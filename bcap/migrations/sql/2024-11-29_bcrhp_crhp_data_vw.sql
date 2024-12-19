@@ -1,4 +1,4 @@
-create or replace view bcrhp_crhp_data_vw as
+create or replace view bcap_crhp_data_vw as
 select distinct i.resourceinstanceid,
                 i.descriptors site_descriptors,
                 sn.site_names,
@@ -97,7 +97,7 @@ from heritage_site.instances i
                            (select jsonb_agg(
                                            jsonb_build_object(
                                                    'site_images', site_images,
-                                                   'image_caption', bcrhp_build_image_caption(
+                                                   'image_caption', bcap_build_image_caption(
                                                            __arches_get_concept_label(image_view),
                                                            image_features->'en'->>'value',
                                                            image_date

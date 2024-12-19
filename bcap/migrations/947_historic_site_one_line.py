@@ -17,7 +17,7 @@ from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivileg
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "947_create_testing_table"),
+        ("bcap", "947_create_testing_table"),
     ]
 
     operations = [
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                             msb.utmzone::numeric(2,0) utm_zone,
                             msb.utmnorthing::numeric(10,0) utm_northing,
                             msb.utmeasting::numeric(10,0) utm_easting,
-                            'https://apps.nrs.gov.bc.ca/int/bcrhp/report/'||bn.resourceinstanceid site_url,
+                            'https://apps.nrs.gov.bc.ca/int/bcap/report/'||bn.resourceinstanceid site_url,
                             msb.site_boundary
             from mv_borden_number bn
                      left join (select resourceinstanceid, name from mv_site_names where name_type = 'Common') cn on cn.resourceinstanceid = bn.resourceinstanceid
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                                            )->0 significance_statement
                                 from mv_bc_statement_of_significance group by resourceinstanceid) sos on bn.resourceinstanceid = sos.resourceinstanceid,
                 databc.get_first_address(bn.resourceinstanceid) prop
-            where msra.bcrhp_submission_status in ('Approved - Basic Record','Approved - Full Record')
+            where msra.bcap_submission_status in ('Approved - Basic Record','Approved - Full Record')
             and registration_status in ('Federal Jurisdiction', 'Recorded/Unprotected', 'Registered', 'Legacy')
             and not coalesce(msra.restricted, false);
             DO
@@ -124,7 +124,7 @@ class Migration(migrations.Migration):
                 DECLARE
                     databc_user text;
                 BEGIN
-                    select replace(current_database(), 'bcrhp','proxy_databc') into databc_user;
+                    select replace(current_database(), 'bcap','proxy_databc') into databc_user;
                     EXECUTE format('grant select on databc.v_historic_enviro_onerow_site to %s' ,quote_ident(databc_user));
                 end;
             $$ language 'plpgsql';
@@ -292,9 +292,9 @@ class Migration(migrations.Migration):
                 msb.utmzone::numeric(2,0) utm_zone,
                 msb.utmnorthing::numeric(10,0) utm_northing,
                 msb.utmeasting::numeric(10,0) utm_easting,
-                'https://apps.nrs.gov.bc.ca/int/bcrhp/report/'||bn.resourceinstanceid site_url,
+                'https://apps.nrs.gov.bc.ca/int/bcap/report/'||bn.resourceinstanceid site_url,
                 msb.site_boundary,
-                msra.bcrhp_submission_status,
+                msra.bcap_submission_status,
                 msra.restricted,
                 msra.date_submitted_to_crhp
             from mv_borden_number bn
@@ -447,7 +447,7 @@ class Migration(migrations.Migration):
                 site_url,
                 site_boundary
             from V_HISTORIC_SITE
-            where bcrhp_submission_status in ('Approved - Basic Record','Approved - Full Record')
+            where bcap_submission_status in ('Approved - Basic Record','Approved - Full Record')
                 and registration_status in ('Federal Jurisdiction', 'Recorded/Unprotected', 'Registered', 'Legacy')
                 and not coalesce(restricted, false);
             DO
@@ -455,7 +455,7 @@ class Migration(migrations.Migration):
                 DECLARE
                     databc_user text;
                 BEGIN
-                    select replace(current_database(), 'bcrhp','proxy_databc') into databc_user;
+                    select replace(current_database(), 'bcap','proxy_databc') into databc_user;
                     EXECUTE format('grant select on databc.v_historic_enviro_onerow_site to %s' ,quote_ident(databc_user));
                 end;
             $$ language 'plpgsql';

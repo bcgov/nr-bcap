@@ -17,7 +17,7 @@ from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivileg
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "0003_create_databc_proxy_role"),
+        ("bcap", "0003_create_databc_proxy_role"),
     ]
 
     operations = [

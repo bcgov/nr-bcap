@@ -8,10 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONSerializer
-from bcrhp.util.borden_number_api import BordenNumberApi
-from bcrhp.util.business_data_proxy import LegislativeActDataProxy
+from bcap.util.borden_number_api import BordenNumberApi
+from bcap.util.business_data_proxy import LegislativeActDataProxy
 from arches.app.models import models
-from bcrhp.util.mvt_tiler import MVTTiler
+from bcap.util.mvt_tiler import MVTTiler
 
 logger = logging.getLogger(__name__)
 

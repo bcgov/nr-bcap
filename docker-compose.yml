@@ -1,15 +1,15 @@
-name: bcrhp7-6-3
+name: bcap7-6-3
 services:
-  bcrhp:
-    container_name:  bcrhp7-6-3
-    image: bcgov/bcrhp7-6-3
+  bcap:
+    container_name:  bcap7-6-3
+    image: bcgov/bcap7-6-3
     build:
       context: ..
-      dockerfile: bcrhp/Dockerfile
+      dockerfile: bcap/Dockerfile
     command: run_arches
     volumes:
       - ../arches/:/web_root/arches
-      - ./:/web_root/bcrhp
+      - ./:/web_root/bcap
       - ../arches_common/:/web_root/arches_common
     env_file:
       - ./docker/env_file.env
@@ -21,16 +21,16 @@ services:
     stdin_open: true
     tty: true
 
-  bcrhp-webpack:
-    container_name: bcrhp-webpack-7-6-3
-    image: bcgov/bcrhp-webpack-7-6-3
+  bcap-webpack:
+    container_name: bcap-webpack-7-6-3
+    image: bcgov/bcap-webpack-7-6-3
     build:
       context: ..
-      dockerfile: bcrhp/docker/webpack/Dockerfile
+      dockerfile: bcap/docker/webpack/Dockerfile
     command: run_webpack
     volumes:
       - ../arches/:/web_root/arches
-      - ./:/web_root/bcrhp
+      - ./:/web_root/bcap
     env_file:
       - ./docker/webpack/env_file.env
     ports:
@@ -45,5 +45,5 @@ networks:
 
 
 volumes:
-  arches-log-bcrhp7-6-3:
-  arches-static-bcrhp7-6-3:
+  arches-log-bcap7-6-3:
+  arches-static-bcap7-6-3:

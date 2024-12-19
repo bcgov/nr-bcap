@@ -7,7 +7,7 @@ from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivileg
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "665_4_public_internal_map_layers"),
+        ("bcap", "665_4_public_internal_map_layers"),
     ]
 
     operations = [

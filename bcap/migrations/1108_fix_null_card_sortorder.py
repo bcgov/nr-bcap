@@ -24,7 +24,7 @@ reverse_fix_null_sort_order_values = """
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcrhp", "1075_fix_null_sortorder"),
+        ("bcap", "1075_fix_null_sortorder"),
     ]
 
     operations = [

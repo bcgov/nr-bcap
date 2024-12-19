@@ -1,6 +1,6 @@
 from guardian.shortcuts import get_perms, assign_perm, remove_perm
-from bcrhp.functions.admin_only_access import AdminOnlyAccess
-from bcrhp.util.business_data_proxy import HeritageSiteDataProxy
+from bcap.functions.admin_only_access import AdminOnlyAccess
+from bcap.util.business_data_proxy import HeritageSiteDataProxy
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000002003",

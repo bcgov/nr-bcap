@@ -1,8 +1,8 @@
 define([
     'underscore',
         'knockout',
-        'viewmodels/bcrhp-site',
-        'templates/views/report-templates/bcrhp_default.htm',
+        'viewmodels/bcap-site',
+        'templates/views/report-templates/bcap_default.htm',
 ], function (_, ko, ReportViewModel, defaultTemplate) {
     const viewModel = function(params) {
         params.configKeys = [];

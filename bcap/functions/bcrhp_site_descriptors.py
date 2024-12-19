@@ -1,16 +1,16 @@
 from arches.app.functions.primary_descriptors import AbstractPrimaryDescriptorsFunction
 from arches.app.models import models
 from arches.app.datatypes.datatypes import DataTypeFactory
-from bcrhp.util.bcrhp_aliases import BCRHPSiteAliases as aliases
+from bcap.util.bcap_aliases import BCRHPSiteAliases as aliases
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001002",
     "name": "BCRHP Site Descriptors",
     "type": "primarydescriptors",
-    "modulename": "bcrhp_site_descriptors.py",
+    "modulename": "bcap_site_descriptors.py",
     "description": "Function that provides the primary descriptors for BC Heritage Resources",
     "defaultconfig": {
-        "module": "arches_bcrhp.functions.bcrhp_site_descriptors",
+        "module": "arches_bcap.functions.bcap_site_descriptors",
         "class_name": "BCRHPSiteDescriptors",
         "descriptor_types": {
             "name": {
@@ -37,7 +37,7 @@ details = {
         "triggering_nodegroups": [],
     },
     "classname": "BCRHPSiteDescriptors",
-    "component": "views/components/functions/bcrhp-site-descriptors",
+    "component": "views/components/functions/bcap-site-descriptors",
 }
 
 

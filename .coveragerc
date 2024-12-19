@@ -1,6 +1,6 @@
 [run]
 source =
-    bcrhp/
+    bcap/
 
 omit =
     */python?.?/*

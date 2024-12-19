@@ -3,9 +3,9 @@ define(['underscore',
         'knockout-mapping',
         'viewmodels/map-report',
         'reports/map-header',
-        'templates/views/report-templates/bcrhp_default.htm'],
+        'templates/views/report-templates/bcap_default.htm'],
     function(_, ko, koMapping, MapReportViewModel, MapHeader, defaultBchpSiteTemplate) {
-    return ko.components.register('bcrhp-site-report', {
+    return ko.components.register('bcap-site-report', {
         viewModel: MapReportViewModel,
         template: defaultBchpSiteTemplate
     });

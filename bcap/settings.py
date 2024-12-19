@@ -1,5 +1,5 @@
 """
-Django settings for bcrhp project.
+Django settings for bcap project.
 """
 
 import json
@@ -35,7 +35,7 @@ except ImportError:
 load_dotenv(
     os.path.join(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0], ".env")
 )
-APP_NAME = "bcrhp"
+APP_NAME = "bcap"
 APP_VERSION = semantic_version.Version(major=1, minor=3, patch=0)
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
@@ -48,10 +48,10 @@ WEBPACK_LOADER = {
     },
 }
 
-DATATYPE_LOCATIONS.append("bcrhp.datatypes")
-FUNCTION_LOCATIONS.append("bcrhp.functions")
-ETL_MODULE_LOCATIONS.append("bcrhp.etl_modules")
-SEARCH_COMPONENT_LOCATIONS.append("bcrhp.search_components")
+DATATYPE_LOCATIONS.append("bcap.datatypes")
+FUNCTION_LOCATIONS.append("bcap.functions")
+ETL_MODULE_LOCATIONS.append("bcap.etl_modules")
+SEARCH_COMPONENT_LOCATIONS.append("bcap.search_components")
 
 LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
 
@@ -72,7 +72,7 @@ FILE_TYPES = [
     "zip",
     "json",
 ]
-FILENAME_GENERATOR = "bcrhp.util.storage_filename_generator.generate_filename"
+FILENAME_GENERATOR = "bcap.util.storage_filename_generator.generate_filename"
 UPLOADED_FILES_DIR = "uploadedfiles"
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -84,7 +84,7 @@ MODE = get_env_variable("DJANGO_MODE")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = ast.literal_eval(get_env_variable("DJANGO_DEBUG"))
 
-ROOT_URLCONF = "bcrhp.urls"
+ROOT_URLCONF = "bcap.urls"
 
 ELASTICSEARCH_SCHEME = get_env_variable("ES_SCHEME")
 ELASTICSEARCH_HTTP_PORT = int(get_env_variable("ES_PORT"))
@@ -129,11 +129,11 @@ if ELASTICSEARCH_CERT_LOCATION and ELASTICSEARCH_API_KEY:
         "ca_certs": ELASTICSEARCH_CERT_LOCATION,
     }
 # a prefix to append to all elasticsearch indexes, note: must be lower case
-ELASTICSEARCH_PREFIX = "bcrhp" + get_env_variable("APP_SUFFIX")
+ELASTICSEARCH_PREFIX = "bcap" + get_env_variable("APP_SUFFIX")
 
 ELASTICSEARCH_CUSTOM_INDEXES = []
 # [{
-#     'module': 'bcrhp.search_indexes.sample_index.SampleIndex',
+#     'module': 'bcap.search_indexes.sample_index.SampleIndex',
 #     'name': 'my_new_custom_index', <-- follow ES index naming rules
 #     'should_update_asynchronously': False  <-- denotes if asynchronously updating the index would affect custom functionality within the project.
 # }]
@@ -203,21 +203,21 @@ INSTALLED_APPS = (
     # "compressor",
     # "silk",
     "storages",
-    "bcrhp",
+    "bcap",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += ("arches.app",)
 
-ROOT_HOSTCONF = "bcrhp.hosts"
-DEFAULT_HOST = "bcrhp"
+ROOT_HOSTCONF = "bcap.hosts"
+DEFAULT_HOST = "bcap"
 
 AUTHENTICATION_BACKENDS = (
     # "arches.app.utils.email_auth_backend.EmailAuthenticationBackend", #Comment out for IDIR
     "oauth2_provider.backends.OAuth2Backend",
-    "bcrhp.util.external_oauth_backend.ExternalOauthAuthenticationBackend",
+    "bcap.util.external_oauth_backend.ExternalOauthAuthenticationBackend",
     # "django.contrib.auth.backends.ModelBackend",  # this is default # Comment out for IDIR
     # "django.contrib.auth.backends.RemoteUserBackend",
-    # "bcrhp.util.auth.backends.BCGovRemoteUserBackend",  # For IDIR authentication behind legacy siteminder
+    # "bcap.util.auth.backends.BCGovRemoteUserBackend",  # For IDIR authentication behind legacy siteminder
     "guardian.backends.ObjectPermissionBackend",
     "arches.app.utils.permission_backend.PermissionBackend",
 )
@@ -234,8 +234,8 @@ MIDDLEWARE = [
     "arches.app.utils.middleware.ModifyAuthorizationHeader",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    # "bcrhp.util.auth.middleware.SiteminderMiddleware",
-    # "bcrhp.util.auth.auth_required_middleware.AuthRequiredMiddleware",
+    # "bcap.util.auth.middleware.SiteminderMiddleware",
+    # "bcap.util.auth.auth_required_middleware.AuthRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
@@ -262,7 +262,7 @@ ALLOWED_HOSTS = get_env_variable("ALLOWED_HOSTS").split()
 SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(
     APP_ROOT, "system_settings", "System_Settings.json"
 )
-WSGI_APPLICATION = "bcrhp.wsgi.application"
+WSGI_APPLICATION = "bcap.wsgi.application"
 
 # URL that handles the media served from MEDIA_ROOT, used for managing stored files.
 # It must end in a slash if set to a non-empty value.
@@ -321,7 +321,7 @@ LOGGING = {
             "level": "INFO",
         },
         "arches": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
-        "bcrhp": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
+        "bcap": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
     },
 }
 
@@ -334,7 +334,7 @@ RATE_LIMIT = "5/m"
 DATA_UPLOAD_MAX_MEMORY_SIZE = 15728640
 
 # Unique session cookie ensures that logins are treated separately for each app
-SESSION_COOKIE_NAME = "bcrhp" + get_env_variable("APP_SUFFIX")
+SESSION_COOKIE_NAME = "bcap" + get_env_variable("APP_SUFFIX")
 
 
 # For more info on configuring your cache: https://docs.djangoproject.com/en/2.2/topics/cache/
@@ -538,10 +538,10 @@ except ImportError:
 
 # This is used for bootstrapping ES and PG security configuration
 try:
-    from .bcrhp.settings_admin import *
+    from .bcap.settings_admin import *
 except ImportError:
     try:
-        from bcrhp.settings_admin import *
+        from bcap.settings_admin import *
     except ImportError:
         pass
 

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import sys
 import os
 from django.test.utils import get_runner
-from bcrhp.tests import test_settings
+from bcap.tests import test_settings
 
 
 def run_all(argv=None):

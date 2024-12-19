@@ -4,7 +4,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "909_update_url_prefix"),
+        ("bcap", "909_update_url_prefix"),
     ]
 
     backup_table_sql = """

@@ -4,7 +4,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "893_0_add_historic_data_slug"),
+        ("bcap", "893_0_add_historic_data_slug"),
     ]
 
     sql = """
@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         'node',
         'Resource Admin Only Access',
         'Disallows all access to non-admin users',
-        '{"module": "bcrhp.functions.admin_only_access", "class_name": "AdminOnlyAccess", "triggering_nodegroups": []}',
+        '{"module": "bcap.functions.admin_only_access", "class_name": "AdminOnlyAccess", "triggering_nodegroups": []}',
         'admin_only_access.py',
         'AdminOnlyAccess',
         'views/components/functions/admin-only-access'

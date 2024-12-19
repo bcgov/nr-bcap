@@ -13,7 +13,7 @@ class AbstractAliases:
 class BCRHPSiteAliases(AbstractAliases):
 
     ACCURACY_REMARKS = "accuracy_remarks"
-    BCRHP_SUBMISSION_STATUS = "bcrhp_submission_status"
+    BCRHP_SUBMISSION_STATUS = "bcap_submission_status"
     BORDEN_NUMBER = "borden_number"
     CHILD_SITES = "child_sites"
     CHRONOLOGY = "chronology"

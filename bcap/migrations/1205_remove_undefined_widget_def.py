@@ -15,7 +15,7 @@ def unregister_widget(self, name):
 
 
 class Migration(migrations.Migration):
-    dependencies = [("bcrhp", "1081_add_missing_featureids")]
+    dependencies = [("bcap", "1081_add_missing_featureids")]
 
     operations = [
         migrations.RunPython(unregister_widget, migrations.RunPython.noop),

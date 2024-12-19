@@ -57,7 +57,7 @@ def remove_permissions(apps, schema_editor, with_create_permissions=True):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "893_2_apply_admin_only_function"),
+        ("bcap", "893_2_apply_admin_only_function"),
     ]
 
     operations = [

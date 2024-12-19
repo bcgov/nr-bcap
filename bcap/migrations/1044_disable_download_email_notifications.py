@@ -19,7 +19,7 @@ enable_emails = """
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcrhp", "1108_fix_null_card_sortorder"),
+        ("bcap", "1108_fix_null_card_sortorder"),
     ]
 
     operations = [

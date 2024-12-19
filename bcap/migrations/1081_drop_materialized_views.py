@@ -5,7 +5,7 @@ from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivileg
 
 
 class Migration(migrations.Migration):
-    dependencies = [("bcrhp", "1168_fix_mv_chronology_index")]
+    dependencies = [("bcap", "1168_fix_mv_chronology_index")]
 
     files = [
         "2024-11-29_mv_bc_statement_of_significance.sql",
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         "2024-11-29_refresh_materialized_views.sql",
         "2024-11-29_v_historic_site.sql",
         "2024-11-29_v_historic_enviro_onerow_site.sql",
-        "2024-11-29_bcrhp_crhp_data_vw.sql",
+        "2024-11-29_bcap_crhp_data_vw.sql",
         "2024-11-29_heritage_site.csv_export.sql",
     ]
 
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
     drop_views = """
        drop view if exists heritage_site.csv_export;
        drop view if exists databc.V_HISTORIC_ENVIRO_ONEROW_SITE;
-       drop view if exists bcrhp_crhp_data_vw;
+       drop view if exists bcap_crhp_data_vw;
        drop view if exists v_historic_site;
        drop materialized view if exists mv_bc_statement_of_significance;
        drop materialized view if exists mv_chronology;

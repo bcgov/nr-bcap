@@ -26,7 +26,7 @@ revert_config = """
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcrhp", "1036_update_heritage_site_export_config"),
+        ("bcap", "1036_update_heritage_site_export_config"),
     ]
 
     operations = [

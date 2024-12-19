@@ -8,7 +8,7 @@ from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivileg
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "694_3_set_initial_permissions"),
+        ("bcap", "694_3_set_initial_permissions"),
     ]
 
     operations = [
@@ -16,15 +16,15 @@ class Migration(migrations.Migration):
             """
             begin;
             update map_layers
-            set legend = replace(legend, '/int/bcrhp/', '/bcrhp/')
-            where legend like '%/int/bcrhp/%';
+            set legend = replace(legend, '/int/bcap/', '/bcap/')
+            where legend like '%/int/bcap/%';
             commit;
             """,
             """
             begin;
             update map_layers
-            set legend = replace(legend, '/bcrhp/', '/int/bcrhp/')
-            where legend like '%/bcrhp/%';
+            set legend = replace(legend, '/bcap/', '/int/bcap/')
+            where legend like '%/bcap/%';
             commit;
             """,
         ),
@@ -36,11 +36,11 @@ class Migration(migrations.Migration):
                 source,
                 '{tiles}',
                 (
-                    select jsonb_agg(to_jsonb(replace(value, '/int/bcrhp/', '/bcrhp/')))
+                    select jsonb_agg(to_jsonb(replace(value, '/int/bcap/', '/bcap/')))
                     from jsonb_array_elements_text(source -> 'tiles') as arr(value)
                 )
             )
-            where source::text like '%/int/bcrhp/%';
+            where source::text like '%/int/bcap/%';
             commit;
             """,
             """
@@ -50,11 +50,11 @@ class Migration(migrations.Migration):
                 source,
                 '{tiles}',
                 (
-                    select jsonb_agg(to_jsonb(replace(value, '/bcrhp/', '/int/bcrhp/')))
+                    select jsonb_agg(to_jsonb(replace(value, '/bcap/', '/int/bcap/')))
                     from jsonb_array_elements_text(source -> 'tiles') as arr(value)
                 )
             )
-            where source::text like '%/bcrhp/%';
+            where source::text like '%/bcap/%';
             commit;
             """,
         ),
@@ -65,10 +65,10 @@ class Migration(migrations.Migration):
             set config = jsonb_set(
                 config,
                 '{url}',
-                ('"' || replace(config->>'url', '/int/bcrhp/', '/bcrhp/') || '"')::jsonb
+                ('"' || replace(config->>'url', '/int/bcap/', '/bcap/') || '"')::jsonb
             )
             where (config->'url') is not null
-            and config->>'url' like '%/int/bcrhp/%';
+            and config->>'url' like '%/int/bcap/%';
             commit;
             """,
             """
@@ -77,10 +77,10 @@ class Migration(migrations.Migration):
             set config = jsonb_set(
                 config,
                 '{url}',
-                ('"' || replace(config->>'url', '/bcrhp/', '/int/bcrhp/') || '"')::jsonb
+                ('"' || replace(config->>'url', '/bcap/', '/int/bcap/') || '"')::jsonb
             )
             where (config->'url') is not null
-            and config->>'url' like '%/bcrhp/%';
+            and config->>'url' like '%/bcap/%';
             commit;
             """,
         ),
@@ -97,12 +97,12 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6')::jsonb,
                     '{0, url}',
-                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url', '/int/bcrhp/', '/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url', '/int/bcap/', '/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6' is not null
             and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 -> 'url' is not null
-            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url' like '%/int/bcrhp/%'
+            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url' like '%/int/bcap/%'
             ;
             update tiles
             set tiledata = jsonb_set(
@@ -111,12 +111,12 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6')::jsonb,
                     '{0, content}',
-                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content', '/int/bcrhp/', '/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content', '/int/bcap/', '/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6' is not null
             and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 -> 'content' is not null
-            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content' like '%/int/bcrhp/%'
+            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content' like '%/int/bcap/%'
             ;
             -- for site images
             update tiles
@@ -126,12 +126,12 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6')::jsonb,
                     '{0, url}',
-                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'url', '/int/bcrhp/', '/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'url', '/int/bcap/', '/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6' is not null
             and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 -> 'url' is not null
-            and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'url' like '%/int/bcrhp/%'
+            and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'url' like '%/int/bcap/%'
             ;
             update tiles
             set tiledata = jsonb_set(
@@ -140,12 +140,12 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6')::jsonb,
                     '{0, content}',
-                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content', '/int/bcrhp/', '/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content', '/int/bcap/', '/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6' is not null
             and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 -> 'content' is not null
-            and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content' like '%/int/bcrhp/%'
+            and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content' like '%/int/bcap/%'
             ;
             commit;
             """,
@@ -159,12 +159,12 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6')::jsonb,
                     '{0, url}',
-                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url', '/bcrhp/', '/int/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url', '/bcap/', '/int/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6' is not null
             and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 -> 'url' is not null
-            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url' like '%/bcrhp/%'
+            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'url' like '%/bcap/%'
             ;
             update tiles
             set tiledata = jsonb_set(
@@ -173,12 +173,12 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6')::jsonb,
                     '{0, content}',
-                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content', '/bcrhp/', '/int/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content', '/bcap/', '/int/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6' is not null
             and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 -> 'content' is not null
-            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content' like '%/bcrhp/%'
+            and (tiledata -> 'dc12f414-0d07-11ed-8804-5254008afee6') -> 0 ->> 'content' like '%/bcap/%'
             ;
             -- for site images
             update tiles
@@ -188,7 +188,7 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6')::jsonb,
                     '{0, url}',
-                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'url', '/bcrhp/', '/int/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'url', '/bcap/', '/int/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6' is not null
@@ -201,12 +201,12 @@ class Migration(migrations.Migration):
                 jsonb_set(
                     (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6')::jsonb,
                     '{0, content}',
-                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content', '/bcrhp/', '/int/bcrhp/') || '"')::jsonb
+                    ('"' || replace((tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content', '/bcap/', '/int/bcap/') || '"')::jsonb
                 )
             )
             where tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6' is not null
             and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 -> 'content' is not null
-            and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content' like '%/bcrhp/%'
+            and (tiledata -> '0a883b80-2fb6-11ed-be5f-5254008afee6') -> 0 ->> 'content' like '%/bcap/%'
             ;
             commit;
             """,
@@ -218,10 +218,10 @@ class Migration(migrations.Migration):
             set config = jsonb_set(
                 config,
                 '{searchString}',
-                ('"' || replace(config->>'searchString', '/int/bcrhp/', '/bcrhp/') || '"')::jsonb
+                ('"' || replace(config->>'searchString', '/int/bcap/', '/bcap/') || '"')::jsonb
             )
             where (config->'searchString') is not null
-            and config->>'searchString' like '%/int/bcrhp/%'
+            and config->>'searchString' like '%/int/bcap/%'
             ;
             commit;
             """,
@@ -231,10 +231,10 @@ class Migration(migrations.Migration):
             set config = jsonb_set(
                 config,
                 '{searchString}',
-                ('"' || replace(config->>'searchString', '/bcrhp/', '/int/bcrhp/') || '"')::jsonb
+                ('"' || replace(config->>'searchString', '/bcap/', '/int/bcap/') || '"')::jsonb
             )
             where (config->'searchString') is not null
-            and config->>'searchString' like '%/bcrhp/%'
+            and config->>'searchString' like '%/bcap/%'
             ;
             commit;
             """,
@@ -243,16 +243,16 @@ class Migration(migrations.Migration):
             """
             begin;
             update concepts
-            set legacyoid = replace(legacyoid, '/int/bcrhp/', '/bcrhp/')
-            where legacyoid like '%/int/bcrhp/%'
+            set legacyoid = replace(legacyoid, '/int/bcap/', '/bcap/')
+            where legacyoid like '%/int/bcap/%'
             ;
             commit;
             """,
             """
             begin;
             update concepts
-            set legacyoid = replace(legacyoid, '/bcrhp/', '/int/bcrhp/')
-            where legacyoid like '%/bcrhp/%'
+            set legacyoid = replace(legacyoid, '/bcap/', '/int/bcap/')
+            where legacyoid like '%/bcap/%'
             ;
             commit;
             """,
@@ -261,16 +261,16 @@ class Migration(migrations.Migration):
             """
             begin;
             update values
-            set value = replace(value, '/int/bcrhp/', '/bcrhp/')
-            where value like '%/int/bcrhp/%'
+            set value = replace(value, '/int/bcap/', '/bcap/')
+            where value like '%/int/bcap/%'
             ;
             commit;
             """,
             """
             begin;
             update values
-            set value = replace(value, '/bcrhp/', '/int/bcrhp/')
-            where value like '%/bcrhp/%'
+            set value = replace(value, '/bcap/', '/int/bcap/')
+            where value like '%/bcap/%'
             ;
             commit;
             """,
@@ -279,16 +279,16 @@ class Migration(migrations.Migration):
             """
             begin;
             update published_graphs
-            set serialized_graph = replace(serialized_graph::text, '/int/bcrhp/', '/bcrhp/')::jsonb
-            where serialized_graph::text like '%/int/bcrhp/%'
+            set serialized_graph = replace(serialized_graph::text, '/int/bcap/', '/bcap/')::jsonb
+            where serialized_graph::text like '%/int/bcap/%'
             ;
             commit;
             """,
             """
             begin;
             update published_graphs
-            set serialized_graph = replace(serialized_graph::text, '/bcrhp/', '/int/bcrhp/')::jsonb
-            where serialized_graph::text like '%/bcrhp/%'
+            set serialized_graph = replace(serialized_graph::text, '/bcap/', '/int/bcap/')::jsonb
+            where serialized_graph::text like '%/bcap/%'
             ;
             commit;
             """,
@@ -297,15 +297,15 @@ class Migration(migrations.Migration):
             """
             begin;
             update edit_log
-            set newvalue = replace(newvalue::text, '/int/bcrhp/', '/bcrhp/')::jsonb
-            where newvalue::text like '%/int/bcrhp/';
+            set newvalue = replace(newvalue::text, '/int/bcap/', '/bcap/')::jsonb
+            where newvalue::text like '%/int/bcap/';
             commit;
             """,
             """
             begin;
             update edit_log
-            set newvalue = replace(newvalue::text, '/bcrhp/', '/int/bcrhp/')::jsonb
-            where newvalue::text like '%/bcrhp/';
+            set newvalue = replace(newvalue::text, '/bcap/', '/int/bcap/')::jsonb
+            where newvalue::text like '%/bcap/';
             commit;
             """,
         ),
@@ -338,9 +338,9 @@ class Migration(migrations.Migration):
                 msb.utmzone::numeric(2,0) utm_zone,
                 msb.utmnorthing::numeric(10,0) utm_northing,
                 msb.utmeasting::numeric(10,0) utm_easting,
-                'https://apps.nrs.gov.bc.ca/bcrhp/report/'||bn.resourceinstanceid site_url,
+                'https://apps.nrs.gov.bc.ca/bcap/report/'||bn.resourceinstanceid site_url,
                 msb.site_boundary,
-                msra.bcrhp_submission_status,
+                msra.bcap_submission_status,
                 msra.restricted,
                 msra.date_submitted_to_crhp
             from mv_borden_number bn
@@ -470,9 +470,9 @@ class Migration(migrations.Migration):
                 msb.utmzone::numeric(2,0) utm_zone,
                 msb.utmnorthing::numeric(10,0) utm_northing,
                 msb.utmeasting::numeric(10,0) utm_easting,
-                'https://apps.nrs.gov.bc.ca/int/bcrhp/report/'||bn.resourceinstanceid site_url,
+                'https://apps.nrs.gov.bc.ca/int/bcap/report/'||bn.resourceinstanceid site_url,
                 msb.site_boundary,
-                msra.bcrhp_submission_status,
+                msra.bcap_submission_status,
                 msra.restricted,
                 msra.date_submitted_to_crhp
             from mv_borden_number bn

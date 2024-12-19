@@ -9,7 +9,7 @@ from django.core.management import call_command
 private_resources_sql = """
     select distinct resourceinstanceid from heritage_site.site_record_admin
          where restricted=true
-                or __arches_get_concept_label(bcrhp_submission_status) not in ('Approved - Basic Record', 'Approved - Full Record')
+                or __arches_get_concept_label(bcap_submission_status) not in ('Approved - Basic Record', 'Approved - Full Record')
     union
     select resourceinstanceid from heritage_site.bc_right 
         where not officially_recognized_site
@@ -65,7 +65,7 @@ def remove_permissions(apps, schema_editor, with_create_permissions=True):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "694_2_apply_restricted_site_access_function"),
+        ("bcap", "694_2_apply_restricted_site_access_function"),
     ]
 
     operations = [

@@ -57,7 +57,7 @@ def remove_groups(apps, schema_editor, with_create_permissions=True):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "665_6_correct_public_internal_map_layers"),
+        ("bcap", "665_6_correct_public_internal_map_layers"),
     ]
 
     operations = [

@@ -2,7 +2,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    dependencies = [("bcrhp", "1081_recreate_materialized_views")]
+    dependencies = [("bcap", "1081_recreate_materialized_views")]
 
     add_missing_featureids = """
         DO $$

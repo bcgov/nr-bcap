@@ -40,7 +40,7 @@ class ExternalOauth(CoreExternalOauth):
             login(
                 request,
                 user,
-                backend="bcrhp.util.external_oauth_backend.ExternalOauthAuthenticationBackend",
+                backend="bcap.util.external_oauth_backend.ExternalOauthAuthenticationBackend",
             )
             logger.debug("Next URL: %s" % next_url)
             return redirect(next_url)

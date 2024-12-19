@@ -85,8 +85,8 @@ class HriaDao:
                     borden_number, resourceinstanceid, connection
                 )
                 version_exists = cursor.execute(
-                    """SELECT COUNT (1) FROM sde.versions WHERE name = :bcrhp_user""",
-                    bcrhp_user=hria_application_user,
+                    """SELECT COUNT (1) FROM sde.versions WHERE name = :bcap_user""",
+                    bcap_user=hria_application_user,
                 ).fetchone()
                 logger.debug("Version exists? %s" % version_exists)
                 if version_exists[0] == 0:
@@ -138,7 +138,7 @@ class HriaDao:
                         -- IMPORTFK, --                 VARCHAR2(100)
                         -- SDE_STATE_ID, --             NUMBER
                     )
-                    values (:bcrhp_user,
+                    values (:bcap_user,
                         sysdate,
                         'SQL',
                         :borden_number,
@@ -146,16 +146,16 @@ class HriaDao:
                         :borden_lower,
                         :borden_sequence,
                         sysdate,
-                        :bcrhp_user,
+                        :bcap_user,
                         'Decision Pending',
                         'NEW',
                         sysdate,
-                        :bcrhp_user,
+                        :bcap_user,
                         'SQL',
                         :is_heritage_site,
                         :arches_uuid
                            )""",
-                    bcrhp_user=hria_application_user,
+                    bcap_user=hria_application_user,
                     borden_number=borden_number,
                     borden_upper=re.sub(r"(.)(.)(.)(.)-.*", r"\1\3", borden_number),
                     borden_lower=re.sub(r"(.)(.)(.)(.)-.*", r"\2\4", borden_number),

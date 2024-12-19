@@ -5,7 +5,7 @@ from arches.settings_utils import generate_frontend_configuration
 
 
 class BcrhpConfig(AppConfig):
-    name = "bcrhp"
+    name = "bcap"
     is_arches_application = True
 
     def ready(self):

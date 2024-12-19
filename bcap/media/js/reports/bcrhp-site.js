@@ -1,7 +1,7 @@
 define(['underscore',
     'knockout',
     'knockout-mapping',
-    'viewmodels/bcrhp-site',
+    'viewmodels/bcap-site',
     'reports/map-header',
     'templates/views/report-templates/map.htm',
     'templates/views/report-templates/details/heritage_site.htm'
@@ -15,7 +15,7 @@ define(['underscore',
         }
     }
      */
-    return ko.components.register('bcrhp-site-report', {
+    return ko.components.register('bcap-site-report', {
         viewModel: siteViewModel,
         template: defaultSiteTemplate
     });

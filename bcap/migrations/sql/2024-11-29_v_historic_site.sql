@@ -25,9 +25,9 @@ select distinct bn.resourceinstanceid,
                 msb.utmzone::numeric(2,0) utm_zone,
                 msb.utmnorthing::numeric(10,0) utm_northing,
                 msb.utmeasting::numeric(10,0) utm_easting,
-                'https://apps.nrs.gov.bc.ca/int/bcrhp/report/'||bn.resourceinstanceid site_url,
+                'https://apps.nrs.gov.bc.ca/int/bcap/report/'||bn.resourceinstanceid site_url,
                 msb.site_boundary,
-                msra.bcrhp_submission_status,
+                msra.bcap_submission_status,
                 msra.restricted,
                 msra.date_submitted_to_crhp
 from mv_borden_number bn

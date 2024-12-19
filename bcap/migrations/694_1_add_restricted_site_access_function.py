@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "893_4_restrict_nodes_from_public"),
+        ("bcap", "893_4_restrict_nodes_from_public"),
     ]
 
     sql = """
@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         'node',
         'Restricted Site Only Access',
         'Disallows all access to non-admin users',
-        '{"module": "bcrhp.functions.restricted_site_access", "class_name": "RestrictedSiteAccess", "triggering_nodegroups": []}',
+        '{"module": "bcap.functions.restricted_site_access", "class_name": "RestrictedSiteAccess", "triggering_nodegroups": []}',
         'restricted_site_access.py',
         'RestrictedSiteAccess',
         'views/components/functions/restricted-site-access'

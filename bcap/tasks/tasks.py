@@ -14,7 +14,7 @@ from tempfile import NamedTemporaryFile
 
 @shared_task(bind=True)
 def export_search_results(self, userid, request_values, format, report_link):
-    from bcrhp.search.search_export import (
+    from bcap.search.search_export import (
         BCRHPSearchResultsExporter as SearchResultsExporter,
     )
     from arches.app.models.system_settings import settings

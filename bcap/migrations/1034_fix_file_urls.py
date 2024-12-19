@@ -28,7 +28,7 @@ reverse_backup_document_table_sql = """
 
 fix_images_sql = """
     update heritage_site.site_images
-        set site_images = jsonb_set(site_images, '{0,url}', to_jsonb(regexp_replace(site_images->0->>'url', '^/bcrhp', '')))
+        set site_images = jsonb_set(site_images, '{0,url}', to_jsonb(regexp_replace(site_images->0->>'url', '^/bcap', '')))
     where site_images->0->>'url' !~ '^/files';
     """
 
@@ -41,7 +41,7 @@ reverse_fix_images_sql = """
 
 fix_documents_sql = """
     update heritage_site.site_document
-        set site_document = jsonb_set(site_document, '{0,url}', to_jsonb(regexp_replace(site_document->0->>'url', '^/bcrhp', '')))
+        set site_document = jsonb_set(site_document, '{0,url}', to_jsonb(regexp_replace(site_document->0->>'url', '^/bcap', '')))
     where site_document->0->>'url' !~ '^/files';
     """
 
@@ -55,7 +55,7 @@ reverse_fix_documents_sql = """
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcrhp", "910_update_heritage_usernames"),
+        ("bcap", "910_update_heritage_usernames"),
     ]
 
     operations = [

@@ -6,9 +6,9 @@ define(['jquery',
     'viewmodels/function',
     'bindings/chosen',
     'views/components/simple-switch',
-    'templates/views/components/functions/bcrhp-site-submission-descriptors.htm'],
+    'templates/views/components/functions/bcap-site-submission-descriptors.htm'],
 function($, _, arches, ko, koMapping, FunctionViewModel, chosen, SimpleSwitch, defaultSiteDescriptorsTemplate) {
-    return ko.components.register('views/components/functions/bcrhp-site-submission-descriptors', {
+    return ko.components.register('views/components/functions/bcap-site-submission-descriptors', {
         viewModel: function(params) {
             FunctionViewModel.apply(this, arguments);
             console.log("params2"+JSON.stringify(params))

@@ -1,4 +1,4 @@
-from bcrhp.util.bcrhp_aliases import GraphSlugs, BCRHPSiteSubmissionAliases as aliases
+from bcap.util.bcap_aliases import GraphSlugs, BCRHPSiteSubmissionAliases as aliases
 from bcgov_arches_common.util.bc_primary_descriptors_function import (
     BCPrimaryDescriptorsFunction,
 )
@@ -8,10 +8,10 @@ details = {
     "functionid": "60000000-0000-0000-0000-000000001005",
     "name": "BCRHP Site Submission Descriptors",
     "type": "primarydescriptors",
-    "modulename": "bcrhp_site_submission_descriptors.py",
+    "modulename": "bcap_site_submission_descriptors.py",
     "description": "Function that provides the primary descriptors for BC Heritage Site Submissions",
     "defaultconfig": {
-        "module": "arches_bcrhp.functions.bcrhp_site_submission_descriptors",
+        "module": "arches_bcap.functions.bcap_site_submission_descriptors",
         "class_name": "BCRHPSiteSubmissionDescriptors",
         "descriptor_types": {
             "name": {},
@@ -20,7 +20,7 @@ details = {
         },
     },
     "classname": "BCRHPSiteSubmissionDescriptors",
-    "component": "views/components/functions/bcrhp-site-submission-descriptors",
+    "component": "views/components/functions/bcap-site-submission-descriptors",
 }
 
 

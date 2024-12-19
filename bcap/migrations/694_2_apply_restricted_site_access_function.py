@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "694_1_add_restricted_site_access_function"),
+        ("bcap", "694_1_add_restricted_site_access_function"),
     ]
 
     sql = """

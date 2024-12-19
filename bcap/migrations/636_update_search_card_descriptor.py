@@ -23,7 +23,7 @@ def reindex_heritage_sites(apps, schema_editor, with_create_permissions=True):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "992_add_resource_exporter_to_anonymous"),
+        ("bcap", "992_add_resource_exporter_to_anonymous"),
     ]
 
     operations = [

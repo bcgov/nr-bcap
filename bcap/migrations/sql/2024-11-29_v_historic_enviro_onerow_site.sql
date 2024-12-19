@@ -43,7 +43,7 @@ select distinct
     site_url,
     site_boundary
 from V_HISTORIC_SITE
-where bcrhp_submission_status in ('Approved - Basic Record','Approved - Full Record')
+where bcap_submission_status in ('Approved - Basic Record','Approved - Full Record')
   and registration_status in ('Federal Jurisdiction', 'Recorded/Unprotected', 'Registered', 'Legacy')
   and not coalesce(restricted, false);
 DO
@@ -51,7 +51,7 @@ $$
     DECLARE
         databc_user text;
     BEGIN
-        select replace(current_database(), 'bcrhp','proxy_databc') into databc_user;
+        select replace(current_database(), 'bcap','proxy_databc') into databc_user;
         EXECUTE format('grant select on databc.v_historic_enviro_onerow_site to %s' ,quote_ident(databc_user));
     end;
 $$ language 'plpgsql';

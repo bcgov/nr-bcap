@@ -8,7 +8,7 @@ username_suffix = "@idir"
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "636_update_search_card_descriptor"),
+        ("bcap", "636_update_search_card_descriptor"),
     ]
 
     def add_suffix(apps, schema_editor, with_create_permissions=True):

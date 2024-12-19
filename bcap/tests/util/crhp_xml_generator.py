@@ -1,6 +1,6 @@
 # from tests.base_test import ArchesTestCase
 from django.test.runner import DiscoverRunner, TestCase
-from bcrhp.util.crhp_xml_generator import CrhpXmlGenerator
+from bcap.util.crhp_xml_generator import CrhpXmlGenerator
 
 
 class CrhpXmlGeneratorTests(TestCase):

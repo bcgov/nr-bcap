@@ -2,10 +2,10 @@ FROM ubuntu:22.04 AS base
 USER root
 ENV WEB_ROOT=/web_root
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
-ENV APP_ROOT=${WEB_ROOT}/bcrhp
+ENV APP_ROOT=${WEB_ROOT}/bcap
 #ENV AFS_ROOT=${WEB_ROOT}/arches-for-science
 ENV NODE_MAJOR=20
-RUN mkdir -p ${APP_ROOT}/bcrhp/webpack
+RUN mkdir -p ${APP_ROOT}/bcap/webpack
 
 RUN apt-get update && apt-get install -y make software-properties-common && apt-get install -y ca-certificates curl gnupg && mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
@@ -41,7 +41,7 @@ RUN apt-get update && apt-get -y install curl \
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e . --user
 
-COPY /bcrhp/docker/webpack/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
+COPY /bcap/docker/webpack/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
 RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh
 WORKDIR ${WEB_ROOT}
 ENTRYPOINT [ "./entrypoint.sh" ]

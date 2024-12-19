@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from bcrhp.settings import *
+from bcap.settings import *
 import arches
 import os
 import inspect
@@ -26,10 +26,10 @@ try:
 except ImportError:  # unable to import prior to installing requirements.txt in setup.py
     pass
 
-PACKAGE_NAME = "bcrhp"
+PACKAGE_NAME = "bcap"
 ROOT_DIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 print("Root dir: %s" % ROOT_DIR)
-ROOT_DIR = os.path.normpath(os.path.join(ROOT_DIR, "..", "..", "bcrhp"))
+ROOT_DIR = os.path.normpath(os.path.join(ROOT_DIR, "..", "..", "bcap"))
 print("Root dir: %s" % ROOT_DIR)
 ROOT_DIR = os.path.normpath(
     os.path.join("/apps_ux", "projects", "arches-core", "arches")
@@ -37,9 +37,9 @@ ROOT_DIR = os.path.normpath(
 print("Root dir: %s" % ROOT_DIR)
 # TEST_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "tests"))
 TEST_ROOT = os.path.normpath(
-    os.path.join("apps_ux", "projects", "bcrhp", "bcrhp", "tests")
+    os.path.join("apps_ux", "projects", "bcap", "bcap", "tests")
 )
-# APP_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "bcrhp"))
+# APP_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "bcap"))
 APP_ROOT = ""
 ELASTICSEARCH_HTTP_PORT = 9200
 
@@ -75,7 +75,7 @@ CACHES = {
 
 ELASTICSEARCH_PREFIX = "test"
 
-TEST_RUNNER = "bcrhp.tests.base_test.ArchesTestRunner"
+TEST_RUNNER = "bcap.tests.base_test.ArchesTestRunner"
 
 # could add Chrome, PhantomJS etc... here
 LOCAL_BROWSERS = []  # ['Firefox']

@@ -26,7 +26,7 @@ from arches.app.utils.data_management.resource_graphs.importer import (
     import_graph as ResourceGraphImporter,
 )
 from arches.app.utils.data_management.resources.importer import BusinessDataImporter
-from bcrhp.tests import test_settings
+from bcap.tests import test_settings
 from arches.app.utils.context_processors import app_settings
 from django.db import connection
 from django.core import management

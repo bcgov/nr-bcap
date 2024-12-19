@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
 from arches.app.search.base_index import BaseIndex
-from bcrhp.search_indexes.sample_index import SampleIndex
+from bcap.search_indexes.sample_index import SampleIndex
 from django.test import TestCase
 
 

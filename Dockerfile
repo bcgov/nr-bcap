@@ -1,6 +1,6 @@
 FROM ubuntu:22.04 AS base
 USER root
-ENV PROJECT_NAME=bcrhp
+ENV PROJECT_NAME=bcap
 ## Setting default environment variables
 ENV WEB_ROOT=/web_root
 ENV APP_ROOT=${WEB_ROOT}/${PROJECT_NAME}
@@ -50,7 +50,7 @@ COPY ./arches ${ARCHES_ROOT}
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev] && \
     pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi
-COPY ./bcrhp/docker/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
+COPY ./bcap/docker/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
 RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh &&\
   dos2unix ${WEB_ROOT}/entrypoint.sh
 RUN mkdir /var/log/supervisor

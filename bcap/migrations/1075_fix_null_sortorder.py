@@ -9,7 +9,7 @@ fix_null_sort_order_values = """
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcrhp", "1034_fix_file_urls"),
+        ("bcap", "1034_fix_file_urls"),
     ]
 
     operations = [

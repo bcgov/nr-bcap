@@ -7,7 +7,7 @@ import platform
 if platform.system().lower() == "windows":
     os.environ.setdefault("FORKED_BY_MULTIPROCESSING", "1")
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bcrhp.settings")
-app = Celery("bcrhp")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bcap.settings")
+app = Celery("bcap")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()

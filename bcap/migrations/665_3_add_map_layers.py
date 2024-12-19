@@ -4,7 +4,7 @@ from django.core.management import call_command
 from django.db import migrations
 from django.db.migrations.operations.special import RunPython
 
-from bcrhp.settings import APP_ROOT
+from bcap.settings import APP_ROOT
 
 mapbox_overlays_dir = f"{APP_ROOT}/pkg/map_layers/mapbox_spec_json/overlays"
 
@@ -60,7 +60,7 @@ def backward(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "665_2_update_map_layer"),
+        ("bcap", "665_2_update_map_layer"),
     ]
 
     operations = [RunPython(forward, backward)]

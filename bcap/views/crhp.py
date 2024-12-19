@@ -1,6 +1,6 @@
 import logging
 from arches.app.views.api import APIBase
-from bcrhp.models import CrhpExportData
+from bcap.models import CrhpExportData
 import html2text
 import datetime
 

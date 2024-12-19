@@ -27,4 +27,4 @@ class CrhpExportData(models.Model):
 
     class Meta:
         managed = False
-        db_table = "bcrhp_crhp_data_vw"
+        db_table = "bcap_crhp_data_vw"

@@ -1,7 +1,7 @@
 from django.db import connection
 from django.core.management.base import BaseCommand, CommandError
 import logging
-from bcrhp.util.buisiness_permission_manager import (
+from bcap.util.buisiness_permission_manager import (
     AdminOnlyPermissionManager,
     HeritageSitePermissionManager,
 )

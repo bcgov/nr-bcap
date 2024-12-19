@@ -3,11 +3,11 @@ from arches.app.datatypes.datatypes import DataTypeFactory
 from django.contrib.gis.geos import Point
 from arches.app.utils import geo_utils
 import json
-from bcrhp.util.bcrhp_aliases import (
+from bcap.util.bcap_aliases import (
     BCRHPSiteAliases as site_aliases,
     GraphSlugs as slugs,
 )
-from bcrhp.util.hria_db import HriaDao
+from bcap.util.hria_db import HriaDao
 from django.conf import settings
 
 import urllib3

@@ -144,7 +144,7 @@ class ExternalOauthAuthenticationBackend(CoreOauthBackend):
         logger.debug("Logging in (custom): %s" % user)
         if (
             user.backend
-            == "bcrhp.util.external_oauth_backend.ExternalOauthAuthenticationBackend"
+            == "bcap.util.external_oauth_backend.ExternalOauthAuthenticationBackend"
         ):
             try:
                 token = ExternalOauthAuthenticationBackend.get_token(user)

@@ -3,13 +3,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls.resolvers import RegexPattern
-from bcrhp.views.api import BordenNumber, MVT, LegislativeAct, UserProfile
-from bcrhp.views.crhp import CRHPXmlExport
-from bcrhp.views.search import export_results as bcrhp_export_results
-from bcrhp.views.resource import ResourceReportView
-from bcrhp.views.auth import UnauthorizedView
+from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile
+from bcap.views.crhp import CRHPXmlExport
+from bcap.views.search import export_results as bcap_export_results
+from bcap.views.resource import ResourceReportView
+from bcap.views.auth import UnauthorizedView
 from bcgov_arches_common.views.map import BCTileserverProxyView
-from bcrhp.views.auth import ExternalOauth
+from bcap.views.auth import ExternalOauth
 import re
 
 uuid_regex = settings.UUID_REGEX
@@ -46,7 +46,7 @@ urlpatterns = [
     re_path(
         bc_path_prefix(r"^bctileserver/(?P<path>.*)$"),
         BCTileserverProxyView.as_view(),
-        name="bcrhp_tile_server",
+        name="bcap_tile_server",
     ),
     re_path(
         bc_path_prefix(r"^borden_number/(?P<resourceinstanceid>%s)$" % uuid_regex),
@@ -108,7 +108,7 @@ urlpatterns = [
     # Override base export results
     re_path(
         bc_path_prefix(r"^search/export_results$"),
-        bcrhp_export_results,
+        bcap_export_results,
         name="export_results",
     ),
     bc_url_resolver,

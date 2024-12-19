@@ -179,7 +179,7 @@ revert_config = """
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcrhp", "1044_disable_download_email_notifications"),
+        ("bcap", "1044_disable_download_email_notifications"),
     ]
 
     operations = [

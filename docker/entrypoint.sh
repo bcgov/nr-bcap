@@ -111,7 +111,7 @@ copy_settings_local() {
 
 start_celery_supervisor() {
 	cd ${APP_FOLDER}
-	supervisord -c docker/bcrhp-supervisor.conf
+	supervisord -c docker/bcap-supervisor.conf
 }
 
 run_migrations() {
@@ -135,7 +135,7 @@ run_load_package() {
 	echo "----- *** LOADING PACKAGE: ${ARCHES_PROJECT} *** -----"
 	echo ""
 	cd ${APP_FOLDER}
-	python3 manage.py packages -o load_package -s bcrhp/pkg -db -dev -y
+	python3 manage.py packages -o load_package -s bcap/pkg -db -dev -y
 }
 
 # "exec" means that it will finish building???

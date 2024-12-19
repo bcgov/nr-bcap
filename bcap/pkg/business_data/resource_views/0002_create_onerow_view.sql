@@ -126,13 +126,13 @@ drop materialized view if exists mv_site_record_admin cascade;
 create materialized view mv_site_record_admin as
 select resourceinstanceid,
        restricted,
-       __arches_get_concept_label(bcrhp_submission_status) bcrhp_submission_status,
+       __arches_get_concept_label(bcap_submission_status) bcap_submission_status,
        __arches_get_concept_label(crhp_submission_status) crhp_submission_status,
        date_submitted_to_crhp,
        federal_id_number
 from heritage_site.site_record_admin;
 create index mv_sra_idx on mv_site_record_admin(resourceinstanceid);
-create index mv_sra_idx2 on mv_site_record_admin(bcrhp_submission_status);
+create index mv_sra_idx2 on mv_site_record_admin(bcap_submission_status);
 
 drop materialized view if exists mv_heritage_function cascade;
 create materialized view mv_heritage_function as
@@ -338,13 +338,13 @@ select distinct bn.resourceinstanceid site_id,
                 msb.utmzone::numeric(2,0) utm_zone,
                 msb.utmnorthing::numeric(10,0) utm_northing,
                 msb.utmeasting::numeric(10,0) utm_easting,
-                'https://apps.nrs.gov.bc.ca/int/bcrhp/report/'||bn.resourceinstanceid site_url,
+                'https://apps.nrs.gov.bc.ca/int/bcap/report/'||bn.resourceinstanceid site_url,
                 msb.site_boundary
 --                 prop.location_description,
 --                 prop.pin,
 --                 prop.legal_description,
 --                 msra.restricted,
---                ,msra.bcrhp_submission_status
+--                ,msra.bcap_submission_status
 --                 msra.date_submitted_to_crhp,
 --                 msra.federal_id_number
 from mv_borden_number bn
@@ -402,6 +402,6 @@ from mv_borden_number bn
                                )->0 significance_statement
                     from mv_bc_statement_of_significance group by resourceinstanceid) sos on bn.resourceinstanceid = sos.resourceinstanceid,
     databc.get_first_address(bn.resourceinstanceid) prop
-where msra.bcrhp_submission_status in ('Approved - Basic Record','Approved - Full Record')
+where msra.bcap_submission_status in ('Approved - Basic Record','Approved - Full Record')
 and registration_status in ('Federal Jurisdiction', 'Recorded/Unprotected', 'Registered', 'Legacy')
 and not coalesce(msra.restricted, false);

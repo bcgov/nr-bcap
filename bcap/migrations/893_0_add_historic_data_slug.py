@@ -4,7 +4,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcrhp", "665_5_reorder_map_layers"),
+        ("bcap", "665_5_reorder_map_layers"),
     ]
 
     sql = """

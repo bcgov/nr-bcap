@@ -4,7 +4,7 @@
     "provinces-states-source": {
       "type": "vector",
       "tiles": [
-        "/int/bcrhp/bctileserver/geo/pub/WHSE_BASEMAPPING.DBM_BC_7H_MIL_POLITICAL_POLY/ows?format=pbf&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&width=512&height=512&transparent=true&layers=pub:WHSE_BASEMAPPING.DBM_BC_7H_MIL_POLITICAL_POLY&bbox={bbox-epsg-3857}"
+        "/int/bcap/bctileserver/geo/pub/WHSE_BASEMAPPING.DBM_BC_7H_MIL_POLITICAL_POLY/ows?format=pbf&service=WMS&version=1.3.0&request=GetMap&srs=EPSG:3857&width=512&height=512&transparent=true&layers=pub:WHSE_BASEMAPPING.DBM_BC_7H_MIL_POLITICAL_POLY&bbox={bbox-epsg-3857}"
       ],
       "tileSize": 512
     }
@@ -16,7 +16,7 @@
     "centery": null,
     "icon": "fa fa-globe",
     "isoverlay": true,
-    "legend": "<p><img alt=\"\" class=\"province-state legend-line\" style=\"width: 8px;\" src=\"/int/bcrhp/static/img/blank.png\" /><img alt=\"\" class=\"cadastral legend-line\" src=\"/int/bcrhp/static/img/blank.png\" />Province/State Boundary</p>",
+    "legend": "<p><img alt=\"\" class=\"province-state legend-line\" style=\"width: 8px;\" src=\"/int/bcap/static/img/blank.png\" /><img alt=\"\" class=\"cadastral legend-line\" src=\"/int/bcap/static/img/blank.png\" />Province/State Boundary</p>",
     "searchonly": false,
     "sortorder": 0,
     "zoom": null

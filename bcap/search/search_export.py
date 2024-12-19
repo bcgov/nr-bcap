@@ -1,7 +1,7 @@
 from arches.app.search.search_export import SearchResultsExporter
 from django.db import connection
 from arches.app.models import models
-from bcrhp.util.bcrhp_aliases import GraphSlugs
+from bcap.util.bcap_aliases import GraphSlugs
 
 
 class BCRHPSearchResultsExporter(SearchResultsExporter):
