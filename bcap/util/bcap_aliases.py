@@ -10,7 +10,7 @@ class AbstractAliases:
         return newdict
 
 
-class BCRHPSiteAliases(AbstractAliases):
+class BCAPSiteAliases(AbstractAliases):
 
     ACCURACY_REMARKS = "accuracy_remarks"
     BCRHP_SUBMISSION_STATUS = "bcap_submission_status"
@@ -84,7 +84,7 @@ class BCRHPSiteAliases(AbstractAliases):
 
     @staticmethod
     def get_aliases():
-        return AbstractAliases.get_dict(BCRHPSiteAliases)
+        return AbstractAliases.get_dict(BCAPSiteAliases)
 
 
 class BCRHPSiteSubmissionAliases(AbstractAliases):

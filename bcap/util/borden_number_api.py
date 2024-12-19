@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point
 from arches.app.utils import geo_utils
 import json
 from bcap.util.bcap_aliases import (
-    BCRHPSiteAliases as site_aliases,
+    BCAPSiteAliases as site_aliases,
     GraphSlugs as slugs,
 )
 from bcap.util.hria_db import HriaDao

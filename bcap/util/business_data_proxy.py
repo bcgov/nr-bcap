@@ -1,5 +1,5 @@
 from arches.app.models import models
-from bcap.util.bcap_aliases import GraphSlugs, LegislativeActAliases, BCRHPSiteAliases
+from bcap.util.bcap_aliases import GraphSlugs, LegislativeActAliases, BCAPSiteAliases
 from bcgov_arches_common.util.graph_lookup import GraphLookup
 from arches.settings import LANGUAGE_CODE
 
@@ -81,33 +81,33 @@ class HeritageSiteDataProxy(BusinessDataProxy):
 
     def __init__(self):
         super(HeritageSiteDataProxy, self).__init__(
-            GraphSlugs.HERITAGE_SITE, BCRHPSiteAliases.get_aliases().values()
+            GraphSlugs.HERITAGE_SITE, BCAPSiteAliases.get_aliases().values()
         )
 
     def is_site_public(self, resourceinstance):
         return (
             self.get_value_from_node(
-                BCRHPSiteAliases.RESTRICTED,
+                BCAPSiteAliases.RESTRICTED,
                 resourceinstanceid=resourceinstance.resourceinstanceid,
                 use_boolean_label=False,
             )
             != "True"
             and self.get_value_from_node(
-                BCRHPSiteAliases.OFFICIALLY_RECOGNIZED_SITE,
+                BCAPSiteAliases.OFFICIALLY_RECOGNIZED_SITE,
                 resourceinstanceid=resourceinstance.resourceinstanceid,
                 use_boolean_label=False,
             )
             == "True"
             and (
                 self.get_value_from_node(
-                    BCRHPSiteAliases.BCRHP_SUBMISSION_STATUS,
+                    BCAPSiteAliases.BCRHP_SUBMISSION_STATUS,
                     resourceinstanceid=resourceinstance.resourceinstanceid,
                 )
                 in ["Approved - Full Record", "Approved - Basic Record"]
             )
             and (
                 self.get_value_from_node(
-                    BCRHPSiteAliases.REGISTRATION_STATUS,
+                    BCAPSiteAliases.REGISTRATION_STATUS,
                     resourceinstanceid=resourceinstance.resourceinstanceid,
                 )
                 in ["Registered", "Federal Jurisdiction"]
