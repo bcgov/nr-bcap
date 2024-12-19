@@ -1,1 +1,0 @@
-update map_layers set addtomap = true where name ~ '^Parks';
