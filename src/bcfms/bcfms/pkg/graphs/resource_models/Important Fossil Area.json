@@ -1,0 +1,605 @@
+{
+    "graph": [
+        {
+            "author": "Brett Ferguson",
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "49b83ea4-10c7-11ec-81af-5254008afee6",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": "",
+                    "description": {
+                        "en": "The name of a resource.\n\nApplies to Heritage Resource, Heritage Resource Group, Activity, and Historical Event.  Actors receive their \"names\" from the Appellation branch."
+                    },
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": "Enter the area name, description and boundary rationale"
+                    },
+                    "is_editable": false,
+                    "name": {
+                        "en": "Area Name and Description"
+                    },
+                    "nodegroup_id": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "sortorder": 0,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "66fa7f80-e56c-4c75-a312-e97b9c8288a0",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": false,
+                    "name": {
+                        "en": "Potential Ranking"
+                    },
+                    "nodegroup_id": "77b025ea-e0b5-11ee-8aa4-080027b7463b",
+                    "sortorder": 2,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "c6651676-10c6-11ec-adef-5254008afee6",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": "",
+                    "description": {
+                        "en": "Describes the physical location of a heritage resource or heritage resource group.  Includes extra nodes for cadastral information.\n\nRelates to Heritage Resource E18 with P53\nRelates to Heritage Resource Group E27 with P89\n"
+                    },
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": false,
+                    "name": {
+                        "en": "Area Boundary"
+                    },
+                    "nodegroup_id": "c6651266-10c6-11ec-adef-5254008afee6",
+                    "sortorder": 1,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "c6651676-10c6-11ec-adef-5254008afee6",
+                    "config": {
+                        "basemap": "streets",
+                        "bearing": 0,
+                        "centerX": "-125.8041191652735",
+                        "centerY": "54.53909267900477",
+                        "defaultValue": "",
+                        "defaultValueType": "",
+                        "featureColor": "#FF0000",
+                        "featureLineWidth": 1,
+                        "featurePointSize": 3,
+                        "geocodePlaceholder": "Search",
+                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
+                        "geocoderVisible": true,
+                        "geometryTypes": [
+                            {
+                                "id": "Point",
+                                "text": "Point"
+                            },
+                            {
+                                "id": "Line",
+                                "text": "Line"
+                            },
+                            {
+                                "id": "Polygon",
+                                "text": "Polygon"
+                            }
+                        ],
+                        "label": "Area Boundary",
+                        "maxZoom": 20,
+                        "minZoom": 0,
+                        "overlayConfigs": [],
+                        "overlayOpacity": 0,
+                        "pitch": 0,
+                        "rerender": true,
+                        "zoom": "4.020978191846662"
+                    },
+                    "id": "0131b96e-aba0-4199-bce8-f6d1c4c4a4c9",
+                    "label": {
+                        "en": "Area Boundary"
+                    },
+                    "node_id": "c6651266-10c6-11ec-adef-5254008afee6",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000007"
+                },
+                {
+                    "card_id": "49b83ea4-10c7-11ec-81af-5254008afee6",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Notes",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Add rationale for creating the area"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "40aca65e-b54b-4e16-bb74-e5d4bb115017",
+                    "label": {
+                        "en": "Notes"
+                    },
+                    "node_id": "4aaea5a6-e00d-11ee-a2a0-080027b7463b",
+                    "sortorder": 2,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "49b83ea4-10c7-11ec-81af-5254008afee6",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Area Name",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "a732c2e8-10c7-11ec-adef-5254008afee6",
+                    "label": {
+                        "en": "Area Name"
+                    },
+                    "node_id": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "66fa7f80-e56c-4c75-a312-e97b9c8288a0",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Potential Ranking",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "a87dd96f-b4fe-4c7c-9c7a-1f784a9059f2",
+                    "label": {
+                        "en": "Potential Ranking"
+                    },
+                    "node_id": "77b025ea-e0b5-11ee-8aa4-080027b7463b",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
+                    "card_id": "49b83ea4-10c7-11ec-81af-5254008afee6",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Description",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": ""
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "b170f4c5-dd5e-476c-9e03-a5a2710696f7",
+                    "label": {
+                        "en": "Description"
+                    },
+                    "node_id": "c0ee06a4-e00c-11ee-a2a0-080027b7463b",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                }
+            ],
+            "color": "rgba(215,48,39,1)",
+            "config": {
+                "basemap": "British Columbia Roads",
+                "bearing": 0,
+                "centerX": -122.3979693,
+                "centerY": 37.79,
+                "featureColor": "#FF0000",
+                "featureEditingDisabled": true,
+                "featureLineWidth": 1,
+                "featurePointSize": 3,
+                "geocodePlaceholder": "Search",
+                "geocodeProvider": "10000000-0000-0000-0000-010000000000",
+                "geocoderVisible": true,
+                "geometryTypes": [
+                    {
+                        "id": "Point",
+                        "text": "Point"
+                    },
+                    {
+                        "id": "Line",
+                        "text": "Line"
+                    },
+                    {
+                        "id": "Polygon",
+                        "text": "Polygon"
+                    }
+                ],
+                "mapControlsHidden": false,
+                "maxZoom": 20,
+                "minZoom": 0,
+                "overlayConfigs": [],
+                "overlayOpacity": 0,
+                "pitch": 0,
+                "zoom": 10
+            },
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": "An Important Fossil Area is a fuzzy boundary presented to the public indicating, without details, the types of fossils that may be found in that area."
+            },
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "edgeid": "302e7b02-83d2-4bec-9b7d-1d9e12bbdfa9",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "c0ee06a4-e00c-11ee-a2a0-080027b7463b"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "edgeid": "48cfa0b2-e34d-4da6-83e7-277dfb01fd56",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "4aaea5a6-e00d-11ee-a2a0-080027b7463b"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "4d6c8e98-10c6-11ec-9a94-5254008afee6",
+                    "edgeid": "49b84cb4-10c7-11ec-81af-5254008afee6",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/BM.PX_is_related_to",
+                    "rangenode_id": "49b837b0-10c7-11ec-81af-5254008afee6"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "4d6c8e98-10c6-11ec-9a94-5254008afee6",
+                    "edgeid": "54c1aaf7-04d3-4f39-9052-c23b0378c380",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "77b025ea-e0b5-11ee-8aa4-080027b7463b"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "4d6c8e98-10c6-11ec-9a94-5254008afee6",
+                    "edgeid": "c6656d60-10c6-11ec-adef-5254008afee6",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P156_occupies",
+                    "rangenode_id": "c6651266-10c6-11ec-adef-5254008afee6"
+                }
+            ],
+            "functions_x_graphs": [
+                {
+                    "config": {
+                        "class_name": "BCFossilsDescriptors",
+                        "descriptor_types": {
+                            "description": {
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [
+                                    "77b025ea-e0b5-11ee-8aa4-080027b7463b"
+                                ],
+                                "show_name": true,
+                                "type": "description"
+                            },
+                            "map_popup": {
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [
+                                    "c0ee06a4-e00c-11ee-a2a0-080027b7463b"
+                                ],
+                                "show_name": true,
+                                "type": "map_popup"
+                            },
+                            "name": {
+                                "first_only": true,
+                                "node_ids": [
+                                    "49b837b0-10c7-11ec-81af-5254008afee6"
+                                ],
+                                "show_name": false,
+                                "type": "name"
+                            }
+                        },
+                        "module": "bcfms.functions.bc_fossils_descriptors",
+                        "triggering_nodegroups": []
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000001001",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "id": "e207be05-b50c-4fcb-81d8-fc50b1d9791e"
+                }
+            ],
+            "graphid": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+            "iconclass": "fa fa-sitemap",
+            "is_editable": false,
+            "isresource": true,
+            "jsonldcontext": null,
+            "name": {
+                "en": "Important Fossil Area"
+            },
+            "nodegroups": [
+                {
+                    "cardinality": "n",
+                    "legacygroupid": null,
+                    "nodegroupid": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "77b025ea-e0b5-11ee-8aa4-080027b7463b",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "c6651266-10c6-11ec-adef-5254008afee6",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "nodes": [
+                {
+                    "alias": "area_name",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "The name of a resource.\n\nApplies to Heritage Resource, Heritage Resource Group, Activity, and Historical Event.  Actors receive their \"names\" from the Appellation branch.",
+                    "exportable": false,
+                    "fieldname": "",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Area Name",
+                    "nodegroup_id": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "nodeid": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E41_Appellation",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/BM.PX_is_related_to",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "notes",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Notes",
+                    "nodegroup_id": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "nodeid": "4aaea5a6-e00d-11ee-a2a0-080027b7463b",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "bc_important_fossil_area",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "Important Fossil Area",
+                    "nodegroup_id": null,
+                    "nodeid": "4d6c8e98-10c6-11ec-9a94-5254008afee6",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E18_Physical_Thing",
+                    "parentproperty": "",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "potential_ranking",
+                    "config": {
+                        "rdmCollection": "9663c829-650e-4052-a824-2bebdc38b1b5"
+                    },
+                    "datatype": "concept",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Potential Ranking",
+                    "nodegroup_id": "77b025ea-e0b5-11ee-8aa4-080027b7463b",
+                    "nodeid": "77b025ea-e0b5-11ee-8aa4-080027b7463b",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 2,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "description_n1",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Description",
+                    "nodegroup_id": "49b837b0-10c7-11ec-81af-5254008afee6",
+                    "nodeid": "c0ee06a4-e00c-11ee-a2a0-080027b7463b",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "area_boundary",
+                    "config": {
+                        "addToMap": true,
+                        "advancedStyle": "",
+                        "advancedStyling": false,
+                        "clusterDistance": 20,
+                        "clusterMaxZoom": "1",
+                        "clusterMinPoints": 3,
+                        "fillColor": "rgba(215,48,39,0.2)",
+                        "haloRadius": 4,
+                        "haloWeight": 4,
+                        "layerActivated": true,
+                        "layerIcon": "fa fa-question",
+                        "layerLegend": "<p><img alt=\"\" class=\"important-fossil-area legend-swatch\" src=\"/bc-fossil-management/static/img/blank.png\" />Area Boundary</p>",
+                        "layerName": "",
+                        "lineColor": "rgba(215,48,39, 0.7)",
+                        "lineHaloColor": "rgba(215,48,39, 0.5)",
+                        "outlineColor": "rgba(215,48,39,0.7)",
+                        "outlineWeight": 3,
+                        "pointColor": "rgba(215,48,39,0.7)",
+                        "pointHaloColor": "rgba(215,48,39,0.5)",
+                        "radius": 2,
+                        "simplification": 0.3,
+                        "weight": 2
+                    },
+                    "datatype": "geojson-feature-collection",
+                    "description": "Describes the physical location of a heritage resource or heritage resource group.  Includes extra nodes for cadastral information.\n\nRelates to Heritage Resource E18 with P53\nRelates to Heritage Resource Group E27 with P89\n",
+                    "exportable": false,
+                    "fieldname": "",
+                    "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Area Boundary",
+                    "nodegroup_id": "c6651266-10c6-11ec-adef-5254008afee6",
+                    "nodeid": "c6651266-10c6-11ec-adef-5254008afee6",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P156_occupies",
+                    "sortorder": 1,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "publication": {
+                "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                "notes": null,
+                "publicationid": "132672a8-328d-11ef-a621-0242ac170006",
+                "published_time": "2024-06-24T19:51:36.484"
+            },
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "root": {
+                "alias": "bc_important_fossil_area",
+                "config": {},
+                "datatype": "semantic",
+                "description": "",
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "4d6c9226-10c6-11ec-9a94-5254008afee6",
+                "hascustomalias": false,
+                "is_collector": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "Important Fossil Area",
+                "nodegroup_id": null,
+                "nodeid": "4d6c8e98-10c6-11ec-9a94-5254008afee6",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E18_Physical_Thing",
+                "sortorder": 0,
+                "sourcebranchpublication_id": null
+            },
+            "slug": "important_area",
+            "subtitle": {
+                "en": "Provides name, description and location of areas with important fossil resources"
+            },
+            "template_id": "50000000-0000-0000-0000-000000000002",
+            "version": ""
+        }
+    ],
+    "metadata": {
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "6928cbe43 2024-06-21 15:22:35 -0700",
+        "os": "Linux",
+        "os version": "6.6.31-linuxkit"
+    }
+}

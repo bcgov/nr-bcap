@@ -1,0 +1,452 @@
+<!--
+ARCHES - a program developed to inventory and manage immovable cultural heritage.
+Copyright (C) 2013 J. Paul Getty Trust and World Monuments Fund
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+{% load static %}
+{% load template_tags %}
+{% load i18n %}
+{% load webpack_static from webpack_loader %}
+
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+
+<head>
+    <title>{{app_title}}</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="shortcut icon" href="{% webpack_static 'img/favicon.png' %}" />
+
+    <link rel='stylesheet' type='text/css' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600&amp;subset=cyrillic,latin'>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <link href="{% webpack_static 'css/unify.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link href="{% webpack_static 'css/index.css' %}" rel="stylesheet">
+    <link href="{% webpack_static 'css/project.css' %}" rel="stylesheet">
+    <link href="{% webpack_static 'css/bc_index.css' %}" rel="stylesheet">
+    {% if app_settings.ACCESSIBILITY_MODE %}
+    <link href="{% webpack_static 'css/accessibility.css' %}" rel="stylesheet">
+    {% endif %}
+</head>
+
+<body>
+
+<!--=== Header ===-->
+<header>
+    <nav class="v5-splash-navbar navbar" role="navigation">
+        <div class="feedback-bar">{% blocktrans %}Welcome to the new BC Fossil Management System{% endblocktrans %}</div>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false" aria-controls="myNavbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <div class="relative nav-brand-container">
+                    <div class="navbar-brand-v5-icon-container">
+                        <a href="https://www2.gov.bc.ca/gov/content/home" target="BCGov Home">
+                        <img class="navbar-brand-v5-icon" src="{% webpack_static 'img/logo/BCID_H_rgb_rev.png' %}" alt="BC Government Logo">
+                        </a>
+                        <h1>{% blocktrans %}BC Fossil Management System{% endblocktrans %}</h1>
+                    </div>
+                    <div class="application-name">
+                    </div>
+                </div>
+            </div>
+
+            <div id="myNavbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#info-block-1">{% trans "About" %}</a>
+                    </li>
+                    {% if user|can_create_resource_instance and user.username != 'anonymous' %}
+                    <li>
+                        <a href="{% url 'search_home' %}">{% trans "Search Fossils" %}</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'resource' %}" target="_blank">{% trans "Manage" %}</a>
+                    </li>
+                    {% endif %}
+                    {% if user.username and user.username != 'anonymous' %}
+                    <li>
+                        <a class="auth-welcome" href="{% url 'user_profile_manager' %}">
+                            {% trans "Welcome, " %} {{ user.first_name|default:user.username }}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if not user.username or user.username == 'anonymous' %}
+                    <li>
+                        <a class="application-login" href="{% url 'auth' %}?next={% url 'home' %}">{% trans 'Log in' %}</a>
+                    </li>
+                    {% endif %}
+                    {% if show_language_swtich %}
+                    <li>
+                        {% get_current_language as LANGUAGE_CODE %}
+                        <div class="lang-switch" style="max-width: none;" data-bind='component: {
+                                    name: "views/components/language-switcher",
+                                    params: {
+                                        current_language: "{{LANGUAGE_CODE}}"
+                                    }
+                                }'></div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<!--=== End Header ===-->
+
+<main>
+    <article>
+        <!-- Intro Section -->
+        <section id="info-block-0" class="app-info-block intro-section relative">
+            <!-- Vertical Nav -->
+<!--            <div class="vertical-nav-container-background"></div>-->
+
+            <div id="cd-vertical-nav" class="vertical-nav-container" style="display: none;">
+                <ul class="vertical-nav-list">
+                    <li class="active">
+                        <a class="vertical-nav-list-link" href="#info-block-0" data-number="1" aria-label="Go to the top of the page">
+                            <span class="vertical-nav-list-ref">{% trans "Home" %}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="vertical-nav-list-link" href="#info-block-1" data-number="2" aria-label="Go to the fossil management system section">
+                            <span class="vertical-nav-list-ref">{% trans "BC Fossil Management System" %}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="vertical-nav-list-link" href="#info-block-2" data-number="3" aria-label="Go to the data management section">
+                            <span class="vertical-nav-list-ref">{% trans "Data Management and Use" %}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="vertical-nav-list-link" href="#info-block-3" data-number="4" aria-label="Go to the search section">
+                            <span class="vertical-nav-list-ref">{% trans "BC Fossil Data Search and Visualization " %}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="vertical-nav-list-link" href="#info-block-4" data-number="5" aria-label="Go to the workflow section">
+                            <span class="vertical-nav-list-ref">{% trans "Workflow" %}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Splash Screen -->
+            <div class="fullscreenbanner-container">
+                <div class="fullscreenbanner">
+                    <ul>
+                        <!-- SLIDE 1 -->
+                        <li data-transition="fade" data-slotamount="9" data-masterspeed="0" data-title="Slide 1">
+                            <!-- MAIN IMAGE -->
+                            <img src="{% webpack_static 'img/front/mcabee.jpg' %}" alt="slidebg1" data-bgfit="cover" data-bgposition="center center" data-bgrepeat="no-repeat">
+                            <!-- LAYERS -->
+                            <!-- NEW LAYER -->
+                            <div class="tp-caption sft start text-bold bc-splash-caption" delay="4500" data-hoffset="0" data-y="400" data-speed="800" data-start="100" data-easing="Back.easeInOut" data-endspeed="300" data-x="0">
+                                <h2>{% blocktrans %}BC Fossil Management System{% endblocktrans %}</h2>
+                                <h4 class="area-description">{% trans "Providing information, guidance and policies to support protection and management of fossils and fossil sites in B.C." %}</h4>
+                            </div>
+
+                            <!-- Gradient -->
+                            <div class="image-gradient"></div>
+
+                            <!-- Attribution -->
+                            <div class="image-attribution">
+<!--                                <span>{% trans "Taktsang Palphug Monastery (also known as Paro Takstang or Tiger's Nest Monastery), Bhutan" %}</span>-->
+                                <span>{% trans "McAbee Heritage Site. Photo by Elisabeth Deom" %}</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="tp-bannertimer tp-bottom"></div>
+                </div>
+
+                <!-- Down button -->
+                <a href="#info-block-1" class="down-button" aria-label="Go to content"><i class="fa fa-angle-down down-button-icon"></i></a>
+            </div>
+        </section>
+        <!-- End Intro Section -->
+
+        <!-- Info Block 1 -->
+        <section id="info-block-1" class="app-info-block app-info-content relative">
+            <div>
+                <!-- Heading Info -->
+                <div class="info-section">
+                        <div class="app-info-block-intro">
+                            <h3 class="app-info-block-title">{% trans "BC Fossil Management System" %}</h3>
+                            <p class="app-info-block-text">
+                                {% trans "The BC Fossil Management System is a database of fossil collection locations and fossil sites. The System is intended as a two-way street for users to access information about known fossil occurrences and to build the inventory of fossil sites by contributing new information about fossil discoveries." %}
+                            </p>
+                            <p class="app-info-block-text">
+                                {% trans "The Fossil Management Office, Heritage Branch is the custodian of this data that serve as a foundation for fossil site protection, impact prevention, and access management of the resource. Information management supports all values of fossils – scientific, heritage, and educational." %}
+                            </p>
+                        </div>
+                </div>
+            </div>
+        </section>
+        <!-- End Info Block 2 -->
+
+        <!-- Info Block 2 -->
+        <section id="info-block-2" class="app-info-block app-info-content relative">
+            <div>
+                <div class="info-section">
+                    <div class="app-info-block-intro">
+                        <h3 class="app-info-block-title">{% trans "Data Management and Use" %}</h3>
+                        <p class="app-info-block-text">
+                            {% trans "The system is maintained by the Fossil Management Office. The inventory of fossil sites contains spatial and attribute data to provide different users appropriate levels of access to information." %}
+                        </p>
+                        <p class="app-info-block-text">
+                            {% trans "Base maps and map overlays for data that are not maintained within the Fossil Management System are integrated from the BC Geographic Warehouse." %}
+                        </p>
+                        <p class="app-info-block-text">
+                            {% trans "Different kinds of information are represented by <b>Resource Types</b> such as Fossil Sample, Collection Event, and Publication. These Resource Types can be related to each other, for example a Collection Event can have one or more Fossil Samples. All Resource Types, along with their related Resources, are searchable within the system." %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <figure class="splash-img">
+                    <img src="{% webpack_static 'img/front/2023-08-01_relation_graph.png' %}"  alt="Arches Designer">
+                    <figcaption>{% trans "Figure 1. Collection Event (orange) linked to the Fossil Samples (grey) and associated publication (green)." %}</figcaption>
+                </figure>
+            </div>
+        </section>
+        <!-- End Info Block 2 -->
+
+
+        <!-- Info Block 3 -->
+        <section id="info-block-3" class="app-info-block app-info-content relative">
+            <div>
+                <div class="info-body">
+                    <div class="app-info-block-intro">
+                        <h3 class="app-info-block-title">{% trans "BC Fossil Data Search and Visualization" %}</h3>
+                        <p class="app-info-block-text">
+                            {% trans "You can search for and retrieve information about where fossils have been collected, visualize the data using a variety of overlays, and then use the data to suit your research or site assessment needs." %}
+                        </p>
+                        <p class="app-info-block-text">
+                            {% trans "The system opens with a BC map showing key roads, water features and outlines of Important Fossil Areas. A general location search function in the upper right can help focus the search area by geographical term or by using a Zoom tool in the upper left of the map. The toolbar to the right of the map allows you to conduct a <b>Map Search</b> using filters, choose a <b>Base map</b>, select <b>Overlays</b> for visualization (e.g., adding fossil collection events, bedrock geology, parks, or rivers), and generate a <b>Legend</b>." %}
+                        </p>
+                        <figure class="splash-img">
+                            <img src="{% webpack_static 'img/front/2023-04-01_screenshot_search.png' %}"  alt="Arches Designer">
+                            <figcaption>{% trans "Figure 2. BC map with fossil collection events." %}</figcaption>
+                        </figure>
+                    </div>
+                </div>
+
+                <div class="info-body">
+                    <div>
+                        <h4 class="app-info-block-title">{% trans "Data Discovery and Search" %}</h4>
+                        <p class="app-info-block-text">
+                            {% trans "The data can be explored in a general way by using the Map view. With the Fossil Collection Event overlay on, you can view information by clicking on a fossil location (orange dots) and see a Map Pop-up with brief information. Selecting the word Report at the bottom of the pop-up card will provide details about the event." %}
+                        </p>
+                        <p class="app-info-block-text">
+                            {% trans "The data can be searched in more detail by using the Search function in two ways:" %}
+                        </p>
+                        <ol>
+                            <li class="app-info-block-text">
+                                {% trans "The search screen allows you to do a general Search using the text field in the upper left to look for comparative data. If you come to the system looking specifically for a fossil name or a location, you could enter this here and generate Results, listed as a series of Search Result Cards." %}
+                            </li>
+                            <li class="app-info-block-text">
+                                {% trans "Alternatively, you can start in the central screen, where you will see the Advanced Search function tab on the top of the screen. This allows you to apply filters to find fossil occurrences such as by location, time, geology, collector, or taxonomy. Each of these attributes is related to information stored under the blue tab called Resource Types." %}
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- End Info Block 3 -->
+
+        <!-- Info Block 4 -->
+        <section id="info-block-4" class="app-info-block app-info-content relative">
+            <div>
+                <div class="info-section">
+                    <div class="app-info-block-intro">
+                        <h3 class="app-info-block-title">{% trans "Workflow" %}</h3>
+                        <p class="app-info-block-text">
+                            {% trans "The system has a workflow for new data entry, with a built-in list of the steps to walk users through the process of adding a new fossil collection event or to report a new fossil site. Help Guides are available to define fields for data entry. All items entered here will become searchable in the system. Workflows guide users to input new data that expands the provincial inventory of fossil occurrences." %}
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- End Info Block 4 -->
+    </article>
+</main>
+
+
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="arches_footer">
+        <a class="arches_link" target="archesproject" href="https://archesproject.org" >
+            <img class="arches_logo"
+                 src="{% webpack_static 'img/logo/arches/Arches_badge_white_powered_by_2.png' %}" alt="Powered by Arches logo">
+        </a>
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <div class="container">
+            <ul>
+                <li><a href="https://www2.gov.bc.ca/gov/content/home" target="_blank">Home</a></li>
+                <li><a href="https://www2.gov.bc.ca/gov/content/about-gov-bc-ca" target="_blank">About gov.bc.ca</a></li>
+                <li><a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank">Disclaimer</a></li>
+                <li><a href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank">Privacy</a></li>
+                <li><a href="https://www2.gov.bc.ca/gov/content/home/accessible-government" target="_blank">Accessibility</a></li>
+                <li><a href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a></li>
+                <li><a href="https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services" target="_blank">Contact Us</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<!-- End Footer -->
+
+<script src="{% webpack_static 'node_modules/requirejs/require.js' %}"></script>
+
+<script>
+
+    require.config({
+        baseUrl: '{{ STATIC_URL }}js',
+        paths: {
+            'templates': '{% url "templates" ""%}'.replace(/\/$/, ""),
+            'text': '{{ STATIC_URL }}node_modules/requirejs-text/text',
+            'jquery-lib': '{{ STATIC_URL }}node_modules/jquery/dist/jquery.min',
+            'jquery': '{{ STATIC_URL }}node_modules/jquery-migrate/dist/jquery-migrate.min',
+            'jquery-ui': '{{ STATIC_URL }}node_modules/jqueryui/jquery-ui.min',
+            'underscore': '{{ STATIC_URL }}node_modules/underscore/underscore-min',
+            'chosen': '{{ STATIC_URL }}node_modules/chosen-js/chosen.jquery.min',
+            'knockout': '{{ STATIC_URL }}node_modules/knockout/build/output/knockout-latest',
+            'bootstrap': '{{ STATIC_URL }}node_modules/bootstrap/dist/js/bootstrap.min',
+            'themepunch-tools': '{{ STATIC_URL }}plugins/revolution-slider/rs-plugin/js/jquery.themepunch.tools.min',
+            'themepunch-revolution': '{{ STATIC_URL }}plugins/revolution-slider/rs-plugin/js/jquery.themepunch.revolution',
+            'revolution-slider': '{{ STATIC_URL }}plugins/revolution-slider',
+            'one-app': '{{ STATIC_URL }}plugins/one.app',
+        },
+        shim: {
+            'jquery': {
+                deps: ['jquery-lib'],
+                exports: '$'
+            },
+            'bootstrap': {
+                deps: ['jquery', 'jquery-ui']
+            },
+            'chosen': {
+                deps: ['jquery'],
+            },
+            'themepunch-tools': {
+                deps: ['jquery'],
+            },
+            'themepunch-revolution': {
+                deps: ['jquery'],
+            },
+            'revolution-slider': {
+                deps: ['jquery'],
+            },
+            'one-app': {
+                deps: ['jquery'],
+            }
+        }
+    });
+    require(
+        ['jquery',
+            'knockout',
+            'bootstrap',
+            'themepunch-tools',
+            'themepunch-revolution',
+            'revolution-slider',
+            'one-app',
+            'bindings/chosen',
+            'views/components/language-switcher'
+        ], function ($, ko) {
+            $(document).ready(function () {
+                App.init();
+                RevolutionSlider.initRSfullScreen();
+
+                var contentSections = $('.app-info-block'),
+                    navigationItems = $('#cd-vertical-nav a');
+
+                updateNavigation();
+                $(window).on('scroll', function () {
+                    updateNavigation();
+                });
+
+                //smooth scroll to the section
+                navigationItems.on('click', function (event) {
+                    event.preventDefault();
+                    smoothScroll($(this.hash));
+                });
+
+                $("a.down-button").on('click', function (event) {
+                    event.preventDefault();
+                    smoothScroll($("#info-block-1"));
+                });
+
+
+                function updateNavigation() {
+                    contentSections.each(function () {
+                        $this = $(this);
+                        var activeSection = $('#cd-vertical-nav a[href="#' + $this.attr('id') + '"]').data('number') - 1;
+                        if (($this.offset().top - $(window).height() / 3 < $(window).scrollTop()) && ($this.offset().top + $this.height() - $(window).height() / 3 > $(window).scrollTop())) {
+                            if (activeSection === 0)
+                            {
+                                $("#cd-vertical-nav").css("display","none");
+                            }
+                            else {
+                                console.log(`Active section: ${activeSection}`)
+                                navigationItems.eq(activeSection).addClass('is-selected');
+                                $("#cd-vertical-nav").css("display","");
+                            }
+                        } else {
+                            navigationItems.eq(activeSection).removeClass('is-selected');
+                        }
+                    });
+                }
+
+                function smoothScroll(target) {
+                    $('body,html').animate(
+                        { 'scrollTop': target.offset().top },
+                        600
+                    );
+                }
+
+                var ViewModel = function () {
+                    // place observables here
+                };
+
+                // need to have this to prevent mismatched anonymous define error in require.js
+                setTimeout(function () {
+                    ko.applyBindings(new ViewModel());
+                }, 300);
+            });
+
+        }
+    );
+</script>
+
+</body>
+
+</html>

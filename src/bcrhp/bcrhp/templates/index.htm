@@ -1,0 +1,532 @@
+<!--
+ARCHES - a program developed to inventory and manage immovable cultural heritage.
+Copyright (C) 2013 J. Paul Getty Trust and World Monuments Fund
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+{% load static %}
+{% load template_tags %}
+{% load i18n %}
+{% load webpack_static from webpack_loader %}
+
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+
+<head>
+    <title>{{app_title}}</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="shortcut icon" href="{% webpack_static 'img/favicon.png' %}" />
+
+    <link rel='stylesheet' type='text/css' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600&amp;subset=cyrillic,latin'>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <link href="{% webpack_static 'css/unify.css' %}" rel="stylesheet">
+<!--    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">-->
+
+    <link href="{% webpack_static 'fontawesome/css/fontawesome.min.css' %}" rel="stylesheet">
+    <link href="{% webpack_static 'fontawesome/css/solid.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% webpack_static 'plugins/slick/slick.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% webpack_static 'plugins/slick/accessible-slick-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% webpack_static 'css/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% webpack_static 'css/index-slider.css' %}">
+    <link href="{% webpack_static 'css/index.css' %}" rel="stylesheet">
+    <link href="{% webpack_static 'css/project.css' %}" rel="stylesheet">
+    <link href="{% webpack_static 'css/bc_index.css' %}" rel="stylesheet">
+    {% if app_settings.ACCESSIBILITY_MODE %}
+    <link href="{% webpack_static 'css/accessibility.css' %}" rel="stylesheet">
+    {% endif %}
+</head>
+
+<body>
+
+    <!--=== Header ===-->
+    <header>
+        <nav class="v5-splash-navbar navbar" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false" aria-controls="myNavbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <div class="relative nav-brand-container">
+                        <div class="navbar-brand-v5-icon-container">
+                            <a href="https://www2.gov.bc.ca/gov/content/home" target="BCGov Home">
+                                <img class="navbar-brand-v5-icon" src="{% webpack_static 'img/logo/BCID_H_rgb_rev.png' %}" alt="BC Government Logo">
+                            </a>
+                            <h1>{% blocktrans %}BC Register of Historic Places {% endblocktrans %}</h1>
+                        </div>
+                        <div class="application-name">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="myNavbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#info-block-1">{% trans "About" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'search_home' %}">{% trans "Search Sites" %}</a>
+                        </li>
+                        {% if user.username and user.username != 'anonymous' %}
+                        {% if user|can_create_resource_instance %}
+                        <li>
+                            <a href="{% url 'resource' %}" target="_blank">{% trans "Manage" %}</a>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a class="auth-welcome" href="{% url 'user_profile_manager' %}">
+                                {% trans "Welcome, " %} {{ user.first_name|default:user.username }}
+                            </a>
+                        </li>
+                        <!--li>
+                            <a class="application-login" href="{% url 'auth' %}?next={% url 'home' %}{% if user.username != 'anonymous' %}&logout=true{% endif %}">{% trans 'Log off' %}</a>
+                        </li-->
+                        {% endif %}
+                        {% if show_language_swtich %}
+                            <li>
+                                {% get_current_language as LANGUAGE_CODE %}
+                                <div class="lang-switch" style="max-width: none;" data-bind='component: {
+                                    name: "views/components/language-switcher",
+                                    params: {
+                                        current_language: "{{LANGUAGE_CODE}}"
+                                    }
+                                }'></div>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!--=== End Header ===-->
+
+    <main>
+        <article>
+            <!-- Intro Section -->
+            <section id="info-block-0" class="app-info-block intro-section relative">
+                <!-- Vertical Nav -->
+<!--                <div class="vertical-nav-container-background"></div>-->
+
+                <div id="cd-vertical-nav" class="vertical-nav-container" style="display: none;">
+                    <ul class="vertical-nav-list">
+                        <li class="active">
+                            <a class="vertical-nav-list-link" href="#info-block-0" data-number="1" aria-label="Go to the top of the page">
+                                <span class="vertical-nav-list-ref">{% trans "Home" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="vertical-nav-list-link" href="#info-block-1" data-number="2" aria-label="Go to the About BCRHP section">
+                                <span class="vertical-nav-list-ref">{% trans "About the BCRHP" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="vertical-nav-list-link" href="#info-block-2" data-number="3" aria-label="Go to the Local Government Historic Places section">
+                                <span class="vertical-nav-list-ref">{% trans "Local Government Historic Places" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="vertical-nav-list-link" href="#info-block-3" data-number="4" aria-label="Go to the Provincial Historic Places section">
+                                <span class="vertical-nav-list-ref">{% trans "Provincial Historic Places" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="vertical-nav-list-link" href="#info-block-4" data-number="5" aria-label="Go to the Federal Government section">
+                                <span class="vertical-nav-list-ref">{% trans "Federal Government Historic Places" %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="vertical-nav-list-link" href="#info-block-5" data-number="6" aria-label="Go to the contact Heritage Branch section">
+                                <span class="vertical-nav-list-ref">{% trans "Contact" %}</span>
+                            </a>
+                    </ul>
+                </div>
+
+                <!-- Slider -->
+                <div class="home-slider">
+                    <div class="slide-img-container">
+                        <img src="{% webpack_static 'img/front/ColeIsland.jpg' %}" alt="null">
+                        <div class="slide-caption bc-splash-caption">
+                            <h2>{% blocktrans %}BC Register of Historic Places{% endblocktrans %}</h2>
+                            <h3>{% trans "Official Register of historic places for British Columbia" %}</h3>
+                            <!-- this is a workaround for a layout issue causing the section to not be limited -->
+                            <h4 class="area-description"><span>{% blocktrans %}BC Register of Historic Places records historic places that have been officially recognized by the provincial, federal or local / regional governments for their heritage value.{% endblocktrans %}</span></h4>
+                        </div>
+                        <div class="slide-img-attribution">{% trans "Cole Island at Colwood" %}</div>
+                    </div>
+                    <div class="slide-img-container">
+                        <img src="{% webpack_static 'img/front/Chinatown_Crowd_2023_Mia_Cirotto.jpg' %}" alt="null">
+                        <div class="slide-caption bc-splash-caption">
+                            <h2>{% blocktrans %}BC Register of Historic Places{% endblocktrans %}</h2>
+                            <h3>{% trans "Official Register of historic places for British Columbia" %}</h3>
+                            <!-- this is a workaround for a layout issue causing the section to not be limited -->
+                            <h4 class="area-description"><span>{% blocktrans %}BC Register of Historic Places records historic places that have been officially recognized by the provincial, federal or local / regional governments for their heritage value.{% endblocktrans %}</span></h4>
+                            <!--                                    <h4 class="area-description">{% trans "BC Register of Historic Places records historic places that have been officially recognized by the provincial, federal or local " %}</h4>-->
+                        </div>
+                        <div class="slide-img-attribution">{% trans "Barkerville Historic Town and Park" %}</div>
+                    </div>
+                    <div class="slide-img-container">
+                        <img src="{% webpack_static 'img/front/McAbeeFossilBeds.jpg' %}" alt="McAbee Fossil Beds">
+                        <div class="slide-caption bc-splash-caption">
+                            <h2>{% blocktrans %}BC Register of Historic Places{% endblocktrans %}</h2>
+                            <h3>{% trans "Official Register of historic places for British Columbia" %}</h3>
+                            <!-- this is a workaround for a layout issue causing the section to not be limited -->
+                            <h4 class="area-description"><span>{% blocktrans %}BC Register of Historic Places records historic places that have been officially recognized by the provincial, federal or local / regional governments for their heritage value.{% endblocktrans %}</span></h4>
+                        </div>
+                        <div class="slide-img-attribution">{% trans "McAbee Fossil Beds" %}</div>
+                    </div>
+                </div>
+
+                <!-- Down button -->
+                <a href="#info-block-1" class="down-button"><i class="fa fa-angle-down down-button-icon"></i></a>
+
+                <div id="nav_visibility_control" style="margin-top: -225px">&nbsp;</div>
+            </section>
+            <!-- End Intro Section -->
+
+            <!-- Info Block 1 -->
+            <section id="info-block-1" class="app-info-block app-info-content relative">
+                <div>
+
+                    <!-- Heading Info -->
+                    <div class="info-section">
+                            <div class="app-info-block-intro">
+<!--                                <h2 class="app-info-block-header">{% trans "What are Historic Places?" %}</h2>-->
+                                <h3 class="app-info-block-title">{% trans "What are Historic Places?" %}</h3>
+                                <p class="app-info-block-text">
+                                    {% trans "Historic places include the buildings, neighbourhoods, trails and cultural landscapes that provide a sense of place and contribute to BC's unique identity.  They serve as touchstones to memory and catalysts for community revitalization.  Formal recognition of such places builds awareness of our shared heritage." %}
+                                </p>
+                            </div>
+                    </div>
+
+                    <!-- Content -->
+                    <figure class="splash-img">
+                        <img src="{% webpack_static 'img/front/figure1_map.jpg' %}"  alt="BCRHP Arches map screenshot">
+                        <figcaption>Figure 1: Interactive map of historic places in BC.</figcaption>
+                    </figure>
+
+
+                    <div class="info-body">
+                            <div class="app-info-block-intro">
+                                <!--                                <h2 class="app-info-block-header">{% trans "What are Historic Places?" %}</h2>-->
+                                <h3 class="app-info-block-title">{% trans "What is the BC Register of Historic Places?" %}</h3>
+                                <p class="app-info-block-text">
+                                    {% trans "The BC Register of Historic Places (BCRHP) is an official list of historic places that have been formally recognized by the province or by a local government. The BCRHP supports land use decisions, heritage conservation projects, and public awareness initiatives. There are over 5,000 registered sites representing the diversity of historic places across the province." %}
+                                </p>
+                                <p class="app-info-block-text">
+                                    {% trans "The BCRHP is a subset of the Provincial Heritage Register of historic and archaeological sites that exists as a statutory requirement of the" %} <a target="hca" href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96187_01">{% trans "Heritage Conservation Act." %}</a> Archaeological and pre-1846 sites are not included on the BCRHP. Contact the <a target="achaeology_branch" href="https://www2.gov.bc.ca/gov/content/industry/natural-resource-use/archaeology">{% trans "Archaeology Branch" %}</a> {% trans "for information about archaeology in BC." %}
+                                </p>
+                            </div>
+                    </div>
+
+                    <div class="info-section">
+                            <h3 class="app-info-block-title">{% trans "Arches is designed to be intuitive" %}</h3>
+                            <p class="app-info-block-text">
+                                {% trans "Click on the thumbnails below to access the user guides to help you navigate the Arches interface:" %}
+                            </p>
+                            <div class="app-info-manual">
+                                <div class="app-info-manual-item" style="grid-column: 1">
+                                    <a href="https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/our-history/historic-places/documents/20240719_how_to_search_bcrhp_final.pdf"
+                                       target="search_manual">
+                                        <img alt="How to Search PDF Guide" src="{% webpack_static 'img/front/manual-with-text-1.jpg' %}" />
+                                    </a>
+                                </div>
+                                <div class="app-info-manual-item" style="grid-column: 2; grid-row: 1;">
+                                    <a href="https://youtu.be/kn4lAEU2NNc" target="basic_search_video">
+                                        <img alt="Basic Search Video Guide" src="{% webpack_static 'img/front/manual-with-text-2.jpg' %}" />
+                                    </a>
+                                </div>
+                                <div class="app-info-manual-item" style="grid-column: 3; grid-row: 1;">
+                                    <a href="https://youtu.be/qkpAsaczhn8" target="advanced_search_video">
+                                        <img alt="Advanced Search Video Guide" src="{% webpack_static 'img/front/manual-with-text-3.jpg' %}" />
+                                    </a>
+                                </div>
+                            </div>
+                    </div>
+
+                </div>
+            </section>
+            <!-- End Info Block 1 -->
+
+            <!-- Info Block 2 -->
+            <section id="info-block-2" class="app-info-block app-info-content relative">
+                <div>
+
+                    <!-- Heading Info -->
+                    <div class="info-body">
+                            <div class="app-info-block-intro">
+                                <h3 class="app-info-block-title">{% trans "Local Government Historic Places" %}</h3>
+                                <p class="app-info-block-text">
+                                    {% trans "Under the" %} <a target="lgact" href="https://www.bclaws.gov.bc.ca/civix/document/id/consol21/consol21/96323_31">{% trans "Local Government Act" %}</a> {% trans "and the" %} <a target="vancharter" href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/vanch_29">{% trans "Vancouver Charter" %}</a>{% trans ", local governments can formally protect and recognize places with local or regional heritage significance, primarily through municipal designation and community heritage register listings. Local governments notify the province of recognized municipal historic places so they can be added to the BC Register of Historic Places." %}
+                                </p>
+                            </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="app-info-block-intro">
+                            <p class="app-info-block-text">
+                                {% trans "If you have questions about a site recognized under the Local Government Act, you should contact the Local government for further information." %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <figure class="splash-img">
+                        <img class="sub-block-image" src="{% webpack_static 'img/front/figure2_filter.jpg' %}" alt="Arches Workflows">
+                        <figcaption>{% trans "Figure 2: Filter search by local government. Showing map card pop-up for Nelson Street Grids." %}</figcaption>
+                    </figure>
+
+                </div>
+            </section>
+            <!-- End Info Block 2 -->
+
+            <!-- Info Block 3 -->
+            <section id="info-block-3" class="app-info-block app-info-content relative">
+                <div>
+
+                    <!-- Heading Info -->
+                    <div class="info-body">
+                            <div class="app-info-block-intro">
+                                <h3 class="app-info-block-title">{% trans "Provincial Historic Places" %}</h3>
+                                <p class="app-info-block-text">
+                                    {% trans "Under the " %} <a target="hca" href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96187_01">{% trans "Heritage Conservation Act" %}</a>{% trans ", the province protects historic places with provincial-level heritage significance in several ways, primarily through designation as provincial heritage property (Crown land) or provincial heritage sites (non-Crown land)."%}
+                                </p>
+                                <p class="app-info-block-text">
+                                    {% trans "In British Columbia, there are over 50 provincial heritage designations for historic places under the Heritage Conservation Act." %}
+                                </p>
+                            </div>
+                    </div>
+
+                    <figure class="splash-img">
+                        <img class="sub-block-image" src="{% webpack_static 'img/front/Grist_Mill.jpg' %}" alt='{% trans "View of the Grist Mill located in Keremeos" %} '>
+                        <figcaption>{% trans "Grist Mill at Keremeos" %}</figcaption>
+                    </figure>
+
+
+                </div>
+            </section>
+            <!-- End Info Block 3 -->
+
+            <!-- Info Block 4 -->
+            <section id="info-block-4" class="app-info-block app-info-content relative">
+                <div>
+                    <!-- Heading Info -->
+                    <!-- Heading Info -->
+                    <div class="info-body">
+                        <div class="app-info-block-intro">
+                            <h3 class="app-info-block-title">{% trans "Federal Government Historic Places" %}</h3>
+                            <p class="app-info-block-text">
+                                {% trans "The federal government has responsibility for national-level formal recognition. National Historic Sites and other federal recognitions are not officially part of the BC Register of Historic Places but are noted in the system." %}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Content -->
+                    <figure class="splash-img">
+                        <img class="sub-block-image" src="{% webpack_static 'img/front/figure4_details.jpg' %}" alt='{% trans "Screenshot of Arches details view" %} '>
+                        <figcaption>{% trans "Figure 4: National Historic Site search showing Fisgard Lighthouse details page." %}</figcaption>
+                    </figure>
+                </div>
+            </section>
+            <!-- End Info Block 4 -->
+
+            <!-- Info Block 5 -->
+            <section id="info-block-5" class="app-info-block app-info-content relative">
+                <div>
+                    <!-- Heading Info -->
+                    <!-- Heading Info -->
+                    <div class="info-body">
+                        <div class="app-info-block-intro">
+                            <h3 class="app-info-block-title">{% trans "Contact the Heritage Branch" %}</h3>
+                            <p class="app-info-block-text">
+                                {% trans "For more information or to report any issues please contact the Heritage Branch at" %}<a target="mail_address" href="mailto:heritage@gov.bc.ca"> {% trans "heritage@gov.bc.ca" %}</a> {% trans "or visit our" %}<a target="heritage_branch" href="https://www2.gov.bc.ca/gov/content/governments/celebrating-british-columbia/historic-places"> {% trans "website." %}</a>
+                            </p>
+                            <p class="app-info-block-text">
+                                {% trans "The Heritage Branch acknowledges it carries out its work on the traditional territories of Indigenous nations throughout British Columbia. We pay our respects to the Elders, past and present, descendants and custodians of these lands. We honour the knowledge keepers and the continuing relationships with Indigenous peoples in BC that develop through our work together. The Heritage Branch is grateful to the Lekwungen-speaking people, today known as the Esquimalt and Songhees First Nations, on whose traditional territories we operate our main offices." %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End Info Block 4 -->
+
+
+        </article>
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="arches_footer">
+            <a class="arches_link" target="archesproject" href="https://archesproject.org" >
+                <img class="arches_logo"
+                     src="{% webpack_static 'img/logo/arches/Arches_badge_white_powered_by_2.png' %}" alt="Powered by Arches logo">
+            </a>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <div class="container">
+                <ul>
+                    <li><a href="https://www2.gov.bc.ca/gov/content/home" target="_blank">Home</a></li>
+                    <li><a href="https://www2.gov.bc.ca/gov/content/about-gov-bc-ca" target="_blank">About gov.bc.ca</a></li>
+                    <li><a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank">Disclaimer</a></li>
+                    <li><a href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank">Privacy</a></li>
+                    <li><a href="https://www2.gov.bc.ca/gov/content/home/accessible-government" target="_blank">Accessibility</a></li>
+                    <li><a href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a></li>
+                    <li><a href="https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services" target="_blank">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer -->
+
+<script src="{% webpack_static 'node_modules/requirejs/require.js' %}"></script>
+
+<script>
+
+    require.config({
+        baseUrl: '{{ STATIC_URL }}js',
+        paths: {
+            'templates': '{% url "templates" ""%}'.replace(/\/$/, ""),
+            'text': '{{ STATIC_URL }}node_modules/requirejs-text/text',
+            'jquery-lib': '{{ STATIC_URL }}node_modules/jquery/dist/jquery.min',
+            'jquery': '{{ STATIC_URL }}node_modules/jquery-migrate/dist/jquery-migrate.min',
+            'jquery-ui': '{{ STATIC_URL }}node_modules/jqueryui/jquery-ui.min',
+            'underscore': '{{ STATIC_URL }}node_modules/underscore/underscore-min',
+            'chosen': '{{ STATIC_URL }}node_modules/chosen-js/chosen.jquery.min',
+            'knockout': '{{ STATIC_URL }}node_modules/knockout/build/output/knockout-latest',
+            'bootstrap': '{{ STATIC_URL }}node_modules/bootstrap/dist/js/bootstrap.min',
+            'themepunch-tools': '{{ STATIC_URL }}plugins/revolution-slider/rs-plugin/js/jquery.themepunch.tools.min',
+            'themepunch-revolution': '{{ STATIC_URL }}plugins/revolution-slider/rs-plugin/js/jquery.themepunch.revolution',
+            'revolution-slider': '{{ STATIC_URL }}plugins/revolution-slider',
+            'one-app': '{{ STATIC_URL }}plugins/one.app',
+            'slick': "{% webpack_static 'plugins/slick/slick.min' %}",
+        },
+        shim: {
+            'jquery': {
+                deps: ['jquery-lib'],
+                exports: '$'
+            },
+            'bootstrap': {
+                deps: ['jquery', 'jquery-ui']
+            },
+            'chosen': {
+                deps: ['jquery'],
+            },
+            'one-app': {
+                deps: ['jquery'],
+            },
+            'slick': {
+                deps: ['jquery'],
+            }
+        }
+    });
+    require(
+        ['jquery',
+            'knockout',
+            'bootstrap',
+            'one-app',
+            'slick',
+            'bindings/chosen',
+            'views/components/language-switcher'
+        ], function ($, ko) {
+            var contentSections = null,
+                navigationItems = null;
+            $(document).ready(function () {
+                jQuery.expr.filters.offscreen = function(el) {
+                    var rect = el.getBoundingClientRect();
+                    return (
+                        (rect.x + rect.width) < 0
+                        || (rect.y + rect.height) < 0
+                        || (rect.x > window.innerWidth || rect.y > window.innerHeight)
+                    );
+                };
+                App.init();
+
+                contentSections = $('.app-info-block');
+                navigationItems = $('#cd-vertical-nav a');
+
+                $(window).on('scroll', function () {
+                    updateNavigation();
+                });
+
+                //smooth scroll to the section
+                navigationItems.on('click', function (event) {
+                    event.preventDefault();
+                    smoothScroll($(this.hash));
+                });
+
+                $("a.down-button").on('click', function (event) {
+                    event.preventDefault();
+                    smoothScroll($("#info-block-1"));
+                });
+
+                //slider
+                $('.home-slider').slick({
+                    accessibility: true,
+                    arrowsPlacement: 'split',
+                    dots: true,
+                    autoplay: true,
+                    autoplaySpeed: 8000,
+                    prevArrow:"<button type='button' class='slick-prev pull-left'><i class='fa fa-chevron-left' aria-hidden='true'></i></button>",
+                    nextArrow:"<button type='button' class='slick-next pull-right'><i class='fa fa-chevron-right' aria-hidden='true'></i></button>"
+                });
+
+                var ViewModel = function () {
+                     // place observables here
+                };
+
+                // need to have this to prevent mismatched anonymous define error in require.js
+                setTimeout(function () {
+                    ko.applyBindings(new ViewModel());
+                }, 300);
+            });
+            function updateNavigation() {
+                contentSections.each(function () {
+                    $this = $(this);
+                    let offset = 100;
+                    var activeSection = $('#cd-vertical-nav a[href="#' + $this.attr('id') + '"]').data('number') - 1;
+                    $("#cd-vertical-nav").css("display", $("#nav_visibility_control").is(":offscreen") ? "" : "none");
+                    if (($this.offset().top - $(window).height() / 2 < ($(window).scrollTop()-offset)) && ($this.offset().top + $this.height() - $(window).height() / 2 > ($(window).scrollTop())-offset)) {
+                        navigationItems.eq(activeSection).addClass('is-selected');
+                    } else {
+                        navigationItems.eq(activeSection).removeClass('is-selected');
+                    }
+                });
+            }
+            function smoothScroll(target) {
+                $('body,html').animate(
+                    { 'scrollTop': target.offset().top },
+                    600
+                );
+            }
+
+        }
+    );
+</script>
+
+</body>
+
+</html>
