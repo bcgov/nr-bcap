@@ -165,9 +165,9 @@ class HriaDao:
                 )
 
                 # Add a row to the reconcile log to kick off the process
-                # Here the version is <HRIA DB Schema>.<Version Name> - eg 'BFERGUSO.BCRHP_ARCHES'
+                # Here the version is <HRIA DB Schema>.<Version Name> - eg 'BFERGUSO.BCAP_ARCHES'
                 #   HRIA DB Schema: Oracle DB schema that created the version
-                #   Version Name: Name of the version - using BCRHP_ARCHES
+                #   Version Name: Name of the version - using BCAP_ARCHES
                 cursor.execute(
                     """INSERT INTO SDE.TFM_SYS_RECONCILE_LOG
                                         (VERSION, 

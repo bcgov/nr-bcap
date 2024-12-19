@@ -33,7 +33,7 @@ update_config = """
         update nodes set exportable = false, fieldname = 'doctype' where nodeid = 'f77e8d84-37b9-11ee-95f8-080027b7463b'; --Document Type
         update nodes set exportable = false, fieldname = 'imagetype' where nodeid = 'e82084a6-2fc1-11ed-8a32-5254008afee6'; --Image Type
         update nodes set exportable = true, fieldname = 'SITE_NAME' where nodeid = 'b5cdfd32-0d05-11ed-8804-5254008afee6'; --Name
-        update nodes set exportable = false, fieldname = 'bcrstatus' where nodeid = '167e3e88-98a3-11ee-a464-080027b7463b'; --BCRHP Submission Status
+        update nodes set exportable = false, fieldname = 'bcrstatus' where nodeid = '167e3e88-98a3-11ee-a464-080027b7463b'; --BCAP Submission Status
         update nodes set exportable = false, fieldname = 'urltype' where nodeid = '1f5a7b92-ca41-11ed-933f-5254004d77d3'; --External URL Type
         update nodes set exportable = false, fieldname = '' where nodeid = '1b622e58-0d0f-11ed-98c2-5254008afee6'; --BC Property Address
         update nodes set exportable = false, fieldname = 'docdesc' where nodeid = '9be15b6a-ccc9-11ed-b7b5-5254004d77d3'; --Document Description
@@ -98,7 +98,7 @@ revert_config = """
         update nodes set exportable = true, fieldname = 'ST_IMGS' where nodeid = '0a883b80-2fb6-11ed-be5f-5254008afee6'; --Site Images
         update nodes set exportable = true, fieldname = 'LGLADDNOTE' where nodeid = '15656a28-1a67-11ed-b83c-5254008afee6'; --Legal Address Internal Notes
         update nodes set exportable = true, fieldname = 'photograph' where nodeid = '15f8f37c-2fc2-11ed-9cc9-5254008afee6'; --Photographer
-        update nodes set exportable = true, fieldname = 'bcrstatus' where nodeid = '167e3e88-98a3-11ee-a464-080027b7463b'; --BCRHP Submission Status
+        update nodes set exportable = true, fieldname = 'bcrstatus' where nodeid = '167e3e88-98a3-11ee-a464-080027b7463b'; --BCAP Submission Status
         update nodes set exportable = false, fieldname = null where nodeid = '19d560d2-0d05-11ed-a4d8-5254008afee6'; --Heritage Site
         update nodes set exportable = false, fieldname = null where nodeid = '1b622ab6-0d0f-11ed-98c2-5254008afee6'; --BC Property Legal Description
         update nodes set exportable = false, fieldname = '' where nodeid = '1b622e58-0d0f-11ed-98c2-5254008afee6'; --BC Property Address

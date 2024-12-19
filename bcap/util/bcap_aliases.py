@@ -13,7 +13,7 @@ class AbstractAliases:
 class BCAPSiteAliases(AbstractAliases):
 
     ACCURACY_REMARKS = "accuracy_remarks"
-    BCRHP_SUBMISSION_STATUS = "bcap_submission_status"
+    BCAP_SUBMISSION_STATUS = "bcap_submission_status"
     BORDEN_NUMBER = "borden_number"
     CHILD_SITES = "child_sites"
     CHRONOLOGY = "chronology"
@@ -87,7 +87,7 @@ class BCAPSiteAliases(AbstractAliases):
         return AbstractAliases.get_dict(BCAPSiteAliases)
 
 
-class BCRHPSiteSubmissionAliases(AbstractAliases):
+class BCAPSiteSubmissionAliases(AbstractAliases):
     SUBMITTING_GOVERNMENT = "submitting_government"
     SUBMISSION_DATE = "submission_date"
     SUBMITTED_SITE_COUNT = "total_number_submitted"
@@ -97,10 +97,10 @@ class BCRHPSiteSubmissionAliases(AbstractAliases):
 
     @staticmethod
     def get_aliases():
-        return AbstractAliases.get_dict(BCRHPSiteSubmissionAliases)
+        return AbstractAliases.get_dict(BCAPSiteSubmissionAliases)
 
 
-class BCRHPLocalGovernmentAliases:
+class BCAPLocalGovernmentAliases:
     TEST = "test"
 
 

@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @group_required("Resource Exporter")
 def export_results(request):
-    from bcap.search.search_export import BCRHPSearchResultsExporter
+    from bcap.search.search_export import BCAPSearchResultsExporter
 
     # Merge the GET and POST data. Arches assumes data is in the GET object
     request.GET = request.GET.copy()
@@ -64,7 +64,7 @@ def export_results(request):
                 return JSONResponse({"success": False, "message": message})
 
     elif format == "tilexl":
-        exporter = BCRHPSearchResultsExporter(search_request=request)
+        exporter = BCAPSearchResultsExporter(search_request=request)
         export_files, export_info = exporter.export(format, report_link)
         wb = export_files[0]["outputfile"]
         try:
@@ -82,7 +82,7 @@ def export_results(request):
         os.unlink(tmp.name)
         return result
     else:
-        exporter = BCRHPSearchResultsExporter(search_request=request)
+        exporter = BCAPSearchResultsExporter(search_request=request)
         export_files, export_info = exporter.export(format, report_link)
 
         if len(export_files) == 0 and format == "shp":

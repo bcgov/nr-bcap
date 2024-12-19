@@ -100,7 +100,7 @@ class HeritageSiteDataProxy(BusinessDataProxy):
             == "True"
             and (
                 self.get_value_from_node(
-                    BCAPSiteAliases.BCRHP_SUBMISSION_STATUS,
+                    BCAPSiteAliases.BCAP_SUBMISSION_STATUS,
                     resourceinstanceid=resourceinstance.resourceinstanceid,
                 )
                 in ["Approved - Full Record", "Approved - Basic Record"]

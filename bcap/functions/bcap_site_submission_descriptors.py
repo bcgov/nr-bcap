@@ -1,4 +1,4 @@
-from bcap.util.bcap_aliases import GraphSlugs, BCRHPSiteSubmissionAliases as aliases
+from bcap.util.bcap_aliases import GraphSlugs, BCAPSiteSubmissionAliases as aliases
 from bcgov_arches_common.util.bc_primary_descriptors_function import (
     BCPrimaryDescriptorsFunction,
 )
@@ -6,25 +6,25 @@ from bcgov_arches_common.util.graph_lookup import GraphLookup
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001005",
-    "name": "BCRHP Site Submission Descriptors",
+    "name": "BCAP Site Submission Descriptors",
     "type": "primarydescriptors",
     "modulename": "bcap_site_submission_descriptors.py",
     "description": "Function that provides the primary descriptors for BC Heritage Site Submissions",
     "defaultconfig": {
         "module": "arches_bcap.functions.bcap_site_submission_descriptors",
-        "class_name": "BCRHPSiteSubmissionDescriptors",
+        "class_name": "BCAPSiteSubmissionDescriptors",
         "descriptor_types": {
             "name": {},
             "description": {},
             "map_popup": {},
         },
     },
-    "classname": "BCRHPSiteSubmissionDescriptors",
+    "classname": "BCAPSiteSubmissionDescriptors",
     "component": "views/components/functions/bcap-site-submission-descriptors",
 }
 
 
-class BCRHPSiteSubmissionDescriptors(BCPrimaryDescriptorsFunction):
+class BCAPSiteSubmissionDescriptors(BCPrimaryDescriptorsFunction):
     # For Name part of descriptor
     _graph_slug = GraphSlugs.SITE_SUBMISSION
     _graph_lookup = None
@@ -40,9 +40,9 @@ class BCRHPSiteSubmissionDescriptors(BCPrimaryDescriptorsFunction):
     def __init__(self):
         super(BCPrimaryDescriptorsFunction).__init__()
         self._graph_lookup = GraphLookup(
-            BCRHPSiteSubmissionDescriptors._graph_slug,
-            BCRHPSiteSubmissionDescriptors._name_nodes
-            + BCRHPSiteSubmissionDescriptors._card_nodes,
+            BCAPSiteSubmissionDescriptors._graph_slug,
+            BCAPSiteSubmissionDescriptors._name_nodes
+            + BCAPSiteSubmissionDescriptors._card_nodes,
         )
 
     def get_primary_descriptor_from_nodes(

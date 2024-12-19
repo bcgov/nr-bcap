@@ -48,7 +48,7 @@
         <skos:hasTopConcept rdf:resource="https://rhel9/bcap/5678942f-1dfe-46f4-8642-1d61208b40da"/>
         <skos:hasTopConcept rdf:resource="https://rhel9/bcap/1215af87-d8f4-43fb-8c3a-b008997bc8ca"/>
         <skos:hasTopConcept rdf:resource="https://rhel9/bcap/bc7ef20d-e914-4edf-bb42-405dce578aa4"/>
-        <dcterms:title xml:lang="en">{"id": "94ab2366-f7d1-42de-a2d2-ee4c9f398965", "value": "BCRHP Thesauri"}</dcterms:title>
+        <dcterms:title xml:lang="en">{"id": "94ab2366-f7d1-42de-a2d2-ee4c9f398965", "value": "BCAP Thesauri"}</dcterms:title>
         <skos:hasTopConcept rdf:resource="https://rhel9/bcap/4747b3ec-67cb-43e1-a292-775faa956a48"/>
       </skos:ConceptScheme>
     </skos:inScheme>
@@ -1338,10 +1338,10 @@
         <skos:inScheme rdf:resource="https://rhel9/bcap/6a61a24d-2ec6-44b0-beb4-f2fd79c2bef8"/>
         <dcterms:identifier xml:lang="en">{"id": "6f9e4769-53da-4cea-ad7e-a575f3fad316", "value": "http://rhel9.local:8000/bcap/47f9acf1-5290-4c45-8ff1-0ce4d4550772"}</dcterms:identifier>
         <skos:prefLabel xml:lang="en">{"id": "7ab65d58-fd63-4de9-b2d9-43c5b37e1d7d", "value": "Submitted"}</skos:prefLabel>
-        <skos:scopeNote xml:lang="en">{"id": "3128bf29-e5a0-48bb-8c9b-eb3abec44252", "value": "Submitted to BCRHP for review/approval"}</skos:scopeNote>
+        <skos:scopeNote xml:lang="en">{"id": "3128bf29-e5a0-48bb-8c9b-eb3abec44252", "value": "Submitted to BCAP for review/approval"}</skos:scopeNote>
       </skos:Concept>
     </skos:narrower>
-    <skos:prefLabel xml:lang="en">{"id": "536aa6c9-268c-49a2-9358-22f582b124d2", "value": "Submission Status - BCRHP"}</skos:prefLabel>
+    <skos:prefLabel xml:lang="en">{"id": "536aa6c9-268c-49a2-9358-22f582b124d2", "value": "Submission Status - BCAP"}</skos:prefLabel>
     <skos:inScheme rdf:resource="https://rhel9/bcap/6a61a24d-2ec6-44b0-beb4-f2fd79c2bef8"/>
     <dcterms:identifier xml:lang="en">{"id": "9fe0887b-0d4d-4737-b2c6-2aff8f9b1162", "value": "http://localhost:8000/b0c4b218-5593-430e-8a84-b2356d9041f9"}</dcterms:identifier>
   </skos:Concept>

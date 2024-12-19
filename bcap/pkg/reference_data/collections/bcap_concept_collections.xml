@@ -7,7 +7,7 @@
     <skos:member>
       <skos:Concept rdf:about="https://rhel9/bcap/47f9acf1-5290-4c45-8ff1-0ce4d4550772"/>
     </skos:member>
-    <skos:prefLabel xml:lang="en">{"id": "cba16cfc-b69f-49c7-844e-73c83eba8472", "value": "Submission Status - BCRHP"}</skos:prefLabel>
+    <skos:prefLabel xml:lang="en">{"id": "cba16cfc-b69f-49c7-844e-73c83eba8472", "value": "Submission Status - BCAP"}</skos:prefLabel>
     <skos:member>
       <skos:Concept rdf:about="https://rhel9/bcap/404d1042-0985-4cfc-b85f-042f3b64910b"/>
     </skos:member>

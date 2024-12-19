@@ -14,7 +14,7 @@
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "helpenabled": true,
                     "helptext": {
-                        "en": "<p>Enter the status of the record to indicate its completeness.</p>\n\n<p><u>BCRHP Submission Status</u></p>\n\n<p>Select the appropriate option from the drop-down menu.</p>\n\n<p>In Progress &ndash; record is in the process of being entered.</p>\n\n<p>Submitted &ndash; record is complete and awaiting review.</p>\n\n<p>Update Requested &ndash; existing record was edited and requires review.</p>\n\n<p>Approved Basic Record &ndash; record reviewed and approved. Basic records only include enough information to have them on the BC Register and are ineligible for the Canadian Register.</p>\n\n<p>Approved Full Record &ndash; record reviewed and approved. Full records include all the information required to be eligible for the Canadian Register.</p>\n\n<p><u>Restricted/Unrestricted</u></p>\n\n<p>Select the appropriate option. Restricted records do not appear to the public and are ineligible for the Canadian Register.</p>\n\n<p><u>CRHP Submission Status</u></p>\n\n<p>Select the appropriate option from the drop-down menu:</p>\n\n<p>Ineligible &ndash; record is not eligible for the CRHP because it is restricted or does not have enough required information to be submitted to the CRHP.</p>\n\n<p>Submitted &ndash; record is submitted to the CRHP and awaiting feedback or approval.</p>\n\n<p>Update Required &ndash; record has been updated and needs to be resubmitted to CRHP.</p>\n\n<p>Approved &ndash; record has been approved and is available on the Historic Places website.</p>\n\n<p>Removed &ndash; record was previously listed on the CRHP but was removed.</p>\n\n<p><u>Date Submitted to CRHP</u></p>\n\n<p>Enter the most recent date the record was submitted to the CRHP.</p>\n\n<p><u>Generate CRHP XML</u></p>\n\n<p>Click to generate the xml to submit to the CRHP. Ensure all information is reviewed for accuracy and typos before generating, especially the SoS and Images info.</p>\n\n<p><u>CRHP ID Number</u></p>\nEnter the federal ID number assigned upon record submission to the CRHP."
+                        "en": "<p>Enter the status of the record to indicate its completeness.</p>\n\n<p><u>BCAP Submission Status</u></p>\n\n<p>Select the appropriate option from the drop-down menu.</p>\n\n<p>In Progress &ndash; record is in the process of being entered.</p>\n\n<p>Submitted &ndash; record is complete and awaiting review.</p>\n\n<p>Update Requested &ndash; existing record was edited and requires review.</p>\n\n<p>Approved Basic Record &ndash; record reviewed and approved. Basic records only include enough information to have them on the BC Register and are ineligible for the Canadian Register.</p>\n\n<p>Approved Full Record &ndash; record reviewed and approved. Full records include all the information required to be eligible for the Canadian Register.</p>\n\n<p><u>Restricted/Unrestricted</u></p>\n\n<p>Select the appropriate option. Restricted records do not appear to the public and are ineligible for the Canadian Register.</p>\n\n<p><u>CRHP Submission Status</u></p>\n\n<p>Select the appropriate option from the drop-down menu:</p>\n\n<p>Ineligible &ndash; record is not eligible for the CRHP because it is restricted or does not have enough required information to be submitted to the CRHP.</p>\n\n<p>Submitted &ndash; record is submitted to the CRHP and awaiting feedback or approval.</p>\n\n<p>Update Required &ndash; record has been updated and needs to be resubmitted to CRHP.</p>\n\n<p>Approved &ndash; record has been approved and is available on the Historic Places website.</p>\n\n<p>Removed &ndash; record was previously listed on the CRHP but was removed.</p>\n\n<p><u>Date Submitted to CRHP</u></p>\n\n<p>Enter the most recent date the record was submitted to the CRHP.</p>\n\n<p><u>Generate CRHP XML</u></p>\n\n<p>Click to generate the xml to submit to the CRHP. Ensure all information is reviewed for accuracy and typos before generating, especially the SoS and Images info.</p>\n\n<p><u>CRHP ID Number</u></p>\nEnter the federal ID number assigned upon record submission to the CRHP."
                     },
                     "helptitle": {
                         "en": "Site Record Admin Help"
@@ -1040,7 +1040,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "BCRHP Submission Status",
+                        "label": "BCAP Submission Status",
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
@@ -1048,7 +1048,7 @@
                     },
                     "id": "3852722e-b754-46a7-92f4-5abe9b551161",
                     "label": {
-                        "en": "BCRHP Submission Status"
+                        "en": "BCAP Submission Status"
                     },
                     "node_id": "167e3e88-98a3-11ee-a464-080027b7463b",
                     "sortorder": 0,
@@ -3183,7 +3183,7 @@
                 },
                 {
                     "config": {
-                        "class_name": "BCRHPSiteDescriptors",
+                        "class_name": "BCAPSiteDescriptors",
                         "descriptor_types": {
                             "description": {
                                 "delimiter": "<br>",
@@ -3595,7 +3595,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "BCRHP Submission Status",
+                    "name": "BCAP Submission Status",
                     "nodegroup_id": "0684fec8-0d07-11ed-8804-5254008afee6",
                     "nodeid": "167e3e88-98a3-11ee-a464-080027b7463b",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",

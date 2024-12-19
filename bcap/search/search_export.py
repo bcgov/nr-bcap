@@ -4,7 +4,7 @@ from arches.app.models import models
 from bcap.util.bcap_aliases import GraphSlugs
 
 
-class BCRHPSearchResultsExporter(SearchResultsExporter):
+class BCAPSearchResultsExporter(SearchResultsExporter):
     _heritage_site_nodegroups = None
 
     def flatten_tiles(self, tiles, datatype_factory, compact=True, use_fieldname=False):

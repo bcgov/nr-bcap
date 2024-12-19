@@ -47,7 +47,7 @@
                     ],
                     "cssclass": null,
                     "description": {
-                        "en": "Username the resource uses to interact with BCRHP"
+                        "en": "Username the resource uses to interact with BCAP"
                     },
                     "graph_id": "412444dd-b13f-4289-9f04-5c7f1878ad4e",
                     "helpenabled": false,
@@ -197,7 +197,7 @@
                         "label": "Username",
                         "maxLength": "12",
                         "placeholder": {
-                            "en": "Username within BCRHP application"
+                            "en": "Username within BCAP application"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -475,7 +475,7 @@
                         "en": ""
                     },
                     "datatype": "string",
-                    "description": "Username the resource uses to interact with BCRHP",
+                    "description": "Username the resource uses to interact with BCAP",
                     "exportable": true,
                     "fieldname": "USR_NM",
                     "graph_id": "412444dd-b13f-4289-9f04-5c7f1878ad4e",

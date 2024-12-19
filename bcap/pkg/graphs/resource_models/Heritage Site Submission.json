@@ -94,7 +94,7 @@
                     "constraints": [],
                     "cssclass": null,
                     "description": {
-                        "en": "BCRHP Internal notes about the submission"
+                        "en": "BCAP Internal notes about the submission"
                     },
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
                     "helpenabled": false,
@@ -150,7 +150,7 @@
                     "constraints": [],
                     "cssclass": null,
                     "description": {
-                        "en": "List of sites submitted to BCRHP"
+                        "en": "List of sites submitted to BCAP"
                     },
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
                     "helpenabled": false,
@@ -472,14 +472,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Alternate BCRHP Asignee",
+                        "label": "Alternate BCAP Asignee",
                         "placeholder": {
-                            "en": "Select BCRHP Assignee if different from Submission Assignee"
+                            "en": "Select BCAP Assignee if different from Submission Assignee"
                         }
                     },
                     "id": "7eb9cbcc-b60c-4fdf-a75c-62654ce64ea8",
                     "label": {
-                        "en": "Alternate BCRHP Asignee"
+                        "en": "Alternate BCAP Asignee"
                     },
                     "node_id": "02c58238-a985-11ed-9f00-5254004d77d3",
                     "sortorder": 5,
@@ -870,7 +870,7 @@
                 },
                 {
                     "config": {
-                        "class_name": "BCRHPSiteSubmissionDescriptors",
+                        "class_name": "BCAPSiteSubmissionDescriptors",
                         "descriptor_types": {
                             "description": {},
                             "map_popup": {},
@@ -1113,7 +1113,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Alternate BCRHP Asignee",
+                    "name": "Alternate BCAP Asignee",
                     "nodegroup_id": "4506b49e-a324-11ed-bbb0-5254004d77d3",
                     "nodeid": "02c58238-a985-11ed-9f00-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E21_Person",
@@ -1225,7 +1225,7 @@
                         "en": ""
                     },
                     "datatype": "semantic",
-                    "description": "List of sites submitted to BCRHP",
+                    "description": "List of sites submitted to BCAP",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
@@ -1439,7 +1439,7 @@
                         "en": ""
                     },
                     "datatype": "string",
-                    "description": "BCRHP Internal notes about the submission",
+                    "description": "BCAP Internal notes about the submission",
                     "exportable": true,
                     "fieldname": "SUB_INT_NT",
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
