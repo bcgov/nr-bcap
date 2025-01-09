@@ -5,7 +5,7 @@ services:
     image: bcgov/bcap7-6-3
     build:
       context: ..
-      dockerfile: bcap/Dockerfile
+      dockerfile: nr-bcap/Dockerfile
     command: run_arches
     volumes:
       - ../arches/:/web_root/arches
@@ -26,7 +26,7 @@ services:
     image: bcgov/bcap-webpack-7-6-3
     build:
       context: ..
-      dockerfile: bcap/docker/webpack/Dockerfile
+      dockerfile: nr-bcap/docker/webpack/Dockerfile
     command: run_webpack
     volumes:
       - ../arches/:/web_root/arches

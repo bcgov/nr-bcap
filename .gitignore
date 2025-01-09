@@ -17,9 +17,15 @@ webpack/webpack-stats.json
 coverage/
 
 # Common resources that are copied from arches_common
-bcap/media/css/project_common.css
-bcap/media/css/bc_index.css
-bcap/media/css/map_legend_common.css
 node_modules
 .vscode/
 CACHE
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/

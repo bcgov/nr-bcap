@@ -41,7 +41,7 @@ RUN apt-get update && apt-get -y install curl \
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e . --user
 
-COPY /bcap/docker/webpack/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
+COPY /nr-bcap/docker/webpack/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
 RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh
 WORKDIR ${WEB_ROOT}
 ENTRYPOINT [ "./entrypoint.sh" ]

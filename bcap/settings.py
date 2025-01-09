@@ -170,15 +170,6 @@ DATABASES = {
     }
 }
 
-HRIA_DATABASE = {
-    "USER": get_env_variable("HRIADB_USER"),
-    "PASSWORD": get_env_variable("HRIADB_PASSWORD"),
-    "HOST": get_env_variable("HRIADB_HOST"),
-    "PORT": get_env_variable("HRIADB_PORT"),
-    "SERVICE_NAME": get_env_variable("HRIADB_SERVICE_NAME"),
-    "APPLICATION_USER": get_env_variable("HRIADB_APPLICATION_USER"),
-}
-
 SEARCH_THUMBNAILS = False
 
 INSTALLED_APPS = (
