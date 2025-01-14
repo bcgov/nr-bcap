@@ -29,7 +29,7 @@
     "dependencies": {
         "@mapbox/mapbox-gl-draw": "1.4.3",
         "arches": "archesproject/arches#stable/7.6.3",
-        "bcgov_arches_common": "bcgov/arches_common#feat/rename_app"
+        "bcgov_arches_common": "github:bcgov/arches_common"
     },
     "nodeModulesPaths": {}
 }

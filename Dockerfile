@@ -40,20 +40,23 @@ RUN set -ex \
   && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
   && python3.11 get-pip.py \
   && apt-get install -y nodejs
+
 # Install Yarn components
 RUN mkdir -p ${APP_ROOT}/${PROJECT_NAME}/app/media/packages
 WORKDIR ${WEB_ROOT}
 RUN rm -rf /root/.cache/pip/*
+
 # Install the Arches application
 # FIXME: ADD from github repository instead?
 COPY ./arches ${ARCHES_ROOT}
 # From here, run commands from ARCHES_ROOT
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev] && \
-    pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis \
+    pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis
 
+COPY ./arches_common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}
-RUN pip install -e .[dev] && \
+RUN pip install -e .
 
 WORKDIR ${ARCHES_ROOT}
 COPY ./nr-bcap/docker/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
