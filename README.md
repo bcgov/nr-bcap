@@ -21,6 +21,7 @@ Arches (Postgres, Elasticsearch, Redis, etc).
 cd git
 git clone https://github.com/bcgov/arches
 git clone https://github.com/bcgov/arches_common
+cd arches && git checkout stable/7.6.4_bcgov_11578_11716
 # This should result in a directory structure like the below:
 .../git/bcap/
        /bcap/arches/      # <- This is a clone of the arches bcgov/arches repo
@@ -28,8 +29,30 @@ git clone https://github.com/bcgov/arches_common
        /bcap/bcap_common/ # <- This is a clone of the bcgov/arches_common repo
 ```
 
-3. Change back to the nr-bcap directory and create the BCAP containers:
+
+3. Change back to the nr-bcap directory and create the test user data file at
+`bcap/management/data/test_user_list.py`:
+
+    1. the password is only a dummy password so it can be left as is. OIDC is used so when
+authenticating you will use your IDIR username and password.
+   2. the `@idir` suffix is necessary
+   3. tht `<idir username>` must be in lower case
+``` python
+def get_user_list():
+   return (
+   {"name": "<idir username>@idir", "email": "<email>", "password": "Test12345!", "is_superuser": True,
+   "is_staff": True, "first_name": "<first name>", "last_name": "<last name>",
+   "groups": ["Resource Editor", "Resource Reviewer", "Archaeology Branch", "Resource Exporter"]},
+   )
+```
+
+4. Create the BCAP containers:
 ```shell
 cd git/nr-bcap
 docker compose up
 ```
+
+You should now be able to access BCAP at http://localhost:82/bcap
+
+5. After logging into BCAP, the map will initially be blank. Navigate to the system settings in the LHS
+menu and enter your Mapbox token there.

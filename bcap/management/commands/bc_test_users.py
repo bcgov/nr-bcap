@@ -60,25 +60,37 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
+            "-r",
             "--refresh",
+            action="store_true",
+            dest="refresh_users",
             default=False,
             help="refresh users. delete existing users if they exist",
         )
         parser.add_argument(
-            "--delete", default=False, help="delete historic places test users"
+            "-d",
+            "--delete",
+            action="store_true",
+            dest="delete_users",
+            default=False,
+            help="delete historic places test users"
         )
         parser.add_argument(
-            "--add", default=False, help="add historic places test users"
+            "-a",
+            "--add",
+            action="store_true",
+            dest="add_users",
+            default=False,
+            help="add historic places test users"
         )
 
     def handle(self, *args, **options):
-        print(options["refresh"])
-        if options["refresh"] or options["delete"]:
+        if options["refresh_users"] or options["delete_users"]:
             self.delete_users()
         else:
             print("Not trying to delete users")
 
-        if options["refresh"] or options["add"]:
+        if options["refresh_users"] or options["add_users"]:
             self.add_users()
         else:
             print("Not trying to add users")

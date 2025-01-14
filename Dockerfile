@@ -52,7 +52,8 @@ COPY ./arches ${ARCHES_ROOT}
 # From here, run commands from ARCHES_ROOT
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev] && \
-    pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis
+    pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis && \
+    pip install --upgrade cryptography PyJWT
 
 COPY ./arches_common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}
