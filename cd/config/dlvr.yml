@@ -1,0 +1,11 @@
+db_databc_user: "proxy_databc_dlvr"
+
+celery_broker_url: "{{ default_cache_backend_location }}/12"
+
+webpack_internal_url: "https://dlvrapps-endowment.nrs.bcgov:8010"
+
+django_debug_mode: "True"
+
+oauth_auth_endpoint: "https://dev.loginproxy.gov.bc.ca/auth/realms/bcregistry/protocol/openid-connect/auth"
+oauth_token_endpoint: "https://dev.loginproxy.gov.bc.ca/auth/realms/bcregistry/protocol/openid-connect/token"
+oauth_jwks_uri: "https://dev.loginproxy.gov.bc.ca/auth/realms/bcregistry/protocol/openid-connect/certs"

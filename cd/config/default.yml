@@ -1,0 +1,47 @@
+db_host: "localhost"
+
+es_username: "bcap"
+es_scheme: "https"
+es_host: "localhost"
+es_port: "9200"
+
+url_context_root: "bcap"
+force_script_name: "/{{ url_context_root }}/"
+
+oauth_client_id: "bcap-web"
+
+django_mode: "PROD"
+django_debug_mode: "False"
+
+default_cache_backend: "django.core.cache.backends.redis.RedisCache"
+default_cache_backend_location: "redis://127.0.0.1:6379"
+
+configure_s6_celery: True
+# BCRHP uses /0 (TEST & PROD) and /10 (DLVR)
+# BCFMS uses /1 (TEST & PROD) and /11 (DLVR)
+# BCAP  uses /2 (TEST & PROD) and /12 (DLVR)
+celery_broker_url: "{{ default_cache_backend_location }}/2"
+
+auth_bypass_hosts: "{{ local_names | join(' ') }}"
+
+s3_endpoint: "https://nrs.objectstore.gov.bc.ca/"
+
+additional_pip_modules:
+  - "html2text"
+  - "oracledb"
+
+configure_tileserv: False
+
+django_key: "{{ lookup('ansible.builtin.env', 'DJANGO_KEY') }}"
+db_password: "{{ lookup('ansible.builtin.env', 'DB_PASSWORD') }}"
+db_databc_password: "{{ lookup('ansible.builtin.env', 'DB_DATABC_PASSWORD') }}" # Password used by DataBC to export data
+
+es_password: "{{ lookup('ansible.builtin.env', 'ES_PASSWORD') }}"
+es_api_key: "{{ lookup('ansible.builtin.env', 'ES_API_KEY') }}"
+
+s3_bucket: "{{ lookup('ansible.builtin.env', 'S3_BUCKET') }}"
+s3_access_key_id: "{{ lookup('ansible.builtin.env', 'S3_ACCESS_KEY_ID') }}"
+s3_secret_access_key: "{{ lookup('ansible.builtin.env', 'S3_SECRET_ACCESS_KEY') }}"
+
+planet_api_key: "{{ lookup('ansible.builtin.env', 'PLANET_API_KEY') }}"
+oauth_client_secret: "{{ lookup('ansible.builtin.env', 'OAUTH_CLIENT_SECRET') }}"
