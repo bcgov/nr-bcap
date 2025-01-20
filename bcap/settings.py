@@ -213,6 +213,7 @@ AUTHENTICATION_BACKENDS = (
     "arches.app.utils.permission_backend.PermissionBackend",
 )
 
+
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     "corsheaders.middleware.CorsMiddleware",
@@ -226,7 +227,7 @@ MIDDLEWARE = [
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # "bcap.util.auth.middleware.SiteminderMiddleware",
-    # "bcap.util.auth.auth_required_middleware.AuthRequiredMiddleware",
+    "bcap.util.auth.auth_required_middleware.AuthRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
