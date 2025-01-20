@@ -26,6 +26,11 @@ requires-python = ">=3.10"
 dependencies = [
     "arches @ git+https://github.com/bcgov/arches.git@stable/7.6.4_bcgov_11578_11716_11729_11723",
     "bcgov_arches_common @ git+https://github.com/bcgov/arches_common.git",
+    "boto3==1.26",
+    "django-storages==1.13",
+    "redis",
+    "mod_wsgi",
+    "python-dotenv"
 ]
 
 version = "0.0.1-a"
