@@ -1,0 +1,87 @@
+{% extends "views/components/widgets/base.htm" %}
+{% load i18n %}
+
+{% block display_value %}
+<div data-bind="visible: textHasValue(tile().data[streetAddress().attributes.node_id()]) || textHasValue(tile().data[city().attributes.node_id()]) || !!ko.unwrap(tile().data[province().attributes.node_id()])">
+    <dt>Address</dt>
+    <dd>
+        <!-- ko let: {addressPart: streetAddress()} -->
+        <span style="font-size: 0;" data-bind="component: {
+                                                name: addressPart.widgetLookup[addressPart.widget_id()].name,
+                                                params: {
+                                                    tile: tile(),
+                                                    node: addressPart.node,
+                                                    config: addressPart.config,
+                                                    value: tile().data[addressPart.attributes.node_id()],
+                                                    state: 'display_value',
+                                                }
+                                            }, click: function(){console.log(card);},
+                                             visible:  textHasValue(tile().data[streetAddress().attributes.node_id()])">
+        </span>
+        <span class="address_separator" data-bind="visible: (textHasValue(tile().data[city().attributes.node_id()]) && textHasValue(tile().data[streetAddress().attributes.node_id()]))">, </span>
+        <!-- /ko -->
+        <!-- ko let: {addressPart: city()} -->
+        <span style="font-size: 0;" data-bind="component: {
+                                            name: addressPart.widgetLookup[addressPart.widget_id()].name,
+                                            params: {
+                                                tile: tile(),
+                                                node: addressPart.node,
+                                                config: addressPart.config,
+                                                value: tile().data[addressPart.attributes.node_id()],
+                                                state: 'display_value',
+                                            }
+                                        }, click: function(){console.log(card);},
+                                         visible:  textHasValue(tile().data[city().attributes.node_id()])"></span>
+        <span class="address_separator" data-bind="visible: (!!ko.unwrap(tile().data[province().attributes.node_id()]) && (textHasValue(tile().data[city().attributes.node_id()]) || textHasValue(tile().data[streetAddress().attributes.node_id()])) )">, </span>
+        <!-- /ko -->
+        <!-- ko let: {addressPart: province()} -->
+        <span data-bind="component: {
+                                                name: addressPart.widgetLookup[addressPart.widget_id()].name,
+                                                params: {
+                                                    tile: tile(),
+                                                    node: addressPart.node,
+                                                    config: addressPart.config,
+                                                    value: tile().data[addressPart.attributes.node_id()],
+                                                    state: 'display_value',
+                                                }
+                                            }, click: function(){console.log(card);}">
+        </span>
+        <!-- /ko -->
+    </dd>
+</div>
+<!-- ko let: {addressPart: locality()} -->
+<div data-bind="visible: textHasValue(tile().data[addressPart.attributes.node_id()])">
+    <dt>Locality</dt>
+    <dd data-bind="component: {
+                                            name: addressPart.widgetLookup[addressPart.widget_id()].name,
+                                            params: {
+                                                tile: tile(),
+                                                node: addressPart.node,
+                                                config: addressPart.config,
+                                                label: addressPart.label(),
+                                                value: tile().data[addressPart.attributes.node_id()],
+                                                state: 'display_value',
+                                            }
+                                        }, click: function(){console.log(card);}">
+    </dd>
+</div>
+<!-- /ko -->
+<!-- ko let: {addressPart: location_description()} -->
+<div data-bind="visible: textHasValue(tile().data[addressPart.attributes.node_id()])">
+    <dt>Location Description</dt>
+    <dd data-bind="component: {
+                                            name: addressPart.widgetLookup[addressPart.widget_id()].name,
+                                            params: {
+                                                tile: tile(),
+                                                node: addressPart.node,
+                                                config: addressPart.config,
+                                                label: addressPart.label(),
+                                                value: tile().data[addressPart.attributes.node_id()],
+                                                state: 'display_value',
+                                                displayfullvalue: true
+                                            }
+                                        }">
+    </dd>
+</div>
+<!-- /ko -->
+{% endblock display_value %}

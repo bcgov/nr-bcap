@@ -1,0 +1,48 @@
+name: bcap7-6-3
+services:
+  bcap:
+    container_name:  bcap7-6-3
+    image: bcgov/bcap7-6-3
+    build:
+      context: ..
+      dockerfile: nr-bcap/Dockerfile
+    command: run_arches
+    volumes:
+      - ../arches/:/web_root/arches
+      - ./:/web_root/bcap
+      - ../arches_common/:/web_root/arches_common
+    env_file:
+      - ./docker/env_file.env
+    ports:
+      - 5690:5678
+      - 82:80
+      - 446:443
+    stdin_open: true
+    tty: true
+
+  bcap-webpack:
+    container_name: bcap-webpack-7-6-3
+    image: bcgov/bcap-webpack-7-6-3
+    build:
+      context: ..
+      dockerfile: nr-bcap/docker/webpack/Dockerfile
+    command: run_webpack
+    volumes:
+      - ../arches/:/web_root/arches
+      - ./:/web_root/bcap
+    env_file:
+      - ./docker/webpack/env_file.env
+    ports:
+      - 8024:8021
+    stdin_open: true
+    tty: true
+
+networks:
+  default:
+    external: true
+    name: arches7-5-2-dev
+
+
+volumes:
+  arches-log-bcap7-6-3:
+  arches-static-bcap7-6-3:
