@@ -7,6 +7,7 @@ class Command(BaseCommand):
 
     def get_index_order(self):
         return [
+            "contributor",
             "local_government",
             "lg_person",
             "legislative_act",

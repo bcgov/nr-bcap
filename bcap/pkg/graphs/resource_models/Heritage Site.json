@@ -3171,6 +3171,8 @@
             "functions_x_graphs": [
                 {
                     "config": {
+                        "class_name": "UniqueBooleanValue",
+                        "module": "bcgov_arches_common.functions.unique_boolean_value",
                         "node_id": "703bbe62-3d24-11ee-93bd-080027b7463b",
                         "triggering_nodegroups": [
                             "0a883b80-2fb6-11ed-be5f-5254008afee6"
@@ -4866,7 +4868,7 @@
                 {
                     "alias": "registry_types",
                     "config": {
-                        "rdmCollection": "c598e44c-aa1c-4139-80b3-e6804c54373d"
+                        "rdmCollection": "eb072c5e-bbce-44e6-8438-17b64f4210c4"
                     },
                     "datatype": "concept-list",
                     "description": null,
@@ -5429,8 +5431,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "81944084-8bdf-11ef-9971-005056a3bc47",
-                "published_time": "2024-10-16T11:55:53.971"
+                "publicationid": "605d03a0-db8b-11ef-8f82-0242ac170007",
+                "published_time": "2025-01-26T02:15:13.542"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -5463,9 +5465,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
-        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "c2d44664b 2025-01-15 20:52:27 -0800",
         "os": "Linux",
-        "os version": "5.14.0-427.37.1.el9_4.x86_64"
+        "os version": "6.10.14-linuxkit"
     }
 }
