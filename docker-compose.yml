@@ -1,8 +1,8 @@
-name: bcap7-6-3
+name: bcap7-6
 services:
   bcap:
-    container_name:  bcap7-6-3
-    image: bcgov/bcap7-6-3
+    container_name:  bcap7-6
+    image: bcgov/bcap7-6
     build:
       context: ..
       dockerfile: nr-bcap/Dockerfile
@@ -21,8 +21,8 @@ services:
     tty: true
 
   bcap-webpack:
-    container_name: bcap-webpack-7-6-3
-    image: bcgov/bcap-webpack-7-6-3
+    container_name: bcap-webpack7-6
+    image: bcgov/bcap-webpack7-6
     build:
       context: ..
       dockerfile: nr-bcap/docker/webpack/Dockerfile
@@ -44,5 +44,5 @@ networks:
 
 
 volumes:
-  arches-log-bcap7-6-3:
-  arches-static-bcap7-6-3:
+  arches-log-bcap7-6:
+  arches-static-bcap7-6:

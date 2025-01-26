@@ -73,7 +73,7 @@ class Command(BaseCommand):
             action="store_true",
             dest="delete_users",
             default=False,
-            help="delete historic places test users"
+            help="delete historic places test users",
         )
         parser.add_argument(
             "-a",
@@ -81,7 +81,7 @@ class Command(BaseCommand):
             action="store_true",
             dest="add_users",
             default=False,
-            help="add historic places test users"
+            help="add historic places test users",
         )
 
     def handle(self, *args, **options):
@@ -135,9 +135,7 @@ class Command(BaseCommand):
                 )
                 user.save()
 
-                print(
-                    f"Added test user: {user.username}, password: {profile['password']}"
-                )
+                print(f"Added test user: {user.username}")
 
                 for group_name in profile["groups"]:
                     group = Group.objects.get_or_create(name=group_name)
