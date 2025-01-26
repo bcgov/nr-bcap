@@ -27,7 +27,7 @@
                         "en": "Chronology"
                     },
                     "nodegroup_id": "fda3f49e-d941-11ef-b0c5-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 7,
                     "visible": true
                 },
                 {
@@ -54,7 +54,7 @@
                         "en": "Jurisdiction"
                     },
                     "nodegroup_id": "19037f80-d93c-11ef-bf8f-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 8,
                     "visible": true
                 },
                 {
@@ -81,7 +81,7 @@
                         "en": "Site Typology"
                     },
                     "nodegroup_id": "b0b19038-d93c-11ef-bf8f-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "visible": true
                 },
                 {
@@ -108,7 +108,7 @@
                         "en": "Archaelogical Features"
                     },
                     "nodegroup_id": "2c2ece3a-d940-11ef-9bfd-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 5,
                     "visible": true
                 },
                 {
@@ -135,7 +135,7 @@
                         "en": "Site Location"
                     },
                     "nodegroup_id": "9bebae52-d939-11ef-92f0-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "visible": true
                 },
                 {
@@ -162,7 +162,7 @@
                         "en": "Stratigraphy"
                     },
                     "nodegroup_id": "a70fe552-d941-11ef-9bfd-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 4,
                     "visible": true
                 },
                 {
@@ -189,7 +189,7 @@
                         "en": "Cultural Materials"
                     },
                     "nodegroup_id": "cf48233c-d940-11ef-b0c5-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 3,
                     "visible": true
                 },
                 {
@@ -245,7 +245,7 @@
                         "en": "Site Dimensions and Boundaries"
                     },
                     "nodegroup_id": "13ca0f36-d93a-11ef-8a12-005056a3bc47",
-                    "sortorder": null,
+                    "sortorder": 6,
                     "visible": true
                 }
             ],
@@ -435,7 +435,7 @@
                         "en": "Borden Number"
                     },
                     "node_id": "f8eaf588-d90a-11ef-bf8f-005056a3bc47",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000101"
                 },
@@ -523,7 +523,7 @@
                         "en": "Site Name(s)"
                     },
                     "node_id": "64b2564e-d90b-11ef-bf8f-005056a3bc47",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
@@ -1558,7 +1558,7 @@
                     "nodeid": "788a3500-d939-11ef-8a12-005056a3bc47",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E30_Right",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P104_is_subject_to",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "sourcebranchpublication_id": null
                 },
                 {
