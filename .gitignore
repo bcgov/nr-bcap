@@ -4,7 +4,7 @@ bcap/logs
 bcap/management/data/test_user_list.py
 bcap/export_deliverables
 bcap/cantaloupe/*
-bcap/media/packages
+bcap/media/build/
 bcap/uploadedfiles/*
 bcap/settings_local.py
 bcap/staticfiles
