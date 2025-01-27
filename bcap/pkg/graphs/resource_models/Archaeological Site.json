@@ -280,6 +280,26 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "b12fdf72-415e-4aae-a53b-12de6f46532d",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Form Received Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "45a799a8-45f7-46b8-ba37-98903622637c",
+                    "label": {
+                        "en": "Form Received Date"
+                    },
+                    "node_id": "788a3500-d939-11ef-8a12-005056a3bc47",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
                     "card_id": "6e7a59bc-3d85-4fe3-a3c5-ce153f2bd6ee",
                     "config": {
                         "basemap": "streets",
@@ -1135,7 +1155,7 @@
                     "nodeid": "19037f80-d93c-11ef-bf8f-005056a3bc47",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E57_Material",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P103_was_intended_for",
-                    "sortorder": 3,
+                    "sortorder": 8,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1558,7 +1578,7 @@
                     "nodeid": "788a3500-d939-11ef-8a12-005056a3bc47",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E30_Right",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P104_is_subject_to",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1699,7 +1719,7 @@
                     "nodeid": "9bebae52-d939-11ef-92f0-005056a3bc47",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E19_Physical_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1860,7 +1880,7 @@
                     "nodeid": "b0b19038-d93c-11ef-bf8f-005056a3bc47",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E81_Transformation",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P123i_resulted_from",
-                    "sortorder": 4,
+                    "sortorder": 1,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -2076,8 +2096,8 @@
             "publication": {
                 "graph_id": "ce3de8f0-0dd4-4408-8162-5df93fceec59",
                 "notes": null,
-                "publicationid": "8d03df32-dc12-11ef-a21b-0242ac170007",
-                "published_time": "2025-01-26T18:22:50.513"
+                "publicationid": "dd1ee0e8-dc17-11ef-8fcb-0242ac170007",
+                "published_time": "2025-01-26T19:00:52.392"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
