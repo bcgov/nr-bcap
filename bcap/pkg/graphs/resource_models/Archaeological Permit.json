@@ -1,0 +1,282 @@
+{
+    "graph": [
+        {
+            "author": "Sergey Popov",
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": false,
+                    "name": {
+                        "en": "Permit Identification"
+                    },
+                    "nodegroup_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "sortorder": null,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [],
+            "color": null,
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": "Model for permitting data (from the old APTS system)"
+            },
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "edgeid": "6b526419-d94d-40e6-b102-9bb05f5f857f",
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "673aa382-df62-11ef-9ad0-0242ac170009"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "edgeid": "73e134ad-7968-4170-bb01-3c8b17490e8d",
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "9c8ad2f0-df62-11ef-9ad0-0242ac170009"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "edgeid": "75882530-eca9-43c0-9f7d-68dfd17d22a4",
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
+                    "rangenode_id": "7f0349ce-df62-11ef-9ad0-0242ac170009"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "779d56f8-dd1d-11ef-b5c7-005056a3bc47",
+                    "edgeid": "b59c2768-a14c-452b-bb2a-529317752446",
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "588c9c3c-df62-11ef-9ad0-0242ac170009"
+                }
+            ],
+            "functions_x_graphs": [
+                {
+                    "config": {
+                        "descriptor_types": {
+                            "description": {
+                                "nodegroup_id": "",
+                                "string_template": "<Issuing Agency>"
+                            },
+                            "map_popup": {
+                                "nodegroup_id": "",
+                                "string_template": "<Issuing Agency>"
+                            },
+                            "name": {
+                                "nodegroup_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                                "string_template": "<Permit Number>, <HCA Permit Type>"
+                            }
+                        },
+                        "triggering_nodegroups": []
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "id": "6f5ee30a-1ff7-4baf-a66c-8e2a7c163bd0"
+                }
+            ],
+            "graphid": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+            "iconclass": "fa fa-folder",
+            "is_editable": false,
+            "isresource": true,
+            "jsonldcontext": null,
+            "name": {
+                "en": "Archaeological Permit"
+            },
+            "nodegroups": [
+                {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "nodes": [
+                {
+                    "alias": "permit_identification",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Permit Identification",
+                    "nodegroup_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "nodeid": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "permit_number",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "non-localized-string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Permit Number",
+                    "nodegroup_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "nodeid": "673aa382-df62-11ef-9ad0-0242ac170009",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": null,
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": "",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "Archaeological Permit",
+                    "nodegroup_id": null,
+                    "nodeid": "779d56f8-dd1d-11ef-b5c7-005056a3bc47",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity",
+                    "parentproperty": "",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "issuing_agency",
+                    "config": {
+                        "rdmCollection": "574cb441-5b78-4a63-8976-16937e1d2f51"
+                    },
+                    "datatype": "concept",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Issuing Agency",
+                    "nodegroup_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "nodeid": "7f0349ce-df62-11ef-9ad0-0242ac170009",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "hca_permit_type",
+                    "config": {
+                        "rdmCollection": "a1da012f-589c-47be-bd69-2521191cbdc4"
+                    },
+                    "datatype": "concept",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "HCA Permit Type",
+                    "nodegroup_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
+                    "nodeid": "9c8ad2f0-df62-11ef-9ad0-0242ac170009",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "publication": {
+                "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                "notes": null,
+                "publicationid": "1250a50c-dff2-11ef-b745-0242ac170009",
+                "published_time": "2025-01-31T16:40:25.413"
+            },
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "root": {
+                "alias": null,
+                "config": {
+                    "en": ""
+                },
+                "datatype": "semantic",
+                "description": "",
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                "hascustomalias": false,
+                "is_collector": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "Archaeological Permit",
+                "nodegroup_id": null,
+                "nodeid": "779d56f8-dd1d-11ef-b5c7-005056a3bc47",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity",
+                "sortorder": 0,
+                "sourcebranchpublication_id": null
+            },
+            "slug": "archaeological_permit",
+            "subtitle": {
+                "en": "APTS Permits"
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "version": ""
+        }
+    ],
+    "metadata": {
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "c2d44664b 2025-01-15 20:52:27 -0800",
+        "os": "Linux",
+        "os version": "6.10.14-linuxkit"
+    }
+}

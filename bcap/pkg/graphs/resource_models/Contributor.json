@@ -116,52 +116,11 @@
                             "placeholder"
                         ],
                         "label": "Role",
-                        "options": [
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "cd27556a-431c-40f4-bcbe-456feca25aa2",
-                                "id": "a144a32b-8ce0-41e5-af8e-bf5dd3a636ca",
-                                "sortorder": "",
-                                "text": "Fossil Collector"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "a337ecb2-7eb9-4789-b307-94f49ebd00c0",
-                                "id": "846b43f9-b3b1-4c14-ae8f-c1e50bd5d6bd",
-                                "sortorder": "",
-                                "text": "Industry Project Initiator"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "0b494714-4f9f-4ebc-aa96-c44d3469d7fa",
-                                "id": "3489e41e-0168-4a8f-80f1-75fde26e2130",
-                                "sortorder": "",
-                                "text": "Paleontology Consultant"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "ea01f3f0-93d2-4fca-81ae-4185b99743f8",
-                                "id": "d71acc49-0f84-4e92-af66-ac576eaea58f",
-                                "sortorder": "",
-                                "text": "Publication Author"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "bc75b99e-187a-422f-aead-2c47a7f4725d",
-                                "id": "b30013a5-0595-4784-a901-b50f53d16a53",
-                                "sortorder": "",
-                                "text": "Researcher"
-                            }
-                        ],
+                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         },
-                        "url": "/bc-fossil-management/concepts/dropdown?conceptid=0454aeb7-da1e-4d10-b45b-9ec16a52767b"
+                        "url": "/bcap/concepts/dropdown?conceptid=0454aeb7-da1e-4d10-b45b-9ec16a52767b"
                     },
                     "id": "56a839af-4f62-4511-8091-98d655e78ee7",
                     "label": {
@@ -983,8 +942,8 @@
             "publication": {
                 "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                 "notes": null,
-                "publicationid": "10e45606-de70-11ef-aaee-0242ac170009",
-                "published_time": "2025-01-29T18:37:17.287"
+                "publicationid": "25e7b0bc-df5a-11ef-a195-0242ac170009",
+                "published_time": "2025-01-30T22:32:54.776"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
