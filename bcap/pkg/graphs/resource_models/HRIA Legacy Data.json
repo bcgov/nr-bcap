@@ -400,7 +400,7 @@
             "isresource": true,
             "jsonldcontext": null,
             "name": {
-                "en": "Heritage Site Historical Data"
+                "en": "HRIA Legacy Data"
             },
             "nodegroups": [
                 {
@@ -426,7 +426,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": true,
-                    "name": "Heritage Site Historical Data",
+                    "name": "HRIA Legacy Data",
                     "nodegroup_id": null,
                     "nodeid": "062ab21c-d045-11ee-b139-080027b7463b",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S2_Sample_Taking",
@@ -717,16 +717,16 @@
                 "isrequired": false,
                 "issearchable": true,
                 "istopnode": true,
-                "name": "Heritage Site Historical Data",
+                "name": "HRIA Legacy Data",
                 "nodegroup_id": null,
                 "nodeid": "062ab21c-d045-11ee-b139-080027b7463b",
                 "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S2_Sample_Taking",
                 "sortorder": 0,
                 "sourcebranchpublication_id": null
             },
-            "slug": "heritage_site_historical_data",
+            "slug": "hria_legacy_data",
             "subtitle": {
-                "en": "Historical HRIA data that will not be used in future site additions"
+                "en": "Legacy HRIA data that will not be used in future site additions"
             },
             "template_id": "50000000-0000-0000-0000-000000000001",
             "version": ""
