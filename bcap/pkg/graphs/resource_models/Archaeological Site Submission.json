@@ -80,7 +80,7 @@
                     },
                     "is_editable": true,
                     "name": {
-                        "en": "Heritage Site"
+                        "en": "Archaeological Site"
                     },
                     "nodegroup_id": "4506b49e-a324-11ed-bbb0-5254004d77d3",
                     "sortorder": 0,
@@ -319,7 +319,7 @@
                         "label": "Internal Notes",
                         "maxLength": null,
                         "placeholder": {
-                            "en": "Heritage Branch internal notes relating to the submission as a whole."
+                            "en": "Archaeology Branch internal notes relating to the submission as a whole."
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -534,14 +534,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Heritage Site",
+                        "label": "Archaeological Site",
                         "placeholder": {
                             "en": "Select or create the site"
                         }
                     },
                     "id": "9ed5afd9-839d-44c0-8a97-a9bcb86e8a13",
                     "label": {
-                        "en": "Heritage Site"
+                        "en": "Archaeological Site"
                     },
                     "node_id": "4506b49e-a324-11ed-bbb0-5254004d77d3",
                     "sortorder": 0,
@@ -890,7 +890,7 @@
             "isresource": true,
             "jsonldcontext": null,
             "name": {
-                "en": "Heritage Site Submission"
+                "en": "Archaeological Site Submission"
             },
             "nodegroups": [
                 {
@@ -1248,7 +1248,7 @@
                         "dateFormat": "YYYY-MM-DD"
                     },
                     "datatype": "date",
-                    "description": "Date the submission was received by Heritage Branch",
+                    "description": "Date the submission was received by Archaeology Branch",
                     "exportable": true,
                     "fieldname": "SUB_DT",
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
@@ -1280,7 +1280,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": true,
-                    "name": "Heritage Site Submission",
+                    "name": "Archaeological Site Submission",
                     "nodegroup_id": null,
                     "nodeid": "4443720a-9da1-11ed-976d-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
@@ -1289,13 +1289,13 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "heritage_site",
+                    "alias": "archaeological_site",
                     "config": {
                         "graphs": [
                             {
                                 "graphid": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                                 "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Heritage Site",
+                                "name": "Archaeological Site",
                                 "relationshipCollection": "00000000-0000-0000-0000-000000000005",
                                 "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
                                 "useOntologyRelationship": false
@@ -1318,7 +1318,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=7049&resource-type-filter=%5B%7B%22graphid%22%3A%22cef9c510-e3e6-4057-ac08-89ad926180b4%22%2C%22name%22%3A%22Heritage+Site%22%2C%22inverted%22%3Afalse%7D%5D&sort-results=asc"
+                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=7049&resource-type-filter=%5B%7B%22graphid%22%3A%22cef9c510-e3e6-4057-ac08-89ad926180b4%22%2C%22name%22%3A%22Archaeological+Site%22%2C%22inverted%22%3Afalse%7D%5D&sort-results=asc"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -1330,7 +1330,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Heritage Site",
+                    "name": "Archaeological Site",
                     "nodegroup_id": "4506b49e-a324-11ed-bbb0-5254004d77d3",
                     "nodeid": "4506b49e-a324-11ed-bbb0-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
@@ -1344,7 +1344,7 @@
                         "en": ""
                     },
                     "datatype": "string",
-                    "description": "Internal Heritage Branch notes related to the site submitted",
+                    "description": "Internal Archaeology Branch notes related to the site submitted",
                     "exportable": true,
                     "fieldname": "ST_SUB_NTS",
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
@@ -1744,7 +1744,7 @@
                 "isrequired": false,
                 "issearchable": true,
                 "istopnode": true,
-                "name": "Heritage Site Submission",
+                "name": "Archaeological Site Submission",
                 "nodegroup_id": null,
                 "nodeid": "4443720a-9da1-11ed-976d-5254004d77d3",
                 "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",

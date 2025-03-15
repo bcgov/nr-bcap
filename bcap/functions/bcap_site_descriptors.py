@@ -44,7 +44,7 @@ details = {
 class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
     _datatype_factory = DataTypeFactory()
     # For Name part of descriptor
-    en_graph = {"en": "Heritage Site"}
+    en_graph = {"en": "Archaeological Site"}
 
     _empty_name_value = "(No official name)"
     _nodes = {}

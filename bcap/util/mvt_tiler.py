@@ -14,5 +14,5 @@ class MVTTiler(MVTTiler_Base):
             "1b6235b0-0d0f-11ed-98c2-5254008afee6": [
                 "authorities",
                 "borden_number",
-            ],  # Heritage Site
+            ],  # Archaeological Site
         }

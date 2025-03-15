@@ -78,7 +78,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "BC Property Legal Description"
                     },
@@ -116,7 +116,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "BC Property Address"
                     },
@@ -145,7 +145,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Spatial Location"
                     },
@@ -172,9 +172,9 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
-                        "en": "Heritage Site Location"
+                        "en": "Site Location"
                     },
                     "nodegroup_id": "1b62393e-0d0f-11ed-98c2-5254008afee6",
                     "sortorder": 1,
@@ -199,7 +199,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Borden Number"
                     },
@@ -226,7 +226,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Child Sites"
                     },
@@ -282,7 +282,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Official Recognition Information"
                     },
@@ -315,33 +315,6 @@
                     },
                     "nodegroup_id": "7599be12-0d06-11ed-a4d8-5254008afee6",
                     "sortorder": 4,
-                    "visible": true
-                },
-                {
-                    "active": true,
-                    "cardid": "7a1713a4-0d06-11ed-b43a-5254008afee6",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": "",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "helpenabled": true,
-                    "helptext": {
-                        "en": "<p>Enter the Statement of Significance for the heritage site. The Statement of Significance explains what the formal recognition applies to, what is valued about the place, and which principal features must be retained to preserve the identified values.</p>\n\n<p>For resources, see the <a href=\"https://www.historicplaces.ca/media/21054/sos_guide_final_e_new_design.pdf\" style=\"color:blue; text-decoration:underline\">Canadian Register of Historic Places Writing Statements of Significance</a></p>\n\n<p><u>Significance Type</u></p>\n\n<p>Select the authority type responsible for the Statement of Significance</p>\n\n<p><u>Description</u></p>\n\n<p>Enter the short description of the physical elements of the property, where it is located (including province), and its physical situation or context.</p>\n\n<p><u>Heritage Value</u></p>\n\n<p>Describe why the place is valued by the community, province, or territory and identify which heritage values the formal recognition is based on. Heritage values are the aesthetic, historic, scientific, cultural, social, or spiritual importance or significance for past, present or future generations.</p>\n\n<p><u>Character-Defining Elements</u></p>\n\n<p>List the key features of the heritage site that contribute to its heritage value.</p>\n\n<p><u>Document Location</u></p>\nEnter the government or agency name where the original document was created.<br />\n&nbsp;"
-                    },
-                    "helptitle": {
-                        "en": "Statement of Significance Help"
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "is_editable": true,
-                    "name": {
-                        "en": "Statement of Significance"
-                    },
-                    "nodegroup_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "sortorder": 9,
                     "visible": true
                 },
                 {
@@ -390,7 +363,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Internal Remarks"
                     },
@@ -444,7 +417,7 @@
                     "instructions": {
                         "en": "Enter any external URLs associated with this Historic Place"
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "External URLs"
                     },
@@ -527,7 +500,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Chronology"
                     },
@@ -554,7 +527,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Names"
                     },
@@ -1702,144 +1675,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
-                    "card_id": "7a1713a4-0d06-11ed-b43a-5254008afee6",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Heritage Value",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": ""
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "7a1719ee-0d06-11ed-b43a-5254008afee6",
-                    "label": {
-                        "en": "Heritage Value"
-                    },
-                    "node_id": "7a17193a-0d06-11ed-b43a-5254008afee6",
-                    "sortorder": 2,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "7a1713a4-0d06-11ed-b43a-5254008afee6",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Character-Defining Elements",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": ""
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "7a171a98-0d06-11ed-b43a-5254008afee6",
-                    "label": {
-                        "en": "Character-Defining Elements"
-                    },
-                    "node_id": "7a1714f8-0d06-11ed-b43a-5254008afee6",
-                    "sortorder": 3,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "7a1713a4-0d06-11ed-b43a-5254008afee6",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Description",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": ""
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "7a171b2e-0d06-11ed-b43a-5254008afee6",
-                    "label": {
-                        "en": "Description"
-                    },
-                    "node_id": "7a17162e-0d06-11ed-b43a-5254008afee6",
-                    "sortorder": 1,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "7a1713a4-0d06-11ed-b43a-5254008afee6",
-                    "config": {
-                        "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Significance Type",
-                        "options": [],
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "7a171bba-0d06-11ed-b43a-5254008afee6",
-                    "label": {
-                        "en": "Significance Type"
-                    },
-                    "node_id": "7a171840-0d06-11ed-b43a-5254008afee6",
-                    "sortorder": 0,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
-                },
-                {
-                    "card_id": "7a1713a4-0d06-11ed-b43a-5254008afee6",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Document Location",
-                        "maxLength": "350",
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "7a171c3c-0d06-11ed-b43a-5254008afee6",
-                    "label": {
-                        "en": "Document Location"
-                    },
-                    "node_id": "7a17173c-0d06-11ed-b43a-5254008afee6",
-                    "sortorder": 4,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
                     "card_id": "a66886c7-2c8a-4621-a413-0c168cc18d1b",
                     "config": {
                         "defaultValue": {
@@ -2728,15 +2563,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "19d560d2-0d05-11ed-a4d8-5254008afee6",
-                    "edgeid": "6918cc55-835f-48dd-8b67-46cb96d85508",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "rangenode_id": "7a171192-0d06-11ed-b43a-5254008afee6"
-                },
-                {
-                    "description": null,
                     "domainnode_id": "6cc30e6a-0d06-11ed-8804-5254008afee6",
                     "edgeid": "6cc32120-0d06-11ed-8804-5254008afee6",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -2860,51 +2686,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "rangenode_id": "7599c3ee-0d06-11ed-a4d8-5254008afee6"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "edgeid": "7a17206a-0d06-11ed-b43a-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "7a17162e-0d06-11ed-b43a-5254008afee6"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "edgeid": "7a172178-0d06-11ed-b43a-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "rangenode_id": "7a17173c-0d06-11ed-b43a-5254008afee6"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "edgeid": "7a17225e-0d06-11ed-b43a-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "7a1714f8-0d06-11ed-b43a-5254008afee6"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "edgeid": "7a17233a-0d06-11ed-b43a-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "7a17193a-0d06-11ed-b43a-5254008afee6"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "edgeid": "7a17240c-0d06-11ed-b43a-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "rangenode_id": "7a171840-0d06-11ed-b43a-5254008afee6"
                 },
                 {
                     "description": null,
@@ -3240,11 +3021,11 @@
             ],
             "graphid": "cef9c510-e3e6-4057-ac08-89ad926180b4",
             "iconclass": "fa fa-bank",
-            "is_editable": true,
+            "is_editable": false,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
-                "en": "Heritage Site"
+                "en": "Archaeological Site"
             },
             "nodegroups": [
                 {
@@ -3323,12 +3104,6 @@
                     "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "7599be12-0d06-11ed-a4d8-5254008afee6",
-                    "parentnodegroup_id": null
-                },
-                {
-                    "cardinality": "n",
-                    "legacygroupid": null,
-                    "nodegroupid": "7a171192-0d06-11ed-b43a-5254008afee6",
                     "parentnodegroup_id": null
                 },
                 {
@@ -3468,7 +3243,7 @@
                             {
                                 "graphid": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                                 "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Heritage Site",
+                                "name": "Archaeological Site",
                                 "relationshipCollection": "00000000-0000-0000-0000-000000000005",
                                 "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
                                 "useOntologyRelationship": false
@@ -3618,7 +3393,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": true,
-                    "name": "Heritage Site",
+                    "name": "Archaeological Site",
                     "nodegroup_id": null,
                     "nodeid": "19d560d2-0d05-11ed-a4d8-5254008afee6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
@@ -3731,7 +3506,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Heritage Site Location",
+                    "name": "Site Location",
                     "nodegroup_id": "1b62393e-0d0f-11ed-98c2-5254008afee6",
                     "nodeid": "1b62393e-0d0f-11ed-98c2-5254008afee6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
@@ -4567,144 +4342,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "bc_statement_of_significance",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "semantic",
-                    "description": "",
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "BC Statement of Significance",
-                    "nodegroup_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "nodeid": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMgeo/SP4_Spatial_Coordinate_Reference_System",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "defining_elements",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": "soscdf",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Defining Elements",
-                    "nodegroup_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "nodeid": "7a1714f8-0d06-11ed-b43a-5254008afee6",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "physical_description",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": "sosdescrip",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Physical Description",
-                    "nodegroup_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "nodeid": "7a17162e-0d06-11ed-b43a-5254008afee6",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "document_location",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": "Location of the original document",
-                    "exportable": false,
-                    "fieldname": "sosdocloc",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Document Location",
-                    "nodegroup_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "nodeid": "7a17173c-0d06-11ed-b43a-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "significance_type",
-                    "config": {
-                        "rdmCollection": "f4b95077-67f2-4867-84e7-5623571b822f"
-                    },
-                    "datatype": "concept",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": "sostype",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Significance Type",
-                    "nodegroup_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "nodeid": "7a171840-0d06-11ed-b43a-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "heritage_value",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": "soshv",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Heritage Value",
-                    "nodegroup_id": "7a171192-0d06-11ed-b43a-5254008afee6",
-                    "nodeid": "7a17193a-0d06-11ed-b43a-5254008afee6",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S6_Data_Evaluation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "construction_actor_notes",
                     "config": {
                         "en": ""
@@ -5431,8 +5068,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "605d03a0-db8b-11ef-8f82-0242ac170007",
-                "published_time": "2025-01-26T02:15:13.542"
+                "publicationid": "606c2426-dc0c-11ef-a22e-0242ac170007",
+                "published_time": "2025-01-26T17:38:38.719"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -5449,14 +5086,14 @@
                 "isrequired": false,
                 "issearchable": true,
                 "istopnode": true,
-                "name": "Heritage Site",
+                "name": "Archaeological Site",
                 "nodegroup_id": null,
                 "nodeid": "19d560d2-0d05-11ed-a4d8-5254008afee6",
                 "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
                 "sortorder": 0,
                 "sourcebranchpublication_id": null
             },
-            "slug": "heritage_site",
+            "slug": "archaeological_site",
             "subtitle": {
                 "en": ""
             },

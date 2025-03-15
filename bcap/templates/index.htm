@@ -94,10 +94,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         <li>
                             <a href="#info-block-1">{% trans "About" %}</a>
                         </li>
+                        {% if user.username and user.username != 'anonymous' %}
                         <li>
                             <a href="{% url 'search_home' %}">{% trans "Search Sites" %}</a>
                         </li>
-                        {% if user.username and user.username != 'anonymous' %}
                         {% if user|can_create_resource_instance %}
                         <li>
                             <a href="{% url 'resource' %}" target="_blank">{% trans "Manage" %}</a>

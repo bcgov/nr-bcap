@@ -11,7 +11,9 @@ class Command(BaseCommand):
             "local_government",
             "lg_person",
             "legislative_act",
-            "heritage_site",
+            "permit",
+            "archaeological_site",
+            "site_visit",
             "project_sandbox",
             "site_submission",
         ]

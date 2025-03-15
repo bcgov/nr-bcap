@@ -63,7 +63,7 @@
         <dl class="dl-vertical dl-vertical-bc submitted_sites" >
             <dt>Submitted Sites</dt>
             <dd>
-                <div data-bind="visible: nodesHaveData(['requested_operation', 'information_provided', 'heritage_site'])">
+                <div data-bind="visible: nodesHaveData(['requested_operation', 'information_provided', 'archaeological_site'])">
                     <ol>
                     <!-- ko foreach: submittedSites -->
                     <li>
@@ -80,15 +80,15 @@
                         </div>
                         <div class="bc-inline">,</div>
                         <div class="bc-inline" data-bind="component: { name: 'resource-instance-select-widget',
-                                                params: { value: heritage_site, state: 'display_value' }
+                                                params: { value: archaeological_site, state: 'display_value' }
                                                 },
-                                                visible: !!heritage_site()">
+                                                visible: !!archaeological_site()">
                         </div>
                     </li>
                     <!-- /ko -->
                     </ol>
                 </div>
-                <div data-bind="visible: !nodesHaveData(['requested_operation', 'information_provided', 'heritage_site'])">
+                <div data-bind="visible: !nodesHaveData(['requested_operation', 'information_provided', 'archaeological_site'])">
                     No sites have been added
                 </div>
 

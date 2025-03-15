@@ -4,7 +4,7 @@ define(['underscore',
     'viewmodels/bcap-site',
     'reports/map-header',
     'templates/views/report-templates/map.htm',
-    'templates/views/report-templates/details/heritage_site.htm'
+    'templates/views/report-templates/details/archaeological_site.htm'
 ], function(_, ko, koMapping, MapReportViewModel, MapHeader, defaultSiteTemplate) {
     var siteViewModel = MapReportViewModel;
     /*
