@@ -132,6 +132,7 @@ python3.11 manage.py bc_test_users --refresh
 10. Open the `bcap7-6` container in Docker Desktop
 11. Go to the "Exec" tab and run the following:
 ```
+bash
 npm run build_development
 python3.11 manage.py setup_db
 ```
