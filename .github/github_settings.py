@@ -155,15 +155,15 @@ DATABASES = {
         "AUTOCOMMIT": True,
         "CONN_MAX_AGE": 0,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": "postgres",
-        "NAME": "bcap",
+        "HOST": get_env_variable("PGHOST"),
+        "NAME": get_env_variable("PGDBNAME"),
         "OPTIONS": {},
-        "PASSWORD": "postgis",
+        "PASSWORD": get_env_variable("PGPASSWORD"),
         "PORT": "5432",
         "POSTGIS_TEMPLATE": "template_postgis",
         "TEST": {"CHARSET": None, "COLLATION": None, "MIRROR": None, "NAME": None},
         "TIME_ZONE": None,
-        "USER": "postgres",
+        "USER": get_env_variable("PGUSERNAME"),
     }
 }
 
