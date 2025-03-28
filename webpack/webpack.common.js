@@ -10,7 +10,7 @@ const BundleTracker = require('webpack-bundle-tracker');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { VueLoaderPlugin } = require("vue-loader");
 
-const { buildFilepathLookup } = require('./webpack-utils/build-filepath-lookup');
+const { buildFilepathLookup, toDockerOrGitHubPath } = require('./webpack-utils/build-filepath-lookup');
 
 module.exports = () => {
     return new Promise((resolve, _reject) => {
@@ -21,11 +21,17 @@ module.exports = () => {
 
         console.log('Data imported from .frontend-configuration-settings.json:', parsedData);
     
-        global.APP_ROOT = parsedData['APP_ROOT'];
+        global.APP_ROOT = toDockerOrGitHubPath(parsedData['APP_ROOT']);
+        global.ROOT_DIR = toDockerOrGitHubPath(parsedData['ROOT_DIR']);
+
+        global.ARCHES_APPLICATIONS_PATHS = {};
+
+        for (const [key, value] of Object.entries(parsedData['ARCHES_APPLICATIONS_PATHS'])) {
+            global.ARCHES_APPLICATIONS_PATHS[key] = toDockerOrGitHubPath(value);
+        }
+
         global.ARCHES_APPLICATIONS = parsedData['ARCHES_APPLICATIONS'];
-        global.ARCHES_APPLICATIONS_PATHS = parsedData['ARCHES_APPLICATIONS_PATHS'];
         global.SITE_PACKAGES_DIRECTORY = parsedData['SITE_PACKAGES_DIRECTORY'];
-        global.ROOT_DIR = parsedData['ROOT_DIR'];
         global.STATIC_URL = parsedData['STATIC_URL'];
         global.PUBLIC_SERVER_ADDRESS = parsedData['PUBLIC_SERVER_ADDRESS'];
         global.WEBPACK_DEVELOPMENT_SERVER_PORT = parsedData['WEBPACK_DEVELOPMENT_SERVER_PORT'];
@@ -44,13 +50,13 @@ module.exports = () => {
         // END workaround for handling node_modules paths in arches-core vs projects
         // BEGIN create entry point configurations
 
-        const archesCoreEntryPointConfiguration = buildFilepathLookup(Path.resolve(__dirname, ROOT_DIR, 'app', 'media', 'js'));
-        const projectEntryPointConfiguration = buildFilepathLookup(Path.resolve(__dirname, APP_ROOT, 'media', 'js'));
+        const archesCoreEntryPointConfiguration = buildFilepathLookup(Path.resolve(__dirname, ROOT_DIR, 'app', 'media', 'js')) || {};
+        const projectEntryPointConfiguration = buildFilepathLookup(Path.resolve(__dirname, APP_ROOT, 'media', 'js')) || {};
 
         const archesApplicationsEntrypointConfiguration = ARCHES_APPLICATIONS.reduce((acc, archesApplication) => {
             return {
                 ...acc,
-                ...buildFilepathLookup(Path.resolve(__dirname, ARCHES_APPLICATIONS_PATHS[archesApplication], 'media', 'js'))
+                ...buildFilepathLookup(Path.resolve(__dirname, ARCHES_APPLICATIONS_PATHS[archesApplication], 'media', 'js'))  || {}
             };
         }, {});
 
@@ -58,15 +64,15 @@ module.exports = () => {
         // BEGIN create JavaScript filepath lookups
 
         const archesCoreJavascriptRelativeFilepathToAbsoluteFilepathLookup = Object.entries(archesCoreEntryPointConfiguration).reduce((acc, [path, config]) => {
-            acc[path + '$'] = Path.resolve(__dirname, path, config['import']);
+            acc[path + '$'] = Path.resolve(__dirname, path, config['import']) || {};;
             return acc;
         }, {});
         const projectJavascriptRelativeFilepathToAbsoluteFilepathLookup = Object.entries(projectEntryPointConfiguration).reduce((acc, [path, config]) => {
-            acc[path + '$'] = Path.resolve(__dirname, path, config['import']);
+            acc[path + '$'] = Path.resolve(__dirname, path, config['import']) || {};;
             return acc;
         }, {});
         const archesApplicationsJavascriptRelativeFilepathToAbsoluteFilepathLookup = Object.entries(archesApplicationsEntrypointConfiguration).reduce((acc, [path, config]) => {
-            acc[path + '$'] = Path.resolve(__dirname, path, config['import']);
+            acc[path + '$'] = Path.resolve(__dirname, path, config['import']) || {};;
             return acc;
         }, {});
 

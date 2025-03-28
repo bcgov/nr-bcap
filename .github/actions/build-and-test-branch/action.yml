@@ -1,6 +1,6 @@
 name: 'Build and test branch'
 description: 'Builds and tests a branch'
-inputs: 
+inputs:
   branch-type:
     description: 'String denoting either `target` or `feature` branch'
     required: true
@@ -12,6 +12,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Symlink GitHub settings
+      run: |
+        ln -sf .github/github_settings.py github_settings.py
+      shell: bash
+
     - name: Install Java, GDAL, and other system dependencies
       run: |
         sudo apt update
@@ -24,16 +29,17 @@ runs:
       with:
         elasticsearch-version: 8
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
     - name: Install Python packages
       run: |
-        python -m pip install --upgrade pip
-        pip install '.[dev]'
-        echo Python packages installed
+        uv pip install --system '.[dev]'
       shell: bash
-    
+
     - name: Ensure frontend configuration files exist
       run: |
-          python manage.py check
+          python manage.py check --settings="github_settings"
       shell: bash
 
     - name: Install Arches applications
@@ -46,6 +52,48 @@ runs:
           npm install
       shell: bash
 
+    - name: Symlink or create configuration files to correct location
+      run: |
+        set -e
+
+        if [ -f "/home/runner/work/nr-bcap/.frontend-configuration-settings.json" ]; then
+            ln -sf /home/runner/work/nr-bcap/.frontend-configuration-settings.json /home/runner/work/nr-bcap/nr-bcap/
+        fi
+
+        if [ -f "/home/runner/work/nr-bcap/.tsconfig-paths.json" ]; then
+            ln -sf /home/runner/work/nr-bcap/.tsconfig-paths.json /home/runner/work/nr-bcap/nr-bcap/
+        fi
+
+        mkdir -p /home/runner/work/nr-bcap/node_modules/arches
+
+        cat > /home/runner/work/nr-bcap/node_modules/arches/package.json << EOL
+        {
+            "name": "arches",
+            "version": "7.6.4",
+            "description": "Mock Arches package.json for GitHub Actions",
+            "nodeModulesPaths": {}
+        }
+        EOL
+
+        mkdir -p /home/runner/work/nr-bcap/node_modules/bcgov_arches_common
+
+        cat > /home/runner/work/nr-bcap/node_modules/bcgov_arches_common/package.json << EOL
+        {
+            "name": "bcgov_arches_common",
+            "version": "1.0.0",
+            "description": "Mock bcgov_arches_common package.json for GitHub Actions",
+            "nodeModulesPaths": {}
+        }
+        EOL
+
+        rm -rf /home/runner/work/nr-bcap/node_modules
+        ln -sf /home/runner/work/nr-bcap/nr-bcap/node_modules /home/runner/work/nr-bcap/node_modules
+
+        if [ ! -d "/home/runner/work/nr-bcap/nr-bcap/bcap" ]; then
+            ln -sf /home/runner/work/nr-bcap/nr-bcap /home/runner/work/nr-bcap/nr-bcap/bcap
+        fi
+      shell: bash
+
     - name: Webpack frontend files
       run: |
           npm run build_test
@@ -54,6 +102,11 @@ runs:
     - name: Check frontend formatting with prettier
       run: |
         npm run prettier:check
+      shell: bash
+
+    - name: Format with black
+      run: |
+        black . --exclude=node_modules
       shell: bash
 
     - name: Check backend formatting with black
@@ -74,7 +127,7 @@ runs:
 
     - name: Check for missing migrations
       run: |
-        python manage.py makemigrations --check
+        python manage.py makemigrations bcap --check --settings="github_settings"
       shell: bash
 
     - name: Ensure previous Python coverage data is erased
@@ -84,7 +137,7 @@ runs:
 
     - name: Run Python unit tests
       run: |
-        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
+        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="github_settings"
       shell: bash
 
     - name: Generate Python report coverage
@@ -104,6 +157,6 @@ runs:
     - name: Upload Python coverage report as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.branch-type }}-branch-python-coverage-report
+        name: ${{ inputs.branch-type }}-branch-python-coverage-report-py${{ matrix.python-version }}
         path: ${{ inputs.branch-type }}_branch_python_coverage.json
         overwrite: true
