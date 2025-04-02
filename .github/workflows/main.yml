@@ -40,14 +40,15 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
           path: .
 
-      - name: Symlink GitHub settings
+      - name: Copy GitHub settings for Django commands
         run: |
-          ln -sf .github/github_settings.py github_settings.py
+          cp .github/github_settings.py github_settings.py
         shell: bash
 
-      - name: Copy GitHub settings to bcap settings for migrations
+      - name: Copy GitHub settings to bcap settings for migrations and installation
         run: |
-          ln -sf $(pwd)/github_settings.py $(pwd)/bcap/settings.py
+          mkdir -p bcap
+          cp .github/github_settings.py bcap/settings.py
         shell: bash
 
       - name: Build and test branch
