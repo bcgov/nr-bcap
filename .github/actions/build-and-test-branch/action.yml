@@ -17,6 +17,11 @@ runs:
         ln -sf .github/github_settings.py github_settings.py
       shell: bash
 
+    - name: Copy GitHub settings to bcap settings for migrations
+      run: |
+        ln -sf $(pwd)/github_settings.py $(pwd)/bcap/settings.py
+      shell: bash
+
     - name: Install Java, GDAL, and other system dependencies
       run: |
         sudo apt update
