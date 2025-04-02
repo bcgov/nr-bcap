@@ -9,7 +9,6 @@ import inspect
 import semantic_version
 from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ImproperlyConfigured
 
 
 def get_env_variable(var_name, default=None):
@@ -17,11 +16,7 @@ def get_env_variable(var_name, default=None):
         val = os.environ[var_name]
         return None if val == "None" else val
     except KeyError:
-        if default is not None:
-            return default
-
-        error_msg = f"Set the {var_name} environment variable"
-        raise ImproperlyConfigured(error_msg)
+        return default
 
 
 try:
