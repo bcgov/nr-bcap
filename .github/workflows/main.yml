@@ -40,6 +40,16 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
           path: .
 
+      - name: Symlink GitHub settings
+        run: |
+          ln -sf .github/github_settings.py github_settings.py
+        shell: bash
+
+      - name: Copy GitHub settings to bcap settings for migrations
+        run: |
+          ln -sf $(pwd)/github_settings.py $(pwd)/bcap/settings.py
+        shell: bash
+
       - name: Build and test branch
         uses: ./.github/actions/build-and-test-branch
         with:
