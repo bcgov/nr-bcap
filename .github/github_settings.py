@@ -12,15 +12,15 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 
 
-def get_env_variable(var_name, is_optional=False):
-    msg = "Set the %s environment variable"
+def get_env_variable(var_name, default=None):
     try:
         val = os.environ[var_name]
         return None if val == "None" else val
     except KeyError:
-        if is_optional:
-            return None
-        error_msg = msg % var_name
+        if default is not None:
+            return default
+
+        error_msg = f"Set the {var_name} environment variable"
         raise ImproperlyConfigured(error_msg)
 
 
@@ -35,10 +35,10 @@ load_dotenv(
 APP_NAME = "bcap"
 APP_VERSION = semantic_version.Version(major=0, minor=0, patch=1)
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-APP_SUFFIX = "_dev"
+APP_SUFFIX = get_env_variable("APP_SUFFIX", default="_dev")
 
 # PROXY prefix used - NB - cannot have leading "/", and must have trailing "/"
-BCGOV_PROXY_PREFIX = get_env_variable("BCGOV_PROXY_PREFIX")
+BCGOV_PROXY_PREFIX = get_env_variable("BCGOV_PROXY_PREFIX", default="bcap/")
 
 WEBPACK_LOADER = {
     "DEFAULT": {
@@ -74,19 +74,22 @@ FILENAME_GENERATOR = "bcap.util.storage_filename_generator.generate_filename"
 UPLOADED_FILES_DIR = "uploadedfiles"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_env_variable("DJANGO_SECRET_KEY")
+SECRET_KEY = get_env_variable(
+    "DJANGO_SECRET_KEY", default="VbNf[N'p'Sl8hcv#xzBBiGt$GIcUE(='v`YdJGtV:+w/'*@-c7"
+)
 
 # options are either "PROD" or "DEV" (installing with Dev mode set gets you extra dependencies)
-MODE = get_env_variable("DJANGO_MODE")
+MODE = get_env_variable("DJANGO_MODE", default="DEV")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = ast.literal_eval(get_env_variable("DJANGO_DEBUG"))
+DEBUG = ast.literal_eval(get_env_variable("DJANGO_DEBUG", default="True"))
 
 ROOT_URLCONF = "bcap.urls"
 
-# ELASTICSEARCH_SCHEME = get_env_variable("ES_SCHEME")
-# ELASTICSEARCH_HTTP_PORT = int(get_env_variable("ES_PORT"))
-# ELASTICSEARCH_HTTP_HOST = get_env_variable("ES_HOST")
+ELASTICSEARCH_SCHEME = get_env_variable("ES_SCHEME", default="http")
+ELASTICSEARCH_HTTP_PORT = int(get_env_variable("ES_PORT", default="9200"))
+ELASTICSEARCH_HTTP_HOST = get_env_variable("ES_HOST", default="localhost")
+
 # ELASTICSEARCH_HOSTS = [
 #     {
 #         "scheme": ELASTICSEARCH_SCHEME,
@@ -115,8 +118,8 @@ ROOT_URLCONF = "bcap.urls"
 # ELASTICSEARCH_HOSTS = [{"scheme": "https", "host": ELASTICSEARCH_HTTP_HOST, "port": ELASTICSEARCH_HTTP_PORT}]
 #
 # # How do we handle this across environments?
-# ELASTICSEARCH_CERT_LOCATION = get_env_variable("ES_CERT_FILE")
-# ELASTICSEARCH_API_KEY = get_env_variable("ES_API_KEY")
+ELASTICSEARCH_CERT_LOCATION = get_env_variable("ES_CERT_FILE", default=None)
+ELASTICSEARCH_API_KEY = get_env_variable("ES_API_KEY", default=None)
 
 # # # If you need to connect to Elasticsearch via an API key instead of username/password, use the syntax below:
 # if ELASTICSEARCH_CERT_LOCATION and ELASTICSEARCH_API_KEY:
@@ -146,7 +149,9 @@ LOAD_PACKAGE_ONTOLOGIES = True
 # This is the namespace to use for export of data (for RDF/XML for example)
 # It must point to the url where you host your site
 # Make sure to use a trailing slash
-PUBLIC_SERVER_ADDRESS = get_env_variable("PUBLIC_SERVER_ADDRESS")
+PUBLIC_SERVER_ADDRESS = get_env_variable(
+    "PUBLIC_SERVER_ADDRESS", default="http://localhost:8000"
+)
 ARCHES_NAMESPACE_FOR_DATA_EXPORT = PUBLIC_SERVER_ADDRESS
 
 DATABASES = {
@@ -155,15 +160,15 @@ DATABASES = {
         "AUTOCOMMIT": True,
         "CONN_MAX_AGE": 0,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": get_env_variable("PGHOST"),
-        "NAME": get_env_variable("PGDBNAME"),
+        "HOST": get_env_variable("PGHOST", default="postgres"),
+        "NAME": get_env_variable("PGDBNAME", default="bcap"),
         "OPTIONS": {},
-        "PASSWORD": get_env_variable("PGPASSWORD"),
+        "PASSWORD": get_env_variable("PGPASSWORD", default="postgis"),
         "PORT": "5432",
         "POSTGIS_TEMPLATE": "template_postgis",
         "TEST": {"CHARSET": None, "COLLATION": None, "MIRROR": None, "NAME": None},
         "TIME_ZONE": None,
-        "USER": get_env_variable("PGUSERNAME"),
+        "USER": get_env_variable("PGUSERNAME", default="postgres"),
     }
 }
 
@@ -246,7 +251,7 @@ TEMPLATES = build_templates_config(
     app_root=APP_ROOT,
 )
 
-ALLOWED_HOSTS = get_env_variable("ALLOWED_HOSTS").split()
+ALLOWED_HOSTS = get_env_variable("ALLOWED_HOSTS", default="localhost").split()
 
 SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(
     APP_ROOT, "system_settings", "System_Settings.json"
@@ -261,7 +266,7 @@ MEDIA_URL = "/files/"
 MEDIA_ROOT = os.path.join(APP_ROOT)
 
 # when hosting Arches under a sub path set this value to the sub path eg : "/{sub_path}/"
-FORCE_SCRIPT_NAME = get_env_variable("FORCE_SCRIPT_NAME")
+FORCE_SCRIPT_NAME = get_env_variable("FORCE_SCRIPT_NAME", default=None)
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -323,8 +328,12 @@ SESSION_COOKIE_NAME = "bcap" + APP_SUFFIX
 # For more info on configuring your cache: https://docs.djangoproject.com/en/2.2/topics/cache/
 CACHES = {
     "default": {
-        "BACKEND": get_env_variable("CACHE_BACKEND"),
-        "LOCATION": get_env_variable("CACHE_BACKEND_LOCATION"),
+        "BACKEND": get_env_variable(
+            "CACHE_BACKEND", default="django.core.cache.backends.redis.RedisCache"
+        ),
+        "LOCATION": get_env_variable(
+            "CACHE_BACKEND_LOCATION", default="redis://localhost:6379/1"
+        ),
     },
     "user_permission": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
@@ -352,34 +361,40 @@ TILE_CACHE_TIMEOUT = 600  # seconds
 CLUSTER_DISTANCE_MAX = 20000  # meters
 GRAPH_MODEL_CACHE_TIMEOUT = None
 
-OAUTH_CLIENT_ID = ""  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
+OAUTH_CLIENT_ID = get_env_variable(
+    "OAUTH_CLIENT_ID", default=None
+)  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 
 
-# EXTERNAL_OAUTH_CONFIGURATION = {
-#     # these groups will be assigned to OAuth authenticated users on their first login
-#     # "default_user_groups": ["Guest", "Resource Exporter"],
-#     # claim to be used to assign arches username from
-#     "uid_claim": "preferred_username",
-#     # application ID and secret assigned to your arches application
-#     "app_id": get_env_variable("OAUTH_CLIENT_ID"),
-#     "app_secret": get_env_variable("OAUTH_CLIENT_SECRET"),
-#     # provider scopes must at least give Arches access to openid, email and profile
-#     "scopes": ["openid", "profile", "email"],
-#     # authorization, token and jwks URIs must be configured for your provider
-#     "authorization_endpoint": get_env_variable("OAUTH_AUTH_ENDPOINT"),
-#     "token_endpoint": get_env_variable("OAUTH_TOKEN_ENDPOINT"),
-#     "jwks_uri": get_env_variable("OAUTH_JWKS_URI"),
-#     # enforces token validation on authentication, AVOID setting this to False,
-#     "validate_id_token": True,
-# }
+EXTERNAL_OAUTH_CONFIGURATION = {
+    #     # these groups will be assigned to OAuth authenticated users on their first login
+    #     # "default_user_groups": ["Guest", "Resource Exporter"],
+    #     # claim to be used to assign arches username from
+    #     "uid_claim": "preferred_username",
+    #     # application ID and secret assigned to your arches application
+    "app_id": get_env_variable("OAUTH_CLIENT_ID", default=None),
+    "app_secret": get_env_variable("OAUTH_CLIENT_SECRET", default=None),
+    #     # provider scopes must at least give Arches access to openid, email and profile
+    #     "scopes": ["openid", "profile", "email"],
+    #     # authorization, token and jwks URIs must be configured for your provider
+    "authorization_endpoint": get_env_variable("OAUTH_AUTH_ENDPOINT", default=None),
+    "token_endpoint": get_env_variable("OAUTH_TOKEN_ENDPOINT", default=None),
+    "jwks_uri": get_env_variable("OAUTH_JWKS_URI", default=None),
+    #     # enforces token validation on authentication, AVOID setting this to False,
+    #     "validate_id_token": True,
+}
 
 APP_TITLE = "BC Government | Historic Place Inventory"
 COPYRIGHT_TEXT = "All Rights Reserved."
 COPYRIGHT_YEAR = "2019"
 
 ENABLE_CAPTCHA = False
-RECAPTCHA_PUBLIC_KEY = get_env_variable("RECAPTCHA_PUBLIC_KEY")
-RECAPTCHA_PRIVATE_KEY = get_env_variable("RECAPTCHA_PRIVATE_KEY")
+RECAPTCHA_PUBLIC_KEY = get_env_variable(
+    "RECAPTCHA_PUBLIC_KEY", default="ojWtGpy2IhammflhSah4c96o0GRJGB"
+)
+RECAPTCHA_PRIVATE_KEY = get_env_variable(
+    "RECAPTCHA_PRIVATE_KEY", default="gzOQGTqbkBheIYAVVhhZzqxl8CnvC9"
+)
 # RECAPTCHA_USE_SSL = False
 NOCAPTCHA = True
 # RECAPTCHA_PROXY = 'http://127.0.0.1:8000'
@@ -397,14 +412,13 @@ EMAIL_HOST_USER = "BCHistoricPlacesRegister@gov.bc.ca"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-CELERY_WORKER_NAME = get_env_variable("CELERY_WORKER_NAME")
+CELERY_WORKER_NAME = get_env_variable("CELERY_WORKER_NAME", default="bcap_dev")
 
 # RabbitMQ --> "amqp://guest:guest@localhost",
 # Redis --> "redis://localhost:6379/0"
-# CELERY_BROKER_URL = get_env_variable(
-#     "CELERY_BROKER_URL"
-# )
-CELERY_BROKER_URL = ""
+CELERY_BROKER_URL = get_env_variable(
+    "CELERY_BROKER_URL", default="redis://localhost:6379/0"
+)
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_RESULT_BACKEND = (
     "django-db"  # Use 'django-cache' if you want to use your cache as your backend
@@ -555,14 +569,14 @@ STORAGES = {
     },
 }
 
-# AWS_STORAGE_BUCKET_NAME = get_env_variable("S3_BUCKET")
-# AWS_ACCESS_KEY_ID = get_env_variable("S3_ACCESS_KEY_ID")
-# AWS_SECRET_ACCESS_KEY = get_env_variable("S3_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = get_env_variable("S3_BUCKET", default=None)
+AWS_ACCESS_KEY_ID = get_env_variable("S3_ACCESS_KEY_ID", default=None)
+AWS_SECRET_ACCESS_KEY = get_env_variable("S3_SECRET_ACCESS_KEY", default=None)
 # AWS_S3_ENDPOINT_URL = "https://nrs.objectstore.gov.bc.ca/"
 # S3_URL = AWS_S3_ENDPOINT_URL
 # We want media to be accessed through the arches app not directly from S3
 # MEDIA_URL = AWS_S3_ENDPOINT_URL
-# AWS_S3_PROXIES = {"https": get_env_variable("S3_PROXIES")}
+AWS_S3_PROXIES = {"https": get_env_variable("S3_PROXIES", default=None)}
 
 # CSRF_TRUSTED_ORIGINS = ["https://{{ arches_url_hostname }}"]
 
@@ -578,11 +592,11 @@ BC_TILESERVER_URLS = {
     "local": "http://localhost:7800/",
 }
 
-AUTH_BYPASS_HOSTS = get_env_variable("AUTH_BYPASS_HOSTS")
+AUTH_BYPASS_HOSTS = get_env_variable("AUTH_BYPASS_HOSTS", default="localhost")
 AUTH_NOACCESS_URL = "https://www2.gov.bc.ca/gov/content/governments/celebrating-british-columbia/historic-places/"
 
 # Need to use an outbound proxy as route to tile servers is blocked by firewall
-TILESERVER_OUTBOUND_PROXY = get_env_variable("TILESERVER_OUTBOUND_PROXY", is_optional=True)
+TILESERVER_OUTBOUND_PROXY = get_env_variable("TILESERVER_OUTBOUND_PROXY", default=None)
 # END Tileserver proxy configuration
 
 DATE_FORMATS = {
@@ -635,5 +649,5 @@ TIMEWHEEL_DATE_TIERS = {
 }
 
 SILENCED_SYSTEM_CHECKS = [
-    "arches.E002", # “Arches requirement is invalid, missing, or from a URL”
+    "arches.E002",  # "Arches requirement is invalid, missing, or from a URL"
 ]
