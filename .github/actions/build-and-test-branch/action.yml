@@ -80,7 +80,7 @@ runs:
 
     - name: Check for missing migrations
       run: |
-        python manage.py makemigrations --check
+        python manage.py makemigrations bcap --check
       shell: bash
 
     - name: Ensure previous Python coverage data is erased
