@@ -132,7 +132,7 @@ runs:
 
     - name: Run Python unit tests
       run: |
-        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="github_settings"
+        python -W default::DeprecationWarning -m coverage run manage.py test tests
       shell: bash
 
     - name: Generate Python report coverage
