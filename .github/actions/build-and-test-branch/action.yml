@@ -52,48 +52,6 @@ runs:
           npm install
       shell: bash
 
-    - name: Symlink or create configuration files to correct location
-      run: |
-        set -e
-
-        if [ -f "/home/runner/work/nr-bcap/.frontend-configuration-settings.json" ]; then
-            ln -sf /home/runner/work/nr-bcap/.frontend-configuration-settings.json /home/runner/work/nr-bcap/nr-bcap/
-        fi
-
-        if [ -f "/home/runner/work/nr-bcap/.tsconfig-paths.json" ]; then
-            ln -sf /home/runner/work/nr-bcap/.tsconfig-paths.json /home/runner/work/nr-bcap/nr-bcap/
-        fi
-
-        mkdir -p /home/runner/work/nr-bcap/node_modules/arches
-
-        cat > /home/runner/work/nr-bcap/node_modules/arches/package.json << EOL
-        {
-            "name": "arches",
-            "version": "7.6.4",
-            "description": "Mock Arches package.json for GitHub Actions",
-            "nodeModulesPaths": {}
-        }
-        EOL
-
-        mkdir -p /home/runner/work/nr-bcap/node_modules/bcgov_arches_common
-
-        cat > /home/runner/work/nr-bcap/node_modules/bcgov_arches_common/package.json << EOL
-        {
-            "name": "bcgov_arches_common",
-            "version": "1.0.0",
-            "description": "Mock bcgov_arches_common package.json for GitHub Actions",
-            "nodeModulesPaths": {}
-        }
-        EOL
-
-        rm -rf /home/runner/work/nr-bcap/node_modules
-        ln -sf /home/runner/work/nr-bcap/nr-bcap/node_modules /home/runner/work/nr-bcap/node_modules
-
-        if [ ! -d "/home/runner/work/nr-bcap/nr-bcap/bcap" ]; then
-            ln -sf /home/runner/work/nr-bcap/nr-bcap /home/runner/work/nr-bcap/nr-bcap/bcap
-        fi
-      shell: bash
-
     - name: Webpack frontend files
       run: |
           npm run build_test
