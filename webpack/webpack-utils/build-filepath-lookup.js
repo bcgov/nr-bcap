@@ -48,13 +48,4 @@ function buildFilepathLookup(path, staticUrlPrefix) {
     }, {});
 }
 
-function toDockerOrGitHubPath(path) {
-    if (process.env.GITHUB_ACTIONS && typeof path === 'string' && path.startsWith('/web_root/')) {
-        const workspace = process.cwd();
-        return path.replace('/web_root/', `${workspace}/`);
-    }
-
-    return path;
-}
-
-module.exports = { buildFilepathLookup, toDockerOrGitHubPath };
+module.exports = { buildFilepathLookup };
