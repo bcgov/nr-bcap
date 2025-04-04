@@ -12,14 +12,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Symlink GitHub settings
+    - name: Copy github_settings to bcap settings
       run: |
-        ln -sf .github/github_settings.py github_settings.py
-      shell: bash
-
-    - name: Copy GitHub settings to bcap settings for migrations
-      run: |
-        ln -sf $(pwd)/github_settings.py $(pwd)/bcap/settings.py
+        cp .github/github_settings.py bcap/settings.py
       shell: bash
 
     - name: Install Java, GDAL, and other system dependencies
@@ -44,7 +39,7 @@ runs:
 
     - name: Ensure frontend configuration files exist
       run: |
-          python manage.py check --settings="github_settings"
+          python manage.py check
       shell: bash
 
     - name: Install Arches applications
@@ -109,11 +104,6 @@ runs:
         npm run prettier:check
       shell: bash
 
-    - name: Format with black
-      run: |
-        black . --exclude=node_modules
-      shell: bash
-
     - name: Check backend formatting with black
       run: |
         black . --check --exclude=node_modules
@@ -132,7 +122,7 @@ runs:
 
     - name: Check for missing migrations
       run: |
-        python manage.py makemigrations bcap --check --settings="github_settings"
+        python manage.py makemigrations bcap --check
       shell: bash
 
     - name: Ensure previous Python coverage data is erased
