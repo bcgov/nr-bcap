@@ -36,7 +36,7 @@ class BordenNumberDataType(StringDataType):
         node=None,
         nodeid=None,
         strict=False,
-        **kwargs
+        **kwargs,
     ):
         errors = super(BordenNumberDataType, self).validate(
             value, row_number, source, node, nodeid, strict, **kwargs

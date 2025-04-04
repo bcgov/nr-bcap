@@ -3,7 +3,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("models","0001_initial")]
+    dependencies = [("models", "0001_initial")]
 
     fn_sql = """
     insert into functions (functionid, functiontype, name, description, defaultconfig, modulename, classname, component)
@@ -33,7 +33,6 @@ class Migration(migrations.Migration):
     reverse_widget_sql = """
         delete from widgets where widgetid = '0346bc9c-d235-4313-adc8-d0e210b2ef25';
     """
-
 
     operations = [
         migrations.RunSQL(
