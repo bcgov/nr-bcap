@@ -10,8 +10,8 @@
         "eslint:watch": "nodemon --watch . --ext ts,vue --exec npm run --silent eslint:check",
         "gettext:extract": "vue-gettext-extract",
         "gettext:compile": "vue-gettext-compile",
-        "prettier:check": "prettier {{ project_name }}/src --check",
-        "prettier:fix": "prettier {{ project_name }}/src --write",
+        "prettier:check": "prettier bcap/src --check",
+        "prettier:fix": "prettier bcap/src --write",
         "ts:check": "vue-tsc --noEmit",
         "ts:watch": "vue-tsc --watch --noEmit",
         "start": "cross-env NODE_OPTIONS=--max-old-space-size=2048 webpack serve --config ./webpack/webpack.config.dev.js",
@@ -27,6 +27,7 @@
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#stable/7.6.4"
     },
     "dependencies": {
+        "ajv": "^8.17.1",
         "arches": "github:bcgov/arches#stable/7.6.4.1_bcgov",
         "bcgov_arches_common": "github:bcgov/arches_common",
         "typescript": "^5.6.2"

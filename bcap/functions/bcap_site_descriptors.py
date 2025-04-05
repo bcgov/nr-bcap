@@ -283,9 +283,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
             display_value = self._empty_name_value
 
         borden_number_tile = models.TileModel.objects.filter(
-            nodegroup_id=BCAPSiteDescriptors._nodes[
-                aliases.BORDEN_NUMBER
-            ].nodegroup_id,
+            nodegroup_id=BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER].nodegroup_id,
             resourceinstance_id=resource.resourceinstanceid,
         ).first()
 

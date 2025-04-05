@@ -40,11 +40,11 @@ class AuthRequiredMiddleware(AuthenticationMiddleware):
             request.META.get("REMOTE_ADDR")
             if request.META.get("HTTP_X_FORWARDED_FOR") is None
             else request.META.get("HTTP_X_FORWARDED_FOR")
-        ) # return True
+        )  # return True
         return (
-                self._is_public_path(request.path)
-                or request_source in settings.AUTH_BYPASS_HOSTS
-                and request.META.get("HTTP_USER_AGENT").startswith("node-fetch/1.0")
+            self._is_public_path(request.path)
+            or request_source in settings.AUTH_BYPASS_HOSTS
+            and request.META.get("HTTP_USER_AGENT").startswith("node-fetch/1.0")
         )
 
     def process_request(self, request):
