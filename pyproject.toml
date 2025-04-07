@@ -29,7 +29,9 @@ dependencies = [
     "boto3==1.26",
     "django-storages==1.13",
     "redis",
-    "python-dotenv"
+    "python-dotenv",
+    "oracledb",
+    "html2text"
 ]
 
 version = "0.0.1-a"

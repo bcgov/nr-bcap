@@ -3,57 +3,209 @@ BC Archaeology Branch Arches configuration, schemas and extensions for the BC Ar
 
 ![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)
 
-### Running in Docker
-**These steps assume that the base directory is ~/git.**
-1. Start Docker Desktop
-2. Create the Arches Dependency Containers:
-``` shell
-cd ~/git
-git clone https://github.com/bcgov/arches-dependency-containers
-cd arches-dependency-containers/arches-7-5-2
-docker compose up
-```
-This should result in a set of docker containers that have the base dependency software to run
-Arches (Postgres, Elasticsearch, Redis, etc).
+## Prerequisites
+- Docker Desktop
 
-3. Clone BCGov Arches Core at the same level as this directory. Assuming that all dependencies
-are installed in ~/git/bcap/.
-``` shell
-cd git
+## Project Setup
+1. Create a directory called `bcap`
+2. Open a terminal and navigate to the `bcap` directory
+3. Run the following to clone the repositories required for this project:
+```
+git clone https://github.com/bcgov/arches-dependency-containers
 git clone https://github.com/bcgov/arches
 git clone https://github.com/bcgov/arches_common
-cd arches && git checkout stable/7.6.4_bcgov_11578_11716
-# This should result in a directory structure like the below:
-~/git/bcap/
-     /bcap/arches/      # <- This is a clone of the arches bcgov/arches repo
-     /bcap/bcap-nr/     # <- This directory
-     /bcap/bcap_common/ # <- This is a clone of the bcgov/arches_common repo
+git clone https://github.com/bcgov/nr-bcap
 ```
 
+- You should now have the following directory structure:
+```
+.
+└── 📁 bcap/
+    ├── 📁 arches-dependency-containers/
+    ├── 📁 arches/
+    ├── 📁 arches_common/
+    └── 📁 nr-bcap/
+```
 
-4. Change back to the nr-bcap directory and create the test user data file at
-`bcap/management/data/test_user_list.py`:
+## Arches
+1. Open or navigate to the `bcap` directory in the terminal
+2. Run the following command:
+```
+cd arches && git checkout stable/7.6.4.1_bcgov
+```
 
-    1. the password is only a dummy password so it can be left as is. OIDC is used so when
-authenticating you will use your IDIR username and password.
-   2. the `@idir` suffix is necessary
-   3. tht `<idir username>` must be in lower case
-``` python
+## Arches Dependency Containers
+- We need to load the base dependencies needed for Arches (i.e., Postgres, Elasticsearch, Redis, etc).
+1. Open or navigate to the `bcap` directory in the terminal
+2. Run the following command to setup the project's dependencies:
+```
+cd arches-dependency-containers/arches-7-5-2 && docker compose up -d
+```
+
+## nr-bcap
+
+### Prerequisites
+- An .env file
+
+### Setup
+
+#### Docker Desktop
+1. Open or navigate to the `bcap` directory in the terminal
+2. Run the following command:
+```
+cd nr-bcap && docker compose up -d
+```
+3. Let the `bcap7-6` container fully load (i.e., watch the "Logs" tab). There will be a warning about missing environment variables.
+    - You will see: `django.core.exceptions.ImproperlyConfigured: Set the BCGOV_PROXY_PREFIX environment variable`
+    - This can take some time.
+4. You need to create or move the .env file to `bcap/nr-bcap/.env`
+5. Stop the `bcap-webpack7-6` container
+6. Restart the `bcap7-6` container in Docker Desktop
+7. Open the `bcap7-6` container in Docker Desktop
+8. Go to the "Exec" tab and run the following:
+```
+bash
+cd bcap && mkdir logs
+```
+9. Restart the `bcap7-6` container in Docker Desktop
+
+#### `test_user_list.py`
+1. Create  `test_user_list.py` in `bcap/nr-bcap/bcap/management/data/test_user_list.py`
+2. Put the following function in the `test_user_list.py` file if you do not have an IDIR username/password:
+
+```
 def get_user_list():
-   return (
-   {"name": "<idir username>@idir", "email": "<email>", "password": "Test12345!", "is_superuser": True,
-   "is_staff": True, "first_name": "<first name>", "last_name": "<last name>",
-   "groups": ["Resource Editor", "Resource Reviewer", "Archaeology Branch", "Resource Exporter"]},
-   )
+    return [
+        {
+            "name": "testuser123",
+            "email": "test@email.com",
+            "password": "Test12345!",
+            "is_superuser": True,
+            "is_staff": True,
+            "first_name": "Test",
+            "last_name": "User",
+            "groups": [
+                "Resource Editor",
+                "Resource Reviewer",
+                "Archaeology Branch",
+                "Resource Exporter"
+            ]
+        }
+    ]
+```
+3. Put the following function in the `test_user_list.py` file if you do have an IDIR username/password:
+```
+def get_user_list():
+    return [
+        {
+            "name": "<idir username>@idir",
+            "email": "<email>",
+            "password": "Test12345!",
+            "is_superuser": True,
+            "is_staff": True,
+            "first_name": "<first name>",
+            "last_name": "<last name>",
+            "groups": [
+                "Resource Editor",
+                "Resource Reviewer",
+                "Archaeology Branch",
+                "Resource Exporter",
+            ],
+        },
+    ]
+```
+- The password is a dummy password so it can be left as is.
+- OIDC is used so when authenticating you will use your IDIR username and password.
+- The `@idir` suffix is necessary
+- The `<idir username>` must be in lowercase
+4. Start and open the `bcap7-6` container in Docker Desktop
+5. Go to the "Exec" tab and run the following:
+```
+python3.11 manage.py bc_test_users --refresh
+```
+6. Open the "Inspect" tab in the container
+7. `Ctrl + F` for `Networks` and look for `IPAddress`
+8. Copy the IP Address and open the `bcap/nr-bcap/.env` file
+9. Add the IP Address to the `AUTH_BYPASS_HOSTS` variable:
+    - `AUTH_BYPASS_HOSTS = ... ... <IPAddress>`
+
+10. Open the `bcap7-6` container in Docker Desktop
+11. Go to the "Exec" tab and run the following:
+```
+npm run build_development
+python3.11 manage.py setup_db
 ```
 
-5. Create the BCAP containers:
-```shell
-cd git/nr-bcap
-docker compose up
+#### Authentication
+1. Open `bcap/nr-bcap/bcap/settings.py` and `bcap/nr-bcap/bcap/urls.py`
+2. Find `AUTHENTICATION_BACKENDS` in the `settings.py` file
+
+#### Django Auth
+- Comment out the following:
+```
+"oauth2_provider.backends.OAuth2Backend",
+"bcap.util.external_oauth_backend.ExternalOauthAuthenticationBackend",
+```
+- Uncomment the following:
+```
+"django.contrib.auth.backends.ModelBackend"
 ```
 
-You should now be able to access BCAP at http://localhost:82/bcap
+#### OAuth2
+- Uncomment the following:
+```
+"oauth2_provider.backends.OAuth2Backend",
+"bcap.util.external_oauth_backend.ExternalOauthAuthenticationBackend",
+```
+- Comment out the following:
+```
+"django.contrib.auth.backends.ModelBackend"
+```
 
-6. After logging into BCAP, the map will initially be blank. Navigate to the system settings in the LHS
-menu and enter your Mapbox token there.
+- You must also add the secret to the `OAUTH_CLIENT_SECRET` variable in the .env file
+
+3. Go to the `urls.py` file
+
+4. If you are using...
+- Django Auth, then comment out the following:
+- OAuth2, then uncomment the following:
+```
+    re_path(
+        bc_path_prefix(r"^admin/login/$"),
+        ExternalOauth.start,
+        name="external_oauth_start",
+    ),
+    re_path(
+        bc_path_prefix(r"^auth/$"),
+        ExternalOauth.start,
+        name="external_oauth_start"
+    ),
+    re_path(
+        bc_path_prefix(r"^auth/eoauth_cb$"),
+        ExternalOauth.callback,
+        name="external_oauth_callback",
+    ),
+    re_path(
+        bc_path_prefix(r"^auth/eoauth_start$"),
+        ExternalOauth.start,
+        name="external_oauth_start",
+    ),
+    re_path(
+        bc_path_prefix(r"^unauthorized/"),
+        UnauthorizedView.as_view(),
+        name="unauthorized",
+    ),
+```
+#### Run
+1. You should now be able to access BCAP at http://localhost:82/bcap
+2. If it doesn't work, then open or navigate to the `bcap` directory in the terminal
+2. Restart the `bcap7-6` container or run the following command:
+```
+cd nr-bcap && docker compose up -d
+```
+4. After logging into BCAP, the map will initially be blank.
+    - You must navigate to the "System Settings" from the menu on the left-hand side, and enter your `Mapbox` token there.
+
+## Notes
+- RabbitMQ is not being used
+- We do not use the Django template engine, therefore changes to the Django code need to be rebuilt with the webpack
