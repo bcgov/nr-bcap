@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls.resolvers import RegexPattern
 from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile
-from bcap.views.crhp import CRHPXmlExport
 from bcap.views.search import export_results as bcap_export_results
 from bcap.views.resource import ResourceReportView
 from bcap.views.auth import UnauthorizedView
@@ -62,11 +61,6 @@ urlpatterns = [
         bc_path_prefix(r"^user_profile$"),
         UserProfile.as_view(),
         name="user_profile",
-    ),
-    re_path(
-        bc_path_prefix(r"^crhp_export/(?P<resourceinstanceid>%s)$" % uuid_regex),
-        CRHPXmlExport.as_view(),
-        name="crhp_export",
     ),
     # Redirect the admin login page to use OAuth
     re_path(
