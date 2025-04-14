@@ -20,7 +20,7 @@ def backward(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcap", "0001_initial"),
+        ("bcap", "0002_load_package"),
         ("models", "10999_update_principaluser"),
         ("guardian", "0002_generic_permissions_index"),
     ]

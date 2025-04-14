@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("bcap", "0002_add_test_users"),
+        ("bcap", "0003_add_test_users"),
     ]
 
     operations = [
