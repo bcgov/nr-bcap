@@ -3,7 +3,16 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("models", "0001_initial")]
+    dependencies = [
+        ("models", "11499_add_editlog_resourceinstance_idx"),
+        ("bcgov_arches_common", "2025-02-07_create_concept_functions"),
+        ("guardian", "0002_generic_permissions_index"),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        ("admin", "0003_logentry_add_action_flag_choices"),
+        ("sessions", "0001_initial"),
+        ("oauth2_provider", "0005_auto_20211222_2352"),
+        ("django_celery_results", "0011_taskresult_periodic_task_name")
+    ]
 
     fn_sql = """
     insert into functions (functionid, functiontype, name, description, defaultconfig, modulename, classname, component)
