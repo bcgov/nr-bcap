@@ -297,13 +297,13 @@
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "helpenabled": false,
                     "helptext": {
-                        "en": null
+                        "en": ""
                     },
                     "helptitle": {
-                        "en": null
+                        "en": ""
                     },
                     "instructions": {
-                        "en": null
+                        "en": ""
                     },
                     "is_editable": true,
                     "name": {
@@ -3995,7 +3995,7 @@
                 {
                     "alias": "registration_status",
                     "config": {
-                        "rdmCollection": null
+                        "rdmCollection": "7424db20-2ab1-4162-938a-54a7c491742c"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -6247,7 +6247,7 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "rdmCollection": "780e8127-cd3a-4a52-8a1b-8e6e7264d7a7"
+                        "rdmCollection": "a440e68a-0304-4652-b544-ebe7fde61b45"
                     },
                     "datatype": "concept",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",
@@ -6372,12 +6372,7 @@
                 }
             ],
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
-            "publication": {
-                "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                "notes": null,
-                "publicationid": "ec64967e-198e-11f0-bdeb-0242ac170008",
-                "published_time": "2025-04-15T00:16:49.055"
-            },
+            "publication": null,
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
             "root": {
@@ -6409,9 +6404,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "940c2453b 2024-11-05 12:53:43 -0800",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "c2d44664b 2025-01-15 20:52:27 -0800",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "5.15.167.4-microsoft-standard-WSL2"
     }
 }

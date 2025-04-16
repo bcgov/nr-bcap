@@ -22,7 +22,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Permit Identification"
                     },
@@ -103,7 +103,7 @@
             ],
             "graphid": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
             "iconclass": "fa fa-folder",
-            "is_editable": false,
+            "is_editable": true,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -190,7 +190,7 @@
                 {
                     "alias": "issuing_agency",
                     "config": {
-                        "rdmCollection": "574cb441-5b78-4a63-8976-16937e1d2f51"
+                        "rdmCollection": "d542689e-b6d0-44d4-b9cf-90c5580a61ff"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -213,7 +213,7 @@
                 {
                     "alias": "hca_permit_type",
                     "config": {
-                        "rdmCollection": "a1da012f-589c-47be-bd69-2521191cbdc4"
+                        "rdmCollection": "d856adf3-7811-4ea5-ac4e-6acfe695016c"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -238,8 +238,8 @@
             "publication": {
                 "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
                 "notes": null,
-                "publicationid": "1250a50c-dff2-11ef-b745-0242ac170009",
-                "published_time": "2025-01-31T16:40:25.413"
+                "publicationid": "b88bb7de-1a91-11f0-b340-f6377fd7e368",
+                "published_time": "2025-04-16T07:09:21.723"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -274,9 +274,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "c2d44664b 2025-01-15 20:52:27 -0800",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "5.15.167.4-microsoft-standard-WSL2"
     }
 }
