@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
         ("admin", "0003_logentry_add_action_flag_choices"),
         ("sessions", "0001_initial"),
         ("oauth2_provider", "0005_auto_20211222_2352"),
-        ("django_celery_results", "0011_taskresult_periodic_task_name")
+        ("django_celery_results", "0011_taskresult_periodic_task_name"),
     ]
 
     fn_sql = """
