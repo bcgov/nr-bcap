@@ -1,0 +1,725 @@
+{
+    "graph": [
+        {
+            "author": "Brett Ferguson",
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": true,
+                    "name": {
+                        "en": "Jursidiction / Tenure Information"
+                    },
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "sortorder": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "c0e4a234-d288-419c-895c-74b9c24ec95f",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": null
+                    },
+                    "helptitle": {
+                        "en": null
+                    },
+                    "instructions": {
+                        "en": null
+                    },
+                    "is_editable": true,
+                    "name": {
+                        "en": "Unreviewed ADIF record"
+                    },
+                    "nodegroup_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "sortorder": null,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Jurisdiction",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "53174f2a-e7fb-4e71-8dfa-39941c191240",
+                    "label": {
+                        "en": "Jurisdiction"
+                    },
+                    "node_id": "313c24d6-197d-11f0-b2a5-0242ac170008",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Tenure Identifier",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "6d3a14f7-1650-4770-9590-17da32e36077",
+                    "label": {
+                        "en": "Tenure Identifier"
+                    },
+                    "node_id": "5d597406-197d-11f0-b2a5-0242ac170008",
+                    "sortorder": 2,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Tenure Type",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "a674439e-89b2-45ae-b417-41d51839e540",
+                    "label": {
+                        "en": "Tenure Type"
+                    },
+                    "node_id": "4d2dbe66-197d-11f0-b2a5-0242ac170008",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Jurisdiction Entered By",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "ac135e0f-0e66-4412-9594-5133298bff6a",
+                    "label": {
+                        "en": "Jurisdiction Entered By"
+                    },
+                    "node_id": "a4acc51a-197d-11f0-b2a5-0242ac170008",
+                    "sortorder": 4,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Jurisdiction Entered Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "e85bd926-1b80-47d9-b559-6d134c874544",
+                    "label": {
+                        "en": "Jurisdiction Entered Date"
+                    },
+                    "node_id": "b7fbd656-197d-11f0-b2a5-0242ac170008",
+                    "sortorder": 5,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Tenure Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "f08f64e3-c156-4944-a1a8-264f0195cf51",
+                    "label": {
+                        "en": "Tenure Remarks"
+                    },
+                    "node_id": "6ef819d8-197d-11f0-b2a5-0242ac170008",
+                    "sortorder": 3,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                }
+            ],
+            "color": null,
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": ""
+            },
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "edgeid": "1857a65b-80e7-440d-a636-153bbe8df063",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
+                    "rangenode_id": "69dea798-1971-11f0-98bb-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "edgeid": "4874dfb9-bf49-4d1d-b952-d26752aea429",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P16i_was_used_for",
+                    "rangenode_id": "83bc4d3a-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "edgeid": "546985ce-948c-462b-bf3c-fae34712214a",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "313c24d6-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "edgeid": "8967db23-05ca-47d2-9353-574c24c222d2",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "rangenode_id": "6ef819d8-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "cc26b946-1970-11f0-b493-0242ac170008",
+                    "edgeid": "976acc6d-da97-483b-9c92-6b595555b787",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "17b5a9f8-1971-11f0-b493-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "4d2dbe66-197d-11f0-b2a5-0242ac170008",
+                    "edgeid": "9baf205e-4e70-4024-a6e2-2c5cc0a1525e",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "5d597406-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "69dea798-1971-11f0-98bb-0242ac170008",
+                    "edgeid": "a046d8dc-fd22-4532-a670-8280449f9e11",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "rangenode_id": "b8675a40-1971-11f0-92d0-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "cc26b946-1970-11f0-b493-0242ac170008",
+                    "edgeid": "b9ccfc0e-8c3d-4108-af37-f4623263ba76",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/BM.PX_is_related_to",
+                    "rangenode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "edgeid": "d018a66d-c835-400b-96d5-412df510a562",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "rangenode_id": "4d2dbe66-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "83bc4d3a-197d-11f0-b2a5-0242ac170008",
+                    "edgeid": "e9ead40e-3b22-45ba-a623-a514e746638f",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "rangenode_id": "a4acc51a-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "83bc4d3a-197d-11f0-b2a5-0242ac170008",
+                    "edgeid": "f02846cd-6a24-4ff0-a729-5d34d5ea8109",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
+                    "rangenode_id": "b7fbd656-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "69dea798-1971-11f0-98bb-0242ac170008",
+                    "edgeid": "fce6c2dc-e9e8-4648-ae04-6a5923e28ade",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P94_has_created",
+                    "rangenode_id": "1c5d8ec0-1972-11f0-a6b9-0242ac170008"
+                }
+            ],
+            "functions_x_graphs": [],
+            "graphid": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+            "iconclass": "",
+            "is_editable": true,
+            "isresource": true,
+            "jsonldcontext": null,
+            "name": {
+                "en": "HRIA Site Data"
+            },
+            "nodegroups": [
+                {
+                    "cardinality": "n",
+                    "legacygroupid": null,
+                    "nodegroupid": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "nodes": [
+                {
+                    "alias": "hria_jursidiction_and_tenure",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "HRIA Jursidiction and Tenure",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/BM.PX_is_related_to",
+                    "sortorder": 1,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "unreviewed_adif_record",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Unreviewed ADIF record",
+                    "nodegroup_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "nodeid": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "site_entry_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD"
+                    },
+                    "datatype": "date",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Site Entry Date",
+                    "nodegroup_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "nodeid": "1c5d8ec0-1972-11f0-a6b9-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E50_Date",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P94_has_created",
+                    "sortorder": 1,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "site_jurisdiction",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Site Jurisdiction",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "313c24d6-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "tenure_type",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Tenure Type",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "4d2dbe66-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E17_Type_Assignment",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "sortorder": 1,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "tenure_identifier",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Tenure Identifier",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "5d597406-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E48_Place_Name",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "site_entered",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Site Entered",
+                    "nodegroup_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "nodeid": "69dea798-1971-11f0-98bb-0242ac170008",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D2_Digitization_Process",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "tenure_remarks",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Tenure Remarks",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "6ef819d8-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "sortorder": 2,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "data_entry",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Data Entry",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "83bc4d3a-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P16i_was_used_for",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "jurisdiction_entered_by",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Jurisdiction Entered By",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "a4acc51a-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "jurisdiction_entered_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD"
+                    },
+                    "datatype": "date",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Jurisdiction Entered Date",
+                    "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
+                    "nodeid": "b7fbd656-197d-11f0-b2a5-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "site_entered_by",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Site Entered By",
+                    "nodegroup_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "nodeid": "b8675a40-1971-11f0-92d0-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E21_Person",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": null,
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": "",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "HRIA Site Data",
+                    "nodegroup_id": null,
+                    "nodeid": "cc26b946-1970-11f0-b493-0242ac170008",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
+                    "parentproperty": "",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "publication": {
+                "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                "notes": null,
+                "publicationid": "494430c0-1980-11f0-a5ad-0242ac170008",
+                "published_time": "2025-04-14T22:32:02.420"
+            },
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "root": {
+                "alias": null,
+                "config": {
+                    "en": ""
+                },
+                "datatype": "semantic",
+                "description": "",
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                "hascustomalias": false,
+                "is_collector": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "HRIA Site Data",
+                "nodegroup_id": null,
+                "nodeid": "cc26b946-1970-11f0-b493-0242ac170008",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
+                "sortorder": 0,
+                "sourcebranchpublication_id": null
+            },
+            "slug": "hria_site_data",
+            "subtitle": {
+                "en": "HRIA site data that will not be entered in new sites"
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "version": ""
+        }
+    ],
+    "metadata": {
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "940c2453b 2024-11-05 12:53:43 -0800",
+        "os": "Linux",
+        "os version": "6.10.14-linuxkit"
+    }
+}
