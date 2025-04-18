@@ -57,4 +57,3 @@ class Migration(migrations.Migration):
             migrations.RunSQL.noop,
         ),
     ]
-
