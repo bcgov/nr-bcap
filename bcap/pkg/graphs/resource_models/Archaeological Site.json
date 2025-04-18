@@ -3995,7 +3995,7 @@
                 {
                     "alias": "registration_status",
                     "config": {
-                        "rdmCollection": "b568aee7-f079-4bb1-ab01-2061856953f6"
+                        "rdmCollection": "c8164213-bff5-468c-91ee-56fa3d239bb4"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -4663,7 +4663,7 @@
                 {
                     "alias": "typology_class",
                     "config": {
-                        "rdmCollection": "5424f976-efa0-4823-9b11-e964f5409899"
+                        "rdmCollection": "bd9c0f51-59ac-41fe-93ea-49d0c75a9b34"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -4800,7 +4800,7 @@
                 {
                     "alias": "latest_edit_type",
                     "config": {
-                        "rdmCollection": "780e8127-cd3a-4a52-8a1b-8e6e7264d7a7"
+                        "rdmCollection": "1599fc9a-81a3-41c6-b466-540286165068"
                     },
                     "datatype": "concept",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -6247,7 +6247,7 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "rdmCollection": "54f16f7f-f13f-4b43-b20a-e43d062604ca"
+                        "rdmCollection": "0d996c26-66a4-421e-91a2-cac4fad5cbf6"
                     },
                     "datatype": "concept",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",
@@ -6375,8 +6375,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "e1ad4ad8-1afa-11f0-9245-ea18a526add0",
-                "published_time": "2025-04-16T19:42:07.886"
+                "publicationid": "adb604be-1c02-11f0-851a-22a9cdf0f596",
+                "published_time": "2025-04-18T03:10:27.838"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
