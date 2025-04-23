@@ -60,7 +60,10 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
     ]
     _popup_nodes = [aliases.CITY, "address"]
     _card_nodes = [aliases.CITY, aliases.REGISTRATION_STATUS]
-    _address_nodes = [[aliases.STREET_NUMBER, aliases.STREET_NAME], [aliases.CITY, "postal_code"]]
+    _address_nodes = [
+        [aliases.STREET_NUMBER, aliases.STREET_NAME],
+        [aliases.CITY, "postal_code"],
+    ]
 
     # Initializes the static nodes and datatypes data
     def initialize(self):
@@ -216,7 +219,6 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
             if line:
                 address += line
         return address if address else None
-
 
     def _get_site_name(self, resource):
         # name_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME]
