@@ -53,15 +53,17 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
     _initialized = False
 
     # @todo Change these to aliases
-    _name_nodes = [aliases.NAME_TYPE, aliases.NAME, aliases.BORDEN_NUMBER]
+    _name_nodes = [aliases.BORDEN_NUMBER]
     _sig_event_nodes = [
-        aliases.START_YEAR,
-        aliases.DATES_APPROXIMATE,
-        aliases.CHRONOLOGY,
+        aliases.REGISTRATION_STATUS,
+        aliases.TYPOLOGY_CLASS,
     ]
     _popup_nodes = [aliases.CITY, "address"]
-    _card_nodes = [aliases.CITY, "construction_date", aliases.REGISTRATION_STATUS]
-    _address_nodes = [["street_address"], [aliases.CITY, "postal_code"]]
+    _card_nodes = [aliases.CITY, aliases.REGISTRATION_STATUS]
+    _address_nodes = [
+        [aliases.STREET_NUMBER, aliases.STREET_NAME],
+        [aliases.CITY, "postal_code"],
+    ]
 
     # Initializes the static nodes and datatypes data
     def initialize(self):
@@ -116,12 +118,12 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                     return_value += BCAPSiteDescriptors._format_value(
                         "Address", BCAPSiteDescriptors._get_address(resource), config
                     )
-                elif alias == "construction_date":
-                    return_value += BCAPSiteDescriptors._format_value(
-                        "Construction Date",
-                        BCAPSiteDescriptors._get_construction_date(resource),
-                        config,
-                    )
+                # elif alias == "construction_date":
+                #     return_value += BCAPSiteDescriptors._format_value(
+                #         "Construction Date",
+                #         BCAPSiteDescriptors._get_construction_date(resource),
+                #         config,
+                #     )
                 elif alias in display_values:
                     return_value += BCAPSiteDescriptors._format_value(
                         nodes[alias].name, display_values[alias], config
@@ -218,69 +220,35 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                 address += line
         return address if address else None
 
-    @staticmethod
-    def _get_construction_date(resource):
-
-        tiles = models.TileModel.objects.filter(
-            nodegroup_id=BCAPSiteDescriptors._nodes[aliases.START_YEAR].nodegroup_id
-        ).filter(resourceinstance_id=resource)
-        if not tiles:
-            return None
-        nodes = BCAPSiteDescriptors._nodes
-        data_types = BCAPSiteDescriptors._datatypes
-        for tile in tiles:
-            if (
-                data_types[aliases.CHRONOLOGY].get_display_value(
-                    tile, nodes[aliases.CHRONOLOGY]
-                )
-                == "Construction"
-            ):
-                qualifier = (
-                    "Circa"
-                    if data_types[aliases.DATES_APPROXIMATE].get_display_value(
-                        tile, nodes[aliases.DATES_APPROXIMATE]
-                    )
-                    == "True"
-                    else ""
-                )
-                const_date = data_types[aliases.START_YEAR].get_display_value(
-                    tile, nodes[aliases.START_YEAR]
-                )
-                if const_date:
-                    return (
-                        "{qualifier} {const_date}" if qualifier else "{const_date}"
-                    ).format(qualifier=qualifier, const_date=const_date)
-        return None
-
     def _get_site_name(self, resource):
-        name_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME]
-        name_type_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME_TYPE]
+        # name_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME]
+        # name_type_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME_TYPE]
         borden_number_datatype = BCAPSiteDescriptors._datatypes[aliases.BORDEN_NUMBER]
         display_value = ""
-
-        for tile in (
-            models.TileModel.objects.filter(
-                nodegroup_id=BCAPSiteDescriptors._nodes[aliases.NAME].nodegroup_id
-            )
-            .filter(resourceinstance_id=resource.resourceinstanceid)
-            .all()
-        ):
-            if (
-                name_type_datatype.get_display_value(
-                    tile, BCAPSiteDescriptors._nodes[aliases.NAME_TYPE]
-                )
-                == "Common"
-            ):
-                name = name_datatype.get_display_value(
-                    tile, BCAPSiteDescriptors._nodes[aliases.NAME]
-                )
-                if display_value and name:
-                    display_value = display_value + ",<br>"
-                if name:
-                    display_value = display_value + name
-
-        if not display_value:
-            display_value = self._empty_name_value
+        #
+        # for tile in (
+        #     models.TileModel.objects.filter(
+        #         nodegroup_id=BCAPSiteDescriptors._nodes[aliases.NAME].nodegroup_id
+        #     )
+        #     .filter(resourceinstance_id=resource.resourceinstanceid)
+        #     .all()
+        # ):
+        #     if (
+        #         name_type_datatype.get_display_value(
+        #             tile, BCAPSiteDescriptors._nodes[aliases.NAME_TYPE]
+        #         )
+        #         == "Common"
+        #     ):
+        #         name = name_datatype.get_display_value(
+        #             tile, BCAPSiteDescriptors._nodes[aliases.NAME]
+        #         )
+        #         if display_value and name:
+        #             display_value = display_value + ",<br>"
+        #         if name:
+        #             display_value = display_value + name
+        #
+        # if not display_value:
+        #     display_value = self._empty_name_value
 
         borden_number_tile = models.TileModel.objects.filter(
             nodegroup_id=BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER].nodegroup_id,
