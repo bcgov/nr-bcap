@@ -41,8 +41,12 @@ class Migration(migrations.Migration):
             source=f"{settings.APP_ROOT}/pkg",
             yes=True,
         )
+    @staticmethod
+    def create_cache(app, somethingelse):
+        call_command("createcachetable")
 
     operations = [
+        migrations.RunPython(create_cache, migrations.RunPython.noop),
         migrations.RunPython(load_package, migrations.RunPython.noop),
         migrations.RunSQL(
             create_resource_proxy_views_sql,
