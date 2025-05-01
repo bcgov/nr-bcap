@@ -5,8 +5,6 @@ from django.conf import settings
 import os
 from .util.migration_util import format_files_into_sql
 
-print(f"APP ROOT: {settings.APP_ROOT}")
-
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -42,7 +40,12 @@ class Migration(migrations.Migration):
             yes=True,
         )
 
+    @staticmethod
+    def create_cache(app, somethingelse):
+        call_command("createcachetable")
+
     operations = [
+        migrations.RunPython(create_cache, migrations.RunPython.noop),
         migrations.RunPython(load_package, migrations.RunPython.noop),
         migrations.RunSQL(
             create_resource_proxy_views_sql,
