@@ -6,8 +6,6 @@ from django.db.migrations.operations.special import RunPython
 
 from bcap.settings import APP_ROOT
 
-mapbox_overlays_dir = f"{APP_ROOT}/pkg/map_layers/mapbox_spec_json/overlays"
-
 
 def forward(apps, schema_editor):
     call_command("bc_test_users", add_users=True)
