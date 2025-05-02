@@ -1,1 +1,0 @@
-update languages set isdefault = false where code <> 'en';

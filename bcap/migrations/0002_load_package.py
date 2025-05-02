@@ -3,12 +3,12 @@ from django.core.management import call_command
 from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivilegedSQL
 from django.conf import settings
 import os
-from .util.migration_util import format_files_into_sql
+from .util.migration_util import format_sql
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcap", "0001_initial"),
+        ("bcap", "0001c_create_map_attribute_data_function"),
     ]
 
     create_resource_proxy_views_sql = """
@@ -19,7 +19,9 @@ class Migration(migrations.Migration):
               and name->>'en' != 'Arches System Settings';
         """
 
-    files = [os.path.join("2024", "2024-12-02___bc_create_node_aliases.sql")]
+    create_node_aliases_function_file = os.path.join(
+        "sql", "2024", "2024-12-02___bc_create_node_aliases.sql"
+    )
     sql_dir = os.path.join(os.path.dirname(__file__), "sql")
 
     create_node_aliases_sql = """ 
@@ -52,7 +54,7 @@ class Migration(migrations.Migration):
             migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
-            format_files_into_sql(files, sql_dir),
+            format_sql(create_node_aliases_function_file),
             migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
