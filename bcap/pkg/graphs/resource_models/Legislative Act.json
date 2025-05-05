@@ -527,7 +527,7 @@
                 {
                     "alias": "legal_instrument",
                     "config": {
-                        "rdmCollection": "b50f82d4-cca7-43b6-84f7-755ad73d6636"
+                        "rdmCollection": "b0248b36-a1ba-51f5-a7c2-ffb79f17bb7b"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -550,7 +550,7 @@
                 {
                     "alias": "authority",
                     "config": {
-                        "rdmCollection": "a6a54145-321c-43b1-86c3-5a105d7ea40a"
+                        "rdmCollection": "de47e759-abb7-5b90-b229-67f94999cb46"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -596,7 +596,7 @@
                 {
                     "alias": "recognition_type",
                     "config": {
-                        "rdmCollection": "a6c45d0e-1226-42e8-a0b8-cf8888fc4f0b"
+                        "rdmCollection": "c77ecae8-8656-50e3-9090-893787af94f2"
                     },
                     "datatype": "concept",
                     "description": null,
