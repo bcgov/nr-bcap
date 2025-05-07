@@ -3955,7 +3955,7 @@
                 {
                     "alias": "registration_status",
                     "config": {
-                        "rdmCollection": "c8164213-bff5-468c-91ee-56fa3d239bb4"
+                        "rdmCollection": "c80f6dc1-4247-500b-8b1c-16ef3761761b"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -4598,7 +4598,7 @@
                 {
                     "alias": "typology_class",
                     "config": {
-                        "rdmCollection": "bd9c0f51-59ac-41fe-93ea-49d0c75a9b34"
+                        "rdmCollection": "d31def91-e057-545a-ada6-3c18b6aa9ae9"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -4735,7 +4735,7 @@
                 {
                     "alias": "latest_edit_type",
                     "config": {
-                        "rdmCollection": "1599fc9a-81a3-41c6-b466-540286165068"
+                        "rdmCollection": "09af5827-3bff-5355-a80c-3266c38ded91"
                     },
                     "datatype": "concept",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -4936,7 +4936,7 @@
                 {
                     "alias": "site_type",
                     "config": {
-                        "rdmCollection": "5424f976-efa0-4823-9b11-e964f5409899"
+                        "rdmCollection": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -5139,7 +5139,7 @@
                 {
                     "alias": "site_subtype",
                     "config": {
-                        "rdmCollection": "1712046f-e59b-433a-ae93-c5e75d305f63"
+                        "rdmCollection": "79332c30-c369-5852-b3ea-023551fd9d34"
                     },
                     "datatype": "concept",
                     "description": "Can this be a single, hierarchical list?",
@@ -5231,7 +5231,7 @@
                 {
                     "alias": "registry_types2",
                     "config": {
-                        "rdmCollection": "eb072c5e-bbce-44e6-8438-17b64f4210c4"
+                        "rdmCollection": "933e5713-9fb9-558b-9055-07302e7084ee"
                     },
                     "datatype": "concept-list",
                     "description": null,
@@ -5769,7 +5769,7 @@
                 {
                     "alias": "image_type",
                     "config": {
-                        "rdmCollection": "b4f84f28-e64b-4285-a8e4-0bacf36e1101"
+                        "rdmCollection": "1da4d092-b025-5615-8208-0af80126c5ee"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -6156,7 +6156,7 @@
                     "alias": "site_decision",
                     "config": {
                         "en": "",
-                        "rdmCollection": "780e8127-cd3a-4a52-8a1b-8e6e7264d7a7"
+                        "rdmCollection": "5ef2a67b-4ebf-58d0-919e-66965be03cb7"
                     },
                     "datatype": "concept",
                     "description": "{\"en\": \"\"}",
@@ -6236,7 +6236,7 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "rdmCollection": "0d996c26-66a4-421e-91a2-cac4fad5cbf6"
+                        "rdmCollection": "895c3059-04b4-5763-aea0-fd92cd008fa0"
                     },
                     "datatype": "concept",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",

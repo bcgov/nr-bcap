@@ -190,7 +190,7 @@
                 {
                     "alias": "issuing_agency",
                     "config": {
-                        "rdmCollection": "63a8ee04-be43-4a2f-9599-a4fadde26d01"
+                        "rdmCollection": "7ee66bc8-66cb-5b86-bb93-f17bf3d93cc0"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -213,7 +213,7 @@
                 {
                     "alias": "hca_permit_type",
                     "config": {
-                        "rdmCollection": "0a594ffe-c572-481d-94d7-078749c35010"
+                        "rdmCollection": "f88307b2-99e8-54cf-bbb4-aac72a017f0f"
                     },
                     "datatype": "concept",
                     "description": null,

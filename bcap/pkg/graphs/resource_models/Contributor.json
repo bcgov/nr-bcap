@@ -846,7 +846,7 @@
                             "fn": "arches.app.datatypes.datatypes.DomainDataType"
                         },
                         "options": [],
-                        "rdmCollection": "3d458dc4-5793-4d67-9007-43d9df242355",
+                        "rdmCollection": "6a2bcd73-f98f-5d3f-bec5-e2c9566d2d81",
                         "searchDsl": "",
                         "searchString": ""
                     },
@@ -917,7 +917,7 @@
                 {
                     "alias": "contributor_role",
                     "config": {
-                        "rdmCollection": "4144f07f-f1f6-4809-bd0d-4c32e1961775"
+                        "rdmCollection": "dea73106-ad02-561d-8075-4f68ba5318b9"
                     },
                     "datatype": "concept-list",
                     "description": null,

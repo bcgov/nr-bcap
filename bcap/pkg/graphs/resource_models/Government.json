@@ -707,7 +707,7 @@
                 {
                     "alias": "government_type",
                     "config": {
-                        "rdmCollection": "41d734d4-484e-46f2-981d-b9d1b8945e38"
+                        "rdmCollection": "97dd9a84-441b-5a45-a517-88caa70148c7"
                     },
                     "datatype": "concept",
                     "description": null,
