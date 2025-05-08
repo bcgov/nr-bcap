@@ -4345,7 +4345,7 @@
                 {
                     "alias": "register_type",
                     "config": {
-                        "rdmCollection": null
+                        "rdmCollection": "933e5713-9fb9-558b-9055-07302e7084ee"
                     },
                     "datatype": "concept-list",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
