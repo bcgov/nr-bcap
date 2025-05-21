@@ -394,6 +394,11 @@ NOCAPTCHA = True
 # RECAPTCHA_PROXY = 'http://127.0.0.1:8000'
 if DEBUG is True:
     SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+else:
+    SILENCED_SYSTEM_CHECKS = [
+        "captcha.recaptcha_test_key_error",
+        "arches.E002",  # "Arches requirement is invalid, missing, or from a URL"
+    ]
 
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  #<-- Only need to uncomment this for testing without an actual email server
