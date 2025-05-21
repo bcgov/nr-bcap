@@ -225,6 +225,15 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
         # name_type_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME_TYPE]
         borden_number_datatype = BCAPSiteDescriptors._datatypes[aliases.BORDEN_NUMBER]
         display_value = ""
+        borden_number_tile = models.TileModel.objects.filter(
+            nodegroup_id=BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER].nodegroup_id,
+            resourceinstance_id=resource.resourceinstanceid,
+        ).first()
+
+        if borden_number_tile:
+            display_value = borden_number_datatype.get_display_value(
+                borden_number_tile, BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER]
+            )
         #
         # for tile in (
         #     models.TileModel.objects.filter(
@@ -250,14 +259,5 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
         # if not display_value:
         #     display_value = self._empty_name_value
 
-        borden_number_tile = models.TileModel.objects.filter(
-            nodegroup_id=BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER].nodegroup_id,
-            resourceinstance_id=resource.resourceinstanceid,
-        ).first()
-
-        if borden_number_tile:
-            display_value += " - %s" % borden_number_datatype.get_display_value(
-                borden_number_tile, BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER]
-            )
 
         return display_value if display_value else self._empty_name_value
