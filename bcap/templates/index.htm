@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 {% load static %}
 {% load template_tags %}
 {% load i18n %}
+{% load render_bundle from webpack_loader %}
 {% load webpack_static from webpack_loader %}
 
 <!DOCTYPE html>
@@ -409,56 +410,25 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     </footer>
     <!-- End Footer -->
 
-<script src="{% webpack_static 'node_modules/requirejs/require.js' %}"></script>
+    <script src="{% webpack_static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% webpack_static 'node_modules/jqueryui/jquery-ui.min.js' %}"></script>
+    <script src="{% webpack_static 'node_modules/jquery-validation/dist/jquery.validate.min.js' %}"></script>
+    <script src="{% webpack_static 'node_modules/underscore/underscore-min.js' %}"></script>
+    <script src="{% webpack_static 'node_modules/chosen-js/chosen.jquery.min.js' %}"></script>
+    <script src="{% webpack_static 'node_modules/knockout/build/output/knockout-latest.js' %}"></script>
+    <script src="{% webpack_static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% webpack_static 'plugins/one.app.js' %}"></script>
+    <script src="{% webpack_static 'plugins/revolution-slider/rs-plugin/js/jquery.themepunch.tools.min.js' %}"></script>
+    <script
+        src="{% webpack_static 'plugins/revolution-slider/rs-plugin/js/jquery.themepunch.revolution.js' %}"></script>
+    <script src="{% webpack_static 'plugins/slick/slick.min.js' %}"></script>
 
+    <!-- Custom Scripts -->
+    {% render_bundle 'bindings/chosen' %}
+    {% render_bundle 'bindings/key-events-click' %}
+    {% render_bundle 'views/components/language-switcher' %}
 <script>
 
-    require.config({
-        baseUrl: '{{ STATIC_URL }}js',
-        paths: {
-            'templates': '{% url "templates" ""%}'.replace(/\/$/, ""),
-            'text': '{{ STATIC_URL }}node_modules/requirejs-text/text',
-            'jquery-lib': '{{ STATIC_URL }}node_modules/jquery/dist/jquery.min',
-            'jquery': '{{ STATIC_URL }}node_modules/jquery-migrate/dist/jquery-migrate.min',
-            'jquery-ui': '{{ STATIC_URL }}node_modules/jqueryui/jquery-ui.min',
-            'underscore': '{{ STATIC_URL }}node_modules/underscore/underscore-min',
-            'chosen': '{{ STATIC_URL }}node_modules/chosen-js/chosen.jquery.min',
-            'knockout': '{{ STATIC_URL }}node_modules/knockout/build/output/knockout-latest',
-            'bootstrap': '{{ STATIC_URL }}node_modules/bootstrap/dist/js/bootstrap.min',
-            'themepunch-tools': '{{ STATIC_URL }}plugins/revolution-slider/rs-plugin/js/jquery.themepunch.tools.min',
-            'themepunch-revolution': '{{ STATIC_URL }}plugins/revolution-slider/rs-plugin/js/jquery.themepunch.revolution',
-            'revolution-slider': '{{ STATIC_URL }}plugins/revolution-slider',
-            'one-app': '{{ STATIC_URL }}plugins/one.app',
-            'slick': "{% webpack_static 'plugins/slick/slick.min' %}",
-        },
-        shim: {
-            'jquery': {
-                deps: ['jquery-lib'],
-                exports: '$'
-            },
-            'bootstrap': {
-                deps: ['jquery', 'jquery-ui']
-            },
-            'chosen': {
-                deps: ['jquery'],
-            },
-            'one-app': {
-                deps: ['jquery'],
-            },
-            'slick': {
-                deps: ['jquery'],
-            }
-        }
-    });
-    require(
-        ['jquery',
-            'knockout',
-            'bootstrap',
-            'one-app',
-            'slick',
-            'bindings/chosen',
-            'views/components/language-switcher'
-        ], function ($, ko) {
             var contentSections = null,
                 navigationItems = null;
             $(document).ready(function () {

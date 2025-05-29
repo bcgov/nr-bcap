@@ -55,7 +55,7 @@ SEARCH_COMPONENT_LOCATIONS.append("bcap.search_components")
 
 LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
 
-FILE_TYPE_CHECKING = False
+FILE_TYPE_CHECKING = "strict"
 FILE_TYPES = [
     "bmp",
     "gif",
@@ -160,7 +160,9 @@ DATABASES = {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "HOST": get_env_variable("PGHOST"),
         "NAME": get_env_variable("PGDBNAME"),
-        "OPTIONS": {},
+        "OPTIONS": {
+            "options": "-c cursor_tuple_fraction=1",
+        },
         "PASSWORD": get_env_variable("PGPASSWORD"),
         "PORT": "5432",
         "POSTGIS_TEMPLATE": "template_postgis",
@@ -186,7 +188,8 @@ INSTALLED_APPS = (
     "arches.app.models",
     "arches.management",
     "guardian",
-    "captcha",
+    "django_recaptcha",
+    "pgtrigger",
     "revproxy",
     "corsheaders",
     "oauth2_provider",
@@ -279,8 +282,6 @@ else:
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.path.join(APP_ROOT, "staticfiles")
 
-OVERRIDE_RESOURCE_MODEL_LOCK = False
-
 RESOURCE_IMPORT_LOG = os.path.join(APP_ROOT, "logs", "resource_import.log")
 DEFAULT_RESOURCE_IMPORT_USER = {"username": "admin", "userid": 1}
 
@@ -306,11 +307,16 @@ LOGGING = {
         },
     },
     "loggers": {
-        "django": {
+        "arches": {
             "handlers": ["file", "console"],
-            "level": "INFO",
+            "level": "WARNING",
+            "propagate": True,
         },
-        "arches": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
+        "django.request": {
+            "handlers": ["file", "console"],
+            "level": "WARNING",  # or consider ERROR if this is too noisy
+            "propagate": True,
+        },
         "bcap": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
     },
 }
@@ -391,10 +397,10 @@ ENABLE_CAPTCHA = False
 NOCAPTCHA = True
 # RECAPTCHA_PROXY = 'http://127.0.0.1:8000'
 if DEBUG is True:
-    SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+    SILENCED_SYSTEM_CHECKS = ["django_recaptcha.recaptcha_test_key_error"]
 else:
     SILENCED_SYSTEM_CHECKS = [
-        "captcha.recaptcha_test_key_error",
+        "django_recaptcha.recaptcha_test_key_error",
         "arches.E002",  # "Arches requirement is invalid, missing, or from a URL"
     ]
 

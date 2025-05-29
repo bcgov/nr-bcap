@@ -7,6 +7,7 @@ ENV APP_ROOT=${WEB_ROOT}/${PROJECT_NAME}
 # Root project folder
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV COMMON_ROOT=${WEB_ROOT}/bcgov-arches-common
+ENV COMPONENT_LAB_ROOT=${WEB_ROOT}/arches-component-lab
 ENV WHEELS=/wheels
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y make software-properties-common
@@ -30,6 +31,7 @@ RUN set -ex \
   dos2unix \
   git \
   gettext \
+  vim \
   " \
   && apt-get install -y --no-install-recommends curl \
   && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
@@ -57,6 +59,10 @@ RUN pip install -e .[dev] && \
 
 COPY ./bcgov-arches-common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}
+RUN pip install -e .
+
+COPY ./arches-component-lab ${COMPONENT_LAB_ROOT}
+WORKDIR ${COMPONENT_LAB_ROOT}
 RUN pip install -e .
 
 WORKDIR ${ARCHES_ROOT}

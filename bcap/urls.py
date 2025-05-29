@@ -102,6 +102,10 @@ urlpatterns = [
 # Ensure Arches core urls are superseded by project-level urls
 urlpatterns.append(path("", include("arches.urls")))
 
+handler400 = "arches.app.views.main.custom_400"
+handler403 = "arches.app.views.main.custom_403"
+handler404 = "arches.app.views.main.custom_404"
+handler500 = "arches.app.views.main.custom_500"
 
 # Adds URL pattern to serve media files during development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

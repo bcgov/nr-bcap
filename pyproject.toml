@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools>=77", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,19 +12,18 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Framework :: Django",
-    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.2",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Information Technology",
-    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
-    "arches @ git+https://github.com/bcgov/arches@v7.6.12.1_bcgov",
+    "arches>=8.0.0a4",
     "arches_component_lab",
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common",
     "boto3==1.26",
@@ -38,7 +37,7 @@ dependencies = [
 
 version = "0.0.1"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "livereload",
     "sst",

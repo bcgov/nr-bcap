@@ -1,24 +1,20 @@
-define([
-    'knockout',
-    'views/components/search/base-filter',
-    'templates/views/components/search/own-data-filter.htm'
-], function(ko, BaseFilter, defaultFilterView) {
-    var componentName = 'own-data-filter';
-    return ko.components.register(componentName, {
-        viewModel: BaseFilter.extend({
-            initialize: function(options) {
-                options.name = 'Own Data Filter';
-                BaseFilter.prototype.initialize.call(this, options);
-                this.restoreState();
-            },
+import ko from "knockout";
+import BaseFilter from "views/components/search/base-filter";
+import defaultFilterView from "templates/views/components/search/own-data-filter.htm";
 
-            restoreState: function() {
-                var queryObj = this.query();
-                queryObj[componentName] = 'enabled';
-                this.query(queryObj);
-            },
+export default ko.components.register("own-data-filter", {
+    viewModel: BaseFilter.extend({
+        initialize: function (options) {
+            options.name = "Own Data Filter";
+            BaseFilter.prototype.initialize.call(this, options);
+            this.restoreState();
+        },
 
-        }),
-        template: defaultFilterView
-    });
+        restoreState: function () {
+            var queryObj = this.query();
+            queryObj["own-data-filter"] = "enabled";
+            this.query(queryObj);
+        },
+    }),
+    template: defaultFilterView,
 });
