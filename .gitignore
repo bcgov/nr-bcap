@@ -12,9 +12,13 @@ webpack/webpack-stats.json
 
 *.egg-info
 .DS_STORE
-.tsconfig-paths.json
-.frontend-configuration-settings.json
 coverage/
+
+frontend_configuration
+
+# Packaging
+build/
+dist/
 
 # Common resources that are copied from arches_common
 node_modules

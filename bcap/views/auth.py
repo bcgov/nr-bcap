@@ -18,9 +18,6 @@ class UnauthorizedView(View):
 class ExternalOauth(CoreExternalOauth):
     # Extends view class of the same name in Arches Core. Allows use of custom external oauth class
     # and redirects to unauthorized page, not login page when not authorized
-    @method_decorator(
-        csrf_exempt, name="dispatch"
-    )  # exempt; returned from other oauth2 authorization server, handled by 'oauth_state' in session
     def callback(request):
         logger.debug("In callback (custom)")
         next_url = (

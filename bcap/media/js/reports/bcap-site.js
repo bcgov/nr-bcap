@@ -1,22 +1,8 @@
-define(['underscore',
-    'knockout',
-    'knockout-mapping',
-    'viewmodels/bcap-site',
-    'reports/map-header',
-    'templates/views/report-templates/map.htm',
-    'templates/views/report-templates/details/archaeological_site.htm'
-], function(_, ko, koMapping, MapReportViewModel, MapHeader, defaultSiteTemplate) {
-    var siteViewModel = MapReportViewModel;
-    /*
-    siteViewModel.extend({
-            var self = this;
-            self.hi = ko.observable("hi");
-            ko.utils.extend(self, new (params));
-        }
-    }
-     */
-    return ko.components.register('bcap-site-report', {
-        viewModel: siteViewModel,
-        template: defaultSiteTemplate
-    });
+import ko from "knockout";
+import MapReportViewModel from "viewmodels/bcap-site";
+import defaultSiteTemplate from "templates/views/report-templates/details/archaeological_site.htm";
+
+export default ko.components.register("bcap-site-report", {
+    viewModel: MapReportViewModel,
+    template: defaultSiteTemplate,
 });
