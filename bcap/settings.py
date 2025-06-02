@@ -301,7 +301,7 @@ LOGGING = {
             "formatter": "console",
         },
         "console": {
-            "level": "INFO",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "console",
         },
@@ -317,7 +317,7 @@ LOGGING = {
             "level": "WARNING",  # or consider ERROR if this is too noisy
             "propagate": True,
         },
-        "bcap": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
+        "bcap": {"handlers": ["file", "console"], "level": "DEBUG", "propagate": True},
     },
 }
 
