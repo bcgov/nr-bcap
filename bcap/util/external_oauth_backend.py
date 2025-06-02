@@ -34,6 +34,7 @@ class ExternalOauthAuthenticationBackend(CoreOauthBackend):
 
     def authenticate(self, request, sso_authentication=False, **kwargs):
         try:
+            print(kwargs)
             logger.debug("Authenticating (custom)")
             if not sso_authentication or not request:
                 return None
@@ -59,7 +60,7 @@ class ExternalOauthAuthenticationBackend(CoreOauthBackend):
             oauth = OAuth2Session(
                 client_id,
                 redirect_uri=redirect_uri,
-                state=request.session["oauth_state"],
+                state=kwargs["oauth_state"],
             )
             try:
                 logger.debug(
@@ -75,6 +76,7 @@ class ExternalOauthAuthenticationBackend(CoreOauthBackend):
                     include_client_id=True,
                     proxies={"https": ""},
                 )
+                print(f"token_response: {token_response}")
             except Exception as e:
                 logger.error("Error getting id/access tokens", exc_info=True)
                 raise e  # raise, otherwise this will mysteriously smother.
@@ -147,9 +149,12 @@ class ExternalOauthAuthenticationBackend(CoreOauthBackend):
             == "bcap.util.external_oauth_backend.ExternalOauthAuthenticationBackend"
         ):
             try:
+                print("Getting token")
                 token = ExternalOauthAuthenticationBackend.get_token(user)
+                print(f"Got token: {token}")
                 request.session.set_expiry(
                     (token.access_token_expiration - datetime.now()).total_seconds()
                 )
             except ExternalOauthToken.DoesNotExist:
+                print("ExternalOauthBackend:  External OAuth token not found")
                 pass

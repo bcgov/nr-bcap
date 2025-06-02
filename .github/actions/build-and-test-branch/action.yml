@@ -1,6 +1,6 @@
 name: 'Build and test branch'
 description: 'Builds and tests a branch'
-inputs:
+inputs: 
   branch-type:
     description: 'String denoting either `target` or `feature` branch'
     required: true
@@ -34,7 +34,9 @@ runs:
 
     - name: Install Python packages
       run: |
-        uv pip install --system '.[dev]'
+        python -m pip install --upgrade pip
+        pip install . --group dev
+        echo Python packages installed
       shell: bash
 
     - name: Ensure frontend configuration files exist
