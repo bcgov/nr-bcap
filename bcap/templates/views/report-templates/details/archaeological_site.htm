@@ -58,6 +58,83 @@
                 </dl>
             </div>
         </div>
+
+        <!-- ko let: {decisionDateWidget: getWidgetForAlias('remark_date')} -->
+        <dl class="dl-horizontal">
+            <table>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Person</th>
+                    <th>Decision</th>
+                    <th>Criteria</th>
+                    <th>Description</th>
+                    <th>Recommended By</th>
+                    <th>Recommended Date</th>
+                </tr>
+
+                </thead>
+                <tbody>
+                <!-- ko foreach: { data: getValuesFromTiles(['site_decision', 'decision_description', 'decision_criteria', 'decision_made_by','decision_date','recommendation_date','recommended_by']), as: 'values' } -->
+                <tr>
+                    <td data-bind="component: { name: 'datepicker-widget',
+                                             params: {
+                                             value: values['decision_date'],
+                                             node: decisionDateWidget.node,
+                                             state: 'display_value'
+                                            }
+                                        }"></td>
+                    <td data-bind="component: {
+                                            name: 'resource-instance-select-widget',
+                                            params: {
+                                                value: values['decision_made_by'],
+                                                state: 'display_value'
+                                            }
+                                        }"></td>
+                    <td data-bind="component: {
+                                            name: 'concept-select-widget',
+                                            params: {
+                                                value: values['site_decision'],
+                                                state: 'display_value'
+                                            }
+                                        }"></td>
+                    <td data-bind="component: {
+                                            name: 'concept-select-widget',
+                                            params: {
+                                                value: values['decision_criteria'],
+                                                state: 'display_value'
+                                            }
+                                        }"></td>
+                    <td data-bind="component: { name: 'text-widget',
+                                             params: {
+                                             value: values['decision_description'],
+                                             state: 'display_value'
+                                            }
+                                        }"></td>
+                    <td data-bind="component: {
+                                            name: 'resource-instance-select-widget',
+                                            params: {
+                                                value: values['recommended_by'],
+                                                state: 'display_value'
+                                            }
+                                        }"></td>
+                    <td data-bind="component: { name: 'datepicker-widget',
+                                             params: {
+                                             value: values['recommended_date'],
+                                             node: decisionDateWidget.node,
+                                             state: 'display_value'
+                                            }
+                                        }"></td>
+
+                </tr>
+
+                <!-- /ko -->
+
+                </tbody>
+            </table>
+        </dl>
+        <!-- /ko -->
+        <!-- /ko -->
         <!-- /ko -->
     </div>
 
@@ -176,6 +253,31 @@
 
         <div class="rp-card-section" data-bind="visible: sectionController, attr: {id: targetSection}">
             <div style="display: inline-flex; width: 100%; justify-content: space-between;">
+            <!-- ko let: {remarkWidget: getWidgetForAlias('internal_remark')} -->
+            <!-- ko let: {remarkDateWidget: getWidgetForAlias('remark_date')} -->
+            <dl class="dl-horizontal">
+                <!-- ko foreach: { data: getValuesFromTiles(['internal_remark', 'remark_date']), as: 'values' } -->
+                <dt>Remark Date</dt>
+                <dd data-bind="component: { name: 'datepicker-widget',
+                                             params: {
+                                             value: values['remark_date'],
+                                             node: remarkDateWidget.node,
+                                             state: 'display_value'
+                                            }
+                                        }"></dd>
+                <dt>Remark</dt>
+                <dd data-bind="component: { name: 'rich-text-widget',
+                                             params: {
+                                             value: values['internal_remark'],
+                                             state: 'display_value',
+                                             displayfullvalue: true
+                                            }
+                                        }"></dd>
+
+            <!-- /ko -->
+            </dl>
+            <!-- /ko -->
+            <!-- /ko -->
             </div>
         </div>
         <!-- /ko -->
