@@ -16,42 +16,41 @@ define([
         self.urls = arches.urls;
         MapReportViewModel.apply(this, [params]);
 
+        this.spatialViewVisible = ko.observable(true);
+        this.identificationVisible = ko.observable(true);
+        this.siteVisitsVisible = ko.observable(true);
+        this.locationVisible = ko.observable(true);
+        this.siteBoundaryVisible = ko.observable(true);
+        this.archDataVisible = ko.observable(true);
+        this.ancestralRemainsVisible = ko.observable(true);
+        this.remarksVisible = ko.observable(true);
+        this.referencesVisible = ko.observable(true);
+
         this.helpenable = ko.observable(false);
-        this.siteNamesVisible = ko.observable(true);
-        this.siteLocationVisible = ko.observable(false);
-        this.bordenNumberVisible = ko.observable(true);
-        this.recognitionInformationVisible = ko.observable(true);
-        this.recognitionDetailsVisible = ko.observable(true);
-        this.chronologyVisible = ko.observable(true);
-        this.sosVisible = ko.observable(true);
-        this.heritageClassVisible = ko.observable(true);
-        this.heritageFunctionVisible = ko.observable(true);
-        this.heritageThemeVisible = ko.observable(true);
-        this.externalUrlsVisible = ko.observable(true);
         this.showAllFields= ko.observable(false);
 
         var getAllWidgets = function(card) {
             return _.flatten([ko.unwrap(card.tiles).length === 0 ? [] : ko.unwrap(card.widgets),
                 _.map(card.cards(), subcard => {return getAllWidgets(subcard); })]);
-        }
+        };
         var getAllTiles = function(card) {
             return _.flatten([ko.unwrap(card.tiles),
                 _.map(card.cards(), subcard => {return getAllTiles(subcard); })]);
-        }
+        };
 
         // var widgets = _.flatten(_.map(params.report.cards, card => {return getAllWidgets(card)}));
 
-        var tiles = _.flatten(_.map(params.report.cards, card => {return getAllTiles(card)}));
+        var tiles = _.flatten(_.map(params.report.cards, card => {return getAllTiles(card);}));
 
         var nodeid_to_widget_lookup = _.object(_.map(params.report.attributes.widgets, function (widget) {
-            return widget.node_id
+            return widget.node_id;
         }), params.report.attributes.widgets);
         var node_alias_to_node_lookup = _.object(_.map(params.report.attributes.nodes, function (node) {
-            return node.alias
+            return node.alias;
         }), params.report.attributes.nodes);
 
 
-        this.helpactive = function(state) { this.helpenable(state) };
+        this.helpactive = function(state) { this.helpenable(state); };
 
         var getWidgetForAlias = function(node_alias){
             if (node_alias in node_alias_to_node_lookup)
@@ -64,7 +63,7 @@ define([
         // Used by template to get widgets for config
         this.getWidgetForAlias = function(node_alias) {
             return getWidgetForAlias(node_alias);
-        }
+        };
 
         var getTilesForAlias = function(node_alias)
         {
@@ -75,9 +74,9 @@ define([
             });
             tiles = _.map(tiles, tile => {
                 return ko.observable(tile);
-            })
+            });
             return tiles;
-        }
+        };
 
         this.getTilesForAlias = function(node_alias)
         {
@@ -87,30 +86,30 @@ define([
         this.getCardForAlias = function(node_alias)
         {
             const widget = getWidgetForAlias(node_alias);
-            return widget ? _.find(self.report.cards, (card) => {return card.nodegroupid === widget.node.nodegroup_id}) : null;
+            return widget ? _.find(self.report.cards, (card) => {return card.nodegroupid === widget.node.nodegroup_id;}) : null;
         };
 
         var getValueFromTile = function(tile, widget)
         {
             return (!tile || !ko.unwrap(tile) || !widget) ? null : ko.unwrap(ko.unwrap(tile).data[widget.node.nodeid]);
-        }
+        };
 
         var getNodeValues = function(node_alias, make_observable = false) {
             var widget = getWidgetForAlias(node_alias);
             if (widget === null)
             {
-                console.log(`Node with alias ${node_alias} does not exist.`)
+                console.log(`Node with alias ${node_alias} does not exist.`);
                 return [];
             }
 
             var values = [];
             _.each(ko.unwrap(tiles), tile => {
-                var value = getValueFromTile(tile, widget)
-                if (!!value)
+                var value = getValueFromTile(tile, widget);
+                if (value)
                     values.push(make_observable ? ko.observable(value) : value);
             });
             return values;
-        }
+        };
 
         this.getValuesFromTiles = function(node_aliases) {
             let widgets = {};
@@ -126,7 +125,7 @@ define([
                 });
                 if (_.some(_.values(tileValues)))
                 {
-                    _.each(_.keys(tileValues), k => { tileValues[k] = ko.observable(tileValues[k])});
+                    _.each(_.keys(tileValues), k => { tileValues[k] = ko.observable(tileValues[k]);});
                     values_list.push(tileValues);
                 }
             });
@@ -136,7 +135,7 @@ define([
         this.getNodeValues = function(node_alias)
         {
             return getNodeValues(node_alias, true);
-        }
+        };
 
         this.nodesHaveData = function(aliases, requireAll = false)
         {
@@ -145,9 +144,9 @@ define([
                 values.push(getNodeValues(alias));
             });
             return !!_.find(_.flatten(values), value => {
-                return ko.unwrap(value) != null
+                return ko.unwrap(value) != null;
             });
-        }
+        };
 
         this.textHasValue = function(textValue, languages = ['en'])
         {
@@ -166,31 +165,31 @@ define([
 
             var value = getNodeValues(alias)[0];
 
-            return ko.unwrap(!!value ? widget.node.config.trueLabel : widget.node.config.trueLabel);
+            return ko.unwrap(value ? widget.node.config.trueLabel : widget.node.config.trueLabel);
         };
 
         this.getResourceInstanceValues = function(aliases)
         {
             if (!Array.isArray(aliases))
             {
-                aliases = [aliases]
+                aliases = [aliases];
             }
             let widgets = _.map(aliases, alias=> {
-                return {"alias": alias, "widget": getWidgetForAlias(alias)}
+                return {"alias": alias, "widget": getWidgetForAlias(alias)};
             });
 
             let resourceValues = [];
             _.each(ko.unwrap(tiles), tile => {
                 _.each(widgets, widget => {
                     let value = getValueFromTile(tile, widget.widget);
-                    if (!!value)
+                    if (value)
                     {
                         resourceValues.push({[widget.alias]: ko.observable(value)});
                     }
-                })
+                });
             });
             return resourceValues;
-        }
+        };
 
         this.getFileUrl = function(urltoclean) {
             const url = ko.unwrap(urltoclean);
@@ -204,7 +203,7 @@ define([
             let url = event.currentTarget.getElementsByTagName('a')[0]['href'];
             let filename = event.currentTarget.getElementsByTagName('a')[0].text.trim();
             window.open(url, filename);
-        }
+        };
 
         this.actAuthorities = {};
 
@@ -312,7 +311,7 @@ define([
         };
 
         this.getWidgetWithLabel = function(card, widgetName) {
-            if (!!card)
+            if (card)
             {
                 let namedWidget = _.find(card.widgets(), function(widget) {
                     return widget.label() === widgetName;
