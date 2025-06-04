@@ -176,7 +176,6 @@ SEARCH_THUMBNAILS = False
 
 INSTALLED_APPS = (
     "webpack_loader",
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -200,7 +199,10 @@ INSTALLED_APPS = (
     "bcap",
     "bcgov_arches_common",
 )
-INSTALLED_APPS += ("arches.app",)
+INSTALLED_APPS += (
+    "arches.app",
+    "django.contrib.admin",
+)
 
 ROOT_HOSTCONF = "bcap.hosts"
 DEFAULT_HOST = "bcap"
