@@ -3425,7 +3425,7 @@
                 {
                     "alias": "latest_edit_type",
                     "config": {
-                        "rdmCollection": "09af5827-3bff-5355-a80c-3266c38ded91"
+                        "rdmCollection": "c7d2fa05-fd40-52d3-95be-1a400766d75b"
                     },
                     "datatype": "concept",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
