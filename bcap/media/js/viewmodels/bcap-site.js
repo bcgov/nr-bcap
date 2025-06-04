@@ -16,19 +16,18 @@ const BcapSiteViewModel = function (params) {
     self.urls = arches.urls;
     MapReportViewModel.apply(this, [params]);
 
-    this.helpenable = ko.observable(false);
-    this.siteNamesVisible = ko.observable(true);
-    this.siteLocationVisible = ko.observable(false);
-    this.bordenNumberVisible = ko.observable(true);
-    this.recognitionInformationVisible = ko.observable(true);
-    this.recognitionDetailsVisible = ko.observable(true);
-    this.chronologyVisible = ko.observable(true);
-    this.sosVisible = ko.observable(true);
-    this.heritageClassVisible = ko.observable(true);
-    this.heritageFunctionVisible = ko.observable(true);
-    this.heritageThemeVisible = ko.observable(true);
-    this.externalUrlsVisible = ko.observable(true);
-    this.showAllFields = ko.observable(false);
+        this.spatialViewVisible = ko.observable(true);
+        this.identificationVisible = ko.observable(true);
+        this.siteVisitsVisible = ko.observable(true);
+        this.locationVisible = ko.observable(true);
+        this.siteBoundaryVisible = ko.observable(true);
+        this.archDataVisible = ko.observable(true);
+        this.ancestralRemainsVisible = ko.observable(true);
+        this.remarksVisible = ko.observable(true);
+        this.referencesVisible = ko.observable(true);
+
+        this.helpenable = ko.observable(false);
+        this.showAllFields= ko.observable(false);
 
     var getAllWidgets = function (card) {
         return _.flatten([
