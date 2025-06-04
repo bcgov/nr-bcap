@@ -20,22 +20,22 @@ services:
     stdin_open: true
     tty: true
 
-  bcap-webpack:
-    container_name: bcap-webpack7-6
-    image: bcgov/bcap-webpack7-6
-    build:
-      context: ..
-      dockerfile: nr-bcap/docker/webpack/Dockerfile
-    command: run_webpack
-    volumes:
-      - ../arches/:/web_root/arches
-      - ./:/web_root/bcap
-    env_file:
-      - ./docker/webpack/env_file.env
-    ports:
-      - 8024:8021
-    stdin_open: true
-    tty: true
+#  bcap-webpack:
+#    container_name: bcap-webpack7-6
+#    image: bcgov/bcap-webpack7-6
+#    build:
+#      context: ..
+#      dockerfile: nr-bcap/docker/webpack/Dockerfile
+#    command: run_webpack
+#    volumes:
+#      - ../arches/:/web_root/arches
+#      - ./:/web_root/bcap
+#    env_file:
+#      - ./docker/webpack/env_file.env
+#    ports:
+#      - 8024:8021
+#    stdin_open: true
+#    tty: true
 
 networks:
   default:
