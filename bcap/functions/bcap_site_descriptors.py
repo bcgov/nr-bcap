@@ -44,7 +44,7 @@ details = {
 class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
     _datatype_factory = DataTypeFactory()
     # For Name part of descriptor
-    en_graph = {"en": "Archaeological Site"}
+    graph_slug = "archaeological_site"
 
     _empty_name_value = "(No official name)"
     _nodes = {}
@@ -75,7 +75,9 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
             + sum(BCAPSiteDescriptors._address_nodes, [])
         ):
             node = models.Node.objects.filter(
-                alias=alias, graph__name__contains=BCAPSiteDescriptors.en_graph
+                alias=alias,
+                graph__slug=BCAPSiteDescriptors.graph_slug,
+                source_identifier__isnull=True,
             ).first()
             if node:
                 BCAPSiteDescriptors._nodes[alias] = node
@@ -256,7 +258,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
         ).first()
 
         if borden_number_tile:
-            display_value += " - %s" % borden_number_datatype.get_display_value(
+            display_value += "%s" % borden_number_datatype.get_display_value(
                 borden_number_tile, BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER]
             )
 
