@@ -5,6 +5,7 @@ from bcgov_arches_common.util.pkg_util import (
     update_map_source_prefix,
 )
 
+
 def reload_map_layers(apps, schema_editor):
     # Common map layers
     for layer_spec in get_common_mapbox_spec_files():
@@ -19,6 +20,7 @@ def reload_map_layers(apps, schema_editor):
             layer_name=layer_spec["name"],
             mapbox_json_path=layer_spec["path"],
         )
+
 
 def update_prefixes(apps, schema_editor):
     update_map_source_prefix("bcap")
