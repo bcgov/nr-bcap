@@ -16,15 +16,15 @@ const BcapSiteViewModel = function (params) {
     self.urls = arches.urls;
     MapReportViewModel.apply(this, [params]);
 
-        this.spatialViewVisible = ko.observable(true);
-        this.identificationVisible = ko.observable(true);
-        this.siteVisitsVisible = ko.observable(true);
-        this.locationVisible = ko.observable(true);
-        this.siteBoundaryVisible = ko.observable(true);
-        this.archDataVisible = ko.observable(true);
-        this.ancestralRemainsVisible = ko.observable(true);
-        this.remarksVisible = ko.observable(true);
-        this.referencesVisible = ko.observable(true);
+    this.spatialViewVisible = ko.observable(true);
+    this.identificationVisible = ko.observable(true);
+    this.siteVisitsVisible = ko.observable(true);
+    this.locationVisible = ko.observable(true);
+    this.siteBoundaryVisible = ko.observable(true);
+    this.archDataVisible = ko.observable(true);
+    this.ancestralRemainsVisible = ko.observable(true);
+    this.remarksVisible = ko.observable(true);
+    this.referencesVisible = ko.observable(true);
 
     this.helpenable = ko.observable(false);
     this.showAllFields = ko.observable(false);
@@ -46,7 +46,11 @@ const BcapSiteViewModel = function (params) {
         ]);
     };
 
-    // var widgets = _.flatten(_.map(params.report.cards, card => {return getAllWidgets(card)}));
+    var widgets = _.flatten(
+        _.map(params.report.cards, (card) => {
+            return getAllWidgets(card);
+        }),
+    );
 
     var tiles = _.flatten(
         _.map(params.report.cards, (card) => {
@@ -55,10 +59,10 @@ const BcapSiteViewModel = function (params) {
     );
 
     var nodeid_to_widget_lookup = _.object(
-        _.map(params.report.attributes.widgets, function (widget) {
-            return widget.node_id;
+        _.map(widgets, function (widget) {
+            return ko.unwrap(widget.node_id);
         }),
-        params.report.attributes.widgets,
+        widgets,
     );
     var node_alias_to_node_lookup = _.object(
         _.map(params.report.attributes.nodes, function (node) {
