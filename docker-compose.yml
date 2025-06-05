@@ -13,6 +13,7 @@ services:
       - ../arches_common/:/web_root/arches_common
       - ../arches-component-lab/:/web_root/arches-component-lab
     env_file:
+      - ./.env
       - ./docker/env_file.env
     ports:
       - 5690:5678
@@ -39,6 +40,17 @@ services:
 #      - 8024:8021
 #    stdin_open: true
 #    tty: true
+  bcap-pg_tileserv:
+    container_name: bcap-pg_tileserv7-6
+    hostname: bcap-pg_tileserv7-6
+    image: pramsey/pg_tileserv:latest
+    env_file:
+      - ./.env
+      - ./docker/pg_tileserv/pg_tileserv.env
+    ports:
+      - "7802:7800"
+    stdin_open: true
+    tty: true
 
 networks:
   default:
