@@ -12,6 +12,7 @@ services:
       - ./:/web_root/bcap
       - ../arches_common/:/web_root/arches_common
     env_file:
+      - ./.env
       - ./docker/env_file.env
     ports:
       - 5690:5678
@@ -20,20 +21,32 @@ services:
     stdin_open: true
     tty: true
 
-  bcap-webpack:
-    container_name: bcap-webpack7-6
-    image: bcgov/bcap-webpack7-6
-    build:
-      context: ..
-      dockerfile: nr-bcap/docker/webpack/Dockerfile
-    command: run_webpack
-    volumes:
-      - ../arches/:/web_root/arches
-      - ./:/web_root/bcap
+#  bcap-webpack:
+#    container_name: bcap-webpack7-6
+#    image: bcgov/bcap-webpack7-6
+#    build:
+#      context: ..
+#      dockerfile: nr-bcap/docker/webpack/Dockerfile
+#    command: run_webpack
+#    volumes:
+#      - ../arches/:/web_root/arches
+#      - ./:/web_root/bcap
+#      - ../arches_common/:/web_root/arches_common
+#      - ../arches-component-lab/:/web_root/arches-component-lab
+#    env_file:
+#      - ./docker/webpack/env_file.env
+#    ports:
+#      - 8024:8021
+#    stdin_open: true
+#    tty: true
+  bcap-pg_tileserv:
+    container_name: bcap-pg_tileserv7-6
+    hostname: bcap-pg_tileserv7-6
+    image: pramsey/pg_tileserv:latest
     env_file:
-      - ./docker/webpack/env_file.env
+      - ./docker/pg_tileserv/pg_tileserv.env
     ports:
-      - 8024:8021
+      - "7802:7800"
     stdin_open: true
     tty: true
 
