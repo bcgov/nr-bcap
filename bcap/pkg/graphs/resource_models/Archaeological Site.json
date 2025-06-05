@@ -4562,7 +4562,7 @@
                 {
                     "alias": "register_type",
                     "config": {
-                        "rdmCollection": "933e5713-9fb9-558b-9055-07302e7084ee"
+                        "rdmCollection": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e"
                     },
                     "datatype": "concept-list",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
@@ -4952,7 +4952,7 @@
                 {
                     "alias": "latest_edit_type",
                     "config": {
-                        "rdmCollection": "09af5827-3bff-5355-a80c-3266c38ded91"
+                        "rdmCollection": "c7d2fa05-fd40-52d3-95be-1a400766d75b"
                     },
                     "datatype": "concept",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -5448,7 +5448,7 @@
                 {
                     "alias": "registry_types2",
                     "config": {
-                        "rdmCollection": "933e5713-9fb9-558b-9055-07302e7084ee"
+                        "rdmCollection": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e"
                     },
                     "datatype": "concept-list",
                     "description": null,
@@ -6628,7 +6628,7 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "rdmCollection": "895c3059-04b4-5763-aea0-fd92cd008fa0"
+                        "rdmCollection": "5ef2a67b-4ebf-58d0-919e-66965be03cb7"
                     },
                     "datatype": "concept",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",
