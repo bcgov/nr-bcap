@@ -17,7 +17,7 @@ def update_basemap(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcap", "0003_add_test_users"),
+        ("bcap", "0004_load_common_map_layers"),
     ]
 
     operations = [RunPython(update_basemap, RunPython.noop)]
