@@ -230,13 +230,13 @@
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "helpenabled": false,
                     "helptext": {
-                        "en": null
+                        "en": ""
                     },
                     "helptitle": {
-                        "en": null
+                        "en": ""
                     },
                     "instructions": {
-                        "en": null
+                        "en": ""
                     },
                     "is_editable": true,
                     "name": {
@@ -361,7 +361,7 @@
                     "config": null,
                     "constraints": [],
                     "cssclass": null,
-                    "description": "{\"en\": \"\"}",
+                    "description": "",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "helpenabled": false,
                     "helptext": {
@@ -787,7 +787,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Fature Remarks",
+                        "label": "Feature Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -797,7 +797,7 @@
                     },
                     "id": "3b939483-1294-4653-9368-805f42e7e6fb",
                     "label": {
-                        "en": "Fature Remarks"
+                        "en": "Feature Remarks"
                     },
                     "node_id": "a0c7d128-1401-11f0-acd5-0242ac170007",
                     "sortorder": 2,
@@ -2350,7 +2350,7 @@
                     "parentnodegroup_id": null
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "fab4ba5a-1408-11f0-9e93-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
@@ -2980,7 +2980,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "fature_remarks",
+                    "alias": "feature_remarks",
                     "config": {
                         "en": ""
                     },
@@ -2994,7 +2994,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Fature Remarks",
+                    "name": "Feature Remarks",
                     "nodegroup_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "nodeid": "a0c7d128-1401-11f0-acd5-0242ac170007",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
@@ -3654,7 +3654,7 @@
                         "rdmCollection": "ed893196-5678-5acd-9afa-985278112b7b"
                     },
                     "datatype": "concept",
-                    "description": "{\"en\": \"\"}",
+                    "description": "",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3815,8 +3815,8 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "notes": null,
-                "publicationid": "76610666-47dc-11f0-bfa4-0242ac170007",
-                "published_time": "2025-06-12T22:27:45.293"
+                "publicationid": "be0df10a-47f9-11f0-9f68-0242ac170007",
+                "published_time": "2025-06-13T01:57:20.950"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
