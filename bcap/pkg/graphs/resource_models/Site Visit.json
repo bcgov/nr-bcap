@@ -221,6 +221,33 @@
                 },
                 {
                     "active": true,
+                    "cardid": "a6995f93-272c-4548-83c5-5ba11fbdc364",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": true,
+                    "name": {
+                        "en": "Team Member"
+                    },
+                    "nodegroup_id": "0484d572-1410-11f0-8419-0242ac170007",
+                    "sortorder": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -238,7 +265,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Chronology"
                     },
@@ -292,7 +319,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "6. Archaeological Data"
                     },
@@ -319,7 +346,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "3. Site Visit Details"
                     },
@@ -334,7 +361,7 @@
                     "config": null,
                     "constraints": [],
                     "cssclass": null,
-                    "description": "{\"en\": \"\"}",
+                    "description": "",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "helpenabled": false,
                     "helptext": {
@@ -676,6 +703,57 @@
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
                 {
+                    "card_id": "fab4bca8-1408-11f0-9e93-0242ac170007",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Culture Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "21bb0b20-39cb-44e7-bef2-14fb599f4c9a",
+                    "label": {
+                        "en": "Culture Remarks"
+                    },
+                    "node_id": "fab4bde8-1408-11f0-9e93-0242ac170007",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "fab4bca8-1408-11f0-9e93-0242ac170007",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Archaeological Culture",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "33a596ca-104b-42bb-8ebd-390ec04e6b56",
+                    "label": {
+                        "en": "Archaeological Culture"
+                    },
+                    "node_id": "fab4ba5a-1408-11f0-9e93-0242ac170007",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
                     "card_id": "d8bdb067-60cb-44bd-8b6c-89ea5af195e9",
                     "config": {
                         "defaultValue": "",
@@ -709,7 +787,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Fature Remarks",
+                        "label": "Feature Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -719,7 +797,7 @@
                     },
                     "id": "3b939483-1294-4653-9368-805f42e7e6fb",
                     "label": {
-                        "en": "Fature Remarks"
+                        "en": "Feature Remarks"
                     },
                     "node_id": "a0c7d128-1401-11f0-acd5-0242ac170007",
                     "sortorder": 2,
@@ -2186,7 +2264,7 @@
             ],
             "graphid": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
             "iconclass": "fa fa-calendar",
-            "is_editable": false,
+            "is_editable": true,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -2200,7 +2278,13 @@
                     "parentnodegroup_id": "887edb3a-df58-11ef-8fa3-0242ac170009"
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
+                    "legacygroupid": null,
+                    "nodegroupid": "0484d572-1410-11f0-8419-0242ac170007",
+                    "parentnodegroup_id": "0484d0b8-1410-11f0-8419-0242ac170007"
+                },
+                {
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "22508fc8-1402-11f0-acd5-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
@@ -2224,7 +2308,7 @@
                     "parentnodegroup_id": "37bdda22-140d-11f0-b9bb-0242ac170007"
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "720dd6dc-1408-11f0-9e93-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
@@ -2266,13 +2350,13 @@
                     "parentnodegroup_id": null
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "fab4ba5a-1408-11f0-9e93-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "fb559106-140c-11f0-b9bb-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
@@ -2303,7 +2387,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "was_on_site_n1",
+                    "alias": "was_on_site",
                     "config": {
                         "falseLabel": {
                             "en": "No"
@@ -2327,7 +2411,7 @@
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Was On Site",
-                    "nodegroup_id": "0484d0b8-1410-11f0-8419-0242ac170007",
+                    "nodegroup_id": "0484d572-1410-11f0-8419-0242ac170007",
                     "nodeid": "0484d428-1410-11f0-8419-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P12i_was_present_at",
@@ -2335,12 +2419,16 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "team_member_n1",
+                    "alias": "team_member",
                     "config": {
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -2352,12 +2440,12 @@
                     "fieldname": null,
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
-                    "is_collector": false,
+                    "is_collector": true,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Team Member",
-                    "nodegroup_id": "0484d0b8-1410-11f0-8419-0242ac170007",
+                    "nodegroup_id": "0484d572-1410-11f0-8419-0242ac170007",
                     "nodeid": "0484d572-1410-11f0-8419-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
@@ -2365,7 +2453,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "member_role",
+                    "alias": "member_roles",
                     "config": {
                         "rdmCollection": "dea73106-ad02-561d-8075-4f68ba5318b9"
                     },
@@ -2379,8 +2467,8 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Member Role",
-                    "nodegroup_id": "0484d0b8-1410-11f0-8419-0242ac170007",
+                    "name": "Member Roles",
+                    "nodegroup_id": "0484d572-1410-11f0-8419-0242ac170007",
                     "nodeid": "0484d69e-1410-11f0-8419-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14i_performed",
@@ -2892,7 +2980,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "fature_remarks",
+                    "alias": "feature_remarks",
                     "config": {
                         "en": ""
                     },
@@ -2906,7 +2994,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Fature Remarks",
+                    "name": "Feature Remarks",
                     "nodegroup_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "nodeid": "a0c7d128-1401-11f0-acd5-0242ac170007",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
@@ -3566,7 +3654,7 @@
                         "rdmCollection": "ed893196-5678-5acd-9afa-985278112b7b"
                     },
                     "datatype": "concept",
-                    "description": "{\"en\": \"\"}",
+                    "description": "",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3727,8 +3815,8 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "notes": null,
-                "publicationid": "df2d5eac-4641-11f0-80b6-227cc05b707e",
-                "published_time": "2025-06-10T21:28:37.959"
+                "publicationid": "be0df10a-47f9-11f0-9f68-0242ac170007",
+                "published_time": "2025-06-13T01:57:20.950"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -3763,7 +3851,7 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "ae2a79c8b1 2025-05-02 07:36:38 +0100",
         "os": "Linux",
         "os version": "6.10.14-linuxkit"
