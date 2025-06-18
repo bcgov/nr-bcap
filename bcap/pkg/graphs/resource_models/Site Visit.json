@@ -776,6 +776,27 @@
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
+                    "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Affiliation",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "3687a10d-a267-42dc-81c8-42182cb29507",
+                    "label": {
+                        "en": "Affiliation"
+                    },
+                    "node_id": "69273f50-4c9c-11f0-9f73-0242ac170007",
+                    "sortorder": 6,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
                     "card_id": "a0c7cec6-1401-11f0-acd5-0242ac170007",
                     "config": {
                         "defaultValue": {
@@ -840,14 +861,35 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Associated Permit",
+                        "label": "Site Form Authors",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "4a0a8da1-146c-4cff-b069-1631d2af1d88",
+                    "label": {
+                        "en": "Site Form Authors"
+                    },
+                    "node_id": "4fb2db52-1410-11f0-8419-0242ac170007",
+                    "sortorder": 8,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
+                    "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Permit",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "5851718a-12dd-48af-8b98-f57f695aa259",
                     "label": {
-                        "en": "Associated Permit"
+                        "en": "Permit"
                     },
                     "node_id": "b03790fe-df58-11ef-8fa3-0242ac170009",
                     "sortorder": 4,
@@ -1033,14 +1075,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Archaological Site",
+                        "label": "Archaeological Site",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "7a2e41fc-4ad9-4be3-8459-51a3523e9c69",
                     "label": {
-                        "en": "Archaological Site"
+                        "en": "Archaeological Site"
                     },
                     "node_id": "cd722a58-df58-11ef-8fa3-0242ac170009",
                     "sortorder": 5,
@@ -1987,6 +2029,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
+                    "edgeid": "bc78350b-7cb6-4a56-b2d8-3bfc70da1916",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "rangenode_id": "69273f50-4c9c-11f0-9f73-0242ac170007"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "840c5b80-d932-11ef-92f0-005056a3bc47",
                     "edgeid": "bc7bb92f-25c0-4b66-a4ff-88d12514d736",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2664,6 +2715,120 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P44_has_condition",
                     "sortorder": 1,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "affiliation",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": {
+                            "bool": {
+                                "filter": [
+                                    {
+                                        "terms": {
+                                            "graph_id": [
+                                                "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
+                                                "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                                "ce3de8f0-0dd4-4408-8162-5df93fceec59",
+                                                "ff623370-fa12-11e6-b98b-6c4008b05c4c",
+                                                "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                                                "4e69d0a9-7af2-473f-929f-71d462ea32d1",
+                                                "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                                                "52dd40f2-1dee-45d2-b72c-234c8cbb5418",
+                                                "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                                                "4d6dafbc-7c47-11eb-a180-5254008afee6",
+                                                "e53d0716-9335-11eb-adb6-5254008afee6",
+                                                "1722187a-7bb2-11eb-8b09-5254008afee6",
+                                                "debd5adc-7bb4-11eb-9b0e-5254008afee6",
+                                                "c3923080-d21e-42d7-b8f1-637b9d0ab63c",
+                                                "aacf8bb6-3f6e-46d9-a551-b0749d7efffc",
+                                                "412444dd-b13f-4289-9f04-5c7f1878ad4e",
+                                                "e8ce03a0-7c40-11eb-a2e5-5254008afee6"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "must": [
+                                    {
+                                        "bool": {
+                                            "filter": [],
+                                            "minimum_should_match": 1,
+                                            "must": [],
+                                            "must_not": [],
+                                            "should": [
+                                                {
+                                                    "bool": {
+                                                        "filter": [],
+                                                        "must": [
+                                                            {
+                                                                "nested": {
+                                                                    "path": "tiles",
+                                                                    "query": {
+                                                                        "bool": {
+                                                                            "filter": [],
+                                                                            "must": [
+                                                                                {
+                                                                                    "match_phrase": {
+                                                                                        "tiles.data.c4eca2de-9dea-11ed-9a7b-5254004d77d3": {
+                                                                                            "query": "891278e4-5d67-571a-a0c4-414896d36d1c"
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            ],
+                                                                            "must_not": [],
+                                                                            "should": []
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                "bool": {
+                                                                    "filter": [],
+                                                                    "must": [],
+                                                                    "must_not": [],
+                                                                    "should": []
+                                                                }
+                                                            }
+                                                        ],
+                                                        "must_not": [],
+                                                        "should": []
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "must_not": [],
+                                "should": []
+                            }
+                        },
+                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=0&exportsystemvalues=false&csrfmiddlewaretoken=CjzrO3saCTSVPY3tSAGQjiES0B7xOYbQ&advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22c4eca2de-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22891278e4-5d67-571a-a0c4-414896d36d1c%22%7D%2C%22e2f1c29a-c500-11ed-9089-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22%22%7D%2C%22c4ec9b2c-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22c4eca13a-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22a5b2cd72-c4f4-11ed-a06d-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22b5ed0072-c4f4-11ed-94de-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%2299643f1e-9e4e-11ed-b6d5-5254004d77d3%22%3A%7B%22val%22%3A%22%22%7D%7D%5D"
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Affiliation",
+                    "nodegroup_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
+                    "nodeid": "69273f50-4c9c-11f0-9f73-0242ac170007",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "sortorder": 6,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -3815,8 +3980,8 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "notes": null,
-                "publicationid": "be0df10a-47f9-11f0-9f68-0242ac170007",
-                "published_time": "2025-06-13T01:57:20.950"
+                "publicationid": "f9f9434c-4c9d-11f0-bf11-0242ac170007",
+                "published_time": "2025-06-18T23:43:03.592"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
