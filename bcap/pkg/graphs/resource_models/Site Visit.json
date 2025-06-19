@@ -76,7 +76,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "2. Identification"
                     },
@@ -157,7 +157,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Archaeologocial Features"
                     },
@@ -184,7 +184,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Cultural Materials"
                     },
@@ -211,7 +211,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Form Received Date"
                     },
@@ -265,7 +265,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Chronology"
                     },
@@ -319,7 +319,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "6. Archaeological Data"
                     },
@@ -346,7 +346,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "3. Site Visit Details"
                     },
@@ -373,7 +373,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Archaeological Culture"
                     },
@@ -400,7 +400,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Disturbance"
                     },
@@ -2292,30 +2292,40 @@
             "functions_x_graphs": [
                 {
                     "config": {
+                        "class_name": "SiteVisitDescriptors",
                         "descriptor_types": {
                             "description": {
-                                "nodegroup_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
-                                "string_template": "<Arch Site>, <Project Description>"
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [],
+                                "show_name": true,
+                                "type": "description"
                             },
                             "map_popup": {
-                                "nodegroup_id": "",
-                                "string_template": "<Arch Site>, <Project Description>"
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [],
+                                "show_name": true,
+                                "type": "map_popup"
                             },
                             "name": {
-                                "nodegroup_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
-                                "string_template": "<Associated Permit>, <Site Visit Type> (<Last Date of Site Visit>)"
+                                "first_only": true,
+                                "node_ids": [],
+                                "show_name": false,
+                                "type": "name"
                             }
                         },
+                        "module": "bcap.functions.site_visit_descriptors",
                         "triggering_nodegroups": []
                     },
-                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "function_id": "60000000-0000-0000-0000-000000001003",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "id": "bc36e0d3-47cd-45ad-a07b-c569b9fbea8f"
+                    "id": "6a9811b3-6969-46d6-a1f2-c6770efc2238"
                 }
             ],
             "graphid": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
             "iconclass": "fa fa-calendar",
-            "is_editable": true,
+            "is_editable": false,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -3980,8 +3990,8 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "notes": null,
-                "publicationid": "f9f9434c-4c9d-11f0-bf11-0242ac170007",
-                "published_time": "2025-06-18T23:43:03.592"
+                "publicationid": "c22c15c0-4cac-11f0-bddb-0242ac170007",
+                "published_time": "2025-06-19T01:28:52.424"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
