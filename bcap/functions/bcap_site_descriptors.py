@@ -156,7 +156,9 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
             if data_tile
             else models.TileModel.objects.filter(
                 nodegroup_id=BCAPSiteDescriptors._nodes[node_alias].nodegroup_id
-            ).filter(resourceinstance_id=resourceinstanceid)
+            )
+            .filter(resourceinstance_id=resourceinstanceid)
+            .all()
         )
 
         for tile in tiles:
@@ -256,7 +258,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
         ).first()
 
         if borden_number_tile:
-            display_value += " - %s" % borden_number_datatype.get_display_value(
+            display_value += "%s" % borden_number_datatype.get_display_value(
                 borden_number_tile, BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER]
             )
 
