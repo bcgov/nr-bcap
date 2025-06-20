@@ -49,7 +49,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Authority"
                     },
@@ -76,7 +76,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Record Admin"
                     },
@@ -103,7 +103,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Typology"
                     },
@@ -130,7 +130,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "9. References & Related Documents"
                     },
@@ -251,7 +251,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "6. Archaeological Data"
                     },
@@ -332,7 +332,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Official Recognition Details"
                     },
@@ -361,7 +361,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Official Recognition Information"
                     },
@@ -407,7 +407,7 @@
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "helpenabled": true,
                     "helptext": {
-                        "en": "<p>Enter any internal-only remarks.</p>\n\n<p><u>Remark Type</u></p>\n\n<p>Select an option from the drop-down menu.</p>\n\n<p>General &ndash; Select for general remarks about record.</p>\n\n<p>Duplicate Record &ndash; Select if the record is a duplicate and needs reconciling.</p>\n\n<p>Incomplete Data &ndash; Select if there is incomplete data that needs resolving.</p>\n\n<p>Restriction Reason &ndash; Select if the record is restricted and document the reason, such as owner requested removal.</p>\n\n<p><u>Internal Remark</u></p>\n\n<p>Enter the internal remark.</p>\n\n<p><u>Remark Date</u></p>\nEnter the date the remark was made."
+                        "en": "<p>Enter any internal-only remarks.</p>\n\n<p><u>Remark Type</u></p>\n\n<p>Select an option from the drop-down menu.</p>\n\n<p>General &ndash; Select for general remarks about record.</p>\n\n<p>Duplicate Record &ndash; Select if the record is a duplicate and needs reconciling.</p>\n\n<p>Incomplete Data &ndash; Select if there is incomplete data that needs resolving.</p>\n\n<p>Restriction Reason &ndash; Select if the record is restricted and document the reason, such as owner requested removal.</p>\n\n<p><u>Remark Date</u></p>\n\n<p>Enter the date the remark was made.</p>\n\n<p><u>Remark</u></p>\n\n<p>Enter the internal remark.</p>\n"
                     },
                     "helptitle": {
                         "en": "Internal Remarks Help"
@@ -471,7 +471,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Elevation Comments"
                     },
@@ -552,7 +552,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Publication Reference"
                     },
@@ -581,7 +581,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Tenure Type"
                     },
@@ -610,7 +610,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Images"
                     },
@@ -855,7 +855,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Internal Remark",
+                        "label": "Remark",
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -865,10 +865,10 @@
                     },
                     "id": "07b68f50-df23-4f6e-a265-40cd0d50c9e9",
                     "label": {
-                        "en": "Internal Remark"
+                        "en": "Remark"
                     },
                     "node_id": "8e26b0a4-9ae3-11ee-a366-080027b7463b",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
@@ -1676,7 +1676,7 @@
                         "en": "Remark Date"
                     },
                     "node_id": "8e26b50e-9ae3-11ee-a366-080027b7463b",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
@@ -6756,8 +6756,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "f93d5550-4640-11f0-9499-227cc05b707e",
-                "published_time": "2025-06-10T21:22:12.188"
+                "publicationid": "265082d4-4e29-11f0-bad9-0242ac170006",
+                "published_time": "2025-06-20T22:51:49.192"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -6790,7 +6790,7 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "ae2a79c8b1 2025-05-02 07:36:38 +0100",
         "os": "Linux",
         "os version": "6.10.14-linuxkit"
