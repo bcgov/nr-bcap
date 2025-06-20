@@ -873,6 +873,28 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Type",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "0952064a-337c-4d1e-8a7b-f409f4679d3c",
+                    "label": {
+                        "en": "Type"
+                    },
+                    "node_id": "6ebdd1e4-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
                     "card_id": "1b623006-0d0f-11ed-98c2-5254008afee6",
                     "config": {
                         "defaultValue": {
@@ -898,6 +920,35 @@
                     },
                     "node_id": "428ee192-8829-11ee-b6ec-080027b7463b",
                     "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Descriptor",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "14b6f4d4-7f90-4fed-ac2a-e44f22896274",
+                    "label": {
+                        "en": "Descriptor"
+                    },
+                    "node_id": "a2bc804e-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 3,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
@@ -1078,6 +1129,28 @@
                     "sortorder": 3,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Class",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "2a50b3ab-1448-48c9-9987-4a867d4029be",
+                    "label": {
+                        "en": "Class"
+                    },
+                    "node_id": "4d3bb20c-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
                     "card_id": "bdb66988-f5ae-4904-879a-d89f095b1e3b",
@@ -1800,6 +1873,28 @@
                     "sortorder": 2,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Subtype",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "adb427be-66c6-4214-af0e-19932adabb84",
+                    "label": {
+                        "en": "Subtype"
+                    },
+                    "node_id": "897b6280-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 2,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
@@ -6756,8 +6851,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "265082d4-4e29-11f0-bad9-0242ac170006",
-                "published_time": "2025-06-20T22:51:49.192"
+                "publicationid": "4cefea28-4e2a-11f0-b4b1-0242ac170006",
+                "published_time": "2025-06-20T23:00:03.487"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
