@@ -49,7 +49,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Authority"
                     },
@@ -76,7 +76,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Record Admin"
                     },
@@ -103,7 +103,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Typology"
                     },
@@ -130,7 +130,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "9. References & Related Documents"
                     },
@@ -251,7 +251,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "6. Archaeological Data"
                     },
@@ -332,7 +332,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Official Recognition Details"
                     },
@@ -361,7 +361,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Official Recognition Information"
                     },
@@ -407,7 +407,7 @@
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "helpenabled": true,
                     "helptext": {
-                        "en": "<p>Enter any internal-only remarks.</p>\n\n<p><u>Remark Type</u></p>\n\n<p>Select an option from the drop-down menu.</p>\n\n<p>General &ndash; Select for general remarks about record.</p>\n\n<p>Duplicate Record &ndash; Select if the record is a duplicate and needs reconciling.</p>\n\n<p>Incomplete Data &ndash; Select if there is incomplete data that needs resolving.</p>\n\n<p>Restriction Reason &ndash; Select if the record is restricted and document the reason, such as owner requested removal.</p>\n\n<p><u>Internal Remark</u></p>\n\n<p>Enter the internal remark.</p>\n\n<p><u>Remark Date</u></p>\nEnter the date the remark was made."
+                        "en": "<p>Enter any internal-only remarks.</p>\n\n<p><u>Remark Type</u></p>\n\n<p>Select an option from the drop-down menu.</p>\n\n<p>General &ndash; Select for general remarks about record.</p>\n\n<p>Duplicate Record &ndash; Select if the record is a duplicate and needs reconciling.</p>\n\n<p>Incomplete Data &ndash; Select if there is incomplete data that needs resolving.</p>\n\n<p>Restriction Reason &ndash; Select if the record is restricted and document the reason, such as owner requested removal.</p>\n\n<p><u>Remark Date</u></p>\n\n<p>Enter the date the remark was made.</p>\n\n<p><u>Remark</u></p>\n\n<p>Enter the internal remark.</p>\n"
                     },
                     "helptitle": {
                         "en": "Internal Remarks Help"
@@ -471,7 +471,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Elevation Comments"
                     },
@@ -552,7 +552,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Publication Reference"
                     },
@@ -581,7 +581,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Site Tenure Type"
                     },
@@ -610,7 +610,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Images"
                     },
@@ -855,7 +855,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Internal Remark",
+                        "label": "Remark",
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -865,12 +865,34 @@
                     },
                     "id": "07b68f50-df23-4f6e-a265-40cd0d50c9e9",
                     "label": {
-                        "en": "Internal Remark"
+                        "en": "Remark"
                     },
                     "node_id": "8e26b0a4-9ae3-11ee-a366-080027b7463b",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Type",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "0952064a-337c-4d1e-8a7b-f409f4679d3c",
+                    "label": {
+                        "en": "Type"
+                    },
+                    "node_id": "6ebdd1e4-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
                     "card_id": "1b623006-0d0f-11ed-98c2-5254008afee6",
@@ -898,6 +920,35 @@
                     },
                     "node_id": "428ee192-8829-11ee-b6ec-080027b7463b",
                     "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Descriptor",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "14b6f4d4-7f90-4fed-ac2a-e44f22896274",
+                    "label": {
+                        "en": "Descriptor"
+                    },
+                    "node_id": "a2bc804e-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 3,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
@@ -1078,6 +1129,28 @@
                     "sortorder": 3,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Class",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "2a50b3ab-1448-48c9-9987-4a867d4029be",
+                    "label": {
+                        "en": "Class"
+                    },
+                    "node_id": "4d3bb20c-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
                     "card_id": "bdb66988-f5ae-4904-879a-d89f095b1e3b",
@@ -1676,7 +1749,7 @@
                         "en": "Remark Date"
                     },
                     "node_id": "8e26b50e-9ae3-11ee-a366-080027b7463b",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
@@ -1800,6 +1873,28 @@
                     "sortorder": 2,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Subtype",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "adb427be-66c6-4214-af0e-19932adabb84",
+                    "label": {
+                        "en": "Subtype"
+                    },
+                    "node_id": "897b6280-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 2,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
@@ -6756,8 +6851,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "f93d5550-4640-11f0-9499-227cc05b707e",
-                "published_time": "2025-06-10T21:22:12.188"
+                "publicationid": "4cefea28-4e2a-11f0-b4b1-0242ac170006",
+                "published_time": "2025-06-20T23:00:03.487"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -6790,7 +6885,7 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "ae2a79c8b1 2025-05-02 07:36:38 +0100",
         "os": "Linux",
         "os version": "6.10.14-linuxkit"
