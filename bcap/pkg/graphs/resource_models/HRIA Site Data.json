@@ -519,15 +519,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "edgeid": "3e038b93-42db-40c3-a3db-b7c6b32fe3f4",
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "rangenode_id": "77ddd648-52b5-11f0-84ae-2a3f36199137"
-                },
-                {
-                    "description": null,
                     "domainnode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
                     "edgeid": "4874dfb9-bf49-4d1d-b952-d26752aea429",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
@@ -543,15 +534,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "rangenode_id": "c236d708-52b5-11f0-84ae-2a3f36199137"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "edgeid": "516fe89a-a64b-46fb-839e-64c4f0894961",
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "rangenode_id": "903ad1aa-52b5-11f0-84ae-2a3f36199137"
                 },
                 {
                     "description": null,
@@ -579,6 +561,24 @@
                     "name": null,
                     "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L31_has_starting_date-time",
                     "rangenode_id": "1fe5cf0c-52b7-11f0-9897-2a3f36199137"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
+                    "edgeid": "71c3e8a5-7d83-4b95-a410-54e9d62476e9",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "c29d6d8a-52c7-11f0-8f82-3e35adbf154c"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
+                    "edgeid": "75a725b0-0ae0-4826-999e-d9a38a8c6c07",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "db704864-52c7-11f0-8f82-3e35adbf154c"
                 },
                 {
                     "description": null,
@@ -672,6 +672,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
+                    "edgeid": "86724ff7-0820-44c6-b28c-a2fecdd90a17",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "e5a2ae94-52c7-11f0-8f82-3e35adbf154c"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
                     "edgeid": "8967db23-05ca-47d2-9353-574c24c222d2",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
@@ -717,30 +726,12 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "edgeid": "bda2b84d-116d-4509-8890-bb3c1f3d5aeb",
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "rangenode_id": "cbaf1026-52b4-11f0-a8df-2a3f36199137"
-                },
-                {
-                    "description": null,
                     "domainnode_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
                     "edgeid": "d018a66d-c835-400b-96d5-412df510a562",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "rangenode_id": "4d2dbe66-197d-11f0-b2a5-0242ac170008"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "edgeid": "d88685d4-0c5c-4275-8e6a-27494c7e1ca7",
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "rangenode_id": "5928cd2a-52b5-11f0-84ae-2a3f36199137"
                 },
                 {
                     "description": null,
@@ -759,6 +750,15 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
                     "rangenode_id": "b7fbd656-197d-11f0-b2a5-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
+                    "edgeid": "fb015c73-2028-45ba-a7f1-a416f23ad19f",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "cdd4b32a-52c7-11f0-8f82-3e35adbf154c"
                 },
                 {
                     "description": null,
@@ -843,7 +843,7 @@
                     "nodeid": "04caad14-52b7-11f0-9897-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 1,
+                    "sortorder": 10,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -912,7 +912,7 @@
                     "nodeid": "1fe5cf0c-52b7-11f0-9897-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E61_Time_Primitive",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L31_has_starting_date-time",
-                    "sortorder": 0,
+                    "sortorder": 11,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -959,29 +959,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E17_Type_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 1,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "rcd_unadjusted_var",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "number",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "RCD Unadjusted Var",
-                    "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "nodeid": "5928cd2a-52b5-11f0-84ae-2a3f36199137",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E54_Dimension",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "sortorder": 6,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1051,29 +1028,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 2,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "rcd_adjusted",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "number",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "RCD Adjusted",
-                    "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "nodeid": "77ddd648-52b5-11f0-84ae-2a3f36199137",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E54_Dimension",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "sortorder": 5,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1165,7 +1119,7 @@
                     "nodeid": "7e48c36a-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 10,
+                    "sortorder": 2,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1188,7 +1142,7 @@
                     "nodeid": "7e48c41e-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P33_used_specific_technique",
-                    "sortorder": 8,
+                    "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1234,7 +1188,7 @@
                     "nodeid": "7e48c586-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
-                    "sortorder": 9,
+                    "sortorder": 1,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1280,7 +1234,7 @@
                     "nodeid": "7e48c6e4-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
-                    "sortorder": 11,
+                    "sortorder": 3,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1350,29 +1304,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P16i_was_used_for",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "rcd_adjusted_var",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "number",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "RCD Adjusted Var",
-                    "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "nodeid": "903ad1aa-52b5-11f0-84ae-2a3f36199137",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E54_Dimension",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "sortorder": 4,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1456,7 +1387,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "rcd_lab_name",
+                    "alias": "rcd_lab_code",
                     "config": {
                         "en": ""
                     },
@@ -1470,7 +1401,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "RCD Lab Name",
+                    "name": "RCD Lab Code",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "b91b62d2-52b6-11f0-99ae-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -1498,7 +1429,7 @@
                     "nodeid": "c236d708-52b5-11f0-84ae-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
-                    "sortorder": 2,
+                    "sortorder": 9,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1506,8 +1437,8 @@
                     "config": {
                         "en": ""
                     },
-                    "datatype": "number",
-                    "description": "",
+                    "datatype": "non-localized-string",
+                    "description": null,
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
@@ -1518,10 +1449,10 @@
                     "istopnode": false,
                     "name": "RCD Unadjusted",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "nodeid": "cbaf1026-52b4-11f0-a8df-2a3f36199137",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E54_Dimension",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMsci/O12_has_dimension",
-                    "sortorder": 0,
+                    "nodeid": "c29d6d8a-52c7-11f0-8f82-3e35adbf154c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 4,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -1546,14 +1477,83 @@
                     "parentproperty": "",
                     "sortorder": 0,
                     "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "rcd_unadjusted_var",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "non-localized-string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "RCD Unadjusted Var",
+                    "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
+                    "nodeid": "cdd4b32a-52c7-11f0-8f82-3e35adbf154c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 5,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "rcd_adjusted",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "non-localized-string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "RCD Adjusted",
+                    "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
+                    "nodeid": "db704864-52c7-11f0-8f82-3e35adbf154c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 6,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "rcd_adjusted_var",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "non-localized-string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "RCD Adjusted Var",
+                    "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
+                    "nodeid": "e5a2ae94-52c7-11f0-8f82-3e35adbf154c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 7,
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                "notes": "Add Discontinued Chronology to HRIA Site Data",
-                "publicationid": "25236cee-52c2-11f0-bfac-2a3f36199137",
-                "published_time": "2025-06-26T19:17:04.869"
+                "notes": "Fix datatype for Discontinued Chronology",
+                "publicationid": "1d551732-52c8-11f0-8f82-3e35adbf154c",
+                "published_time": "2025-06-26T19:59:48.753"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
