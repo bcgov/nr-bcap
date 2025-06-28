@@ -1579,7 +1579,7 @@
                 "sortorder": 0,
                 "sourcebranchpublication_id": null
             },
-            "slug": "hria_site_data",
+            "slug": "hria_discontinued_data",
             "subtitle": {
                 "en": "HRIA site data that will not be entered in new sites"
             },
