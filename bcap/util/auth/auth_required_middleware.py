@@ -45,6 +45,7 @@ def should_bypass_auth(request):
 
 
 class AuthRequiredMiddleware(AuthenticationMiddleware):
+    _valid_urls = []
 
     def process_request(self, request):
         if not request.user.is_authenticated:
