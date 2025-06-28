@@ -22,7 +22,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Visit Team"
                     },
@@ -49,7 +49,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Temporary Numbers"
                     },
@@ -76,7 +76,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "2. Identification"
                     },
@@ -130,7 +130,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "7. Ancestral Remains"
                     },
@@ -157,7 +157,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Stratigraphy"
                     },
@@ -184,7 +184,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Archaeologocial Features"
                     },
@@ -211,7 +211,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Cultural Material"
                     },
@@ -238,7 +238,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Team Member"
                     },
@@ -265,7 +265,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Chronology"
                     },
@@ -319,7 +319,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "6. Archaeological Data"
                     },
@@ -346,7 +346,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "3. Site Visit Details"
                     },
@@ -373,7 +373,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Archaeological Culture"
                     },
@@ -400,7 +400,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Disturbance"
                     },
@@ -511,7 +511,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Archaeologocial Feature",
+                        "label": "Feature Type",
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
@@ -519,7 +519,7 @@
                     },
                     "id": "07038d4c-b1ea-4e00-bbc9-e9403f034d44",
                     "label": {
-                        "en": "Archaeologocial Feature"
+                        "en": "Feature Type"
                     },
                     "node_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "sortorder": 0,
@@ -2525,7 +2525,7 @@
             ],
             "graphid": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
             "iconclass": "fa fa-calendar",
-            "is_editable": false,
+            "is_editable": true,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -3479,7 +3479,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": null,
+                    "alias": "archaeological_feature",
                     "config": {
                         "rdmCollection": "1a6495f4-0ef4-469a-9e62-5e39b1c96a10"
                     },
@@ -3493,7 +3493,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Archaeologocial Feature",
+                    "name": "Archaeological Feature",
                     "nodegroup_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "nodeid": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E14_Condition_Assessment",
@@ -4336,9 +4336,9 @@
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                "notes": "Update chronology section labels and order",
-                "publicationid": "ef66e3de-5428-11f0-aa43-0242ac170006",
-                "published_time": "2025-06-28T14:05:24.040"
+                "notes": "Fix Arch Feature typos and names",
+                "publicationid": "cf4a37c8-542c-11f0-b80a-0242ac170006",
+                "published_time": "2025-06-28T14:33:08.152"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
