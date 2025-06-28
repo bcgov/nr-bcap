@@ -777,7 +777,7 @@
             "isresource": true,
             "jsonldcontext": null,
             "name": {
-                "en": "HRIA Site Data"
+                "en": "HRIA Discontinued Data"
             },
             "nodegroups": [
                 {
@@ -1470,7 +1470,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": true,
-                    "name": "HRIA Site Data",
+                    "name": "HRIA Discontinued Data",
                     "nodegroup_id": null,
                     "nodeid": "cc26b946-1970-11f0-b493-0242ac170008",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
@@ -1572,7 +1572,7 @@
                 "isrequired": false,
                 "issearchable": true,
                 "istopnode": true,
-                "name": "HRIA Site Data",
+                "name": "HRIA Discontinued Data",
                 "nodegroup_id": null,
                 "nodeid": "cc26b946-1970-11f0-b493-0242ac170008",
                 "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",

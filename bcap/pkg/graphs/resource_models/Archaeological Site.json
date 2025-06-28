@@ -5023,7 +5023,7 @@
                             {
                                 "graphid": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                                 "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "HRIA Site Data ",
+                                "name": "HRIA Discontinued Data",
                                 "relationshipCollection": "00000000-0000-0000-0000-000000000005",
                                 "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
                                 "useOntologyRelationship": false
