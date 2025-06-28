@@ -227,6 +227,7 @@ MIDDLEWARE = [
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # "bcap.util.auth.middleware.SiteminderMiddleware",
+    "bcap.util.auth.oauth_token_middleware.OAuthTokenMiddleware",
     "bcap.util.auth.auth_required_middleware.AuthRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
