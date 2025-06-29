@@ -1035,10 +1035,33 @@
                     "rangenode_id": "1c5d8ec0-1972-11f0-a6b9-0242ac170008"
                 }
             ],
-            "functions_x_graphs": [],
+            "functions_x_graphs": [
+                {
+                    "config": {
+                        "descriptor_types": {
+                            "description": {
+                                "nodegroup_id": "",
+                                "string_template": ""
+                            },
+                            "map_popup": {
+                                "nodegroup_id": "",
+                                "string_template": ""
+                            },
+                            "name": {
+                                "nodegroup_id": "642624fa-54f1-11f0-842f-0242ac170006",
+                                "string_template": "<Archaeological Site> (Discontinued)"
+                            }
+                        },
+                        "triggering_nodegroups": []
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "id": "52679fa9-335b-4dc7-8112-8b07397c0a02"
+                }
+            ],
             "graphid": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
             "iconclass": "",
-            "is_editable": false,
+            "is_editable": true,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
