@@ -10,7 +10,7 @@
                     "config": null,
                     "constraints": [],
                     "cssclass": null,
-                    "description": "{\"en\": \"\"}",
+                    "description": "",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "helpenabled": true,
                     "helptext": {
@@ -24,10 +24,10 @@
                     },
                     "is_editable": true,
                     "name": {
-                        "en": "Discontinued Chronology"
+                        "en": "Chronology"
                     },
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 4,
+                    "sortorder": 3,
                     "visible": true
                 },
                 {
@@ -54,7 +54,34 @@
                         "en": "Jursidiction / Tenure Information"
                     },
                     "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 2,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "98c7b0d7-72af-4ec2-a784-365059cdb05d",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": "Archaeological Site this discontinued data was associated with in HRIA.",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": null
+                    },
+                    "helptitle": {
+                        "en": null
+                    },
+                    "instructions": {
+                        "en": null
+                    },
+                    "is_editable": true,
+                    "name": {
+                        "en": "Archaeological Site"
+                    },
+                    "nodegroup_id": "642624fa-54f1-11f0-842f-0242ac170006",
+                    "sortorder": 0,
                     "visible": true
                 },
                 {
@@ -81,11 +108,104 @@
                         "en": "Unreviewed ADIF record"
                     },
                     "nodegroup_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "c0e4a234-d288-419c-895c-74b9c24ec95f",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Site Entered By",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "0592a7b0-3254-4085-bab3-b5c62220799a",
+                    "label": {
+                        "en": "Site Entered By"
+                    },
+                    "node_id": "b8675a40-1971-11f0-92d0-0242ac170008",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "RCD Lab Code",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "373595f5-656e-428b-9ab7-90afd1ecdeba",
+                    "label": {
+                        "en": "RCD Lab Code"
+                    },
+                    "node_id": "b91b62d2-52b6-11f0-99ae-2a3f36199137",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "RCD Adjusted Var",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "3b0a7586-2786-4f8f-9aa2-b27182182ef4",
+                    "label": {
+                        "en": "RCD Adjusted Var"
+                    },
+                    "node_id": "e5a2ae94-52c7-11f0-8f82-3e35adbf154c",
+                    "sortorder": 5,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "RCD Unadjusted",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "4ad59004-18d8-4eed-bad9-bca43836a57d",
+                    "label": {
+                        "en": "RCD Unadjusted"
+                    },
+                    "node_id": "c29d6d8a-52c7-11f0-8f82-3e35adbf154c",
+                    "sortorder": 2,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
                 {
                     "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
                     "config": {
@@ -160,7 +280,7 @@
                         "en": "End Year"
                     },
                     "node_id": "7e48c63a-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 6,
+                    "sortorder": 14,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
@@ -182,7 +302,7 @@
                         "en": "Start Year Calendar"
                     },
                     "node_id": "7e48c798-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 4,
+                    "sortorder": 12,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
@@ -204,7 +324,7 @@
                         "en": "Start Year Qualifier"
                     },
                     "node_id": "7e48c842-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 5,
+                    "sortorder": 13,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
@@ -226,7 +346,7 @@
                         "en": "End Year Qualifier"
                     },
                     "node_id": "7e48c1a8-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 7,
+                    "sortorder": 15,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
@@ -248,7 +368,7 @@
                         "en": "End Year Calendar"
                     },
                     "node_id": "7e48c2ac-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 8,
+                    "sortorder": 16,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
@@ -277,7 +397,7 @@
                         "en": "Source of Dates"
                     },
                     "node_id": "7e48c586-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 1,
+                    "sortorder": 9,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
@@ -319,7 +439,7 @@
                         "en": "Start Year"
                     },
                     "node_id": "7e48c4d2-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 3,
+                    "sortorder": 11,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
@@ -348,7 +468,7 @@
                         "en": "Chronology Remarks"
                     },
                     "node_id": "7e48c36a-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 2,
+                    "sortorder": 10,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
@@ -373,6 +493,50 @@
                     "sortorder": 0,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
+                    "card_id": "c0e4a234-d288-419c-895c-74b9c24ec95f",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Site Entry Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "a012d8c7-cf23-42a5-aae2-1031aaec93d6",
+                    "label": {
+                        "en": "Site Entry Date"
+                    },
+                    "node_id": "1c5d8ec0-1972-11f0-a6b9-0242ac170008",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Modified By",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "a2c0825f-c01e-4500-9c92-b380db9a6efa",
+                    "label": {
+                        "en": "Modified By"
+                    },
+                    "node_id": "04caad14-52b7-11f0-9897-2a3f36199137",
+                    "sortorder": 7,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
@@ -431,6 +595,98 @@
                     "sortorder": 4,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "RCD Lab Number",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "b7ec0554-fc99-4fed-bcc2-f6e4a0fc56a6",
+                    "label": {
+                        "en": "RCD Lab Number"
+                    },
+                    "node_id": "c236d708-52b5-11f0-84ae-2a3f36199137",
+                    "sortorder": 6,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "RCD Adjusted",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "ba42d9d8-986d-4372-a85d-05c0ed7b1994",
+                    "label": {
+                        "en": "RCD Adjusted"
+                    },
+                    "node_id": "db704864-52c7-11f0-8f82-3e35adbf154c",
+                    "sortorder": 4,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Modified On",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "bdc3be88-2213-4720-8194-a5225c062c7f",
+                    "label": {
+                        "en": "Modified On"
+                    },
+                    "node_id": "1fe5cf0c-52b7-11f0-9897-2a3f36199137",
+                    "sortorder": 8,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "RCD Unadjusted Var",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "c14aacbb-88fa-4474-b0aa-b997c8ccb455",
+                    "label": {
+                        "en": "RCD Unadjusted Var"
+                    },
+                    "node_id": "cdd4b32a-52c7-11f0-8f82-3e35adbf154c",
+                    "sortorder": 3,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "952f18f0-3254-4a93-9bf2-bbf21b1d93f0",
@@ -516,6 +772,15 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
                     "rangenode_id": "69dea798-1971-11f0-98bb-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "cc26b946-1970-11f0-b493-0242ac170008",
+                    "edgeid": "37ff5c7a-fb01-41d4-ae97-bf8506adbfe6",
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "642624fa-54f1-11f0-842f-0242ac170006"
                 },
                 {
                     "description": null,
@@ -773,7 +1038,7 @@
             "functions_x_graphs": [],
             "graphid": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
             "iconclass": "",
-            "is_editable": true,
+            "is_editable": false,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -790,6 +1055,12 @@
                     "cardinality": "1",
                     "legacygroupid": null,
                     "nodegroupid": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "642624fa-54f1-11f0-842f-0242ac170006",
                     "parentnodegroup_id": null
                 },
                 {
@@ -985,6 +1256,40 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "archaeological_site",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Archaeological Site",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "Archaeological Site this discontinued data was associated with in HRIA.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Archaeological Site",
+                    "nodegroup_id": "642624fa-54f1-11f0-842f-0242ac170006",
+                    "nodeid": "642624fa-54f1-11f0-842f-0242ac170006",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "site_entered",
                     "config": {
                         "en": ""
@@ -1031,12 +1336,12 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "discontinued_chronology",
+                    "alias": "chronology",
                     "config": {
                         "rdmCollection": null
                     },
                     "datatype": "semantic",
-                    "description": "{\"en\": \"\"}",
+                    "description": "",
                     "exportable": true,
                     "fieldname": "EVENT",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
@@ -1045,7 +1350,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Discontinued Chronology",
+                    "name": "Chronology",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E11_Modification",
@@ -1551,9 +1856,9 @@
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                "notes": "Fix datatype for Discontinued Chronology",
-                "publicationid": "1d551732-52c8-11f0-8f82-3e35adbf154c",
-                "published_time": "2025-06-26T19:59:48.753"
+                "notes": null,
+                "publicationid": "e73b3a6a-54f1-11f0-842f-0242ac170006",
+                "published_time": "2025-06-29T14:03:59.175"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1588,9 +1893,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "c2d44664b 2025-01-15 20:52:27 -0800",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "ae2a79c8b1 2025-05-02 07:36:38 +0100",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.10.14-linuxkit"
     }
 }
