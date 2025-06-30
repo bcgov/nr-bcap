@@ -1,9 +1,12 @@
 import time
+import logging
 from django.shortcuts import redirect
 from django.contrib.auth.models import AnonymousUser
 from requests_oauthlib import OAuth2Session
 from arches.app.utils.external_oauth_backend import ExternalOauthAuthenticationBackend
 from bcap.util.auth.auth_required_middleware import should_bypass_auth
+
+logger = logging.getLogger(__name__)
 
 
 class OAuthTokenMiddleware:
@@ -22,27 +25,33 @@ class OAuthTokenMiddleware:
         # self.token_url = token_url
 
     def __call__(self, request):
-        # for key, value in request.session.items():
-        #     print(f"{key}: {value}")
-        # print("\n\n")
+        print("OAuth Token Middleware")
+        for key, value in request.session.items():
+            print(f"\t{key}: {value}")
+        print("\n\n")
 
         if should_bypass_auth(request):
             return self.get_response(request)
 
-        user = getattr(request, "user", None)
+        try:
+            print("Getting user...")
+            user = getattr(request, "user", None)
+            print(f"Got user {user}")
+        except AttributeError as e:
+            print("Attribute error")
 
         if not user or isinstance(user, AnonymousUser) or not user.is_authenticated:
-            # print("No user")
+            print("No user")
             return redirect(OAuthTokenMiddleware.UNAUTHENTICATED_REDIRECT)
 
         token_record = ExternalOauthAuthenticationBackend.get_token(request.user)
 
         if not token_record:
-            # print("No token")
+            print("No token")
             return redirect(OAuthTokenMiddleware.UNAUTHENTICATED_REDIRECT)
 
         def update_token_record(new_token):
-            # print("\n\n\nUpdating token record\n\n\n")
+            print(f"\n\n\nUpdating token record: {new_token}\n\n\n")
             token_record.access_token = new_token["access_token"]
             token_record.access_token_expiration = new_token["expires_at"]
             if "refresh_token" in new_token:
@@ -71,4 +80,7 @@ class OAuthTokenMiddleware:
         )
 
         request.oauth_session = oauth
+        # logger.warning("Calling oauth.refresh_token")
+        # new_token = oauth.refresh_token(oauth2_settings["token_endpoint"])
+        # logger.warning(f"new_token: {new_token}")
         return self.get_response(request)
