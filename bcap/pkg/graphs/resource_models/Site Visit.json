@@ -135,7 +135,7 @@
                         "en": "7. Ancestral Remains"
                     },
                     "nodegroup_id": "6f96f910-5049-11f0-91cd-0242ac170006",
-                    "sortorder": 2,
+                    "sortorder": 4,
                     "visible": true
                 },
                 {
@@ -186,7 +186,7 @@
                     },
                     "is_editable": true,
                     "name": {
-                        "en": "Archaeologocial Features"
+                        "en": "Archaeological Features"
                     },
                     "nodegroup_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "sortorder": 1,
@@ -511,7 +511,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Archaeologocial Feature",
+                        "label": "Feature Type",
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
@@ -519,7 +519,7 @@
                     },
                     "id": "07038d4c-b1ea-4e00-bbc9-e9403f034d44",
                     "label": {
-                        "en": "Archaeologocial Feature"
+                        "en": "Feature Type"
                     },
                     "node_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "sortorder": 0,
@@ -1313,7 +1313,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Start Year Calendar",
+                        "label": "From Date Calendar",
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
@@ -1321,31 +1321,9 @@
                     },
                     "id": "c1f57760-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "Start Year Calendar"
+                        "en": "From Date Calendar"
                     },
                     "node_id": "c1f575ee-140b-11f0-898b-0242ac170007",
-                    "sortorder": 4,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
-                },
-                {
-                    "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
-                    "config": {
-                        "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Start Year Qualifier",
-                        "options": [],
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "c1f577e2-140b-11f0-898b-0242ac170007",
-                    "label": {
-                        "en": "Start Year Qualifier"
-                    },
-                    "node_id": "c1f576d4-140b-11f0-898b-0242ac170007",
                     "sortorder": 5,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
@@ -1357,18 +1335,18 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "End Year Qualifier",
+                        "label": "From Date Qualifier",
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
-                    "id": "c1f57864-140b-11f0-898b-0242ac170007",
+                    "id": "c1f577e2-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "End Year Qualifier"
+                        "en": "From Date Qualifier"
                     },
-                    "node_id": "c1f56e78-140b-11f0-898b-0242ac170007",
-                    "sortorder": 7,
+                    "node_id": "c1f576d4-140b-11f0-898b-0242ac170007",
+                    "sortorder": 3,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
@@ -1379,7 +1357,29 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "End Year Calendar",
+                        "label": "To Date Qualifier",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "c1f57864-140b-11f0-898b-0242ac170007",
+                    "label": {
+                        "en": "To Date Qualifier"
+                    },
+                    "node_id": "c1f56e78-140b-11f0-898b-0242ac170007",
+                    "sortorder": 6,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
+                    "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "To Date Calendar",
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
@@ -1387,7 +1387,7 @@
                     },
                     "id": "c1f578dc-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "End Year Calendar"
+                        "en": "To Date Calendar"
                     },
                     "node_id": "c1f56f86-140b-11f0-898b-0242ac170007",
                     "sortorder": 8,
@@ -1406,7 +1406,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Source of Dates",
+                        "label": "Source",
                         "maxLength": "250",
                         "placeholder": {
                             "en": "E.g. City of Surrey"
@@ -1416,7 +1416,7 @@
                     },
                     "id": "c1f57954-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "Source of Dates"
+                        "en": "Source"
                     },
                     "node_id": "c1f57332-140b-11f0-898b-0242ac170007",
                     "sortorder": 1,
@@ -1428,7 +1428,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "End Year",
+                        "label": "To Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1436,10 +1436,10 @@
                     },
                     "id": "c1f579cc-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "End Year"
+                        "en": "To Date"
                     },
                     "node_id": "c1f57418-140b-11f0-898b-0242ac170007",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
@@ -1470,7 +1470,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "Start Year",
+                        "label": "From Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1478,10 +1478,10 @@
                     },
                     "id": "c1f57ab2-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "Start Year"
+                        "en": "From Date"
                     },
                     "node_id": "c1f5724c-140b-11f0-898b-0242ac170007",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
@@ -1521,7 +1521,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Determination Method",
+                        "label": "Method",
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
@@ -1529,7 +1529,7 @@
                     },
                     "id": "c1f57ba2-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "Determination Method"
+                        "en": "Method"
                     },
                     "node_id": "c1f57166-140b-11f0-898b-0242ac170007",
                     "sortorder": 0,
@@ -2569,7 +2569,7 @@
                     "parentnodegroup_id": "37bdda22-140d-11f0-b9bb-0242ac170007"
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "6f96f910-5049-11f0-91cd-0242ac170006",
                     "parentnodegroup_id": null
@@ -2587,7 +2587,7 @@
                     "parentnodegroup_id": null
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
@@ -3479,7 +3479,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": null,
+                    "alias": "archaeological_feature",
                     "config": {
                         "rdmCollection": "1a6495f4-0ef4-469a-9e62-5e39b1c96a10"
                     },
@@ -3493,7 +3493,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Archaeologocial Feature",
+                    "name": "Archaeological Feature",
                     "nodegroup_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "nodeid": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E14_Condition_Assessment",
@@ -4173,7 +4173,7 @@
                 {
                     "alias": "archaeological_culture",
                     "config": {
-                        "rdmCollection": "ed893196-5678-5acd-9afa-985278112b7b"
+                        "rdmCollection": "117a187a-9864-5efa-aa7d-d823dddf2ca8"
                     },
                     "datatype": "concept",
                     "description": "",
@@ -4336,9 +4336,9 @@
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                "notes": "Add ancestral remains section",
-                "publicationid": "90b0ab28-5049-11f0-91cd-0242ac170006",
-                "published_time": "2025-06-23T15:48:53.881"
+                "notes": "Fix cardinality issues",
+                "publicationid": "804a9f3c-54fe-11f0-883b-0242ac170006",
+                "published_time": "2025-06-29T15:34:09.928"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
