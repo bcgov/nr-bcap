@@ -12,9 +12,11 @@ class TestSampleIndex(TestCase):
 
         expected_index_metadata = {
             "mappings": {
-                "properties": {
-                    "tile_count": {"type": "keyword"},
-                    "graph_id": {"type": "keyword"},
+                "_doc": {
+                    "properties": {
+                        "tile_count": {"type": "keyword"},
+                        "graph_id": {"type": "keyword"},
+                    }
                 }
             }
         }

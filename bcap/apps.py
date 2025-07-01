@@ -4,7 +4,7 @@ from django.conf import settings
 from arches.settings_utils import generate_frontend_configuration
 
 
-class BcrhpConfig(AppConfig):
+class BcapConfig(AppConfig):
     name = "bcap"
     is_arches_application = True
 

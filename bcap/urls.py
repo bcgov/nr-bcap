@@ -8,7 +8,7 @@ from bcap.views.search import export_results as bcap_export_results
 from bcap.views.resource import ResourceReportView
 from bcap.views.auth import UnauthorizedView
 from bcgov_arches_common.views.map import BCTileserverProxyView
-from bcap.views.auth import ExternalOauth
+from bcap.views import auth
 import re
 
 uuid_regex = settings.UUID_REGEX
@@ -65,22 +65,14 @@ urlpatterns = [
     # Redirect the admin login page to use OAuth
     re_path(
         bc_path_prefix(r"^admin/login/$"),
-        ExternalOauth.start,
-        name="external_oauth_start",
+        auth.login,
+        name="admin_login",
     ),
-    re_path(
-        bc_path_prefix(r"^auth/$"), ExternalOauth.start, name="external_oauth_start"
+    path("bcap/auth/", auth.login, name="auth_login"),
+    path(
+        "bcap/auth/eoauth_cb", auth.auth_callback, name="auth_callback"
     ),
-    re_path(
-        bc_path_prefix(r"^auth/eoauth_cb$"),
-        ExternalOauth.callback,
-        name="external_oauth_callback",
-    ),
-    re_path(
-        bc_path_prefix(r"^auth/eoauth_start$"),
-        ExternalOauth.start,
-        name="external_oauth_start",
-    ),
+    path("bcap/auth/logout/", auth.logout, name="auth_logout"),
     re_path(
         bc_path_prefix(r"^unauthorized/"),
         UnauthorizedView.as_view(),

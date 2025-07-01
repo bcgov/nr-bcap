@@ -112,15 +112,60 @@ FORCE_TWO_FACTOR_AUTHENTICATION = False
 
 DATATYPE_LOCATIONS.append("tests.fixtures.datatypes")
 # ELASTICSEARCH_HOSTS = [{"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}]
-ELASTICSEARCH_HOSTS = [
-    {"scheme": "https", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
+ROOT_DIR = "/web_root/arches/arches"
+APP_ROOT = "/web_root/bcap/bcap"
+DATABASES = {
+    "default": {
+        "ATOMIC_REQUESTS": False,
+        "AUTOCOMMIT": True,
+        "CONN_MAX_AGE": 0,
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "HOST": get_env_variable("PGHOST"),
+        "NAME": get_env_variable("PGDBNAME"),
+        "OPTIONS": {},
+        "PASSWORD": get_env_variable("PGPASSWORD"),
+        "PORT": "5432",
+        "POSTGIS_TEMPLATE": "template_postgis",
+        "TEST": {"CHARSET": None, "COLLATION": None, "MIRROR": None, "NAME": None},
+        "TIME_ZONE": None,
+        "USER": get_env_variable("PGUSERNAME"),
+    }
+}
+
+SILENCED_SYSTEM_CHECKS += [
+    "arches.E001",  # Dummy cache in production
+    "arches.E002",  # Arches requirement invalid
 ]
-ELASTICSEARCH_CERT_LOCATION = "/etc/elasticsearch/certs/http_ca.crt"
+
+ELASTICSEARCH_HOSTS = [
+    {
+        "scheme": "http",  # changed from https
+        "host": "elasticsearch8-3_arches7-5-2",
+        "port": ELASTICSEARCH_HTTP_PORT,
+    }
+]
+
+# Remove the certificate location, no longer needed for HTTP
+ELASTICSEARCH_CERT_LOCATION = None
+
 ELASTICSEARCH_CONNECTION_OPTIONS = {
     "timeout": 30,
-    "verify_certs": True,
-    "ca_certs": ELASTICSEARCH_CERT_LOCATION,
+    "verify_certs": False,  # disable SSL cert verification for HTTP
     "basic_auth": ("arches_test2", "arches_test"),
+}
+
+# Authlib configuration for test (local fake provider)
+AUTHLIB_OAUTH_CLIENTS = {
+    "bcap_oauth": {
+        "client_id": "test-client-id",
+        "client_secret": "test-client-secret",
+        "authorize_url": "http://localhost:9999/fake-oauth/authorize",
+        "access_token_url": "http://localhost:9999/fake-oauth/token",
+        "userinfo_endpoint": "http://localhost:9999/fake-oauth/userinfo",
+        "client_kwargs": {
+            "scope": "openid email profile",
+        },
+    }
 }
 
 LANGUAGES = [
