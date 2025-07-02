@@ -155,7 +155,7 @@ DATABASES = {
         "AUTOCOMMIT": True,
         "CONN_MAX_AGE": 0,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": get_env_variable("PGHOST", default="postgres"),
+        "HOST": get_env_variable("PGHOST", default="localhost"),
         "NAME": get_env_variable("PGDBNAME", default="bcap"),
         "OPTIONS": {},
         "PASSWORD": get_env_variable("PGPASSWORD", default="postgis"),
