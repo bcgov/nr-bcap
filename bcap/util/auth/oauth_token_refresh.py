@@ -1,10 +1,10 @@
 import time
 import logging
 from django.shortcuts import redirect
-from django.urls import resolve
 from authlib.integrations.requests_client import OAuth2Session
 from django.conf import settings
 from bcap.util.auth.token_store import save_token
+from bcap.util.auth.oauth_session_control import log_user_out
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +14,7 @@ UNAUTHORIZED_PAGE = "/bcap/unauthorized"
 EXEMPT_PATHS = {
     HOME_PAGE,
     UNAUTHORIZED_PAGE,
+    "/bcap/index.htm",
     "/bcap/auth",
     "/bcap/auth/eoauth_start",
     "/bcap/auth/eoauth_cb",
@@ -80,8 +81,11 @@ class OAuthTokenRefreshMiddleware:
 
                     except Exception as e:
                         logger.error(f"[Token] Failed to refresh: {e}")
+                        log_user_out(request)
                         return redirect(UNAUTHORIZED_PAGE)
         else:
+            logger.warning(f"[Token] No token - logging user out.")
+            log_user_out(request)
             return redirect(HOME_PAGE)
 
         if not request.user.is_authenticated:

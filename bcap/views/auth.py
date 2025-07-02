@@ -1,12 +1,10 @@
-from django.views.generic import View
-from django.contrib.auth import login as system_login, authenticate
-from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.views.generic import View
+from django.shortcuts import render
 from django.urls import reverse
-from django.contrib.auth.models import User
 from bcap.util.auth.oauth_client import oauth
+from bcap.util.auth.oauth_session_control import log_user_in, log_user_out
 import logging
-import re
 
 logger = logging.getLogger(__name__)
 
@@ -28,30 +26,5 @@ def auth_callback(request):
 
 
 def logout(request):
-    request.session.pop("oauth_token", None)
+    log_user_out(request)
     return HttpResponse("Logged out.")
-
-
-def _clean_username(username):
-    # DLVR: IDIR = <username>@idir, TEST, PROD: IDIR = idir\\<username>
-    return None if username is None else re.sub(r"^idir\\(.*)$", r"\1@idir", username)
-
-
-def log_user_in(request, token, next_url):
-    logger.debug("In ExternalOauth (custom): %s" % token)
-    try:
-        username = _clean_username(token["userinfo"]["preferred_username"])
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        user = None
-
-    if user is not None:
-        user.backend = "django.contrib.auth.backends.ModelBackend"
-        system_login(
-            request,
-            user,
-        )
-        logger.debug("Next URL: %s" % next_url)
-        return redirect(next_url)
-    else:
-        return redirect("unauthorized")
