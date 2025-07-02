@@ -68,11 +68,11 @@ urlpatterns = [
         auth.login,
         name="admin_login",
     ),
-    path("bcap/auth/", auth.login, name="auth_login"),
+    path("auth/", auth.login, name="auth_login"),
     path(
-        "bcap/auth/eoauth_cb", auth.auth_callback, name="auth_callback"
+        "auth/eoauth_cb", auth.auth_callback, name="auth_callback"
     ),
-    path("bcap/auth/logout/", auth.logout, name="auth_logout"),
+    path("auth/logout/", auth.logout, name="auth_logout"),
     re_path(
         bc_path_prefix(r"^unauthorized/"),
         UnauthorizedView.as_view(),
