@@ -84,6 +84,19 @@ ROOT_URLCONF = "bcap.urls"
 ELASTICSEARCH_SCHEME = get_env_variable("ES_SCHEME", default="http")
 ELASTICSEARCH_HTTP_PORT = int(get_env_variable("ES_PORT", default="9200"))
 ELASTICSEARCH_HTTP_HOST = get_env_variable("ES_HOST", default="localhost")
+ELASTICSEARCH_HOSTS = [
+    {"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
+]
+
+# Remove the certificate location, no longer needed for HTTP
+ELASTICSEARCH_CERT_LOCATION = None
+
+ELASTICSEARCH_CONNECTION_OPTIONS = {
+    "timeout": 30,
+    "verify_certs": False,  # disable SSL cert verification for HTTP
+    "basic_auth": ("arches_test2", "arches_test"),
+}
+
 
 # ELASTICSEARCH_HOSTS = [
 #     {
