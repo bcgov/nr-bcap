@@ -33,7 +33,10 @@ def logout(request):
 
 def log_user_in(request, token, next_url):
     logger.debug("In ExternalOauth (custom): %s" % token)
-    user = User.objects.get(username=token["userinfo"]["preferred_username"])
+    try:
+        user = User.objects.get(username=token["userinfo"]["preferred_username"])
+    except User.DoesNotExist:
+        user = None
 
     if user is not None:
         user.backend = "django.contrib.auth.backends.ModelBackend"

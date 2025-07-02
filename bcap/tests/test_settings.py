@@ -26,21 +26,14 @@ try:
 except ImportError:  # unable to import prior to installing requirements.txt in setup.py
     pass
 
+from ..settings import *
+
 PACKAGE_NAME = "bcap"
-ROOT_DIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-print("Root dir: %s" % ROOT_DIR)
-ROOT_DIR = os.path.normpath(os.path.join(ROOT_DIR, "..", "..", "bcap"))
-print("Root dir: %s" % ROOT_DIR)
-ROOT_DIR = os.path.normpath(
-    os.path.join("/apps_ux", "projects", "arches-core", "arches")
-)
+ROOT_DIR = os.path.normpath(os.path.join("/web_root", "arches", "arches"))
 print("Root dir: %s" % ROOT_DIR)
 # TEST_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "tests"))
-TEST_ROOT = os.path.normpath(
-    os.path.join("apps_ux", "projects", "bcap", "bcap", "tests")
-)
-# APP_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "bcap"))
-APP_ROOT = ""
+APP_ROOT = os.path.normpath(os.path.join("/web_root", "bcap", "bcap"))
+TEST_ROOT = os.path.normpath(os.path.join(APP_ROOT, "tests"))
 ELASTICSEARCH_HTTP_PORT = 9200
 
 MIN_ARCHES_VERSION = arches.__version__
@@ -111,26 +104,6 @@ ENABLE_TWO_FACTOR_AUTHENTICATION = False
 FORCE_TWO_FACTOR_AUTHENTICATION = False
 
 DATATYPE_LOCATIONS.append("tests.fixtures.datatypes")
-# ELASTICSEARCH_HOSTS = [{"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}]
-ROOT_DIR = "/web_root/arches/arches"
-APP_ROOT = "/web_root/bcap/bcap"
-DATABASES = {
-    "default": {
-        "ATOMIC_REQUESTS": False,
-        "AUTOCOMMIT": True,
-        "CONN_MAX_AGE": 0,
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": get_env_variable("PGHOST"),
-        "NAME": get_env_variable("PGDBNAME"),
-        "OPTIONS": {},
-        "PASSWORD": get_env_variable("PGPASSWORD"),
-        "PORT": "5432",
-        "POSTGIS_TEMPLATE": "template_postgis",
-        "TEST": {"CHARSET": None, "COLLATION": None, "MIRROR": None, "NAME": None},
-        "TIME_ZONE": None,
-        "USER": get_env_variable("PGUSERNAME"),
-    }
-}
 
 SILENCED_SYSTEM_CHECKS += [
     "arches.E001",  # Dummy cache in production
