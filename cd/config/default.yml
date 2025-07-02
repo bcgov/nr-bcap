@@ -29,6 +29,7 @@ s3_endpoint: "https://nrs.objectstore.gov.bc.ca/"
 additional_pip_modules:
   - "html2text"
   - "oracledb"
+  - "Authlib"
 
 configure_tileserv: False
 
