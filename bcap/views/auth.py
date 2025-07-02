@@ -1,6 +1,5 @@
-from django.http import HttpResponse
 from django.views.generic import View
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from bcap.util.auth.oauth_client import oauth
 from bcap.util.auth.oauth_session_control import log_user_in, log_user_out
@@ -15,6 +14,9 @@ class UnauthorizedView(View):
 
 
 def login(request):
+    # Weird implementation of /auth/?logout=true to log user out.
+    if request.GET.get("logout", False):
+        return logout(request)
     redirect_uri = request.build_absolute_uri(reverse("auth_callback"))
     return oauth.bcap_oauth.authorize_redirect(request, redirect_uri)
 
@@ -27,4 +29,4 @@ def auth_callback(request):
 
 def logout(request):
     log_user_out(request)
-    return HttpResponse("Logged out.")
+    return redirect("/bcap/index.htm")
