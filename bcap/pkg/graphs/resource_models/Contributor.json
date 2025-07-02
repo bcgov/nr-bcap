@@ -49,7 +49,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Contributor"
                     },
@@ -458,7 +458,7 @@
             ],
             "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
             "iconclass": "fa fa-male",
-            "is_editable": true,
+            "is_editable": false,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -579,7 +579,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=0&advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22009ba8da-faf6-11ed-ac37-5254004d77d3%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%22c4eca2de-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22a7a00d7b-ac19-4b7a-b911-55b4fb1473ff%22%7D%2C%22e2f1c29a-c500-11ed-9089-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22%22%7D%2C%22a5b2cd72-c4f4-11ed-a06d-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22b5ed0072-c4f4-11ed-94de-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%2299643f1e-9e4e-11ed-b6d5-5254004d77d3%22%3A%7B%22val%22%3A%22%22%7D%2C%22c4ec9b2c-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22c4eca13a-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%7D%5D"
+                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=0&exportsystemvalues=false&csrfmiddlewaretoken=M34mB5bTfWytwnkRIoRq9IKgeLnot4lm&advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"891278e4-5d67-571a-a0c4-414896d36d1c\"}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -941,9 +941,9 @@
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                "notes": null,
-                "publicationid": "8101966c-1c03-11f0-851a-22a9cdf0f596",
-                "published_time": "2025-04-18T03:16:22.333"
+                "notes": "Fix associated org search filter",
+                "publicationid": "f4aa8fba-55ce-11f0-ac1a-0242ac170006",
+                "published_time": "2025-06-30T16:26:20.492"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -978,9 +978,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "c2d44664b 2025-01-15 20:52:27 -0800",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "ae2a79c8b1 2025-05-02 07:36:38 +0100",
         "os": "Linux",
-        "os version": "5.15.167.4-microsoft-standard-WSL2"
+        "os version": "6.10.14-linuxkit"
     }
 }
