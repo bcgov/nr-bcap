@@ -28,16 +28,11 @@ except ImportError:  # unable to import prior to installing requirements.txt in 
 
 from ..settings import *
 
-PACKAGE_NAME = "bcap"
-ROOT_DIR = os.path.normpath(os.path.join("/web_root", "arches", "arches"))
-print("Root dir: %s" % ROOT_DIR)
-# TEST_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "tests"))
-APP_ROOT = os.path.normpath(os.path.join("/web_root", "bcap", "bcap"))
-TEST_ROOT = os.path.normpath(os.path.join(APP_ROOT, "tests"))
-ELASTICSEARCH_HTTP_PORT = 9200
+try:
+    from ..settings_docker import *
+except ImportError:  # unable to import prior to installing requirements.txt in setup.py
+    pass
 
-MIN_ARCHES_VERSION = arches.__version__
-MAX_ARCHES_VERSION = arches.__version__
 
 # LOAD_V3_DATA_DURING_TESTS = True will engage the most extensive the of the v3
 # data migration tests, which could add over a minute to the test process. It's
@@ -105,27 +100,11 @@ FORCE_TWO_FACTOR_AUTHENTICATION = False
 
 DATATYPE_LOCATIONS.append("tests.fixtures.datatypes")
 
+
 SILENCED_SYSTEM_CHECKS += [
     "arches.E001",  # Dummy cache in production
     "arches.E002",  # Arches requirement invalid
 ]
-
-ELASTICSEARCH_HOSTS = [
-    {
-        "scheme": "http",  # changed from https
-        "host": "elasticsearch8-3_arches7-5-2",
-        "port": ELASTICSEARCH_HTTP_PORT,
-    }
-]
-
-# Remove the certificate location, no longer needed for HTTP
-ELASTICSEARCH_CERT_LOCATION = None
-
-ELASTICSEARCH_CONNECTION_OPTIONS = {
-    "timeout": 30,
-    "verify_certs": False,  # disable SSL cert verification for HTTP
-    "basic_auth": ("arches_test2", "arches_test"),
-}
 
 # Authlib configuration for test (local fake provider)
 AUTHLIB_OAUTH_CLIENTS = {
