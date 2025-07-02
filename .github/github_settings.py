@@ -359,23 +359,18 @@ OAUTH_CLIENT_ID = get_env_variable(
     "OAUTH_CLIENT_ID", default=None
 )  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 
-
-EXTERNAL_OAUTH_CONFIGURATION = {
-    #     # these groups will be assigned to OAuth authenticated users on their first login
-    #     # "default_user_groups": ["Guest", "Resource Exporter"],
-    #     # claim to be used to assign arches username from
-    #     "uid_claim": "preferred_username",
-    #     # application ID and secret assigned to your arches application
-    "app_id": get_env_variable("OAUTH_CLIENT_ID", default=None),
-    "app_secret": get_env_variable("OAUTH_CLIENT_SECRET", default=None),
-    #     # provider scopes must at least give Arches access to openid, email and profile
-    #     "scopes": ["openid", "profile", "email"],
-    #     # authorization, token and jwks URIs must be configured for your provider
-    "authorization_endpoint": get_env_variable("OAUTH_AUTH_ENDPOINT", default=None),
-    "token_endpoint": get_env_variable("OAUTH_TOKEN_ENDPOINT", default=None),
-    "jwks_uri": get_env_variable("OAUTH_JWKS_URI", default=None),
-    #     # enforces token validation on authentication, AVOID setting this to False,
-    #     "validate_id_token": True,
+# Authlib configuration for test (local fake provider)
+AUTHLIB_OAUTH_CLIENTS = {
+    "bcap_oauth": {
+        "client_id": "test-client-id",
+        "client_secret": "test-client-secret",
+        "authorize_url": "http://localhost:9999/fake-oauth/authorize",
+        "access_token_url": "http://localhost:9999/fake-oauth/token",
+        "userinfo_endpoint": "http://localhost:9999/fake-oauth/userinfo",
+        "client_kwargs": {
+            "scope": "openid email profile",
+        },
+    }
 }
 
 APP_TITLE = "BC Government | Historic Place Inventory"
