@@ -322,12 +322,8 @@ SESSION_COOKIE_NAME = "bcap" + APP_SUFFIX
 # For more info on configuring your cache: https://docs.djangoproject.com/en/2.2/topics/cache/
 CACHES = {
     "default": {
-        "BACKEND": get_env_variable(
-            "CACHE_BACKEND", default="django.core.cache.backends.redis.RedisCache"
-        ),
-        "LOCATION": get_env_variable(
-            "CACHE_BACKEND_LOCATION", default="redis://localhost:6379/1"
-        ),
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
     },
     "user_permission": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
