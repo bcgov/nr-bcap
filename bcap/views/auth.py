@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from bcap.util.auth.oauth_client import oauth
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +32,16 @@ def logout(request):
     return HttpResponse("Logged out.")
 
 
+def _clean_username(username):
+    # DLVR: IDIR = <username>@idir, TEST, PROD: IDIR = idir\\<username>
+    return None if username is None else re.sub(r"^idir\\(.*)$", r"\1@idir", username)
+
+
 def log_user_in(request, token, next_url):
     logger.debug("In ExternalOauth (custom): %s" % token)
     try:
-        user = User.objects.get(username=token["userinfo"]["preferred_username"])
+        username = _clean_username(token["userinfo"]["preferred_username"])
+        user = User.objects.get(username=username)
     except User.DoesNotExist:
         user = None
 
