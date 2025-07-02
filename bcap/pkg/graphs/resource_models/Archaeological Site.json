@@ -855,7 +855,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Internal Remark",
+                        "label": "Remark",
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -865,10 +865,10 @@
                     },
                     "id": "07b68f50-df23-4f6e-a265-40cd0d50c9e9",
                     "label": {
-                        "en": "Internal Remark"
+                        "en": "Remark"
                     },
                     "node_id": "8e26b0a4-9ae3-11ee-a366-080027b7463b",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
@@ -1698,7 +1698,7 @@
                         "en": "Remark Date"
                     },
                     "node_id": "8e26b50e-9ae3-11ee-a366-080027b7463b",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
