@@ -26,25 +26,13 @@ try:
 except ImportError:  # unable to import prior to installing requirements.txt in setup.py
     pass
 
-PACKAGE_NAME = "bcap"
-ROOT_DIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-print("Root dir: %s" % ROOT_DIR)
-ROOT_DIR = os.path.normpath(os.path.join(ROOT_DIR, "..", "..", "bcap"))
-print("Root dir: %s" % ROOT_DIR)
-ROOT_DIR = os.path.normpath(
-    os.path.join("/apps_ux", "projects", "arches-core", "arches")
-)
-print("Root dir: %s" % ROOT_DIR)
-# TEST_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "tests"))
-TEST_ROOT = os.path.normpath(
-    os.path.join("apps_ux", "projects", "bcap", "bcap", "tests")
-)
-# APP_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "bcap"))
-APP_ROOT = ""
-ELASTICSEARCH_HTTP_PORT = 9200
+from ..settings import *
 
-MIN_ARCHES_VERSION = arches.__version__
-MAX_ARCHES_VERSION = arches.__version__
+try:
+    from ..settings_docker import *
+except ImportError:  # unable to import prior to installing requirements.txt in setup.py
+    pass
+
 
 # LOAD_V3_DATA_DURING_TESTS = True will engage the most extensive the of the v3
 # data migration tests, which could add over a minute to the test process. It's
@@ -111,16 +99,25 @@ ENABLE_TWO_FACTOR_AUTHENTICATION = False
 FORCE_TWO_FACTOR_AUTHENTICATION = False
 
 DATATYPE_LOCATIONS.append("tests.fixtures.datatypes")
-# ELASTICSEARCH_HOSTS = [{"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}]
-ELASTICSEARCH_HOSTS = [
-    {"scheme": "https", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
+
+
+SILENCED_SYSTEM_CHECKS += [
+    "arches.E001",  # Dummy cache in production
+    "arches.E002",  # Arches requirement invalid
 ]
-ELASTICSEARCH_CERT_LOCATION = "/etc/elasticsearch/certs/http_ca.crt"
-ELASTICSEARCH_CONNECTION_OPTIONS = {
-    "timeout": 30,
-    "verify_certs": True,
-    "ca_certs": ELASTICSEARCH_CERT_LOCATION,
-    "basic_auth": ("arches_test2", "arches_test"),
+
+# Authlib configuration for test (local fake provider)
+AUTHLIB_OAUTH_CLIENTS = {
+    "bcap_oauth": {
+        "client_id": "test-client-id",
+        "client_secret": "test-client-secret",
+        "authorize_url": "http://localhost:9999/fake-oauth/authorize",
+        "access_token_url": "http://localhost:9999/fake-oauth/token",
+        "userinfo_endpoint": "http://localhost:9999/fake-oauth/userinfo",
+        "client_kwargs": {
+            "scope": "openid email profile",
+        },
+    }
 }
 
 LANGUAGES = [

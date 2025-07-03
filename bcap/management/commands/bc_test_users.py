@@ -23,7 +23,6 @@ from arches.app.models import models
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from ..data.test_user_list import get_user_list
 
 
 class Command(BaseCommand):
@@ -96,7 +95,13 @@ class Command(BaseCommand):
             print("Not trying to add users")
 
     def get_profiles(self):
-        return get_user_list()
+        try:
+            from ..data.test_user_list import get_user_list
+
+            return get_user_list()
+        except Exception:
+            print("Failed to get user list - returning empty list")
+            return ()
 
     def delete_users(self):
         profiles = self.get_profiles()

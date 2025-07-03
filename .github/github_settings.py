@@ -84,6 +84,19 @@ ROOT_URLCONF = "bcap.urls"
 ELASTICSEARCH_SCHEME = get_env_variable("ES_SCHEME", default="http")
 ELASTICSEARCH_HTTP_PORT = int(get_env_variable("ES_PORT", default="9200"))
 ELASTICSEARCH_HTTP_HOST = get_env_variable("ES_HOST", default="localhost")
+ELASTICSEARCH_HOSTS = [
+    {"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
+]
+
+# Remove the certificate location, no longer needed for HTTP
+ELASTICSEARCH_CERT_LOCATION = None
+
+ELASTICSEARCH_CONNECTION_OPTIONS = {
+    "timeout": 30,
+    "verify_certs": False,  # disable SSL cert verification for HTTP
+    "basic_auth": ("arches_test2", "arches_test"),
+}
+
 
 # ELASTICSEARCH_HOSTS = [
 #     {
@@ -155,7 +168,7 @@ DATABASES = {
         "AUTOCOMMIT": True,
         "CONN_MAX_AGE": 0,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": get_env_variable("PGHOST", default="postgres"),
+        "HOST": get_env_variable("PGHOST", default="localhost"),
         "NAME": get_env_variable("PGDBNAME", default="bcap"),
         "OPTIONS": {},
         "PASSWORD": get_env_variable("PGPASSWORD", default="postgis"),
@@ -223,8 +236,7 @@ MIDDLEWARE = [
     "arches.app.utils.middleware.ModifyAuthorizationHeader",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    # "bcap.util.auth.middleware.SiteminderMiddleware",
-    "bcap.util.auth.auth_required_middleware.AuthRequiredMiddleware",
+    "bcap.util.auth.oauth_token_refresh.OAuthTokenRefreshMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
@@ -323,12 +335,8 @@ SESSION_COOKIE_NAME = "bcap" + APP_SUFFIX
 # For more info on configuring your cache: https://docs.djangoproject.com/en/2.2/topics/cache/
 CACHES = {
     "default": {
-        "BACKEND": get_env_variable(
-            "CACHE_BACKEND", default="django.core.cache.backends.redis.RedisCache"
-        ),
-        "LOCATION": get_env_variable(
-            "CACHE_BACKEND_LOCATION", default="redis://localhost:6379/1"
-        ),
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
     },
     "user_permission": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
@@ -360,23 +368,18 @@ OAUTH_CLIENT_ID = get_env_variable(
     "OAUTH_CLIENT_ID", default=None
 )  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 
-
-EXTERNAL_OAUTH_CONFIGURATION = {
-    #     # these groups will be assigned to OAuth authenticated users on their first login
-    #     # "default_user_groups": ["Guest", "Resource Exporter"],
-    #     # claim to be used to assign arches username from
-    #     "uid_claim": "preferred_username",
-    #     # application ID and secret assigned to your arches application
-    "app_id": get_env_variable("OAUTH_CLIENT_ID", default=None),
-    "app_secret": get_env_variable("OAUTH_CLIENT_SECRET", default=None),
-    #     # provider scopes must at least give Arches access to openid, email and profile
-    #     "scopes": ["openid", "profile", "email"],
-    #     # authorization, token and jwks URIs must be configured for your provider
-    "authorization_endpoint": get_env_variable("OAUTH_AUTH_ENDPOINT", default=None),
-    "token_endpoint": get_env_variable("OAUTH_TOKEN_ENDPOINT", default=None),
-    "jwks_uri": get_env_variable("OAUTH_JWKS_URI", default=None),
-    #     # enforces token validation on authentication, AVOID setting this to False,
-    #     "validate_id_token": True,
+# Authlib configuration for test (local fake provider)
+AUTHLIB_OAUTH_CLIENTS = {
+    "bcap_oauth": {
+        "client_id": "test-client-id",
+        "client_secret": "test-client-secret",
+        "authorize_url": "http://localhost:9999/fake-oauth/authorize",
+        "access_token_url": "http://localhost:9999/fake-oauth/token",
+        "userinfo_endpoint": "http://localhost:9999/fake-oauth/userinfo",
+        "client_kwargs": {
+            "scope": "openid email profile",
+        },
+    }
 }
 
 APP_TITLE = "BC Government | Historic Place Inventory"

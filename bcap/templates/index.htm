@@ -111,7 +111,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                         {% endif %}
                         {% if not user.username or user.username == 'anonymous' %}
                         <li>
-                            <a class="application-login" href="{% url 'auth' %}?next={% url 'home' %}">{% trans 'Log in' %}</a>
+                            <a class="application-login" href="{% url 'auth_login' %}?next={% url 'home' %}">{% trans 'Log in' %}</a>
                         </li>
                         {% endif %}
                         {% if show_language_swtich %}
