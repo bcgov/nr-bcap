@@ -5871,7 +5871,7 @@
                 {
                     "alias": "reference_type",
                     "config": {
-                        "rdmCollection": "b7b1184a-8526-430d-a6af-33d60f968e30"
+                        "rdmCollection": "74e02e4f-8587-5cfa-93b4-d81539f023dd"
                     },
                     "datatype": "concept",
                     "description": "Need to fix Concept name and values",
