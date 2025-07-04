@@ -4686,7 +4686,7 @@
                 {
                     "alias": "related_document_type",
                     "config": {
-                        "rdmCollection": "b7b1184a-8526-430d-a6af-33d60f968e30"
+                        "rdmCollection": "96aaf519-1698-533e-bca4-8f5d2158e5f8"
                     },
                     "datatype": "concept",
                     "description": null,
