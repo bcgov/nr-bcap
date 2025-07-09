@@ -22,7 +22,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Chronology"
                     },
@@ -78,7 +78,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "Archaeological Site"
                     },
@@ -132,7 +132,7 @@
                         "en": "Site Entered By"
                     },
                     "node_id": "b8675a40-1971-11f0-92d0-0242ac170008",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
@@ -265,6 +265,21 @@
                     "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "c0e4a234-d288-419c-895c-74b9c24ec95f",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Unreviewed ADIF record"
+                    },
+                    "id": "7b3eb0f5-0aaf-4290-8376-bbce958de37d",
+                    "label": {
+                        "en": "Unreviewed ADIF record"
+                    },
+                    "node_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
@@ -512,7 +527,7 @@
                         "en": "Site Entry Date"
                     },
                     "node_id": "1c5d8ec0-1972-11f0-a6b9-0242ac170008",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
@@ -1063,7 +1078,7 @@
             ],
             "graphid": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
             "iconclass": "",
-            "is_editable": true,
+            "is_editable": false,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -1145,9 +1160,18 @@
                 {
                     "alias": "unreviewed_adif_record",
                     "config": {
-                        "en": ""
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
                     },
-                    "datatype": "semantic",
+                    "datatype": "boolean",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -1882,8 +1906,8 @@
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                 "notes": null,
-                "publicationid": "0dfcd76a-54fe-11f0-883b-0242ac170006",
-                "published_time": "2025-06-29T15:30:58.158"
+                "publicationid": "193850e6-5cbf-11f0-927b-0242ac170007",
+                "published_time": "2025-07-09T12:20:28.011"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
