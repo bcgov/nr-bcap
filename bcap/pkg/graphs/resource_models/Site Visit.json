@@ -1253,9 +1253,45 @@
                         "en": "Cultural Material Status"
                     },
                     "node_id": "5d4e5254-1402-11f0-acd5-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
+                    "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
+                    "config": {
+                        "defaultValue": "",
+                        "format": "",
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
+                        "label": "Number of Artifacts",
+                        "max": "",
+                        "min": "",
+                        "placeholder": {
+                            "en": "Enter number"
+                        },
+                        "precision": "",
+                        "prefix": {
+                            "en": ""
+                        },
+                        "step": "",
+                        "suffix": {
+                            "en": ""
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "a692997c-6657-482c-a26c-5826d7ad5a10",
+                    "label": {
+                        "en": "Number of Artifacts"
+                    },
+                    "node_id": "2423be32-1403-11f0-ae97-0242ac170007",
+                    "sortorder": 3,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000008"
                 },
                 {
                     "card_id": "d8bdb067-60cb-44bd-8b6c-89ea5af195e9",
@@ -1706,7 +1742,7 @@
                         "en": "Cultural Material Type"
                     },
                     "node_id": "4abf8e50-1402-11f0-acd5-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
@@ -1784,7 +1820,7 @@
                         "en": "Cultural Material Details"
                     },
                     "node_id": "b029a3c0-1402-11f0-a830-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
@@ -1860,6 +1896,27 @@
                     "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Repository",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "fc5eb56a-c5d9-4f69-b13a-701ea00b6f30",
+                    "label": {
+                        "en": "Repository"
+                    },
+                    "node_id": "3787b9de-5cd2-11f0-b2ee-0242ac170007",
+                    "sortorder": 4,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 }
             ],
             "color": null,
@@ -2175,6 +2232,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "22508fc8-1402-11f0-acd5-0242ac170007",
+                    "edgeid": "9de27a2c-a790-47b7-b860-02886df4b8ac",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P55_has_current_location",
+                    "rangenode_id": "3787b9de-5cd2-11f0-b2ee-0242ac170007"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "37bdda22-140d-11f0-b9bb-0242ac170007",
                     "edgeid": "9e378db6-fa06-4906-b40d-8a1a98622c33",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2226,15 +2292,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
                     "rangenode_id": "4fb2db52-1410-11f0-8419-0242ac170007"
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "22508fc8-1402-11f0-acd5-0242ac170007",
-                    "edgeid": "bb3d39ff-163d-4d98-bbe9-1c4dd1b3038d",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P55_has_current_location",
-                    "rangenode_id": "cb2fb6f0-1407-11f0-892b-0242ac170007"
                 },
                 {
                     "description": null,
@@ -2826,6 +2883,36 @@
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
                     "sortorder": 3,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "repository",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "3e6a2880-14d4-11ec-9df0-5254008afee6",
+                                "name": "Repository"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Repository",
+                    "nodegroup_id": "22508fc8-1402-11f0-acd5-0242ac170007",
+                    "nodeid": "3787b9de-5cd2-11f0-b2ee-0242ac170007",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P55_has_current_location",
+                    "sortorder": 4,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -3907,29 +3994,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "repository",
-                    "config": {
-                        "rdmCollection": "b0d496d4-2b00-4a65-8715-a9384e9e188e"
-                    },
-                    "datatype": "concept",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Repository",
-                    "nodegroup_id": "22508fc8-1402-11f0-acd5-0242ac170007",
-                    "nodeid": "cb2fb6f0-1407-11f0-892b-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P55_has_current_location",
-                    "sortorder": 4,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "location_and_access",
                     "config": {
                         "en": ""
@@ -4336,9 +4400,9 @@
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                "notes": "Fix cardinality issues",
-                "publicationid": "804a9f3c-54fe-11f0-883b-0242ac170006",
-                "published_time": "2025-06-29T15:34:09.928"
+                "notes": "Changed repository datatype from Concept to Resource Instance",
+                "publicationid": "5fc9905c-5cd2-11f0-b2ee-0242ac170007",
+                "published_time": "2025-07-09T14:38:26.841"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
