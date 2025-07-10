@@ -13,7 +13,7 @@ BC Archaeology Branch Arches configuration, schemas and extensions for the BC Ar
 ```
 git clone https://github.com/bcgov/arches-dependency-containers
 git clone https://github.com/bcgov/arches
-git clone https://github.com/bcgov/bcgov_arches_common
+git clone https://github.com/bcgov/bcgov-arches-common
 git clone https://github.com/bcgov/nr-bcap
 ```
 
@@ -23,7 +23,7 @@ git clone https://github.com/bcgov/nr-bcap
 └── 📁 bcap/
     ├── 📁 arches-dependency-containers/
     ├── 📁 arches/
-    ├── 📁 bcgov_arches_common/
+    ├── 📁 bcgov-arches-common/
     └── 📁 nr-bcap/
 ```
 

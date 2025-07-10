@@ -3,7 +3,7 @@ USER root
 ENV WEB_ROOT=/web_root
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV APP_ROOT=${WEB_ROOT}/bcap
-ENV ARCHES_COMMON=${WEB_ROOT}/bcgov_arches_common
+ENV ARCHES_COMMON=${WEB_ROOT}/bcgov-arches-common
 ENV NODE_MAJOR=20
 RUN mkdir -p ${APP_ROOT}/bcap/webpack
 
@@ -31,7 +31,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.p
   && pip install setuptools python-dotenv django-storages
 
 COPY ./arches ${ARCHES_ROOT}
-COPY ./bcgov_arches_common ${ARCHES_COMMON}
+COPY ./bcgov-arches-common ${ARCHES_COMMON}
 RUN apt-get update && apt-get -y install curl \
   && apt-get install nodejs && npm install -g yarn && apt install wait-for-it
 
