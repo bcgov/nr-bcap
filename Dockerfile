@@ -6,7 +6,7 @@ ENV WEB_ROOT=/web_root
 ENV APP_ROOT=${WEB_ROOT}/${PROJECT_NAME}
 # Root project folder
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
-ENV COMMON_ROOT=${WEB_ROOT}/arches_common
+ENV COMMON_ROOT=${WEB_ROOT}/bcgov-arches-common
 ENV WHEELS=/wheels
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y make software-properties-common
@@ -55,7 +55,7 @@ RUN pip install -e .[dev] && \
     pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis && \
     pip install --upgrade cryptography PyJWT
 
-COPY ./arches_common ${COMMON_ROOT}
+COPY ./bcgov-arches-common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}
 RUN pip install -e .
 

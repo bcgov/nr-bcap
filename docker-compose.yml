@@ -10,7 +10,7 @@ services:
     volumes:
       - ../arches/:/web_root/arches
       - ./:/web_root/bcap
-      - ../arches_common/:/web_root/arches_common
+      - ../bcgov-arches-common/:/web_root/bcgov-arches-common
     env_file:
       - ./.env
       - ./docker/env_file.env
@@ -31,7 +31,7 @@ services:
 #    volumes:
 #      - ../arches/:/web_root/arches
 #      - ./:/web_root/bcap
-#      - ../arches_common/:/web_root/arches_common
+#      - ../bcgov-arches-common/:/web_root/bcgov-arches-common
 #      - ../arches-component-lab/:/web_root/arches-component-lab
 #    env_file:
 #      - ./docker/webpack/env_file.env
