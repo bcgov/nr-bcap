@@ -4833,7 +4833,7 @@
                     "config": {
                         "en": ""
                     },
-                    "datatype": "string",
+                    "datatype": "semantic",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -5692,7 +5692,7 @@
                     "config": {
                         "en": ""
                     },
-                    "datatype": "string",
+                    "datatype": "semantic",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -6016,7 +6016,7 @@
                     "config": {
                         "en": ""
                     },
-                    "datatype": "string",
+                    "datatype": "semantic",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -6326,7 +6326,7 @@
                     "config": {
                         "en": ""
                     },
-                    "datatype": "string",
+                    "datatype": "semantic",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
