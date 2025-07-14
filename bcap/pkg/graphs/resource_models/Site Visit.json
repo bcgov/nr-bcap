@@ -32,6 +32,33 @@
                 },
                 {
                     "active": true,
+                    "cardid": "1ae32457-0a38-4ee0-90af-140493e25a74",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": true,
+                    "name": {
+                        "en": "Recorder Recommendations"
+                    },
+                    "nodegroup_id": "87df65fc-60fc-11f0-9752-e6d321aad3ef",
+                    "sortorder": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "290cd148-e9a9-45c9-b649-065e59e893fa",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -265,7 +292,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": true,
+                    "is_editable": false,
                     "name": {
                         "en": "General Remarks"
                     },
@@ -1578,6 +1605,35 @@
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
+                    "card_id": "1ae32457-0a38-4ee0-90af-140493e25a74",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Recommendations",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "cc028e36-4060-42b2-8b91-19d444845c39",
+                    "label": {
+                        "en": "Recommendations"
+                    },
+                    "node_id": "9b0cf4be-60fc-11f0-9752-e6d321aad3ef",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
                     "card_id": "290cd148-e9a9-45c9-b649-065e59e893fa",
                     "config": {
                         "defaultResourceInstance": [],
@@ -2339,6 +2395,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "840c5b80-d932-11ef-92f0-005056a3bc47",
+                    "edgeid": "b68d95fe-8636-4313-8c3b-f5c1c27666e5",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
+                    "rangenode_id": "87df65fc-60fc-11f0-9752-e6d321aad3ef"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
                     "edgeid": "bc78350b-7cb6-4a56-b2d8-3bfc70da1916",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2600,6 +2665,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "87df65fc-60fc-11f0-9752-e6d321aad3ef",
+                    "edgeid": "fd07f094-c003-4fc2-b400-52a4470c710b",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "rangenode_id": "9b0cf4be-60fc-11f0-9752-e6d321aad3ef"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "840c5b80-d932-11ef-92f0-005056a3bc47",
                     "edgeid": "fe936070-145e-45d9-993d-6133e373ab72",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2698,6 +2772,12 @@
                     "legacygroupid": null,
                     "nodegroupid": "720dd6dc-1408-11f0-9e93-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
+                },
+                {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "87df65fc-60fc-11f0-9752-e6d321aad3ef",
+                    "parentnodegroup_id": null
                 },
                 {
                     "cardinality": "1",
@@ -3657,6 +3737,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "recorder_recommendations",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Recorder Recommendations",
+                    "nodegroup_id": "87df65fc-60fc-11f0-9752-e6d321aad3ef",
+                    "nodeid": "87df65fc-60fc-11f0-9752-e6d321aad3ef",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
+                    "sortorder": 5,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "site_visit_details",
                     "config": {
                         "en": ""
@@ -3677,6 +3780,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 3,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "recommendations",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Recommendations",
+                    "nodegroup_id": "87df65fc-60fc-11f0-9752-e6d321aad3ef",
+                    "nodeid": "9b0cf4be-60fc-11f0-9752-e6d321aad3ef",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -4398,7 +4524,7 @@
                     "nodeid": "f4bcbad6-60f6-11f0-b97a-72a5a0fc74af",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -4567,9 +4693,9 @@
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                "notes": "General Remarks",
-                "publicationid": "d02ecdca-60f7-11f0-b97a-72a5a0fc74af",
-                "published_time": "2025-07-14T21:16:31.440"
+                "notes": null,
+                "publicationid": "f725d14e-60fc-11f0-9752-e6d321aad3ef",
+                "published_time": "2025-07-14T21:53:24.296"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
