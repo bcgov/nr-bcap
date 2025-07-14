@@ -22,7 +22,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "2. Identification and Registration"
                     },
@@ -49,7 +49,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Authority"
                     },
@@ -76,7 +76,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Record Admin"
                     },
@@ -103,7 +103,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Typology"
                     },
@@ -130,7 +130,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "9. References & Related Documents"
                     },
@@ -197,7 +197,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "BC Property Address"
                     },
@@ -224,7 +224,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "4. Site Location"
                     },
@@ -251,7 +251,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "6. Archaeological Data"
                     },
@@ -305,7 +305,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Related Documents"
                     },
@@ -467,7 +467,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Official Recognition Details"
                     },
@@ -496,7 +496,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Official Recognition Information"
                     },
@@ -577,7 +577,7 @@
                     "instructions": {
                         "en": "From Sergey's mock up. Where did this come from?"
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "8. Remarks & Restricted Information"
                     },
@@ -633,7 +633,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Elevation Comments"
                     },
@@ -660,7 +660,7 @@
                     "instructions": {
                         "en": "Enter any external URLs associated with this Historic Place"
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "External URLs"
                     },
@@ -687,7 +687,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "1. Site Boundary"
                     },
@@ -714,7 +714,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Publication Reference"
                     },
@@ -743,7 +743,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Tenure Type"
                     },
@@ -772,7 +772,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Images"
                     },
@@ -799,7 +799,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Site Names"
                     },
@@ -826,7 +826,7 @@
                     "instructions": {
                         "en": ""
                     },
-                    "is_editable": false,
+                    "is_editable": true,
                     "name": {
                         "en": "Decision History"
                     },
@@ -4322,7 +4322,7 @@
             ],
             "graphid": "cef9c510-e3e6-4057-ac08-89ad926180b4",
             "iconclass": "fa fa-bank",
-            "is_editable": false,
+            "is_editable": true,
             "isresource": true,
             "jsonldcontext": null,
             "name": {
@@ -6866,9 +6866,9 @@
                 {
                     "alias": "remarks_date",
                     "config": {
-                        "en": ""
+                        "dateFormat": "YYYY-MM-DD"
                     },
-                    "datatype": "semantic",
+                    "datatype": "date",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -7777,7 +7777,12 @@
                 }
             ],
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
-            "publication": null,
+            "publication": {
+                "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                "notes": null,
+                "publicationid": "5cdbcc32-60e4-11f0-9049-de7bc2dc92c7",
+                "published_time": "2025-07-14T18:57:17.520"
+            },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
             "root": {
