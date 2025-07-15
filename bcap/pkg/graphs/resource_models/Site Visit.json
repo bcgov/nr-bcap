@@ -3827,7 +3827,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "recommendations",
+                    "alias": "recommendation",
                     "config": {
                         "en": ""
                     },
@@ -3841,7 +3841,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Recommendations",
+                    "name": "Recommendation",
                     "nodegroup_id": "8cf43a0e-61ab-11f0-be7c-3a7a4e6803c5",
                     "nodeid": "8cf43a0e-61ab-11f0-be7c-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
@@ -3873,7 +3873,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "general_remarks_n1",
+                    "alias": "general_remark",
                     "config": {
                         "en": ""
                     },
@@ -3887,7 +3887,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "General Remarks",
+                    "name": "General Remark",
                     "nodegroup_id": "9625020c-61ab-11f0-be7c-3a7a4e6803c5",
                     "nodeid": "9625020c-61ab-11f0-be7c-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
@@ -4830,8 +4830,8 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "notes": null,
-                "publicationid": "27c1dc44-61ac-11f0-be7c-3a7a4e6803c5",
-                "published_time": "2025-07-15T18:47:27.777"
+                "publicationid": "fee1f3d0-61b1-11f0-aa48-3a7a4e6803c5",
+                "published_time": "2025-07-15T19:29:16.181"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
