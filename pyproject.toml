@@ -24,8 +24,8 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "arches @ git+https://github.com/bcgov/arches.git@stable/7.6.9_bcgov",
-    "bcgov_arches_common @ git+https://github.com/bcgov/arches_common.git",
+    "arches @ git+https://github.com/bcgov/arches.git@stable/7.6.12_bcgov",
+    "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common.git",
     "boto3==1.26",
     "django-storages==1.13",
     "redis",
