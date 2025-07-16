@@ -7810,7 +7810,7 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "rdmCollection": "5ef2a67b-4ebf-58d0-919e-66965be03cb7"
+                        "rdmCollection": "b99eb5fe-5c72-53bb-8d2f-6b3cc53f8c7a"
                     },
                     "datatype": "concept",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",
