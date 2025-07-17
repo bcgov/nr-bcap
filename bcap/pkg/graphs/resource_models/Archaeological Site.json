@@ -862,26 +862,6 @@
             ],
             "cards_x_nodes_x_widgets": [
                 {
-                    "card_id": "0333c189-23c7-4a3e-b01e-285457fe6366",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD",
-                        "defaultValue": "",
-                        "label": "Entry Date",
-                        "maxDate": false,
-                        "minDate": false,
-                        "placeholder": "Enter date",
-                        "viewMode": "days"
-                    },
-                    "id": "015b1682-e563-4764-934d-3b5796cd533e",
-                    "label": {
-                        "en": "Entry Date"
-                    },
-                    "node_id": "3b7150a6-62d0-11f0-afd9-76ff5c50888d",
-                    "sortorder": 0,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000004"
-                },
-                {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultValue": {
@@ -1747,6 +1727,27 @@
                     "widget_id": "10000000-0000-0000-0000-000000000019"
                 },
                 {
+                    "card_id": "0333c189-23c7-4a3e-b01e-285457fe6366",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Person",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "5b96e456-0bd6-432c-8005-2eb7f263a034",
+                    "label": {
+                        "en": "Person"
+                    },
+                    "node_id": "8f5e3dda-631d-11f0-aece-76ff5c50888d",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
                     "card_id": "6cc30640-0d06-11ed-8804-5254008afee6",
                     "config": {
                         "defaultValue": "",
@@ -1973,6 +1974,26 @@
                     "sortorder": 2,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "0333c189-23c7-4a3e-b01e-285457fe6366",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Entry Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "75386d99-575d-4611-8f89-5409fc85183d",
+                    "label": {
+                        "en": "Entry Date"
+                    },
+                    "node_id": "e0700a5a-631d-11f0-aece-76ff5c50888d",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
                 {
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
@@ -2335,27 +2356,6 @@
                     "sortorder": 1,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
-                    "card_id": "0333c189-23c7-4a3e-b01e-285457fe6366",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Person",
-                        "placeholder": {
-                            "en": ""
-                        }
-                    },
-                    "id": "bae3e426-177d-442e-a3b8-b58ee3323552",
-                    "label": {
-                        "en": "Person"
-                    },
-                    "node_id": "4858fc10-62d0-11f0-afd9-76ff5c50888d",
-                    "sortorder": 1,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
@@ -3754,15 +3754,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
-                    "edgeid": "55f0f660-d8d4-481a-bc36-9f824e3d1cb6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
-                    "rangenode_id": "3b7150a6-62d0-11f0-afd9-76ff5c50888d"
-                },
-                {
-                    "description": null,
                     "domainnode_id": "c2f9e970-01be-11f0-9078-0242ac170007",
                     "edgeid": "56e48e82-7560-42b5-a2f6-0834f0bc8e49",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -3997,6 +3988,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "6202ebee-62d0-11f0-afd9-76ff5c50888d",
+                    "edgeid": "a1d157d1-334b-42b2-abd8-166eabda2a2e",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P168i_defines_place",
+                    "rangenode_id": "e0700a5a-631d-11f0-aece-76ff5c50888d"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "034d1c32-13f2-11f0-9ff8-0242ac170007",
                     "edgeid": "a31a3f2e-d17a-4ece-974c-13f336af37e1",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4168,12 +4168,12 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
-                    "edgeid": "c133af07-0e8a-4b1f-b33e-2a1547eafe1c",
+                    "domainnode_id": "6202ebee-62d0-11f0-afd9-76ff5c50888d",
+                    "edgeid": "c02e271c-5705-41d7-8b13-9bb06fbd95c7",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
-                    "rangenode_id": "4858fc10-62d0-11f0-afd9-76ff5c50888d"
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P168i_defines_place",
+                    "rangenode_id": "8f5e3dda-631d-11f0-aece-76ff5c50888d"
                 },
                 {
                     "description": null,
@@ -4334,7 +4334,7 @@
                     "edgeid": "d0f13e8d-8b7f-4c83-b2c5-0e9d57b092d0",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P10i_contains",
                     "rangenode_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d"
                 },
                 {
@@ -5666,8 +5666,8 @@
                     "name": "Ancestral Remains",
                     "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
                     "nodeid": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E71_Man-Made_Thing",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E18_Physical_Thing",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P10i_contains",
                     "sortorder": 7,
                     "sourcebranchpublication_id": null
                 },
@@ -5737,29 +5737,6 @@
                     "nodeid": "387adf52-1979-11f0-8713-0242ac170008",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
-                    "sortorder": 0,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "entry_date",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD"
-                    },
-                    "datatype": "date",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Entry Date",
-                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
-                    "nodeid": "3b7150a6-62d0-11f0-afd9-76ff5c50888d",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
@@ -6044,36 +6021,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 2,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "person",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
-                            }
-                        ],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Person",
-                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
-                    "nodeid": "4858fc10-62d0-11f0-afd9-76ff5c50888d",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
-                    "sortorder": 1,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -6719,6 +6666,40 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E17_Type_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "remains_remark_made_by",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Remains Remark Made By",
+                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "nodeid": "8f5e3dda-631d-11f0-aece-76ff5c50888d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E25_Man-Made_Feature",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P168i_defines_place",
+                    "sortorder": 1,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -7814,6 +7795,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "remains_remark_entry_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD"
+                    },
+                    "datatype": "date",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Remains Remark Entry Date",
+                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "nodeid": "e0700a5a-631d-11f0-aece-76ff5c50888d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E25_Man-Made_Feature",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P168i_defines_place",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "pin",
                     "config": {
                         "en": ""
@@ -8082,8 +8086,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "ac75b88c-62d0-11f0-afd9-76ff5c50888d",
-                "published_time": "2025-07-17T05:41:23.460"
+                "publicationid": "11dd06d0-6321-11f0-b495-76ff5c50888d",
+                "published_time": "2025-07-17T15:16:53.325"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
