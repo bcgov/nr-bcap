@@ -78,7 +78,7 @@
                     },
                     "is_editable": true,
                     "name": {
-                        "en": "General Remark"
+                        "en": "General Remark Information"
                     },
                     "nodegroup_id": "05baebf6-61a5-11f0-9674-3a7a4e6803c5",
                     "sortorder": 1,
@@ -7963,7 +7963,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "remark_n2",
+                    "alias": "typology_remark",
                     "config": {
                         "en": ""
                     },
@@ -7977,7 +7977,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Remark",
+                    "name": "Typology Remark",
                     "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
                     "nodeid": "e3f0d066-62d1-11f0-8725-76ff5c50888d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
