@@ -2015,7 +2015,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Remarks",
+                        "label": "Remark",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2025,7 +2025,7 @@
                     },
                     "id": "7f8dfc0e-156d-43bf-aed7-7789fce45e67",
                     "label": {
-                        "en": "Remarks"
+                        "en": "Remark"
                     },
                     "node_id": "e3f0d066-62d1-11f0-8725-76ff5c50888d",
                     "sortorder": 4,
@@ -3067,6 +3067,28 @@
                     "sortorder": 4,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Typology Class",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "d847a431-b08e-40b6-891b-135d84b46f58",
+                    "label": {
+                        "en": "Typology Class"
+                    },
+                    "node_id": "4d3bb20c-01c0-11f0-97f7-0242ac170007",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
@@ -7938,6 +7960,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 1,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "remark_n2",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Remark",
+                    "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
+                    "nodeid": "e3f0d066-62d1-11f0-8725-76ff5c50888d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
                 {
