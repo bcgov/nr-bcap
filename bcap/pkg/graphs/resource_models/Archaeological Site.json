@@ -2015,7 +2015,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Remark",
+                        "label": "Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2025,7 +2025,7 @@
                     },
                     "id": "7f8dfc0e-156d-43bf-aed7-7789fce45e67",
                     "label": {
-                        "en": "Remark"
+                        "en": "Remarks"
                     },
                     "node_id": "e3f0d066-62d1-11f0-8725-76ff5c50888d",
                     "sortorder": 4,
@@ -7822,7 +7822,7 @@
                     "nodeid": "e3f0d066-62d1-11f0-8725-76ff5c50888d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -8094,8 +8094,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "02b92d18-62d2-11f0-8725-76ff5c50888d",
-                "published_time": "2025-07-17T05:50:57.683"
+                "publicationid": "ac9bbd78-62d2-11f0-ba65-76ff5c50888d",
+                "published_time": "2025-07-17T05:55:42.702"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
