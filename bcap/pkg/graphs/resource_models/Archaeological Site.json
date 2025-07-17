@@ -5,6 +5,33 @@
             "cards": [
                 {
                     "active": true,
+                    "cardid": "0333c189-23c7-4a3e-b01e-285457fe6366",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": true,
+                    "name": {
+                        "en": "7. Ancestral Remains"
+                    },
+                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "sortorder": 4,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -27,7 +54,7 @@
                         "en": "2. Identification and Registration"
                     },
                     "nodegroup_id": "034d1c32-13f2-11f0-9ff8-0242ac170007",
-                    "sortorder": 5,
+                    "sortorder": 1,
                     "visible": true
                 },
                 {
@@ -108,7 +135,7 @@
                         "en": "Site Record Admin"
                     },
                     "nodegroup_id": "0684fec8-0d07-11ed-8804-5254008afee6",
-                    "sortorder": 14,
+                    "sortorder": 9,
                     "visible": true
                 },
                 {
@@ -162,7 +189,7 @@
                         "en": "9. References & Related Documents"
                     },
                     "nodegroup_id": "347e24f8-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 10,
+                    "sortorder": 6,
                     "visible": true
                 },
                 {
@@ -256,7 +283,7 @@
                         "en": "4. Site Location"
                     },
                     "nodegroup_id": "1b62393e-0d0f-11ed-98c2-5254008afee6",
-                    "sortorder": 6,
+                    "sortorder": 2,
                     "visible": true
                 },
                 {
@@ -310,7 +337,7 @@
                         "en": "6. Archaeological Data"
                     },
                     "nodegroup_id": "09856d8c-01c0-11f0-97f7-0242ac170007",
-                    "sortorder": 7,
+                    "sortorder": 3,
                     "visible": true
                 },
                 {
@@ -391,7 +418,7 @@
                         "en": "8. Remarks and Restricted Information"
                     },
                     "nodegroup_id": "75c91464-619f-11f0-acf4-3a7a4e6803c5",
-                    "sortorder": 9,
+                    "sortorder": 5,
                     "visible": true
                 },
                 {
@@ -419,33 +446,6 @@
                     },
                     "nodegroup_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
                     "sortorder": 5,
-                    "visible": true
-                },
-                {
-                    "active": true,
-                    "cardid": "5e5d7358-a3bc-41a3-9b82-fabda1e44477",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": "This is a placeholer for now. Is eveything except the Remarks, Photos & Documents historica data only?"
-                    },
-                    "is_editable": true,
-                    "name": {
-                        "en": "7. Ancestral Remains"
-                    },
-                    "nodegroup_id": "e832dd30-01ca-11f0-8108-0242ac170007",
-                    "sortorder": 8,
                     "visible": true
                 },
                 {
@@ -528,7 +528,7 @@
                         "en": "Official Recognition Information"
                     },
                     "nodegroup_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "sortorder": 12,
+                    "sortorder": 7,
                     "visible": true
                 },
                 {
@@ -636,7 +636,7 @@
                         "en": "External URLs"
                     },
                     "nodegroup_id": "3ee73f28-ca40-11ed-af48-5254004d77d3",
-                    "sortorder": 13,
+                    "sortorder": 8,
                     "visible": true
                 },
                 {
@@ -861,6 +861,26 @@
                 }
             ],
             "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "0333c189-23c7-4a3e-b01e-285457fe6366",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Entry Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "015b1682-e563-4764-934d-3b5796cd533e",
+                    "label": {
+                        "en": "Entry Date"
+                    },
+                    "node_id": "3b7150a6-62d0-11f0-afd9-76ff5c50888d",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
                 {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
@@ -1727,35 +1747,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000019"
                 },
                 {
-                    "card_id": "5e5d7358-a3bc-41a3-9b82-fabda1e44477",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Ancestral Remains",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "59033593-2508-4510-96ca-1de4e6e24d2b",
-                    "label": {
-                        "en": "Ancestral Remains"
-                    },
-                    "node_id": "e832dd30-01ca-11f0-8108-0242ac170007",
-                    "sortorder": 0,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
                     "card_id": "6cc30640-0d06-11ed-8804-5254008afee6",
                     "config": {
                         "defaultValue": "",
@@ -2344,6 +2335,27 @@
                     "sortorder": 1,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "0333c189-23c7-4a3e-b01e-285457fe6366",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Person",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "bae3e426-177d-442e-a3b8-b58ee3323552",
+                    "label": {
+                        "en": "Person"
+                    },
+                    "node_id": "4858fc10-62d0-11f0-afd9-76ff5c50888d",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
@@ -3108,6 +3120,35 @@
                     "widget_id": "10000000-0000-0000-0000-000000000008"
                 },
                 {
+                    "card_id": "0333c189-23c7-4a3e-b01e-285457fe6366",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Restricted Ancestral Remains Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "f23f9976-6aeb-4e8f-bfed-70b711596f5b",
+                    "label": {
+                        "en": "Restricted Ancestral Remains Remarks"
+                    },
+                    "node_id": "6202ebee-62d0-11f0-afd9-76ff5c50888d",
+                    "sortorder": 2,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
                     "card_id": "6cc30640-0d06-11ed-8804-5254008afee6",
                     "config": {
                         "defaultValue": true,
@@ -3713,6 +3754,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "edgeid": "55f0f660-d8d4-481a-bc36-9f824e3d1cb6",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "3b7150a6-62d0-11f0-afd9-76ff5c50888d"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "c2f9e970-01be-11f0-9078-0242ac170007",
                     "edgeid": "56e48e82-7560-42b5-a2f6-0834f0bc8e49",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4118,6 +4168,15 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "edgeid": "c133af07-0e8a-4b1f-b33e-2a1547eafe1c",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "4858fc10-62d0-11f0-afd9-76ff5c50888d"
+                },
+                {
+                    "description": null,
                     "domainnode_id": "c2f9e970-01be-11f0-9078-0242ac170007",
                     "edgeid": "c30cbe33-b3e7-43f3-a196-cc3afd461665",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4226,15 +4285,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "19d560d2-0d05-11ed-a4d8-5254008afee6",
-                    "edgeid": "c945c1b3-3788-4bda-a338-daebf288e2ca",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "rangenode_id": "e832dd30-01ca-11f0-8108-0242ac170007"
-                },
-                {
-                    "description": null,
                     "domainnode_id": "2509f4a2-197f-11f0-b2a5-0242ac170008",
                     "edgeid": "c9ce9569-4089-4b15-b2eb-aafd1ed01d44",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4277,6 +4327,15 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "rangenode_id": "c2f9e970-01be-11f0-9078-0242ac170007"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "19d560d2-0d05-11ed-a4d8-5254008afee6",
+                    "edgeid": "d0f13e8d-8b7f-4c83-b2c5-0e9d57b092d0",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "rangenode_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d"
                 },
                 {
                     "description": null,
@@ -4385,6 +4444,15 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "rangenode_id": "aad2e7e2-197f-11f0-9fc9-0242ac170008"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "edgeid": "f4c1fb31-9462-4da7-8e31-4c2dd5986948",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "rangenode_id": "6202ebee-62d0-11f0-afd9-76ff5c50888d"
                 },
                 {
                     "description": null,
@@ -4617,6 +4685,12 @@
                     "parentnodegroup_id": "347e24f8-01d8-11f0-850c-0242ac170007"
                 },
                 {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "parentnodegroup_id": null
+                },
+                {
                     "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "3083c10e-01c0-11f0-97f7-0242ac170007",
@@ -4711,12 +4785,6 @@
                     "legacygroupid": null,
                     "nodegroupid": "d60b1b28-35f4-11f0-afbc-0242ac170008",
                     "parentnodegroup_id": "034d1c32-13f2-11f0-9ff8-0242ac170007"
-                },
-                {
-                    "cardinality": "1",
-                    "legacygroupid": null,
-                    "nodegroupid": "e832dd30-01ca-11f0-8108-0242ac170007",
-                    "parentnodegroup_id": null
                 },
                 {
                     "cardinality": "n",
@@ -5581,6 +5649,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "ancestral_remains",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Ancestral Remains",
+                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "nodeid": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E71_Man-Made_Thing",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "sortorder": 7,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "site_typology",
                     "config": {
                         "en": ""
@@ -5646,6 +5737,29 @@
                     "nodeid": "387adf52-1979-11f0-8713-0242ac170008",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "entry_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD"
+                    },
+                    "datatype": "date",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Entry Date",
+                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "nodeid": "3b7150a6-62d0-11f0-afd9-76ff5c50888d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
@@ -5933,6 +6047,36 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "person",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Person",
+                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "nodeid": "4858fc10-62d0-11f0-afd9-76ff5c50888d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "sortorder": 1,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "typology_class",
                     "config": {
                         "rdmCollection": "d31def91-e057-545a-ada6-3c18b6aa9ae9"
@@ -6033,6 +6177,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E16_Measurement",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P9_consists_of",
                     "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "restricted_ancestral_remains_remark",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Restricted Ancestral Remains Remark",
+                    "nodegroup_id": "2e1a11d6-62d0-11f0-afd9-76ff5c50888d",
+                    "nodeid": "6202ebee-62d0-11f0-afd9-76ff5c50888d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 2,
                     "sourcebranchpublication_id": null
                 },
                 {
@@ -7670,29 +7837,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "ancestral_remains",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Ancestral Remains",
-                    "nodegroup_id": "e832dd30-01ca-11f0-8108-0242ac170007",
-                    "nodeid": "e832dd30-01ca-11f0-8108-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E71_Man-Made_Thing",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 7,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "alert_entered_by",
                     "config": {
                         "graphs": [
@@ -7938,8 +8082,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "91bc14fa-61d6-11f0-af0b-5ed990020125",
-                "published_time": "2025-07-15T23:51:04.440"
+                "publicationid": "ac75b88c-62d0-11f0-afd9-76ff5c50888d",
+                "published_time": "2025-07-17T05:41:23.460"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
