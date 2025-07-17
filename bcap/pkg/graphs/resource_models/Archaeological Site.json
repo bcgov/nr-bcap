@@ -78,7 +78,7 @@
                     },
                     "is_editable": true,
                     "name": {
-                        "en": "General Remark"
+                        "en": "General Remark Information"
                     },
                     "nodegroup_id": "05baebf6-61a5-11f0-9674-3a7a4e6803c5",
                     "sortorder": 1,
@@ -5085,7 +5085,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "general_remark",
+                    "alias": "general_remark_information",
                     "config": {
                         "en": ""
                     },
@@ -5099,7 +5099,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "General Remark",
+                    "name": "General Remark Information",
                     "nodegroup_id": "05baebf6-61a5-11f0-9674-3a7a4e6803c5",
                     "nodeid": "05baebf6-61a5-11f0-9674-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
@@ -5108,7 +5108,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "remark_source",
+                    "alias": "general_remark_source",
                     "config": {
                         "rdmCollection": "eba1146d-b617-5fff-9c79-92eb2ed6e8aa"
                     },
@@ -5122,7 +5122,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Remark Source",
+                    "name": "General Remark Source",
                     "nodegroup_id": "05baebf6-61a5-11f0-9674-3a7a4e6803c5",
                     "nodeid": "05baef2a-61a5-11f0-9674-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
@@ -5131,7 +5131,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "remark_date_n1",
+                    "alias": "general_remark_date",
                     "config": {
                         "dateFormat": "YYYY-MM-DD"
                     },
@@ -5145,7 +5145,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Remark Date",
+                    "name": "General Remark Date",
                     "nodegroup_id": "05baebf6-61a5-11f0-9674-3a7a4e6803c5",
                     "nodeid": "05baf01a-61a5-11f0-9674-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
@@ -5154,7 +5154,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "remark",
+                    "alias": "general_remark",
                     "config": {
                         "en": ""
                     },
@@ -5168,7 +5168,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Remark",
+                    "name": "General Remark",
                     "nodegroup_id": "05baebf6-61a5-11f0-9674-3a7a4e6803c5",
                     "nodeid": "05baf0e2-61a5-11f0-9674-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -6826,7 +6826,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "entry_date_n1",
+                    "alias": "restricted_entry_date",
                     "config": {
                         "dateFormat": "YYYY-MM-DD"
                     },
@@ -6840,7 +6840,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Entry Date",
+                    "name": "Restricted Entry Date",
                     "nodegroup_id": "b0ed31c4-61a4-11f0-9674-3a7a4e6803c5",
                     "nodeid": "b0ed34b2-61a4-11f0-9674-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
@@ -6849,12 +6849,16 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "person_n2",
+                    "alias": "restricted_person",
                     "config": {
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -6870,7 +6874,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Person",
+                    "name": "Restricted Person",
                     "nodegroup_id": "b0ed31c4-61a4-11f0-9674-3a7a4e6803c5",
                     "nodeid": "b0ed35ac-61a4-11f0-9674-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
@@ -6879,7 +6883,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "remark_n1",
+                    "alias": "restricted_remark",
                     "config": {
                         "en": ""
                     },
@@ -6893,7 +6897,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Remark",
+                    "name": "Restricted Remark",
                     "nodegroup_id": "b0ed31c4-61a4-11f0-9674-3a7a4e6803c5",
                     "nodeid": "b0ed366a-61a4-11f0-9674-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -7803,7 +7807,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "remark_n2",
+                    "alias": "typology_remark",
                     "config": {
                         "en": ""
                     },
@@ -7817,7 +7821,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Remark",
+                    "name": "Typology Remark",
                     "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
                     "nodeid": "e3f0d066-62d1-11f0-8725-76ff5c50888d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -8094,8 +8098,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "ac9bbd78-62d2-11f0-ba65-76ff5c50888d",
-                "published_time": "2025-07-17T05:55:42.702"
+                "publicationid": "8dd61062-6324-11f0-b27c-76ff5c50888d",
+                "published_time": "2025-07-17T15:41:49.807"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
