@@ -3091,6 +3091,7 @@
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
+
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
@@ -3112,6 +3113,7 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
+
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
                         "defaultValue": "",
