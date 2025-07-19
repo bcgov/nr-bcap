@@ -25,6 +25,7 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "arches @ git+https://github.com/bcgov/arches@v7.6.12.1_bcgov",
+    "arches_component_lab",
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common",
     "boto3==1.26",
     "django-storages==1.13",
@@ -35,7 +36,7 @@ dependencies = [
     "Authlib",
 ]
 
-version = "0.0.1-a"
+version = "0.0.1"
 
 [project.optional-dependencies]
 dev = [
