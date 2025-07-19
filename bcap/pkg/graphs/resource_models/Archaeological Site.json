@@ -3159,7 +3159,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
-
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
@@ -3181,7 +3180,6 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
-
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
                         "defaultValue": "",
@@ -8212,29 +8210,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
                     "sortorder": 3,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "ancestral_remains",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Ancestral Remains",
-                    "nodegroup_id": "e832dd30-01ca-11f0-8108-0242ac170007",
-                    "nodeid": "e832dd30-01ca-11f0-8108-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E71_Man-Made_Thing",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 7,
                     "sourcebranchpublication_id": null
                 },
                 {
