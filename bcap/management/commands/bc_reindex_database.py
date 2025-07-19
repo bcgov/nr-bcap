@@ -8,14 +8,14 @@ class Command(BaseCommand):
     def get_index_order(self):
         return [
             "contributor",
-            "government_person",
-            "government",
+            "lg_person",
+            "local_government",
             "legislative_act",
             "repository",
             "hca_permit",
             "archaeological_site",
             "site_visit",
-            "archaeological_site_submission",
             "hria_discontinued_data",
-            "sandcastle"
+            "project_sandbox",
+            "site_submission",
         ]
