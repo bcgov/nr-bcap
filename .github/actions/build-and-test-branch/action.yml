@@ -34,7 +34,7 @@ runs:
 
     - name: Install Python packages
       run: |
-        uv pip install --system '.[dev]'
+        uv pip install --prerelease=allow --system '.[dev]'
       shell: bash
 
     - name: Ensure frontend configuration files exist
