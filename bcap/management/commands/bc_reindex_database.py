@@ -17,6 +17,5 @@ class Command(BaseCommand):
             "site_visit",
             "hria_discontinued_data",
             "project_sandbox",
-            "site_form",
             "site_submission",
         ]
