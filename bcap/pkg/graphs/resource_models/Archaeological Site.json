@@ -3137,28 +3137,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
                 {
-                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
-                    "config": {
-                        "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Typology Class",
-                        "options": [],
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "d847a431-b08e-40b6-891b-135d84b46f58",
-                    "label": {
-                        "en": "Typology Class"
-                    },
-                    "node_id": "4d3bb20c-01c0-11f0-97f7-0242ac170007",
-                    "sortorder": 0,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
-                },
-                {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
@@ -5562,7 +5540,7 @@
                 {
                     "alias": "bcap_submission_status",
                     "config": {
-                        "rdmCollection": "b68b366b-1831-4554-b127-120353789d88"
+                        "rdmCollection": "a45b6273-46c0-550e-9caf-a26758834eb3"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -5840,7 +5818,7 @@
                 {
                     "alias": "external_url_type",
                     "config": {
-                        "rdmCollection": "16306f36-2d12-41e3-9f17-ef0ec53928ff"
+                        "rdmCollection": "4236434c-d8ec-5173-a986-945ddeccc545"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -7760,7 +7738,7 @@
                 {
                     "alias": "image_view",
                     "config": {
-                        "rdmCollection": "de747b76-9047-455c-8696-a469130c9807"
+                        "rdmCollection": "435dccb6-ef91-50bc-9f17-69e9c99aa9fa"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -8190,29 +8168,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "typology_remark",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Typology Remark",
-                    "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
-                    "nodeid": "e3f0d066-62d1-11f0-8725-76ff5c50888d",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 3,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "alert_entered_by",
                     "config": {
                         "graphs": [
@@ -8457,9 +8412,9 @@
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                "notes": "Reworked Ancestral Remains Remarks section",
-                "publicationid": "843e7488-64ad-11f0-a4ef-6e5bb479055b",
-                "published_time": "2025-07-19T14:34:45.929"
+                "notes": null,
+                "publicationid": "b59ad8b0-653d-11f0-b66f-5a2afcebe986",
+                "published_time": "2025-07-20T07:46:56.272"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -8492,9 +8447,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "d3018ac272 2025-07-02 16:44:24 -0700",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
