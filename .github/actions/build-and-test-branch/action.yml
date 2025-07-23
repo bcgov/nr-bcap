@@ -1,6 +1,6 @@
 name: 'Build and test branch'
 description: 'Builds and tests a branch'
-inputs:
+inputs: 
   branch-type:
     description: 'String denoting either `target` or `feature` branch'
     required: true
@@ -12,11 +12,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Copy github_settings to bcap settings
-      run: |
-        cp .github/github_settings.py bcap/settings.py
-      shell: bash
-
     - name: Install Java, GDAL, and other system dependencies
       run: |
         sudo apt update
@@ -29,14 +24,13 @@ runs:
       with:
         elasticsearch-version: 8
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-
     - name: Install Python packages
       run: |
-        uv pip install --prerelease=allow --system '.[dev]'
+        python -m pip install --upgrade pip
+        pip install . --group dev
+        echo Python packages installed
       shell: bash
-
+    
     - name: Ensure frontend configuration files exist
       run: |
           python manage.py check
@@ -110,6 +104,6 @@ runs:
     - name: Upload Python coverage report as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.branch-type }}-branch-python-coverage-report-py${{ matrix.python-version }}
+        name: ${{ inputs.branch-type }}-branch-python-coverage-report
         path: ${{ inputs.branch-type }}_branch_python_coverage.json
         overwrite: true

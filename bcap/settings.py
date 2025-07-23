@@ -218,6 +218,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
+
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     "corsheaders.middleware.CorsMiddleware",
@@ -230,7 +231,7 @@ MIDDLEWARE = [
     "arches.app.utils.middleware.ModifyAuthorizationHeader",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "bcap.util.auth.oauth_token_refresh.OAuthTokenRefreshMiddleware",
+    "bcgov_arches_common.util.auth.oauth_token_refresh.OAuthTokenRefreshMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
@@ -369,9 +370,15 @@ GRAPH_MODEL_CACHE_TIMEOUT = None
 
 OAUTH_CLIENT_ID = ""  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 
+# Allow cookies on cross-site OAuth callback
+# This is required to allow OAUTH framework to work w/ Django 5.2.x
+SESSION_COOKIE_SAMESITE = None      # allows cookie to be sent on third‑party POSTs
+SESSION_COOKIE_SECURE = True       # required for SameSite=None
+CSRF_COOKIE_SAMESITE = None        # if using CSRF in session-backed mode
+CSRF_COOKIE_SECURE = True
 
 AUTHLIB_OAUTH_CLIENTS = {
-    'bcap_oauth': {
+    'default': {
         'client_id': get_env_variable("OAUTH_CLIENT_ID"),
         'client_secret': get_env_variable("OAUTH_CLIENT_SECRET"),
         'authorize_url': get_env_variable("OAUTH_AUTH_ENDPOINT"),
@@ -381,6 +388,20 @@ AUTHLIB_OAUTH_CLIENTS = {
         'client_kwargs': {
             'scope': 'openid profile email',
             'token_endpoint_auth_method': 'client_secret_post',
+        },
+        "urls": {
+            "home_page": "/bcap/",
+            "unauthorized_page": "/bcap/unauthorized",
+            "unauthorized_template": "unauthorized.htm",
+            "auth_exempt_pages": [
+                "/bcap",
+                "/bcap/",
+                "/unauthorized",
+                "/bcap/index.htm",
+                "/bcap/auth",
+                "/bcap/auth/eoauth_start",
+                "/bcap/auth/eoauth_cb",
+            ],
         },
     }
 }

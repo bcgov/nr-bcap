@@ -55,7 +55,7 @@ COPY ./arches ${ARCHES_ROOT}
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev] && \
     pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis && \
-    pip install --upgrade cryptography PyJWT
+    pip install --upgrade cryptography PyJWT Authlib
 
 COPY ./bcgov-arches-common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}

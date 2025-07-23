@@ -6,9 +6,7 @@ from django.urls.resolvers import RegexPattern
 from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile
 from bcap.views.search import export_results as bcap_export_results
 from bcap.views.resource import ResourceReportView
-from bcap.views.auth import UnauthorizedView
 from bcgov_arches_common.views.map import BCTileserverProxyView
-from bcap.views import auth
 import re
 
 uuid_regex = settings.UUID_REGEX
@@ -16,10 +14,12 @@ uuid_regex = settings.UUID_REGEX
 path_prefix_re = re.compile(r"^(\^)(.*)$")
 
 
-def bc_path_prefix(path):
+def bc_path_prefix(path=""):
     if not settings.BCGOV_PROXY_PREFIX:
         return path
     else:
+        if not path:
+            return settings.BCGOV_PROXY_PREFIX
         new_path = path_prefix_re.sub(r"\1%s\2", path)
         return new_path % settings.BCGOV_PROXY_PREFIX
 
@@ -62,22 +62,6 @@ urlpatterns = [
         UserProfile.as_view(),
         name="user_profile",
     ),
-    # Redirect the admin login page to use OAuth
-    re_path(
-        bc_path_prefix(r"^admin/login/$"),
-        auth.login,
-        name="admin_login",
-    ),
-    re_path(bc_path_prefix(r"^auth/$"), auth.login, name="auth_login"),
-    re_path(
-        bc_path_prefix(r"^auth/eoauth_cb$"), auth.auth_callback, name="auth_callback"
-    ),
-    re_path(bc_path_prefix(r"^auth/logout/"), auth.logout, name="auth_logout"),
-    re_path(
-        bc_path_prefix(r"^unauthorized/"),
-        UnauthorizedView.as_view(),
-        name="unauthorized",
-    ),
     re_path(
         bc_path_prefix(
             r"^mvt/(?P<nodeid>%s)/(?P<zoom>[0-9]+|\{z\})/(?P<x>[0-9]+|\{x\})/(?P<y>[0-9]+|\{y\}).pbf$"
@@ -97,6 +81,7 @@ urlpatterns = [
         bcap_export_results,
         name="export_results",
     ),
+    path(bc_path_prefix(), include("bcgov_arches_common.urls")),
     bc_url_resolver,
 ]
 # Ensure Arches core urls are superseded by project-level urls
