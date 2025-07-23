@@ -135,7 +135,7 @@
                         "en": "7. Ancestral Remains"
                     },
                     "nodegroup_id": "6f96f910-5049-11f0-91cd-0242ac170006",
-                    "sortorder": 7,
+                    "sortorder": 6,
                     "visible": true
                 },
                 {
@@ -297,7 +297,7 @@
                         "en": "8. Remarks and Recommendations"
                     },
                     "nodegroup_id": "77789d46-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "visible": true
                 },
                 {
