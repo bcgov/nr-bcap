@@ -1014,14 +1014,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Permit",
+                        "label": "HCA Permit",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "5851718a-12dd-48af-8b98-f57f695aa259",
                     "label": {
-                        "en": "Permit"
+                        "en": "HCA Permit"
                     },
                     "node_id": "b03790fe-df58-11ef-8fa3-0242ac170009",
                     "sortorder": 4,
@@ -4830,8 +4830,8 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "notes": null,
-                "publicationid": "fee1f3d0-61b1-11f0-aa48-3a7a4e6803c5",
-                "published_time": "2025-07-15T19:29:16.181"
+                "publicationid": "aaf52446-682c-11f0-968f-6ec89f566ec4",
+                "published_time": "2025-07-24T01:22:30.452"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
