@@ -1769,14 +1769,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Person",
+                        "label": "Entered By",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "4d2c9c6f-fa0a-4743-a831-fed58ed5199d",
                     "label": {
-                        "en": "Person"
+                        "en": "Entered By"
                     },
                     "node_id": "41fb5d62-61a5-11f0-9674-3a7a4e6803c5",
                     "sortorder": 1,
@@ -2142,6 +2142,26 @@
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
                 {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Conviction Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "853ce54a-bc6b-479a-aa08-04f2e0997cda",
+                    "label": {
+                        "en": "Conviction Date"
+                    },
+                    "node_id": "c515a532-619f-11f0-acf4-3a7a4e6803c5",
+                    "sortorder": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultValue": "",
@@ -2188,7 +2208,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "HCA Entry Date",
+                        "label": "Entry Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -2196,7 +2216,7 @@
                     },
                     "id": "89549890-ea8f-4a57-9cf4-625cdd2e31ab",
                     "label": {
-                        "en": "HCA Entry Date"
+                        "en": "Entry Date"
                     },
                     "node_id": "41fb5c72-61a5-11f0-9674-3a7a4e6803c5",
                     "sortorder": 0,
@@ -2328,6 +2348,35 @@
                         "en": "Site Tenure Identifier"
                     },
                     "node_id": "b2fcabe0-197c-11f0-b2a5-0242ac170008",
+                    "sortorder": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Inventory Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%%"
+                    },
+                    "id": "a314a133-f39a-4868-b0e1-96badc546aa7",
+                    "label": {
+                        "en": "Inventory Remarks"
+                    },
+                    "node_id": "c515a668-619f-11f0-acf4-3a7a4e6803c5",
                     "sortorder": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -8413,8 +8462,8 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "notes": null,
-                "publicationid": "b59ad8b0-653d-11f0-b66f-5a2afcebe986",
-                "published_time": "2025-07-20T07:46:56.272"
+                "publicationid": "8491ed5e-682f-11f0-9e9d-6ec89f566ec4",
+                "published_time": "2025-07-24T01:42:54.539"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
