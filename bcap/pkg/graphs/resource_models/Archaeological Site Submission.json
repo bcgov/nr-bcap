@@ -1921,6 +1921,6 @@
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
