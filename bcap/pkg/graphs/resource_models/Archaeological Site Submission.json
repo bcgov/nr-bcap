@@ -1006,7 +1006,7 @@
                 {
                     "alias": "requested_operation",
                     "config": {
-                        "rdmCollection": "None"
+                        "rdmCollection": null
                     },
                     "datatype": "concept",
                     "description": "Addition, Removal or Update.\nShould this be assigned at the Site level? Eg - do you want to allow ",
@@ -1433,7 +1433,7 @@
                 {
                     "alias": "information_provided",
                     "config": {
-                        "rdmCollection": "None"
+                        "rdmCollection": null
                     },
                     "datatype": "concept",
                     "description": null,

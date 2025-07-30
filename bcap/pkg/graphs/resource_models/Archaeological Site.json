@@ -5768,7 +5768,7 @@
                 {
                     "alias": "bcap_submission_status",
                     "config": {
-                        "rdmCollection": "None"
+                        "rdmCollection": null
                     },
                     "datatype": "concept",
                     "description": null,
