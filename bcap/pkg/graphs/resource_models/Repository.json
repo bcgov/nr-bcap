@@ -878,7 +878,7 @@
                 {
                     "alias": "province",
                     "config": {
-                        "rdmCollection": "d49579da-a691-4a31-a09b-495f078a448b"
+                        "rdmCollection": "9affa732-8bbe-501f-8e24-e25b48a47e78"
                     },
                     "datatype": "concept",
                     "description": null,

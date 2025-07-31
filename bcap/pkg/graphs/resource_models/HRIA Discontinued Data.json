@@ -2358,7 +2358,7 @@
                 {
                     "alias": "end_year_qualifier",
                     "config": {
-                        "rdmCollection": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5"
+                        "rdmCollection": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec"
                     },
                     "datatype": "concept",
                     "description": null,
@@ -2583,7 +2583,7 @@
                 {
                     "alias": "start_year_qualifier",
                     "config": {
-                        "rdmCollection": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5"
+                        "rdmCollection": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec"
                     },
                     "datatype": "concept",
                     "description": null,
