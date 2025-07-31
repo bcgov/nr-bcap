@@ -972,7 +972,7 @@
                 {
                     "alias": "requested_operation",
                     "config": {
-                        "rdmCollection": null
+                        "rdmCollection": "56c3460e-e1b5-5afc-93ff-3625b652302b"
                     },
                     "datatype": "concept",
                     "description": "Addition, Removal or Update.\nShould this be assigned at the Site level? Eg - do you want to allow ",
@@ -1022,7 +1022,7 @@
                 {
                     "alias": "submission_type",
                     "config": {
-                        "rdmCollection": "c99b8763-d118-4869-9c58-4bcbf705e810"
+                        "rdmCollection": "0868cf04-7b9f-5be1-99ae-24074540603c"
                     },
                     "datatype": "concept-list",
                     "description": null,
@@ -1782,8 +1782,8 @@
                 "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
                 "most_recent_edit_id": null,
                 "notes": null,
-                "publicationid": "17447162-e7b7-46fb-88ab-ce7b30f28dcc",
-                "published_time": "2025-07-31T20:50:11.797"
+                "publicationid": "60017d44-52be-44c3-b6b1-ab9f9f7896ef",
+                "published_time": "2025-07-31T21:19:27.914"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
