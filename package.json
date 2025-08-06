@@ -31,10 +31,10 @@
         "@primevue/auto-import-resolver": "^4.3.7",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
         "eslint-config-prettier": "^10.1.5",
+        "prettier": "^3.6.2",
         "unplugin-vue-components": "^29.0.0",
         "vite": "^6.2.1",
-        "webpack-bundle-tracker": "^3.2.1",
-        "prettier": "^3.6.2"
+        "webpack-bundle-tracker": "^3.2.1"
     },
     "dependencies": {
         "@primeuix/themes": "^1.2.3",

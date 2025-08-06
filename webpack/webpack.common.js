@@ -441,14 +441,22 @@ module.exports = () => {
                     },
                     {
                         test: /\.htm$/i,
-                        type: 'asset/resource',
-                        generator: {
-                            filename: (pathData) => {
-                                return pathData.module.rawRequest;
+                        oneOf: [ // This change was to try to fix the webpack issue. Using Vue instead
+                            {
+                                // Match `import './foo.htm?inline'`
+                                resourceQuery: /inline/,
+                                type: "asset/source" // returns the raw HTML content
                             },
-                            publicPath: '',  // this ensures that Knockout can render the template on page load
-                            emit: false,
-                        },
+                            {
+                                // Default: return the file path
+                                type: "asset/resource",
+                                generator: {
+                                    filename: (pathData) => pathData.module.rawRequest,
+                                    publicPath: "",
+                                    emit: false
+                                }
+                            }
+                        ]
                     },
                     {
                         test: /\.(txt|DS_Store)$/i,
