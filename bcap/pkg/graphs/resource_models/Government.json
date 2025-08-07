@@ -95,7 +95,16 @@
                     "cardid": "7d35e296-ba54-4879-88aa-c2951dce0d1c",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
-                    "constraints": [],
+                    "constraints": [
+                        {
+                            "card_id": "7d35e296-ba54-4879-88aa-c2951dce0d1c",
+                            "constraintid": "64993cb2-8001-4a58-a311-45ed69ffa433",
+                            "nodes": [
+                                "91cc2384-a31c-11ed-b90e-5254004d77d3"
+                            ],
+                            "uniquetoallinstances": true
+                        }
+                    ],
                     "cssclass": null,
                     "description": null,
                     "graph_id": "aacf8bb6-3f6e-46d9-a551-b0749d7efffc",
@@ -172,7 +181,6 @@
                 {
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
                     "config": {
-                        "defaultValue": "aae4921b-3600-5309-8e38-5f02a066f533",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -767,8 +775,8 @@
                 "graph_id": "aacf8bb6-3f6e-46d9-a551-b0749d7efffc",
                 "most_recent_edit_id": null,
                 "notes": null,
-                "publicationid": "09377ff4-fe86-41b4-a30b-b00c99d20840",
-                "published_time": "2025-07-31T04:11:58.105"
+                "publicationid": "13157f53-7258-4352-bd15-962f0bec4d31",
+                "published_time": "2025-07-23T19:21:45.441"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],

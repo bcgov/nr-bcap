@@ -226,7 +226,72 @@
                             "placeholder"
                         ],
                         "label": "Submission Type",
-                        "options": [],
+                        "options": [
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "dbc4020b-2dc0-4b65-afb0-6c84228bc22a",
+                                "id": "d3cee5a2-3acb-42c1-9b2d-4642504aa981",
+                                "sortorder": "",
+                                "text": "Amendment"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "b68c613a-30a5-404c-a376-a6d5cc6f451c",
+                                "id": "0a32f5c4-682b-46db-b48c-f40a045e47f2",
+                                "sortorder": "",
+                                "text": "Community Heritage Register"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "bc9f88dc-9902-47ee-9b89-569eb166e813",
+                                "id": "632647c0-0019-49b8-b169-e7d6e07ed456",
+                                "sortorder": "",
+                                "text": "Heritage Conservation Area"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "12c5a155-c1d6-4c94-9a19-6a854ba57060",
+                                "id": "dddc77d9-a69e-4e26-9664-8ecd08744ff2",
+                                "sortorder": "",
+                                "text": "Heritage Designation"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "081d3683-b978-4f48-9f15-443b91b9e22a",
+                                "id": "efce68c6-8d59-4910-b0aa-5d6681cf76c8",
+                                "sortorder": "",
+                                "text": "Heritage Revitalization Agreement"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "49c8e6a4-a84e-4c03-8864-0aecc5b516cb",
+                                "id": "65815e61-cb09-4585-a806-a117ae8130ef",
+                                "sortorder": "",
+                                "text": "Other"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "c69fcfe3-83a0-41d5-89a2-542b6161888c",
+                                "id": "546f5d90-9ef8-453b-a102-f08528bdab5c",
+                                "sortorder": "",
+                                "text": "Removal"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "5c0af7aa-1693-458f-a63c-136b6f18e816",
+                                "id": "c45a595e-d6ad-4616-be10-adf1684d8872",
+                                "sortorder": "",
+                                "text": "Tax Exemption"
+                            }
+                        ],
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -316,20 +381,6 @@
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
                         "defaultValue": {
-                            "__ko_mapping__": {
-                                "copiedProperties": {},
-                                "copy": [],
-                                "ignore": [],
-                                "include": [
-                                    "_destroy"
-                                ],
-                                "mappedProperties": {
-                                    "en": true,
-                                    "en.direction": true,
-                                    "en.value": true
-                                },
-                                "observe": []
-                            },
                             "en": {
                                 "direction": "ltr",
                                 "value": ""
@@ -360,20 +411,6 @@
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
                         "defaultValue": {
-                            "__ko_mapping__": {
-                                "copiedProperties": {},
-                                "copy": [],
-                                "ignore": [],
-                                "include": [
-                                    "_destroy"
-                                ],
-                                "mappedProperties": {
-                                    "en": true,
-                                    "en.direction": true,
-                                    "en.value": true
-                                },
-                                "observe": []
-                            },
                             "en": {
                                 "direction": "ltr",
                                 "value": ""
@@ -436,50 +473,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000008"
-                },
-                {
-                    "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
-                    "config": {
-                        "defaultValue": {
-                            "__ko_mapping__": {
-                                "copiedProperties": {},
-                                "copy": [],
-                                "ignore": [],
-                                "include": [
-                                    "_destroy"
-                                ],
-                                "mappedProperties": {
-                                    "en": true,
-                                    "en.direction": true,
-                                    "en.value": true
-                                },
-                                "observe": []
-                            },
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Information Provided",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "7a482329-ca70-4215-b20c-7532acedf4fa",
-                    "label": {
-                        "en": "Information Provided"
-                    },
-                    "node_id": "9c694d7e-6800-4b35-8d5d-50799bb413bb",
-                    "sortorder": 4,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
@@ -567,6 +560,47 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Information Provided",
+                        "options": [
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "67b1e543-c947-46a6-b138-18621aa5ac85",
+                                "id": "5b940fe7-75f2-48e3-b0dd-0562f0f291aa",
+                                "sortorder": "",
+                                "text": "Basic Record"
+                            },
+                            {
+                                "children": [],
+                                "collector": "",
+                                "conceptid": "24a4a0a5-3233-4842-a58b-c5fbf69caebe",
+                                "id": "33ddc451-9f67-42b7-bdf7-f7f4d8c924a3",
+                                "sortorder": "",
+                                "text": "Full Record"
+                            }
+                        ],
+                        "placeholder": {
+                            "en": "Select an option"
+                        },
+                        "url": "/bcap/concepts/dropdown?conceptid=72c95a59-0d85-4ee9-8491-7def12dd9b9e"
+                    },
+                    "id": "a21636ac-6a5d-40ab-aa63-7773187d7d39",
+                    "label": {
+                        "en": "Information Provided"
+                    },
+                    "node_id": "59066780-5c0d-11ee-b28c-080027b7463b",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000009"
                 },
                 {
                     "card_id": "247a4e3c-3122-4351-9b1e-83f1d5e104bb",
@@ -772,6 +806,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "02c5723e-a985-11ed-9f00-5254004d77d3",
+                    "edgeid": "8ac551d7-6225-4ca2-a93f-9161d0e7ae73",
+                    "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L43i_is_annotated_by",
+                    "rangenode_id": "59066780-5c0d-11ee-b28c-080027b7463b",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "e750627a-a326-11ed-a0e3-5254004d77d3",
                     "edgeid": "9c083a70-c39e-4fd0-801b-a460cc61c55b",
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
@@ -848,16 +892,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
                     "rangenode_id": "9d1f461e-a32e-11ed-8f5c-5254004d77d3",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "02c5723e-a985-11ed-9f00-5254004d77d3",
-                    "edgeid": "f8f4449d-fa46-4c84-8cff-5b2c61a78ec1",
-                    "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L43i_is_annotated_by",
-                    "rangenode_id": "9c694d7e-6800-4b35-8d5d-50799bb413bb",
                     "source_identifier_id": null
                 }
             ],
@@ -972,7 +1006,7 @@
                 {
                     "alias": "requested_operation",
                     "config": {
-                        "rdmCollection": "56c3460e-e1b5-5afc-93ff-3625b652302b"
+                        "rdmCollection": "None"
                     },
                     "datatype": "concept",
                     "description": "Addition, Removal or Update.\nShould this be assigned at the Site level? Eg - do you want to allow ",
@@ -990,7 +1024,7 @@
                     "nodeid": "02c57cd4-a985-11ed-9f00-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E89_Propositional_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 3,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1022,7 +1056,7 @@
                 {
                     "alias": "submission_type",
                     "config": {
-                        "rdmCollection": "0868cf04-7b9f-5be1-99ae-24074540603c"
+                        "rdmCollection": "c99b8763-d118-4869-9c58-4bcbf705e810"
                     },
                     "datatype": "concept-list",
                     "description": null,
@@ -1040,7 +1074,7 @@
                     "nodeid": "02c580a8-a985-11ed-9f00-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1397,6 +1431,31 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "information_provided",
+                    "config": {
+                        "rdmCollection": "None"
+                    },
+                    "datatype": "concept",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "INF_PRVD",
+                    "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Information Provided",
+                    "nodegroup_id": "4506b49e-a324-11ed-bbb0-5254004d77d3",
+                    "nodeid": "59066780-5c0d-11ee-b28c-080027b7463b",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L43i_is_annotated_by",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "submission_documents",
                     "config": {
                         "activateMax": false,
@@ -1520,31 +1579,6 @@
                     "nodeid": "98a21d7a-a32c-11ed-8143-5254004d77d3",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D9_Data_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "information_provided",
-                    "config": {
-                        "rdmCollection": null
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "INF_PRVD",
-                    "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Information Provided",
-                    "nodegroup_id": "4506b49e-a324-11ed-bbb0-5254004d77d3",
-                    "nodeid": "9c694d7e-6800-4b35-8d5d-50799bb413bb",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L43i_is_annotated_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -1782,8 +1816,8 @@
                 "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
                 "most_recent_edit_id": null,
                 "notes": null,
-                "publicationid": "60017d44-52be-44c3-b6b1-ab9f9f7896ef",
-                "published_time": "2025-07-31T21:19:27.914"
+                "publicationid": "010b12b4-d92a-478f-a0c2-8f621d104573",
+                "published_time": "2025-07-23T19:21:49.887"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
