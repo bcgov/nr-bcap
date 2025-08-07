@@ -5430,9 +5430,10 @@
                 {
                     "alias": "registration_status",
                     "config": {
-                        "rdmCollection": "c80f6dc1-4247-500b-8b1c-16ef3761761b"
+                        "controlledList": "c80f6dc1-4247-500b-8b1c-16ef3761761b",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -5505,9 +5506,10 @@
                 {
                     "alias": "general_remark_source",
                     "config": {
-                        "rdmCollection": "eba1146d-b617-5fff-9c79-92eb2ed6e8aa"
+                        "controlledList": "eba1146d-b617-5fff-9c79-92eb2ed6e8aa",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -5765,9 +5767,7 @@
                 },
                 {
                     "alias": "bcap_submission_status",
-                    "config": {
-                        "rdmCollection": "None"
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
@@ -6066,9 +6066,10 @@
                 {
                     "alias": "external_url_type",
                     "config": {
-                        "rdmCollection": "4236434c-d8ec-5173-a986-945ddeccc545"
+                        "controlledList": "4236434c-d8ec-5173-a986-945ddeccc545",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": "urltype",
@@ -6091,9 +6092,10 @@
                 {
                     "alias": "register_type",
                     "config": {
-                        "rdmCollection": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e"
+                        "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
+                        "multiValue": true
                     },
-                    "datatype": "concept-list",
+                    "datatype": "reference",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
                     "exportable": false,
                     "fieldname": null,
@@ -6222,9 +6224,10 @@
                 {
                     "alias": "related_document_type",
                     "config": {
-                        "rdmCollection": "96aaf519-1698-533e-bca4-8f5d2158e5f8"
+                        "controlledList": "96aaf519-1698-533e-bca4-8f5d2158e5f8",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": "doctype",
@@ -6628,9 +6631,7 @@
                 },
                 {
                     "alias": "site_tenure_remarks",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "string",
                     "description": null,
                     "exportable": false,
@@ -6654,9 +6655,10 @@
                 {
                     "alias": "typology_class",
                     "config": {
-                        "rdmCollection": "d31def91-e057-545a-ada6-3c18b6aa9ae9"
+                        "controlledList": "d31def91-e057-545a-ada6-3c18b6aa9ae9",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -6765,9 +6767,10 @@
                 {
                     "alias": "latest_edit_type",
                     "config": {
-                        "rdmCollection": "247c2519-6887-5bdd-aa76-deb839a3c65a"
+                        "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
                     "exportable": false,
                     "fieldname": null,
@@ -6984,9 +6987,10 @@
                 {
                     "alias": "site_type",
                     "config": {
-                        "rdmCollection": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2"
+                        "controlledList": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -7008,9 +7012,7 @@
                 },
                 {
                     "alias": "biogeography_type",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
@@ -7040,7 +7042,6 @@
                                 "name": "Archaeological Site"
                             }
                         ],
-                        "rdmCollection": null,
                         "searchDsl": "",
                         "searchString": ""
                     },
@@ -7116,9 +7117,7 @@
                 },
                 {
                     "alias": "site_tenure_type",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "string",
                     "description": "This comes from the BCGW. Need to confirm whether this should be stored in BCAP or just implemented as a spatial function with the BCGW layers. Values are determined by the following BCGW overlays:\nWHSE_ADMIN_BOUNDARIES.CLAB_INDIAN_RESERVES \nWHSE_ADMIN_BOUNDARIES.CLAB_NATIONAL_PARKS \nWHSE_TANTALIS.TA_MUNICIPALITIES_SVW \nWHSE_TANTALIS.TA_REGIONAL_DISTRICTS_SVW \nWHSE_TANTALIS.TA_LAND_DISTRICTS_SVW \nWHSE_TANTALIS.TA_PARK_ECORES_PA_SVW \n\nAlthough this is a controlled vocabulary, it is managed outside of. BCAP so implemented as a string.\n",
                     "exportable": false,
@@ -7278,9 +7277,10 @@
                 {
                     "alias": "site_subtype",
                     "config": {
-                        "rdmCollection": "79332c30-c369-5852-b3ea-023551fd9d34"
+                        "controlledList": "79332c30-c369-5852-b3ea-023551fd9d34",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "Can this be a single, hierarchical list?",
                     "exportable": false,
                     "fieldname": null,
@@ -7303,9 +7303,10 @@
                 {
                     "alias": "registry_types2",
                     "config": {
-                        "rdmCollection": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e"
+                        "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
+                        "multiValue": true
                     },
-                    "datatype": "concept-list",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "RGSTRY_TYP",
@@ -7327,9 +7328,7 @@
                 },
                 {
                     "alias": "biogeography_name",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "string",
                     "description": null,
                     "exportable": false,
@@ -7402,9 +7401,7 @@
                 },
                 {
                     "alias": "biogeography_description",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "string",
                     "description": null,
                     "exportable": false,
@@ -7661,9 +7658,7 @@
                 },
                 {
                     "alias": "site_tenure_identifier",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "string",
                     "description": "Name of the place holding tenure on the site. See \"Site Tenure Type\" for source values.",
                     "exportable": false,
@@ -7787,9 +7782,10 @@
                 {
                     "alias": "reference_type",
                     "config": {
-                        "rdmCollection": "74e02e4f-8587-5cfa-93b4-d81539f023dd"
+                        "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "Need to fix Concept name and values",
                     "exportable": false,
                     "fieldname": null,
@@ -7917,8 +7913,7 @@
                 {
                     "alias": "elevation_comments",
                     "config": {
-                        "en": "",
-                        "rdmCollection": null
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8096,9 +8091,10 @@
                 {
                     "alias": "image_type",
                     "config": {
-                        "rdmCollection": "1da4d092-b025-5615-8208-0af80126c5ee"
+                        "controlledList": "1da4d092-b025-5615-8208-0af80126c5ee",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": "imagetype",
@@ -8146,9 +8142,10 @@
                 {
                     "alias": "image_view",
                     "config": {
-                        "rdmCollection": "435dccb6-ef91-50bc-9f17-69e9c99aa9fa"
+                        "controlledList": "435dccb6-ef91-50bc-9f17-69e9c99aa9fa",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": "image_view",
@@ -8446,9 +8443,10 @@
                 {
                     "alias": "name_type",
                     "config": {
-                        "rdmCollection": "b80c39a8-dbaf-5d3a-8d52-1aa2778e712d"
+                        "controlledList": "b80c39a8-dbaf-5d3a-8d52-1aa2778e712d",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "ST_NM_TYP",
@@ -8649,9 +8647,10 @@
                     "alias": "site_decision",
                     "config": {
                         "en": "",
-                        "rdmCollection": "5ef2a67b-4ebf-58d0-919e-66965be03cb7"
+                        "controlledList": "5ef2a67b-4ebf-58d0-919e-66965be03cb7",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "{\"en\": \"\"}",
                     "exportable": false,
                     "fieldname": null,
@@ -8735,9 +8734,10 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "rdmCollection": "5ef2a67b-4ebf-58d0-919e-66965be03cb7"
+                        "controlledList": "5ef2a67b-4ebf-58d0-919e-66965be03cb7",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",
                     "exportable": false,
                     "fieldname": null,

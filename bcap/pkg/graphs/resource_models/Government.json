@@ -672,9 +672,10 @@
                 {
                     "alias": "province",
                     "config": {
-                        "rdmCollection": "9affa732-8bbe-501f-8e24-e25b48a47e78"
+                        "controlledList": "9affa732-8bbe-501f-8e24-e25b48a47e78",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "PRVNC",
@@ -747,9 +748,10 @@
                 {
                     "alias": "government_type",
                     "config": {
-                        "rdmCollection": "97dd9a84-441b-5a45-a517-88caa70148c7"
+                        "controlledList": "97dd9a84-441b-5a45-a517-88caa70148c7",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "govtype",

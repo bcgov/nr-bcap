@@ -558,9 +558,10 @@
                 {
                     "alias": "legal_instrument",
                     "config": {
-                        "rdmCollection": "b0248b36-a1ba-51f5-a7c2-ffb79f17bb7b"
+                        "controlledList": "b0248b36-a1ba-51f5-a7c2-ffb79f17bb7b",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "legalact",
@@ -583,9 +584,10 @@
                 {
                     "alias": "authority",
                     "config": {
-                        "rdmCollection": "de47e759-abb7-5b90-b229-67f94999cb46"
+                        "controlledList": "de47e759-abb7-5b90-b229-67f94999cb46",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "authority",
@@ -607,9 +609,7 @@
                 },
                 {
                     "alias": "act_section",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "string",
                     "description": null,
                     "exportable": true,
@@ -633,9 +633,10 @@
                 {
                     "alias": "recognition_type",
                     "config": {
-                        "rdmCollection": "c77ecae8-8656-50e3-9090-893787af94f2"
+                        "controlledList": "c77ecae8-8656-50e3-9090-893787af94f2",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "rcgntntp",

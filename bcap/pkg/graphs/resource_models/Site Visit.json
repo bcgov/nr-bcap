@@ -3117,9 +3117,10 @@
                 {
                     "alias": "member_roles",
                     "config": {
-                        "rdmCollection": "dea73106-ad02-561d-8075-4f68ba5318b9"
+                        "controlledList": "dea73106-ad02-561d-8075-4f68ba5318b9",
+                        "multiValue": true
                     },
-                    "datatype": "concept-list",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3299,9 +3300,10 @@
                 {
                     "alias": "cultural_material_type",
                     "config": {
-                        "rdmCollection": "ed893196-5678-5acd-9afa-985278112b7b"
+                        "controlledList": "ed893196-5678-5acd-9afa-985278112b7b",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3356,9 +3358,10 @@
                 {
                     "alias": "cultural_material_status",
                     "config": {
-                        "rdmCollection": "c2cbf04a-5112-5264-a05d-ba348a2bdfcd"
+                        "controlledList": "c2cbf04a-5112-5264-a05d-ba348a2bdfcd",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3604,9 +3607,10 @@
                 {
                     "alias": "name_type",
                     "config": {
-                        "rdmCollection": "b80c39a8-dbaf-5d3a-8d52-1aa2778e712d"
+                        "controlledList": "b80c39a8-dbaf-5d3a-8d52-1aa2778e712d",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "ST_NM_TYP",
@@ -3711,9 +3715,10 @@
                 {
                     "alias": "ancestral_remains_type",
                     "config": {
-                        "rdmCollection": "ed893196-5678-5acd-9afa-985278112b7b"
+                        "controlledList": "ed893196-5678-5acd-9afa-985278112b7b",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3770,9 +3775,10 @@
                 {
                     "alias": "ancestral_remains_status",
                     "config": {
-                        "rdmCollection": "c2cbf04a-5112-5264-a05d-ba348a2bdfcd"
+                        "controlledList": "c2cbf04a-5112-5264-a05d-ba348a2bdfcd",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4045,9 +4051,10 @@
                 {
                     "alias": "remark_source",
                     "config": {
-                        "rdmCollection": "eba1146d-b617-5fff-9c79-92eb2ed6e8aa"
+                        "controlledList": "eba1146d-b617-5fff-9c79-92eb2ed6e8aa",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4120,9 +4127,10 @@
                 {
                     "alias": "archaeological_feature",
                     "config": {
-                        "rdmCollection": "1a6495f4-0ef4-469a-9e62-5e39b1c96a10"
+                        "controlledList": "1a6495f4-0ef4-469a-9e62-5e39b1c96a10",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "{\"en\": \"\"}",
                     "exportable": false,
                     "fieldname": null,
@@ -4308,9 +4316,7 @@
                 },
                 {
                     "alias": "chronology",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
                     "exportable": true,
@@ -4334,9 +4340,10 @@
                 {
                     "alias": "end_year_qualifier",
                     "config": {
-                        "rdmCollection": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec"
+                        "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4359,9 +4366,10 @@
                 {
                     "alias": "end_year_calendar",
                     "config": {
-                        "rdmCollection": "3add280e-11ef-5209-9612-2ba3377a451c"
+                        "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4409,9 +4417,10 @@
                 {
                     "alias": "determination_method",
                     "config": {
-                        "rdmCollection": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033"
+                        "controlledList": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4534,9 +4543,10 @@
                 {
                     "alias": "start_year_calendar",
                     "config": {
-                        "rdmCollection": "3add280e-11ef-5209-9612-2ba3377a451c"
+                        "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4559,9 +4569,10 @@
                 {
                     "alias": "start_year_qualifier",
                     "config": {
-                        "rdmCollection": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec"
+                        "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4725,9 +4736,10 @@
                 {
                     "alias": "latest_edit_type",
                     "config": {
-                        "rdmCollection": "f02e971f-a22b-59b7-acbb-ad232526e7a2"
+                        "controlledList": "f02e971f-a22b-59b7-acbb-ad232526e7a2",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
                     "exportable": false,
                     "fieldname": null,
@@ -4800,9 +4812,10 @@
                 {
                     "alias": "site_visit_type",
                     "config": {
-                        "rdmCollection": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2"
+                        "controlledList": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4875,9 +4888,10 @@
                 {
                     "alias": "archaeological_culture",
                     "config": {
-                        "rdmCollection": "117a187a-9864-5efa-aa7d-d823dddf2ca8"
+                        "controlledList": "117a187a-9864-5efa-aa7d-d823dddf2ca8",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": "",
                     "exportable": false,
                     "fieldname": null,
@@ -4951,9 +4965,10 @@
                     "alias": "disturbance_period",
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
-                        "rdmCollection": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76"
+                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4976,9 +4991,10 @@
                 {
                     "alias": "disturbance_cause",
                     "config": {
-                        "rdmCollection": "49ba5921-9bc6-5e3d-914d-cc9682410867"
+                        "controlledList": "49ba5921-9bc6-5e3d-914d-cc9682410867",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,

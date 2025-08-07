@@ -2332,9 +2332,7 @@
                 },
                 {
                     "alias": "chronology",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "semantic",
                     "description": "",
                     "exportable": true,
@@ -2358,9 +2356,10 @@
                 {
                     "alias": "end_year_qualifier",
                     "config": {
-                        "rdmCollection": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5"
+                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2383,9 +2382,10 @@
                 {
                     "alias": "end_year_calendar",
                     "config": {
-                        "rdmCollection": "3add280e-11ef-5209-9612-2ba3377a451c"
+                        "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2433,9 +2433,10 @@
                 {
                     "alias": "determination_method",
                     "config": {
-                        "rdmCollection": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033"
+                        "controlledList": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2558,9 +2559,10 @@
                 {
                     "alias": "start_year_calendar",
                     "config": {
-                        "rdmCollection": "3add280e-11ef-5209-9612-2ba3377a451c"
+                        "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2583,9 +2585,10 @@
                 {
                     "alias": "start_year_qualifier",
                     "config": {
-                        "rdmCollection": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5"
+                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,

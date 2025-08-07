@@ -1005,9 +1005,7 @@
                 },
                 {
                     "alias": "requested_operation",
-                    "config": {
-                        "rdmCollection": "None"
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": "Addition, Removal or Update.\nShould this be assigned at the Site level? Eg - do you want to allow ",
                     "exportable": true,
@@ -1056,9 +1054,10 @@
                 {
                     "alias": "submission_type",
                     "config": {
-                        "rdmCollection": "c99b8763-d118-4869-9c58-4bcbf705e810"
+                        "controlledList": "c99b8763-d118-4869-9c58-4bcbf705e810",
+                        "multiValue": true
                     },
-                    "datatype": "concept-list",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "SUB_TYP",
@@ -1366,7 +1365,6 @@
                                 "useOntologyRelationship": false
                             }
                         ],
-                        "rdmCollection": null,
                         "searchDsl": {
                             "bool": {
                                 "filter": [
@@ -1432,9 +1430,7 @@
                 },
                 {
                     "alias": "information_provided",
-                    "config": {
-                        "rdmCollection": "None"
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": null,
                     "exportable": true,
