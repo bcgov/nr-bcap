@@ -56,7 +56,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     <link rel="stylesheet" type="text/css" href="{% webpack_static 'css/index-slider.css' %}">
     <link href="{% webpack_static 'css/index.css' %}" rel="stylesheet">
     <link href="{% webpack_static 'css/project.css' %}" rel="stylesheet">
-    <link href="{% webpack_static 'css/bc_index.css' %}" rel="stylesheet">
+    <link href="{% webpack_static 'node_modules/bcgov_arches_common/bcgov_arches_common/media/css/bc_index.css' %}" rel="stylesheet">
+    <link href="{% webpack_static 'node_modules/bcgov_arches_common/bcgov_arches_common/media/css/project.css' %}" rel="stylesheet">
     {% if app_settings.ACCESSIBILITY_MODE %}
     <link href="{% webpack_static 'css/accessibility.css' %}" rel="stylesheet">
     {% endif %}
@@ -85,7 +86,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 <div class="relative nav-brand-container">
                     <div class="navbar-brand-v5-icon-container">
                         <a href="https://www2.gov.bc.ca/gov/content/home" target="BCGov Home">
-                            <img class="navbar-brand-v5-icon" src="{% webpack_static 'img/logo/BCID_H_rgb_rev.png' %}"
+                            <img class="navbar-brand-v5-icon" src="{% webpack_static 'node_modules/bcgov_arches_common/bcgov_arches_common/media/img/logo/BCID_H_rgb_rev.png' %}"
                                  alt="BC Government Logo">
                         </a>
                         <h1>{% blocktrans %}BC Archaeology Portal {% endblocktrans %}</h1>
@@ -186,7 +187,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
             </div>
 
             <!-- Slider -->
-            <div class="home-slider">
+            <div id="home-slider" class="home-slider">
                 <div class="slide-img-container">
                     <img src="{% webpack_static 'img/front/Haida-Gwaii-980X450.webp' %}" alt="null">
                     <div class="slide-caption bc-splash-caption">
@@ -488,18 +489,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 <script src="{% webpack_static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 <script src="{% webpack_static 'plugins/one.app.js' %}"></script>
 <script src="{% webpack_static 'plugins/revolution-slider/rs-plugin/js/jquery.themepunch.tools.min.js' %}"></script>
-<script
-    src="{% webpack_static 'plugins/revolution-slider/rs-plugin/js/jquery.themepunch.revolution.js' %}"></script>
+<script src="{% webpack_static 'plugins/revolution-slider/rs-plugin/js/jquery.themepunch.revolution.js' %}"></script>
 <script src="{% webpack_static 'plugins/slick/slick.min.js' %}"></script>
 
 <!-- Custom Scripts -->
 {% render_bundle 'bindings/chosen' %}
 {% render_bundle 'bindings/key-events-click' %}
 {% render_bundle 'views/components/language-switcher' %}
+
 <script type="module">
-
-    import $ from "jquery";
-
     var contentSections = null,
         navigationItems = null;
     $(document).ready(function() {
@@ -532,7 +530,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         });
 
         //slider
-        $(".home-slider").slick({
+        $("#home-slider").slick({
             accessibility: true,
             arrowsPlacement: "split",
             dots: true,
