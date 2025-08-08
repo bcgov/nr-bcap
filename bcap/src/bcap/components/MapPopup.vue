@@ -182,8 +182,8 @@ onMounted(() => {
                         v-if="visibleFeature?.resourceinstanceid"
                         href="javascript:void(0)"
                         @click="
-                            feature.mapCard.showDetailsFromFilter(
-                                feature.resourceinstanceid,
+                                popupFeatures?.[0]?.mapCard.showDetailsFromFilter(
+                                popupFeatures,
                             )
                         "
                     >

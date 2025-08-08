@@ -218,20 +218,22 @@ const popupDataProvider = {
      */
     showFilterByFeature: function (popupFeatureObject) {
         const noFeatureId =
-              popupFeatureObject?.feature?.sourceLayer === undefined;
-            // popupFeatureObject.feature?.properties?.featureid === undefined;
+            popupFeatureObject?.feature?.sourceLayer === undefined;
+        // popupFeatureObject.feature?.properties?.featureid === undefined;
         if (noFeatureId) return false;
         return this.findPopupFeatureById(popupFeatureObject) !== null;
     },
     findPopupFeatureById: function (popupFeatureObject) {
-
         let foundFeature = null;
         const strippedFeatureId =
-             popupFeatureObject?.feature?.properties?.featureid.replace(/-/g, "");
+            popupFeatureObject?.feature?.properties?.featureid.replace(
+                /-/g,
+                "",
+            );
         for (let geometry of popupFeatureObject.geometries()) {
             if (geometry.geom && Array.isArray(geometry.geom.features)) {
                 foundFeature = geometry.geom.features.find(
-                    feature =>
+                    (feature) =>
                         feature?.id?.replace(/-/g, "") === strippedFeatureId,
                 );
                 if (foundFeature) break;
