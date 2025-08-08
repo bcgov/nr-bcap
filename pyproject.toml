@@ -33,6 +33,7 @@ dependencies = [
     "oracledb",
     "html2text",
     "Authlib",
+    "django-captcha"
 ]
 
 version = "0.0.1"
