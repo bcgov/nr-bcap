@@ -28,7 +28,7 @@ dependencies = [
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common@brf/feat/214_upgrade_to_v8_take2",
     "boto3==1.26",
     "django-migrate-sql-deux==1.1.1",
-    "django-pgtrigger",
+    "django-pgtrigger==4.15.2",
     "django-storages==1.13",
     "redis",
     "python-dotenv",
