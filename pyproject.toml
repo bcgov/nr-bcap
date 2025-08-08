@@ -23,7 +23,7 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "arches>=8.0.0a4",
+    "arches>=8.0.2",
     "arches_component_lab",
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common",
     "boto3==1.26",

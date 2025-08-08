@@ -1,7 +1,7 @@
 import ko from "knockout";
 import _ from "underscore";
-import default_template from "templates/views/components/map_popup/toggle-map-popup.htm";
-import edit_popup from "templates/views/components/map_popup/edit-map-popup.htm";
+import defaultTemplate from "templates/views/components/map_popup/toggle-map-popup.htm?inline";
+import editPopup from "templates/views/components/map_popup/edit-map-popup.htm?inline";
 const popupDataProvider = {
     layerConfigs: {
         "WHSE_CADASTRE.PMBC_PARCEL_FABRIC_POLY_SVW": {
@@ -98,7 +98,7 @@ const popupDataProvider = {
     ],
 
     isFeatureClickable: function (feature, map) {
-        // console.log("bchp.isFeatureClickable()")
+        console.log("bcap.isFeatureClickable()");
         // console.log(`Context: ${map.context}`);
         if (
             (map.context === "resource-editor" &&
@@ -132,8 +132,8 @@ const popupDataProvider = {
                 );
             })
         )
-            return edit_popup;
-        return default_template;
+            return editPopup;
+        return defaultTemplate;
     },
     isSelectableAsFilter: function (feature) {
         return (
@@ -218,19 +218,21 @@ const popupDataProvider = {
      */
     showFilterByFeature: function (popupFeatureObject) {
         const noFeatureId =
-            popupFeatureObject.feature?.properties?.featureid === undefined;
+              popupFeatureObject?.feature?.sourceLayer === undefined;
+            // popupFeatureObject.feature?.properties?.featureid === undefined;
         if (noFeatureId) return false;
         return this.findPopupFeatureById(popupFeatureObject) !== null;
     },
     findPopupFeatureById: function (popupFeatureObject) {
+
         let foundFeature = null;
         const strippedFeatureId =
-            popupFeatureObject.feature.properties.featureid.replace(/-/g, "");
+             popupFeatureObject?.feature?.properties?.featureid.replace(/-/g, "");
         for (let geometry of popupFeatureObject.geometries()) {
             if (geometry.geom && Array.isArray(geometry.geom.features)) {
                 foundFeature = geometry.geom.features.find(
-                    (feature) =>
-                        feature.id.replace(/-/g, "") === strippedFeatureId,
+                    feature =>
+                        feature?.id?.replace(/-/g, "") === strippedFeatureId,
                 );
                 if (foundFeature) break;
             }
@@ -238,4 +240,5 @@ const popupDataProvider = {
         return foundFeature;
     },
 };
+
 export default popupDataProvider;
