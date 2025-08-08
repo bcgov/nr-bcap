@@ -117,8 +117,13 @@ AUTHLIB_OAUTH_CLIENTS = {
         "access_token_url": get_env_variable(
             "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
         ),
-        "refresh_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"),
-        "server_metadata_url": get_env_variable("OAUTH_SERVER_METADATA_URL", "http://localhost:9999/fake-oauth/.well-known/openid-configuration"),
+        "refresh_token_url": get_env_variable(
+            "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
+        ),
+        "server_metadata_url": get_env_variable(
+            "OAUTH_SERVER_METADATA_URL",
+            "http://localhost:9999/fake-oauth/.well-known/openid-configuration",
+        ),
         "client_kwargs": {
             "scope": "openid profile email",
             "token_endpoint_auth_method": "client_secret_post",
