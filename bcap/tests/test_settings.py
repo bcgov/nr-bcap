@@ -108,14 +108,39 @@ SILENCED_SYSTEM_CHECKS += [
 
 # Authlib configuration for test (local fake provider)
 AUTHLIB_OAUTH_CLIENTS = {
-    "bcap_oauth": {
-        "client_id": "test-client-id",
-        "client_secret": "test-client-secret",
-        "authorize_url": "http://localhost:9999/fake-oauth/authorize",
-        "access_token_url": "http://localhost:9999/fake-oauth/token",
-        "userinfo_endpoint": "http://localhost:9999/fake-oauth/userinfo",
+    "default": {
+        "client_id": get_env_variable("OAUTH_CLIENT_ID", "test-client-id"),
+        "client_secret": get_env_variable("OAUTH_CLIENT_SECRET", "test-client-secret"),
+        "authorize_url": get_env_variable(
+            "OAUTH_AUTH_ENDPOINT", "http://localhost:9999/fake-oauth/authorize"
+        ),
+        "access_token_url": get_env_variable(
+            "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
+        ),
+        "refresh_token_url": get_env_variable(
+            "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
+        ),
+        "server_metadata_url": get_env_variable(
+            "OAUTH_SERVER_METADATA_URL",
+            "http://localhost:9999/fake-oauth/.well-known/openid-configuration",
+        ),
         "client_kwargs": {
-            "scope": "openid email profile",
+            "scope": "openid profile email",
+            "token_endpoint_auth_method": "client_secret_post",
+        },
+        "urls": {
+            "home_page": "/bcap/",
+            "unauthorized_page": "/bcap/unauthorized",
+            "unauthorized_template": "unauthorized.htm",
+            "auth_exempt_pages": [
+                "/bcap",
+                "/bcap/",
+                "/unauthorized",
+                "/bcap/index.htm",
+                "/bcap/auth",
+                "/bcap/auth/eoauth_start",
+                "/bcap/auth/eoauth_cb",
+            ],
         },
     }
 }

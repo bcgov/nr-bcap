@@ -190,6 +190,7 @@ INSTALLED_APPS = (
     "django_recaptcha",
     "pgtrigger",
     "revproxy",
+    "django_migrate_sql",
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
