@@ -26,11 +26,12 @@
         "underscore": "^1.13.6"
     },
     "devDependencies": {
-        "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x"
+        "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
+        "webpack-bundle-tracker": "^3.2.1"
     },
     "dependencies": {
         "ajv": "^8.17.1",
-        "arches": "github:archesproject/arches#stable/8.0.2",
+        "arches": "^8.0.2",
         "bcgov_arches_common": "github:bcgov/bcgov-arches-common#brf/feat/214_upgrade_to_v8_take2",
         "eslint-config-prettier": "^10.1.5",
         "typescript": "^5.6.2"
