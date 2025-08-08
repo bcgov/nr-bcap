@@ -509,14 +509,15 @@ const viewModel = function (params) {
                     try {
                         map.setFeatureState(feature, { selected: false });
                         map.setFeatureState(feature, { hover: false });
-                        app.unmount();
+                        app?.unmount();
                     } catch (e) {
                         // map may have been destroyed
+                        console.log(e);
                     }
                 }
             });
 
-            app.unmount();
+            app?.unmount();
             self.popup = undefined;
         });
     };

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import _ from "underscore";
 import mapPopupProvider from 'utils/map-popup-provider';
 
@@ -27,6 +27,10 @@ function advanceFeature(direction) {
     visibleFeature.value = features.value[activeFeatureOffset.value].value;
     // emit("advance-feature", direction);
 }
+
+const currentFeature = computed(() => {
+return features.value[activeFeatureOffset.value].value;
+});
 
 function showExpandButton(feature) {
     if (!feature) return false;
@@ -182,9 +186,7 @@ onMounted(() => {
                         v-if="visibleFeature?.resourceinstanceid"
                         href="javascript:void(0)"
                         @click="
-                                popupFeatures?.[0]?.mapCard.showDetailsFromFilter(
-                                popupFeatures,
-                            )
+                                currentFeature?.mapCard.showDetailsFromFilter( currentFeature.resourceinstanceid )
                         "
                     >
                         <i class="fa fa-info-circle"></i>
