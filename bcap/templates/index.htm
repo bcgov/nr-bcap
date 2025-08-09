@@ -1,19 +1,19 @@
 <!--
-ARCHES - a program developed to inventory and manage immovable cultural heritage.
-Copyright (C) 2013 J. Paul Getty Trust and World Monuments Fund
+arches - a program developed to inventory and manage immovable cultural heritage.
+copyright (c) 2013 j. paul getty trust and world monuments fund
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
+this program is free software: you can redistribute it and/or modify
+it under the terms of the gnu affero general public license as
+published by the free software foundation, either version 3 of the
+license, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
+this program is distributed in the hope that it will be useful,
+but without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose. see the
+gnu affero general public license for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
+you should have received a copy of the gnu affero general public license
+along with this program. if not, see <http://www.gnu.org/licenses/>.
 -->
 {% load static %}
 {% load template_tags %}
@@ -22,18 +22,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 {% load webpack_static from webpack_loader %}
 
 <!doctype html>
-<!--[if IE 8]>
+<!--[if ie 8]>
 <html lang="en" class="ie8"> <![endif]-->
-<!--[if IE 9]>
+<!--[if ie 9]>
 <html lang="en" class="ie9"> <![endif]-->
-<!--[if !IE]><!-->
+<!--[if !ie]><!-->
 <html lang="en">
     <!--<![endif]-->
 
     <head>
         <title>{{ app_title }}</title>
 
-        <!-- Meta -->
+        <!-- meta -->
         <meta charset="utf-8" />
         <meta
             name="viewport"
@@ -56,7 +56,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
         <link
             rel="stylesheet"
             type="text/css"
-            href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600&amp;subset=cyrillic,latin"
+            href="//fonts.googleapis.com/css?family=open+sans:400,300,600&amp;subset=cyrillic,latin"
         />
         <link
             rel="stylesheet"
@@ -113,7 +113,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
             href="{% webpack_static 'node_modules/bcgov_arches_common/bcgov_arches_common/media/css/project.css' %}"
             rel="stylesheet"
         />
-        {% if app_settings.ACCESSIBILITY_MODE %}
+        {% if app_settings.accessibility_mode %}
             <link
                 href="{% webpack_static 'css/accessibility.css' %}"
                 rel="stylesheet"
@@ -127,7 +127,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     </head>
 
     <body>
-        <!--=== Header ===-->
+        <!--=== header ===-->
         <header>
             <nav
                 class="v5-splash-navbar navbar"
@@ -139,11 +139,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             type="button"
                             class="navbar-toggle collapsed"
                             data-toggle="collapse"
-                            data-target="#myNavbar"
+                            data-target="#mynavbar"
                             aria-expanded="false"
-                            aria-controls="myNavbar"
+                            aria-controls="mynavbar"
                         >
-                            <span class="sr-only">Toggle navigation</span>
+                            <span class="sr-only">toggle navigation</span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
@@ -153,31 +153,31 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                             <div class="navbar-brand-v5-icon-container">
                                 <a
                                     href="https://www2.gov.bc.ca/gov/content/home"
-                                    target="BCGov Home"
+                                    target="bcgov home"
                                 >
                                     <img
                                         class="navbar-brand-v5-icon"
-                                        src="{% webpack_static 'node_modules/bcgov_arches_common/bcgov_arches_common/media/img/logo/BCID_H_rgb_rev.png' %}"
-                                        alt="BC Government Logo"
+                                        src="{% webpack_static 'node_modules/bcgov_arches_common/bcgov_arches_common/media/img/logo/bcid_h_rgb_rev.png' %}"
+                                        alt="bc government logo"
                                     />
                                 </a>
-                                <h1>{% blocktrans %}BC Archaeology Portal{% endblocktrans %}</h1>
+                                <h1>{% blocktrans %}bc archaeology portal{% endblocktrans %}</h1>
                             </div>
                             <div class="application-name"></div>
                         </div>
                     </div>
 
                     <div
-                        id="myNavbar"
+                        id="mynavbar"
                         class="navbar-collapse collapse"
                     >
                         <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="#info-block-1">{% trans "About" %}</a>
+                                <a href="#info-block-1">{% trans "about" %}</a>
                             </li>
                             {% if user.username and user.username != 'anonymous' %}
                                 <li>
-                                    <a href="{% url 'search_home' %}">{% trans "Search Sites" %}</a>
+                                    <a href="{% url 'search_home' %}">{% trans "search sites" %}</a>
                                 </li>
                                 {% if user|can_create_resource_instance %}
                                     <li>
@@ -185,7 +185,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                             href="{% url 'resource' %}"
                                             target="_blank"
                                         >
-                                            {% trans "Manage" %}
+                                            {% trans "manage" %}
                                         </a>
                                     </li>
                                 {% endif %}
@@ -194,7 +194,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         class="auth-welcome"
                                         href="{% url 'user_profile_manager' %}"
                                     >
-                                        {% trans "Welcome, " %} {{ user.first_name|default:user.username }}
+                                        {% trans "welcome, " %} {{ user.first_name|default:user.username }}
                                     </a>
                                 </li>
                             {% endif %}
@@ -204,20 +204,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                         class="application-login"
                                         href="{% url 'auth_login' %}?next={% url 'home' %}"
                                     >
-                                        {% trans 'Log in' %}
+                                        {% trans 'log in' %}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if show_language_swtich %}
                                 <li>
-                                    {% get_current_language as LANGUAGE_CODE %}
+                                    {% get_current_language as language_code %}
                                     <div
                                         class="lang-switch"
                                         style="max-width: none"
                                         data-bind='component: {
                                     name: "views/components/language-switcher",
                                     params: {
-                                        current_language: "{{ LANGUAGE_CODE }}"
+                                        current_language: "{{ language_code }}"
                                     }
                                 }'
                                     ></div>
@@ -228,16 +228,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 </div>
             </nav>
         </header>
-        <!--=== End Header ===-->
+        <!--=== end header ===-->
 
         <main>
             <article>
-                <!-- Intro Section -->
+                <!-- intro section -->
                 <section
                     id="info-block-0"
                     class="app-info-block intro-section relative"
                 >
-                    <!-- Vertical Nav -->
+                    <!-- vertical nav -->
                     <!--                <div class="vertical-nav-container-background"></div>-->
 
                     <div
@@ -251,9 +251,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     class="vertical-nav-list-link"
                                     href="#info-block-0"
                                     data-number="1"
-                                    aria-label="Go to the top of the page"
+                                    aria-label="go to the top of the page"
                                 >
-                                    <span class="vertical-nav-list-ref">{% trans "Home" %}</span>
+                                    <span class="vertical-nav-list-ref">{% trans "home" %}</span>
                                 </a>
                             </li>
                             <li>
@@ -261,9 +261,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     class="vertical-nav-list-link"
                                     href="#info-block-1"
                                     data-number="2"
-                                    aria-label="Go to the About BCAP section"
+                                    aria-label="go to the about bcap section"
                                 >
-                                    <span class="vertical-nav-list-ref">{% trans "About the BCAP" %}</span>
+                                    <span class="vertical-nav-list-ref">{% trans "about the bcap" %}</span>
                                 </a>
                             </li>
                             <li>
@@ -271,10 +271,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     class="vertical-nav-list-link"
                                     href="#info-block-2"
                                     data-number="3"
-                                    aria-label="Go to the Local Government Historic Places section"
+                                    aria-label="go to the local government historic places section"
                                 >
                                     <span class="vertical-nav-list-ref">
-                                        {% trans "Local Government Historic Places" %}
+                                        {% trans "local government historic places" %}
                                     </span>
                                 </a>
                             </li>
@@ -283,9 +283,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     class="vertical-nav-list-link"
                                     href="#info-block-3"
                                     data-number="4"
-                                    aria-label="Go to the Provincial Historic Places section"
+                                    aria-label="go to the provincial historic places section"
                                 >
-                                    <span class="vertical-nav-list-ref">{% trans "Provincial Historic Places" %}</span>
+                                    <span class="vertical-nav-list-ref">{% trans "provincial historic places" %}</span>
                                 </a>
                             </li>
                             <li>
@@ -293,10 +293,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     class="vertical-nav-list-link"
                                     href="#info-block-4"
                                     data-number="5"
-                                    aria-label="Go to the Federal Government section"
+                                    aria-label="go to the federal government section"
                                 >
                                     <span class="vertical-nav-list-ref">
-                                        {% trans "Federal Government Historic Places" %}
+                                        {% trans "federal government historic places" %}
                                     </span>
                                 </a>
                             </li>
@@ -305,22 +305,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                     class="vertical-nav-list-link"
                                     href="#info-block-5"
                                     data-number="6"
-                                    aria-label="Go to the contact Heritage Branch section"
+                                    aria-label="go to the contact heritage branch section"
                                 >
-                                    <span class="vertical-nav-list-ref">{% trans "Contact" %}</span>
+                                    <span class="vertical-nav-list-ref">{% trans "contact" %}</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
 
-                    <!-- Slider -->
+                    <!-- slider -->
                     <div
                         id="home-slider"
                         class="home-slider"
                     >
                         <div class="slide-img-container">
                             <img
-                                src="{% webpack_static 'img/front/Haida-Gwaii-980X450.webp' %}"
+                                src="{% webpack_static 'img/front/haida-gwaii-980x450.webp' %}"
                                 alt="null"
                             />
                             <div class="slide-caption bc-splash-caption">
@@ -329,11 +329,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 <!-- this is a workaround for a layout issue causing the section to not be limited -->
                                 <h4 class="area-description">
                                     <span>
-                                        {% blocktrans %}
-                                            BC Archaeology Portal records Archaeological Sites that have been officially
-                                            recognized by the provincial, federal or local / regional governments for
-                                            their heritage value.
-                                        {% endblocktrans %}
+                                        <!-- prettier-ignore -->
+                                        {% blocktrans %} BC Archaeology Portal records Archaeological Sites that have been officially recognized by the provincial, federal or local / regional governments for their heritage value. {% endblocktrans %}
                                     </span>
                                 </h4>
                             </div>
