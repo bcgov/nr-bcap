@@ -436,12 +436,10 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Start Year Calendar",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -454,17 +452,15 @@
                     "sortorder": 12,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Start Year Qualifier",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -477,17 +473,15 @@
                     "sortorder": 13,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "End Year Qualifier",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -500,17 +494,15 @@
                     "sortorder": 15,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "End Year Calendar",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -523,7 +515,7 @@
                     "sortorder": 16,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
@@ -632,12 +624,10 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Determination Method",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -650,7 +640,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "2054fef7-03f5-4cbf-98df-c057ba81d3c7",

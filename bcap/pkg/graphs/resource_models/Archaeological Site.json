@@ -1269,12 +1269,10 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Registration Status",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1287,7 +1285,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
@@ -1414,12 +1412,10 @@
                 {
                     "card_id": "2ad1641e-50ad-11f0-a6c8-0242ac170006",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Document Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1432,7 +1428,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "bdb66988-f5ae-4904-879a-d89f095b1e3b",
@@ -1746,12 +1742,10 @@
                 {
                     "card_id": "a9ce5a20-d085-4fa2-9f5b-2b812223b3d1",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "External URL Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1764,7 +1758,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
@@ -1788,12 +1782,10 @@
                 {
                     "card_id": "6cc30640-0d06-11ed-8804-5254008afee6",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Registry Types",
-                        "options": [],
                         "placeholder": {
                             "en": "Select all applicable options"
                         }
@@ -1806,7 +1798,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000012"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
@@ -2119,12 +2111,10 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Register Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2137,7 +2127,7 @@
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000012"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
@@ -2265,12 +2255,10 @@
                 {
                     "card_id": "05baee08-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Source",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2283,7 +2271,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "bdb66988-f5ae-4904-879a-d89f095b1e3b",
@@ -2370,12 +2358,10 @@
                 {
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Site Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2388,7 +2374,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
@@ -2535,12 +2521,10 @@
                 {
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Site Subtype",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2553,7 +2537,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
@@ -2588,12 +2572,10 @@
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Reference Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2606,7 +2588,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
@@ -2795,12 +2777,10 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "defaultValue": "e08bb190-89df-5146-bbbc-e7f478cf09fc",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Image Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2813,7 +2793,7 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
@@ -2885,12 +2865,10 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Image View",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2903,7 +2881,7 @@
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
@@ -3076,7 +3054,6 @@
                             "placeholder"
                         ],
                         "label": "Name Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -3089,7 +3066,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
@@ -3159,12 +3136,10 @@
                 {
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Typology Class",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -3177,17 +3152,15 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Latest Edit Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -3200,7 +3173,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
@@ -3438,12 +3411,10 @@
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Site Decision",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -3456,17 +3427,15 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Decision Criteria",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -3479,7 +3448,7 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",

@@ -510,12 +510,10 @@
                 {
                     "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Member Role(s)",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -528,7 +526,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000012"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
@@ -592,12 +590,10 @@
                 {
                     "card_id": "a0c7cec6-1401-11f0-acd5-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Feature Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -610,122 +606,15 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Site Visit Type",
-                        "options": [
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "0d05c82a-77ef-438f-a388-e9c09aae650b",
-                                "id": "73ac8722-5fab-4b17-b773-cc81f59cad55",
-                                "sortorder": "",
-                                "text": "Alteration"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "ea28ef08-c6cf-464d-9e94-64713215d842",
-                                "id": "00d374a7-39fd-4d4e-baf8-9de2623225dd",
-                                "sortorder": "",
-                                "text": "Empty_String!"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "ceca6564-f831-41aa-a415-32807024298c",
-                                "id": "f8ac174c-5910-4adb-8b79-8a1ed57023da",
-                                "sortorder": "",
-                                "text": "Excavation"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "2747fb4d-83f4-419f-a977-1561350b49fc",
-                                "id": "a88bef1c-cee9-45c4-9399-8a8646d399e8",
-                                "sortorder": "",
-                                "text": "Monitoring"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "afbe4313-2eb7-496e-b918-b81847e8e99a",
-                                "id": "75c0dccf-8b18-414c-9d7f-c2b4951b9624",
-                                "sortorder": "",
-                                "text": "Other"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "fee4524a-3d58-450c-9bfb-807de5ae93d5",
-                                "id": "2c76dde2-afc6-471e-9f17-57f597d8ee19",
-                                "sortorder": "",
-                                "text": "PFR"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "e8f39e2c-0cee-479e-97e3-929913d17260",
-                                "id": "04905a37-3a8f-4920-9a51-7ba7ece811d1",
-                                "sortorder": "",
-                                "text": "Recording"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "f8d67a3f-3b76-42e9-9669-8c9fce8850b4",
-                                "id": "e1d28c2b-072a-4613-ae9a-696289604d18",
-                                "sortorder": "",
-                                "text": "Recording (no tests)"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "77da1b04-b036-48cc-a376-03eeb588c4e3",
-                                "id": "bfdf65be-adec-48a8-98d2-6aeb170dc7aa",
-                                "sortorder": "",
-                                "text": "Recording (w tests)"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "22307d6b-2d41-4c85-93fe-56f2e5fc4de9",
-                                "id": "53779735-d0e6-4213-9a1d-0176f9008f04",
-                                "sortorder": "",
-                                "text": "Repatriation"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "69fbc45b-f972-4624-9699-39e84bf99371",
-                                "id": "4c7a39ca-5b73-4a11-a20f-da29ecd7c780",
-                                "sortorder": "",
-                                "text": "Surface Collection"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "7ed40316-a702-46ed-b5bb-92fae26c5c9f",
-                                "id": "c81d609b-ec04-40cc-8fe7-179b1ec7a2a8",
-                                "sortorder": "",
-                                "text": "Testing"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "0d994e50-41eb-4fcd-b994-64c738039cce",
-                                "id": "df6c3908-4141-40ac-b262-e5ae51ad3cfa",
-                                "sortorder": "",
-                                "text": "Unknown"
-                            }
-                        ],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -738,7 +627,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
@@ -773,12 +662,10 @@
                 {
                     "card_id": "962503ce-61ab-11f0-be7c-3a7a4e6803c5",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Source",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -791,7 +678,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
@@ -847,12 +734,10 @@
                 {
                     "card_id": "fab4bca8-1408-11f0-9e93-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Archaeological Culture",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -865,7 +750,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
@@ -1120,7 +1005,6 @@
                             "placeholder"
                         ],
                         "label": "Name Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1133,7 +1017,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "6d906048-140d-11f0-b9bb-0242ac170007",
@@ -1181,12 +1065,10 @@
                 {
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Status",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1199,17 +1081,15 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1222,7 +1102,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
@@ -1383,12 +1263,10 @@
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Cultural Material Status",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1401,7 +1279,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
@@ -1464,12 +1342,10 @@
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "From Date Calendar",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1482,17 +1358,15 @@
                     "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "From Date Qualifier",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1505,17 +1379,15 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "To Date Qualifier",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1528,17 +1400,15 @@
                     "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "To Date Calendar",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1551,7 +1421,7 @@
                     "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
@@ -1681,12 +1551,10 @@
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Method",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1699,7 +1567,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "290cd148-e9a9-45c9-b649-065e59e893fa",
@@ -1726,12 +1594,10 @@
                 {
                     "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Latest Edit Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1744,7 +1610,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
@@ -1861,12 +1727,10 @@
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Cultural Material Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1879,7 +1743,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "290cd148-e9a9-45c9-b649-065e59e893fa",
@@ -1987,12 +1851,10 @@
                 {
                     "card_id": "fb55932c-140c-11f0-b9bb-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Disturbance Cause",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2005,17 +1867,15 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "fb55932c-140c-11f0-b9bb-0242ac170007",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Disturbance Period",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -2028,7 +1888,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "fb55932c-140c-11f0-b9bb-0242ac170007",

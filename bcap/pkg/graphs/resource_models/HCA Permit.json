@@ -35,12 +35,10 @@
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "HCA Permit Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -53,17 +51,15 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Issuing Agency",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -76,7 +72,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",

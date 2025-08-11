@@ -185,7 +185,6 @@
                             "placeholder"
                         ],
                         "label": "Province",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -198,7 +197,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
@@ -310,12 +309,10 @@
                 {
                     "card_id": "7d35e296-ba54-4879-88aa-c2951dce0d1c",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Government Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -328,7 +325,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 }
             ],
             "color": "rgba(80,80,250,1)",

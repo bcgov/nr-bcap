@@ -113,12 +113,10 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Role",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -132,7 +130,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000013"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "781da83d-3229-4af3-89fd-9c66f54a223b",
@@ -204,12 +202,10 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Organization or Individual",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -222,7 +218,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",

@@ -221,77 +221,10 @@
                 {
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Submission Type",
-                        "options": [
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "dbc4020b-2dc0-4b65-afb0-6c84228bc22a",
-                                "id": "d3cee5a2-3acb-42c1-9b2d-4642504aa981",
-                                "sortorder": "",
-                                "text": "Amendment"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "b68c613a-30a5-404c-a376-a6d5cc6f451c",
-                                "id": "0a32f5c4-682b-46db-b48c-f40a045e47f2",
-                                "sortorder": "",
-                                "text": "Community Heritage Register"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "bc9f88dc-9902-47ee-9b89-569eb166e813",
-                                "id": "632647c0-0019-49b8-b169-e7d6e07ed456",
-                                "sortorder": "",
-                                "text": "Heritage Conservation Area"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "12c5a155-c1d6-4c94-9a19-6a854ba57060",
-                                "id": "dddc77d9-a69e-4e26-9664-8ecd08744ff2",
-                                "sortorder": "",
-                                "text": "Heritage Designation"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "081d3683-b978-4f48-9f15-443b91b9e22a",
-                                "id": "efce68c6-8d59-4910-b0aa-5d6681cf76c8",
-                                "sortorder": "",
-                                "text": "Heritage Revitalization Agreement"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "49c8e6a4-a84e-4c03-8864-0aecc5b516cb",
-                                "id": "65815e61-cb09-4585-a806-a117ae8130ef",
-                                "sortorder": "",
-                                "text": "Other"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "c69fcfe3-83a0-41d5-89a2-542b6161888c",
-                                "id": "546f5d90-9ef8-453b-a102-f08528bdab5c",
-                                "sortorder": "",
-                                "text": "Removal"
-                            },
-                            {
-                                "children": [],
-                                "collector": "",
-                                "conceptid": "5c0af7aa-1693-458f-a63c-136b6f18e816",
-                                "id": "c45a595e-d6ad-4616-be10-adf1684d8872",
-                                "sortorder": "",
-                                "text": "Tax Exemption"
-                            }
-                        ],
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -305,7 +238,7 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000013"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e0b688b-f0d8-44b0-a795-0861370b0f6a",
