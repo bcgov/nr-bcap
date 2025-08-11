@@ -25,6 +25,8 @@ requires-python = ">=3.11"
 dependencies = [
     "arches>=8.0.0a4",
     "arches_component_lab",
+    "arches_querysets",
+    "arches-controlled-lists",
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common",
     "boto3==1.26",
     "django-storages==1.13",
