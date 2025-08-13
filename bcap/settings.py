@@ -196,6 +196,7 @@ INSTALLED_APPS = (
     "django_celery_results",
     # "compressor",
     # "silk",
+    "django_vite",
     "storages",
     "bcap",
     "bcgov_arches_common",
@@ -204,6 +205,31 @@ INSTALLED_APPS += (
     "arches.app",
     "django.contrib.admin",
 )
+
+# toggle Vite injection
+USE_VITE = True
+VITE_BASE = "/bcap/@vite/"
+
+
+# django_vite SETTINGS
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": True,
+        "static_url_prefix": "/bcrhp/static",
+        # "static_url_prefix": "/",
+    }
+}
+# BASE_DIR = "/web_root/bcap/bcap/src"
+BASE_DIR = "/web_root/bcap"
+# Where ViteJS assets are built.
+DJANGO_VITE_ASSETS_PATH = os.path.join(BASE_DIR, "staticfiles", "dist")
+# If use HMR or not.
+# DJANGO_VITE_DEV_MODE = DEBUG
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5175",
+    "http://localhost:82",
+]
+# END django_vite SETTINGS
 
 ROOT_HOSTCONF = "bcap.hosts"
 DEFAULT_HOST = "bcap"
@@ -253,6 +279,11 @@ TEMPLATES = build_templates_config(
     debug=DEBUG,
     app_root=APP_ROOT,
 )
+
+# make vite context processor available in templates
+TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "bcap.context_processors.vite",
+]
 
 ALLOWED_HOSTS = get_env_variable("ALLOWED_HOSTS").split()
 
@@ -377,6 +408,11 @@ SESSION_COOKIE_SAMESITE = None      # allows cookie to be sent on third‑party 
 SESSION_COOKIE_SECURE = True       # required for SameSite=None
 CSRF_COOKIE_SAMESITE = None        # if using CSRF in session-backed mode
 CSRF_COOKIE_SECURE = True
+if DEBUG:
+    # trust proxy headers for host/port/proto
+    USE_X_FORWARDED_HOST = True
+    CSRF_TRUSTED_ORIGINS = ["http://localhost:82"]
+    PUBLIC_ORIGIN = "http://localhost:82"
 
 AUTHLIB_OAUTH_CLIENTS = {
     'default': {

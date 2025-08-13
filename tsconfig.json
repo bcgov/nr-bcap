@@ -1,28 +1,44 @@
 {
-    "extends": "./frontend_configuration/tsconfig-paths.json",
-    "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "jsx": "preserve",
-        "jsxImportSource": "vue",
-        "strict": true,
-        "noEmit": true,
-        "noImplicitThis": false,
-        "verbatimModuleSyntax": true,
-        "useDefineForClassFields": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "types": [
-            "vitest/globals"
-        ],
-        "allowImportingTsExtensions": true
+  "extends": "./frontend_configuration/tsconfig-paths.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "strict": true,
+    "noEmit": true,
+    "noImplicitThis": false,
+    "verbatimModuleSyntax": true,
+    "useDefineForClassFields": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "types": ["vitest/globals", "vite/client"],
+    "allowImportingTsExtensions": true,
+
+    "baseUrl": ".",
+    "paths": {
+      // keep aliases from the generated file (they still apply)
+      "*": [
+        "*",
+        "bcap/media/js/*",
+        "../bcgov-arches-common/bcgov_arches_common/media/js/*",
+        "../arches/arches/app/media/js/*",
+        "node_modules/*",
+        "../node_modules/*"
+      ]
     },
-    "exclude": [
-        "**/*.test.ts",
-        "**/build/**",
-        "**/staticfiles/**",
+    "rootDirs": [
+      "bcap/media/js",
+      "../bcgov-arches-common/bcgov_arches_common/media/js",
+      "../arches/arches/app/media/js"
     ]
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "**/build/**",
+    "**/staticfiles/**"
+  ]
 }

@@ -3,6 +3,8 @@
 {% load template_tags %}
 {% load webpack_static from webpack_loader %}
 {% load i18n %}
+{% load vite %}
+{% vite_scripts %}
 
 
 <link rel="stylesheet" type="text/css" href="{% webpack_static 'plugins/slick/slick.min.css' %}">
@@ -39,6 +41,7 @@
 {% endblock report_title_bar %}
 
 {% block summary %}
+
 <div class="relative report-title-bar">
 
     <!-- Title Block -->
@@ -55,13 +58,20 @@
     </div>
 </div>
 
-<div class="rp-report-container-preview relative">
+<div id="details-tab" class="rp-report-container-preview relative">
+    <div data-bind="text: report"></div>
     <!-- ko if: report.get('name') == "Archaeological Site" -->
     {% include 'views/report-templates/details/archaeological_site_help.htm' %}
+    <div id="other-mountpoint" data-bind="vueComponent: {data: aliasedData }"></div>
     <!-- /ko -->
     <div class="rp-report-section rp-report-section-root">
         <div class="rp-report-section-title">
-            <div class="rp-card-section">
+            <div id="details-mount-point" class="rp-card-section">
+                {% if USE_VITE %}
+                <script type="module" src="/bcap/@vite/bcap/vite-entries/bcap-site.entry.js"></script>
+                {% endif %}
+                <div>BELOW VITE IMPORT</div>
+                {{ USE_VITE }}
                 <!--div data-bind="text: report.get('name')"></div-->
                 <!-- ko if: report.get('name') == "Archaeological Site" -->
                 {% include 'views/report-templates/details/archaeological_site.htm' %}

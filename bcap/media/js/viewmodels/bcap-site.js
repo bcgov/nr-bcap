@@ -6,8 +6,45 @@ import slick from "slick";
 import arches from "arches";
 import MapReportViewModel from "viewmodels/map-report";
 import chosen from "bindings/chosen";
+import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite.vue";
+import { createApp } from "vue";
 
-$.ready(function () {
+
+// ADDED: KO binding to mount a Vue 3 component and manage lifecycle with KO
+ko.bindingHandlers.vueComponent = ko.bindingHandlers.vueComponent || {
+  init(el, valueAccessor) {
+    // pull params (optional)
+    const params = ko.unwrap(valueAccessor()) || {};
+    // default to the imported ArchaeologicalSite component if none provided
+    const component = params.component || ArchaeologicalSite;
+    // allow KO-observable props or plain objects
+    let props = ko.unwrap(params.props) || {};
+
+    props.resourceDescriptors= {en: {name: "Undefined2"}};
+    // create an isolated mount root inside this element
+    const mount = document.createElement("div");
+    el.appendChild(mount);
+
+    // create + mount Vue app
+    const app = createApp(component, ko.toJS(props));
+    app.mount(mount);
+
+    // clean up when KO disposes this element (e.g., template re-renders)
+    ko.utils.domNodeDisposal.addDisposeCallback(el, () => {
+      try { app.unmount(); } catch (e) {}
+    });
+
+    // tell KO not to bind inside the Vue subtree
+    return { controlsDescendantBindings: true };
+  }
+};
+
+// ADDED: allow binding on virtual elements if KO templates use them
+if (ko.virtualElements) {
+  ko.virtualElements.allowedBindings.vueComponent = true;
+}
+
+$(function () {
     $(".data-carousel").slick({});
 });
 
@@ -198,7 +235,7 @@ const BcapSiteViewModel = function (params) {
         var value = getNodeValues(alias)[0];
 
         return ko.unwrap(
-            value ? widget.node.config.trueLabel : widget.node.config.trueLabel,
+            value ? widget.node.config.trueLabel : widget.node.config.falseLabel,
         );
     };
 
@@ -313,6 +350,18 @@ const BcapSiteViewModel = function (params) {
         return authority;
     };
 
+    this.allTiles = ko.computed(function () {
+        return tiles;
+    });
+
+    this.aliasedData = ko.computed(function () {
+        return  self.report.report_json.aliased_data;
+    });
+
+    this.resourceDescriptors = ko.computed(function () {
+        return  self.report.report_json.descriptors;
+    });
+
     this.submittedSites = ko.computed(function () {
         let opWidget = getWidgetForAlias("requested_operation"),
             infoWidget = getWidgetForAlias("information_provided"),
@@ -390,3 +439,8 @@ const BcapSiteViewModel = function (params) {
     };
 };
 export default BcapSiteViewModel;
+if (import.meta && import.meta.hot) {
+  // If you have bootstrap side-effects only, a full reload is safest:
+  import.meta.hot.accept(() => window.location.reload());
+  // If you can refactor bootstrap to be re-runnable, you can call it here instead of reloading.
+}
