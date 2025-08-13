@@ -181,12 +181,10 @@
                 {
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
                     "config": {
-                        "defaultValue": "992e6e03-6d42-493a-8bd6-34a089de52d6",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Province",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -199,7 +197,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
@@ -311,12 +309,10 @@
                 {
                     "card_id": "7d35e296-ba54-4879-88aa-c2951dce0d1c",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Government Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -329,7 +325,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 }
             ],
             "color": "rgba(80,80,250,1)",
@@ -673,9 +669,10 @@
                 {
                     "alias": "province",
                     "config": {
-                        "rdmCollection": "9affa732-8bbe-501f-8e24-e25b48a47e78"
+                        "controlledList": "9affa732-8bbe-501f-8e24-e25b48a47e78",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "PRVNC",
@@ -748,9 +745,10 @@
                 {
                     "alias": "government_type",
                     "config": {
-                        "rdmCollection": "97dd9a84-441b-5a45-a517-88caa70148c7"
+                        "controlledList": "97dd9a84-441b-5a45-a517-88caa70148c7",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "govtype",
@@ -881,6 +879,6 @@
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }

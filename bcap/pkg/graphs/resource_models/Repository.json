@@ -460,12 +460,10 @@
                 {
                     "card_id": "ba92777c-14d5-11ec-a57a-5254008afee6",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Province",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -478,7 +476,7 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "d47c8536-d075-11ec-acf2-5254008afee6",
@@ -878,9 +876,10 @@
                 {
                     "alias": "province",
                     "config": {
-                        "rdmCollection": "d49579da-a691-4a31-a09b-495f078a448b"
+                        "controlledList": "d49579da-a691-4a31-a09b-495f078a448b",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -1468,6 +1467,6 @@
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }

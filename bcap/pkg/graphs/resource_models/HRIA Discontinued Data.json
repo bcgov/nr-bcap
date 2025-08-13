@@ -436,12 +436,10 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Start Year Calendar",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -454,17 +452,15 @@
                     "sortorder": 12,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Start Year Qualifier",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -477,17 +473,15 @@
                     "sortorder": 13,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "End Year Qualifier",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -500,17 +494,15 @@
                     "sortorder": 15,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "End Year Calendar",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -523,7 +515,7 @@
                     "sortorder": 16,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
@@ -632,12 +624,10 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Determination Method",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -650,7 +640,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "2054fef7-03f5-4cbf-98df-c057ba81d3c7",
@@ -2332,9 +2322,7 @@
                 },
                 {
                     "alias": "chronology",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "semantic",
                     "description": "",
                     "exportable": true,
@@ -2358,9 +2346,10 @@
                 {
                     "alias": "end_year_qualifier",
                     "config": {
-                        "rdmCollection": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5"
+                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2383,9 +2372,10 @@
                 {
                     "alias": "end_year_calendar",
                     "config": {
-                        "rdmCollection": "3add280e-11ef-5209-9612-2ba3377a451c"
+                        "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2433,9 +2423,10 @@
                 {
                     "alias": "determination_method",
                     "config": {
-                        "rdmCollection": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033"
+                        "controlledList": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2558,9 +2549,10 @@
                 {
                     "alias": "start_year_calendar",
                     "config": {
-                        "rdmCollection": "3add280e-11ef-5209-9612-2ba3377a451c"
+                        "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2583,9 +2575,10 @@
                 {
                     "alias": "start_year_qualifier",
                     "config": {
-                        "rdmCollection": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5"
+                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3166,6 +3159,6 @@
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
