@@ -214,7 +214,7 @@ VITE_BASE = "/bcap/@vite/"
 # django_vite SETTINGS
 DJANGO_VITE = {
     "default": {
-        "dev_mode": True,
+        "dev_mode": USE_VITE,
         "static_url_prefix": "/bcrhp/static",
         # "static_url_prefix": "/",
     }

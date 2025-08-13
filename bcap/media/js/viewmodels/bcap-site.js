@@ -11,39 +11,47 @@ import { createApp } from "vue";
 
 if (typeof window !== "undefined" && !window.ko) window.ko = ko;
 
-// ADDED: KO binding to mount a Vue 3 component and manage lifecycle with KO
-ko.bindingHandlers.vueComponent = ko.bindingHandlers.vueComponent || {
-  init(el, valueAccessor) {
-    // pull params (optional)
-    const params = ko.unwrap(valueAccessor()) || {};
-    // default to the imported ArchaeologicalSite component if none provided
-    const component = params.component || ArchaeologicalSite;
-    // allow KO-observable props or plain objects
-    let props = ko.unwrap(params.props) || {};
+(function installVueBinding(ko) {
+  if (!ko) return;
 
-    props.resourceDescriptors= {en: {name: "Undefined2"}};
-    // create an isolated mount root inside this element
-    const mount = document.createElement("div");
-    el.appendChild(mount);
+  // Avoid re-installing
+  if (ko.bindingHandlers.vueComponent?.__bcap_dual) return;
 
-    // create + mount Vue app
-    const app = createApp(component, ko.toJS(props));
-    app.mount(mount);
+  ko.bindingHandlers.vueComponent = {
+    init(el, valueAccessor, allBindings, vm, ctx) {
+      // If Vite’s real mount is present, delegate to it (Vite path)
+      if (typeof window.__bcapMountVueComponent === 'function') {
+        return window.__bcapMountVueComponent(ko, el, valueAccessor, allBindings, vm, ctx);
+      }
 
-    // clean up when KO disposes this element (e.g., template re-renders)
-    ko.utils.domNodeDisposal.addDisposeCallback(el, () => {
-      try { app.unmount(); } catch (e) {}
-    });
+      // Webpack fallback path: do the mount here
+      const params = typeof valueAccessor === 'function' ? valueAccessor() : (valueAccessor || {});
+      const props  = ko?.toJS?.(params.props || {}) ?? (params.props || {});
+      const component = params.component || ArchaeologicalSite;
 
-    // tell KO not to bind inside the Vue subtree
-    return { controlsDescendantBindings: true };
+      const mount = document.createElement('div');
+      el.appendChild(mount);
+
+      const app = createApp(component, props);
+      app.mount(mount);
+
+      ko?.utils?.domNodeDisposal?.addDisposeCallback?.(el, () => {
+        try { app.unmount(); } catch {}
+      });
+
+      return { controlsDescendantBindings: true };
+    }
+  };
+
+  // Let KO templates use the binding on <!-- ko ... --> virtual nodes
+  if (ko.virtualElements) {
+    ko.virtualElements.allowedBindings.vueComponent = true;
   }
-};
 
-// ADDED: allow binding on virtual elements if KO templates use them
-if (ko.virtualElements) {
-  ko.virtualElements.allowedBindings.vueComponent = true;
-}
+  // mark installed
+  ko.bindingHandlers.vueComponent.__bcap_dual = true;
+
+})(window.ko);
 
 $(function () {
     $(".data-carousel").slick({});
@@ -360,7 +368,8 @@ const BcapSiteViewModel = function (params) {
     });
 
     this.resourceDescriptors = ko.computed(function () {
-        return  self.report?.report_json?.descriptors;
+        // return  self.report?.report_json?.descriptors;
+        return { "en": { "name": "Undefined6" } };
     });
 
     this.submittedSites = ko.computed(function () {

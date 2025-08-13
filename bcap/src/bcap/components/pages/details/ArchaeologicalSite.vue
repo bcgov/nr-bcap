@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
 
 
 type LangCode = string;
@@ -27,7 +28,7 @@ const props = withDefaults(defineProps<{
     resourceDescriptors: ResourceDescriptors,
     languageCode?: string
 }>(), {
-    resourceDescriptors: () => ({en: {name: "Undefined"}}),
+    resourceDescriptors: () => ({en: {name: "Undefined2"}}),
     languageCode: "en"
 });
 
@@ -38,7 +39,7 @@ const now = ref(new Date());
 <template>
     <div class="container">
         <div class="report-toolbar-preview ep-form-toolbar">
-        <h4 class="report-toolbar-title"><span class="bc-report-title">Hi42! Archaeological Site</span> -
+        <h4 class="report-toolbar-title"><span class="bc-report-title">Archaeological Site</span> -
             <span class="bc-report-title">{{ props?.resourceDescriptors?.[props.languageCode]?.name }}</span></h4>
         <!-- Tools -->
         <div class="ep-form-toolbar-tools mar-no flex">
@@ -50,6 +51,7 @@ const now = ref(new Date());
         <div style="background-color: lightblue">{{ props.data }}</div>
         <div style="background-color: lightgreen">{{ props.resourceDescriptors }}</div>
     </div>
+    <DetailsSection />
 </template>
 
 <style scoped>

@@ -301,11 +301,11 @@ export default defineConfig({
     strictPort: true,
     origin: 'http://localhost:82',
     hmr: {
-      protocol: 'ws',
-      host: 'localhost',      // browser reaches Vite through nginx on :82
-      port: 82,
-      path: '/@vite',
-      clientPort: 82,
+      // protocol: 'ws',
+      // host: 'localhost',      // browser reaches Vite through nginx on :82
+      // port: 82,
+      // path: '/@vite',
+      // clientPort: 82,
     },
     fs: {
       allow: ["/web_root", "/web_root/bcap", "/web_root/arches",
@@ -313,11 +313,8 @@ export default defineConfig({
         path.join(ROOTS.common, "bcgov_arches_common"),
         path.join(ROOTS.arches, "arches", "app")]
     },
-    // warmup: {
-    //   clientFiles: [
-    //     '/bcap/@vite/bcap/vite-entries/bcap-site.entry.ts',
-    //     '/bcap/@vite/bcap/vite-entries/map.entry.js',
-    //   ],
-    // },
+    watch: {
+      ignored: [/logs/, /frontend_configuration/]
+    }
   },
 });

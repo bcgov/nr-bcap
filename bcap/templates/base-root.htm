@@ -89,80 +89,82 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 {% endblock arches_modules %}
 
 {% if main_script %}
-<!-- This override allows the Vue files to be hosed by Vite while allowing the rest
-of the site to continue to use the webpack loader (for now). This is to help with
-the development of the custom pages -->
-<!-- PRELUDE: put this BEFORE the old bundles -->
-<script>
-    (function() {
-        // Queueing stub: KO binding will call this before Vite is ready
-        window.__bcap_vue_queue__ = [];
-        window.__bcapMountVueComponent = function() {
-            window.__bcap_vue_queue__.push([].slice.call(arguments));
-        };
+{{ USE_VITE }}
+    {% if USE_VITE %}
+        <!-- This override allows the Vue files to be hosed by Vite while allowing the rest
+        of the site to continue to use the webpack loader (for now). This is to help with
+        the development of the custom pages -->
+        <!-- PRELUDE: put this BEFORE the old bundles -->
+        <script>
+            (function() {
+                // Queueing stub: KO binding will call this before Vite is ready
+                window.__bcap_vue_queue__ = [];
+                window.__bcapMountVueComponent = function() {
+                    window.__bcap_vue_queue__.push([].slice.call(arguments));
+                };
 
-        // Patch KO binding as soon as KO shows up (no DOMContentLoaded hacks)
-        function patchKo(ko) {
-            try {
-                if (ko && !ko.bindingHandlers.__bcapVuePatched) {
-                    var base = ko.bindingHandlers.vueComponent || {};
-                    ko.bindingHandlers.vueComponent = {
-                        init: function(el, valueAccessor, allBindings, vm, ctx) {
-                            // Delegate to (stub or real) global mount
-                            return window.__bcapMountVueComponent(
-                                ko, el, valueAccessor, allBindings, vm, ctx, base.init
-                            );
+                // Patch KO binding as soon as KO shows up (no DOMContentLoaded hacks)
+                function patchKo(ko) {
+                    try {
+                        if (ko && !ko.bindingHandlers.__bcapVuePatched) {
+                            var base = ko.bindingHandlers.vueComponent || {};
+                            ko.bindingHandlers.vueComponent = {
+                                init: function(el, valueAccessor, allBindings, vm, ctx) {
+                                    // Delegate to (stub or real) global mount
+                                    return window.__bcapMountVueComponent(
+                                        ko, el, valueAccessor, allBindings, vm, ctx, base.init
+                                    );
+                                }
+                            };
+                            ko.bindingHandlers.__bcapVuePatched = true;
+                            console.log("[BCAP] KO vueComponent binding patched");
                         }
-                    };
-                    ko.bindingHandlers.__bcapVuePatched = true;
-                    console.log("[BCAP] KO vueComponent binding patched");
+                    } catch (e) {
+                        console.warn("[BCAP] patchKo error", e);
+                    }
                 }
-            } catch (e) {
-                console.warn("[BCAP] patchKo error", e);
-            }
-        }
 
-        if ("ko" in window) {
-            patchKo(window.ko);
-        } else {
-            Object.defineProperty(window, "ko", {
-                configurable: true,
-                get: function() {
-                    return this.__bcap_ko__;
-                },
-                set: function(v) {
-                    this.__bcap_ko__ = v;
-                    patchKo(v);
+                if ("ko" in window) {
+                    patchKo(window.ko);
+                } else {
+                    Object.defineProperty(window, "ko", {
+                        configurable: true,
+                        get: function() {
+                            return this.__bcap_ko__;
+                        },
+                        set: function(v) {
+                            this.__bcap_ko__ = v;
+                            patchKo(v);
+                        }
+                    });
                 }
-            });
-        }
-    })();
-</script>
+            })();
+        </script>
 
-{# Grab just the JS files for the entry you currently render via {% render_bundle main_script %} #}
-{% get_files main_script as js_files %}
+        {# Grab just the JS files for the entry you currently render via {% render_bundle main_script %} #}
+        {% get_files main_script as js_files %}
 
-{# 1) print every Webpack script EXCEPT the last (the main entry) #}
-{% for f in js_files %}
-{% if not forloop.last %}
-<script src="{{ f.url }}"></script>
-{% endif %}
-{% endfor %}
+        {# 1) print every Webpack script EXCEPT the last (the main entry) #}
+        {% for f in js_files %}
+            {% if not forloop.last %}
+                <script src="{{ f.url }}"></script>
+            {% endif %}
+        {% endfor %}
 
-{# 2) inject Vite #}
-{% if USE_VITE %}
-<script type="module" src="/bcap/@vite/@vite/client"></script>
-<script type="module" src="/bcap/@vite/bcap/vite-entries/bcap-site.entry.js"></script>
-{% endif %}
+        {# 2) inject Vite #}
+        <script type="module" src="/bcap/@vite/@vite/client"></script>
+        <script type="module" src="/bcap/@vite/bcap/vite-entries/bcap-site.entry.js"></script>
 
-
-{# 3) print the final Webpack entry last #}
-{% with js_files|slice:"-1:" as last %}
-{% for f in last %}
-<script src="{{ f.url }}"></script>
-{% endfor %}
-{% endwith %}
-
+        {# 3) print the final Webpack entry last #}
+        {% with js_files|slice:"-1:" as last %}
+            {% for f in last %}
+                <script src="{{ f.url }}"></script>
+            {% endfor %}
+        {% endwith %}
+    {% else %}
+        <!-- Do default webpack bundle rendering -->
+        {% render_bundle main_script %}
+    {% endif %}
 {% endif %}
 {% endblock javascript %}
 
