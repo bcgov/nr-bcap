@@ -60,7 +60,7 @@
     <div data-bind="text: report"></div>
     <!-- ko if: report.get('name') == "Archaeological Site" -->
     {% include 'views/report-templates/details/archaeological_site_help.htm' %}
-    <div id="other-mountpoint" data-bind="vueComponent: {data: aliasedData }"></div>
+    <div id="other-mountpoint" data-bind="detailsVueComponent: {data: aliasedData }"></div>
     <!-- /ko -->
     <div class="rp-report-section rp-report-section-root">
         <div class="rp-report-section-title">

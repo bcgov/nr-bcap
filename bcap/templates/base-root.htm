@@ -107,8 +107,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                 function patchKo(ko) {
                     try {
                         if (ko && !ko.bindingHandlers.__bcapVuePatched) {
-                            var base = ko.bindingHandlers.vueComponent || {};
-                            ko.bindingHandlers.vueComponent = {
+                            var base = ko.bindingHandlers.detailsVueComponent || {};
+                            ko.bindingHandlers.detailsVueComponent = {
                                 init: function(el, valueAccessor, allBindings, vm, ctx) {
                                     // Delegate to (stub or real) global mount
                                     return window.__bcapMountVueComponent(
@@ -117,7 +117,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                                 }
                             };
                             ko.bindingHandlers.__bcapVuePatched = true;
-                            console.log("[BCAP] KO vueComponent binding patched");
+                            console.log("[BCAP] KO detailsVueComponent binding patched");
                         }
                     } catch (e) {
                         console.warn("[BCAP] patchKo error", e);

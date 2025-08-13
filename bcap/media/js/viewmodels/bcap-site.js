@@ -15,9 +15,9 @@ if (typeof window !== "undefined" && !window.ko) window.ko = ko;
   if (!ko) return;
 
   // Avoid re-installing
-  if (ko.bindingHandlers.vueComponent?.__bcap_dual) return;
+  if (ko.bindingHandlers.detailsVueComponent?.__bcap_dual) return;
 
-  ko.bindingHandlers.vueComponent = {
+  ko.bindingHandlers.detailsVueComponent = {
     init(el, valueAccessor, allBindings, vm, ctx) {
       // If Vite’s real mount is present, delegate to it (Vite path)
       if (typeof window.__bcapMountVueComponent === 'function') {
@@ -45,11 +45,11 @@ if (typeof window !== "undefined" && !window.ko) window.ko = ko;
 
   // Let KO templates use the binding on <!-- ko ... --> virtual nodes
   if (ko.virtualElements) {
-    ko.virtualElements.allowedBindings.vueComponent = true;
+    ko.virtualElements.allowedBindings.detailsVueComponent = true;
   }
 
   // mark installed
-  ko.bindingHandlers.vueComponent.__bcap_dual = true;
+  ko.bindingHandlers.detailsVueComponent.__bcap_dual = true;
 
 })(window.ko);
 

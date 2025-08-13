@@ -12,6 +12,7 @@ services:
       - ./:/web_root/bcap
       - ../bcgov-arches-common/:/web_root/bcgov-arches-common
       - ../arches-component-lab/:/web_root/arches-component-lab
+      - ../arches-querysets/:/web_root/arches-querysets
     env_file:
       - ./.env
       - ./docker/env_file.env

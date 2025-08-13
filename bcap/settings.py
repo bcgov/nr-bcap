@@ -199,6 +199,9 @@ INSTALLED_APPS = (
     "django_vite",
     "storages",
     "bcap",
+    "arches_querysets",
+    "arches_component_lab",
+    "rest_framework",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += (
@@ -207,7 +210,7 @@ INSTALLED_APPS += (
 )
 
 # toggle Vite injection
-USE_VITE = True
+USE_VITE = False
 VITE_BASE = "/bcap/@vite/"
 
 
@@ -404,9 +407,9 @@ OAUTH_CLIENT_ID = ""  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 
 # Allow cookies on cross-site OAuth callback
 # This is required to allow OAUTH framework to work w/ Django 5.2.x
-SESSION_COOKIE_SAMESITE = None      # allows cookie to be sent on third‑party POSTs
-SESSION_COOKIE_SECURE = True       # required for SameSite=None
-CSRF_COOKIE_SAMESITE = None        # if using CSRF in session-backed mode
+SESSION_COOKIE_SAMESITE = None  # allows cookie to be sent on third‑party POSTs
+SESSION_COOKIE_SECURE = True  # required for SameSite=None
+CSRF_COOKIE_SAMESITE = None  # if using CSRF in session-backed mode
 CSRF_COOKIE_SECURE = True
 if DEBUG:
     # trust proxy headers for host/port/proto
@@ -415,16 +418,16 @@ if DEBUG:
     PUBLIC_ORIGIN = "http://localhost:82"
 
 AUTHLIB_OAUTH_CLIENTS = {
-    'default': {
-        'client_id': get_env_variable("OAUTH_CLIENT_ID"),
-        'client_secret': get_env_variable("OAUTH_CLIENT_SECRET"),
-        'authorize_url': get_env_variable("OAUTH_AUTH_ENDPOINT"),
-        'access_token_url': get_env_variable("OAUTH_TOKEN_ENDPOINT"),
-        'refresh_token_url': get_env_variable("OAUTH_TOKEN_ENDPOINT"),
-        'server_metadata_url': get_env_variable("OAUTH_SERVER_METADATA_URL"),
-        'client_kwargs': {
-            'scope': 'openid profile email',
-            'token_endpoint_auth_method': 'client_secret_post',
+    "default": {
+        "client_id": get_env_variable("OAUTH_CLIENT_ID"),
+        "client_secret": get_env_variable("OAUTH_CLIENT_SECRET"),
+        "authorize_url": get_env_variable("OAUTH_AUTH_ENDPOINT"),
+        "access_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT"),
+        "refresh_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT"),
+        "server_metadata_url": get_env_variable("OAUTH_SERVER_METADATA_URL"),
+        "client_kwargs": {
+            "scope": "openid profile email",
+            "token_endpoint_auth_method": "client_secret_post",
         },
         "urls": {
             "home_page": "/bcap/",
@@ -444,7 +447,7 @@ AUTHLIB_OAUTH_CLIENTS = {
 }
 
 # Optional: storage location for updated tokens
-OAUTH2_TOKEN_STORE = 'bcap.util.auth.token_store.save_token'
+OAUTH2_TOKEN_STORE = "bcap.util.auth.token_store.save_token"
 
 APP_TITLE = "BC Government | Historic Place Inventory"
 COPYRIGHT_TEXT = "All Rights Reserved."

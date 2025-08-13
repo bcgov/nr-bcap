@@ -8,6 +8,7 @@ ENV APP_ROOT=${WEB_ROOT}/${PROJECT_NAME}
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV COMMON_ROOT=${WEB_ROOT}/bcgov-arches-common
 ENV COMPONENT_LAB_ROOT=${WEB_ROOT}/arches-component-lab
+ENV QUERYSETS_ROOT=${WEB_ROOT}/arches-querysets
 ENV WHEELS=/wheels
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y make software-properties-common
@@ -65,7 +66,13 @@ COPY ./arches-component-lab ${COMPONENT_LAB_ROOT}
 WORKDIR ${COMPONENT_LAB_ROOT}
 RUN pip install -e .
 
+COPY ./arches-querysets ${QUERYSETS_ROOT}
+WORKDIR ${QUERYSETS_ROOT}
+RUN pip install -e .[drf]
+
 WORKDIR ${ARCHES_ROOT}
+RUN pip install -e .[dev]
+
 COPY ./nr-bcap/docker/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
 RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh &&\
   dos2unix ${WEB_ROOT}/entrypoint.sh
