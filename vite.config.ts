@@ -221,6 +221,7 @@ export default defineConfig({
     // Also catch direct “src/js.cookie(.js)” imports that some Arches code may use
     { find: /^js-cookie\/src\/js\.cookie(?:\.js)?$/, replacement: jsCookieMjs },
     // point bare imports to the window-backed shims
+    { find: /^uuid$/,              replacement: '/@fs/web_root/bcap/vite-shims/uuid-default.js' },
     { find: /^jquery$/,              replacement: '/@fs/web_root/bcap/vite-shims/jquery-global.js' },
     { find: /^underscore$/,          replacement: '/@fs/web_root/bcap/vite-shims/underscore-global.js' },
     { find: /^backbone$/,            replacement: '/@fs/web_root/bcap/vite-shims/backbone-global.js' },
@@ -280,7 +281,7 @@ export default defineConfig({
   //     'datatables.net-responsive-bs',
   //   ],
   //   entries: [
-  //     path.resolve(__dirname, 'bcap/vite-entries/bcap-site.entry.js'),
+  //     path.resolve(__dirname, 'bcap/vite-entries/bcap-site.entry.ts'),
   //     path.resolve(__dirname, 'bcap/vite-entries/map.entry.js'),
   //   ],
   //   force: true,
@@ -303,7 +304,7 @@ export default defineConfig({
       protocol: 'ws',
       host: 'localhost',      // browser reaches Vite through nginx on :82
       port: 82,
-      path: '/bcap/@vite',
+      path: '/@vite',
       clientPort: 82,
     },
     fs: {
@@ -312,11 +313,11 @@ export default defineConfig({
         path.join(ROOTS.common, "bcgov_arches_common"),
         path.join(ROOTS.arches, "arches", "app")]
     },
-    warmup: {
-      clientFiles: [
-        '/bcap/@vite/bcap/vite-entries/bcap-site.entry.js',
-        '/bcap/@vite/bcap/vite-entries/map.entry.js',
-      ],
-    },
+    // warmup: {
+    //   clientFiles: [
+    //     '/bcap/@vite/bcap/vite-entries/bcap-site.entry.ts',
+    //     '/bcap/@vite/bcap/vite-entries/map.entry.js',
+    //   ],
+    // },
   },
 });

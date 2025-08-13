@@ -9,6 +9,7 @@ import chosen from "bindings/chosen";
 import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite.vue";
 import { createApp } from "vue";
 
+if (typeof window !== "undefined" && !window.ko) window.ko = ko;
 
 // ADDED: KO binding to mount a Vue 3 component and manage lifecycle with KO
 ko.bindingHandlers.vueComponent = ko.bindingHandlers.vueComponent || {
@@ -355,11 +356,11 @@ const BcapSiteViewModel = function (params) {
     });
 
     this.aliasedData = ko.computed(function () {
-        return  self.report.report_json.aliased_data;
+        return  self.report?.report_json?.aliased_data;
     });
 
     this.resourceDescriptors = ko.computed(function () {
-        return  self.report.report_json.descriptors;
+        return  self.report?.report_json?.descriptors;
     });
 
     this.submittedSites = ko.computed(function () {

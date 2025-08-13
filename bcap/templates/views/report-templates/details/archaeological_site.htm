@@ -1,10 +1,10 @@
-{% if USE_VITE %}
-  <!-- Vite HMR client (needed when HTML is not served by Vite) -->
-  <script type="module" src="/bcap/@vite/@vite/client"></script>
-  <script type="module" src="/bcap/@vite/bcap/vite-entries/bcap-site.entry.js"></script>
-{% else %}
-<div>NO IMPORT2: {{ USE_VITE }}</div>
-{% endif %}
+{% extends "views/report-templates/default.htm" %}
+{% load static %}
+{% load template_tags %}
+{% load webpack_static from webpack_loader %}
+{% load i18n %}
+
+{% block summary %}
 <style>
     table.decision-table th, table.decision-table td {
         border: thin solid #ddd;
@@ -15,8 +15,9 @@
     }
 </style>
 <div class="details-card-section">
-    <div id="arch-site-mountpoint2">HIIII</div>
-    <div id="other-mountpoint" data-bind="vueComponent: { props: {data: aliasedData, resourceDescriptors: resourceDescriptors} }"></div>
+    <div id="other-mountpoint" data-bind="
+    vueComponent: { props: {data: aliasedData,
+    resourceDescriptors: resourceDescriptors} }"></div>
     <div>HI</div>
     <div class="details-icons">
         <a data-bind="click: function () { window.print() }" style="cursor:pointer;">
@@ -373,3 +374,4 @@
     </div>
 
 </div>
+{% endblock summary %}
