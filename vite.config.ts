@@ -280,10 +280,6 @@ export default defineConfig({
   //     'datatables.net-responsive',
   //     'datatables.net-responsive-bs',
   //   ],
-  //   entries: [
-  //     path.resolve(__dirname, 'bcap/vite-entries/bcap-site.entry.ts'),
-  //     path.resolve(__dirname, 'bcap/vite-entries/map.entry.js'),
-  //   ],
   //   force: true,
   //   esbuildOptions: { preserveSymlinks: true },
   // },

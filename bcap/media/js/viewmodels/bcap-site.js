@@ -11,47 +11,14 @@ import { createApp } from "vue";
 
 if (typeof window !== "undefined" && !window.ko) window.ko = ko;
 
-(function installVueBinding(ko) {
-  if (!ko) return;
-
-  // Avoid re-installing
-  if (ko.bindingHandlers.detailsVueComponent?.__bcap_dual) return;
-
-  ko.bindingHandlers.detailsVueComponent = {
-    init(el, valueAccessor, allBindings, vm, ctx) {
-      // If Vite’s real mount is present, delegate to it (Vite path)
-      if (typeof window.__bcapMountVueComponent === 'function') {
-        return window.__bcapMountVueComponent(ko, el, valueAccessor, allBindings, vm, ctx);
-      }
-
-      // Webpack fallback path: do the mount here
-      const params = typeof valueAccessor === 'function' ? valueAccessor() : (valueAccessor || {});
-      const props  = ko?.toJS?.(params.props || {}) ?? (params.props || {});
-      const component = params.component || ArchaeologicalSite;
-
-      const mount = document.createElement('div');
-      el.appendChild(mount);
-
-      const app = createApp(component, props);
-      app.mount(mount);
-
-      ko?.utils?.domNodeDisposal?.addDisposeCallback?.(el, () => {
-        try { app.unmount(); } catch {}
-      });
-
-      return { controlsDescendantBindings: true };
-    }
-  };
-
-  // Let KO templates use the binding on <!-- ko ... --> virtual nodes
-  if (ko.virtualElements) {
-    ko.virtualElements.allowedBindings.detailsVueComponent = true;
-  }
-
-  // mark installed
-  ko.bindingHandlers.detailsVueComponent.__bcap_dual = true;
-
-})(window.ko);
+if (!window.__BCAP_PREFER_VITE__) {
+    window.BCAP.vueKO.register({
+        name: "detailsVueComponent",
+        createApp,
+        component: ArchaeologicalSite,
+        source: "webpack",
+    });
+}
 
 $(function () {
     $(".data-carousel").slick({});
@@ -244,7 +211,9 @@ const BcapSiteViewModel = function (params) {
         var value = getNodeValues(alias)[0];
 
         return ko.unwrap(
-            value ? widget.node.config.trueLabel : widget.node.config.falseLabel,
+            value
+                ? widget.node.config.trueLabel
+                : widget.node.config.falseLabel,
         );
     };
 
@@ -364,12 +333,12 @@ const BcapSiteViewModel = function (params) {
     });
 
     this.aliasedData = ko.computed(function () {
-        return  self.report?.report_json?.aliased_data;
+        return self.report?.report_json?.aliased_data;
     });
 
     this.resourceDescriptors = ko.computed(function () {
         // return  self.report?.report_json?.descriptors;
-        return { "en": { "name": "Undefined6" } };
+        return { en: { name: "Undefined6" } };
     });
 
     this.submittedSites = ko.computed(function () {
@@ -450,7 +419,7 @@ const BcapSiteViewModel = function (params) {
 };
 export default BcapSiteViewModel;
 if (import.meta && import.meta.hot) {
-  // If you have bootstrap side-effects only, a full reload is safest:
-  import.meta.hot.accept(() => window.location.reload());
-  // If you can refactor bootstrap to be re-runnable, you can call it here instead of reloading.
+    // If you have bootstrap side-effects only, a full reload is safest:
+    import.meta.hot.accept(() => window.location.reload());
+    // If you can refactor bootstrap to be re-runnable, you can call it here instead of reloading.
 }

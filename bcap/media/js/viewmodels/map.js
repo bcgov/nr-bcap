@@ -1,31 +1,29 @@
-import $ from 'jquery';
-import _ from 'underscore';
-import arches from 'arches';
-import ko from 'knockout';
-import koMapping from 'knockout-mapping';
-import mapPopupProvider from 'utils/map-popup-provider';
-import mapConfigurator from 'utils/map-configurator';
-import ariaUtils from 'utils/aria';
-import 'templates/views/components/map-popup.htm';
-import MapboxGl from 'mapbox-gl';
-import MapboxGeocoder from 'mapbox-gl-geocoder';
-import MapPopup from '@/bcap/components/MapPopup.vue';
+import $ from "jquery";
+import _ from "underscore";
+import arches from "arches";
+import ko from "knockout";
+import koMapping from "knockout-mapping";
+import mapPopupProvider from "utils/map-popup-provider";
+import mapConfigurator from "utils/map-configurator";
+import ariaUtils from "utils/aria";
+import "templates/views/components/map-popup.htm";
+import MapboxGl from "mapbox-gl";
+import MapboxGeocoder from "mapbox-gl-geocoder";
+import MapPopup from "@/bcap/components/MapPopup.vue";
 // import createVueApplication from "arches/arches/app/media/js/utils/create-vue-application";
-import { createApp } from 'vue';
-
+import { createApp } from "vue";
 
 const viewModel = function (params) {
     var self = this;
 
-
     var geojsonSourceFactory = function () {
         return {
-            "type": "geojson",
-            "generateId": true,
-            "data": {
-                "type": "FeatureCollection",
-                "features": []
-            }
+            type: "geojson",
+            generateId: true,
+            data: {
+                type: "FeatureCollection",
+                features: [],
+            },
         };
     };
 
@@ -38,9 +36,9 @@ const viewModel = function (params) {
             top: 40,
             left: 40 + (self.activeTab() ? 200 : 0),
             bottom: 40,
-            right: 40 + (self.activeTab() ? 200 : 0)
+            right: 40 + (self.activeTab() ? 200 : 0),
         },
-        animate: false
+        animate: false,
     };
 
     this.map = ko.isObservable(params.map) ? params.map : ko.observable();
@@ -53,8 +51,12 @@ const viewModel = function (params) {
             const lng = parseFloat(params.x());
             const lat = parseFloat(params.y());
 
-            if (lng) { center.lng = lng; }
-            if (lat) { center.lat = lat; }
+            if (lng) {
+                center.lng = lng;
+            }
+            if (lat) {
+                center.lat = lat;
+            }
 
             map.setCenter(center);
         }
@@ -66,16 +68,20 @@ const viewModel = function (params) {
         if (ko.unwrap(params.bounds)) {
             map.fitBounds(ko.unwrap(params.bounds), boundingOptions);
         }
-
     });
 
-    this.bounds = ko.observable(ko.unwrap(params.bounds) || arches.hexBinBounds);
+    this.bounds = ko.observable(
+        ko.unwrap(params.bounds) || arches.hexBinBounds,
+    );
     this.bounds.subscribe(function (bounds) {
         if (bounds && self.map()) {
             self.map().fitBounds(bounds, boundingOptions);
         }
 
-        if (ko.isObservable(params.fitBounds) && params.fitBounds() !== bounds) {
+        if (
+            ko.isObservable(params.fitBounds) &&
+            params.fitBounds() !== bounds
+        ) {
             params.fitBounds(bounds);
         }
     });
@@ -108,7 +114,9 @@ const viewModel = function (params) {
 
     this.zoom = ko.observable(ko.unwrap(params.zoom) || arches.mapDefaultZoom);
     this.zoom.subscribe(function (level) {
-        if (level && self.map()) { self.map().setZoom(level); }
+        if (level && self.map()) {
+            self.map().setZoom(level);
+        }
 
         if (ko.isObservable(params.zoom) && params.zoom() !== level) {
             params.zoom(level);
@@ -122,19 +130,26 @@ const viewModel = function (params) {
         }
     });
 
-    this.activeBasemap = ko.observable();  // params.basemap is a string, activeBasemap is a map. Cannot initialize from params.
+    this.activeBasemap = ko.observable(); // params.basemap is a string, activeBasemap is a map. Cannot initialize from params.
     this.activeBasemap.subscribe(function (basemap) {
-        if (ko.isObservable(params.basemap) && params.basemap() !== basemap.name) {
+        if (
+            ko.isObservable(params.basemap) &&
+            params.basemap() !== basemap.name
+        ) {
             params.basemap(basemap.name);
         }
     });
 
-    var sources = Object.assign({
-        "resource": geojsonSourceFactory(),
-        "search-results-hex": geojsonSourceFactory(),
-        "search-results-hashes": geojsonSourceFactory(),
-        "search-results-points": geojsonSourceFactory()
-    }, arches.mapSources, params.sources);
+    var sources = Object.assign(
+        {
+            resource: geojsonSourceFactory(),
+            "search-results-hex": geojsonSourceFactory(),
+            "search-results-hashes": geojsonSourceFactory(),
+            "search-results-points": geojsonSourceFactory(),
+        },
+        arches.mapSources,
+        params.sources,
+    );
 
     this.basemaps = params.basemaps || [];
     this.overlays = params.overlaysObservable || ko.observableArray();
@@ -143,15 +158,16 @@ const viewModel = function (params) {
     mapLayers.forEach(function (layer) {
         if (!layer.isoverlay) {
             if (!params.basemaps) self.basemaps.push(layer);
-        }
-        else if (!params.overlaysObservable) {
+        } else if (!params.overlaysObservable) {
             if (layer.searchonly && !params.search) return;
             layer.opacity = ko.observable(layer.addtomap ? 100 : 0);
             layer.onMap = ko.pureComputed({
-                read: function () { return layer.opacity() > 0; },
+                read: function () {
+                    return layer.opacity() > 0;
+                },
                 write: function (value) {
                     layer.opacity(value ? 100 : 0);
-                }
+                },
             });
 
             layer.updateParent = function (parent) {
@@ -202,8 +218,9 @@ const viewModel = function (params) {
 
     for (var overlay of self.overlays()) {
         if (
-            ko.unwrap(self.overlayConfigs) && self.overlayConfigs.indexOf(overlay.maplayerid) > -1
-            || params.search && overlay.addtomap
+            (ko.unwrap(self.overlayConfigs) &&
+                self.overlayConfigs.indexOf(overlay.maplayerid) > -1) ||
+            (params.search && overlay.addtomap)
         ) {
             overlay.opacity(100);
         } else {
@@ -214,12 +231,16 @@ const viewModel = function (params) {
     _.each(sources, function (sourceConfig) {
         if (sourceConfig.tiles) {
             sourceConfig.tiles.forEach(function (url, i) {
-                if (url.startsWith('/')) {
+                if (url.startsWith("/")) {
                     sourceConfig.tiles[i] = window.location.origin + url;
                 }
             });
         }
-        if (sourceConfig.data && typeof sourceConfig.data === 'string' && sourceConfig.data.startsWith('/')) {
+        if (
+            sourceConfig.data &&
+            typeof sourceConfig.data === "string" &&
+            sourceConfig.data.startsWith("/")
+        ) {
             sourceConfig.data = arches.urls.root + sourceConfig.data.substr(1);
         }
     });
@@ -240,39 +261,59 @@ const viewModel = function (params) {
         if (layer.paint === undefined) {
             layer.paint = {};
         }
-        _.each([
-            'background',
-            'fill',
-            'line',
-            'text',
-            'icon',
-            'raster',
-            'circle',
-            'fill-extrusion',
-            'heatmap'
-        ], function (opacityType) {
-            var startVal = layer.paint ? layer.paint[opacityType + '-opacity'] : null;
+        _.each(
+            [
+                "background",
+                "fill",
+                "line",
+                "text",
+                "icon",
+                "raster",
+                "circle",
+                "fill-extrusion",
+                "heatmap",
+            ],
+            function (opacityType) {
+                var startVal = layer.paint
+                    ? layer.paint[opacityType + "-opacity"]
+                    : null;
 
-            if (startVal) {
-                if (parseFloat(startVal) && parseFloat(layer.paint[opacityType + '-opacity'])) { // verify startVal and opacity can be numbers
-                    layer.paint[opacityType + '-opacity'] = startVal * opacityVal;
-                }
-                else if (parseFloat(startVal)) {
-                    layer.paint[opacityType + '-opacity'].base = startVal * opacityVal;
-                } else {
-                    layer.paint[opacityType + '-opacity'] = JSON.parse(JSON.stringify(startVal));
-                    if (startVal.base) {
-                        layer.paint[opacityType + '-opacity'].base = startVal.base * opacityVal;
+                if (startVal) {
+                    if (
+                        parseFloat(startVal) &&
+                        parseFloat(layer.paint[opacityType + "-opacity"])
+                    ) {
+                        // verify startVal and opacity can be numbers
+                        layer.paint[opacityType + "-opacity"] =
+                            startVal * opacityVal;
+                    } else if (parseFloat(startVal)) {
+                        layer.paint[opacityType + "-opacity"].base =
+                            startVal * opacityVal;
+                    } else {
+                        layer.paint[opacityType + "-opacity"] = JSON.parse(
+                            JSON.stringify(startVal),
+                        );
+                        if (startVal.base) {
+                            layer.paint[opacityType + "-opacity"].base =
+                                startVal.base * opacityVal;
+                        }
+                        if (startVal.stops) {
+                            multiplyStopValues(
+                                layer.paint[opacityType + "-opacity"].stops,
+                                opacityVal,
+                            );
+                        }
                     }
-                    if (startVal.stops) {
-                        multiplyStopValues(layer.paint[opacityType + '-opacity'].stops, opacityVal);
-                    }
+                } else if (
+                    layer.type === opacityType ||
+                    (layer.type === "symbol" &&
+                        (opacityType === "text" || opacityType === "icon"))
+                ) {
+                    layer.paint[opacityType + "-opacity"] = opacityVal;
                 }
-            } else if (layer.type === opacityType ||
-                (layer.type === 'symbol' && (opacityType === 'text' || opacityType === 'icon'))) {
-                layer.paint[opacityType + '-opacity'] = opacityVal;
-            }
-        }, self);
+            },
+            self,
+        );
         return layer;
     };
 
@@ -282,13 +323,18 @@ const viewModel = function (params) {
         self.overlays().forEach(function (layer) {
             if (layer.onMap()) {
                 var opacity = layer.opacity();
-                layers = layer.layer_definitions.map(function (layer) {
-                    return updateOpacity(layer, opacity);
-                }).concat(layers);
+                layers = layer.layer_definitions
+                    .map(function (layer) {
+                        return updateOpacity(layer, opacity);
+                    })
+                    .concat(layers);
             }
         });
         if (ko.unwrap(self.activeBasemap)) {
-            layers = ko.unwrap(self.activeBasemap).layer_definitions.slice(0).concat(layers);
+            layers = ko
+                .unwrap(self.activeBasemap)
+                .layer_definitions.slice(0)
+                .concat(layers);
         }
         if (this.additionalLayers) {
             layers = layers.concat(ko.unwrap(this.additionalLayers));
@@ -303,10 +349,7 @@ const viewModel = function (params) {
             sprite: arches.mapboxSprites,
             glyphs: arches.mapboxGlyphs,
             layers: self.layers(),
-            center: [
-                parseFloat(self.centerX()),
-                parseFloat(self.centerY()),
-            ],
+            center: [parseFloat(self.centerX()), parseFloat(self.centerY())],
             zoom: parseFloat(self.zoom()),
         },
         maxZoom: arches.mapDefaultMaxZoom,
@@ -329,7 +372,7 @@ const viewModel = function (params) {
             self.activeTab(null);
         } else {
             self.activeTab(tabName);
-            ariaUtils.shiftFocus('#side-panel');
+            ariaUtils.shiftFocus("#side-panel");
         }
     };
 
@@ -337,7 +380,9 @@ const viewModel = function (params) {
         var style = self.map().getStyle();
 
         if (style) {
-            style.layers = self.draw ? layers.concat(self.draw.options.styles) : layers;
+            style.layers = self.draw
+                ? layers.concat(self.draw.options.styles)
+                : layers;
             self.map().setStyle(style);
         }
     };
@@ -348,51 +393,76 @@ const viewModel = function (params) {
 
     this.resourceLookup = {};
     this.getPopupData = function (features) {
-        const popupFeatures = features.map(feature => {
+        const popupFeatures = features.map((feature) => {
             var data = feature.properties;
             var id = data.resourceinstanceid;
             const userid = ko.unwrap(self.userid);
             data.showFilterByFeatureButton = !!params.search;
-            data.sendFeatureToMapFilter = mapPopupProvider.sendFeatureToMapFilter.bind(mapPopupProvider);
-            data.showFilterByFeature = mapPopupProvider.showFilterByFeature.bind(mapPopupProvider);
-            const descriptionProperties = ['displayname', 'graph_name', 'map_popup', 'geometries'];
+            data.sendFeatureToMapFilter =
+                mapPopupProvider.sendFeatureToMapFilter.bind(mapPopupProvider);
+            data.showFilterByFeature =
+                mapPopupProvider.showFilterByFeature.bind(mapPopupProvider);
+            const descriptionProperties = [
+                "displayname",
+                "graph_name",
+                "map_popup",
+                "geometries",
+            ];
             const setEditButtonVisibility = function (data) {
-                const isFeatureEditable = self.canEdit &&
-                    ko.unwrap(data.permissions)?.users_without_edit_perm?.includes(userid) === false ||
-                    ko.unwrap(data.permissions)?.principal_user?.includes(userid) ||
+                const isFeatureEditable =
+                    (self.canEdit &&
+                        ko
+                            .unwrap(data.permissions)
+                            ?.users_without_edit_perm?.includes(userid) ===
+                            false) ||
+                    ko
+                        .unwrap(data.permissions)
+                        ?.principal_user?.includes(userid) ||
                     ko.unwrap(data.permissions)?.users_edit?.includes(userid);
                 data.showEditButton(isFeatureEditable);
             };
             if (id) {
                 if (!self.resourceLookup[id]) {
                     data = _.defaults(data, {
-                        'loading': true,
-                        'displayname': '',
-                        'graph_name': '',
-                        'map_popup': '',
-                        'geometries': [],
-                        'feature': feature,
-                        'showEditButton': ko.observable(false)
+                        loading: true,
+                        displayname: "",
+                        graph_name: "",
+                        map_popup: "",
+                        geometries: [],
+                        feature: feature,
+                        showEditButton: ko.observable(false),
                     });
 
                     if (data.permissions) {
                         try {
-                            data.permissions = JSON.parse(ko.unwrap(data.permissions));
+                            data.permissions = JSON.parse(
+                                ko.unwrap(data.permissions),
+                            );
                         } catch (err) {
-                            data.permissions = koMapping.toJS(ko.unwrap(data.permissions));
+                            data.permissions = koMapping.toJS(
+                                ko.unwrap(data.permissions),
+                            );
                         }
                         setEditButtonVisibility(data);
                     }
-                    descriptionProperties.forEach(prop => data[prop] = ko.observable(data[prop]));
+                    descriptionProperties.forEach(
+                        (prop) => (data[prop] = ko.observable(data[prop])),
+                    );
                     data.reportURL = arches.urls.resource_report;
                     data.editURL = arches.urls.resource_editor;
                     self.resourceLookup[id] = data;
-                    $.get(arches.urls.resource_descriptors + id, function (data) {
-                        data.loading = false;
-                        descriptionProperties.forEach(prop => self.resourceLookup[id][prop](data[prop]));
-                        self.resourceLookup[id].permissions = data["permissions"];
-                        setEditButtonVisibility(self.resourceLookup[id]);
-                    });
+                    $.get(
+                        arches.urls.resource_descriptors + id,
+                        function (data) {
+                            data.loading = false;
+                            descriptionProperties.forEach((prop) =>
+                                self.resourceLookup[id][prop](data[prop]),
+                            );
+                            self.resourceLookup[id].permissions =
+                                data["permissions"];
+                            setEditButtonVisibility(self.resourceLookup[id]);
+                        },
+                    );
                 }
                 self.resourceLookup[id].feature = feature;
                 self.resourceLookup[id].mapCard = self;
@@ -407,7 +477,7 @@ const viewModel = function (params) {
         });
 
         const unique = [];
-        const uniquePopupFeatures = popupFeatures.filter(feature => {
+        const uniquePopupFeatures = popupFeatures.filter((feature) => {
             feature.active = ko.observable(false);
             if (!unique.includes(feature)) {
                 unique.push(feature);
@@ -422,47 +492,56 @@ const viewModel = function (params) {
             activeFeature: uniquePopupFeatures[0],
             advanceFeature: function (direction) {
                 const map = self.map();
-                const activeFeatureIndex = uniquePopupFeatures.findIndex(feature => feature.active());
+                const activeFeatureIndex = uniquePopupFeatures.findIndex(
+                    (feature) => feature.active(),
+                );
                 let activeFeature;
                 uniquePopupFeatures[activeFeatureIndex].active(false);
-                if (direction === 'right') {
+                if (direction === "right") {
                     if (activeFeatureIndex + 1 >= uniquePopupFeatures.length) {
                         activeFeature = uniquePopupFeatures[0];
                     } else {
-                        activeFeature = uniquePopupFeatures[activeFeatureIndex + 1];
+                        activeFeature =
+                            uniquePopupFeatures[activeFeatureIndex + 1];
                     }
                 } else {
                     if (activeFeatureIndex == 0) {
-                        activeFeature = uniquePopupFeatures[uniquePopupFeatures.length - 1];
+                        activeFeature =
+                            uniquePopupFeatures[uniquePopupFeatures.length - 1];
                     } else {
-                        activeFeature = uniquePopupFeatures[activeFeatureIndex - 1];
+                        activeFeature =
+                            uniquePopupFeatures[activeFeatureIndex - 1];
                     }
                 }
                 activeFeature.active(true);
                 if (map.getStyle()) {
-                    uniquePopupFeatures.forEach(feature => {
+                    uniquePopupFeatures.forEach((feature) => {
                         const featureId = feature.feature.id;
                         if (featureId) {
                             if (featureId === activeFeature.feature.id) {
-                                map.setFeatureState(activeFeature.feature, { hover: true });
+                                map.setFeatureState(activeFeature.feature, {
+                                    hover: true,
+                                });
                             } else {
-                                map.setFeatureState(feature.feature, { hover: false });
+                                map.setFeatureState(feature.feature, {
+                                    hover: false,
+                                });
                             }
                         }
                     });
                 }
-            }
+            },
         };
     };
 
-    this.onFeatureClick = function(features, lngLat, MapboxGl) {
+    this.onFeatureClick = function (features, lngLat, MapboxGl) {
         const map = self.map();
         const mapStyle = map.getStyle();
 
         // Process viewmodel data
         const popupViewModel = {
             ...mapPopupProvider.processData(self.getPopupData(features)),
-            translations: arches.translations
+            translations: arches.translations,
         };
 
         // Mark the active feature (if needed)
@@ -484,7 +563,7 @@ const viewModel = function (params) {
                 if (typeof self.sendFeatureToMapFilter === "function") {
                     self.sendFeatureToMapFilter(feature, useAsFilter);
                 }
-            }
+            },
         });
 
         app.mount(container);
@@ -496,15 +575,15 @@ const viewModel = function (params) {
             .addTo(map);
 
         // Mark features as selected in Mapbox
-        features.forEach(feature => {
+        features.forEach((feature) => {
             if (mapStyle && feature.id) {
                 map.setFeatureState(feature, { selected: true });
             }
         });
 
         // Cleanup when popup closes
-        self.popup.on("close", function() {
-            features.forEach(feature => {
+        self.popup.on("close", function () {
+            features.forEach((feature) => {
                 if (mapStyle && feature.id) {
                     try {
                         map.setFeatureState(feature, { selected: false });
@@ -522,11 +601,11 @@ const viewModel = function (params) {
         });
     };
 
-    this.beforeMove = function(e) {
-        e.cancelDrop = (e.sourceParent!==e.targetParent);
+    this.beforeMove = function (e) {
+        e.cancelDrop = e.sourceParent !== e.targetParent;
     };
 
-    this.reorderOverlays = function(e) {
+    this.reorderOverlays = function (e) {
         const mapOrder = ko.observableArray(e.sourceParent());
         const newOrder = self.createNewOverlayOrder(mapOrder);
         self.sendNewOverlayOrder(newOrder);
@@ -565,64 +644,76 @@ const viewModel = function (params) {
     };
 
     this.setupMap = function (map) {
-        map.on('load', function () {
+        map.on("load", function () {
             mapConfigurator.preConfig(map);
-            map.addControl(new MapboxGl.NavigationControl(), 'top-left');
-            map.addControl(new MapboxGl.FullscreenControl({
-                container: $(map.getContainer()).closest('.workbench-card-wrapper')[0]
-            }), 'top-left');
-            map.addControl(new MapboxGeocoder({
-                accessToken: MapboxGl.accessToken,
-                mapboxgl: MapboxGl,
-                placeholder: arches.translations.geocoderPlaceHolder,
-                bbox: arches.hexBinBounds
-            }), 'top-right');
+            map.addControl(new MapboxGl.NavigationControl(), "top-left");
+            map.addControl(
+                new MapboxGl.FullscreenControl({
+                    container: $(map.getContainer()).closest(
+                        ".workbench-card-wrapper",
+                    )[0],
+                }),
+                "top-left",
+            );
+            map.addControl(
+                new MapboxGeocoder({
+                    accessToken: MapboxGl.accessToken,
+                    mapboxgl: MapboxGl,
+                    placeholder: arches.translations.geocoderPlaceHolder,
+                    bbox: arches.hexBinBounds,
+                }),
+                "top-right",
+            );
 
             self.layers.subscribe(self.updateLayers);
 
             var hoverFeature;
 
-            map.on('mousemove', function (e) {
+            map.on("mousemove", function (e) {
                 var style = map.getStyle();
-                if (hoverFeature && hoverFeature.id && style) map.setFeatureState(hoverFeature, { hover: false });
+                if (hoverFeature && hoverFeature.id && style)
+                    map.setFeatureState(hoverFeature, { hover: false });
                 hoverFeature = _.find(
                     map.queryRenderedFeatures(e.point),
-                    feature => mapPopupProvider.isFeatureClickable(feature, self)
+                    (feature) =>
+                        mapPopupProvider.isFeatureClickable(feature, self),
                 );
-                if (hoverFeature && hoverFeature.id && style) map.setFeatureState(hoverFeature, { hover: true });
+                if (hoverFeature && hoverFeature.id && style)
+                    map.setFeatureState(hoverFeature, { hover: true });
 
-                map.getCanvas().style.cursor = hoverFeature ? 'pointer' : '';
+                map.getCanvas().style.cursor = hoverFeature ? "pointer" : "";
                 if (self.map().draw_mode) {
                     var crosshairModes = [
                         "draw_point",
                         "draw_line_string",
                         "draw_polygon",
                     ];
-                    map.getCanvas().style.cursor = crosshairModes.includes(self.map().draw_mode) ? "crosshair" : "";
+                    map.getCanvas().style.cursor = crosshairModes.includes(
+                        self.map().draw_mode,
+                    )
+                        ? "crosshair"
+                        : "";
                 }
             });
 
             map.draw_mode = null;
 
-
-            map.on('click', function (e) {
+            map.on("click", function (e) {
                 const popupFeatures = _.filter(
                     map.queryRenderedFeatures(e.point),
-                    feature => mapPopupProvider.isFeatureClickable(feature, self)
+                    (feature) =>
+                        mapPopupProvider.isFeatureClickable(feature, self),
                 );
                 if (popupFeatures.length) {
                     self.onFeatureClick(popupFeatures, e.lngLat, MapboxGl);
                 }
             });
 
-
-            map.on('zoomend', function () {
-                self.zoom(
-                    parseFloat(map.getZoom())
-                );
+            map.on("zoomend", function () {
+                self.zoom(parseFloat(map.getZoom()));
             });
 
-            map.on('dragend', function () {
+            map.on("dragend", function () {
                 var center = map.getCenter();
 
                 self.centerX(parseFloat(center.lng));
@@ -631,7 +722,6 @@ const viewModel = function (params) {
 
             mapConfigurator.postConfig(map);
             self.map(map);
-
         });
     };
 };

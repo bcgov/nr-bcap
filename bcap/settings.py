@@ -213,6 +213,7 @@ INSTALLED_APPS += (
 USE_VITE = False
 VITE_BASE = "/bcap/@vite/"
 
+VITE_ENTRYPOINTS = {"/bcap/search": ["bcap/vite-entries/bcap-site.entry.js"]}
 
 # django_vite SETTINGS
 DJANGO_VITE = {
@@ -246,7 +247,6 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
     "arches.app.utils.permission_backend.PermissionBackend",
 )
-
 
 
 MIDDLEWARE = [

@@ -1,3 +1,3 @@
 <template>
-    <div>This is a template?</div>
+    <div>This is a template? YES!</div>
 </template>
