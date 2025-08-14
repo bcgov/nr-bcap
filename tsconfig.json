@@ -28,7 +28,8 @@
         "../arches/arches/app/media/js/*",
         "node_modules/*",
         "../node_modules/*"
-      ]
+      ],
+      "@/bcap/*": ["bcap/src/bcap/*"]
     },
     "rootDirs": [
       "bcap/media/js",

@@ -6,7 +6,7 @@ import slick from "slick";
 import arches from "arches";
 import MapReportViewModel from "viewmodels/map-report";
 import chosen from "bindings/chosen";
-import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite.vue";
+import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue";
 import { createApp } from "vue";
 
 if (typeof window !== "undefined" && !window.ko) window.ko = ko;

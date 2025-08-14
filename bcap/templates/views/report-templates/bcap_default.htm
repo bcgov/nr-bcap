@@ -57,33 +57,7 @@
 </div>
 
 <div id="details-tab" class="rp-report-container-preview relative">
-    <div data-bind="text: report"></div>
-    <!-- ko if: report.get('name') == "Archaeological Site" -->
-    {% include 'views/report-templates/details/archaeological_site_help.htm' %}
-    <div id="other-mountpoint" data-bind="detailsVueComponent: {data: aliasedData }"></div>
-    <!-- /ko -->
-    <div class="rp-report-section rp-report-section-root">
-        <div class="rp-report-section-title">
-            <div id="details-mount-point" class="rp-card-section">
-                <!--div data-bind="text: report.get('name')"></div-->
-                <!-- ko if: report.get('name') == "Archaeological Site" -->
-                {% include 'views/report-templates/details/archaeological_site.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Legislative Act" -->
-                {% include 'views/report-templates/details/legislative_act.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Government" -->
-                {% include 'views/report-templates/details/government.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Government Person" -->
-                {% include 'views/report-templates/details/government_person.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Site Submission" -->
-                {% include 'views/report-templates/details/site_submission.htm' %}
-                <!-- /ko -->
-            </div>
-        </div>
-    </div>
+    <div id="detailsTab" data-bind="detailsVueComponent: {props: {data: allTiles} }"></div>
 </div>
 
 {% endblock summary %}

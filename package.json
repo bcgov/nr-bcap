@@ -33,9 +33,11 @@
         "eslint-config-prettier": "^10.1.5",
         "unplugin-vue-components": "^29.0.0",
         "vite": "^6.2.1",
-        "webpack-bundle-tracker": "^3.2.1"
+        "webpack-bundle-tracker": "^3.2.1",
+        "prettier": "^3.6.2"
     },
     "dependencies": {
+        "@primeuix/themes": "^1.2.3",
         "ajv": "^8.17.1",
         "arches": "^8.0.2",
         "bcgov_arches_common": "github:bcgov/bcgov-arches-common#brf/feat/214_upgrade_to_v8_take2",
