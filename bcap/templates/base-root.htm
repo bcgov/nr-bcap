@@ -92,10 +92,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     {{ USE_VITE }}
 
     {# Always: the reusable KO↔Vue bridge #}
+    <script>
+        // This needs to run before the bridge for early firing if we're not using vite
+        // or there are no entrypoints
+        ( function() {
+            window.BCAP_USE_VITE = "{{ USE_VITE }}".toLowerCase();
+            window.BCAP_HAS_VUE_ENTRYPOINTS = {{ VUE_ENTRYPOINTS|length }} > 0;
+        })();
+    </script>
     <script src="{% webpack_static 'js/vite/ko-vue-bridge.js' %}"></script>
     {% if USE_VITE %}
           <script>
             window.__BCAP_PREFER_VITE__ = true;
+            window.BCAP_DEFERRAL_TIMEOUT_MS = 5000;
           </script>
         <script src="{% webpack_static 'js/vite/ko-deferral.js' %}"></script>
         {# Grab just the JS files for the entry you currently render via {% render_bundle main_script %} #}

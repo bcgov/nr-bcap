@@ -1,9 +1,29 @@
 (() => {
     const PENDING_REGS = [];
+    const APP_MIDDLEWARE = []; // <- NEW: per-app middleware (e.g., install PrimeVue theme)
+
+    function fireViteReady(reason) {
+        if (window.__BCAP_VITE_READY_FIRED__) return;
+        window.__BCAP_VITE_READY_FIRED__ = true;
+        try {
+            document.dispatchEvent(new Event("__BCAP_VITE_READY__"));
+        } catch {}
+        console.log(`[BCAP] __BCAP_VITE_READY__ fired (${reason})`);
+    }
+
+    function prefireFromGlobals() {
+        const has_entrypoint =
+            String(window.BCAP_HAS_VUE_ENTRYPOINTS) === "true";
+        const use_vite = String(window.BCAP_USE_VITE).toLowerCase() === "true";
+        if (!use_vite) return fireViteReady("Not using Vite");
+        if (!has_entrypoint) return fireViteReady("No entrypoints");
+    }
+
+    // call this early in the file
+    prefireFromGlobals();
 
     function toJS(ko, v) {
         if (!ko) return v;
-        // Prefer KO's toJS if present; fall back to unwrapping or identity
         if (typeof ko.toJS === "function") return ko.toJS(v);
         try {
             return typeof v === "function" ? v() : v;
@@ -14,10 +34,8 @@
 
     function wrapApplyBindingsLazily(ko) {
         if (!ko || ko.applyBindings?.__bcapWrapped) return;
-
         const orig = ko.applyBindings.bind(ko);
         const wrapped = function () {
-            // Look up the deferral *at call-time* so it also works if ko-deferral loaded later
             const defer = window.__BCAP_DEFERRAL__;
             if (defer) {
                 return Promise.resolve(defer).then(() =>
@@ -57,8 +75,25 @@
                 const mount = document.createElement("div");
                 mount.dataset.vue = comp?.name || name;
                 el.appendChild(mount);
+
                 const app = createApp(comp, props);
+
+                // NEW: run all middleware (e.g., install PrimeVue + theme) before mount
+                try {
+                    for (const fn of APP_MIDDLEWARE) {
+                        try {
+                            fn(app, { el, params, ko, name });
+                        } catch (e) {
+                            console.warn(
+                                "[BCAP] vueKO.use middleware failed:",
+                                e,
+                            );
+                        }
+                    }
+                } catch {}
+
                 app.mount(mount);
+
                 try {
                     ko?.utils?.domNodeDisposal?.addDisposeCallback?.(el, () => {
                         try {
@@ -66,14 +101,13 @@
                         } catch {}
                     });
                 } catch {}
+
                 return { controlsDescendantBindings: true };
             },
         };
-        // tag + install
         handler.__bcapInstalled = true;
         handler.__bcapSource = source;
 
-        // Install, then freeze so late bundles can’t clobber it
         Object.defineProperty(ko.bindingHandlers, name, {
             value: handler,
             writable: false,
@@ -89,7 +123,6 @@
 
     function onKOReady(ko) {
         while (PENDING_REGS.length) installBinding(ko, PENDING_REGS.shift());
-        // Always wrap lazily; it’s harmless without a deferral and fixes race when deferral loads later
         wrapApplyBindingsLazily(ko);
     }
 
@@ -103,13 +136,21 @@
             if (window.ko) installBinding(window.ko, opts);
             else PENDING_REGS.push(opts);
         },
+        /**
+         * Add middleware that receives (app, context) BEFORE each app mounts.
+         * Use this to install PrimeVue with a global theme, etc.
+         */
+        use(fn) {
+            if (typeof fn === "function") APP_MIDDLEWARE.push(fn);
+            else console.warn("[BCAP] vueKO.use(fn) expects a function");
+            return this;
+        },
     };
 
     // Expose
     window.BCAP = window.BCAP || {};
     window.BCAP.vueKO = api;
 
-    // If KO is already there, finish setup; otherwise hook assignment
     if (window.ko) {
         onKOReady(window.ko);
     } else {
