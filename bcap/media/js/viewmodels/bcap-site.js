@@ -7,6 +7,7 @@ import arches from "arches";
 import MapReportViewModel from "viewmodels/map-report";
 import chosen from "bindings/chosen";
 import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue";
+import "@/bcap/primevue-theme-global.ts";
 import { createApp } from "vue";
 
 if (typeof window !== "undefined" && !window.ko) window.ko = ko;

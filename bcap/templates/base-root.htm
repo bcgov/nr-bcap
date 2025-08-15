@@ -67,34 +67,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     <link rel="stylesheet" href="{% webpack_static 'node_modules/font-awesome/css/font-awesome.min.css' %}" />
     <link rel="stylesheet" href="{% webpack_static 'node_modules/primeicons/primeicons.css' %}" />
     {% endblock css %}
-    <!-- If you're on PrimeVue v4, swap @primeuix/* with @primevue/* -->
-<script type="importmap">
-{
-  "imports": {
-    "primevue/config": "https://cdn.jsdelivr.net/npm/primevue@4/config/+esm",
-    "@primeuix/themes/aura": "https://cdn.jsdelivr.net/npm/@primeuix/themes/aura/+esm"
-  }
-}
-</script>
-
-<script type="module">
-  import PrimeVue from "primevue/config";
-  import Aura from "@primeuix/themes/aura"; // if you're on PrimeVue v4, you can also use '@primevue/themes/aura'
-
-  // Optional: centralize dark-mode toggle class
-  window.BCAP = window.BCAP || {};
-  window.BCAP.DARK_SELECTOR = window.BCAP.DARK_SELECTOR || "html.dark";
-
-  // Register the middleware once; every KO→Vue app will get Aura
-  window.BCAP.vueKO?.use?.((app) => {
-    app.use(PrimeVue, {
-      theme: {
-        preset: Aura,
-        options: { darkModeSelector: window.BCAP.DARK_SELECTOR }
-      }
-    });
-  });
-</script>
 </head>
 {% endblock head %}
 
