@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import _ from "underscore";
-import mapPopupProvider from 'utils/map-popup-provider';
+import mapPopupProvider from "utils/map-popup-provider";
 
 const props = defineProps({
     loading: Boolean,
@@ -19,17 +19,22 @@ const activeFeatureOffset = ref(0);
 
 function advanceFeature(direction) {
     if (direction === "left") {
-        activeFeatureOffset.value = activeFeatureOffset.value === 0 ? features.value.length - 1 : activeFeatureOffset.value - 1;
-    }
-    else {
-        activeFeatureOffset.value = activeFeatureOffset.value === features.value.length - 1 ?  0 : activeFeatureOffset.value + 1;
+        activeFeatureOffset.value =
+            activeFeatureOffset.value === 0
+                ? features.value.length - 1
+                : activeFeatureOffset.value - 1;
+    } else {
+        activeFeatureOffset.value =
+            activeFeatureOffset.value === features.value.length - 1
+                ? 0
+                : activeFeatureOffset.value + 1;
     }
     visibleFeature.value = features.value[activeFeatureOffset.value].value;
     // emit("advance-feature", direction);
 }
 
 const currentFeature = computed(() => {
-return features.value[activeFeatureOffset.value].value;
+    return features.value[activeFeatureOffset.value].value;
 });
 
 function showExpandButton(feature) {
@@ -59,30 +64,39 @@ function showFilterByFeature(feature) {
         : false;
 }
 
-const descriptionProperties = ['displayname', 'graph_name', 'map_popup', 'geometries'];
+const descriptionProperties = [
+    "displayname",
+    "graph_name",
+    "map_popup",
+    "geometries",
+];
 function setDisplayValues() {
     props.popupFeatures.forEach((raw_feature, index) => {
         const feature = ref(raw_feature);
         features.value.push(ref(feature));
-        if (feature.value.active())
-        {
+        if (feature.value.active()) {
             visibleFeature.value = feature.value;
             activeFeatureOffset.value = index;
             console.log(`Setting index to ${index}`);
         }
-        fetch(props.urls.resource_descriptors + feature.value.resourceinstanceid)
-            .then(response => response.json()).then(data => {
-            feature.value.displayValues = ref({});
-            descriptionProperties.forEach(prop => feature.value.displayValues[prop] = data[prop]);
-            console.log(feature.value.displayValues);
-            feature.value.permissions = data["permissions"];
-            feature.value.loading = false;
-        }).catch(error => {
-            console.log(error);
-        });
+        fetch(
+            props.urls.resource_descriptors + feature.value.resourceinstanceid,
+        )
+            .then((response) => response.json())
+            .then((data) => {
+                feature.value.displayValues = ref({});
+                descriptionProperties.forEach(
+                    (prop) => (feature.value.displayValues[prop] = data[prop]),
+                );
+                console.log(feature.value.displayValues);
+                feature.value.permissions = data["permissions"];
+                feature.value.loading = false;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     });
 }
-
 
 /* eslint-disable */
 function getActiveFeature() {
@@ -137,7 +151,7 @@ onMounted(() => {
                     >
                         <i class="fa fa-angle-right"></i>
                     </div>
-                    <div class="hover-feature-title" >
+                    <div class="hover-feature-title">
                         {{ visibleFeature?.displayValues?.displayname }}
                     </div>
                 </div>
@@ -171,7 +185,9 @@ onMounted(() => {
                 >
                     <div class="hover-feature-metadata">
                         <span>{{ translations.resourceModel }}</span>
-                        <span>{{ visibleFeature?.displayValues?.graph_name }}</span>
+                        <span>{{
+                            visibleFeature?.displayValues?.graph_name
+                        }}</span>
                     </div>
                     <div class="hover-feature-metadata">
                         <span>{{ translations.idString }}</span>
@@ -186,7 +202,9 @@ onMounted(() => {
                         v-if="visibleFeature?.resourceinstanceid"
                         href="javascript:void(0)"
                         @click="
-                                currentFeature?.mapCard.showDetailsFromFilter( currentFeature.resourceinstanceid )
+                            currentFeature?.mapCard.showDetailsFromFilter(
+                                currentFeature.resourceinstanceid,
+                            )
                         "
                     >
                         <i class="fa fa-info-circle"></i>
@@ -194,7 +212,9 @@ onMounted(() => {
                     </a>
 
                     <a
-                        v-if="visibleFeature?.resourceinstanceid && showEditButton"
+                        v-if="
+                            visibleFeature?.resourceinstanceid && showEditButton
+                        "
                         href="javascript:void(0)"
                         @click="openReport(visibleFeature?.resourceinstanceid)"
                     >
@@ -203,7 +223,9 @@ onMounted(() => {
                     </a>
 
                     <a
-                        v-if="visibleFeature?.resourceinstanceid && showEditButton"
+                        v-if="
+                            visibleFeature?.resourceinstanceid && showEditButton
+                        "
                         href="javascript:void(0)"
                         @click="openEdit(visibleFeature?.resourceinstanceid)"
                     >
@@ -218,7 +240,9 @@ onMounted(() => {
                         "
                         href="#"
                         style="padding-right: 2px"
-                        @click.prevent="sendFeatureToMapFilter(visibleFeature, true)"
+                        @click.prevent="
+                            sendFeatureToMapFilter(visibleFeature, true)
+                        "
                     >
                         <i class="fa fa-filter"></i>
                         <span>{{ translations.filterByFeature }}</span>

@@ -207,6 +207,9 @@ INSTALLED_APPS = (
     # "silk",
     "storages",
     "bcap",
+    "arches_querysets",
+    "arches_component_lab",
+    "rest_framework",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += ("arches.app",)

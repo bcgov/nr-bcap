@@ -12,34 +12,29 @@ services:
       - ./:/web_root/bcap
       - ../bcgov-arches-common/:/web_root/bcgov-arches-common
       - ../arches-component-lab/:/web_root/arches-component-lab
+      - ../arches-querysets/:/web_root/arches-querysets
     env_file:
       - ./.env
       - ./docker/env_file.env
     ports:
       - 5690:5678
-      - 82:80
+      # - 82:80            # moved to bcap-proxy
       - 446:443
+      - 5175:5175        # Vite dev server (optional direct access)
     stdin_open: true
     tty: true
 
-#  bcap-webpack:
-#    container_name: bcap-webpack7-6
-#    image: bcgov/bcap-webpack7-6
-#    build:
-#      context: ..
-#      dockerfile: nr-bcap/docker/webpack/Dockerfile
-#    command: run_webpack
-#    volumes:
-#      - ../arches/:/web_root/arches
-#      - ./:/web_root/bcap
-#      - ../bcgov-arches-common/:/web_root/bcgov-arches-common
-#      - ../arches-component-lab/:/web_root/arches-component-lab
-#    env_file:
-#      - ./docker/webpack/env_file.env
-#    ports:
-#      - 8024:8021
-#    stdin_open: true
-#    tty: true
+  bcap-proxy:
+    container_name: bcap-proxy7-6
+    image: nginx:1.25-alpine
+    depends_on:
+      - bcap
+    ports:
+      - "82:80"          # expose the proxy on host:82
+    volumes:
+      - ./docker/nginx/dev.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+
   bcap-pg_tileserv:
     container_name: bcap-pg_tileserv7-6
     hostname: bcap-pg_tileserv7-6
@@ -55,7 +50,6 @@ networks:
   default:
     external: true
     name: arches7-5-2-dev
-
 
 volumes:
   arches-log-bcap7-6:

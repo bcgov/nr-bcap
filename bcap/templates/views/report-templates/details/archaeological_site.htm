@@ -1,3 +1,10 @@
+{% extends "views/report-templates/default.htm" %}
+{% load static %}
+{% load template_tags %}
+{% load webpack_static from webpack_loader %}
+{% load i18n %}
+
+{% block summary %}
 <style>
     table.decision-table th, table.decision-table td {
         border: thin solid #ddd;
@@ -8,6 +15,10 @@
     }
 </style>
 <div class="details-card-section">
+    <div id="other-mountpoint" data-bind="
+    detailsVueComponent: { props: {data: aliasedData,
+    resourceDescriptors: resourceDescriptors} }"></div>
+    <div>HI</div>
     <div class="details-icons">
         <a data-bind="click: function () { window.print() }" style="cursor:pointer;">
             <span>Print</span>
@@ -363,3 +374,4 @@
     </div>
 
 </div>
+{% endblock summary %}

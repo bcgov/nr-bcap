@@ -6,8 +6,22 @@ import slick from "slick";
 import arches from "arches";
 import MapReportViewModel from "viewmodels/map-report";
 import chosen from "bindings/chosen";
+import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue";
+import "@/bcap/primevue-theme-global.ts";
+import { createApp } from "vue";
 
-$.ready(function () {
+if (typeof window !== "undefined" && !window.ko) window.ko = ko;
+
+if (!window.__BCAP_PREFER_VITE__) {
+    window.BCAP.vueKO.register({
+        name: "detailsVueComponent",
+        createApp,
+        component: ArchaeologicalSite,
+        source: "webpack",
+    });
+}
+
+$(function () {
     $(".data-carousel").slick({});
 });
 
@@ -198,7 +212,9 @@ const BcapSiteViewModel = function (params) {
         var value = getNodeValues(alias)[0];
 
         return ko.unwrap(
-            value ? widget.node.config.trueLabel : widget.node.config.trueLabel,
+            value
+                ? widget.node.config.trueLabel
+                : widget.node.config.falseLabel,
         );
     };
 
@@ -313,6 +329,19 @@ const BcapSiteViewModel = function (params) {
         return authority;
     };
 
+    this.allTiles = ko.computed(function () {
+        return tiles;
+    });
+
+    this.aliasedData = ko.computed(function () {
+        return self.report?.report_json?.aliased_data;
+    });
+
+    this.resourceDescriptors = ko.computed(function () {
+        // return  self.report?.report_json?.descriptors;
+        return { en: { name: "Undefined6" } };
+    });
+
     this.submittedSites = ko.computed(function () {
         let opWidget = getWidgetForAlias("requested_operation"),
             infoWidget = getWidgetForAlias("information_provided"),
@@ -390,3 +419,8 @@ const BcapSiteViewModel = function (params) {
     };
 };
 export default BcapSiteViewModel;
+if (import.meta && import.meta.hot) {
+    // If you have bootstrap side-effects only, a full reload is safest:
+    import.meta.hot.accept(() => window.location.reload());
+    // If you can refactor bootstrap to be re-runnable, you can call it here instead of reloading.
+}
