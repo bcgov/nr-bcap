@@ -39,7 +39,7 @@
     "dependencies": {
         "@primeuix/themes": "^1.2.3",
         "ajv": "^8.17.1",
-        "arches": "^8.0.2",
+        "arches": "archesproject/arches#stable/8.0.2",
         "bcgov_arches_common": "github:bcgov/bcgov-arches-common#brf/feat/214_upgrade_to_v8_take2",
         "datatables.net": "^1.13.11",
         "js-cookie": "^3.0.5",
