@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { useThemeDebug } from "@/bcap/composables/useThemeDebug.ts";
 import { getResourceData } from "@/bcap/components/pages/api.ts";
 // main.js or in your component's script setup
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 import "primeicons/primeicons.css";
-import Section2 from "./sections/Section2.vue";
+import Section2 from "./sections/DetailsSection2.vue";
 
 type LangCode = string;
 interface Descriptor {
@@ -38,7 +35,6 @@ const props = withDefaults(
     {
         resourceDescriptors: () => ({ en: { name: "Undefined" } }),
         languageCode: "en",
-        data: { resourceId: "1234567890" },
     },
 );
 type ResourceCache = Record<string, object>;
@@ -56,36 +52,6 @@ watchEffect(async () => {
 });
 
 const now = ref(new Date());
-
-const getDisplayValue = (value: object) => {
-    return value?.node_value ? value.display_value : "";
-};
-
-const isEmpty = (value: object) => {
-    return !value?.node_value;
-};
-
-const id_fields = [
-    "borden_number",
-    "registration_date",
-    "registration_status",
-    "parcel_owner_type",
-    "site_creation_date",
-    "register_type",
-    "parent_site",
-    "site_alert",
-    "authority",
-    "site_names",
-];
-
-// Turn "borden_number" -> "Borden Number"
-const labelize = (key) =>
-    key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-
-const { info, refresh } = useThemeDebug({
-    log: true, // set false to silence console
-    varNames: ["--p-primary-700"], // add any extra vars you care about
-});
 </script>
 
 <template>

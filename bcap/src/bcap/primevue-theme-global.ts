@@ -2,10 +2,26 @@
 // If your project uses the PrimeUIX monorepo, keep '@primeuix/themes'.
 import { definePreset } from "@primeuix/themes";
 import Aura from "@primeuix/themes/aura"; // base preset (light). Other options: Lara, Nora, etc.
-// import Nora from '@primevue/themes/nora';
-// import Lara from '@primevue/themes/lara';
+import type { Preset } from "@primeuix/themes/types";
+import type { App } from "vue";
 
 import PrimeVue from "primevue/config";
+
+declare global {
+    interface Window {
+        BCAP: BcapConfig;
+    }
+    interface BcapConfig {
+        setPrimeVuePreset?: (preset: Preset) => void;
+        PRIMEVUE_PRESET: Preset;
+        vueKO: VueKO;
+    }
+    type VueAppMiddleware = (app: App) => void;
+    interface VueKO {
+        register: (middleware: VueAppMiddleware) => void;
+        use: (middleware: VueAppMiddleware) => void;
+    }
+}
 
 // Make your custom preset (optional; you can also pass Aura directly)
 const BcapPreset = definePreset(Aura, {
@@ -27,7 +43,7 @@ const BcapPreset = definePreset(Aura, {
 });
 
 // Register once with your KO↔Vue bridge so EVERY app gets PrimeVue + the preset.
-(window as any).BCAP?.vueKO?.use?.((app: any) => {
+window.BCAP?.vueKO?.use?.((app: App) => {
     app.use(PrimeVue, {
         theme: {
             preset: BcapPreset, // or Aura / Nora / Lara directly
@@ -39,8 +55,8 @@ const BcapPreset = definePreset(Aura, {
 });
 
 // (optional) runtime switch helper
-(window as any).BCAP = (window as any).BCAP || {};
-(window as any).BCAP.setPrimeVuePreset = (preset: any) => {
+window.BCAP = window.BCAP || {};
+window.BCAP.setPrimeVuePreset = (preset: Preset) => {
     // Every newly created app will use the new preset automatically via the middleware above.
-    (window as any).BCAP.PRIMEVUE_PRESET = preset;
+    window.BCAP.PRIMEVUE_PRESET = preset;
 };

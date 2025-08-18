@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { useThemeDebug } from "@/bcap/composables/useThemeDebug.ts";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
 // main.js or in your component's script setup
 import DataTable from "primevue/datatable";
@@ -38,11 +37,6 @@ const id_fields = [
 // Turn "borden_number" -> "Borden Number"
 const labelize = (key) =>
     key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-
-const { info, refresh } = useThemeDebug({
-    log: true, // set false to silence console
-    varNames: ["--p-primary-700"], // add any extra vars you care about
-});
 </script>
 
 <template>
