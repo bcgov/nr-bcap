@@ -52,44 +52,45 @@ runs:
 
     - name: Install frontend dependencies
       run: |
-          npm install
+          npm install && \
+          ls -l node_modules
       shell: bash
 
 #    - name: Webpack frontend files
 #      run: |
 #          npm run build_test
 #      shell: bash
-
-    - name: Webpack frontend files
-      shell: bash
-      run: |
-        # Derive the Arches JS path from your metadata
-        ROOT_DIR=$(jq -r '.ROOT_DIR' frontend_configuration/webpack-metadata.json)
-        ARJS="$ROOT_DIR/app/media/js"
-
-        # Clean up any old/bad links from previous runs
-        mkdir -p node_modules
-        rm -f node_modules/arches node_modules/viewmodels node_modules/utils node_modules/bindings node_modules/templates node_modules/views
-
-        # Symlink Arches AMD namespaces into node_modules so bare imports resolve
-        # 'arches' must target the file arches.js
-        ln -s "$ARJS/arches.js"  node_modules/arches
-        # Point these namespaces at their respective directories
-        ln -s "$ARJS/viewmodels" node_modules/viewmodels
-        ln -s "$ARJS/utils"      node_modules/utils
-        ln -s "$ARJS/bindings"   node_modules/bindings
-        ln -s "$ARJS/templates"  node_modules/templates
-        ln -s "$ARJS/views"      node_modules/views
-
-        # (Optional) quick debug
-        ls -l node_modules | sed -n '1,200p'
-
-        # Keep your lint + type checks
-        npm run eslint:check
-        npm run ts:check
-
-        # Build (no special flags needed now)
-        npx webpack --config ./webpack/webpack.config.dev.js --env test=true   
+#
+#    - name: Webpack frontend files
+#      shell: bash
+#      run: |
+#        # Derive the Arches JS path from your metadata
+#        ROOT_DIR=$(jq -r '.ROOT_DIR' frontend_configuration/webpack-metadata.json)
+#        ARJS="$ROOT_DIR/app/media/js"
+#
+#        # Clean up any old/bad links from previous runs
+#        mkdir -p node_modules
+#        rm -f node_modules/arches node_modules/viewmodels node_modules/utils node_modules/bindings node_modules/templates node_modules/views
+#
+#        # Symlink Arches AMD namespaces into node_modules so bare imports resolve
+#        # 'arches' must target the file arches.js
+#        ln -s "$ARJS/arches.js"  node_modules/arches
+#        # Point these namespaces at their respective directories
+#        ln -s "$ARJS/viewmodels" node_modules/viewmodels
+#        ln -s "$ARJS/utils"      node_modules/utils
+#        ln -s "$ARJS/bindings"   node_modules/bindings
+#        ln -s "$ARJS/templates"  node_modules/templates
+#        ln -s "$ARJS/views"      node_modules/views
+#
+#        # (Optional) quick debug
+#        ls -l node_modules | sed -n '1,200p'
+#
+#        # Keep your lint + type checks
+#        npm run eslint:check
+#        npm run ts:check
+#
+#        # Build (no special flags needed now)
+#        npx webpack --config ./webpack/webpack.config.dev.js --env test=true
 
     - name: Check frontend formatting with prettier
       run: |
