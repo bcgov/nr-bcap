@@ -55,10 +55,35 @@ runs:
           npm install
       shell: bash
 
+#    - name: Webpack frontend files
+#      run: |
+#          npm run build_test
+#      shell: bash
+
     - name: Webpack frontend files
-      run: |
-          npm run build_test
       shell: bash
+      run: |
+        # Derive the Arches JS path from the metadata your build already generates
+        ROOT_DIR=$(jq -r '.ROOT_DIR' webpack-metadata.json)
+        ARJS="$ROOT_DIR/app/media/js"
+
+        # (Safety) Symlink Arches' AMD namespaces into node_modules so bare imports resolve
+        mkdir -p node_modules || true
+        ln -s "$ARJS" node_modules/arches       2>/dev/null || true
+        ln -s "$ARJS" node_modules/viewmodels   2>/dev/null || true
+        ln -s "$ARJS" node_modules/utils        2>/dev/null || true
+        ln -s "$ARJS" node_modules/bindings     2>/dev/null || true
+        ln -s "$ARJS/templates" node_modules/templates 2>/dev/null || true
+        ln -s "$ARJS/views"     node_modules/views     2>/dev/null || true
+
+        # Keep your lint + type checks
+        npm run eslint:check
+        npm run ts:check
+
+        # Build with resolver hints so webpack looks inside site-packages
+        cross-env webpack --config ./webpack/webpack.config.dev.js --env test=true \
+          --resolve-alias arches="$ARJS/arches" \
+          --resolve-modules "$ARJS" node_modules      
 
     - name: Check frontend formatting with prettier
       run: |
