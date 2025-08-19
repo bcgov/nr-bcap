@@ -32,9 +32,13 @@ runs:
     - name: Install uv
       uses: astral-sh/setup-uv@v5
 
-    - name: Install Python packages
-      run: |
-        uv pip install --prerelease=allow --system '.[dev]'
+#    - name: Install Python packages
+#      run: |
+#        uv pip install --prerelease=allow --system '.[dev]'
+#      shell: bash
+
+    - name: Sync deps (incl. dev group)
+      run: uv sync --group dev
       shell: bash
 
     - name: Ensure frontend configuration files exist
