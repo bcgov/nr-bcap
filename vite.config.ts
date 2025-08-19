@@ -1,4 +1,5 @@
-import { defineConfig, Logger } from "vite";
+import { defineConfig } from "vite";
+import type { Logger } from "vite";
 import path from "path";
 import vue from "@vitejs/plugin-vue";
 import fs from "fs";
@@ -91,7 +92,8 @@ function MultiRootBareJsResolver() {
     ];
     const BASES = ROOTS.map((r) => path.join(r, "media", "js"));
     const exts = [".js", ".mjs", ".cjs", ".ts"];
-    const logger: ResolvedConfig["logger"] | null = null;
+    let logger: Logger | undefined;
+
     const out = (...a: any[]) => {
         const line = `[multi-root] ${a.join(" ")}`;
         if (logger) logger.info(line);
@@ -119,6 +121,9 @@ function MultiRootBareJsResolver() {
     return {
         name: "multi-root-bare-js-resolver",
         enforce: "pre" as const,
+        configResolved(config: ResolvedConfig) {
+            logger = config.logger;
+        },
         async resolveId(source: string, importer?: string) {
             // 1) Skip Vite internal/virtual ids and virtual importers
             if (
@@ -152,7 +157,7 @@ function MultiRootBareJsResolver() {
 }
 
 function MultiRootFailoverResolver() {
-    const logger: ResolvedConfig["logger"] | null = null;
+    let logger: Logger | undefined;
     const out = (...a: any[]) => {
         const line = `[multi-root-failover] ${a.join(" ")}`;
         if (logger) logger.info(line);
@@ -161,6 +166,9 @@ function MultiRootFailoverResolver() {
     return {
         name: "multi-root-failover-resolver",
         enforce: "pre" as const,
+        configResolved(config: ResolvedConfig) {
+            logger = config.logger;
+        },
 
         resolveId(id: string, importer?: string) {
             if (isUrl(id)) return null; // leave URLs alone

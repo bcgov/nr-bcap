@@ -2,14 +2,19 @@
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
+import type {
+    AliasedNodeData,
+    AliasedTileData,
+} from "@/arches_component_lab/types.ts";
 // main.js or in your component's script setup
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import "primeicons/primeicons.css";
+import type { IdentificationAndRegistrationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
 
 const props = withDefaults(
     defineProps<{
-        data: object;
+        data: IdentificationAndRegistrationTile | undefined;
         languageCode?: string;
     }>(),
     {
@@ -17,9 +22,13 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<object>(() => {
-    return props.data?.aliased_data;
-});
+const currentData = computed<IdentificationAndRegistrationTile | undefined>(
+    (): AliasedTileData | undefined => {
+        return props.data?.aliased_data as
+            | IdentificationAndRegistrationTile
+            | undefined;
+    },
+);
 
 const id_fields = [
     "borden_number",
@@ -32,10 +41,12 @@ const id_fields = [
     "site_alert",
     "authority",
     "site_names",
-];
+] as const;
+
+type IdFieldKey = (typeof id_fields)[number];
 
 // Turn "borden_number" -> "Borden Number"
-const labelize = (key) =>
+const labelize = (key: string) =>
     key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 </script>
 
@@ -51,15 +62,37 @@ const labelize = (key) =>
                         v-for="field in id_fields"
                         :key="field"
                     >
-                        <dt v-if="!isEmpty(currentData?.[field])">
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.[
+                                        field as IdFieldKey
+                                    ] as AliasedNodeData,
+                                )
+                            "
+                        >
                             {{ labelize(field) }}
                         </dt>
-                        <dd v-if="!isEmpty(currentData?.[field])">
-                            {{ getDisplayValue(currentData?.[field]) }}
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.[
+                                        field as IdFieldKey
+                                    ] as AliasedNodeData,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.[
+                                        field as IdFieldKey
+                                    ] as AliasedNodeData,
+                                )
+                            }}
                         </dd>
                     </template>
                 </dl>
-                <dl v-if="currentData?.site_decision?.length > 0">
+                <dl v-if="(currentData?.site_decision?.length ?? 0) > 0">
                     <dt>Decision History</dt>
                     <dd>
                         <DataTable

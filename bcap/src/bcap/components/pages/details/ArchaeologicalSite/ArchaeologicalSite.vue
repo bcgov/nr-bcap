@@ -4,7 +4,9 @@ import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue"
 import { getResourceData } from "@/bcap/components/pages/api.ts";
 // main.js or in your component's script setup
 import "primeicons/primeicons.css";
-import Section2 from "./sections/DetailsSection2.vue";
+import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
+import type { TileReference } from "@/bcap/types.ts";
+import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
 
 type LangCode = string;
 interface Descriptor {
@@ -28,7 +30,7 @@ const formattedNow = computed(() => {
 
 const props = withDefaults(
     defineProps<{
-        data: object;
+        data: TileReference[];
         resourceDescriptors: ResourceDescriptors;
         languageCode?: string;
     }>(),
@@ -37,17 +39,17 @@ const props = withDefaults(
         languageCode: "en",
     },
 );
-type ResourceCache = Record<string, object>;
+type ResourceCache = Record<string, ArchaeologySiteSchema>;
 
-const resourceCache = ref<ResourceCache>({});
-const currentData = ref<object>({});
+const resourceCache = ref<ResourceCache>({} as ResourceCache);
+const currentData = ref<ArchaeologySiteSchema>({} as ArchaeologySiteSchema);
 watchEffect(async () => {
-    const resourceId = props.data?.[0]?.resourceinstance_id;
+    const resourceId: string = props.data?.[0]?.resourceinstance_id;
     resourceCache.value[resourceId] = await getResourceData(
         "archaeological_site",
         resourceId,
     );
-    currentData.value = resourceCache.value[resourceId];
+    currentData.value = resourceCache.value[resourceId as string];
     console.log(Object.keys(resourceCache.value).length);
 });
 
@@ -81,20 +83,20 @@ const now = ref(new Date());
                         <dd>
                             {{
                                 currentData.aliased_data?.site_boundary
-                                    ?.aliased_data.source_notes.display_value
+                                    ?.aliased_data.source_notes?.display_value
                             }}
                         </dd>
                         <div
                             v-if="
                                 currentData.aliased_data?.site_boundary
-                                    ?.aliased_data?.latest_edit_type.node_value
+                                    ?.aliased_data?.latest_edit_type?.node_value
                             "
                         >
                             <dt>Latest Edit Type</dt>
                             <dd>
                                 {{
                                     currentData.aliased_data?.site_boundary
-                                        .aliased_data?.latest_edit_type
+                                        ?.aliased_data?.latest_edit_type
                                         ?.display_value
                                 }}
                             </dd>

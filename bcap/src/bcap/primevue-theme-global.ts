@@ -1,27 +1,9 @@
-// If you are on PrimeVue v4 use '@primevue/themes'.
-// If your project uses the PrimeUIX monorepo, keep '@primeuix/themes'.
 import { definePreset } from "@primeuix/themes";
 import Aura from "@primeuix/themes/aura"; // base preset (light). Other options: Lara, Nora, etc.
 import type { Preset } from "@primeuix/themes/types";
 import type { App } from "vue";
 
 import PrimeVue from "primevue/config";
-
-declare global {
-    interface Window {
-        BCAP: BcapConfig;
-    }
-    interface BcapConfig {
-        setPrimeVuePreset?: (preset: Preset) => void;
-        PRIMEVUE_PRESET: Preset;
-        vueKO: VueKO;
-    }
-    type VueAppMiddleware = (app: App) => void;
-    interface VueKO {
-        register: (middleware: VueAppMiddleware) => void;
-        use: (middleware: VueAppMiddleware) => void;
-    }
-}
 
 // Make your custom preset (optional; you can also pass Aura directly)
 const BcapPreset = definePreset(Aura, {
