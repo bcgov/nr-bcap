@@ -38,12 +38,11 @@ runs:
 #      shell: bash
 
     - name: Sync deps (incl. dev group)
-      run: uv sync --prerelease=allow --system --group dev
+      run: uv sync --prerelease=allow --group dev
       shell: bash
 
     - name: Ensure frontend configuration files exist
-      run: |
-          python manage.py check
+      run: uv run python manage.py check
       shell: bash
 
     - name: Install Arches applications
@@ -67,8 +66,7 @@ runs:
       shell: bash
 
     - name: Check backend formatting with black
-      run: |
-        black . --check --exclude=node_modules
+      run: uv run black . --check --exclude=node_modules
       shell: bash
 
     - name: Check line endings on all but ontology (.xml) files
@@ -83,24 +81,21 @@ runs:
       shell: bash
 
     - name: Check for missing migrations
-      run: |
-        python manage.py makemigrations --check
+      run: uv run python manage.py makemigrations --check
       shell: bash
 
     - name: Ensure previous Python coverage data is erased
-      run: |
-        coverage erase
+      run: uv run coverage erase
       shell: bash
 
     - name: Run Python unit tests
-      run: |
-        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
+      run: uv run python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
       shell: bash
 
     - name: Generate Python report coverage
       run: |
-        coverage report
-        coverage json
+        uv run coverage report
+        uv run coverage json
         mv coverage/python/coverage.json ${{ inputs.branch-type }}_branch_python_coverage.json
       shell: bash
 
