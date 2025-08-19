@@ -30,7 +30,7 @@
         "../node_modules/*"
       ],
       "@/bcap/*": ["bcap/src/bcap/*"],
-      "@/arches_component_lab/*": ["../arches-component-lab/arches_component_lab/src/arches_component_lab/*"]
+      "@/arches_component_lab/*": ["node_modules/arches_component_lab/src/arches_component_lab/*"]
     },
     "rootDirs": [
       "bcap/media/js",
