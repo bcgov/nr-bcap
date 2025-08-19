@@ -64,7 +64,7 @@ runs:
       shell: bash
       run: |
         # Derive the Arches JS path from the metadata your build already generates
-        ROOT_DIR=$(jq -r '.ROOT_DIR' webpack-metadata.json)
+        ROOT_DIR=$(jq -r '.ROOT_DIR' frontend_configuration/webpack-metadata.json)
         ARJS="$ROOT_DIR/app/media/js"
 
         # (Safety) Symlink Arches' AMD namespaces into node_modules so bare imports resolve
