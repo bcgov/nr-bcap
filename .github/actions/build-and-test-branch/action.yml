@@ -38,7 +38,7 @@ runs:
 #      shell: bash
 
     - name: Sync deps (incl. dev group)
-      run: uv sync --group dev
+      run: uv sync --prerelease=allow --group dev
       shell: bash
 
     - name: Ensure frontend configuration files exist
