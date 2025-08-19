@@ -81,9 +81,9 @@ runs:
         npm run ts:check
 
         # Build with resolver hints so webpack looks inside site-packages
-        cross-env webpack --config ./webpack/webpack.config.dev.js --env test=true \
+        npx webpack --config ./webpack/webpack.config.dev.js --env test=true \
           --resolve-alias arches="$ARJS/arches" \
-          --resolve-modules "$ARJS" node_modules      
+          --resolve-modules "$ARJS" node_modules    
 
     - name: Check frontend formatting with prettier
       run: |
