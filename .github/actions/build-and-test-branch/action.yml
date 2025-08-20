@@ -56,11 +56,11 @@ runs:
           ls -l node_modules
       shell: bash
 
-#    - name: Webpack frontend files
-#      run: |
-#          npm run build_test
-#      shell: bash
-#
+    - name: Webpack frontend files
+      run: |
+          npm run build_test
+      shell: bash
+
 #    - name: Webpack frontend files
 #      shell: bash
 #      run: |
