@@ -4,7 +4,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from authlib.integrations.requests_client import OAuth2Session
 from django.conf import settings
-from bcap.util.auth import token_store
+from bcgov_arches_common.util.auth import token_store
 
 
 class BCAPOAuthTestMixin:
