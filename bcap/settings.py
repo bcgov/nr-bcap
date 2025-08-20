@@ -244,7 +244,6 @@ AUTHENTICATION_BACKENDS = (
     "oauth2_provider.backends.OAuth2Backend",
     "django.contrib.auth.backends.ModelBackend",  # this is default # Comment out for IDIR
     # "django.contrib.auth.backends.RemoteUserBackend",
-    # "bcap.util.auth.backends.BCGovRemoteUserBackend",  # For IDIR authentication behind legacy siteminder
     "guardian.backends.ObjectPermissionBackend",
     "arches.app.utils.permission_backend.PermissionBackend",
 )
@@ -448,7 +447,7 @@ AUTHLIB_OAUTH_CLIENTS = {
 }
 
 # Optional: storage location for updated tokens
-OAUTH2_TOKEN_STORE = "bcap.util.auth.token_store.save_token"
+OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
 
 APP_TITLE = "BC Government | Historic Place Inventory"
 COPYRIGHT_TEXT = "All Rights Reserved."

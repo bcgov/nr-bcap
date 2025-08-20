@@ -28,7 +28,10 @@ class BCAPOAuthTestMixin:
 
 class OAuthTokenRefreshTest(TestCase, BCAPOAuthTestMixin):
 
-    @patch("bcap.util.auth.token_store.save_token", wraps=token_store.save_token)
+    @patch(
+        "bcgov_arches_common.util.auth.token_store.save_token",
+        wraps=token_store.save_token,
+    )
     def test_refresh_triggers_save_token(self, spy_save_token):
         expired_token = {
             "access_token": "expired-token",
