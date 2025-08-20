@@ -98,7 +98,7 @@ runs:
       shell: bash
 
     - name: Check backend formatting with black
-      run: uv run black . --check --exclude=node_modules
+      run: uv run black . --check --exclude=node_modules --exclude=.venv
       shell: bash
 
     - name: Check line endings on all but ontology (.xml) files
