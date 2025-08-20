@@ -84,7 +84,6 @@ urlpatterns = [
     path(bc_path_prefix(), include("arches_component_lab.urls")),
     path(bc_path_prefix(), include("arches_querysets.urls")),
     path(bc_path_prefix(), include("bcgov_arches_common.urls")),
-
     bc_url_resolver,
 ]
 # Ensure Arches core urls are superseded by project-level urls
