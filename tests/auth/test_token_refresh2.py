@@ -12,7 +12,7 @@ class BCAPOAuthTestMixin:
         """
         Returns an Authlib OAuth2Session configured to use the BCAP OAuth client config.
         """
-        oauth_config = settings.AUTHLIB_OAUTH_CLIENTS["bcap_oauth"]
+        oauth_config = settings.AUTHLIB_OAUTH_CLIENTS["default"]
         return oauth_config, OAuth2Session(
             client_id=oauth_config["client_id"],
             client_secret=oauth_config["client_secret"],
