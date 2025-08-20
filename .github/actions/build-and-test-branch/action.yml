@@ -58,6 +58,7 @@ runs:
 
     - name: Webpack frontend files
       run: |
+          ls -l /home/runner/work/nr-bcap/nr-bcap/.venv/lib/python3.12/site-packages
           npm run build_test
       shell: bash
 
