@@ -121,7 +121,9 @@ runs:
       shell: bash
 
     - name: Run Python unit tests
-      run: uv run python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
+      run: |
+        find . -name webpack-stats.json
+        uv run python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
       shell: bash
 
     - name: Generate Python report coverage
