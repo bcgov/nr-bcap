@@ -5736,7 +5736,9 @@
                 },
                 {
                     "alias": "bcap_submission_status",
-                    "config": {},
+                    "config": {
+                        "rdmCollection": "a45b6273-46c0-550e-9caf-a26758834eb3"
+                    },
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
@@ -6981,7 +6983,9 @@
                 },
                 {
                     "alias": "biogeography_type",
-                    "config": {},
+                    "config": {
+                        "rdmCollection": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d"
+                    },
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
