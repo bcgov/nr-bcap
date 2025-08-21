@@ -613,7 +613,7 @@ except ImportError:
 # BCGov specific settings. Should these be externalized into separate file?
 ###########
 
-WEBPACK_DEVELOPMENT_SERVER_PORT = 9000
+WEBPACK_DEVELOPMENT_SERVER_PORT = 5175
 
 ARCHES_NAMESPACE_FOR_DATA_EXPORT = PUBLIC_SERVER_ADDRESS
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
