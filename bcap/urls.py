@@ -81,6 +81,8 @@ urlpatterns = [
         bcap_export_results,
         name="export_results",
     ),
+    path(bc_path_prefix(), include("arches_component_lab.urls")),
+    path(bc_path_prefix(), include("arches_querysets.urls")),
     path(bc_path_prefix(), include("bcgov_arches_common.urls")),
     bc_url_resolver,
 ]

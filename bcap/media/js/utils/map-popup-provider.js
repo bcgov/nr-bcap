@@ -1,7 +1,7 @@
 import ko from "knockout";
 import _ from "underscore";
-import defaultTemplate from "templates/views/components/map_popup/toggle-map-popup.htm?inline";
-import editPopup from "templates/views/components/map_popup/edit-map-popup.htm?inline";
+import defaultTemplate from "templates/views/components/map_popup/toggle-map-popup.htm";
+import editPopup from "templates/views/components/map_popup/edit-map-popup.htm";
 const popupDataProvider = {
     layerConfigs: {
         "WHSE_CADASTRE.PMBC_PARCEL_FABRIC_POLY_SVW": {
