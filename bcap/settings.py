@@ -214,24 +214,54 @@ INSTALLED_APPS = (
     "arches.management",
     "guardian",
     "django_recaptcha",
-    "arches_querysets",
-    "arches_component_lab",
-    "arches_controlled_lists",
     "pgtrigger",
     "revproxy",
+    "django_migrate_sql",
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
     # "compressor",
     # "silk",
+    "django_vite",
     "storages",
     "bcap",
+    "arches_querysets",
+    "arches_component_lab",
+    "arches_controlled_lists",
+    "rest_framework",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += (
     "arches.app",
     "django.contrib.admin",
 )
+
+# toggle Vite injection
+USE_VITE = False
+VITE_BASE = "/bcap/@vite/"
+
+# These are the Vue entrypoints that can be served by Vite on a page-by-page basis.
+VITE_ENTRYPOINTS = {"/bcap/search": ["bcap/vite-entries/bcap-site.entry.js"]}
+
+# django_vite SETTINGS
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": USE_VITE,
+        "static_url_prefix": "/bcrhp/static",
+        # "static_url_prefix": "/",
+    }
+}
+# BASE_DIR = "/web_root/bcap/bcap/src"
+BASE_DIR = "/web_root/bcap"
+# Where ViteJS assets are built.
+DJANGO_VITE_ASSETS_PATH = os.path.join(BASE_DIR, "staticfiles", "dist")
+# If use HMR or not.
+# DJANGO_VITE_DEV_MODE = DEBUG
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5175",
+    "http://localhost:82",
+]
+# END django_vite SETTINGS
 
 ROOT_HOSTCONF = "bcap.hosts"
 DEFAULT_HOST = "bcap"
@@ -241,11 +271,9 @@ AUTHENTICATION_BACKENDS = (
     "oauth2_provider.backends.OAuth2Backend",
     "django.contrib.auth.backends.ModelBackend",  # this is default # Comment out for IDIR
     # "django.contrib.auth.backends.RemoteUserBackend",
-    # "bcap.util.auth.backends.BCGovRemoteUserBackend",  # For IDIR authentication behind legacy siteminder
     "guardian.backends.ObjectPermissionBackend",
     "arches.app.utils.permission_backend.PermissionBackend",
 )
-
 
 
 MIDDLEWARE = [
@@ -281,6 +309,11 @@ TEMPLATES = build_templates_config(
     debug=DEBUG,
     app_root=APP_ROOT,
 )
+
+# make vite context processor available in templates
+TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "bcap.context_processors.vite",
+]
 
 ALLOWED_HOSTS = get_env_variable("ALLOWED_HOSTS").split()
 
@@ -401,22 +434,27 @@ OAUTH_CLIENT_ID = ""  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 
 # Allow cookies on cross-site OAuth callback
 # This is required to allow OAUTH framework to work w/ Django 5.2.x
-SESSION_COOKIE_SAMESITE = None      # allows cookie to be sent on third‑party POSTs
-SESSION_COOKIE_SECURE = True       # required for SameSite=None
-CSRF_COOKIE_SAMESITE = None        # if using CSRF in session-backed mode
+SESSION_COOKIE_SAMESITE = None  # allows cookie to be sent on third‑party POSTs
+SESSION_COOKIE_SECURE = True  # required for SameSite=None
+CSRF_COOKIE_SAMESITE = None  # if using CSRF in session-backed mode
 CSRF_COOKIE_SECURE = True
+if DEBUG:
+    # trust proxy headers for host/port/proto
+    USE_X_FORWARDED_HOST = True
+    CSRF_TRUSTED_ORIGINS = ["http://localhost:82"]
+    PUBLIC_ORIGIN = "http://localhost:82"
 
 AUTHLIB_OAUTH_CLIENTS = {
-    'default': {
-        'client_id': get_env_variable("OAUTH_CLIENT_ID"),
-        'client_secret': get_env_variable("OAUTH_CLIENT_SECRET"),
-        'authorize_url': get_env_variable("OAUTH_AUTH_ENDPOINT"),
-        'access_token_url': get_env_variable("OAUTH_TOKEN_ENDPOINT"),
-        'refresh_token_url': get_env_variable("OAUTH_TOKEN_ENDPOINT"),
-        'server_metadata_url': get_env_variable("OAUTH_SERVER_METADATA_URL"),
-        'client_kwargs': {
-            'scope': 'openid profile email',
-            'token_endpoint_auth_method': 'client_secret_post',
+    "default": {
+        "client_id": get_env_variable("OAUTH_CLIENT_ID"),
+        "client_secret": get_env_variable("OAUTH_CLIENT_SECRET"),
+        "authorize_url": get_env_variable("OAUTH_AUTH_ENDPOINT"),
+        "access_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT"),
+        "refresh_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT"),
+        "server_metadata_url": get_env_variable("OAUTH_SERVER_METADATA_URL"),
+        "client_kwargs": {
+            "scope": "openid profile email",
+            "token_endpoint_auth_method": "client_secret_post",
         },
         "urls": {
             "home_page": "/bcap/",
@@ -436,7 +474,7 @@ AUTHLIB_OAUTH_CLIENTS = {
 }
 
 # Optional: storage location for updated tokens
-OAUTH2_TOKEN_STORE = 'bcap.util.auth.token_store.save_token'
+OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
 
 SAVED_SEARCHES = []
 
@@ -604,7 +642,7 @@ except ImportError:
 # BCGov specific settings. Should these be externalized into separate file?
 ###########
 
-WEBPACK_DEVELOPMENT_SERVER_PORT = 9000
+WEBPACK_DEVELOPMENT_SERVER_PORT = 5175
 
 ARCHES_NAMESPACE_FOR_DATA_EXPORT = PUBLIC_SERVER_ADDRESS
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"

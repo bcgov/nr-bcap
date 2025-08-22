@@ -23,18 +23,21 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "arches>=8.0.0a4",
+    "arches>=8.0.2",
     "arches_component_lab",
+    "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common@brf/feat/214_upgrade_to_v8_take2",
     "arches_querysets",
-    "arches-controlled-lists",
-    "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common",
+    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@main",
     "boto3==1.26",
+    "django-migrate-sql-deux==1.1.1",
+    "django-pgtrigger==4.15.2",
     "django-storages==1.13",
     "redis",
     "python-dotenv",
     "oracledb",
     "html2text",
     "Authlib",
+    "django-captcha"
 ]
 
 version = "0.0.1"
@@ -47,7 +50,8 @@ dev = [
     "django-silk==5.1.0",
     "pre-commit==3.8.0",
     "black==24.4.2",
-    "requests-mock==1.12.1"
+    "requests-mock==1.12.1",
+    "django-vite",
 ]
 
 [tool.setuptools]

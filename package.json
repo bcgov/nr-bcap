@@ -5,7 +5,7 @@
         "build_development": "npm i typescript@5.6.2 && npm run eslint:check && npm run ts:check && cross-env webpack --config ./webpack/webpack.config.dev.js",
         "build_production": "npm run eslint:check && npm run ts:check && cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.prod.js",
         "build_test": "npm run eslint:check && npm run ts:check && cross-env webpack --config ./webpack/webpack.config.dev.js --env test=true",
-        "eslint:check": "eslint **/src",
+        "eslint:check": "eslint **/src/bcap",
         "eslint:fix": "eslint --fix",
         "eslint:fix:all": "npm run eslint:fix **/src",
         "eslint:watch": "nodemon --watch . --ext ts,vue --exec npm run --silent eslint:check",
@@ -17,6 +17,8 @@
         "ts:check": "vue-tsc --noEmit",
         "ts:watch": "vue-tsc --watch --noEmit",
         "start": "cross-env webpack serve --config ./webpack/webpack.config.dev.js",
+        "vite_dev": "DEBUG=vite:* vite --host --force",
+        "vite_build": "DEBUG=vite:*  vite build",
         "vitest": "vitest --run --coverage"
     },
     "overrides": {
@@ -26,15 +28,24 @@
         "underscore": "^1.13.6"
     },
     "devDependencies": {
+        "@primevue/auto-import-resolver": "^4.3.7",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
+        "eslint-config-prettier": "^10.1.5",
         "prettier": "^3.6.2",
-        "prettier-plugin-jinja-template": "^2.1.0"
+        "prettier-plugin-jinja-template": "^2.1.0",
+        "unplugin-vue-components": "^29.0.0",
+        "vite": "^6.2.1",
+        "webpack-bundle-tracker": "^3.2.1"
     },
     "dependencies": {
+        "@primeuix/themes": "^1.2.3",
         "ajv": "^8.17.1",
-        "arches": "github:archesproject/arches#dev/8.0.x",
+        "arches": "bcgov/arches#stable/8.0.2_12377",
+        "arches_component_lab": "github:archesproject/arches-component-lab#main",
         "arches_controlled_lists": "archesproject/arches-controlled-lists#main",
-        "bcgov_arches_common": "github:bcgov/bcgov-arches-common",
+        "bcgov_arches_common": "github:bcgov/bcgov-arches-common#brf/feat/214_upgrade_to_v8_take2",
+        "datatables.net": "^1.13.11",
+        "js-cookie": "^3.0.5",
         "eslint-config-prettier": "^10.1.5",
         "typescript": "^5.6.2"
     },

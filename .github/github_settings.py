@@ -196,8 +196,10 @@ INSTALLED_APPS = (
     "arches.app.models",
     "arches.management",
     "guardian",
-    "captcha",
+    "django_recaptcha",
+    "pgtrigger",
     "revproxy",
+    "django_migrate_sql",
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
@@ -205,6 +207,10 @@ INSTALLED_APPS = (
     # "silk",
     "storages",
     "bcap",
+    "arches_querysets",
+    "arches_component_lab",
+    "arches_controlled_lists",
+    "rest_framework",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += ("arches.app",)
@@ -236,7 +242,7 @@ MIDDLEWARE = [
     "arches.app.utils.middleware.ModifyAuthorizationHeader",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "bcap.util.auth.oauth_token_refresh.OAuthTokenRefreshMiddleware",
+    "bcgov_arches_common.util.auth.oauth_token_refresh.OAuthTokenRefreshMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
@@ -370,14 +376,39 @@ OAUTH_CLIENT_ID = get_env_variable(
 
 # Authlib configuration for test (local fake provider)
 AUTHLIB_OAUTH_CLIENTS = {
-    "bcap_oauth": {
-        "client_id": "test-client-id",
-        "client_secret": "test-client-secret",
-        "authorize_url": "http://localhost:9999/fake-oauth/authorize",
-        "access_token_url": "http://localhost:9999/fake-oauth/token",
-        "userinfo_endpoint": "http://localhost:9999/fake-oauth/userinfo",
+    "default": {
+        "client_id": get_env_variable("OAUTH_CLIENT_ID", "test-client-id"),
+        "client_secret": get_env_variable("OAUTH_CLIENT_SECRET", "test-client-secret"),
+        "authorize_url": get_env_variable(
+            "OAUTH_AUTH_ENDPOINT", "http://localhost:9999/fake-oauth/authorize"
+        ),
+        "access_token_url": get_env_variable(
+            "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
+        ),
+        "refresh_token_url": get_env_variable(
+            "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
+        ),
+        "server_metadata_url": get_env_variable(
+            "OAUTH_SERVER_METADATA_URL",
+            "http://localhost:9999/fake-oauth/.well-known/openid-configuration",
+        ),
         "client_kwargs": {
-            "scope": "openid email profile",
+            "scope": "openid profile email",
+            "token_endpoint_auth_method": "client_secret_post",
+        },
+        "urls": {
+            "home_page": "/bcap/",
+            "unauthorized_page": "/bcap/unauthorized",
+            "unauthorized_template": "unauthorized.htm",
+            "auth_exempt_pages": [
+                "/bcap",
+                "/bcap/",
+                "/unauthorized",
+                "/bcap/index.htm",
+                "/bcap/auth",
+                "/bcap/auth/eoauth_start",
+                "/bcap/auth/eoauth_cb",
+            ],
         },
     }
 }
@@ -414,9 +445,8 @@ CELERY_WORKER_NAME = get_env_variable("CELERY_WORKER_NAME", default="bcap_dev")
 
 # RabbitMQ --> "amqp://guest:guest@localhost",
 # Redis --> "redis://localhost:6379/0"
-CELERY_BROKER_URL = get_env_variable(
-    "CELERY_BROKER_URL", default="redis://localhost:6379/0"
-)
+CELERY_BROKER_URL = ""
+
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_RESULT_BACKEND = (
     "django-db"  # Use 'django-cache' if you want to use your cache as your backend
