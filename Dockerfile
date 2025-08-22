@@ -7,6 +7,7 @@ ENV APP_ROOT=${WEB_ROOT}/${PROJECT_NAME}
 # Root project folder
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV COMMON_ROOT=${WEB_ROOT}/bcgov-arches-common
+ENV CONTROLLED_LISTS_ROOT=${WEB_ROOT}/arches-controlled-lists
 ENV COMPONENT_LAB_ROOT=${WEB_ROOT}/arches-component-lab
 ENV QUERYSETS_ROOT=${WEB_ROOT}/arches-querysets
 ENV WHEELS=/wheels
@@ -60,6 +61,10 @@ RUN pip install -e .[dev] && \
 
 COPY ./bcgov-arches-common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}
+RUN pip install -e .
+
+COPY ./arches-controlled-lists ${CONTROLLED_LISTS_ROOT}
+WORKDIR ${CONTROLLED_LISTS_ROOT}
 RUN pip install -e .
 
 COPY ./arches-component-lab ${COMPONENT_LAB_ROOT}

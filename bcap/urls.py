@@ -81,15 +81,13 @@ urlpatterns = [
         bcap_export_results,
         name="export_results",
     ),
+    path(bc_path_prefix(), include("bcgov_arches_common.urls")),
+    path(bc_path_prefix(), include("arches_controlled_lists.urls")),
     path(bc_path_prefix(), include("arches_component_lab.urls")),
     path(bc_path_prefix(), include("arches_querysets.urls")),
-    path(bc_path_prefix(), include("bcgov_arches_common.urls")),
-    bc_url_resolver,
 ]
 # Ensure Arches core urls are superseded by project-level urls
-urlpatterns.append(path("", include("arches_component_lab.urls")))
-urlpatterns.append(path("", include("arches_controlled_lists.urls")))
-urlpatterns.append(path("", include("arches.urls")))
+urlpatterns.append(path("",  include("arches.urls")))
 
 handler400 = "arches.app.views.main.custom_400"
 handler403 = "arches.app.views.main.custom_403"

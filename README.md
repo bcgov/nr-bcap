@@ -14,6 +14,7 @@ BC Archaeology Branch Arches configuration, schemas and extensions for the BC Ar
 git clone https://github.com/bcgov/arches-dependency-containers
 git clone https://github.com/bcgov/arches
 git clone https://github.com/archesproject/arches-component-lab
+git clone https://github.com/archesproject/arches-controlled-lists
 git clone https://github.com/archesproject/arches-querysets
 git clone https://github.com/bcgov/bcgov-arches-common
 git clone https://github.com/bcgov/nr-bcap
@@ -28,6 +29,7 @@ git clone https://github.com/bcgov/nr-bcap
     ├── 📁 bcgov-arches-common/
     ├── 📁 arches-querysets/
     ├── 📁 arches-component-lab/
+    ├── 📁 arches-controlled-lists/
     └── 📁 nr-bcap/
 ```
 
@@ -35,7 +37,7 @@ git clone https://github.com/bcgov/nr-bcap
 1. Open or navigate to the `bcap` directory in the terminal
 2. Run the following command:
 ```
-cd arches && git checkout stable/7.6.12_bcgov.1
+cd arches && git checkout stable/8.0.3_bcgov_12377
 ```
 
 # Docker configuration
