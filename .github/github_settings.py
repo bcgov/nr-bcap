@@ -209,6 +209,7 @@ INSTALLED_APPS = (
     "bcap",
     "arches_querysets",
     "arches_component_lab",
+    "arches_controlled_lists",
     "rest_framework",
     "bcgov_arches_common",
 )
