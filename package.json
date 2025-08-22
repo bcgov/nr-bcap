@@ -45,8 +45,8 @@
         "arches_controlled_lists": "archesproject/arches-controlled-lists#main",
         "bcgov_arches_common": "github:bcgov/bcgov-arches-common#brf/feat/214_upgrade_to_v8_take2",
         "datatables.net": "^1.13.11",
-        "js-cookie": "^3.0.5",
         "eslint-config-prettier": "^10.1.5",
+        "js-cookie": "^3.0.5",
         "typescript": "^5.6.2"
     },
     "nodeModulesPaths": {}
