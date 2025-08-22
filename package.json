@@ -28,7 +28,6 @@
         "underscore": "^1.13.6"
     },
     "devDependencies": {
-
         "@primevue/auto-import-resolver": "^4.3.7",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
         "eslint-config-prettier": "^10.1.5",
