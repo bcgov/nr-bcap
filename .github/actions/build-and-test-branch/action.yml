@@ -40,12 +40,13 @@ runs:
     - name: Install Python packages
       run: |
         python -m pip install --upgrade pip
-        pip install '.[dev]'
+        pip install . --group dev
         echo Python packages installed
       shell: bash
 
     - name: Ensure frontend configuration files exist
-      run: python manage.py check
+      run: |
+          python manage.py check
       shell: bash
 
     - name: Install Arches applications
@@ -55,13 +56,11 @@ runs:
 
     - name: Install frontend dependencies
       run: |
-          npm install && \
-          ls -l node_modules
+          npm install
       shell: bash
 
     - name: Webpack frontend files
       run: |
-          ls -l /home/runner/work/nr-bcap/nr-bcap/.venv/lib/python3.12/site-packages/arches/app/media/js
           npm run build_test
       shell: bash
 
@@ -102,7 +101,8 @@ runs:
       shell: bash
 
     - name: Check backend formatting with black
-      run: black . --check --extend-exclude=node_modules
+      run: |
+        black . --check --exclude=node_modules
       shell: bash
 
     - name: Check line endings on all but ontology (.xml) files
@@ -117,15 +117,18 @@ runs:
       shell: bash
 
     - name: Check for missing migrations
-      run: python manage.py makemigrations --check
+      run: |
+        python manage.py makemigrations --check
       shell: bash
 
     - name: Ensure previous Python coverage data is erased
-      run: coverage erase
+      run: |
+        coverage erase
       shell: bash
 
     - name: Run Python unit tests
-      run: python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
+      run: |
+        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
       shell: bash
 
     - name: Generate Python report coverage
