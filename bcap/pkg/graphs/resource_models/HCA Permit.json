@@ -35,12 +35,10 @@
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "HCA Permit Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -53,17 +51,15 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Issuing Agency",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -76,7 +72,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
@@ -318,9 +314,10 @@
                 {
                     "alias": "issuing_agency",
                     "config": {
-                        "rdmCollection": "7ee66bc8-66cb-5b86-bb93-f17bf3d93cc0"
+                        "controlledList": "7ee66bc8-66cb-5b86-bb93-f17bf3d93cc0",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -343,9 +340,10 @@
                 {
                     "alias": "hca_permit_type",
                     "config": {
-                        "rdmCollection": "f88307b2-99e8-54cf-bbb4-aac72a017f0f"
+                        "controlledList": "f88307b2-99e8-54cf-bbb4-aac72a017f0f",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -476,6 +474,6 @@
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
