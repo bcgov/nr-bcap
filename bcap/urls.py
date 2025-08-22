@@ -85,6 +85,8 @@ urlpatterns = [
     bc_url_resolver,
 ]
 # Ensure Arches core urls are superseded by project-level urls
+urlpatterns.append(path("", include("arches_component_lab.urls")))
+urlpatterns.append(path("", include("arches_controlled_lists.urls")))
 urlpatterns.append(path("", include("arches.urls")))
 
 handler400 = "arches.app.views.main.custom_400"

@@ -101,12 +101,10 @@
                 {
                     "card_id": "7e71fa57-b986-406b-bde6-3a8996937fe8",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Legal Instrument",
-                        "options": [],
                         "placeholder": {
                             "en": "Select the legal instrument"
                         }
@@ -119,7 +117,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7b496e9d-021c-4807-8448-1c2d7902f5f8",
@@ -175,12 +173,10 @@
                 {
                     "card_id": "7e71fa57-b986-406b-bde6-3a8996937fe8",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Recognition Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select the recognition type"
                         }
@@ -193,7 +189,7 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "a95ce7c2-c772-444e-9c31-be33dcd2c7bc",
@@ -284,12 +280,10 @@
                 {
                     "card_id": "7e71fa57-b986-406b-bde6-3a8996937fe8",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Authority",
-                        "options": [],
                         "placeholder": {
                             "en": "Select the level of the responsible government"
                         }
@@ -302,7 +296,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "7b496e9d-021c-4807-8448-1c2d7902f5f8",
@@ -558,9 +552,10 @@
                 {
                     "alias": "legal_instrument",
                     "config": {
-                        "rdmCollection": "b0248b36-a1ba-51f5-a7c2-ffb79f17bb7b"
+                        "controlledList": "b0248b36-a1ba-51f5-a7c2-ffb79f17bb7b",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "legalact",
@@ -583,9 +578,10 @@
                 {
                     "alias": "authority",
                     "config": {
-                        "rdmCollection": "de47e759-abb7-5b90-b229-67f94999cb46"
+                        "controlledList": "de47e759-abb7-5b90-b229-67f94999cb46",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "authority",
@@ -607,9 +603,7 @@
                 },
                 {
                     "alias": "act_section",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "string",
                     "description": null,
                     "exportable": true,
@@ -633,9 +627,10 @@
                 {
                     "alias": "recognition_type",
                     "config": {
-                        "rdmCollection": "c77ecae8-8656-50e3-9090-893787af94f2"
+                        "controlledList": "c77ecae8-8656-50e3-9090-893787af94f2",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": true,
                     "fieldname": "rcgntntp",
@@ -939,6 +934,6 @@
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
