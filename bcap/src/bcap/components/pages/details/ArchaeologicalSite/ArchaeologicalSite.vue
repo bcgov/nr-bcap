@@ -60,10 +60,11 @@ const now = ref(new Date());
     <div class="container">
         <div class="report-toolbar-preview ep-form-toolbar">
             <h4 class="report-toolbar-title">
-                <span class="bc-report-title">Archaeological Site</span> -
-                <span class="bc-report-title">{{
-                    props?.resourceDescriptors?.[props.languageCode]?.name
-                }}</span>
+                <span class="bc-report-title">Archaeological Site</span>
+                -
+                <span class="bc-report-title">
+                    {{ props?.resourceDescriptors?.[props.languageCode]?.name }}
+                </span>
             </h4>
             <!-- Tools -->
             <div class="ep-form-toolbar-tools mar-no flex">
@@ -107,25 +108,24 @@ const now = ref(new Date());
         </DetailsSection>
         <Section2
             :data="currentData.aliased_data?.identification_and_registration"
-        >
-        </Section2>
+        ></Section2>
         <DetailsSection
             section-title="3. Site Visits"
             :visible="true"
         >
-            <template #sectionContent> </template>
+            <template #sectionContent></template>
         </DetailsSection>
         <DetailsSection
             section-title="4. Location"
             :visible="true"
         >
-            <template #sectionContent> </template>
+            <template #sectionContent></template>
         </DetailsSection>
         <DetailsSection
             section-title="5. Site Boundary"
             :visible="true"
         >
-            <template #sectionContent> </template>
+            <template #sectionContent></template>
         </DetailsSection>
         <DetailsSection
             section-title="6. Archaeological Data"

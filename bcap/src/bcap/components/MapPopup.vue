@@ -185,9 +185,9 @@ onMounted(() => {
                 >
                     <div class="hover-feature-metadata">
                         <span>{{ translations.resourceModel }}</span>
-                        <span>{{
-                            visibleFeature?.displayValues?.graph_name
-                        }}</span>
+                        <span>
+                            {{ visibleFeature?.displayValues?.graph_name }}
+                        </span>
                     </div>
                     <div class="hover-feature-metadata">
                         <span>{{ translations.idString }}</span>
