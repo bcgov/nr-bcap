@@ -1590,7 +1590,6 @@
                             "placeholder"
                         ],
                         "label": "BCAP Submission Status",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -1603,7 +1602,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "1bebc5d0-61a5-11f0-9674-3a7a4e6803c5",
@@ -5736,8 +5735,11 @@
                 },
                 {
                     "alias": "bcap_submission_status",
-                    "config": {},
-                    "datatype": "concept",
+                    "config": {
+                        "controlledList": "a45b6273-46c0-550e-9caf-a26758834eb3",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": "bcrstatus",
@@ -6981,8 +6983,11 @@
                 },
                 {
                     "alias": "biogeography_type",
-                    "config": {},
-                    "datatype": "concept",
+                    "config": {
+                        "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
