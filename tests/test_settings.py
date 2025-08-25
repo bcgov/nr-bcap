@@ -64,8 +64,10 @@ LOGGING["loggers"]["arches"]["level"] = "ERROR"
 ELASTICSEARCH_PREFIX = "test"
 
 TEST_RUNNER = "arches.test.runner.ArchesTestRunner"
+
 SILENCED_SYSTEM_CHECKS.append(
-    "arches.W001",  # Cache backend does not support rate-limiting
+    # Cache backend does not support rate-limiting
+    "arches.W001",
 )
 
 ELASTICSEARCH_HOSTS = [
