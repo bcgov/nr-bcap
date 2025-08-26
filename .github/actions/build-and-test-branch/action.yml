@@ -102,7 +102,7 @@ runs:
 
     - name: Check backend formatting with black
       run: |
-        black . --check --exclude=node_modules
+        black . --check --exclude="node_modules|build"
       shell: bash
 
     - name: Check line endings on all but ontology (.xml) files

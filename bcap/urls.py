@@ -87,7 +87,7 @@ urlpatterns = [
     path(bc_path_prefix(), include("arches_querysets.urls")),
 ]
 # Ensure Arches core urls are superseded by project-level urls
-urlpatterns.append(path("",  include("arches.urls")))
+urlpatterns.append(path("", include("arches.urls")))
 
 handler400 = "arches.app.views.main.custom_400"
 handler403 = "arches.app.views.main.custom_403"
