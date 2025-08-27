@@ -32,7 +32,6 @@ dependencies = [
     "django-migrate-sql-deux==1.1.1",
     "django-pgtrigger==4.15.2",
     "django-storages==1.13",
-    "django-vite",
     "redis",
     "python-dotenv",
     "oracledb",
