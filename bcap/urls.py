@@ -75,12 +75,12 @@ urlpatterns = [
         ResourceReportView.as_view(),
         name="resource_report",
     ),
-    # Override base export results
-    re_path(
-        bc_path_prefix(r"^search/export_results$"),
-        bcap_export_results,
-        name="export_results",
-    ),
+    # # Override base export results
+    # re_path(
+    #     bc_path_prefix(r"^search/export_results$"),
+    #     bcap_export_results,
+    #     name="export_results",
+    # ),
     path(bc_path_prefix(), include("bcgov_arches_common.urls")),
     path(bc_path_prefix(), include("arches_controlled_lists.urls")),
     path(bc_path_prefix(), include("arches_component_lab.urls")),
