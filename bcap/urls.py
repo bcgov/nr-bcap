@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls.resolvers import RegexPattern
 from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile
-from bcap.views.search import export_results as bcap_export_results
 from bcap.views.resource import ResourceReportView
 from bcgov_arches_common.views.map import BCTileserverProxyView
 import re
@@ -75,12 +74,6 @@ urlpatterns = [
         ResourceReportView.as_view(),
         name="resource_report",
     ),
-    # # Override base export results
-    # re_path(
-    #     bc_path_prefix(r"^search/export_results$"),
-    #     bcap_export_results,
-    #     name="export_results",
-    # ),
     path(bc_path_prefix(), include("bcgov_arches_common.urls")),
     path(bc_path_prefix(), include("arches_controlled_lists.urls")),
     path(bc_path_prefix(), include("arches_component_lab.urls")),
