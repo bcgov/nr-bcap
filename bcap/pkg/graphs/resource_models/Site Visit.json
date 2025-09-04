@@ -53,7 +53,7 @@
                         "en": "Temporary Numbers"
                     },
                     "nodegroup_id": "ab674670-140d-11f0-b9bb-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -188,7 +188,7 @@
                         "en": "Recommendations"
                     },
                     "nodegroup_id": "8cf43a0e-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -215,7 +215,7 @@
                         "en": "General Remarks"
                     },
                     "nodegroup_id": "9625020c-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -323,7 +323,7 @@
                         "en": "Team Member"
                     },
                     "nodegroup_id": "0484d572-1410-11f0-8419-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -829,7 +829,7 @@
                         "en": "Stratigraphy Remarks"
                     },
                     "node_id": "720dd6dc-1408-11f0-9e93-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -1586,7 +1586,7 @@
                         "en": "Assigned By"
                     },
                     "node_id": "c85b4e24-140e-11f0-8419-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1761,7 +1761,7 @@
                         "en": "Date Assigned"
                     },
                     "node_id": "e3dd076e-140e-11f0-8419-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1791,7 +1791,7 @@
                         "en": "Temporary Number"
                     },
                     "node_id": "ab674670-140d-11f0-b9bb-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"

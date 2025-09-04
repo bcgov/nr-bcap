@@ -26,7 +26,7 @@
                         "en": "Permit Identification"
                     },
                     "nodegroup_id": "588c9c3c-df62-11ef-9ad0-0242ac170009",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 }

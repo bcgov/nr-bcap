@@ -134,7 +134,7 @@
                         "en": "Restricted Ancestral Remains Remark"
                     },
                     "nodegroup_id": "1417996e-64ad-11f0-a4ef-6e5bb479055b",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -188,7 +188,7 @@
                         "en": "Site Typology"
                     },
                     "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -498,7 +498,7 @@
                         "en": "Biogeography"
                     },
                     "nodegroup_id": "2509f4a2-197f-11f0-b2a5-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -608,7 +608,7 @@
                         "en": "Remark Keyword"
                     },
                     "nodegroup_id": "82ec5fac-61d6-11f0-ac0d-5ed990020125",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -1455,7 +1455,7 @@
                         "en": "Site Tenure Type"
                     },
                     "node_id": "7b8991ec-197b-11f0-8d46-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2297,7 +2297,7 @@
                         "en": "Site Tenure Identifier"
                     },
                     "node_id": "b2fcabe0-197c-11f0-b2a5-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -3306,7 +3306,7 @@
                         "en": "Elevation Comments"
                     },
                     "node_id": "bc131e78-01bf-11f0-97f7-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
