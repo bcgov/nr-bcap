@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getDisplayValue, getNodeDisplayValue, isEmpty } from "@/bcap/util.ts";
-import type {
-    AliasedNodeData,
-    AliasedTileData,
-} from "@/arches_component_lab/types.ts";
-// main.js or in your component's script setup
+import { getNodeDisplayValue } from "@/bcap/util.ts";
+
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
 import type { ArchaeologicalDataTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
 
@@ -23,7 +20,7 @@ const props = withDefaults(
 );
 
 const currentData = computed<ArchaeologicalDataTile | undefined>(
-    (): AliasedTileData | undefined => {
+    (): ArchaeologicalDataTile | undefined => {
         return props.data?.aliased_data as ArchaeologicalDataTile | undefined;
     },
 );
@@ -43,7 +40,7 @@ const currentData = computed<ArchaeologicalDataTile | undefined>(
 // type IdFieldKey = (typeof id_fields)[number];
 
 /** Generic column definitions: configure any key/path + label */
-const typeologyColumns = [
+const typologyColumns = [
     { field: "typology_class", label: "Class" },
     { field: "site_type", label: "Type" },
     { field: "site_subtype", label: "Subtype" },
@@ -59,70 +56,12 @@ const typeologyColumns = [
     >
         <template #sectionContent>
             <div>
-                <!--                <dl>-->
-                <!--                    <template-->
-                <!--                        v-for="field in id_fields"-->
-                <!--                        :key="field"-->
-                <!--                    >-->
-                <!--                        <dt-->
-                <!--                            v-if="-->
-                <!--                                !isEmpty(-->
-                <!--                                    currentData?.[-->
-                <!--                                        field as IdFieldKey-->
-                <!--                                    ] as AliasedNodeData,-->
-                <!--                                )-->
-                <!--                            "-->
-                <!--                        >-->
-                <!--                            {{ labelize(field) }}-->
-                <!--                        </dt>-->
-                <!--                        <dd-->
-                <!--                            v-if="-->
-                <!--                                !isEmpty(-->
-                <!--                                    currentData?.[-->
-                <!--                                        field as IdFieldKey-->
-                <!--                                    ] as AliasedNodeData,-->
-                <!--                                )-->
-                <!--                            "-->
-                <!--                        >-->
-                <!--                            {{-->
-                <!--                                getDisplayValue(-->
-                <!--                                    currentData?.[-->
-                <!--                                        field as IdFieldKey-->
-                <!--                                    ] as AliasedNodeData,-->
-                <!--                                )-->
-                <!--                            }}-->
-                <!--                        </dd>-->
-                <!--                    </template>-->
-                <!--                </dl>-->
-                <dl v-if="(currentData?.site_typology?.length ?? 0) > 0">
-                    <dt>Site Typology</dt>
-                    <dd>
-                        <DataTable
-                            :value="currentData?.site_typology"
-                            data-key="tileid"
-                            responsive-layout="scroll"
-                            :sort-field="`aliased_data.${typeologyColumns[3].field}.display_value`"
-                            :sort-order="-1"
-                        >
-                            <Column
-                                v-for="col in typeologyColumns"
-                                :key="col.field"
-                                :header="col.label"
-                                :field="`aliased_data.${col.field}.display_value`"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getNodeDisplayValue(
-                                            slotProps.data,
-                                            col.field,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-                        </DataTable>
-                    </dd>
-                </dl>
+                <StandardDataTable
+                    :table-data="currentData?.site_typology"
+                    :column-definitions="typologyColumns"
+                    title="Site Typology"
+                    initial-sort-field="0"
+                ></StandardDataTable>
             </div>
         </template>
     </DetailsSection>

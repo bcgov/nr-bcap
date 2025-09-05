@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getDisplayValue, getNodeDisplayValue, isEmpty } from "@/bcap/util.ts";
-import type {
-    AliasedNodeData,
-    AliasedTileData,
-} from "@/arches_component_lab/types.ts";
 // main.js or in your component's script setup
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 import "primeicons/primeicons.css";
 import type { RemarksAndRestrictedInformationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 
 const props = withDefaults(
     defineProps<{
@@ -100,73 +94,18 @@ const restrictedRemarkColumns = [
                 <!--                        </dd>-->
                 <!--                    </template>-->
                 <!--                </dl>-->
-                <dl
-                    v-if="
-                        (currentData?.general_remark_information?.length ?? 0) >
-                        0
-                    "
-                >
-                    <dt>General Remarks</dt>
-                    <dd>
-                        <DataTable
-                            :value="currentData?.general_remark_information"
-                            data-key="tileid"
-                            responsive-layout="scroll"
-                            :sort-field="`aliased_data.${generalRemarkColumns[0].field}.display_value`"
-                            :sort-order="-1"
-                        >
-                            <Column
-                                v-for="col in generalRemarkColumns"
-                                :key="col.field"
-                                :header="col.label"
-                                :field="`aliased_data.${col.field}.display_value`"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getNodeDisplayValue(
-                                            slotProps.data,
-                                            col.field,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-                        </DataTable>
-                    </dd>
-                </dl>
-                <dl
-                    v-if="
-                        (currentData?.restricted_information_n1?.length ?? 0) >
-                        0
-                    "
-                >
-                    <dt>Restricted Information</dt>
-                    <dd>
-                        <DataTable
-                            :value="currentData?.restricted_information_n1"
-                            data-key="tileid"
-                            responsive-layout="scroll"
-                            :sort-field="`aliased_data.${restrictedRemarkColumns[1].field}.display_value`"
-                            :sort-order="-1"
-                        >
-                            <Column
-                                v-for="col in restrictedRemarkColumns"
-                                :key="col.field"
-                                :header="col.label"
-                                :field="`aliased_data.${col.field}.display_value`"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getNodeDisplayValue(
-                                            slotProps.data,
-                                            col.field,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-                        </DataTable>
-                    </dd>
+                <StandardDataTable
+                    :table-data="currentData?.general_remark_information"
+                    :column-definitions="generalRemarkColumns"
+                    :initial-sort-field-index="0"
+                    title="General Remarks"
+                ></StandardDataTable>
+                <StandardDataTable
+                    :table-data="currentData?.restricted_information_n1"
+                    :column-definitions="restrictedRemarkColumns"
+                    :initial-sort-field-index="1"
+                ></StandardDataTable>
+                <dl>
                     <dt>Restricted Documents</dt>
                     <dd>Need to add files</dd>
                 </dl>

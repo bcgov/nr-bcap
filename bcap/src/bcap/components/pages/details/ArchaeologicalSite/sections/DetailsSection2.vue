@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getDisplayValue, getNodeDisplayValue, isEmpty } from "@/bcap/util.ts";
+import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
 import type {
     AliasedNodeData,
     AliasedTileData,
 } from "@/arches_component_lab/types.ts";
 // main.js or in your component's script setup
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
+import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
 import type { IdentificationAndRegistrationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
 
@@ -112,66 +111,19 @@ const labelize = (key: string) =>
                         </dd>
                     </template>
                 </dl>
-                <dl v-if="(currentData?.authority?.length ?? 0) > 0">
-                    <dt>Authority</dt>
-                    <dd>
-                        <DataTable
-                            :value="currentData?.authority"
-                            data-key="tileid"
-                            responsive-layout="scroll"
-                            :sort-field="`aliased_data.${authorityColumns[3].field}.display_value`"
-                            :sort-order="-1"
-                        >
-                            <Column
-                                v-for="col in authorityColumns"
-                                :key="col.field"
-                                :header="col.label"
-                                :field="`aliased_data.${col.field}.display_value`"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getNodeDisplayValue(
-                                            slotProps.data,
-                                            col.field,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-                        </DataTable>
-                    </dd>
-                </dl>
-                <dl v-if="(currentData?.site_decision?.length ?? 0) > 0">
-                    <dt>Decision History</dt>
-                    <dd>
-                        <DataTable
-                            :value="currentData?.site_decision"
-                            data-key="tileid"
-                            responsive-layout="scroll"
-                            :sort-field="`aliased_data.${siteDecisionColumns[0].field}.display_value`"
-                            :sort-order="-1"
-                        >
-                            <Column
-                                v-for="col in siteDecisionColumns"
-                                :key="col.field"
-                                :header="col.label"
-                                :field="`aliased_data.${col.field}.display_value`"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getNodeDisplayValue(
-                                            slotProps.data,
-                                            col.field,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-                        </DataTable>
-                    </dd>
-                </dl>
+                <StandardDataTable
+                    :table-data="currentData?.authority"
+                    :column-definitions="authorityColumns"
+                    title="Authority"
+                    :initial-sort-field-index="3"
+                ></StandardDataTable>
+                <StandardDataTable
+                    :table-data="currentData?.site_decision"
+                    :column-definitions="siteDecisionColumns"
+                    title="Decision History"
+                    :initial-sort-field-index="0"
+                ></StandardDataTable>
             </div>
-            <div>HI!{{ Object.keys(currentData) }}</div>
         </template>
     </DetailsSection>
 </template>

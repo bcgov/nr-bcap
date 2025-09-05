@@ -64,9 +64,7 @@ export interface SiteTypologyTile extends AliasedTileData {
     typology_remark?: AliasedNodeData;
 }
 export interface ArchaeologicalDataTile extends AliasedTileData {
-    aliased_data: {
-        site_typology?: SiteTypologyTile[];
-    };
+    site_typology?: SiteTypologyTile[];
 }
 
 // 4) Ancestral Remains
