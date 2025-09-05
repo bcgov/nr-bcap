@@ -2,9 +2,10 @@
 import { computed, ref, watchEffect } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
 import { getResourceData } from "@/bcap/components/pages/api.ts";
-// main.js or in your component's script setup
 import "primeicons/primeicons.css";
 import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
+import Section6 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue";
+import Section8 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue";
 import type { TileReference } from "@/bcap/types.ts";
 import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
 
@@ -127,15 +128,9 @@ const now = ref(new Date());
         >
             <template #sectionContent></template>
         </DetailsSection>
-        <DetailsSection
-            section-title="6. Archaeological Data"
-            :visible="true"
-        >
-            <template #sectionContent>
-                HI
-                {{ currentData?.aliased_data?.archaeological_data }}
-            </template>
-        </DetailsSection>
+        <Section6
+            :data="currentData?.aliased_data?.archaeological_data"
+        ></Section6>
         <DetailsSection
             section-title="7. Ancestral Remains"
             :visible="true"
@@ -144,17 +139,11 @@ const now = ref(new Date());
                 {{ currentData?.aliased_data?.ancestral_remains }}
             </template>
         </DetailsSection>
-        <DetailsSection
-            section-title="8. Remarks & Restricted Info"
-            :visible="true"
-        >
-            <template #sectionContent>
-                {{
-                    currentData?.aliased_data
-                        ?.remarks_and_restricted_information
-                }}
-            </template>
-        </DetailsSection>
+        <Section8
+            :data="
+                currentData?.aliased_data?.remarks_and_restricted_information
+            "
+        ></Section8>
         <DetailsSection
             section-title="9. References & Related Documents"
             :visible="true"

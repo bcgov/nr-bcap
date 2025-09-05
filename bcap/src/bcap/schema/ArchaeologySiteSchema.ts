@@ -3,6 +3,10 @@ import type {
     AliasedNodeData,
     AliasedTileData,
 } from "@/arches_component_lab/types.ts";
+import type { ReferenceSelectValue } from "arches_controlled_lists/arches_controlled_lists/src/arches_controlled_lists/datatypes/reference-select/types.ts";
+import type { DateValue } from "arches_component_lab/arches_component_lab/src/arches_component_lab/datatypes/date/types.ts";
+import type { StringValue } from "arches_component_lab/arches_component_lab/src/arches_component_lab/datatypes/string/types.ts";
+import type { ResourceInstanceValue } from "arches_component_lab/arches_component_lab/src/arches_component_lab/datatypes/resource-instance/types.ts";
 
 // 1) Site Boundary (only fields referenced by the template are required here)
 export interface SiteBoundaryTile extends AliasedTileData {
@@ -15,6 +19,16 @@ export interface SiteBoundaryTile extends AliasedTileData {
     };
 }
 
+export interface AuthorityTile extends AliasedTileData {
+    aliased_data: {
+        authority_start_date?: AliasedNodeData;
+        responsible_government?: AliasedNodeData;
+        authority_end_date?: AliasedNodeData;
+        legislative_act?: AliasedNodeData;
+        authority_description?: AliasedNodeData;
+        reference_number?: AliasedNodeData;
+    };
+}
 export interface SiteDecisionTile extends AliasedTileData {
     aliased_data: {
         decision_date?: AliasedNodeData;
@@ -36,14 +50,23 @@ export interface IdentificationAndRegistrationTile extends AliasedTileData {
     register_type?: AliasedNodeData;
     parent_site?: AliasedNodeData;
     site_alert?: AliasedNodeData;
-    authority?: AliasedNodeData;
+    authority?: AuthorityTile[];
     site_names?: AliasedTileData[]; // generic child tiles
     site_decision?: SiteDecisionTile[]; // specialized shape
 }
 
 // 3) Archaeological Data
+export interface SiteTypologyTile extends AliasedTileData {
+    typology_class?: AliasedNodeData;
+    site_type?: AliasedNodeData;
+    site_subtype?: AliasedNodeData;
+    typology_descriptor?: AliasedNodeData;
+    typology_remark?: AliasedNodeData;
+}
 export interface ArchaeologicalDataTile extends AliasedTileData {
-    aliased_data: AliasedData;
+    aliased_data: {
+        site_typology?: SiteTypologyTile[];
+    };
 }
 
 // 4) Ancestral Remains
@@ -51,9 +74,36 @@ export interface AncestralRemainsTile extends AliasedTileData {
     aliased_data: AliasedData;
 }
 
+/*************************************************/
 // 5) Remarks & Restricted Information
+/*************************************************/
+
+export interface GeneralRemarkTile extends AliasedTileData {
+    aliased_data: {
+        general_remark_source?: ReferenceSelectValue;
+        general_remark_date?: DateValue;
+        general_remark?: StringValue;
+    };
+}
+
+export interface RestrictedRemarkTile extends AliasedTileData {
+    aliased_data: {
+        restricted_entry_date?: DateValue;
+        restricted_person?: ResourceInstanceValue;
+        restricted_remark?: StringValue;
+    };
+}
+
 export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
-    aliased_data: AliasedData;
+    general_remark_information: GeneralRemarkTile[];
+
+    remark_keyword?: AliasedNodeData;
+    contravention_document?: AliasedNodeData;
+    restricted_document?: AliasedNodeData;
+
+    hca_contravention: AliasedTileData[];
+    restricted_information_n1: RestrictedRemarkTile[];
+    conviction: AliasedTileData[];
 }
 
 // 6) References & Related Documents
