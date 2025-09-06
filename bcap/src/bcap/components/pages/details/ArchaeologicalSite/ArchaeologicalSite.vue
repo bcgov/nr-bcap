@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getResourceData } from "@/bcap/components/pages/api.ts";
+import {
+    getRelatedResourceData,
+    getResourceData,
+} from "@/bcap/components/pages/api.ts";
 import "primeicons/primeicons.css";
 import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
 import Section6 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue";
 import Section8 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue";
-import type { TileReference } from "@/bcap/types.ts";
+import Section9 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue";
+import type { DetailsData } from "@/bcap/types.ts";
 import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+
+import DataTable from "primevue/datatable";
+import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 
 type LangCode = string;
 interface Descriptor {
@@ -31,8 +38,8 @@ const formattedNow = computed(() => {
 
 const props = withDefaults(
     defineProps<{
-        data: TileReference[];
-        resourceDescriptors: ResourceDescriptors;
+        data: DetailsData;
+        resourceDescriptors?: ResourceDescriptors;
         languageCode?: string;
     }>(),
     {
@@ -40,17 +47,37 @@ const props = withDefaults(
         languageCode: "en",
     },
 );
-type ResourceCache = Record<string, ArchaeologySiteSchema>;
+type SiteDataCache = {
+    site: ArchaeologySiteSchema | null;
+    hria_discontinued_data: object | null;
+    site_visits: SiteVisitSchema[];
+};
+type ResourceCache = Record<string, SiteDataCache>;
 
 const resourceCache = ref<ResourceCache>({} as ResourceCache);
 const currentData = ref<ArchaeologySiteSchema>({} as ArchaeologySiteSchema);
 watchEffect(async () => {
-    const resourceId: string = props.data?.[0]?.resourceinstance_id;
-    resourceCache.value[resourceId] = await getResourceData(
+    const resourceId: string = props.data?.resourceinstance_id;
+    if (!(resourceId in resourceCache.value)) {
+        resourceCache.value[resourceId] = {
+            site: null,
+            hria_discontinued_data: null,
+            site_visits: [],
+        };
+    }
+    resourceCache.value[resourceId].site = (await getResourceData(
         "archaeological_site",
         resourceId,
+    )) as ArchaeologySiteSchema;
+
+    getRelatedResourceData("site_visit", resourceId).then(
+        (data) =>
+            (resourceCache.value[resourceId].site_visits =
+                data as SiteVisitSchema[]),
     );
-    currentData.value = resourceCache.value[resourceId as string];
+    currentData.value =
+        resourceCache.value[resourceId as string].site ??
+        ({} as ArchaeologySiteSchema);
     console.log(Object.keys(resourceCache.value).length);
 });
 
@@ -58,22 +85,11 @@ const now = ref(new Date());
 </script>
 
 <template>
+    <!-- Hack to ensure styles come through -->
+    <div style="display: none">
+        <DataTable></DataTable>
+    </div>
     <div class="container">
-        <div class="report-toolbar-preview ep-form-toolbar">
-            <h4 class="report-toolbar-title">
-                <span class="bc-report-title">Archaeological Site</span>
-                -
-                <span class="bc-report-title">
-                    {{ props?.resourceDescriptors?.[props.languageCode]?.name }}
-                </span>
-            </h4>
-            <!-- Tools -->
-            <div class="ep-form-toolbar-tools mar-no flex">
-                <p class="report-print-date">
-                    <span data-bind="text: reportDate">{{ formattedNow }}</span>
-                </p>
-            </div>
-        </div>
         <DetailsSection
             section-title="1. Spatial View"
             :visible="true"
@@ -144,17 +160,16 @@ const now = ref(new Date());
                 currentData?.aliased_data?.remarks_and_restricted_information
             "
         ></Section8>
-        <DetailsSection
-            section-title="9. References & Related Documents"
-            :visible="true"
-        >
-            <template #sectionContent>
-                {{ currentData?.aliased_data?.related_documents }}
-            </template>
-        </DetailsSection>
+        <Section9
+            :data="currentData?.aliased_data?.related_documents"
+        ></Section9>
     </div>
-    <div v-if="currentData.aliased_data?.ancestral_remains">
-        {{ Object.keys(currentData.aliased_data.ancestral_remains) }}
+    <div>
+        <pre v-if="currentData.aliased_data">
+            {{ Object.keys(currentData?.aliased_data) }}
+        </pre>
+        {{ currentData?.aliased_data }}
+        <span></span>
     </div>
 </template>
 

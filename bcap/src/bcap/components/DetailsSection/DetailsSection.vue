@@ -14,3 +14,9 @@ const sectionVisible = ref(props.visible || true);
         <slot name="sectionContent"></slot>
     </FieldSet>
 </template>
+
+<style>
+legend.p-fieldset-legend {
+    width: unset;
+}
+</style>

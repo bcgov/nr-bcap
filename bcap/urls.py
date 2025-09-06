@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls.resolvers import RegexPattern
-from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile
+from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile, RelatedSiteVisits
 from bcap.views.resource import ResourceReportView
 from bcgov_arches_common.views.map import BCTileserverProxyView
 import re
@@ -73,6 +73,15 @@ urlpatterns = [
         bc_path_prefix(r"^report/(?P<resourceid>%s)$" % uuid_regex),
         ResourceReportView.as_view(),
         name="resource_report",
+    ),
+    path( "bcap/api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
+        RelatedSiteVisits.as_view(),
+        name="api-related-site-resources",
+    ),
+    path(
+        "bcap/api/arch_site_related_resources/<slug:graph>",
+        RelatedSiteVisits.as_view(),
+        name="api-related-sites-resources",
     ),
     path(bc_path_prefix(), include("bcgov_arches_common.urls")),
     path(bc_path_prefix(), include("arches_controlled_lists.urls")),

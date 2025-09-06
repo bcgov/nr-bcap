@@ -3,10 +3,11 @@ import type {
     AliasedNodeData,
     AliasedTileData,
 } from "@/arches_component_lab/types.ts";
-import type { ReferenceSelectValue } from "arches_controlled_lists/arches_controlled_lists/src/arches_controlled_lists/datatypes/reference-select/types.ts";
-import type { DateValue } from "arches_component_lab/arches_component_lab/src/arches_component_lab/datatypes/date/types.ts";
-import type { StringValue } from "arches_component_lab/arches_component_lab/src/arches_component_lab/datatypes/string/types.ts";
-import type { ResourceInstanceValue } from "arches_component_lab/arches_component_lab/src/arches_component_lab/datatypes/resource-instance/types.ts";
+import type { ReferenceSelectValue } from "@/arches_controlled_lists/datatypes/reference-select/types.ts";
+import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
+import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
+import type { ResourceInstanceValue } from "@/arches_component_lab/datatypes/resource-instance/types.ts";
+import type { FileListValue } from "@/arches_component_lab/datatypes/file-list/types.ts";
 
 // 1) Site Boundary (only fields referenced by the template are required here)
 export interface SiteBoundaryTile extends AliasedTileData {
@@ -104,10 +105,19 @@ export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
     conviction: AliasedTileData[];
 }
 
-// 6) References & Related Documents
+// 8) References & Related Documents
 // The template renders: currentData?.aliased_data?.related_documents
+export interface RelatedSiteDocumentsTile extends AliasedTileData {
+    aliased_data: {
+        related_document_description?: StringValue;
+        related_document_type?: ReferenceSelectValue;
+        related_site_documents?: FileListValue;
+    };
+}
 export interface RelatedDocumentsTile extends AliasedTileData {
-    aliased_data: AliasedData;
+    related_site_documents: RelatedSiteDocumentsTile[]; // nested tile
+    publication_reference: AliasedTileData[]; // [] in sample
+    site_images: AliasedTileData[];
 }
 
 // --- Top-level resource schema used by the component ---

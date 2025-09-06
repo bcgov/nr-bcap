@@ -6,7 +6,7 @@ import slick from "slick";
 import arches from "arches";
 import MapReportViewModel from "viewmodels/map-report";
 import chosen from "bindings/chosen";
-import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue";
+import DetailsPage from "@/bcap/components/pages/details/DetailsPage.vue";
 import "@/bcap/primevue-theme-global.ts";
 import { createApp } from "vue";
 
@@ -16,7 +16,7 @@ if (!window.__BCAP_PREFER_VITE__) {
     window.BCAP.vueKO.register({
         name: "detailsVueComponent",
         createApp,
-        component: ArchaeologicalSite,
+        component: DetailsPage,
         source: "webpack",
     });
 }
@@ -331,6 +331,14 @@ const BcapSiteViewModel = function (params) {
 
     this.allTiles = ko.computed(function () {
         return tiles;
+    });
+
+    this.detailsData = ko.computed(function () {
+        return {
+            resourceinstance_id: tiles?.[0]?.resourceinstance_id,
+            graph_slug: params.report.graph.slug,
+            displayname: params.report.attributes.displayname,
+        };
     });
 
     this.aliasedData = ko.computed(function () {

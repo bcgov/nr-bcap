@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getNodeDisplayValue } from "@/bcap/util.ts";
 
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
 import type { ArchaeologicalDataTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
@@ -57,7 +54,7 @@ const typologyColumns = [
         <template #sectionContent>
             <div>
                 <StandardDataTable
-                    :table-data="currentData?.site_typology"
+                    :table-data="currentData?.site_typology ?? []"
                     :column-definitions="typologyColumns"
                     title="Site Typology"
                     initial-sort-field="0"

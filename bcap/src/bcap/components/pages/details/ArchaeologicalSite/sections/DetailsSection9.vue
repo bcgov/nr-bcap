@@ -3,24 +3,17 @@ import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
 // main.js or in your component's script setup
 import "primeicons/primeicons.css";
-import type { RemarksAndRestrictedInformationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+
+import type { RelatedDocumentsTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
 import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 
-const props = withDefaults(
-    defineProps<{
-        data: RemarksAndRestrictedInformationTile | undefined;
-        languageCode?: string;
-    }>(),
-    {
-        languageCode: "en",
-    },
-);
+const props = defineProps<{
+    data: RelatedDocumentsTile | undefined;
+}>();
 
-const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
-    (): RemarksAndRestrictedInformationTile | undefined => {
-        return props.data?.aliased_data as
-            | RemarksAndRestrictedInformationTile
-            | undefined;
+const currentData = computed<RelatedDocumentsTile | undefined>(
+    (): RelatedDocumentsTile | undefined => {
+        return props.data?.aliased_data as RelatedDocumentsTile | undefined;
     },
 );
 
@@ -39,22 +32,18 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
 // type IdFieldKey = (typeof id_fields)[number];
 
 /** Generic column definitions: configure any key/path + label */
-const generalRemarkColumns = [
-    { field: "general_remark_date", label: "Date" },
-    { field: "general_remark", label: "Remark" },
-    { field: "general_remark_source", label: "Source" },
+const siteDocumentsColumns = [
+    { field: "related_document_type", label: "Type" },
+    { field: "related_site_documents", label: "Document" },
+    { field: "related_document_description", label: "Description" },
 ];
-const restrictedRemarkColumns = [
-    { field: "restricted_remark", label: "Restricted Remarks" },
-    { field: "restricted_entry_date", label: "Entered On" },
-    { field: "restricted_person", label: "Entered By" },
-];
+
 // [ "general_remark_information", "remark_keyword", "contravention_document", "restricted_document", "hca_contravention", "restricted_information_n1", "conviction" ]
 </script>
 
 <template>
     <DetailsSection
-        section-title="8. Remarks & Restricted Information"
+        section-title="9. References & Related Documents"
         :visible="true"
     >
         <template #sectionContent>
@@ -94,31 +83,30 @@ const restrictedRemarkColumns = [
                 <!--                        </dd>-->
                 <!--                    </template>-->
                 <!--                </dl>-->
+                <dl>
+                    <dt>References</dt>
+                    <dd>Need to add references</dd>
+                    <dt>Related Documents</dt>
+                    <dd>Need to add related documents</dd>
+                    <dt>Images</dt>
+                    <dd>Need to add images</dd>
+                    <dt>Other Maps</dt>
+                    <dd>Need to add other maps?</dd>
+                </dl>
                 <StandardDataTable
-                    :table-data="currentData?.general_remark_information ?? []"
-                    :column-definitions="generalRemarkColumns"
+                    :table-data="currentData?.related_site_documents ?? []"
+                    :column-definitions="siteDocumentsColumns"
                     :initial-sort-field-index="0"
-                    title="General Remarks"
-                ></StandardDataTable>
-                <StandardDataTable
-                    :table-data="currentData?.restricted_information_n1 ?? []"
-                    :column-definitions="restrictedRemarkColumns"
-                    :initial-sort-field-index="1"
+                    title="Site Documents"
                 ></StandardDataTable>
                 <dl>
                     <dt>Restricted Documents</dt>
                     <dd>Need to add files</dd>
                 </dl>
             </div>
-            <div v-if="currentData?.restricted_information_n1?.length ?? 0 > 0">
-                {{
-                    Object.keys(
-                        currentData?.restricted_information_n1?.[0]
-                            ?.aliased_data ?? [],
-                    )
-                }}
-            </div>
-            <div>{{ currentData }}</div>
+            <pre>
+                {{ currentData }}
+            </pre>
         </template>
     </DetailsSection>
 </template>

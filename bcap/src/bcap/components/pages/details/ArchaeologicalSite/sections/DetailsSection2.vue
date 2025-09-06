@@ -112,13 +112,13 @@ const labelize = (key: string) =>
                     </template>
                 </dl>
                 <StandardDataTable
-                    :table-data="currentData?.authority"
+                    :table-data="currentData?.authority ?? []"
                     :column-definitions="authorityColumns"
                     title="Authority"
                     :initial-sort-field-index="3"
                 ></StandardDataTable>
                 <StandardDataTable
-                    :table-data="currentData?.site_decision"
+                    :table-data="currentData?.site_decision || []"
                     :column-definitions="siteDecisionColumns"
                     title="Decision History"
                     :initial-sort-field-index="0"
