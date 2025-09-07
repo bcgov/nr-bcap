@@ -8,7 +8,7 @@ import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 const props = withDefaults(
     defineProps<{
         data: SiteVisitSchema | undefined;
-        sectionTitle: string;
+        sectionTitle?: string;
         loading?: boolean;
         visible?: boolean;
     }>(),

@@ -6,10 +6,6 @@ import type {
 import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
 import type { NonLocalizedTextValue } from "@/arches_component_lab/datatypes/non-localized-text/types.ts";
 import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
-import type {
-    ResourceInstanceValue,
-    ResourceInstanceReference,
-} from "@/arches_component_lab/datatypes/resource-instance/types.ts";
 import type { ResourceInstanceListValue } from "@/arches_component_lab/datatypes/resource-instance-list/types.ts";
 
 // Use the new reference / reference-list types exactly as provided:

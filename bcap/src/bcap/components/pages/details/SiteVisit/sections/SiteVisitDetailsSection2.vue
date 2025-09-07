@@ -15,12 +15,6 @@ const newNames = computed(
     () => idTile.value?.aliased_data?.new_site_names || [],
 );
 
-const tempFields = [
-    { field: "temporary_number", label: "Temporary Number" },
-    { field: "temporary_number_assigned_by", label: "Assigned By" },
-    { field: "temporary_number_assigned_date", label: "Assigned Date" },
-];
-
 const newNameColumns = [
     { field: "name", label: "Name" },
     { field: "name_type", label: "Name Type" },
