@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
 import { getResourceData } from "@/bcap/components/pages/api.ts";
 import "primeicons/primeicons.css";
-import Section1 from "./sections/Section1.vue";
-import Section2 from "./sections/Section2.vue";
-import Section3 from "./sections/Section3.vue";
-import Section4 from "./sections/Section4.vue";
-import Section5 from "./sections/Section5.vue";
-import Section6 from "./sections/Section6.vue";
+import Section1 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection1.vue";
+import Section2 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection2.vue";
+import Section3 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue";
+import Section4 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection4.vue";
+import Section5 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection5.vue";
+import Section6 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection6.vue";
 import DataTable from "primevue/datatable";
 import type { DetailsData } from "@/bcap/types.ts";
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
@@ -29,17 +29,18 @@ const props = withDefaults(
 type Cache = Record<string, SiteVisitSchema | null>;
 const cache = ref<Cache>({});
 const current = ref<SiteVisitSchema | null>(null);
+const loading = ref(true);
 
 watchEffect(async () => {
     const resourceId: string = props.data?.resourceinstance_id;
     if (!resourceId) return;
     if (!(resourceId in cache.value)) {
-        cache.value[resourceId] = (await getResourceData(
-            "site_visit",
-            resourceId,
-        )) as SiteVisitSchema;
+        getResourceData("site_visit", resourceId).then((data) => {
+            cache.value[resourceId] = data as SiteVisitSchema;
+            current.value = cache.value[resourceId];
+            loading.value = false;
+        });
     }
-    current.value = cache.value[resourceId];
 });
 </script>
 
@@ -53,12 +54,30 @@ watchEffect(async () => {
         />
     </div>
     <div class="container">
-        <Section1 :data="current || undefined" />
-        <Section2 :data="current || undefined" />
-        <Section3 :data="current || undefined" />
-        <Section4 :data="current || undefined" />
-        <Section5 :data="current || undefined" />
-        <Section6 :data="current || undefined" />
+        <Section1
+            :data="current || undefined"
+            :loading="loading"
+        />
+        <Section2
+            :data="current || undefined"
+            :loading="loading"
+        />
+        <Section3
+            :data="current || undefined"
+            :loading="loading"
+        />
+        <Section4
+            :data="current || undefined"
+            :loading="loading"
+        />
+        <Section5
+            :data="current || undefined"
+            :loading="loading"
+        />
+        <Section6
+            :data="current || undefined"
+            :loading="loading"
+        />
     </div>
 </template>
 

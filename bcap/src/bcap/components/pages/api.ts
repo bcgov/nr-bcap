@@ -3,6 +3,7 @@ import type {
     SiteVisitResponse,
     SiteVisitSchema,
 } from "@/bcap/schema/SiteVisitSchema.ts";
+import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
 
 export const getResourceData = async (
     graph_slug: string,
@@ -20,7 +21,7 @@ type ErrorResponse = Record<string, string>;
 export const getRelatedResourceData = async (
     graph_slug: string,
     resource_id: string,
-): Promise<SiteVisitSchema[]> => {
+): Promise<SiteVisitSchema[] | HriaDiscontinuedDataSchema[]> => {
     const response = await fetch(
         `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
     ).then();

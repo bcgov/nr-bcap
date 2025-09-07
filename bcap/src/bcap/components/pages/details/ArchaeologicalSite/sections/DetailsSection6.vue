@@ -9,6 +9,7 @@ import type { ArchaeologicalDataTile } from "@/bcap/schema/ArchaeologySiteSchema
 const props = withDefaults(
     defineProps<{
         data: ArchaeologicalDataTile | undefined;
+        loading?: boolean;
         languageCode?: string;
     }>(),
     {
@@ -21,20 +22,6 @@ const currentData = computed<ArchaeologicalDataTile | undefined>(
         return props.data?.aliased_data as ArchaeologicalDataTile | undefined;
     },
 );
-
-// const id_fields = [
-//     "borden_number",
-//     "registration_date",
-//     "registration_status",
-//     "parcel_owner_type",
-//     "register_type",
-//     "site_creation_date",
-//     "parent_site",
-//     "site_alert",
-//     "authority",
-//     "site_names",
-// ] as const;
-// type IdFieldKey = (typeof id_fields)[number];
 
 /** Generic column definitions: configure any key/path + label */
 const typologyColumns = [
@@ -49,6 +36,7 @@ const typologyColumns = [
 <template>
     <DetailsSection
         section-title="6. Archaeological Data"
+        :loading="props.loading"
         :visible="true"
     >
         <template #sectionContent>
@@ -63,15 +51,3 @@ const typologyColumns = [
         </template>
     </DetailsSection>
 </template>
-
-<style>
-dl {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 1rem;
-}
-dt {
-    min-width: 20rem;
-}
-</style>
-<style scoped></style>

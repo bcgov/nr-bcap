@@ -13,10 +13,10 @@ import type { FileListValue } from "@/arches_component_lab/datatypes/file-list/t
 export interface SiteBoundaryTile extends AliasedTileData {
     aliased_data: {
         // <dt>Source Notes</dt> -> currentData.aliased_data.site_boundary.aliased_data.source_notes.display_value
-        source_notes?: AliasedNodeData;
-
-        // <dt>Latest Edit Type</dt> -> ...latest_edit_type.node_value / .display_value (guarded)
+        site_boundary?: AliasedNodeData;
         latest_edit_type?: AliasedNodeData;
+        source_notes?: AliasedNodeData;
+        accuracy_remarks?: AliasedNodeData;
     };
 }
 

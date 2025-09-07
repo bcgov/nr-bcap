@@ -6,8 +6,8 @@ import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTabl
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined }>(),
-    {},
+    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
+    { loading: false },
 );
 const remainsRows = computed(
     () => props.data?.aliased_data?.ancestral_remains || [],
@@ -26,6 +26,7 @@ const remainsColumns = [
     <DetailsSection
         section-title="5. Ancestral Remains"
         :visible="true"
+        :loading="props.loading"
     >
         <template #sectionContent>
             <StandardDataTable

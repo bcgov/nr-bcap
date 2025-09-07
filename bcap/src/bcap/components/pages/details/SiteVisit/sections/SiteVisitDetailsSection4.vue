@@ -6,8 +6,8 @@ import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTabl
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined }>(),
-    {},
+    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
+    { loading: false },
 );
 const arch = computed(() => props.data?.aliased_data?.archaeological_data);
 
@@ -57,6 +57,7 @@ const disturbColumns = [
     <DetailsSection
         section-title="4. Archaeological Data"
         :visible="true"
+        :loading="props.loading"
     >
         <template #sectionContent>
             <div>

@@ -4,8 +4,8 @@ import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue"
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined }>(),
-    {},
+    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
+    { loading: false },
 );
 const current = computed(() => props.data);
 </script>
@@ -13,72 +13,76 @@ const current = computed(() => props.data);
 <template>
     <DetailsSection
         section-title="1. Site Visit Location"
+        :loading="props.loading"
         :visible="true"
     >
         <template #sectionContent>
             <div>
                 <dl>
-                    <dt>1.1 Location and Access</dt>
+                    <dt>Location and Access</dt>
                     <dd>
                         {{
-                            current.value?.aliased_data?.site_visit_location
+                            current?.aliased_data?.site_visit_location
                                 ?.aliased_data?.location_and_access
                                 ?.display_value
                         }}
                     </dd>
 
-                    <dt>1.2 Site Visit Location (geojson)</dt>
-                    <dd>
-                        <pre
-                            style="
-                                white-space: pre-wrap;
-                                word-break: break-word;
-                            "
-                            >{{
-                                JSON.stringify(
-                                    current.value?.aliased_data
-                                        ?.site_visit_location?.aliased_data
-                                        ?.site_visit_location?.node_value,
-                                    null,
-                                    2,
-                                )
-                            }}
+                    <DetailsSection
+                        section-title="Site Visit Location (geojson)"
+                        :visible="false"
+                    >
+                        <template #sectionContent>
+                            <pre
+                                style="
+                                    white-space: pre-wrap;
+                                    word-break: break-word;
+                                "
+                                >{{
+                                    JSON.stringify(
+                                        current?.aliased_data
+                                            ?.site_visit_location?.aliased_data
+                                            ?.site_visit_location?.node_value,
+                                        null,
+                                        2,
+                                    )
+                                }}
             </pre
-                        >
-                    </dd>
-
+                            >
+                        </template>
+                    </DetailsSection>
                     <dt
                         v-if="
-                            current.value?.aliased_data?.site_visit_location
+                            current?.aliased_data?.site_visit_location
                                 ?.aliased_data?.latest_edit_type?.node_value
                         "
                     >
-                        1.3 Latest Edit Type
+                        Latest Edit Type
                     </dt>
                     <dd
                         v-if="
-                            current.value?.aliased_data?.site_visit_location
+                            current?.aliased_data?.site_visit_location
                                 ?.aliased_data?.latest_edit_type?.node_value
                         "
                     >
                         {{
-                            current.value?.aliased_data?.site_visit_location
+                            current?.aliased_data?.site_visit_location
                                 ?.aliased_data?.latest_edit_type?.display_value
                         }}
                     </dd>
 
-                    <dt>1.4 Accuracy Remarks</dt>
+                    <dt>Accuracy Remarks</dt>
                     <dd>
                         {{
-                            current.value?.aliased_data?.site_visit_location
+                            current?.aliased_data?.site_visit_location
                                 ?.aliased_data?.accuracy_remarks?.display_value
                         }}
                     </dd>
 
-                    <dt>1.5 Source Notes</dt>
+                    <dt>Source Notes</dt>
                     <dd>
                         {{
-                            current.value?.aliased_data?.site_visit_location
+                            current?.aliased_data?.site_visit_location
                                 ?.aliased_data?.source_notes?.display_value
                         }}
                     </dd>

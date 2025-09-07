@@ -6,8 +6,8 @@ import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTabl
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined }>(),
-    {},
+    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
+    { loading: false },
 );
 const recRows = computed(
     () =>
@@ -33,6 +33,7 @@ const remarkColumns = [
     <DetailsSection
         section-title="6. Remarks and Recommendations"
         :visible="true"
+        :loading="props.loading"
     >
         <template #sectionContent>
             <h4>6.1 Recommendations</h4>

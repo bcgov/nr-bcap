@@ -10,10 +10,13 @@ import type {
 import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
 import type { IdentificationAndRegistrationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
 
 const props = withDefaults(
     defineProps<{
         data: IdentificationAndRegistrationTile | undefined;
+        hriaData: HriaDiscontinuedDataSchema | undefined;
+        loading?: boolean;
         languageCode?: string;
     }>(),
     {
@@ -26,6 +29,12 @@ const currentData = computed<IdentificationAndRegistrationTile | undefined>(
         return props.data?.aliased_data as
             | IdentificationAndRegistrationTile
             | undefined;
+    },
+);
+
+const currentHriaData = computed<HriaDiscontinuedDataSchema | undefined>(
+    (): HriaDiscontinuedDataSchema | undefined => {
+        return props.hriaData as HriaDiscontinuedDataSchema | undefined;
     },
 );
 
@@ -72,6 +81,7 @@ const labelize = (key: string) =>
 <template>
     <DetailsSection
         section-title="2. ID & Registration"
+        :loading="props.loading"
         :visible="true"
     >
         <template #sectionContent>
@@ -110,6 +120,30 @@ const labelize = (key: string) =>
                             }}
                         </dd>
                     </template>
+                    <div
+                        v-if="
+                            currentHriaData?.aliased_data
+                                ?.unreviewed_adif_record?.aliased_data
+                                ?.unreviewed_adif_record.node_value
+                        "
+                    >
+                        <dt>Is ADIF Record?</dt>
+                        <dd>Yes</dd>
+                        <dt>Site Entered By / Date:</dt>
+                        <dd>
+                            {{
+                                currentHriaData?.aliased_data
+                                    ?.unreviewed_adif_record?.aliased_data
+                                    ?.site_entered_by?.display_value
+                            }}
+                            /
+                            {{
+                                currentHriaData?.aliased_data
+                                    ?.unreviewed_adif_record?.aliased_data
+                                    ?.site_entry_date?.display_value
+                            }}
+                        </dd>
+                    </div>
                 </dl>
                 <StandardDataTable
                     :table-data="currentData?.authority ?? []"
@@ -127,15 +161,3 @@ const labelize = (key: string) =>
         </template>
     </DetailsSection>
 </template>
-
-<style>
-dl {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 1rem;
-}
-dt {
-    min-width: 20rem;
-}
-</style>
-<style scoped></style>

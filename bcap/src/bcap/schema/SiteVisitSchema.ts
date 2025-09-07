@@ -6,10 +6,7 @@ import type {
 
 import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
 import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
-import type {
-    ResourceInstanceValue,
-    ResourceInstanceReference,
-} from "@/arches_component_lab/datatypes/resource-instance/types.ts";
+import type { ResourceInstanceValue } from "@/arches_component_lab/datatypes/resource-instance/types.ts";
 import type { ResourceInstanceListValue } from "@/arches_component_lab/datatypes/resource-instance-list/types.ts";
 
 // Controlled list “reference / reference-list”
@@ -49,29 +46,20 @@ export type NullableReferenceSelectValue =
           details: ReferenceSelectDetails[] | [];
       });
 
-// Allow sortorder: null (matches samples)
-type NullableSortTile<TAliasedData> = Omit<
-    AliasedTileData,
-    "aliased_data" | "sortorder"
-> & {
-    sortorder: number | null;
-    aliased_data: TAliasedData;
-};
-
 // ====================================================================
 // Site Visit tiles (datatype-specific leaf nodes)
 // ====================================================================
 
 // --- site_visit_location ---
-export interface SiteVisitLocationAliasedData {
-    source_notes: StringValue; // string (i18n)
-    accuracy_remarks: StringValue; // string (i18n)
-    latest_edit_type: ReferenceSelectValue; // reference
-    site_visit_location: GeoJSONFeatureCollectionValue; // geojson-feature-collection
-    location_and_access: StringValue; // string (i18n)
+export interface SiteVisitLocationTile extends AliasedTileData {
+    aliased_data: {
+        source_notes: StringValue; // string (i18n)
+        accuracy_remarks: StringValue; // string (i18n)
+        latest_edit_type: ReferenceSelectValue; // reference
+        site_visit_location: GeoJSONFeatureCollectionValue; // geojson-feature-collection
+        location_and_access: StringValue; // string (i18n)
+    };
 }
-export type SiteVisitLocationTile =
-    NullableSortTile<SiteVisitLocationAliasedData>;
 
 // --- ancestral_remains[] (semantic group of tiles) ---
 export interface AncestralRemainsTile extends AliasedTileData {
@@ -119,42 +107,25 @@ export interface TeamMemberTile extends AliasedTileData {
     };
 }
 
-export interface SiteVisitTeamAliasedData {
-    team_member: TeamMemberTile[]; // semantic subgroup
+export interface SiteVisitTeamTile extends AliasedTileData {
+    aliased_data: {
+        team_member: TeamMemberTile[]; // semantic subgroup
+    };
 }
-export type SiteVisitTeamTile = NullableSortTile<SiteVisitTeamAliasedData>;
 
-export interface SiteVisitDetailsAliasedData {
-    site_form_authors: ResourceInstanceListValue; // resource-instance-list
-    site_visit_type: ReferenceSelectValue; // reference
-    first_date_of_site_visit: DateValue; // date (nullable in some payloads)
-    last_date_of_site_visit: DateValue; // date
-    project_description: StringValue; // string (i18n)
-    archaeological_site:
-        | (Omit<ResourceInstanceValue, "node_value"> & {
-              node_value: ResourceInstanceReference | null;
-          })
-        | (Omit<ResourceInstanceListValue, "node_value"> & {
-              node_value: ResourceInstanceReference[];
-          });
-    associated_permit:
-        | (Omit<ResourceInstanceValue, "node_value"> & {
-              node_value: ResourceInstanceReference | null;
-          })
-        | (Omit<ResourceInstanceListValue, "node_value"> & {
-              node_value: ResourceInstanceReference[];
-          });
-    affiliation:
-        | (Omit<ResourceInstanceValue, "node_value"> & {
-              node_value: ResourceInstanceReference | null;
-          })
-        | (Omit<ResourceInstanceListValue, "node_value"> & {
-              node_value: ResourceInstanceReference[];
-          });
-    site_visit_team_n1: SiteVisitTeamTile; // semantic subgroup (child tile)
+export interface SiteVisitDetailsTile extends AliasedTileData {
+    aliased_data: {
+        site_form_authors: ResourceInstanceListValue; // resource-instance-list
+        site_visit_type: ReferenceSelectValue; // reference
+        first_date_of_site_visit: DateValue; // date (nullable in some payloads)
+        last_date_of_site_visit: DateValue; // date
+        project_description: StringValue; // string (i18n)
+        archaeological_site: ResourceInstanceValue;
+        associated_permit: ResourceInstanceValue;
+        affiliation: ResourceInstanceValue;
+        site_visit_team_n1: SiteVisitTeamTile; // semantic subgroup (child tile)
+    };
 }
-export type SiteVisitDetailsTile =
-    NullableSortTile<SiteVisitDetailsAliasedData>;
 
 // --- archaeological_data (multiple semantic groups) ---
 export interface StratigraphyTile extends AliasedTileData {

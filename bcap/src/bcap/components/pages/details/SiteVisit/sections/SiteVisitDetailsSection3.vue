@@ -6,8 +6,13 @@ import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTabl
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined }>(),
-    {},
+    defineProps<{
+        data: SiteVisitSchema | undefined;
+        sectionTitle: string;
+        loading?: boolean;
+        visible?: boolean;
+    }>(),
+    { sectionTitle: "3. Site Visit Details", visible: true, loading: false },
 );
 const details = computed(() => props.data?.aliased_data?.site_visit_details);
 const teamTile = computed(
@@ -22,63 +27,39 @@ const teamColumns = [
     { field: "member_roles", label: "Roles" },
     { field: "was_on_site", label: "Was On Site" },
 ];
+const siteVisitDetailsColumns = [
+    { field: "site_visit_type", label: "Type" },
+    { field: "last_date_of_site_visit", label: "Last Date" },
+    { field: "project_description", label: "Project Description" },
+    { field: "associated_permit", label: "Permit" },
+    { field: "affiliation", label: "Affiliation" },
+];
 </script>
 
 <template>
     <DetailsSection
-        section-title="3. Site Visit Details"
-        :visible="true"
+        :section-title="props.sectionTitle"
+        :visible="props.visible"
+        :loading="props.loading"
     >
         <template #sectionContent>
             <div>
                 <dl>
-                    <dt>3.1 Site Visit Type</dt>
-                    <dd>
-                        {{
-                            details?.aliased_data?.site_visit_type
-                                ?.display_value
-                        }}
-                    </dd>
-
-                    <dt>3.2 Last Date of Site Visit</dt>
-                    <dd>
-                        {{
-                            details?.aliased_data?.last_date_of_site_visit
-                                ?.display_value
-                        }}
-                    </dd>
-
-                    <dt>3.3 Project Description</dt>
-                    <dd>
-                        {{
-                            details?.aliased_data?.project_description
-                                ?.display_value
-                        }}
-                    </dd>
-
-                    <dt>3.4 Associated Permit</dt>
-                    <dd>
-                        {{
-                            details?.aliased_data?.associated_permit
-                                ?.display_value
-                        }}
-                    </dd>
-
-                    <dt>3.5 Archaeological Site</dt>
+                    <dt>Archaeological Site</dt>
                     <dd>
                         {{
                             details?.aliased_data?.archaeological_site
                                 ?.display_value
                         }}
                     </dd>
-
-                    <dt>3.6 Affiliation</dt>
-                    <dd>
-                        {{ details?.aliased_data?.affiliation?.display_value }}
-                    </dd>
                 </dl>
 
-                <h4>3.7 Site Visit Team</h4>
+                <StandardDataTable
+                    :column-definitions="siteVisitDetailsColumns"
+                    :table-data="details ? [details] : []"
+                ></StandardDataTable>
+
+                <dt>Site Visit Team</dt>
                 <StandardDataTable
                     :table-data="teamMembers || []"
                     :column-definitions="teamColumns"

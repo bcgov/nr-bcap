@@ -6,8 +6,8 @@ import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTabl
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined }>(),
-    {},
+    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
+    { loading: false },
 );
 const idTile = computed(() => props.data?.aliased_data?.identification);
 const tempNumber = computed(() => idTile.value?.aliased_data?.temporary_number);
@@ -34,6 +34,7 @@ const newNameColumns = [
     <DetailsSection
         section-title="2. Identification"
         :visible="true"
+        :loading="props.loading"
     >
         <template #sectionContent>
             <div>

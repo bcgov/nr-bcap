@@ -9,6 +9,7 @@ import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTabl
 
 const props = defineProps<{
     data: RelatedDocumentsTile | undefined;
+    loading?: boolean;
 }>();
 
 const currentData = computed<RelatedDocumentsTile | undefined>(
@@ -17,33 +18,18 @@ const currentData = computed<RelatedDocumentsTile | undefined>(
     },
 );
 
-// const id_fields = [
-//     "borden_number",
-//     "registration_date",
-//     "registration_status",
-//     "parcel_owner_type",
-//     "register_type",
-//     "site_creation_date",
-//     "parent_site",
-//     "site_alert",
-//     "authority",
-//     "site_names",
-// ] as const;
-// type IdFieldKey = (typeof id_fields)[number];
-
 /** Generic column definitions: configure any key/path + label */
 const siteDocumentsColumns = [
     { field: "related_document_type", label: "Type" },
     { field: "related_site_documents", label: "Document" },
     { field: "related_document_description", label: "Description" },
 ];
-
-// [ "general_remark_information", "remark_keyword", "contravention_document", "restricted_document", "hca_contravention", "restricted_information_n1", "conviction" ]
 </script>
 
 <template>
     <DetailsSection
         section-title="9. References & Related Documents"
+        :loading="props.loading ?? false"
         :visible="true"
     >
         <template #sectionContent>
@@ -110,15 +96,3 @@ const siteDocumentsColumns = [
         </template>
     </DetailsSection>
 </template>
-
-<style>
-dl {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 1rem;
-}
-dt {
-    min-width: 20rem;
-}
-</style>
-<style scoped></style>
