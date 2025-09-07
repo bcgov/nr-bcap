@@ -20,6 +20,11 @@
 
     "baseUrl": ".",
     "paths": {
+      "@/bcap/*": ["bcap/src/bcap/*"],
+      "@/bcgov_arches_common/*": ["node_modules/bcgov_arches_common/bcgov_arches_common/src/bcgov_arches_common/*"],
+      "@/arches_component_lab/*": ["node_modules/arches-component-lab/arches_component_lab/src/arches_component_lab/*"],
+      "@/arches_controlled_lists/*": ["node_modules/arches-controlled-lists/arches_controlled_lists/src/arches_controlled_lists/*"],
+      "@/arches_querysets/*": ["node_modules/arches-controlled-lists/arches_controlled_lists/src/arches_controlled_lists/*"],
       // keep aliases from the generated file (they still apply)
       "*": [
         "*",
@@ -29,8 +34,6 @@
         "node_modules/*",
         "../node_modules/*"
       ],
-      "@/bcap/*": ["bcap/src/bcap/*"],
-      "@/arches_component_lab/*": ["node_modules/arches_component_lab/arches_component_lab/src/arches_component_lab/*"]
     },
     "rootDirs": [
       "bcap/media/js",

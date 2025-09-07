@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
     "arches>=8.0.2",
-    "arches_component_lab",
+    "arches-component-lab",
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common@brf/feat/214_upgrade_to_v8_take2",
     "arches_querysets",
     "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@main",
