@@ -10,7 +10,6 @@ import "templates/views/components/map-popup.htm";
 import MapboxGl from "mapbox-gl";
 import MapboxGeocoder from "mapbox-gl-geocoder";
 import MapPopup from "@/bcap/components/MapPopup.vue";
-// import createVueApplication from "arches/arches/app/media/js/utils/create-vue-application";
 import { createApp } from "vue";
 
 const viewModel = function (params) {

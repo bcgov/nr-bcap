@@ -68,31 +68,6 @@ export default ko.components.register(
                             property.string_template(template);
                         }, this);
                     }
-                    // if (property.card_names) {
-                    //     property.card_names.subscribe(function(card_names){
-                    //         var templateFragments = [];
-                    //         //property.string_template(card_names);
-                    //         _.each(card_names, function(card_name){
-                    //             console.log(card_name);
-                    //             var node = _.filter(this.graph.nodes, function(node){
-                    //                 return node.name === card_name;
-                    //             }, this);
-                    //             templateFragments.push('<' + node.name + '>');
-                    //         }, this);
-                    //
-                    //         /*
-                    //         var nodes = _.filter(this.graph.nodes, function(node){
-                    //             return node.nodegroup_id === nodegroup_id;
-                    //         }, this);
-                    //         _.each(nodes, function(node){
-                    //             templateFragments.push('<' + node.name + '>');
-                    //         }, this);
-                    //
-                    //         var template = templateFragments.join(', ');
-                    //         property.string_template(template);
-                    //          */
-                    //     }, this);
-                    // }
                 },
                 this,
             );

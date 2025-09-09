@@ -267,24 +267,6 @@ const BordenNumberWidget = function (params) {
             self.form.loading(false);
         });
     };
-    /*
-            var self = this;
-            if (this.value()) {
-                this.latitudeLocator = ko.observable(this.value().substring(0,2));
-                this.longitudeLocator = ko.observable(this.value().substring(2,4));
-                this.sequence = ko.observable(this.value().substring(5));
-            } else {
-                this.latitudeLocator = ko.observable();
-                this.longitudeLocator = ko.observable();
-                this.sequence = ko.observable();
-            };
-
-            this.preview = ko.pureComputed(function() {
-                var res = this.latitudeLocator() + this.longitudeLocator() + "-" + this.sequence();
-                this.value(res);
-                return res;
-            }, this);
-             */
 };
 
 export default ko.components.register("borden-number-widget", {
