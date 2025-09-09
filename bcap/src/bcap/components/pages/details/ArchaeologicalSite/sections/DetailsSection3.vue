@@ -24,12 +24,7 @@ const currentData = computed<SiteVisitSchema[] | undefined>(
 );
 
 const sectionTitle = function (siteVisit: SiteVisitSchema): string {
-    return [
-        siteVisit.aliased_data.site_visit_details.aliased_data
-            .last_date_of_site_visit.display_value,
-        siteVisit.aliased_data.site_visit_details.aliased_data.site_visit_type
-            .display_value,
-    ].join(" ");
+    return siteVisit.descriptors.en.name;
 };
 </script>
 
