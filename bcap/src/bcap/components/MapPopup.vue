@@ -104,24 +104,9 @@ function getActiveFeature() {
 }
 /* eslint-enable */
 
-// function makeReactiveDisplayValues() {
-//     props.popupFeatures.forEach((feature) => {
-//         feature.displayValues = {
-//             displayName: ref(feature.displayname()),
-//             mapPopup: ref(feature.map_popup()),
-//             // description: ref(feature.description()),
-//             graphName: ref(feature.graph_name()),
-//         };
-//     });
-// }
-
 onMounted(() => {
     console.log("Component is mounted!");
-    // makeReactiveDisplayValues();
-    // setDisplayValues(visibleFeature.value.resourceinstanceid);
     setDisplayValues();
-    // visibleFeature.value = getActiveFeature();
-    // You can safely access the DOM or run initialization logic here
 });
 </script>
 <template>
