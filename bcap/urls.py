@@ -3,7 +3,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls.resolvers import RegexPattern
-from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile, RelatedSiteVisits
+from bcap.views.api import (
+    BordenNumber,
+    MVT,
+    LegislativeAct,
+    UserProfile,
+    RelatedSiteVisits,
+)
 from bcap.views.resource import ResourceReportView
 from bcgov_arches_common.views.map import BCTileserverProxyView
 import re
@@ -74,7 +80,8 @@ urlpatterns = [
         ResourceReportView.as_view(),
         name="resource_report",
     ),
-    path( f"{bc_path_prefix()}api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
+    path(
+        f"{bc_path_prefix()}api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
         RelatedSiteVisits.as_view(),
         name="api-related-site-resources",
     ),

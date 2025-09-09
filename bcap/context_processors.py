@@ -4,7 +4,8 @@ from django.conf import settings
 def vueEntrypointsForPath(request):
     return (
         settings.VITE_ENTRYPOINTS[request.path]
-        if hasattr(settings, "VITE_ENTRYPOINTS") and request.path in settings.VITE_ENTRYPOINTS
+        if hasattr(settings, "VITE_ENTRYPOINTS")
+        and request.path in settings.VITE_ENTRYPOINTS
         else []
     )
 
