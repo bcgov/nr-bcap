@@ -4,3 +4,9 @@ export interface TileReference {
     nodegroupid: string;
     data: object;
 }
+
+export interface DetailsData {
+    resourceinstance_id: string;
+    displayname: string;
+    graph_slug: string;
+}

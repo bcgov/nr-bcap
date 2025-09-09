@@ -244,28 +244,28 @@ if USE_VITE:
         "django_vite",
     )
 
-# These are the Vue entrypoints that can be served by Vite on a page-by-page basis.
-VITE_ENTRYPOINTS = {"/bcap/search": ["bcap/vite-entries/bcap-site.entry.js"]}
+    # These are the Vue entrypoints that can be served by Vite on a page-by-page basis.
+    VITE_ENTRYPOINTS = {"/bcap/search": ["bcap/vite-entries/bcap-site.entry.js"]}
 
-# django_vite SETTINGS
-DJANGO_VITE = {
-    "default": {
-        "dev_mode": USE_VITE,
-        "static_url_prefix": "/bcrhp/static",
-        # "static_url_prefix": "/",
+    # django_vite SETTINGS
+    DJANGO_VITE = {
+        "default": {
+            "dev_mode": USE_VITE,
+            "static_url_prefix": "/bcrhp/static",
+            # "static_url_prefix": "/",
+        }
     }
-}
-# BASE_DIR = "/web_root/bcap/bcap/src"
-BASE_DIR = "/web_root/bcap"
-# Where ViteJS assets are built.
-DJANGO_VITE_ASSETS_PATH = os.path.join(BASE_DIR, "staticfiles", "dist")
-# If use HMR or not.
-# DJANGO_VITE_DEV_MODE = DEBUG
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5175",
-    "http://localhost:82",
-]
-# END django_vite SETTINGS
+    # BASE_DIR = "/web_root/bcap/bcap/src"
+    BASE_DIR = "/web_root/bcap"
+    # Where ViteJS assets are built.
+    DJANGO_VITE_ASSETS_PATH = os.path.join(BASE_DIR, "staticfiles", "dist")
+    # If use HMR or not.
+    # DJANGO_VITE_DEV_MODE = DEBUG
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5175",
+        "http://localhost:82",
+    ]
+    # END django_vite SETTINGS
 
 ROOT_HOSTCONF = "bcap.hosts"
 DEFAULT_HOST = "bcap"
@@ -442,7 +442,7 @@ SESSION_COOKIE_SAMESITE = None  # allows cookie to be sent on third‑party POST
 SESSION_COOKIE_SECURE = True  # required for SameSite=None
 CSRF_COOKIE_SAMESITE = None  # if using CSRF in session-backed mode
 CSRF_COOKIE_SECURE = True
-if DEBUG:
+if MODE == "DEV":
     # trust proxy headers for host/port/proto
     USE_X_FORWARDED_HOST = True
     CSRF_TRUSTED_ORIGINS = ["http://localhost:82"]

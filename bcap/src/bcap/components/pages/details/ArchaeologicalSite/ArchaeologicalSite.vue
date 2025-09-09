@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getResourceData } from "@/bcap/components/pages/api.ts";
-// main.js or in your component's script setup
+import {
+    getRelatedResourceData,
+    getResourceData,
+} from "@/bcap/components/pages/api.ts";
 import "primeicons/primeicons.css";
+import Section1 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue";
 import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
-import type { TileReference } from "@/bcap/types.ts";
+import Section3 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection3.vue";
+import Section6 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue";
+import Section8 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue";
+import Section9 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue";
+import type { DetailsData } from "@/bcap/types.ts";
 import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+
+import DataTable from "primevue/datatable";
+import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
 
 type LangCode = string;
 interface Descriptor {
@@ -16,22 +27,10 @@ interface Descriptor {
 
 type ResourceDescriptors = Record<LangCode, Descriptor>;
 
-const formattedNow = computed(() => {
-    // undefined => use browser's locale (e.g., "en-CA", "fr-FR", etc.)
-    return new Intl.DateTimeFormat(undefined, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-    }).format(now.value);
-});
-
 const props = withDefaults(
     defineProps<{
-        data: TileReference[];
-        resourceDescriptors: ResourceDescriptors;
+        data: DetailsData;
+        resourceDescriptors?: ResourceDescriptors;
         languageCode?: string;
     }>(),
     {
@@ -39,82 +38,86 @@ const props = withDefaults(
         languageCode: "en",
     },
 );
-type ResourceCache = Record<string, ArchaeologySiteSchema>;
+type SiteDataCache = {
+    site: ArchaeologySiteSchema | null;
+    hria_discontinued_data: HriaDiscontinuedDataSchema | null;
+    site_visits: SiteVisitSchema[];
+};
+type ResourceCache = Record<string, SiteDataCache>;
 
 const resourceCache = ref<ResourceCache>({} as ResourceCache);
 const currentData = ref<ArchaeologySiteSchema>({} as ArchaeologySiteSchema);
+const siteVisitData = ref<SiteVisitSchema[]>({} as SiteVisitSchema[]);
+const hriaDiscontinuedData = ref<HriaDiscontinuedDataSchema>(
+    {} as HriaDiscontinuedDataSchema,
+);
+
+const siteDataLoading = ref(true);
+const siteVisitDataLoading = ref(true);
+const hriaDataLoading = ref(true);
+
 watchEffect(async () => {
-    const resourceId: string = props.data?.[0]?.resourceinstance_id;
-    resourceCache.value[resourceId] = await getResourceData(
-        "archaeological_site",
-        resourceId,
+    const resourceId: string = props.data?.resourceinstance_id;
+    if (!(resourceId in resourceCache.value)) {
+        resourceCache.value[resourceId] = {
+            site: null,
+            hria_discontinued_data: null,
+            site_visits: [],
+        };
+    }
+
+    getResourceData("archaeological_site", resourceId).then((data) => {
+        resourceCache.value[resourceId].site = data as ArchaeologySiteSchema;
+        currentData.value = (data ?? {}) as ArchaeologySiteSchema;
+        siteDataLoading.value = false;
+    });
+
+    getRelatedResourceData("site_visit", resourceId).then((data) => {
+        resourceCache.value[resourceId].site_visits = data as SiteVisitSchema[];
+        siteVisitData.value = data as SiteVisitSchema[];
+        siteVisitDataLoading.value = false;
+    });
+
+    getRelatedResourceData("hria_discontinued_data", resourceId).then(
+        (data) => {
+            const hriaData: HriaDiscontinuedDataSchema =
+                data && data.length > 0
+                    ? (data[0] as HriaDiscontinuedDataSchema)
+                    : ({} as HriaDiscontinuedDataSchema);
+            resourceCache.value[resourceId].hria_discontinued_data = hriaData;
+            hriaDiscontinuedData.value = hriaData;
+            hriaDataLoading.value = false;
+        },
     );
-    currentData.value = resourceCache.value[resourceId as string];
+
     console.log(Object.keys(resourceCache.value).length);
 });
-
-const now = ref(new Date());
 </script>
 
 <template>
-    <div class="container">
-        <div class="report-toolbar-preview ep-form-toolbar">
-            <h4 class="report-toolbar-title">
-                <span class="bc-report-title">Archaeological Site</span>
-                -
-                <span class="bc-report-title">
-                    {{ props?.resourceDescriptors?.[props.languageCode]?.name }}
-                </span>
-            </h4>
-            <!-- Tools -->
-            <div class="ep-form-toolbar-tools mar-no flex">
-                <p class="report-print-date">
-                    <span data-bind="text: reportDate">{{ formattedNow }}</span>
-                </p>
-            </div>
-        </div>
+    <!-- Hack to ensure styles come through -->
+    <div style="display: none">
+        <DataTable></DataTable>
         <DetailsSection
-            section-title="1. Spatial View"
-            :visible="true"
-        >
-            <template #sectionContent>
-                <div>
-                    <dl>
-                        <dt>Source Notes</dt>
-                        <dd>
-                            {{
-                                currentData.aliased_data?.site_boundary
-                                    ?.aliased_data.source_notes?.display_value
-                            }}
-                        </dd>
-                        <div
-                            v-if="
-                                currentData.aliased_data?.site_boundary
-                                    ?.aliased_data?.latest_edit_type?.node_value
-                            "
-                        >
-                            <dt>Latest Edit Type</dt>
-                            <dd>
-                                {{
-                                    currentData.aliased_data?.site_boundary
-                                        ?.aliased_data?.latest_edit_type
-                                        ?.display_value
-                                }}
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </template>
-        </DetailsSection>
+            section-title=""
+            :visible="false"
+        ></DetailsSection>
+    </div>
+    <div class="container">
+        <Section1
+            :data="currentData"
+            :loading="siteDataLoading"
+        ></Section1>
         <Section2
             :data="currentData.aliased_data?.identification_and_registration"
+            :hria-data="hriaDiscontinuedData"
+            :loading="siteDataLoading"
         ></Section2>
-        <DetailsSection
-            section-title="3. Site Visits"
-            :visible="true"
-        >
-            <template #sectionContent></template>
-        </DetailsSection>
+
+        <Section3
+            :data="siteVisitData"
+            :loading="siteVisitDataLoading"
+        ></Section3>
         <DetailsSection
             section-title="4. Location"
             :visible="true"
@@ -127,45 +130,34 @@ const now = ref(new Date());
         >
             <template #sectionContent></template>
         </DetailsSection>
-        <DetailsSection
-            section-title="6. Archaeological Data"
-            :visible="true"
-        >
-            <template #sectionContent>
-                HI
-                {{ currentData?.aliased_data?.archaeological_data }}
-            </template>
-        </DetailsSection>
+        <Section6
+            :data="currentData?.aliased_data?.archaeological_data"
+            :loading="siteDataLoading"
+        ></Section6>
         <DetailsSection
             section-title="7. Ancestral Remains"
             :visible="true"
+            :loading="siteDataLoading"
         >
             <template #sectionContent>
                 {{ currentData?.aliased_data?.ancestral_remains }}
             </template>
         </DetailsSection>
-        <DetailsSection
-            section-title="8. Remarks & Restricted Info"
-            :visible="true"
-        >
-            <template #sectionContent>
-                {{
-                    currentData?.aliased_data
-                        ?.remarks_and_restricted_information
-                }}
-            </template>
-        </DetailsSection>
-        <DetailsSection
-            section-title="9. References & Related Documents"
-            :visible="true"
-        >
-            <template #sectionContent>
-                {{ currentData?.aliased_data?.related_documents }}
-            </template>
-        </DetailsSection>
+        <Section8
+            :data="
+                currentData?.aliased_data?.remarks_and_restricted_information
+            "
+            :loading="siteDataLoading"
+        ></Section8>
+        <Section9
+            :data="currentData?.aliased_data?.related_documents"
+            :loading="siteDataLoading"
+        ></Section9>
     </div>
-    <div v-if="currentData.aliased_data?.ancestral_remains">
-        {{ Object.keys(currentData.aliased_data.ancestral_remains) }}
+    <div>
+        <pre v-if="currentData.aliased_data">
+            {{ Object.keys(currentData?.aliased_data) }}
+        </pre>
     </div>
 </template>
 
@@ -177,6 +169,7 @@ dl {
 }
 dt {
     min-width: 20rem;
+    padding-top: 0.75rem;
 }
 </style>
 <style scoped></style>

@@ -7,14 +7,16 @@ import type {
     AliasedTileData,
 } from "@/arches_component_lab/types.ts";
 // main.js or in your component's script setup
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
+import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
 import type { IdentificationAndRegistrationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
 
 const props = withDefaults(
     defineProps<{
         data: IdentificationAndRegistrationTile | undefined;
+        hriaData: HriaDiscontinuedDataSchema | undefined;
+        loading?: boolean;
         languageCode?: string;
     }>(),
     {
@@ -30,18 +32,44 @@ const currentData = computed<IdentificationAndRegistrationTile | undefined>(
     },
 );
 
+const currentHriaData = computed<HriaDiscontinuedDataSchema | undefined>(
+    (): HriaDiscontinuedDataSchema | undefined => {
+        return props.hriaData as HriaDiscontinuedDataSchema | undefined;
+    },
+);
+
 const id_fields = [
     "borden_number",
     "registration_date",
     "registration_status",
     "parcel_owner_type",
-    "site_creation_date",
     "register_type",
+    "site_creation_date",
     "parent_site",
     "site_alert",
     "authority",
     "site_names",
 ] as const;
+
+/** Generic column definitions: configure any key/path + label */
+const siteDecisionColumns = [
+    { field: "decision_date", label: "Decision Date" },
+    { field: "decision_made_by", label: "Decision Maker" },
+    { field: "site_decision", label: "Decision" },
+    { field: "decision_criteria", label: "Criteria" },
+    { field: "decision_description", label: "Description" },
+    { field: "recommendation_date", label: "Recommended On" },
+    { field: "recommended_by", label: "Recommended By" },
+];
+
+const authorityColumns = [
+    { field: "responsible_government", label: "Government" },
+    { field: "legislative_act", label: "Legislative Act" },
+    { field: "reference_number", label: "Reference #" },
+    { field: "authority_start_date", label: "Start Date" },
+    { field: "authority_end_date", label: "End Date" },
+    { field: "authority_description", label: "Description" },
+];
 
 type IdFieldKey = (typeof id_fields)[number];
 
@@ -53,6 +81,7 @@ const labelize = (key: string) =>
 <template>
     <DetailsSection
         section-title="2. ID & Registration"
+        :loading="props.loading"
         :visible="true"
     >
         <template #sectionContent>
@@ -91,137 +120,44 @@ const labelize = (key: string) =>
                             }}
                         </dd>
                     </template>
+                    <div
+                        v-if="
+                            currentHriaData?.aliased_data
+                                ?.unreviewed_adif_record?.aliased_data
+                                ?.unreviewed_adif_record.node_value
+                        "
+                    >
+                        <dt>Is ADIF Record?</dt>
+                        <dd>Yes</dd>
+                        <dt>Site Entered By / Date:</dt>
+                        <dd>
+                            {{
+                                currentHriaData?.aliased_data
+                                    ?.unreviewed_adif_record?.aliased_data
+                                    ?.site_entered_by?.display_value
+                            }}
+                            /
+                            {{
+                                currentHriaData?.aliased_data
+                                    ?.unreviewed_adif_record?.aliased_data
+                                    ?.site_entry_date?.display_value
+                            }}
+                        </dd>
+                    </div>
                 </dl>
-                <dl v-if="(currentData?.site_decision?.length ?? 0) > 0">
-                    <dt>Decision History</dt>
-                    <dd>
-                        <DataTable
-                            :value="currentData?.site_decision"
-                            data-key="tileid"
-                            responsive-layout="scroll"
-                            sort-field="aliased_data.decision_date.display_value"
-                            :sort-order="-1"
-                        >
-                            <Column
-                                header="Decision Date"
-                                field="aliased_data.decision_date.display_value"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getDisplayValue(
-                                            slotProps.data.aliased_data
-                                                ?.decision_date,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-
-                            <Column
-                                header="Decision Maker"
-                                field="aliased_data.decision_made_by.display_value"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getDisplayValue(
-                                            slotProps.data.aliased_data
-                                                ?.decision_made_by,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-
-                            <Column
-                                header="Decision"
-                                field="aliased_data.site_decision.display_value"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getDisplayValue(
-                                            slotProps.data.aliased_data
-                                                ?.site_decision,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-
-                            <Column
-                                header="Criteria"
-                                field="aliased_data.decision_criteria.display_value"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getDisplayValue(
-                                            slotProps.data.aliased_data
-                                                ?.decision_criteria,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-
-                            <Column
-                                header="Description"
-                                field="aliased_data.decision_description.display_value"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getDisplayValue(
-                                            slotProps.data.aliased_data
-                                                ?.decision_description,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-
-                            <Column
-                                header="Recommended On"
-                                field="aliased_data.recommendation_date.display_value"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getDisplayValue(
-                                            slotProps.data.aliased_data
-                                                ?.recommendation_date,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-
-                            <Column
-                                header="Recommended By"
-                                field="aliased_data.recommended_by.display_value"
-                                sortable
-                            >
-                                <template #body="slotProps">
-                                    {{
-                                        getDisplayValue(
-                                            slotProps.data.aliased_data
-                                                ?.recommended_by,
-                                        )
-                                    }}
-                                </template>
-                            </Column>
-                        </DataTable>
-                    </dd>
-                </dl>
+                <StandardDataTable
+                    :table-data="currentData?.authority ?? []"
+                    :column-definitions="authorityColumns"
+                    title="Authority"
+                    :initial-sort-field-index="3"
+                ></StandardDataTable>
+                <StandardDataTable
+                    :table-data="currentData?.site_decision || []"
+                    :column-definitions="siteDecisionColumns"
+                    title="Decision History"
+                    :initial-sort-field-index="0"
+                ></StandardDataTable>
             </div>
         </template>
     </DetailsSection>
 </template>
-
-<style>
-dl {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 1rem;
-}
-dt {
-    min-width: 20rem;
-}
-</style>
-<style scoped></style>

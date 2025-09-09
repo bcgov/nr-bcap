@@ -1,13 +1,13 @@
 // e.g. bcap/vite-entries/search.entry.ts
 import { createApp } from "vue";
-import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue";
+import DetailsPage from "@/bcap/components/pages/details/DetailsPage.vue";
 import "@/bcap/primevue-theme-global.ts";
 
 // Register the KO binding name used in your HTML
 window.BCAP.vueKO.register({
     name: "detailsVueComponent",
     createApp,
-    component: ArchaeologicalSite,
+    component: DetailsPage,
     source: "vite",
 });
 

@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import FieldSet from "primevue/fieldset";
-const props = defineProps<{ sectionTitle: string; visible: boolean }>();
-const sectionVisible = ref(props.visible || true);
+import ProgressSpinner from "primevue/progressspinner";
+const props = defineProps<{
+    sectionTitle: string;
+    visible?: boolean;
+    loading?: boolean;
+}>();
+const sectionVisible = ref(props.visible ?? true);
+const isLoading = computed(() => props.loading ?? false);
 </script>
 
 <template>
@@ -11,6 +17,21 @@ const sectionVisible = ref(props.visible || true);
         :legend="props.sectionTitle"
         :toggleable="true"
     >
-        <slot name="sectionContent"></slot>
+        <ProgressSpinner
+            v-if="isLoading"
+            :style="{ width: '2rem', height: '2rem' }"
+        />
+        <slot
+            v-else
+            name="sectionContent"
+        ></slot>
     </FieldSet>
 </template>
+
+<style>
+legend.p-fieldset-legend {
+    width: unset;
+    margin-bottom: 0;
+    font-size: 1.75rem;
+}
+</style>
