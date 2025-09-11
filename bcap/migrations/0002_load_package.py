@@ -8,7 +8,7 @@ from .util.migration_util import format_sql
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcap", "0001c_create_map_attribute_data_function"),
+        ("bcap", "0001d_fix_relational_views_for_reference_datatypes"),
     ]
 
     create_resource_proxy_views_sql = """
