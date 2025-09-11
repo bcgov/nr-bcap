@@ -3,12 +3,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls.resolvers import RegexPattern
-from bcap.views.api import BordenNumber, MVT, LegislativeAct, UserProfile
-from bcap.views.search import export_results as bcap_export_results
+from bcap.views.api import (
+    BordenNumber,
+    MVT,
+    LegislativeAct,
+    UserProfile,
+    RelatedSiteVisits,
+)
 from bcap.views.resource import ResourceReportView
-from bcap.views.auth import UnauthorizedView
 from bcgov_arches_common.views.map import BCTileserverProxyView
-from bcap.views import auth
 import re
 
 uuid_regex = settings.UUID_REGEX
@@ -16,10 +19,12 @@ uuid_regex = settings.UUID_REGEX
 path_prefix_re = re.compile(r"^(\^)(.*)$")
 
 
-def bc_path_prefix(path):
+def bc_path_prefix(path=""):
     if not settings.BCGOV_PROXY_PREFIX:
         return path
     else:
+        if not path:
+            return settings.BCGOV_PROXY_PREFIX
         new_path = path_prefix_re.sub(r"\1%s\2", path)
         return new_path % settings.BCGOV_PROXY_PREFIX
 
@@ -62,22 +67,6 @@ urlpatterns = [
         UserProfile.as_view(),
         name="user_profile",
     ),
-    # Redirect the admin login page to use OAuth
-    re_path(
-        bc_path_prefix(r"^admin/login/$"),
-        auth.login,
-        name="admin_login",
-    ),
-    re_path(bc_path_prefix(r"^auth/$"), auth.login, name="auth_login"),
-    re_path(
-        bc_path_prefix(r"^auth/eoauth_cb$"), auth.auth_callback, name="auth_callback"
-    ),
-    re_path(bc_path_prefix(r"^auth/logout/"), auth.logout, name="auth_logout"),
-    re_path(
-        bc_path_prefix(r"^unauthorized/"),
-        UnauthorizedView.as_view(),
-        name="unauthorized",
-    ),
     re_path(
         bc_path_prefix(
             r"^mvt/(?P<nodeid>%s)/(?P<zoom>[0-9]+|\{z\})/(?P<x>[0-9]+|\{x\})/(?P<y>[0-9]+|\{y\}).pbf$"
@@ -91,17 +80,28 @@ urlpatterns = [
         ResourceReportView.as_view(),
         name="resource_report",
     ),
-    # Override base export results
-    re_path(
-        bc_path_prefix(r"^search/export_results$"),
-        bcap_export_results,
-        name="export_results",
+    path(
+        f"{bc_path_prefix()}api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
+        RelatedSiteVisits.as_view(),
+        name="api-related-site-resources",
     ),
-    bc_url_resolver,
+    path(
+        f"{bc_path_prefix()}api/arch_site_related_resources/<slug:graph>",
+        RelatedSiteVisits.as_view(),
+        name="api-related-sites-resources",
+    ),
+    path(bc_path_prefix(), include("bcgov_arches_common.urls")),
+    path(bc_path_prefix(), include("arches_controlled_lists.urls")),
+    path(bc_path_prefix(), include("arches_component_lab.urls")),
+    path(bc_path_prefix(), include("arches_querysets.urls")),
 ]
 # Ensure Arches core urls are superseded by project-level urls
 urlpatterns.append(path("", include("arches.urls")))
 
+handler400 = "arches.app.views.main.custom_400"
+handler403 = "arches.app.views.main.custom_403"
+handler404 = "arches.app.views.main.custom_404"
+handler500 = "arches.app.views.main.custom_500"
 
 # Adds URL pattern to serve media files during development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

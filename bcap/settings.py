@@ -55,7 +55,7 @@ SEARCH_COMPONENT_LOCATIONS.append("bcap.search_components")
 
 LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
 
-FILE_TYPE_CHECKING = False
+FILE_TYPE_CHECKING = "strict"
 FILE_TYPES = [
     "bmp",
     "gif",
@@ -131,12 +131,38 @@ if ELASTICSEARCH_CERT_LOCATION and ELASTICSEARCH_API_KEY:
 # a prefix to append to all elasticsearch indexes, note: must be lower case
 ELASTICSEARCH_PREFIX = "bcap" + get_env_variable("APP_SUFFIX")
 
-ELASTICSEARCH_CUSTOM_INDEXES = []
-# [{
-#     'module': 'bcap.search_indexes.sample_index.SampleIndex',
-#     'name': 'my_new_custom_index', <-- follow ES index naming rules
-#     'should_update_asynchronously': False  <-- denotes if asynchronously updating the index would affect custom functionality within the project.
-# }]
+REFERENCES_INDEX_NAME = "references"
+ELASTICSEARCH_CUSTOM_INDEXES = [
+    {
+        "module": "arches_controlled_lists.search_indexes.reference_index.ReferenceIndex",
+        "name": REFERENCES_INDEX_NAME,
+        "should_update_asynchronously": True,
+    }
+]
+TERM_SEARCH_TYPES = [
+    {
+        "type": "term",
+        "label": _("Term Matches"),
+        "key": "terms",
+        "module": "arches.app.search.search_term.TermSearch",
+    },
+    {
+        "type": "concept",
+        "label": _("Concepts"),
+        "key": "concepts",
+        "module": "arches.app.search.concept_search.ConceptSearch",
+    },
+    {
+        "type": "reference",
+        "label": _("References"),
+        "key": REFERENCES_INDEX_NAME,
+        "module": "arches_controlled_lists.search_indexes.reference_index.ReferenceIndex",
+    },
+]
+
+ES_MAPPING_MODIFIER_CLASSES = [
+    "arches_controlled_lists.search.references_es_mapping_modifier.ReferencesEsMappingModifier"
+]
 
 KIBANA_URL = "http://localhost:5601/"
 KIBANA_CONFIG_BASEPATH = "kibana"  # must match Kibana config.yml setting (server.basePath) but without the leading slash,
@@ -160,7 +186,9 @@ DATABASES = {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "HOST": get_env_variable("PGHOST"),
         "NAME": get_env_variable("PGDBNAME"),
-        "OPTIONS": {},
+        "OPTIONS": {
+            "options": "-c cursor_tuple_fraction=1",
+        },
         "PASSWORD": get_env_variable("PGPASSWORD"),
         "PORT": "5432",
         "POSTGIS_TEMPLATE": "template_postgis",
@@ -174,7 +202,6 @@ SEARCH_THUMBNAILS = False
 
 INSTALLED_APPS = (
     "webpack_loader",
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -186,8 +213,10 @@ INSTALLED_APPS = (
     "arches.app.models",
     "arches.management",
     "guardian",
-    "captcha",
+    "django_recaptcha",
+    "pgtrigger",
     "revproxy",
+    "django_migrate_sql",
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
@@ -195,9 +224,48 @@ INSTALLED_APPS = (
     # "silk",
     "storages",
     "bcap",
+    "arches_querysets",
+    "arches_component_lab",
+    "arches_controlled_lists",
+    "rest_framework",
     "bcgov_arches_common",
 )
-INSTALLED_APPS += ("arches.app",)
+INSTALLED_APPS += (
+    "arches.app",
+    "django.contrib.admin",
+)
+
+# toggle Vite injection
+USE_VITE = False
+VITE_BASE = "/bcap/@vite/"
+
+if USE_VITE:
+    INSTALLED_APPS += (
+        "django_vite",
+    )
+
+    # These are the Vue entrypoints that can be served by Vite on a page-by-page basis.
+    VITE_ENTRYPOINTS = {"/bcap/search": ["bcap/vite-entries/bcap-site.entry.js"]}
+
+    # django_vite SETTINGS
+    DJANGO_VITE = {
+        "default": {
+            "dev_mode": USE_VITE,
+            "static_url_prefix": "/bcrhp/static",
+            # "static_url_prefix": "/",
+        }
+    }
+    # BASE_DIR = "/web_root/bcap/bcap/src"
+    BASE_DIR = "/web_root/bcap"
+    # Where ViteJS assets are built.
+    DJANGO_VITE_ASSETS_PATH = os.path.join(BASE_DIR, "staticfiles", "dist")
+    # If use HMR or not.
+    # DJANGO_VITE_DEV_MODE = DEBUG
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5175",
+        "http://localhost:82",
+    ]
+    # END django_vite SETTINGS
 
 ROOT_HOSTCONF = "bcap.hosts"
 DEFAULT_HOST = "bcap"
@@ -207,7 +275,6 @@ AUTHENTICATION_BACKENDS = (
     "oauth2_provider.backends.OAuth2Backend",
     "django.contrib.auth.backends.ModelBackend",  # this is default # Comment out for IDIR
     # "django.contrib.auth.backends.RemoteUserBackend",
-    # "bcap.util.auth.backends.BCGovRemoteUserBackend",  # For IDIR authentication behind legacy siteminder
     "guardian.backends.ObjectPermissionBackend",
     "arches.app.utils.permission_backend.PermissionBackend",
 )
@@ -225,7 +292,7 @@ MIDDLEWARE = [
     "arches.app.utils.middleware.ModifyAuthorizationHeader",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "bcap.util.auth.oauth_token_refresh.OAuthTokenRefreshMiddleware",
+    "bcgov_arches_common.util.auth.oauth_token_refresh.OAuthTokenRefreshMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
@@ -246,6 +313,11 @@ TEMPLATES = build_templates_config(
     debug=DEBUG,
     app_root=APP_ROOT,
 )
+
+# make vite context processor available in templates
+TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "bcap.context_processors.vite",
+]
 
 ALLOWED_HOSTS = get_env_variable("ALLOWED_HOSTS").split()
 
@@ -279,8 +351,6 @@ else:
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.path.join(APP_ROOT, "staticfiles")
 
-OVERRIDE_RESOURCE_MODEL_LOCK = False
-
 RESOURCE_IMPORT_LOG = os.path.join(APP_ROOT, "logs", "resource_import.log")
 DEFAULT_RESOURCE_IMPORT_USER = {"username": "admin", "userid": 1}
 
@@ -300,18 +370,23 @@ LOGGING = {
             "formatter": "console",
         },
         "console": {
-            "level": "INFO",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "console",
         },
     },
     "loggers": {
-        "django": {
+        "arches": {
             "handlers": ["file", "console"],
-            "level": "INFO",
+            "level": "WARNING",
+            "propagate": True,
         },
-        "arches": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
-        "bcap": {"handlers": ["file", "console"], "level": "INFO", "propagate": True},
+        "django.request": {
+            "handlers": ["file", "console"],
+            "level": "WARNING",  # or consider ERROR if this is too noisy
+            "propagate": True,
+        },
+        "bcap": {"handlers": ["file", "console"], "level": "DEBUG", "propagate": True},
     },
 }
 
@@ -361,24 +436,51 @@ GRAPH_MODEL_CACHE_TIMEOUT = None
 
 OAUTH_CLIENT_ID = ""  #'9JCibwrWQ4hwuGn5fu2u1oRZSs9V6gK8Vu8hpRC4'
 
+# Allow cookies on cross-site OAuth callback
+# This is required to allow OAUTH framework to work w/ Django 5.2.x
+SESSION_COOKIE_SAMESITE = None  # allows cookie to be sent on third‑party POSTs
+SESSION_COOKIE_SECURE = True  # required for SameSite=None
+CSRF_COOKIE_SAMESITE = None  # if using CSRF in session-backed mode
+CSRF_COOKIE_SECURE = True
+if MODE == "DEV":
+    # trust proxy headers for host/port/proto
+    USE_X_FORWARDED_HOST = True
+    CSRF_TRUSTED_ORIGINS = ["http://localhost:82"]
+    PUBLIC_ORIGIN = "http://localhost:82"
 
 AUTHLIB_OAUTH_CLIENTS = {
-    'bcap_oauth': {
-        'client_id': get_env_variable("OAUTH_CLIENT_ID"),
-        'client_secret': get_env_variable("OAUTH_CLIENT_SECRET"),
-        'authorize_url': get_env_variable("OAUTH_AUTH_ENDPOINT"),
-        'access_token_url': get_env_variable("OAUTH_TOKEN_ENDPOINT"),
-        'refresh_token_url': get_env_variable("OAUTH_TOKEN_ENDPOINT"),
-        'server_metadata_url': get_env_variable("OAUTH_SERVER_METADATA_URL"),
-        'client_kwargs': {
-            'scope': 'openid profile email',
-            'token_endpoint_auth_method': 'client_secret_post',
+    "default": {
+        "client_id": get_env_variable("OAUTH_CLIENT_ID"),
+        "client_secret": get_env_variable("OAUTH_CLIENT_SECRET"),
+        "authorize_url": get_env_variable("OAUTH_AUTH_ENDPOINT"),
+        "access_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT"),
+        "refresh_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT"),
+        "server_metadata_url": get_env_variable("OAUTH_SERVER_METADATA_URL"),
+        "client_kwargs": {
+            "scope": "openid profile email",
+            "token_endpoint_auth_method": "client_secret_post",
+        },
+        "urls": {
+            "home_page": "/bcap/",
+            "unauthorized_page": "/bcap/unauthorized",
+            "unauthorized_template": "unauthorized.htm",
+            "auth_exempt_pages": [
+                "/bcap",
+                "/bcap/",
+                "/unauthorized",
+                "/bcap/index.htm",
+                "/bcap/auth",
+                "/bcap/auth/eoauth_start",
+                "/bcap/auth/eoauth_cb",
+            ],
         },
     }
 }
 
 # Optional: storage location for updated tokens
-OAUTH2_TOKEN_STORE = 'bcap.util.auth.token_store.save_token'
+OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
+
+SAVED_SEARCHES = []
 
 APP_TITLE = "BC Government | Historic Place Inventory"
 COPYRIGHT_TEXT = "All Rights Reserved."
@@ -391,10 +493,10 @@ ENABLE_CAPTCHA = False
 NOCAPTCHA = True
 # RECAPTCHA_PROXY = 'http://127.0.0.1:8000'
 if DEBUG is True:
-    SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+    SILENCED_SYSTEM_CHECKS = ["django_recaptcha.recaptcha_test_key_error"]
 else:
     SILENCED_SYSTEM_CHECKS = [
-        "captcha.recaptcha_test_key_error",
+        "django_recaptcha.recaptcha_test_key_error",
         "arches.E002",  # "Arches requirement is invalid, missing, or from a URL"
     ]
 
@@ -544,7 +646,7 @@ except ImportError:
 # BCGov specific settings. Should these be externalized into separate file?
 ###########
 
-WEBPACK_DEVELOPMENT_SERVER_PORT = 9000
+WEBPACK_DEVELOPMENT_SERVER_PORT = 5175
 
 ARCHES_NAMESPACE_FOR_DATA_EXPORT = PUBLIC_SERVER_ADDRESS
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"

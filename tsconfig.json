@@ -1,5 +1,5 @@
 {
-  "extends": "./.tsconfig-paths.json",
+  "extends": "./frontend_configuration/tsconfig-paths.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -15,7 +15,35 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "types": ["vitest/globals"],
-    "allowImportingTsExtensions": true
-  }
+    "types": ["vitest/globals", "vite/client"],
+    "allowImportingTsExtensions": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/bcap/*": ["bcap/src/bcap/*"],
+      "@/bcgov_arches_common/*": ["node_modules/bcgov_arches_common/bcgov_arches_common/src/bcgov_arches_common/*"],
+      "@/arches_component_lab/*": ["node_modules/arches-component-lab/arches_component_lab/src/arches_component_lab/*"],
+      "@/arches_controlled_lists/*": ["node_modules/arches-controlled-lists/arches_controlled_lists/src/arches_controlled_lists/*"],
+      "@/arches_querysets/*": ["node_modules/arches-controlled-lists/arches_controlled_lists/src/arches_controlled_lists/*"],
+      // keep aliases from the generated file (they still apply)
+      "*": [
+        "*",
+        "bcap/media/js/*",
+        "../bcgov-arches-common/bcgov_arches_common/media/js/*",
+        "../arches/arches/app/media/js/*",
+        "node_modules/*",
+        "../node_modules/*"
+      ],
+    },
+    "rootDirs": [
+      "bcap/media/js",
+      "../bcgov-arches-common/bcgov_arches_common/media/js",
+      "../arches/arches/app/media/js"
+    ]
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "**/build/**",
+    "**/staticfiles/**"
+  ]
 }

@@ -10,7 +10,7 @@ from django.test import override_settings
 class OAuthTokenRefreshMiddlewareTest(TestCase):
     def setUp(self):
         self.protected_url = "/test/protected"  # ✅ Now points to a protected route
-        self.home_url = "/bcap"
+        self.home_url = "/bcap/"
         self.auth_start_url = "/bcap/auth"
         self.unauthorized_url = "/bcap/unauthorized"
         self.session = self.client.session

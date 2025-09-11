@@ -4,7 +4,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from authlib.integrations.requests_client import OAuth2Session
 from django.conf import settings
-from bcap.util.auth import token_store
+from bcgov_arches_common.util.auth import token_store
 
 
 class BCAPOAuthTestMixin:
@@ -12,7 +12,7 @@ class BCAPOAuthTestMixin:
         """
         Returns an Authlib OAuth2Session configured to use the BCAP OAuth client config.
         """
-        oauth_config = settings.AUTHLIB_OAUTH_CLIENTS["bcap_oauth"]
+        oauth_config = settings.AUTHLIB_OAUTH_CLIENTS["default"]
         return oauth_config, OAuth2Session(
             client_id=oauth_config["client_id"],
             client_secret=oauth_config["client_secret"],
@@ -28,7 +28,10 @@ class BCAPOAuthTestMixin:
 
 class OAuthTokenRefreshTest(TestCase, BCAPOAuthTestMixin):
 
-    @patch("bcap.util.auth.token_store.save_token", wraps=token_store.save_token)
+    @patch(
+        "bcgov_arches_common.util.auth.token_store.save_token",
+        wraps=token_store.save_token,
+    )
     def test_refresh_triggers_save_token(self, spy_save_token):
         expired_token = {
             "access_token": "expired-token",

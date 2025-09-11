@@ -4,7 +4,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("models", "11499_add_editlog_resourceinstance_idx"),
+        ("models", "12229_add_lifecycle_filter_to_standard_search"),
         ("bcgov_arches_common", "2025-02-07_create_concept_functions"),
         ("guardian", "0002_generic_permissions_index"),
         ("auth", "0012_alter_user_first_name_max_length"),

@@ -39,6 +39,7 @@
 {% endblock report_title_bar %}
 
 {% block summary %}
+
 <div class="relative report-title-bar">
 
     <!-- Title Block -->
@@ -55,32 +56,8 @@
     </div>
 </div>
 
-<div class="rp-report-container-preview relative">
-    <!-- ko if: report.get('name') == "Archaeological Site" -->
-    {% include 'views/report-templates/details/archaeological_site_help.htm' %}
-    <!-- /ko -->
-    <div class="rp-report-section rp-report-section-root">
-        <div class="rp-report-section-title">
-            <div class="rp-card-section">
-                <!--div data-bind="text: report.get('name')"></div-->
-                <!-- ko if: report.get('name') == "Archaeological Site" -->
-                {% include 'views/report-templates/details/archaeological_site.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Legislative Act" -->
-                {% include 'views/report-templates/details/legislative_act.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Government" -->
-                {% include 'views/report-templates/details/government.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Government Person" -->
-                {% include 'views/report-templates/details/government_person.htm' %}
-                <!-- /ko -->
-                <!-- ko if: report.get('name') == "Site Submission" -->
-                {% include 'views/report-templates/details/site_submission.htm' %}
-                <!-- /ko -->
-            </div>
-        </div>
-    </div>
+<div id="details-tab" class="rp-report-container-preview relative">
+    <div id="detailsTab" data-bind="detailsVueComponent: {props: {data: detailsData} }"></div>
 </div>
 
 {% endblock summary %}

@@ -4,6 +4,7 @@ ENV WEB_ROOT=/web_root
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV APP_ROOT=${WEB_ROOT}/bcap
 ENV ARCHES_COMMON=${WEB_ROOT}/bcgov-arches-common
+ENV ARCHES_COMPONENT_LAB=${WEB_ROOT}/arches-component-lab
 ENV NODE_MAJOR=20
 RUN mkdir -p ${APP_ROOT}/bcap/webpack
 
@@ -39,9 +40,12 @@ RUN apt-get update && apt-get -y install curl \
 #RUN pip show setuptools && pip --version && pip install -e . && pip uninstall arches -y
 
 WORKDIR ${ARCHES_ROOT}
-RUN pip install -e . --user
+RUN pip install -e .
 
 WORKDIR ${ARCHES_COMMON}
+RUN pip install -e .
+
+WORKDIR ${ARCHES_COMPONENT_LAB}
 RUN pip install -e .
 
 COPY /nr-bcap/docker/webpack/entrypoint.sh ${WEB_ROOT}/entrypoint.sh

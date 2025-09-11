@@ -1,4 +1,15 @@
 {
+    "plugins": ["prettier-plugin-jinja-template"],
+    "htmlWhitespaceSensitivity": "ignore",
     "singleAttributePerLine": true,
-    "tabWidth": 4
+    "tabWidth": 4,
+    "overrides": [
+        {
+            "files": ["**/templates/**/*.html", "**/templates/**/*.htm"],
+            "options": {
+                "parser": "jinja-template",
+                "printWidth": 120
+            }
+        }
+    ]
 }

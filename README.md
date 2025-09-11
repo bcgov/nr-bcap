@@ -13,6 +13,9 @@ BC Archaeology Branch Arches configuration, schemas and extensions for the BC Ar
 ```
 git clone https://github.com/bcgov/arches-dependency-containers
 git clone https://github.com/bcgov/arches
+git clone https://github.com/archesproject/arches-component-lab
+git clone https://github.com/archesproject/arches-controlled-lists
+git clone https://github.com/archesproject/arches-querysets
 git clone https://github.com/bcgov/bcgov-arches-common
 git clone https://github.com/bcgov/nr-bcap
 ```
@@ -24,6 +27,9 @@ git clone https://github.com/bcgov/nr-bcap
     ├── 📁 arches-dependency-containers/
     ├── 📁 arches/
     ├── 📁 bcgov-arches-common/
+    ├── 📁 arches-querysets/
+    ├── 📁 arches-component-lab/
+    ├── 📁 arches-controlled-lists/
     └── 📁 nr-bcap/
 ```
 
@@ -31,8 +37,19 @@ git clone https://github.com/bcgov/nr-bcap
 1. Open or navigate to the `bcap` directory in the terminal
 2. Run the following command:
 ```
-cd arches && git checkout stable/7.6.4.1_bcgov
+cd arches && git checkout stable/8.0.3_bcgov_12377
 ```
+
+# Docker configuration
+There are 3 application specific docker containers and 4 common depdendency containers:
+1. bcap7-6: Application container (Django dev server, BCAP codebase)
+2. bcap-proxy7-6: Nginx proxy container
+3. bcap-pg_tileserv7-6: Postgres Tileserve container - tile server for generating local map tiles
+4. Depdendency containers - These containers can be shared across applications
+   1. postgres16-3_arches7-5-2: Postgres/PostGIS container
+   2. elasticsearch8-3_arches7-5-2: Elasticsearch container
+   3. redis_arches7-5-2: Redis container
+   4. rabbitmq3_arches7-5-2: RabbitMQ (not currently used, but still there)
 
 ## Arches Dependency Containers
 - We need to load the base dependencies needed for Arches (i.e., Postgres, Elasticsearch, Redis, etc).
@@ -59,7 +76,6 @@ cd nr-bcap && docker compose up -d
     - You will see: `django.core.exceptions.ImproperlyConfigured: Set the BCGOV_PROXY_PREFIX environment variable`
     - This can take some time.
 4. You need to create or move the .env file to `bcap/nr-bcap/.env`
-5. Stop the `bcap-webpack7-6` container
 6. Restart the `bcap7-6` container in Docker Desktop
 7. Open the `bcap7-6` container in Docker Desktop
 8. Go to the "Exec" tab and run the following:
@@ -72,7 +88,6 @@ cd bcap && mkdir logs
 #### `test_user_list.py`
 1. Create  `test_user_list.py` in `bcap/nr-bcap/bcap/management/data/test_user_list.py`
 2. Put the following function in the `test_user_list.py` file if you do not have an IDIR username/password:
-
 ```
 def get_user_list():
     return [
@@ -206,6 +221,11 @@ cd nr-bcap && docker compose up -d
 4. After logging into BCAP, the map will initially be blank.
     - You must navigate to the "System Settings" from the menu on the left-hand side, and enter your `Mapbox` token there.
 
+## Developing the UI using Vite
+See [README.vite.md](./README.vite.md) for details about developing using the Vite dev server.
+
 ## Notes
 - RabbitMQ is not being used
 - We do not use the Django template engine, therefore changes to the Django code need to be rebuilt with the webpack
+
+

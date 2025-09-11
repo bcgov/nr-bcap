@@ -11,7 +11,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:13-3.0
+        image: postgis/postgis:14-3.4
         env:
           POSTGRES_PASSWORD: postgis
           POSTGRES_DB: bcap
@@ -26,6 +26,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Load repo-defined env vars
+        run: |
+          # strip out blank lines & comments, then append to GITHUB_ENV
+          grep -vE '^\s*(#|$)' .github/github_env >> $GITHUB_ENV
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -57,7 +62,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:13-3.0
+        image: postgis/postgis:14-3.4
         env:
           POSTGRES_PASSWORD: postgis
           POSTGRES_DB: bcap
@@ -68,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.12"]
 
     steps:
       - uses: actions/checkout@v4

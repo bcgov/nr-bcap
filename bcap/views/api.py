@@ -3,6 +3,19 @@ from arches.app.views.api import MVT as MVTBase
 import logging
 from arches.app.views.api import APIBase
 from django.http import HttpResponse
+from rest_framework.generics import (
+    RetrieveUpdateDestroyAPIView,
+    ListCreateAPIView,
+)
+from rest_framework.parsers import JSONParser
+from django.utils.translation import gettext as _
+from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.metadata import SimpleMetadata
+from rest_framework.settings import api_settings
+from arches.app.models.models import ResourceInstance
+from django.core.exceptions import FieldError
+
+from arches import VERSION as arches_version
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -12,6 +25,15 @@ from bcap.util.borden_number_api import BordenNumberApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
 from arches.app.models import models
 from bcap.util.mvt_tiler import MVTTiler
+
+from arches_querysets.models import ResourceTileTree
+from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
+from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
+from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
+from arches_querysets.rest_framework.serializers import (
+    ArchesResourceSerializer,
+)
+from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 logger = logging.getLogger(__name__)
 
@@ -68,3 +90,41 @@ class MVT(MVTBase):
         if not tile or not len(tile):
             raise Http404()
         return HttpResponse(tile, content_type="application/x-protobuf")
+
+
+class ArchesSiteVisitSerializer(ArchesResourceSerializer):
+    class Meta(ArchesResourceSerializer.Meta):
+        graph_slug = "site_visit"
+
+
+class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
+    permission_classes = [ResourceEditor | ReadOnly]
+    serializer_class = ArchesResourceSerializer
+    parser_classes = [JSONParser, MultiPartJSONParser]
+    pagination_class = ArchesLimitOffsetPagination
+
+    def get_queryset(self):
+        options = self.serializer_class.Meta
+        resource_ids_string = [str(uuid) for uuid in self.resource_ids]
+        try:
+            if issubclass(options.model, ResourceInstance):
+                qs = options.model.get_tiles(
+                    self.graph_slug,
+                    as_representation=True,
+                ).select_related("graph")
+                qs = qs.filter(archaeological_site__id__in=resource_ids_string)
+                if arches_version >= (8, 0):
+                    qs = qs.select_related("resource_instance_lifecycle_state")
+            else:  # pragma: no cover
+                raise NotImplementedError
+            # print(f"Related Site Visits Queryset: {qs}")
+            print(f"Returning related resources: {self.graph_slug}")
+            return qs
+        except FieldError:
+            msg = (
+                _("Field archaeological_site not found in graph: %s") % self.graph_slug
+            )
+            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: msg})
+        except ValueError:
+            msg = _("No nodes found for graph slug: %s") % self.graph_slug
+            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: msg})

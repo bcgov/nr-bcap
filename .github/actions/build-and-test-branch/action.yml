@@ -29,12 +29,11 @@ runs:
       with:
         elasticsearch-version: 8
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-
     - name: Install Python packages
       run: |
-        uv pip install --prerelease=allow --system '.[dev]'
+        python -m pip install --upgrade pip
+        pip install . --group dev
+        echo Python packages installed
       shell: bash
 
     - name: Ensure frontend configuration files exist
@@ -64,7 +63,7 @@ runs:
 
     - name: Check backend formatting with black
       run: |
-        black . --check --exclude=node_modules
+        black . --check --exclude="node_modules|build"
       shell: bash
 
     - name: Check line endings on all but ontology (.xml) files
@@ -80,7 +79,7 @@ runs:
 
     - name: Check for missing migrations
       run: |
-        python manage.py makemigrations bcap --check
+        python manage.py makemigrations --check
       shell: bash
 
     - name: Ensure previous Python coverage data is erased
@@ -90,7 +89,7 @@ runs:
 
     - name: Run Python unit tests
       run: |
-        python -W default::DeprecationWarning -m coverage run manage.py test tests
+        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
       shell: bash
 
     - name: Generate Python report coverage

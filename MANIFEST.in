@@ -1,1 +1,2 @@
-graft *
+exclude bcap/settings_local.py
+exclude bcap/settings_docker.py
