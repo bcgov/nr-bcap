@@ -8651,7 +8651,6 @@
                     "alias": "site_decision",
                     "config": {
                         "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
-                        "en": "",
                         "multiValue": false,
                         "defaultValue": []
                     },
