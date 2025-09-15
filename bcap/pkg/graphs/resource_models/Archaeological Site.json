@@ -5445,7 +5445,8 @@
                     "alias": "registration_status",
                     "config": {
                         "controlledList": "c80f6dc1-4247-500b-8b1c-16ef3761761b",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6084,7 +6085,8 @@
                     "alias": "external_url_type",
                     "config": {
                         "controlledList": "4236434c-d8ec-5173-a986-945ddeccc545",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6110,7 +6112,8 @@
                     "alias": "register_type",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true
+                        "multiValue": true,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
@@ -6242,7 +6245,8 @@
                     "alias": "related_document_type",
                     "config": {
                         "controlledList": "96aaf519-1698-533e-bca4-8f5d2158e5f8",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6677,7 +6681,8 @@
                     "alias": "typology_class",
                     "config": {
                         "controlledList": "d31def91-e057-545a-ada6-3c18b6aa9ae9",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6812,7 +6817,8 @@
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -7058,7 +7064,8 @@
                     "alias": "biogeography_type",
                     "config": {
                         "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7301,7 +7308,8 @@
                     "alias": "registry_types2",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true
+                        "multiValue": true,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7755,7 +7763,8 @@
                     "alias": "reference_type",
                     "config": {
                         "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "Need to fix Concept name and values",
@@ -8064,7 +8073,8 @@
                     "alias": "image_type",
                     "config": {
                         "controlledList": "1da4d092-b025-5615-8208-0af80126c5ee",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -8115,7 +8125,8 @@
                     "alias": "image_view",
                     "config": {
                         "controlledList": "435dccb6-ef91-50bc-9f17-69e9c99aa9fa",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -8639,9 +8650,10 @@
                 {
                     "alias": "site_decision",
                     "config": {
-                        "controlledList": "5ef2a67b-4ebf-58d0-919e-66965be03cb7",
+                        "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
                         "en": "",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
@@ -8727,8 +8739,9 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "controlledList": "5ef2a67b-4ebf-58d0-919e-66965be03cb7",
-                        "multiValue": false
+                        "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",
