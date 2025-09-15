@@ -2978,7 +2978,8 @@
                     "alias": "member_roles",
                     "config": {
                         "controlledList": "dea73106-ad02-561d-8075-4f68ba5318b9",
-                        "multiValue": true
+                        "multiValue": true,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3161,7 +3162,8 @@
                     "alias": "cultural_material_type",
                     "config": {
                         "controlledList": "ed893196-5678-5acd-9afa-985278112b7b",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3219,7 +3221,8 @@
                     "alias": "cultural_material_status",
                     "config": {
                         "controlledList": "c2cbf04a-5112-5264-a05d-ba348a2bdfcd",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3468,7 +3471,8 @@
                     "alias": "name_type",
                     "config": {
                         "controlledList": "b80c39a8-dbaf-5d3a-8d52-1aa2778e712d",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3987,8 +3991,9 @@
                 {
                     "alias": "archaeological_feature",
                     "config": {
-                        "controlledList": "1a6495f4-0ef4-469a-9e62-5e39b1c96a10",
-                        "multiValue": false
+                        "controlledList": "d3b24bed-65fb-5e43-9479-1d3e0cba482c",
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
@@ -4201,7 +4206,8 @@
                     "alias": "end_year_qualifier",
                     "config": {
                         "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4227,7 +4233,8 @@
                     "alias": "end_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4278,7 +4285,8 @@
                     "alias": "determination_method",
                     "config": {
                         "controlledList": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4404,7 +4412,8 @@
                     "alias": "start_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4430,7 +4439,8 @@
                     "alias": "start_year_qualifier",
                     "config": {
                         "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4597,7 +4607,8 @@
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "f02e971f-a22b-59b7-acbb-ad232526e7a2",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -4673,7 +4684,8 @@
                     "alias": "site_visit_type",
                     "config": {
                         "controlledList": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4749,7 +4761,8 @@
                     "alias": "archaeological_culture",
                     "config": {
                         "controlledList": "117a187a-9864-5efa-aa7d-d823dddf2ca8",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "",
@@ -4826,7 +4839,8 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4852,7 +4866,8 @@
                     "alias": "disturbance_cause",
                     "config": {
                         "controlledList": "49ba5921-9bc6-5e3d-914d-cc9682410867",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
