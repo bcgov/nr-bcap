@@ -912,7 +912,10 @@
                 {
                     "alias": "submission_details_n1",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -964,7 +967,10 @@
                 {
                     "alias": "operation_details",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": "Rationale for Removal or type of Update.",
@@ -1216,7 +1222,10 @@
                 {
                     "alias": "submitted_sites",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "List of sites submitted to BCAP",
@@ -1266,7 +1275,10 @@
                 {
                     "alias": "archaeological_site_submission",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -1342,7 +1354,10 @@
                 {
                     "alias": "site_submission_internal_notes",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": "Internal Archaeology Branch notes related to the site submitted",
@@ -1443,7 +1458,10 @@
                 {
                     "alias": "submission_internal_notes",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": "BCAP Internal notes about the submission",
@@ -1493,7 +1511,10 @@
                 {
                     "alias": "comments_to_lg",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": "Notes sent to the Local Government regarding the site submission",
@@ -1634,7 +1655,10 @@
                 {
                     "alias": "total_number_submitted",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "number",
                     "description": null,
@@ -1695,7 +1719,10 @@
                 {
                     "alias": "submission_details",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -1720,7 +1747,10 @@
                 {
                     "alias": "comment_delivery",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": null,

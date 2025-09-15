@@ -239,7 +239,10 @@
                 {
                     "alias": "permit_identification",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -264,7 +267,10 @@
                 {
                     "alias": "permit_number",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -289,7 +295,10 @@
                 {
                     "alias": "hca_permit",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "",
