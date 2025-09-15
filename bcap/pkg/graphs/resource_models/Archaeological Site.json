@@ -368,32 +368,24 @@
                     "visible": true
                 },
                 {
-                    "active": true,
-                    "cardid": "250ed8de-61a8-11f0-ad02-3a7a4e6803c5",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": "{\"en\": \"\"}",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
+                    "card_id": "250ed8de-61a8-11f0-ad02-3a7a4e6803c5",
+                    "config": {
+                        "acceptedFiles": "",
+                        "defaultValue": [],
+                        "label": "Restricted Document",
+                        "maxFilesize": "200",
+                        "rerender": true
                     },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
+                    "id": "250ed6fe-61a8-11f0-ad02-3a7a4e6803c5-widget",
+                    "label": {
                         "en": "Restricted Document"
                     },
-                    "nodegroup_id": "250ed6fe-61a8-11f0-ad02-3a7a4e6803c5",
-                    "sortorder": 4,
+                    "node_id": "250ed6fe-61a8-11f0-ad02-3a7a4e6803c5",
+                    "sortorder": 0,
                     "source_identifier_id": null,
-                    "visible": true
-                },
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000019"
+                }
                 {
                     "active": true,
                     "cardid": "2ad1641e-50ad-11f0-a6c8-0242ac170006",
@@ -503,31 +495,118 @@
                     "visible": true
                 },
                 {
-                    "active": true,
-                    "cardid": "6a2ca199-d3c9-4578-a2fe-3e03415efdd1",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
+                    "card_id": "67ab15bd-7377-44c4-a9e2-0ff632b14bd9",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Biogeography Name",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
                     },
-                    "helptitle": {
-                        "en": ""
+                    "id": "96df3a2e-197f-11f0-9fc9-0242ac170008-widget",
+                    "label": {
+                        "en": "Biogeography Name"
                     },
-                    "instructions": {
-                        "en": ""
+                    "node_id": "96df3a2e-197f-11f0-9fc9-0242ac170008",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "67ab15bd-7377-44c4-a9e2-0ff632b14bd9",
+                    "config": {
+                        "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
+                        "multiValue": false,
+                        "defaultValue": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Biogeography Type",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
                     },
-                    "name": {
+                    "id": "7044fb24-197f-11f0-9fc9-0242ac170008-widget",
+                    "label": {
+                        "en": "Biogeography Type"
+                    },
+                    "node_id": "7044fb24-197f-11f0-9fc9-0242ac170008",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "67ab15bd-7377-44c4-a9e2-0ff632b14bd9",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Biogeography Description",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "aad2e7e2-197f-11f0-9fc9-0242ac170008-widget",
+                    "label": {
+                        "en": "Biogeography Description"
+                    },
+                    "node_id": "aad2e7e2-197f-11f0-9fc9-0242ac170008",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "6a2ca199-d3c9-4578-a2fe-3e03415efdd1",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Remark Keyword",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "dc827931-5ed-43e4-8da6-e99c0d02dae7-widget",
+                    "label": {
                         "en": "Remark Keyword"
                     },
-                    "nodegroup_id": "dc827931-05ed-43e4-8da6-e99c0d02dae7",
-                    "sortorder": null,
+                    "node_id": "dc827931-05ed-43e4-8da6-e99c0d02dae7",
+                    "sortorder": 0,
                     "source_identifier_id": null,
-                    "visible": true
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "active": true,
@@ -586,31 +665,34 @@
                     "visible": true
                 },
                 {
-                    "active": true,
-                    "cardid": "723de196-a9df-4e40-9b69-33a9cdabf5f0",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
+                    "card_id": "723de196-a9df-4e40-9b69-33a9cdabf5f0",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Site Tenure Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
                     },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
+                    "id": "4598a202-197c-11f0-b2a5-0242ac170008-widget",
+                    "label": {
                         "en": "Site Tenure Remarks"
                     },
-                    "nodegroup_id": "4598a202-197c-11f0-b2a5-0242ac170008",
-                    "sortorder": null,
+                    "node_id": "4598a202-197c-11f0-b2a5-0242ac170008",
+                    "sortorder": 0,
                     "source_identifier_id": null,
-                    "visible": true
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "active": true,
@@ -858,6 +940,57 @@
                     "visible": true
                 },
                 {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Conviction Details",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "c515a668-619f-11f0-acf4-3a7a4e6803c5-widget",
+                    "label": {
+                        "en": "Conviction Details"
+                    },
+                    "node_id": "c515a668-619f-11f0-acf4-3a7a4e6803c5",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Conviction Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "c515a532-619f-11f0-acf4-3a7a4e6803c5-widget",
+                    "label": {
+                        "en": "Conviction Date"
+                    },
+                    "node_id": "c515a532-619f-11f0-acf4-3a7a4e6803c5",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
                     "active": true,
                     "cardid": "c816292c-01d8-11f0-850c-0242ac170007",
                     "component_id": "4e40b397-d6bc-4660-a398-4a72c90dba07",
@@ -885,6 +1018,31 @@
                     "sortorder": 11,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "PIN",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "5513b739-04f5-4c98-9e6f-def560ff3555-widget",
+                    "label": {
+                        "en": "PIN"
+                    },
+                    "node_id": "5513b739-04f5-4c98-9e6f-def560ff3555",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "active": true,
@@ -1542,14 +1700,9 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
-                    "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
+                    "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1561,15 +1714,15 @@
                         "uneditable": false,
                         "width": "100%"
                     },
-                    "id": "34e211b6-46a0-43f9-a050-cc949e1d2c32",
+                    "id": "f5c343f3-217f-4ff0-a414-5dcaff74d2fa-widget",
                     "label": {
                         "en": "PID"
                     },
-                    "node_id": "41fb5f7e-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 4,
+                    "node_id": "f5c343f3-217f-4ff0-a414-5dcaff74d2fa",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "068500bc-0d07-11ed-8804-5254008afee6",
@@ -5343,7 +5496,8 @@
                     "alias": "registration_status",
                     "config": {
                         "controlledList": "c80f6dc1-4247-500b-8b1c-16ef3761761b",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -5982,7 +6136,8 @@
                     "alias": "external_url_type",
                     "config": {
                         "controlledList": "4236434c-d8ec-5173-a986-945ddeccc545",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6008,7 +6163,8 @@
                     "alias": "register_type",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true
+                        "multiValue": true,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
@@ -6140,7 +6296,8 @@
                     "alias": "related_document_type",
                     "config": {
                         "controlledList": "96aaf519-1698-533e-bca4-8f5d2158e5f8",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6575,7 +6732,8 @@
                     "alias": "typology_class",
                     "config": {
                         "controlledList": "d31def91-e057-545a-ada6-3c18b6aa9ae9",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6710,7 +6868,8 @@
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -6930,7 +7089,8 @@
                     "alias": "biogeography_type",
                     "config": {
                         "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7147,7 +7307,8 @@
                     "alias": "registry_types2",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true
+                        "multiValue": true,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7576,7 +7737,8 @@
                     "alias": "reference_type",
                     "config": {
                         "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "Need to fix Concept name and values",
@@ -7885,7 +8047,8 @@
                     "alias": "image_type",
                     "config": {
                         "controlledList": "1da4d092-b025-5615-8208-0af80126c5ee",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7936,7 +8099,8 @@
                     "alias": "image_view",
                     "config": {
                         "controlledList": "435dccb6-ef91-50bc-9f17-69e9c99aa9fa",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -8460,9 +8624,10 @@
                 {
                     "alias": "site_decision",
                     "config": {
-                        "controlledList": "5ef2a67b-4ebf-58d0-919e-66965be03cb7",
+                        "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
                         "en": "",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
@@ -8548,8 +8713,9 @@
                 {
                     "alias": "decision_criteria",
                     "config": {
-                        "controlledList": "5ef2a67b-4ebf-58d0-919e-66965be03cb7",
-                        "multiValue": false
+                        "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",

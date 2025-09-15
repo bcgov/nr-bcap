@@ -2346,8 +2346,9 @@
                 {
                     "alias": "end_year_qualifier",
                     "config": {
-                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
-                        "multiValue": false
+                        "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2373,7 +2374,8 @@
                     "alias": "end_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2550,7 +2552,8 @@
                     "alias": "start_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2575,8 +2578,9 @@
                 {
                     "alias": "start_year_qualifier",
                     "config": {
-                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
-                        "multiValue": false
+                        "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
+                        "multiValue": false,
+                        "defaultValue": []
                     },
                     "datatype": "reference",
                     "description": null,
