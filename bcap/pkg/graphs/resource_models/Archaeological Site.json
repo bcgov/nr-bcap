@@ -2327,57 +2327,6 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
-                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Typology Descriptor",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "aee06008-ade9-4c45-9a5d-5135139e269e",
-                    "label": {
-                        "en": "Typology Descriptor"
-                    },
-                    "node_id": "a2bc804e-01c0-11f0-97f7-0242ac170007",
-                    "sortorder": 3,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
-                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
-                    "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Site Type",
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "b02c4973-98f9-4a17-a638-3f6abc2ed402",
-                    "label": {
-                        "en": "Site Type"
-                    },
-                    "node_id": "6ebdd1e4-01c0-11f0-97f7-0242ac170007",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultValue": {
@@ -2518,27 +2467,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
-                    "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
-                    "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Site Subtype",
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "b6c275cd-f02f-47c7-b1b1-9fafef1e97e9",
-                    "label": {
-                        "en": "Site Subtype"
-                    },
-                    "node_id": "897b6280-01c0-11f0-97f7-0242ac170007",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
@@ -3762,16 +3690,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
-                    "edgeid": "198a596f-06b9-4fc7-82ab-7dc23c38e2ac",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "rangenode_id": "6ebdd1e4-01c0-11f0-97f7-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "1b622e58-0d0f-11ed-98c2-5254008afee6",
                     "edgeid": "1b62a37e-0d0f-11ed-98c2-5254008afee6",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4048,16 +3966,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "2255168c-1c55-11f0-9b6d-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6ebdd1e4-01c0-11f0-97f7-0242ac170007",
-                    "edgeid": "59ca586c-c9f1-419c-b62b-e62768e4d1ae",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P127i_has_narrower_term",
-                    "rangenode_id": "897b6280-01c0-11f0-97f7-0242ac170007",
                     "source_identifier_id": null
                 },
                 {
@@ -4772,16 +4680,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
-                    "edgeid": "e1757843-5aa4-4a2c-b2af-94ea049750be",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "a2bc804e-01c0-11f0-97f7-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "1b622e58-0d0f-11ed-98c2-5254008afee6",
                     "edgeid": "e51f7d05-40b0-4ed7-bcad-2bfb29b00bbd",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4955,7 +4853,7 @@
             "group_permissions": {},
             "has_unpublished_changes": true,
             "iconclass": "fa fa-bank",
-            "is_active": true,
+            "is_active": false,
             "is_copy_immutable": false,
             "isresource": true,
             "jsonldcontext": null,
@@ -5214,8 +5112,8 @@
                     "alias": "site_alert",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5267,8 +5165,8 @@
                     "alias": "authority",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5388,8 +5286,8 @@
                     "alias": "authority_description",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -5416,8 +5314,8 @@
                     "alias": "registration_status",
                     "config": {
                         "controlledList": "c80f6dc1-4247-500b-8b1c-16ef3761761b",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -5443,8 +5341,8 @@
                     "alias": "reference_number",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "non-localized-string",
@@ -5471,8 +5369,8 @@
                     "alias": "general_remark_information",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5550,8 +5448,8 @@
                     "alias": "general_remark",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -5578,8 +5476,8 @@
                     "alias": "site_record_admin",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5606,8 +5504,8 @@
                     "alias": "archaeological_data",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5634,8 +5532,8 @@
                     "alias": "restricted_ancestral_remains_remark",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -5662,8 +5560,8 @@
                     "alias": "ancestral_remains",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5751,8 +5649,8 @@
                     "alias": "legal_address_remarks",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -5828,8 +5726,8 @@
                     "alias": "bc_property_legal_description",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5879,8 +5777,8 @@
                     "alias": "heritage_site_location",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -5907,8 +5805,8 @@
                     "alias": "legal_description",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -5935,8 +5833,8 @@
                     "alias": "city",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -5963,8 +5861,8 @@
                     "alias": "street_name",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -5991,8 +5889,8 @@
                     "alias": "postal_code",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6098,8 +5996,8 @@
                     "alias": "external_url_type",
                     "config": {
                         "controlledList": "4236434c-d8ec-5173-a986-945ddeccc545",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6125,8 +6023,8 @@
                     "alias": "register_type",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": true
                     },
                     "datatype": "reference",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
@@ -6152,8 +6050,8 @@
                     "alias": "biogeography",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -6236,8 +6134,8 @@
                     "alias": "related_document_description",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6264,8 +6162,8 @@
                     "alias": "related_document_type",
                     "config": {
                         "controlledList": "96aaf519-1698-533e-bca4-8f5d2158e5f8",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6291,8 +6189,8 @@
                     "alias": "gis_elevation_range",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -6319,8 +6217,8 @@
                     "alias": "site_typology",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -6347,8 +6245,8 @@
                     "alias": "related_documents",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -6400,8 +6298,8 @@
                     "alias": "alert_subject",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6428,8 +6326,8 @@
                     "alias": "external_url",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "url",
@@ -6456,8 +6354,8 @@
                     "alias": "site_tenure",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -6484,8 +6382,8 @@
                     "alias": "hca_contravention",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -6573,8 +6471,8 @@
                     "alias": "inventory_remark",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6601,8 +6499,8 @@
                     "alias": "contravention_address",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6629,8 +6527,8 @@
                     "alias": "contravention_pid",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6657,8 +6555,8 @@
                     "alias": "nros_file_number",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6685,8 +6583,8 @@
                     "alias": "street_number",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -6736,8 +6634,8 @@
                     "alias": "typology_class",
                     "config": {
                         "controlledList": "d31def91-e057-545a-ada6-3c18b6aa9ae9",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6799,8 +6697,8 @@
                     "alias": "gis_upper_elevation",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "number",
@@ -6850,8 +6748,8 @@
                     "alias": "gis_lower_elevation",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "number",
@@ -6878,8 +6776,8 @@
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -6905,8 +6803,8 @@
                     "alias": "authority_effective_period",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -6979,8 +6877,8 @@
                     "alias": "reference_number2",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7007,8 +6905,8 @@
                     "alias": "protection_notes",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7105,37 +7003,11 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "site_type",
-                    "config": {
-                        "controlledList": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Site Type",
-                    "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
-                    "nodeid": "6ebdd1e4-01c0-11f0-97f7-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "biogeography_type",
                     "config": {
                         "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7193,8 +7065,8 @@
                     "alias": "alert_details",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7221,8 +7093,8 @@
                     "alias": "remarks_and_restricted_information",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -7272,8 +7144,8 @@
                     "alias": "borden_number",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "non-localized-string",
@@ -7358,37 +7230,11 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "site_subtype",
-                    "config": {
-                        "controlledList": "79332c30-c369-5852-b3ea-023551fd9d34",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": "Can this be a single, hierarchical list?",
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Site Subtype",
-                    "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
-                    "nodeid": "897b6280-01c0-11f0-97f7-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P127i_has_narrower_term",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "registry_types2",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": true
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7437,8 +7283,8 @@
                     "alias": "address_remarks",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7458,34 +7304,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "typology_descriptor",
-                    "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Typology Descriptor",
-                    "nodegroup_id": "3083c10e-01c0-11f0-97f7-0242ac170007",
-                    "nodeid": "a2bc804e-01c0-11f0-97f7-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E14_Condition_Assessment",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -7516,8 +7334,8 @@
                     "alias": "restricted_information",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -7605,8 +7423,8 @@
                     "alias": "restricted_remark",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7681,8 +7499,8 @@
                     "alias": "accuracy_remarks",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7709,8 +7527,8 @@
                     "alias": "source_notes",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7785,8 +7603,8 @@
                     "alias": "parcel_owner_type",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7813,8 +7631,8 @@
                     "alias": "publication_reference",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -7841,8 +7659,8 @@
                     "alias": "reference_title",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -7869,8 +7687,8 @@
                     "alias": "reference_type",
                     "config": {
                         "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "Need to fix Concept name and values",
@@ -7921,8 +7739,8 @@
                     "alias": "reference_remarks",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8004,8 +7822,8 @@
                     "alias": "elevation_comments",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8057,8 +7875,8 @@
                     "alias": "elevation",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -8085,8 +7903,8 @@
                     "alias": "conviction",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -8138,8 +7956,8 @@
                     "alias": "conviction_details",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8194,8 +8012,8 @@
                     "alias": "image_type",
                     "config": {
                         "controlledList": "1da4d092-b025-5615-8208-0af80126c5ee",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -8221,8 +8039,8 @@
                     "alias": "photographer",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8249,8 +8067,8 @@
                     "alias": "image_view",
                     "config": {
                         "controlledList": "435dccb6-ef91-50bc-9f17-69e9c99aa9fa",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -8276,8 +8094,8 @@
                     "alias": "image_description",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8304,8 +8122,8 @@
                     "alias": "copyright",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8357,8 +8175,8 @@
                     "alias": "image_features",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8453,8 +8271,8 @@
                     "alias": "site_names",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -8481,8 +8299,8 @@
                     "alias": "name",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8541,8 +8359,8 @@
                     "alias": "assigned_or_reported",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -8595,8 +8413,8 @@
                     "alias": "name_remarks",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8712,8 +8530,8 @@
                     "alias": "typology_remark",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -8799,8 +8617,8 @@
                     "alias": "site_decision",
                     "config": {
                         "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
@@ -8887,8 +8705,8 @@
                     "alias": "decision_criteria",
                     "config": {
                         "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "defaultValue": [],
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "The criteria made to make the decision. Collection needs to be updated.",
@@ -8975,8 +8793,8 @@
                     "alias": "decision_description",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "string",
@@ -9003,8 +8821,8 @@
                     "alias": "recommendation",
                     "config": {
                         "en": {
-                            "value": "",
-                            "direction": "ltr"
+                            "direction": "ltr",
+                            "value": ""
                         }
                     },
                     "datatype": "semantic",
@@ -9032,9 +8850,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "First cut of changes for #831. Need to update ETL for some changes made here.",
-                "publicationid": "92a0da32-8b0d-49ad-92a7-f5ba3e9beec9",
-                "published_time": "2025-09-10T03:52:22.575"
+                "notes": null,
+                "publicationid": "fd754a82-43db-4050-8a58-2519e8fe8102",
+                "published_time": "2025-09-16T16:29:48.276"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -9133,9 +8951,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "b5d7f74e79 2025-09-09 14:54:48 -0700",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
