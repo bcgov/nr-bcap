@@ -681,10 +681,7 @@
                 {
                     "alias": "citation",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -709,10 +706,7 @@
                 {
                     "alias": "legislative_act",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -737,10 +731,7 @@
                 {
                     "alias": "act_status",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,

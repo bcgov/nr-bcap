@@ -176,10 +176,12 @@
                 {
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Requested Operation",
+                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -192,7 +194,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
                     "card_id": "247a4e3c-3122-4351-9b1e-83f1d5e104bb",
@@ -912,10 +914,7 @@
                 {
                     "alias": "submission_details_n1",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -939,12 +938,8 @@
                 },
                 {
                     "alias": "requested_operation",
-                    "config": {
-                        "defaultValue": [],
-                        "controlledList": "56c3460e-e1b5-5afc-93ff-3625b652302b",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
+                    "config": {},
+                    "datatype": "concept",
                     "description": "Addition, Removal or Update.\nShould this be assigned at the Site level? Eg - do you want to allow ",
                     "exportable": true,
                     "fieldname": "RQSTD_OP",
@@ -967,10 +962,7 @@
                 {
                     "alias": "operation_details",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": "Rationale for Removal or type of Update.",
@@ -995,9 +987,8 @@
                 {
                     "alias": "submission_type",
                     "config": {
-                        "controlledList": "0868cf04-7b9f-5be1-99ae-24074540603c",
-                        "multiValue": true,
-                        "defaultValue": []
+                        "controlledList": "c99b8763-d118-4869-9c58-4bcbf705e810",
+                        "multiValue": true
                     },
                     "datatype": "reference",
                     "description": null,
@@ -1222,10 +1213,7 @@
                 {
                     "alias": "submitted_sites",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "List of sites submitted to BCAP",
@@ -1275,10 +1263,7 @@
                 {
                     "alias": "archaeological_site_submission",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -1354,10 +1339,7 @@
                 {
                     "alias": "site_submission_internal_notes",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": "Internal Archaeology Branch notes related to the site submitted",
@@ -1458,10 +1440,7 @@
                 {
                     "alias": "submission_internal_notes",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": "BCAP Internal notes about the submission",
@@ -1511,10 +1490,7 @@
                 {
                     "alias": "comments_to_lg",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": "Notes sent to the Local Government regarding the site submission",
@@ -1655,10 +1631,7 @@
                 {
                     "alias": "total_number_submitted",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -1719,10 +1692,7 @@
                 {
                     "alias": "submission_details",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -1747,10 +1717,7 @@
                 {
                     "alias": "comment_delivery",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
