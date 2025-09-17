@@ -421,10 +421,7 @@
                 {
                     "alias": "project_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -449,10 +446,7 @@
                 {
                     "alias": "sandcastle",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -523,10 +517,7 @@
                 {
                     "alias": "project_location",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -551,10 +542,7 @@
                 {
                     "alias": "sandcastle_project",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -579,10 +567,7 @@
                 {
                     "alias": "project_name",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -607,10 +592,7 @@
                 {
                     "alias": "project_period",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -635,10 +617,7 @@
                 {
                     "alias": "geometry_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,

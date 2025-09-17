@@ -2180,7 +2180,12 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "defaultValue": {},
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -3107,7 +3112,12 @@
                 {
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
                     "config": {
-                        "defaultValue": {},
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -5080,10 +5090,7 @@
                 {
                     "alias": "site_alert",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -5133,10 +5140,7 @@
                 {
                     "alias": "authority",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -5254,10 +5258,7 @@
                 {
                     "alias": "authority_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5283,8 +5284,7 @@
                     "alias": "registration_status",
                     "config": {
                         "controlledList": "c80f6dc1-4247-500b-8b1c-16ef3761761b",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -5309,10 +5309,7 @@
                 {
                     "alias": "reference_number",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -5337,10 +5334,7 @@
                 {
                     "alias": "general_remark_information",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -5416,10 +5410,7 @@
                 {
                     "alias": "general_remark",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5444,10 +5435,7 @@
                 {
                     "alias": "site_record_admin",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -5472,10 +5460,7 @@
                 {
                     "alias": "archaeological_data",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -5500,10 +5485,7 @@
                 {
                     "alias": "restricted_ancestral_remains_remark",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5528,10 +5510,7 @@
                 {
                     "alias": "ancestral_remains",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -5617,10 +5596,7 @@
                 {
                     "alias": "legal_address_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5694,10 +5670,7 @@
                 {
                     "alias": "bc_property_legal_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "The legal description of a property in BC. (Is this the same across Canada?)",
@@ -5745,10 +5718,7 @@
                 {
                     "alias": "heritage_site_location",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -5773,10 +5743,7 @@
                 {
                     "alias": "legal_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5801,10 +5768,7 @@
                 {
                     "alias": "city",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5829,10 +5793,7 @@
                 {
                     "alias": "street_name",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": "The numeric part of the Street Address. Eg 1283, 11b.",
@@ -5857,10 +5818,7 @@
                 {
                     "alias": "postal_code",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5965,8 +5923,7 @@
                     "alias": "external_url_type",
                     "config": {
                         "controlledList": "4236434c-d8ec-5173-a986-945ddeccc545",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -5992,8 +5949,7 @@
                     "alias": "register_type",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true,
-                        "defaultValue": []
+                        "multiValue": true
                     },
                     "datatype": "reference",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
@@ -6018,10 +5974,7 @@
                 {
                     "alias": "biogeography",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -6102,10 +6055,7 @@
                 {
                     "alias": "related_document_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -6131,8 +6081,7 @@
                     "alias": "related_document_type",
                     "config": {
                         "controlledList": "96aaf519-1698-533e-bca4-8f5d2158e5f8",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6157,10 +6106,7 @@
                 {
                     "alias": "gis_elevation_range",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "These are generated. Should they be part of the data entry?",
@@ -6185,10 +6131,7 @@
                 {
                     "alias": "site_typology",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -6213,10 +6156,7 @@
                 {
                     "alias": "related_documents",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -6266,10 +6206,7 @@
                 {
                     "alias": "alert_subject",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -6294,10 +6231,7 @@
                 {
                     "alias": "external_url",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "url",
                     "description": null,
@@ -6322,10 +6256,7 @@
                 {
                     "alias": "site_tenure",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -6350,10 +6281,7 @@
                 {
                     "alias": "hca_contravention",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -6439,10 +6367,7 @@
                 {
                     "alias": "inventory_remark",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -6467,10 +6392,7 @@
                 {
                     "alias": "contravention_address",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -6495,10 +6417,7 @@
                 {
                     "alias": "contravention_pid",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -6523,10 +6442,7 @@
                 {
                     "alias": "nros_file_number",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -6551,10 +6467,7 @@
                 {
                     "alias": "street_number",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": "Number portion of the street address",
@@ -6603,8 +6516,7 @@
                     "alias": "typology_class",
                     "config": {
                         "controlledList": "d31def91-e057-545a-ada6-3c18b6aa9ae9",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6665,10 +6577,7 @@
                 {
                     "alias": "gis_upper_elevation",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -6716,10 +6625,7 @@
                 {
                     "alias": "gis_lower_elevation",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -6745,8 +6651,7 @@
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -6771,10 +6676,7 @@
                 {
                     "alias": "authority_effective_period",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -6845,10 +6747,7 @@
                 {
                     "alias": "reference_number2",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": "What is this?",
@@ -6873,10 +6772,7 @@
                 {
                     "alias": "protection_notes",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -6975,8 +6871,7 @@
                     "alias": "biogeography_type",
                     "config": {
                         "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7033,10 +6928,7 @@
                 {
                     "alias": "alert_details",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7061,10 +6953,7 @@
                 {
                     "alias": "remarks_and_restricted_information",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -7112,10 +7001,7 @@
                 {
                     "alias": "borden_number",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -7202,8 +7088,7 @@
                     "alias": "registry_types2",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true,
-                        "defaultValue": []
+                        "multiValue": true
                     },
                     "datatype": "reference",
                     "description": null,
@@ -7251,10 +7136,7 @@
                 {
                     "alias": "address_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7302,10 +7184,7 @@
                 {
                     "alias": "restricted_information",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -7391,10 +7270,7 @@
                 {
                     "alias": "restricted_remark",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7467,10 +7343,7 @@
                 {
                     "alias": "accuracy_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7495,10 +7368,7 @@
                 {
                     "alias": "source_notes",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7571,10 +7441,7 @@
                 {
                     "alias": "parcel_owner_type",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7599,10 +7466,7 @@
                 {
                     "alias": "publication_reference",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -7627,10 +7491,7 @@
                 {
                     "alias": "reference_title",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7656,8 +7517,7 @@
                     "alias": "reference_type",
                     "config": {
                         "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "Need to fix Concept name and values",
@@ -7707,10 +7567,7 @@
                 {
                     "alias": "reference_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7790,10 +7647,7 @@
                 {
                     "alias": "elevation_comments",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7843,10 +7697,7 @@
                 {
                     "alias": "elevation",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -7871,10 +7722,7 @@
                 {
                     "alias": "conviction",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -7924,10 +7772,7 @@
                 {
                     "alias": "conviction_details",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -7981,8 +7826,7 @@
                     "alias": "image_type",
                     "config": {
                         "controlledList": "1da4d092-b025-5615-8208-0af80126c5ee",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -8007,10 +7851,7 @@
                 {
                     "alias": "photographer",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8036,8 +7877,7 @@
                     "alias": "image_view",
                     "config": {
                         "controlledList": "435dccb6-ef91-50bc-9f17-69e9c99aa9fa",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -8062,10 +7902,7 @@
                 {
                     "alias": "image_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8090,10 +7927,7 @@
                 {
                     "alias": "copyright",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8143,10 +7977,7 @@
                 {
                     "alias": "image_features",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8239,10 +8070,7 @@
                 {
                     "alias": "site_names",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -8267,10 +8095,7 @@
                 {
                     "alias": "name",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8327,10 +8152,7 @@
                 {
                     "alias": "assigned_or_reported",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -8381,10 +8203,7 @@
                 {
                     "alias": "name_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8498,10 +8317,7 @@
                 {
                     "alias": "typology_remark",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8585,13 +8401,9 @@
                 {
                     "alias": "site_decision",
                     "config": {
-                        "controlledList": "a05e2998-03b7-552d-8bad-d398230b1222",
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        },
-                        "multiValue": false,
-                        "defaultValue": []
+                        "controlledList": "5ef2a67b-4ebf-58d0-919e-66965be03cb7",
+                        "en": "",
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
@@ -8738,10 +8550,7 @@
                 {
                     "alias": "decision_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -8766,10 +8575,7 @@
                 {
                     "alias": "recommendation",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -8797,8 +8603,8 @@
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
                 "notes": null,
-                "publicationid": "c9a07365-124c-474b-a446-6cc0f6754de7",
-                "published_time": "2025-09-17T04:07:18.107"
+                "publicationid": "bf265dde-f0a6-48a7-919b-77521aad5f39",
+                "published_time": "2025-09-17T07:06:17.494"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],

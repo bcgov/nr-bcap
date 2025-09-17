@@ -1778,10 +1778,7 @@
                 {
                     "alias": "biogeography",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -1806,10 +1803,7 @@
                 {
                     "alias": "hria_jursidiction_and_tenure",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -1834,10 +1828,7 @@
                 {
                     "alias": "modified_by",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -1862,10 +1853,7 @@
                 {
                     "alias": "length",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -1890,10 +1878,7 @@
                 {
                     "alias": "dimension_entered_by",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -1918,10 +1903,7 @@
                 {
                     "alias": "biogeography_type",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2030,10 +2012,7 @@
                 {
                     "alias": "biogeography_name",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2083,10 +2062,7 @@
                 {
                     "alias": "site_jurisdiction",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2111,10 +2087,7 @@
                 {
                     "alias": "biogeography_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2139,10 +2112,7 @@
                 {
                     "alias": "tenure_type",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2167,10 +2137,7 @@
                 {
                     "alias": "length_direction",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2195,10 +2162,7 @@
                 {
                     "alias": "tenure_identifier",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2259,10 +2223,7 @@
                 {
                     "alias": "site_entered",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -2287,10 +2248,7 @@
                 {
                     "alias": "tenure_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2315,10 +2273,7 @@
                 {
                     "alias": "biogeography_data_entry",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -2343,10 +2298,7 @@
                 {
                     "alias": "site_entered_by",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2394,9 +2346,8 @@
                 {
                     "alias": "end_year_qualifier",
                     "config": {
-                        "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2422,8 +2373,7 @@
                     "alias": "end_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2448,10 +2398,7 @@
                 {
                     "alias": "chronology_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2527,10 +2474,7 @@
                 {
                     "alias": "information_source",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2580,10 +2524,7 @@
                 {
                     "alias": "event_period",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -2609,8 +2550,7 @@
                     "alias": "start_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2635,9 +2575,8 @@
                 {
                     "alias": "start_year_qualifier",
                     "config": {
-                        "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "controlledList": "d94edecb-1c9c-43aa-9abc-4aec1f7d19f5",
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2662,10 +2601,7 @@
                 {
                     "alias": "data_entry",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -2690,10 +2626,7 @@
                 {
                     "alias": "biogeography_entered_by",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2743,10 +2676,7 @@
                 {
                     "alias": "jurisdiction_entered_by",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -2796,10 +2726,7 @@
                 {
                     "alias": "rcd_lab_code",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2824,10 +2751,7 @@
                 {
                     "alias": "width",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -2852,10 +2776,7 @@
                 {
                     "alias": "rcd_lab_number",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2880,10 +2801,7 @@
                 {
                     "alias": "rcd_unadjusted",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2908,10 +2826,7 @@
                 {
                     "alias": "width_direction",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2936,10 +2851,7 @@
                 {
                     "alias": "hria_discontinued_data",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -2964,10 +2876,7 @@
                 {
                     "alias": "rcd_unadjusted_var",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -2992,10 +2901,7 @@
                 {
                     "alias": "site_area",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -3020,10 +2926,7 @@
                 {
                     "alias": "rcd_adjusted",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -3048,10 +2951,7 @@
                 {
                     "alias": "rcd_adjusted_var",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "non-localized-string",
                     "description": null,
@@ -3076,10 +2976,7 @@
                 {
                     "alias": "site_dimensions",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -3104,10 +3001,7 @@
                 {
                     "alias": "boundary_type",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -3132,10 +3026,7 @@
                 {
                     "alias": "site_dimension_data_entry",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,

@@ -2882,10 +2882,7 @@
                 {
                     "alias": "site_visit_team_n1",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -2981,8 +2978,7 @@
                     "alias": "member_roles",
                     "config": {
                         "controlledList": "dea73106-ad02-561d-8075-4f68ba5318b9",
-                        "multiValue": true,
-                        "defaultValue": []
+                        "multiValue": true
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3032,10 +3028,7 @@
                 {
                     "alias": "cultural_material",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -3060,10 +3053,7 @@
                 {
                     "alias": "number_of_artifacts",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -3088,10 +3078,7 @@
                 {
                     "alias": "archaeological_data",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -3148,10 +3135,7 @@
                 {
                     "alias": "identification",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -3177,8 +3161,7 @@
                     "alias": "cultural_material_type",
                     "config": {
                         "controlledList": "ed893196-5678-5acd-9afa-985278112b7b",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3236,8 +3219,7 @@
                     "alias": "cultural_material_status",
                     "config": {
                         "controlledList": "c2cbf04a-5112-5264-a05d-ba348a2bdfcd",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3378,10 +3360,7 @@
                 {
                     "alias": "new_site_names",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -3406,10 +3385,7 @@
                 {
                     "alias": "name",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -3466,10 +3442,7 @@
                 {
                     "alias": "assigned_or_reported",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -3495,8 +3468,7 @@
                     "alias": "name_type",
                     "config": {
                         "controlledList": "b80c39a8-dbaf-5d3a-8d52-1aa2778e712d",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3521,10 +3493,7 @@
                 {
                     "alias": "name_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -3581,10 +3550,7 @@
                 {
                     "alias": "ancestral_remains",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -3695,10 +3661,7 @@
                 {
                     "alias": "ancestral_remains_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -3723,10 +3686,7 @@
                 {
                     "alias": "minimum_number_of_individuals",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -3751,10 +3711,7 @@
                 {
                     "alias": "stratigraphy",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -3804,10 +3761,7 @@
                 {
                     "alias": "remarks_and_recommendations",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -3832,10 +3786,7 @@
                 {
                     "alias": "site_visit",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -3860,10 +3811,7 @@
                 {
                     "alias": "site_visit_details",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -3888,10 +3836,7 @@
                 {
                     "alias": "recommendation",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -3916,10 +3861,7 @@
                 {
                     "alias": "recorders_recommendation",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -3944,10 +3886,7 @@
                 {
                     "alias": "general_remark",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -4023,10 +3962,7 @@
                 {
                     "alias": "remark",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4051,9 +3987,8 @@
                 {
                     "alias": "archaeological_feature",
                     "config": {
-                        "controlledList": "d3b24bed-65fb-5e43-9479-1d3e0cba482c",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "controlledList": "1a6495f4-0ef4-469a-9e62-5e39b1c96a10",
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
@@ -4078,10 +4013,7 @@
                 {
                     "alias": "feature_count",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "number",
                     "description": null,
@@ -4106,10 +4038,7 @@
                 {
                     "alias": "feature_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4166,10 +4095,7 @@
                 {
                     "alias": "temporary_number",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4194,10 +4120,7 @@
                 {
                     "alias": "cultural_material_details",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4278,8 +4201,7 @@
                     "alias": "end_year_qualifier",
                     "config": {
                         "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4305,8 +4227,7 @@
                     "alias": "end_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4331,10 +4252,7 @@
                 {
                     "alias": "chronology_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4360,8 +4278,7 @@
                     "alias": "determination_method",
                     "config": {
                         "controlledList": "7be90cc4-2e5f-5ae2-b4d4-61d84b0e2033",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4411,10 +4328,7 @@
                 {
                     "alias": "information_source",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4464,10 +4378,7 @@
                 {
                     "alias": "event_period",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -4493,8 +4404,7 @@
                     "alias": "start_year_calendar",
                     "config": {
                         "controlledList": "3add280e-11ef-5209-9612-2ba3377a451c",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4520,8 +4430,7 @@
                     "alias": "start_year_qualifier",
                     "config": {
                         "controlledList": "67c5c941-e6c2-56aa-a224-7b878ffdb6ec",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4578,10 +4487,7 @@
                 {
                     "alias": "location_and_access",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4691,8 +4597,7 @@
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "f02e971f-a22b-59b7-acbb-ad232526e7a2",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
@@ -4717,10 +4622,7 @@
                 {
                     "alias": "accuracy_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4745,10 +4647,7 @@
                 {
                     "alias": "source_notes",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4774,8 +4673,7 @@
                     "alias": "site_visit_type",
                     "config": {
                         "controlledList": "2162c324-c7e4-55e3-9f0b-5e7a40266bf2",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4825,10 +4723,7 @@
                 {
                     "alias": "temporary_number_assignment",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -4854,8 +4749,7 @@
                     "alias": "archaeological_culture",
                     "config": {
                         "controlledList": "117a187a-9864-5efa-aa7d-d823dddf2ca8",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": "",
@@ -4880,10 +4774,7 @@
                 {
                     "alias": "culture_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -4908,10 +4799,7 @@
                 {
                     "alias": "site_disturbance",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "semantic",
                     "description": "{\"en\": \"\"}",
@@ -4938,8 +4826,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4965,8 +4852,7 @@
                     "alias": "disturbance_cause",
                     "config": {
                         "controlledList": "49ba5921-9bc6-5e3d-914d-cc9682410867",
-                        "multiValue": false,
-                        "defaultValue": []
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4991,10 +4877,7 @@
                 {
                     "alias": "disturbance_remarks",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
@@ -5019,10 +4902,7 @@
                 {
                     "alias": "project_description",
                     "config": {
-                        "en": {
-                            "value": "",
-                            "direction": "ltr"
-                        }
+                        "en": ""
                     },
                     "datatype": "string",
                     "description": null,
