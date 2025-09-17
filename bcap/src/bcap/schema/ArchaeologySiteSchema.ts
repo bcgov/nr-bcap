@@ -3,6 +3,7 @@ import type {
     AliasedNodeData,
     AliasedTileData,
 } from "@/arches_component_lab/types.ts";
+import type { AliasedGeojsonFeatureCollectionNode } from "@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts";
 import type { ReferenceSelectValue } from "@/arches_controlled_lists/datatypes/reference-select/types.ts";
 import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
 import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
@@ -13,7 +14,7 @@ import type { FileListValue } from "@/arches_component_lab/datatypes/file-list/t
 export interface SiteBoundaryTile extends AliasedTileData {
     aliased_data: {
         // <dt>Source Notes</dt> -> currentData.aliased_data.site_boundary.aliased_data.source_notes.display_value
-        site_boundary?: AliasedNodeData;
+        site_boundary?: AliasedGeojsonFeatureCollectionNode;
         latest_edit_type?: AliasedNodeData;
         source_notes?: AliasedNodeData;
         accuracy_remarks?: AliasedNodeData;
