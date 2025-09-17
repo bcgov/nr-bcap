@@ -1,6 +1,7 @@
 {
     "plugins": ["prettier-plugin-jinja-template"],
     "htmlWhitespaceSensitivity": "ignore",
+    "singleQuote": true,
     "singleAttributePerLine": true,
     "tabWidth": 4,
     "overrides": [
