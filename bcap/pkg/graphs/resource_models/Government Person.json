@@ -495,7 +495,10 @@
                 {
                     "alias": "username",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": "Username the resource uses to interact with BCAP",
@@ -556,7 +559,10 @@
                 {
                     "alias": "contact_information",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -581,7 +587,10 @@
                 {
                     "alias": "email_address",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": null,
@@ -606,7 +615,10 @@
                 {
                     "alias": "government_position",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": "Role within the Local Government",
@@ -631,7 +643,10 @@
                 {
                     "alias": "phone_number",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": null,
@@ -656,7 +671,10 @@
                 {
                     "alias": "government_person",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -681,7 +699,10 @@
                 {
                     "alias": "government_person_name",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -706,7 +727,10 @@
                 {
                     "alias": "last_name",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": null,
@@ -731,7 +755,10 @@
                 {
                     "alias": "first_name",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": null,

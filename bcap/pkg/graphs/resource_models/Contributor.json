@@ -629,7 +629,10 @@
                 {
                     "alias": "association_period",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": null,
@@ -654,7 +657,10 @@
                 {
                     "alias": "paleological_consultant",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -713,7 +719,10 @@
                 {
                     "alias": "contact_email",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": null,
@@ -763,7 +772,10 @@
                 {
                     "alias": "contact_phone_number",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": null,
@@ -788,7 +800,10 @@
                 {
                     "alias": "contributor",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -813,7 +828,10 @@
                 {
                     "alias": "contributor_name",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": "Name of the contributor - Last name if an individual, Organization name for an organization",
@@ -838,7 +856,10 @@
                 {
                     "alias": "name",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": "",
@@ -863,7 +884,10 @@
                 {
                     "alias": "first_name",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "string",
                     "description": null,
@@ -921,7 +945,10 @@
                 {
                     "alias": "contact_information",
                     "config": {
-                        "en": ""
+                        "en": {
+                            "value": "",
+                            "direction": "ltr"
+                        }
                     },
                     "datatype": "semantic",
                     "description": null,
