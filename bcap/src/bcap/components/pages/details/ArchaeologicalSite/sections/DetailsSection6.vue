@@ -37,8 +37,8 @@ const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     typologyData,
     {
         sourceField: 'typology_class',
-        hierarchyFields: ['typology_class', 'site_type', 'site_subtype', 'typology_descriptor'],
-        otherFields: ['typology_remark']
+        hierarchicalFields: ['typology_class', 'site_type', 'site_subtype', 'typology_descriptor'],
+        flatFields: ['typology_remark']
     }
 );
 </script>

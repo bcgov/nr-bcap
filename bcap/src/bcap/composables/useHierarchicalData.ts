@@ -3,8 +3,8 @@ import type { AliasedTileData, AliasedNodeData } from "@/arches_component_lab/ty
 
 interface HierarchicalFieldConfig {
     sourceField: string;
-    hierarchyFields: string[];
-    otherFields?: string[];
+    hierarchicalFields: string[];
+    flatFields?: string[];
 }
 
 async function fetchHierarchy(listItemId: string): Promise<string[]> {
@@ -41,14 +41,13 @@ export function useHierarchicalData(
 
         try {
             const results = await Promise.all(
-                dataSource.value.map(async (item: any, index: number) => {
-                    const originalData = item.aliased_data || item;
-
+                dataSource.value.map(async (item: AliasedTileData, index: number) => {
                     let listItemId = null;
 
-                    const sourceNode = originalData[config.sourceField];
+                    const originalData = (item.aliased_data || item) as Record<string, AliasedNodeData | undefined>;
+                    const sourceNode = originalData[config.sourceField] as AliasedNodeData | undefined;
 
-                    if (sourceNode?.node_value?.[0]?.uri) {
+                    if (sourceNode?.node_value && Array.isArray(sourceNode.node_value) && sourceNode.node_value[0]?.uri) {
                         const uriMatch = sourceNode.node_value[0].uri.match(/item\/([a-f0-9-]+)$/);
 
                         if (uriMatch) {
@@ -68,7 +67,7 @@ export function useHierarchicalData(
 
                     const aliasedData: Record<string, AliasedNodeData> = {};
 
-                    config.hierarchyFields.forEach((field, idx) => {
+                    config.hierarchicalFields.forEach((field, idx) => {
                         aliasedData[field] = {
                             node_value: hierarchy[idx] || null,
                             display_value: hierarchy[idx] || '',
@@ -76,8 +75,10 @@ export function useHierarchicalData(
                         };
                     });
 
-                    config.otherFields?.forEach(field => {
-                        aliasedData[field] = originalData[field] || {
+                    config.flatFields?.forEach(field => {
+                        const fieldData = originalData[field];
+
+                        aliasedData[field] = fieldData || {
                             node_value: null,
                             display_value: '',
                             details: []
