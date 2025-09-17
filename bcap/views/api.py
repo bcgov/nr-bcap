@@ -34,6 +34,8 @@ from arches_querysets.rest_framework.serializers import (
     ArchesResourceSerializer,
 )
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
+from arches_controlled_lists.models import ListItem, ListItemValue
+
 
 logger = logging.getLogger(__name__)
 
@@ -128,3 +130,27 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
         except ValueError:
             msg = _("No nodes found for graph slug: %s") % self.graph_slug
             raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: msg})
+
+
+class ControlledListHierarchy(APIBase):
+    def get(self, request, list_item_id):
+        try:
+            item = ListItem.objects.get(id=list_item_id)
+            labels = []
+
+            while item:
+                label = ListItemValue.objects.filter(
+                    list_item=item,
+                    valuetype_id='prefLabel',
+                ).values_list('value', flat=True).first()
+
+                if label:
+                    labels.append(label)
+
+                item = item.parent
+
+            labels.reverse()
+
+            return JSONResponse({'labels': labels})
+        except ListItem.DoesNotExist:
+            return JSONResponse({'labels': []})

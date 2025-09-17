@@ -9,6 +9,7 @@ from bcap.views.api import (
     LegislativeAct,
     UserProfile,
     RelatedSiteVisits,
+    ControlledListHierarchy
 )
 from bcap.views.resource import ResourceReportView
 from bcgov_arches_common.views.map import BCTileserverProxyView
@@ -61,6 +62,11 @@ urlpatterns = [
         bc_path_prefix(r"^legislative_act/(?P<act_id>%s)$" % uuid_regex),
         LegislativeAct.as_view(),
         name="legislative_act",
+    ),
+    re_path(
+        bc_path_prefix(r"^api/hierarchy/(?P<list_item_id>%s)/$" % uuid_regex),
+        ControlledListHierarchy.as_view(),
+        name="controlled_list_hierarchy",
     ),
     re_path(
         bc_path_prefix(r"^user_profile$"),

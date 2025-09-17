@@ -357,13 +357,21 @@ export default defineConfig({
                     path.join(__dirname, "./bcap/src/bcap"),
                 ),
             },
+            // {
+            //     find: "@/bcgov_arches_common",
+            //     replacement: path.resolve(
+            //         path.join(
+            //             __dirname,
+            //             "./../bcgov-arches-common/bcgov_arches_common/src/bcgov_arches_common",
+            //         ),
+            //     ),
+            // },
             {
                 find: "@/bcgov_arches_common",
                 replacement: path.resolve(
                     path.join(
                         __dirname,
-                        "./../bcgov-arches-common/bcgov_arches_common/src/bcgov_arches_common",
-                    ),
+                        "./node_modules/bcgov_arches_common/bcgov_arches_common/src/bcgov_arches_common"),
                 ),
             },
         ],

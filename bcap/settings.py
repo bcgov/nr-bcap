@@ -236,7 +236,7 @@ INSTALLED_APPS += (
 )
 
 # toggle Vite injection
-USE_VITE = False
+USE_VITE = True
 VITE_BASE = "/bcap/@vite/"
 
 if USE_VITE:
