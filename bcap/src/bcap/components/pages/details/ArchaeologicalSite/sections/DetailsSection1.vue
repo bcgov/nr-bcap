@@ -14,7 +14,7 @@ import 'primeicons/primeicons.css';
 //
 import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts';
 
-import Map from '@/bcgov_arches_common//components/SimpleMap/SimpleMap.vue';
+import Map from '@/bcgov_arches_common/components/SimpleMap/SimpleMap.vue';
 
 // import {
 //     DEFAULT_ERROR_TOAST_LIFE,
