@@ -9,7 +9,10 @@ import "primeicons/primeicons.css";
 import Section1 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue";
 import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
 import Section3 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection3.vue";
+import Section4 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection4.vue";
+import Section5 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection5.vue";
 import Section6 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue";
+import Section7 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection7.vue";
 import Section8 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue";
 import Section9 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue";
 import type { DetailsData } from "@/bcap/types.ts";
@@ -113,36 +116,29 @@ watchEffect(async () => {
             :hria-data="hriaDiscontinuedData"
             :loading="siteDataLoading"
         ></Section2>
-
         <Section3
             :data="siteVisitData"
             :loading="siteVisitDataLoading"
         ></Section3>
-        <DetailsSection
-            section-title="4. Location"
-            :visible="true"
-        >
-            <template #sectionContent></template>
-        </DetailsSection>
-        <DetailsSection
-            section-title="5. Site Boundary"
-            :visible="true"
-        >
-            <template #sectionContent></template>
-        </DetailsSection>
+        <Section4
+            :data="currentData?.aliased_data?.heritage_site_location?.[0]?.aliased_data"
+            :site-visit-data="siteVisitData"
+            :loading="siteDataLoading"
+        />
+        <Section5
+            :data="currentData?.aliased_data?.site_boundary"
+            :hria-data="hriaDiscontinuedData"
+            :loading="siteDataLoading || hriaDataLoading"
+        />
         <Section6
             :data="currentData?.aliased_data?.archaeological_data"
             :loading="siteDataLoading"
         ></Section6>
-        <DetailsSection
-            section-title="7. Ancestral Remains"
-            :visible="true"
-            :loading="siteDataLoading"
-        >
-            <template #sectionContent>
-                {{ currentData?.aliased_data?.ancestral_remains }}
-            </template>
-        </DetailsSection>
+        <Section7
+            :data="currentData?.aliased_data?.ancestral_remains"
+            :site-visit-data="siteVisitData"
+            :loading="siteDataLoading || siteVisitDataLoading"
+        />
         <Section8
             :data="
                 currentData?.aliased_data?.remarks_and_restricted_information

@@ -23,7 +23,7 @@ const teamMembers = computed(
 );
 
 const teamColumns = [
-    { field: "team_member", label: "Team Member" },
+    { field: "team_member", label: "Name" },
     { field: "member_roles", label: "Roles" },
     { field: "was_on_site", label: "Was On Site" },
 ];
