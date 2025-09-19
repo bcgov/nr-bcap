@@ -36,10 +36,15 @@ const typologyData = computed(() => currentData.value?.site_typology);
 const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     typologyData,
     {
-        sourceField: 'typology_class',
-        hierarchicalFields: ['typology_class', 'site_type', 'site_subtype', 'typology_descriptor'],
-        flatFields: ['typology_remark']
-    }
+        sourceField: "typology_class",
+        hierarchicalFields: [
+            "typology_class",
+            "site_type",
+            "site_subtype",
+            "typology_descriptor",
+        ],
+        flatFields: ["typology_remark"],
+    },
 );
 </script>
 
