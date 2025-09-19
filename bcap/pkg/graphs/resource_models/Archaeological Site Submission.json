@@ -176,12 +176,10 @@
                 {
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Requested Operation",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -194,7 +192,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "247a4e3c-3122-4351-9b1e-83f1d5e104bb",
@@ -938,8 +936,11 @@
                 },
                 {
                     "alias": "requested_operation",
-                    "config": {},
-                    "datatype": "concept",
+                    "config": {
+                        "controlledList": "56c3460e-e1b5-5afc-93ff-3625b652302b",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
                     "description": "Addition, Removal or Update.\nShould this be assigned at the Site level? Eg - do you want to allow ",
                     "exportable": true,
                     "fieldname": "RQSTD_OP",
@@ -987,7 +988,7 @@
                 {
                     "alias": "submission_type",
                     "config": {
-                        "controlledList": "c99b8763-d118-4869-9c58-4bcbf705e810",
+                        "controlledList": "0868cf04-7b9f-5be1-99ae-24074540603c",
                         "multiValue": true
                     },
                     "datatype": "reference",
