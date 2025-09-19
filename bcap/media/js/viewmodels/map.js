@@ -1,26 +1,26 @@
-import $ from "jquery";
-import _ from "underscore";
-import arches from "arches";
-import ko from "knockout";
-import koMapping from "knockout-mapping";
-import mapPopupProvider from "utils/map-popup-provider";
-import mapConfigurator from "utils/map-configurator";
-import ariaUtils from "utils/aria";
-import "templates/views/components/map-popup.htm";
-import MapboxGl from "mapbox-gl";
-import MapboxGeocoder from "mapbox-gl-geocoder";
-import MapPopup from "@/bcap/components/MapPopup.vue";
-import { createApp } from "vue";
+import $ from 'jquery';
+import _ from 'underscore';
+import arches from 'arches';
+import ko from 'knockout';
+import koMapping from 'knockout-mapping';
+import mapPopupProvider from 'utils/map-popup-provider';
+import mapConfigurator from 'utils/map-configurator';
+import ariaUtils from 'utils/aria';
+import 'templates/views/components/map-popup.htm';
+import MapboxGl from 'mapbox-gl';
+import MapboxGeocoder from 'mapbox-gl-geocoder';
+import MapPopup from '@/bcap/components/MapPopup/MapPopup.vue';
+import { createApp } from 'vue';
 
 const viewModel = function (params) {
     var self = this;
 
     var geojsonSourceFactory = function () {
         return {
-            type: "geojson",
+            type: 'geojson',
             generateId: true,
             data: {
-                type: "FeatureCollection",
+                type: 'FeatureCollection',
                 features: [],
             },
         };
@@ -142,9 +142,9 @@ const viewModel = function (params) {
     var sources = Object.assign(
         {
             resource: geojsonSourceFactory(),
-            "search-results-hex": geojsonSourceFactory(),
-            "search-results-hashes": geojsonSourceFactory(),
-            "search-results-points": geojsonSourceFactory(),
+            'search-results-hex': geojsonSourceFactory(),
+            'search-results-hashes': geojsonSourceFactory(),
+            'search-results-points': geojsonSourceFactory(),
         },
         arches.mapSources,
         params.sources,
@@ -230,15 +230,15 @@ const viewModel = function (params) {
     _.each(sources, function (sourceConfig) {
         if (sourceConfig.tiles) {
             sourceConfig.tiles.forEach(function (url, i) {
-                if (url.startsWith("/")) {
+                if (url.startsWith('/')) {
                     sourceConfig.tiles[i] = window.location.origin + url;
                 }
             });
         }
         if (
             sourceConfig.data &&
-            typeof sourceConfig.data === "string" &&
-            sourceConfig.data.startsWith("/")
+            typeof sourceConfig.data === 'string' &&
+            sourceConfig.data.startsWith('/')
         ) {
             sourceConfig.data = arches.urls.root + sourceConfig.data.substr(1);
         }
@@ -262,53 +262,53 @@ const viewModel = function (params) {
         }
         _.each(
             [
-                "background",
-                "fill",
-                "line",
-                "text",
-                "icon",
-                "raster",
-                "circle",
-                "fill-extrusion",
-                "heatmap",
+                'background',
+                'fill',
+                'line',
+                'text',
+                'icon',
+                'raster',
+                'circle',
+                'fill-extrusion',
+                'heatmap',
             ],
             function (opacityType) {
                 var startVal = layer.paint
-                    ? layer.paint[opacityType + "-opacity"]
+                    ? layer.paint[opacityType + '-opacity']
                     : null;
 
                 if (startVal) {
                     if (
                         parseFloat(startVal) &&
-                        parseFloat(layer.paint[opacityType + "-opacity"])
+                        parseFloat(layer.paint[opacityType + '-opacity'])
                     ) {
                         // verify startVal and opacity can be numbers
-                        layer.paint[opacityType + "-opacity"] =
+                        layer.paint[opacityType + '-opacity'] =
                             startVal * opacityVal;
                     } else if (parseFloat(startVal)) {
-                        layer.paint[opacityType + "-opacity"].base =
+                        layer.paint[opacityType + '-opacity'].base =
                             startVal * opacityVal;
                     } else {
-                        layer.paint[opacityType + "-opacity"] = JSON.parse(
+                        layer.paint[opacityType + '-opacity'] = JSON.parse(
                             JSON.stringify(startVal),
                         );
                         if (startVal.base) {
-                            layer.paint[opacityType + "-opacity"].base =
+                            layer.paint[opacityType + '-opacity'].base =
                                 startVal.base * opacityVal;
                         }
                         if (startVal.stops) {
                             multiplyStopValues(
-                                layer.paint[opacityType + "-opacity"].stops,
+                                layer.paint[opacityType + '-opacity'].stops,
                                 opacityVal,
                             );
                         }
                     }
                 } else if (
                     layer.type === opacityType ||
-                    (layer.type === "symbol" &&
-                        (opacityType === "text" || opacityType === "icon"))
+                    (layer.type === 'symbol' &&
+                        (opacityType === 'text' || opacityType === 'icon'))
                 ) {
-                    layer.paint[opacityType + "-opacity"] = opacityVal;
+                    layer.paint[opacityType + '-opacity'] = opacityVal;
                 }
             },
             self,
@@ -371,7 +371,7 @@ const viewModel = function (params) {
             self.activeTab(null);
         } else {
             self.activeTab(tabName);
-            ariaUtils.shiftFocus("#side-panel");
+            ariaUtils.shiftFocus('#side-panel');
         }
     };
 
@@ -402,10 +402,10 @@ const viewModel = function (params) {
             data.showFilterByFeature =
                 mapPopupProvider.showFilterByFeature.bind(mapPopupProvider);
             const descriptionProperties = [
-                "displayname",
-                "graph_name",
-                "map_popup",
-                "geometries",
+                'displayname',
+                'graph_name',
+                'map_popup',
+                'geometries',
             ];
             const setEditButtonVisibility = function (data) {
                 const isFeatureEditable =
@@ -424,9 +424,9 @@ const viewModel = function (params) {
                 if (!self.resourceLookup[id]) {
                     data = _.defaults(data, {
                         loading: true,
-                        displayname: "",
-                        graph_name: "",
-                        map_popup: "",
+                        displayname: '',
+                        graph_name: '',
+                        map_popup: '',
                         geometries: [],
                         feature: feature,
                         showEditButton: ko.observable(false),
@@ -458,7 +458,7 @@ const viewModel = function (params) {
                                 self.resourceLookup[id][prop](data[prop]),
                             );
                             self.resourceLookup[id].permissions =
-                                data["permissions"];
+                                data['permissions'];
                             setEditButtonVisibility(self.resourceLookup[id]);
                         },
                     );
@@ -496,7 +496,7 @@ const viewModel = function (params) {
                 );
                 let activeFeature;
                 uniquePopupFeatures[activeFeatureIndex].active(false);
-                if (direction === "right") {
+                if (direction === 'right') {
                     if (activeFeatureIndex + 1 >= uniquePopupFeatures.length) {
                         activeFeature = uniquePopupFeatures[0];
                     } else {
@@ -549,7 +549,7 @@ const viewModel = function (params) {
         }
 
         // Create a Vue app
-        const container = document.createElement("div");
+        const container = document.createElement('div');
         const app = createApp(MapPopup, {
             loading: false,
             urls: arches.urls,
@@ -559,7 +559,7 @@ const viewModel = function (params) {
             showFilterByFeatureButton: true,
             // Optionally listen for emitted events from the component
             onSendFeatureToMapFilter: (feature, useAsFilter) => {
-                if (typeof self.sendFeatureToMapFilter === "function") {
+                if (typeof self.sendFeatureToMapFilter === 'function') {
                     self.sendFeatureToMapFilter(feature, useAsFilter);
                 }
             },
@@ -581,7 +581,7 @@ const viewModel = function (params) {
         });
 
         // Cleanup when popup closes
-        self.popup.on("close", function () {
+        self.popup.on('close', function () {
             features.forEach((feature) => {
                 if (mapStyle && feature.id) {
                     try {
@@ -617,9 +617,9 @@ const viewModel = function (params) {
             if (self.overlays().includes(li)) {
                 const index = self.overlays().indexOf(li);
                 let newIndex = index;
-                if (direction == "up") {
+                if (direction == 'up') {
                     newIndex--;
-                } else if (direction == "down") {
+                } else if (direction == 'down') {
                     newIndex++;
                 }
                 if (newIndex != -1 && newIndex != self.overlays().length) {
@@ -633,26 +633,26 @@ const viewModel = function (params) {
         if (e.ctrlKey) {
             switch (e.which) {
                 case 38:
-                    moveOverlays("up");
+                    moveOverlays('up');
                     break;
                 case 40:
-                    moveOverlays("down");
+                    moveOverlays('down');
                     break;
             }
         }
     };
 
     this.setupMap = function (map) {
-        map.on("load", function () {
+        map.on('load', function () {
             mapConfigurator.preConfig(map);
-            map.addControl(new MapboxGl.NavigationControl(), "top-left");
+            map.addControl(new MapboxGl.NavigationControl(), 'top-left');
             map.addControl(
                 new MapboxGl.FullscreenControl({
                     container: $(map.getContainer()).closest(
-                        ".workbench-card-wrapper",
+                        '.workbench-card-wrapper',
                     )[0],
                 }),
-                "top-left",
+                'top-left',
             );
             map.addControl(
                 new MapboxGeocoder({
@@ -661,14 +661,14 @@ const viewModel = function (params) {
                     placeholder: arches.translations.geocoderPlaceHolder,
                     bbox: arches.hexBinBounds,
                 }),
-                "top-right",
+                'top-right',
             );
 
             self.layers.subscribe(self.updateLayers);
 
             var hoverFeature;
 
-            map.on("mousemove", function (e) {
+            map.on('mousemove', function (e) {
                 var style = map.getStyle();
                 if (hoverFeature && hoverFeature.id && style)
                     map.setFeatureState(hoverFeature, { hover: false });
@@ -680,24 +680,24 @@ const viewModel = function (params) {
                 if (hoverFeature && hoverFeature.id && style)
                     map.setFeatureState(hoverFeature, { hover: true });
 
-                map.getCanvas().style.cursor = hoverFeature ? "pointer" : "";
+                map.getCanvas().style.cursor = hoverFeature ? 'pointer' : '';
                 if (self.map().draw_mode) {
                     var crosshairModes = [
-                        "draw_point",
-                        "draw_line_string",
-                        "draw_polygon",
+                        'draw_point',
+                        'draw_line_string',
+                        'draw_polygon',
                     ];
                     map.getCanvas().style.cursor = crosshairModes.includes(
                         self.map().draw_mode,
                     )
-                        ? "crosshair"
-                        : "";
+                        ? 'crosshair'
+                        : '';
                 }
             });
 
             map.draw_mode = null;
 
-            map.on("click", function (e) {
+            map.on('click', function (e) {
                 const popupFeatures = _.filter(
                     map.queryRenderedFeatures(e.point),
                     (feature) =>
@@ -708,11 +708,11 @@ const viewModel = function (params) {
                 }
             });
 
-            map.on("zoomend", function () {
+            map.on('zoomend', function () {
                 self.zoom(parseFloat(map.getZoom()));
             });
 
-            map.on("dragend", function () {
+            map.on('dragend', function () {
                 var center = map.getCenter();
 
                 self.centerX(parseFloat(center.lng));

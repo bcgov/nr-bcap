@@ -12,6 +12,7 @@
     "verbatimModuleSyntax": true,
     "useDefineForClassFields": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -29,10 +30,10 @@
       "*": [
         "*",
         "bcap/media/js/*",
-        "../bcgov-arches-common/bcgov_arches_common/media/js/*",
-        "../arches/arches/app/media/js/*",
+        "node_modules/bcgov-arches-common/bcgov_arches_common/media/js/*",
+        "node_modules/arches/arches/app/media/js/*",
         "node_modules/*",
-        "../node_modules/*"
+//        "../node_modules/*"
       ],
     },
     "rootDirs": [
@@ -44,6 +45,7 @@
   "exclude": [
     "**/*.test.ts",
     "**/build/**",
-    "**/staticfiles/**"
+    "**/staticfiles/**",
+    "**/vite-shims/**"
   ]
 }
