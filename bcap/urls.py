@@ -9,7 +9,7 @@ from bcap.views.api import (
     LegislativeAct,
     UserProfile,
     RelatedSiteVisits,
-    ControlledListHierarchy
+    ControlledListHierarchy,
 )
 from bcap.views.resource import ResourceReportView
 from bcgov_arches_common.views.map import BCTileserverProxyView

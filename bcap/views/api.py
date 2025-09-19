@@ -139,10 +139,14 @@ class ControlledListHierarchy(APIBase):
             labels = []
 
             while item:
-                label = ListItemValue.objects.filter(
-                    list_item=item,
-                    valuetype_id='prefLabel',
-                ).values_list('value', flat=True).first()
+                label = (
+                    ListItemValue.objects.filter(
+                        list_item=item,
+                        valuetype_id="prefLabel",
+                    )
+                    .values_list("value", flat=True)
+                    .first()
+                )
 
                 if label:
                     labels.append(label)
@@ -151,6 +155,6 @@ class ControlledListHierarchy(APIBase):
 
             labels.reverse()
 
-            return JSONResponse({'labels': labels})
+            return JSONResponse({"labels": labels})
         except ListItem.DoesNotExist:
-            return JSONResponse({'labels': []})
+            return JSONResponse({"labels": []})

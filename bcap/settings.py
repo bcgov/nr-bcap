@@ -240,9 +240,7 @@ USE_VITE = False
 VITE_BASE = "/bcap/@vite/"
 
 if USE_VITE:
-    INSTALLED_APPS += (
-        "django_vite",
-    )
+    INSTALLED_APPS += ("django_vite",)
 
     # These are the Vue entrypoints that can be served by Vite on a page-by-page basis.
     VITE_ENTRYPOINTS = {"/bcap/search": ["bcap/vite-entries/bcap-site.entry.js"]}
