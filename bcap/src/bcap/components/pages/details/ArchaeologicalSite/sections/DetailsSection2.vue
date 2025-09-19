@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { useHierarchicalData } from "@/bcap/composables/useHierarchicalData.ts";
 import type {
     AliasedNodeData,
     AliasedTileData,
@@ -76,12 +77,29 @@ type IdFieldKey = (typeof id_fields)[number];
 // Turn "borden_number" -> "Borden Number"
 const labelize = (key: string) =>
     key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+const decisionData = computed(() => currentData.value?.site_decision);
+
+const {
+    processedData: decisionTableData,
+    isProcessing: isProcessingDecisions,
+} = useHierarchicalData(decisionData, {
+    sourceField: "site_decision",
+    hierarchicalFields: ["site_decision", "decision_criteria"],
+    flatFields: [
+        "decision_date",
+        "decision_made_by",
+        "decision_description",
+        "recommendation_date",
+        "recommended_by",
+    ],
+});
 </script>
 
 <template>
     <DetailsSection
         section-title="2. ID & Registration"
-        :loading="props.loading"
+        :loading="props.loading || isProcessingDecisions"
         :visible="true"
     >
         <template #sectionContent>
@@ -152,7 +170,7 @@ const labelize = (key: string) =>
                     :initial-sort-field-index="3"
                 ></StandardDataTable>
                 <StandardDataTable
-                    :table-data="currentData?.site_decision || []"
+                    :table-data="decisionTableData"
                     :column-definitions="siteDecisionColumns"
                     title="Decision History"
                     :initial-sort-field-index="0"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
-
+import { useHierarchicalData } from "@/bcap/composables/useHierarchicalData.ts";
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { ArchaeologicalDataTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
@@ -23,7 +23,6 @@ const currentData = computed<ArchaeologicalDataTile | undefined>(
     },
 );
 
-/** Generic column definitions: configure any key/path + label */
 const typologyColumns = [
     { field: 'typology_class', label: 'Class' },
     { field: 'site_type', label: 'Type' },
@@ -31,23 +30,37 @@ const typologyColumns = [
     { field: 'typology_descriptor', label: 'Descriptor' },
     { field: 'typology_remark', label: 'Remarks' },
 ];
+
+const typologyData = computed(() => currentData.value?.site_typology);
+
+const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
+    typologyData,
+    {
+        sourceField: "typology_class",
+        hierarchicalFields: [
+            "typology_class",
+            "site_type",
+            "site_subtype",
+            "typology_descriptor",
+        ],
+        flatFields: ["typology_remark"],
+    },
+);
 </script>
 
 <template>
     <DetailsSection
         section-title="6. Archaeological Data"
-        :loading="props.loading"
+        :loading="props.loading || isProcessing"
         :visible="true"
     >
         <template #sectionContent>
-            <div>
-                <StandardDataTable
-                    :table-data="currentData?.site_typology ?? []"
-                    :column-definitions="typologyColumns"
-                    title="Site Typology"
-                    initial-sort-field="0"
-                ></StandardDataTable>
-            </div>
+            <StandardDataTable
+                :table-data="typologyTableData"
+                :column-definitions="typologyColumns"
+                title="Site Typology"
+                :initial-sort-field-index="0"
+            />
         </template>
     </DetailsSection>
 </template>
