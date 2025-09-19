@@ -5,8 +5,6 @@ import type { App } from 'vue';
 
 import('@/arches/declarations.d.ts');
 
-declare module 'underscore';
-
 export {};
 
 declare global {
