@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
 import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
@@ -38,9 +39,9 @@ const referencesColumns = [
 ];
 
 const relatedDocumentsColumns = [
-    { field: "related_document_type", label: "Type" },
+    { field: "related_document_type", label: "Document Type" },
+    { field: "related_document_description", label: "Document Description" },
     { field: "related_site_documents", label: "Document" },
-    { field: "related_document_description", label: "Description" },
 ];
 
 const imagesColumns = [
@@ -60,6 +61,25 @@ const otherMapsColumns = [
     { field: "modified_on", label: "Modified On" },
     { field: "modified_by", label: "Modified By" },
 ];
+
+const hasReferences = computed(() => {
+    return currentData.value?.publication_reference &&
+           currentData.value.publication_reference.length > 0;
+});
+
+const hasRelatedDocuments = computed(() => {
+    return relatedDocumentsData.value && relatedDocumentsData.value.length > 0;
+});
+
+const hasImages = computed(() => {
+    return currentData.value?.site_images &&
+           currentData.value.site_images.length > 0;
+});
+
+const hasOtherMaps = computed(() => {
+    return currentData.value?.other_maps &&
+           currentData.value.other_maps.length > 0;
+});
 </script>
 
 <template>
@@ -70,70 +90,83 @@ const otherMapsColumns = [
     >
         <template #sectionContent>
             <DetailsSection
-                section-title="9.1 References"
+                section-title="References"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasReferences }"
             >
                 <template #sectionContent>
                     <StandardDataTable
+                        v-if="hasReferences"
                         :table-data="currentData?.publication_reference ?? []"
                         :column-definitions="referencesColumns"
                         title="Publication References"
                         :initial-sort-field-index="2"
                     />
-                    <div v-if="!currentData?.publication_reference?.length">
-                        <p>No references available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No references available."
+                    />
                 </template>
             </DetailsSection>
 
             <DetailsSection
-                section-title="9.2 Related Documents"
+                section-title="Related Documents"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasRelatedDocuments }"
             >
                 <template #sectionContent>
                     <StandardDataTable
+                        v-if="hasRelatedDocuments"
                         :table-data="relatedDocumentsData"
                         :column-definitions="relatedDocumentsColumns"
-                        title="Site Documents"
                         :initial-sort-field-index="0"
                     />
-                    <div v-if="!relatedDocumentsData.length">
-                        <p>No related documents available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No related documents available."
+                    />
                 </template>
             </DetailsSection>
 
             <DetailsSection
-                section-title="9.3 Images"
+                section-title="Images"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasImages }"
             >
                 <template #sectionContent>
                     <StandardDataTable
+                        v-if="hasImages"
                         :table-data="currentData?.site_images ?? []"
                         :column-definitions="imagesColumns"
-                        title="Site Images"
                         :initial-sort-field-index="5"
                     />
-                    <div v-if="!currentData?.site_images?.length">
-                        <p>No images available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No images available."
+                    />
                 </template>
             </DetailsSection>
 
             <DetailsSection
-                section-title="9.4 Other Maps"
+                section-title="Other Maps"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasOtherMaps }"
             >
                 <template #sectionContent>
                     <StandardDataTable
+                        v-if="hasOtherMaps"
                         :table-data="currentData?.other_maps ?? []"
                         :column-definitions="otherMapsColumns"
-                        title="Other Maps"
                         :initial-sort-field-index="2"
                     />
-                    <div v-if="!currentData?.other_maps?.length">
-                        <p>No other maps available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No other maps available."
+                    />
                 </template>
             </DetailsSection>
         </template>

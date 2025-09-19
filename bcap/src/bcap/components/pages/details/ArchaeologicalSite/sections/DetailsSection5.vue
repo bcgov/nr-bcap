@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
 
 const props = withDefaults(
     defineProps<{
@@ -18,12 +17,20 @@ const props = withDefaults(
     },
 );
 
-const spatialAccuracyColumns = [
-    { field: "latest_edit_type", label: "Edit Type" },
-    { field: "accuracy_remarks", label: "Accuracy Remarks" },
-    { field: "edited_on", label: "Edited On" },
-    { field: "edited_by", label: "Edited By" },
-];
+const hasDimensions = computed(() => {
+    return props.hriaData?.aliased_data?.site_dimensions?.aliased_data;
+});
+
+const hasBoundaryDescription = computed(() => {
+    return props.data?.aliased_data?.source_notes && !isEmpty(props.data.aliased_data.source_notes);
+});
+
+const hasSpatialAccuracy = computed(() => {
+    return props.data?.aliased_data && (
+        !isEmpty(props.data.aliased_data.latest_edit_type) ||
+        !isEmpty(props.data.aliased_data.accuracy_remarks)
+    );
+});
 </script>
 
 <template>
@@ -34,11 +41,13 @@ const spatialAccuracyColumns = [
     >
         <template #sectionContent>
             <DetailsSection
-                section-title="5.1 GIS Calculated Dimensions"
+                section-title="GIS Calculated Dimensions"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasDimensions }"
             >
                 <template #sectionContent>
-                    <dl v-if="props.hriaData?.aliased_data?.site_dimensions?.aliased_data">
+                    <dl v-if="hasDimensions">
                         <dt v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.length)">Length (m)</dt>
                         <dd v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.length)">
                             {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.length) }}
@@ -69,35 +78,41 @@ const spatialAccuracyColumns = [
                             {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.boundary_type) }}
                         </dd>
                     </dl>
-                    <div v-else>
-                        <p>No dimension information available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No dimension information available."
+                    />
                 </template>
             </DetailsSection>
 
             <DetailsSection
-                section-title="5.2 Site Boundary Description"
+                section-title="Site Boundary Description"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasBoundaryDescription }"
             >
                 <template #sectionContent>
-                    <dl v-if="props.data?.aliased_data">
-                        <dt v-if="!isEmpty(props.data.aliased_data.source_notes)">Source Notes</dt>
-                        <dd v-if="!isEmpty(props.data.aliased_data.source_notes)">
+                    <dl v-if="hasBoundaryDescription">
+                        <dt>Source Notes</dt>
+                        <dd>
                             {{ getDisplayValue(props.data.aliased_data.source_notes) }}
                         </dd>
                     </dl>
-                    <div v-else>
-                        <p>No site boundary description available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No site boundary description available."
+                    />
                 </template>
             </DetailsSection>
 
             <DetailsSection
-                section-title="5.3 Spatial Accuracy"
+                section-title="Spatial Accuracy"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasSpatialAccuracy }"
             >
                 <template #sectionContent>
-                    <dl v-if="props.data?.aliased_data">
+                    <dl v-if="hasSpatialAccuracy">
                         <dt v-if="!isEmpty(props.data.aliased_data.latest_edit_type)">Latest Edit Type</dt>
                         <dd v-if="!isEmpty(props.data.aliased_data.latest_edit_type)">
                             {{ getDisplayValue(props.data.aliased_data.latest_edit_type) }}
@@ -108,9 +123,10 @@ const spatialAccuracyColumns = [
                             {{ getDisplayValue(props.data.aliased_data.accuracy_remarks) }}
                         </dd>
                     </dl>
-                    <div v-else>
-                        <p>No spatial accuracy information available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No spatial accuracy information available."
+                    />
                 </template>
             </DetailsSection>
         </template>

@@ -41,6 +41,28 @@ export interface SiteDecisionTile extends AliasedTileData {
     };
 }
 
+export interface CurrentAlertTile extends AliasedTileData {
+    aliased_data: {
+        alert_subject?: AliasedNodeData;
+        alert_details?: AliasedNodeData;
+        branch_contact?: AliasedNodeData;
+        entered_on?: AliasedNodeData;
+        entered_by?: AliasedNodeData;
+    };
+}
+
+export interface SiteNamesTile extends AliasedTileData {
+    aliased_data: {
+        site_name?: AliasedNodeData;
+        site_name_type?: AliasedNodeData;
+        site_name_remarks?: AliasedNodeData;
+        date_assigned_or_reported?: AliasedNodeData;
+        assigned_or_reported_by?: AliasedNodeData;
+        entered_on?: AliasedNodeData;
+        entered_by?: AliasedNodeData;
+    };
+}
+
 export interface IdentificationAndRegistrationTile extends AliasedTileData {
     borden_number?: AliasedNodeData;
     registration_date?: AliasedNodeData;
@@ -49,9 +71,10 @@ export interface IdentificationAndRegistrationTile extends AliasedTileData {
     site_creation_date?: AliasedNodeData;
     register_type?: AliasedNodeData;
     parent_site?: AliasedNodeData;
-    site_alert?: AliasedNodeData;
+    child_sites?: AliasedNodeData[];
+    site_alert?: CurrentAlertTile[] | CurrentAlertTile | AliasedNodeData;
     authority?: AuthorityTile[];
-    site_names?: AliasedTileData[];
+    site_names?: SiteNamesTile[];
     site_decision?: SiteDecisionTile[];
 }
 
@@ -60,11 +83,19 @@ export interface SiteTypologyTile extends AliasedTileData {
     site_type?: AliasedNodeData;
     site_subtype?: AliasedNodeData;
     typology_descriptor?: AliasedNodeData;
-    typology_remark?: AliasedNodeData;
+}
+
+export interface SiteTypologyRemarksTile extends AliasedTileData {
+    aliased_data: {
+        site_typology_remarks?: AliasedNodeData;
+        entered_on?: AliasedNodeData;
+        entered_by?: AliasedNodeData;
+    };
 }
 
 export interface ArchaeologicalDataTile extends AliasedTileData {
     site_typology?: SiteTypologyTile[];
+    site_typology_remarks?: AliasedTileData[];
 }
 
 export interface AncestralRemainsTile extends AliasedTileData {

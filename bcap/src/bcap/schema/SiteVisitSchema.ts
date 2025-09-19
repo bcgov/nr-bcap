@@ -171,6 +171,41 @@ export interface GeneralRemarkTile extends AliasedTileData {
     };
 }
 
+export interface ReferencesTile extends AliasedTileData {
+    aliased_data: {
+        reference_type: ReferenceSelectValue;
+        reference_title: StringValue;
+        publication_year: DateValue;
+        reference_authors: StringValue;
+        reference_remarks: StringValue;
+    };
+}
+
+export interface RelatedDocumentsTile extends AliasedTileData {
+    aliased_data: {
+        document_type: ReferenceSelectValue;
+        document_title: StringValue;
+        document_description: StringValue;
+    };
+}
+
+export interface PhotosTile extends AliasedTileData {
+    aliased_data: {
+        photo_title: StringValue;
+        photo_description: StringValue;
+        photographer: ResourceInstanceValue;
+        photo_date: DateValue;
+    };
+}
+
+export interface ReferencesAndDocumentsTile extends AliasedTileData {
+    aliased_data: {
+        references: ReferencesTile[];
+        related_documents: RelatedDocumentsTile[];
+        photos: PhotosTile[];
+    };
+}
+
 export interface RemarksAndRecommendationsTile extends AliasedTileData {
     aliased_data: {
         recommendation: RecommendationTile[];
@@ -185,6 +220,7 @@ export interface SiteVisitAliasedDataRoot {
     site_visit_details: SiteVisitDetailsTile;
     archaeological_data: ArchaeologicalDataTile;
     remarks_and_recommendations: RemarksAndRecommendationsTile;
+    references_and_documents: ReferencesAndDocumentsTile;
 }
 
 export interface SiteVisitSchema {

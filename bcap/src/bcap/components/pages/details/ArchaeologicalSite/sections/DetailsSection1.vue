@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-// main.js or in your component's script setup
+import EmptyState from "@/bcap/components/EmptyState.vue";
 import "primeicons/primeicons.css";
 import type {
     ArchaeologySiteSchema,
@@ -27,6 +27,16 @@ const siteBoundary = computed<SiteBoundaryTile | undefined>(
             | undefined;
     },
 );
+
+const hasGeoJsonData = computed(() => {
+    return siteBoundary.value?.aliased_data?.site_boundary?.node_value;
+});
+
+const hasBoundaryInfo = computed(() => {
+    return siteBoundary.value?.aliased_data?.accuracy_remarks?.display_value ||
+           siteBoundary.value?.aliased_data?.source_notes?.display_value ||
+           siteBoundary.value?.aliased_data?.latest_edit_type?.node_value;
+});
 </script>
 
 <template>
@@ -38,58 +48,79 @@ const siteBoundary = computed<SiteBoundaryTile | undefined>(
         <template #sectionContent>
             <DetailsSection
                 section-title="Site Boundary GeoJSON"
+                variant="subsection"
                 :visible="false"
+                :class="{ 'empty-section': !hasGeoJsonData }"
             >
                 <template #sectionContent>
-                    <pre
-                        style="
-                            white-space: pre-wrap;
-                            word-break: break-word;
-                            max-height: 50rem;
-                        "
-                        >{{
-                            JSON.stringify(
-                                siteBoundary?.aliased_data?.site_boundary
-                                    ?.node_value,
-                                null,
-                                2,
-                            )
-                        }}</pre
-                    >
+                    <div v-if="hasGeoJsonData">
+                        <pre
+                            style="
+                                white-space: pre-wrap;
+                                word-break: break-word;
+                                max-height: 50rem;
+                            "
+                            >{{
+                                JSON.stringify(
+                                    siteBoundary?.aliased_data?.site_boundary
+                                        ?.node_value,
+                                    null,
+                                    2,
+                                )
+                            }}</pre>
+                    </div>
+                    <EmptyState
+                        v-else
+                        message="No site boundary data available."
+                    />
                 </template>
             </DetailsSection>
-            <div>
-                <dl>
-                    <dt>Accuracy Remarks</dt>
-                    <dd>
-                        {{
-                            siteBoundary?.aliased_data.accuracy_remarks
-                                ?.display_value
-                        }}
-                    </dd>
-                    <dt>Source Notes</dt>
-                    <dd>
-                        {{
-                            siteBoundary?.aliased_data.source_notes
-                                ?.display_value
-                        }}
-                    </dd>
-                    <div
-                        v-if="
-                            siteBoundary?.aliased_data?.latest_edit_type
-                                ?.node_value
-                        "
-                    >
-                        <dt>Latest Edit Type</dt>
-                        <dd>
-                            {{
-                                siteBoundary?.aliased_data?.latest_edit_type
-                                    ?.display_value
-                            }}
-                        </dd>
+
+            <DetailsSection
+                section-title="Site Boundary Information"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasBoundaryInfo }"
+            >
+                <template #sectionContent>
+                    <div v-if="hasBoundaryInfo">
+                        <dl>
+                            <dt>Accuracy Remarks</dt>
+                            <dd>
+                                {{
+                                    siteBoundary?.aliased_data.accuracy_remarks
+                                        ?.display_value
+                                }}
+                            </dd>
+                            <dt>Source Notes</dt>
+                            <dd>
+                                {{
+                                    siteBoundary?.aliased_data.source_notes
+                                        ?.display_value
+                                }}
+                            </dd>
+                            <div
+                                v-if="
+                                    siteBoundary?.aliased_data?.latest_edit_type
+                                        ?.node_value
+                                "
+                            >
+                                <dt>Latest Edit Type</dt>
+                                <dd>
+                                    {{
+                                        siteBoundary?.aliased_data?.latest_edit_type
+                                            ?.display_value
+                                    }}
+                                </dd>
+                            </div>
+                        </dl>
                     </div>
-                </dl>
-            </div>
+                    <EmptyState
+                        v-else
+                        message="No site boundary information available."
+                    />
+                </template>
+            </DetailsSection>
         </template>
     </DetailsSection>
 </template>

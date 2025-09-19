@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
 import type { HcaPermitSchema, PermitIdentificationTile } from "@/bcap/schema/HcaPermitSchema.ts";
 import type {
@@ -22,6 +23,16 @@ const props = withDefaults(
 const currentData = computed<PermitIdentificationTile | undefined>(() => {
     return props.data?.aliased_data?.permit_identification;
 });
+
+const hasPermitInfo = computed(() => {
+    const data = currentData.value?.aliased_data;
+    return data && (
+        !isEmpty(data.permit_number) ||
+        !isEmpty(data.hca_permit_type) ||
+        !isEmpty(data.permit_holder) ||
+        !isEmpty(data.issuing_agency)
+    );
+});
 </script>
 
 <template>
@@ -31,30 +42,40 @@ const currentData = computed<PermitIdentificationTile | undefined>(() => {
         :visible="true"
     >
         <template #sectionContent>
-            <dl v-if="currentData?.aliased_data">
-                <dt v-if="currentData.aliased_data.permit_number && !isEmpty(currentData.aliased_data.permit_number)">Permit Number</dt>
-                <dd v-if="currentData.aliased_data.permit_number && !isEmpty(currentData.aliased_data.permit_number)">
-                    {{ getDisplayValue(currentData.aliased_data.permit_number) }}
-                </dd>
+            <DetailsSection
+                section-title="Permit Information"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasPermitInfo }"
+            >
+                <template #sectionContent>
+                    <dl v-if="hasPermitInfo">
+                        <dt v-if="!isEmpty(currentData?.aliased_data?.permit_number)">Permit Number</dt>
+                        <dd v-if="!isEmpty(currentData?.aliased_data?.permit_number)">
+                            {{ getDisplayValue(currentData?.aliased_data?.permit_number) }}
+                        </dd>
 
-                <dt v-if="currentData.aliased_data.hca_permit_type && !isEmpty(currentData.aliased_data.hca_permit_type)">HCA Permit Type</dt>
-                <dd v-if="currentData.aliased_data.hca_permit_type && !isEmpty(currentData.aliased_data.hca_permit_type)">
-                    {{ getDisplayValue(currentData.aliased_data.hca_permit_type) }}
-                </dd>
+                        <dt v-if="!isEmpty(currentData?.aliased_data?.hca_permit_type)">HCA Permit Type</dt>
+                        <dd v-if="!isEmpty(currentData?.aliased_data?.hca_permit_type)">
+                            {{ getDisplayValue(currentData?.aliased_data?.hca_permit_type) }}
+                        </dd>
 
-                <dt v-if="currentData.aliased_data.permit_holder && !isEmpty(currentData.aliased_data.permit_holder)">Permit Holder</dt>
-                <dd v-if="currentData.aliased_data.permit_holder && !isEmpty(currentData.aliased_data.permit_holder)">
-                    {{ getDisplayValue(currentData.aliased_data.permit_holder) }}
-                </dd>
+                        <dt v-if="!isEmpty(currentData?.aliased_data?.permit_holder)">Permit Holder</dt>
+                        <dd v-if="!isEmpty(currentData?.aliased_data?.permit_holder)">
+                            {{ getDisplayValue(currentData?.aliased_data?.permit_holder) }}
+                        </dd>
 
-                <dt v-if="currentData.aliased_data.issuing_agency && !isEmpty(currentData.aliased_data.issuing_agency)">Issuing Agency</dt>
-                <dd v-if="currentData.aliased_data.issuing_agency && !isEmpty(currentData.aliased_data.issuing_agency)">
-                    {{ getDisplayValue(currentData.aliased_data.issuing_agency) }}
-                </dd>
-            </dl>
-            <div v-else>
-                <p>No permit identification information available.</p>
-            </div>
+                        <dt v-if="!isEmpty(currentData?.aliased_data?.issuing_agency)">Issuing Agency</dt>
+                        <dd v-if="!isEmpty(currentData?.aliased_data?.issuing_agency)">
+                            {{ getDisplayValue(currentData?.aliased_data?.issuing_agency) }}
+                        </dd>
+                    </dl>
+                    <EmptyState
+                        v-else
+                        message="No permit identification information available."
+                    />
+                </template>
+            </DetailsSection>
         </template>
     </DetailsSection>
 </template>

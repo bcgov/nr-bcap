@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
 import "primeicons/primeicons.css";
 
@@ -14,6 +15,10 @@ const props = withDefaults(
         languageCode: "en",
     },
 );
+
+const hasRestrictedRemainsInfo = computed(() => {
+    return props.data?.aliased_data?.restricted_ancestral_remains_remark?.aliased_data;
+});
 </script>
 
 <template>
@@ -24,11 +29,13 @@ const props = withDefaults(
     >
         <template #sectionContent>
             <DetailsSection
-                section-title="7.1 Restricted Ancestral Remains Information"
+                section-title="Restricted Ancestral Remains Information"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasRestrictedRemainsInfo }"
             >
                 <template #sectionContent>
-                    <dl v-if="props.data?.aliased_data?.restricted_ancestral_remains_remark?.aliased_data">
+                    <dl v-if="hasRestrictedRemainsInfo">
                         <dt v-if="!isEmpty(props.data.aliased_data.restricted_ancestral_remains_remark.aliased_data.restricted_ancestral_remains_remark)">Restricted Ancestral Remains Remarks</dt>
                         <dd v-if="!isEmpty(props.data.aliased_data.restricted_ancestral_remains_remark.aliased_data.restricted_ancestral_remains_remark)">
                             {{ getDisplayValue(props.data.aliased_data.restricted_ancestral_remains_remark.aliased_data.restricted_ancestral_remains_remark) }}
@@ -44,9 +51,10 @@ const props = withDefaults(
                             {{ getDisplayValue(props.data.aliased_data.restricted_ancestral_remains_remark.aliased_data.remains_remark_made_by) }}
                         </dd>
                     </dl>
-                    <div v-else>
-                        <p>No restricted ancestral remains information recorded.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No restricted ancestral remains information recorded."
+                    />
                 </template>
             </DetailsSection>
         </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getResourceData } from "@/bcap/components/pages/api.ts";
+import { useResourceData } from "@/bcap/composables/useResourceData.ts";
 import "primeicons/primeicons.css";
 import Section1 from "@/bcap/components/pages/details/Repository/sections/DetailsSection1.vue";
 import DataTable from "primevue/datatable";
@@ -12,42 +12,31 @@ const props = withDefaults(
     defineProps<{
         data: DetailsData;
         languageCode?: string;
+        forceCollapsed?: boolean | undefined;
     }>(),
     {
         languageCode: "en",
     },
 );
 
-type Cache = Record<string, RepositorySchema | null>;
-const cache = ref<Cache>({});
-const current = ref<RepositorySchema | null>(null);
-const loading = ref(true);
-
-watchEffect(async () => {
-    const resourceId: string = props.data?.resourceinstance_id;
-    if (!resourceId) return;
-    if (!(resourceId in cache.value)) {
-        getResourceData("repository", resourceId).then((data) => {
-            cache.value[resourceId] = data as RepositorySchema;
-            current.value = cache.value[resourceId];
-            loading.value = false;
-        });
-    }
-});
+const resourceId = computed(() => props.data?.resourceinstance_id);
+const { data: current, loading } = useResourceData<RepositorySchema>(
+    "repository",
+    resourceId
+);
 </script>
 
 <template>
     <div style="display: none"><DataTable /></div>
     <div style="display: none">
-        <DetailsSection
-            :visible="true"
-            section-title=""
-        />
+        <DetailsSection :visible="true" section-title="" />
     </div>
+
     <div class="container">
         <Section1
             :data="current || undefined"
             :loading="loading"
+            :force-collapsed="props.forceCollapsed"
         />
     </div>
 </template>
@@ -58,6 +47,7 @@ watchEffect(async () => {
     flex-direction: column;
     gap: 1rem;
 }
+
 dl {
     display: flex;
     flex-direction: column;

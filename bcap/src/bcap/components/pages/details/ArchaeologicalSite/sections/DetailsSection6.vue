@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
 import { useHierarchicalData } from "@/bcap/composables/useHierarchicalData.ts";
 import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
@@ -28,7 +29,12 @@ const typologyColumns = [
     { field: "site_type", label: "Type" },
     { field: "site_subtype", label: "Subtype" },
     { field: "typology_descriptor", label: "Descriptor" },
-    { field: "typology_remark", label: "Remarks" },
+];
+
+const typologyRemarksColumns = [
+    { field: "site_typology_remarks", label: "Site Typology Remarks" },
+    { field: "entered_on", label: "Entered On" },
+    { field: "entered_by", label: "Entered By" },
 ];
 
 const typologyData = computed(() => currentData.value?.site_typology);
@@ -38,9 +44,20 @@ const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     {
         sourceField: 'typology_class',
         hierarchicalFields: ['typology_class', 'site_type', 'site_subtype', 'typology_descriptor'],
-        flatFields: ['typology_remark']
     }
 );
+
+const typologyRemarksData = computed(() => {
+    return currentData.value?.site_typology_remarks || [];
+});
+
+const hasTypology = computed(() => {
+    return typologyTableData.value && typologyTableData.value.length > 0;
+});
+
+const hasTypologyRemarks = computed(() => {
+    return typologyRemarksData.value && typologyRemarksData.value.length > 0;
+});
 </script>
 
 <template>
@@ -50,12 +67,45 @@ const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
         :visible="true"
     >
         <template #sectionContent>
-            <StandardDataTable
-                :table-data="typologyTableData"
-                :column-definitions="typologyColumns"
-                title="Site Typology"
-                :initial-sort-field-index="0"
-            />
+            <DetailsSection
+                section-title="Site Typology"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasTypology }"
+            >
+                <template #sectionContent>
+                    <StandardDataTable
+                        v-if="hasTypology"
+                        :table-data="typologyTableData"
+                        :column-definitions="typologyColumns"
+                        :initial-sort-field-index="0"
+                    />
+                    <EmptyState
+                        v-else
+                        message="No site typology information available."
+                    />
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
+                section-title="Site Typology Remarks"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasTypologyRemarks }"
+            >
+                <template #sectionContent>
+                    <StandardDataTable
+                        v-if="hasTypologyRemarks"
+                        :table-data="typologyRemarksData"
+                        :column-definitions="typologyRemarksColumns"
+                        :initial-sort-field-index="1"
+                    />
+                    <EmptyState
+                        v-else
+                        message="No site typology remarks available."
+                    />
+                </template>
+            </DetailsSection>
         </template>
     </DetailsSection>
 </template>

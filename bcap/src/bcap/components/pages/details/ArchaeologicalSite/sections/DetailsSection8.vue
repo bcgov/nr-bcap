@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
 import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import "primeicons/primeicons.css";
@@ -29,8 +30,10 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
 
 const generalRemarkColumns = [
     { field: "general_remark_date", label: "Date" },
-    { field: "general_remark", label: "Remark" },
+    { field: "general_remark", label: "General Remarks" },
     { field: "general_remark_source", label: "Source" },
+    { field: "entered_on", label: "Entered On" },
+    { field: "entered_by", label: "Entered By" },
 ];
 
 const restrictedRemarkColumns = [
@@ -55,41 +58,43 @@ const convictionColumns = [
     { field: "entered_by", label: "Entered By" },
 ];
 
-const recorderRecommendationColumns = [
-    { field: "recorders_recommendation", label: "Recorder's Recommendation" },
-];
-
-const archaeologyBranchRecommendationColumns = [
-    { field: "archaeology_branch_recommendations", label: "Archaeology Branch Recommendations" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
-];
-
 const keywordsData = computed(() => {
-    return currentData.value?.remark_keyword || [];
+    const keywords = currentData.value?.remark_keyword;
+    if (!keywords) return [];
+
+    return Array.isArray(keywords) ? keywords : [keywords];
 });
 
 const restrictedInfoData = computed(() => {
-    return currentData.value?.restricted_information_n1 || currentData.value?.restricted_information || [];
+    return currentData.value?.restricted_information_n1 || [];
 });
 
-const aggregateRecorderRecommendations = computed(() => {
-    if (!props.siteVisitData?.length) return [];
-
-    const recommendations: any[] = [];
-
-    props.siteVisitData.forEach(visit => {
-        const visitRecommendations = visit.aliased_data?.remarks_and_recommendations?.aliased_data?.recommendation;
-        if (visitRecommendations && Array.isArray(visitRecommendations)) {
-            recommendations.push(...visitRecommendations);
-        }
-    });
-
-    return recommendations;
+const hasKeywords = computed(() => {
+    return keywordsData.value && keywordsData.value.length > 0;
 });
 
-const archaeologyBranchRecommendations = computed(() => {
-    return currentData.value?.archaeology_branch_recommendations || [];
+const hasGeneralRemarks = computed(() => {
+    return currentData.value?.general_remark_information &&
+           currentData.value.general_remark_information.length > 0;
+});
+
+const hasRestrictedInfo = computed(() => {
+    return restrictedInfoData.value && restrictedInfoData.value.length > 0;
+});
+
+const hasDocuments = computed(() => {
+    return !isEmpty(currentData.value?.contravention_document) ||
+           !isEmpty(currentData.value?.restricted_document);
+});
+
+const hasContraventions = computed(() => {
+    return currentData.value?.hca_contravention &&
+           currentData.value.hca_contravention.length > 0;
+});
+
+const hasConvictions = computed(() => {
+    return currentData.value?.conviction &&
+           currentData.value.conviction.length > 0;
 });
 </script>
 
@@ -101,115 +106,145 @@ const archaeologyBranchRecommendations = computed(() => {
     >
         <template #sectionContent>
             <DetailsSection
-                section-title="8.1 Keywords"
+                section-title="Keywords"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasKeywords }"
             >
                 <template #sectionContent>
-                    <div v-if="keywordsData.length">
+                    <div v-if="hasKeywords">
                         <div v-for="(keyword, index) in keywordsData" :key="index" class="keyword-item">
                             {{ getDisplayValue(keyword) }}
                         </div>
                     </div>
-                    <div v-else>
-                        <p>No keywords available.</p>
-                    </div>
+                    <EmptyState
+                        v-else
+                        message="No keywords available."
+                    />
                 </template>
             </DetailsSection>
 
             <DetailsSection
-                section-title="8.2 General Remarks"
+                section-title="General Remarks"
+                variant="subsection"
                 :visible="true"
+                :class="{ 'empty-section': !hasGeneralRemarks }"
             >
                 <template #sectionContent>
                     <StandardDataTable
+                        v-if="hasGeneralRemarks"
                         :table-data="currentData?.general_remark_information ?? []"
                         :column-definitions="generalRemarkColumns"
-                        title="General Remarks"
                         :initial-sort-field-index="0"
                     />
-                    <div v-if="!currentData?.general_remark_information?.length">
-                        <p>No general remarks available.</p>
-                    </div>
-                </template>
-            </DetailsSection>
-
-            <DetailsSection
-                section-title="8.3 Restricted Information"
-                :visible="true"
-            >
-                <template #sectionContent>
-                    <StandardDataTable
-                        :table-data="restrictedInfoData"
-                        :column-definitions="restrictedRemarkColumns"
-                        title="Restricted Information"
-                        :initial-sort-field-index="1"
+                    <EmptyState
+                        v-else
+                        message="No general remarks available."
                     />
-                    <div v-if="!restrictedInfoData.length">
-                        <p>No restricted information available.</p>
-                    </div>
                 </template>
             </DetailsSection>
 
             <DetailsSection
-                section-title="8.4 Documents"
-                :visible="true"
-            >
-                <template #sectionContent>
-                    <div v-if="!isEmpty(currentData?.contravention_document) || !isEmpty(currentData?.restricted_document)">
-                        <dl>
-                            <dt v-if="!isEmpty(currentData?.contravention_document)">Contravention Documents</dt>
-                            <dd v-if="!isEmpty(currentData?.contravention_document)">
-                                {{ getDisplayValue(currentData?.contravention_document) }}
-                            </dd>
-
-                            <dt v-if="!isEmpty(currentData?.restricted_document)">Restricted Documents</dt>
-                            <dd v-if="!isEmpty(currentData?.restricted_document)">
-                                {{ getDisplayValue(currentData?.restricted_document) }}
-                            </dd>
-                        </dl>
-                    </div>
-                    <div v-else>
-                        <p>No documents available.</p>
-                    </div>
-                </template>
-            </DetailsSection>
-
-            <DetailsSection
-                section-title="8.5 HCA Contraventions"
+                section-title="Restricted Information"
+                variant="subsection"
                 :visible="true"
             >
                 <template #sectionContent>
                     <DetailsSection
-                        section-title="8.5.1 Contraventions"
+                        section-title="Restricted Remarks"
+                        variant="subsection"
                         :visible="true"
+                        :class="{ 'empty-section': !hasRestrictedInfo }"
                     >
                         <template #sectionContent>
                             <StandardDataTable
+                                v-if="hasRestrictedInfo"
+                                :table-data="restrictedInfoData"
+                                :column-definitions="restrictedRemarkColumns"
+                                :initial-sort-field-index="1"
+                            />
+                            <EmptyState
+                                v-else
+                                message="No restricted remarks available."
+                            />
+                        </template>
+                    </DetailsSection>
+
+                    <DetailsSection
+                        section-title="Restricted Documents"
+                        variant="subsection"
+                        :visible="true"
+                        :class="{ 'empty-section': !hasDocuments }"
+                    >
+                        <template #sectionContent>
+                            <div v-if="hasDocuments">
+                                <dl>
+                                    <dt v-if="!isEmpty(currentData?.contravention_document)">Contravention Documents</dt>
+                                    <dd v-if="!isEmpty(currentData?.contravention_document)">
+                                        {{ getDisplayValue(currentData?.contravention_document) }}
+                                    </dd>
+
+                                    <dt v-if="!isEmpty(currentData?.restricted_document)">Restricted Documents</dt>
+                                    <dd v-if="!isEmpty(currentData?.restricted_document)">
+                                        {{ getDisplayValue(currentData?.restricted_document) }}
+                                    </dd>
+                                </dl>
+                            </div>
+                            <EmptyState
+                                v-else
+                                message="No restricted documents available."
+                            />
+                        </template>
+                    </DetailsSection>
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
+                section-title="HCA Contraventions"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasContraventions && !hasConvictions }"
+            >
+                <template #sectionContent>
+                    <DetailsSection
+                        section-title="Contraventions"
+                        variant="subsection"
+                        :visible="true"
+                        :class="{ 'empty-section': !hasContraventions }"
+                    >
+                        <template #sectionContent>
+                            <StandardDataTable
+                                v-if="hasContraventions"
                                 :table-data="currentData?.hca_contravention ?? []"
                                 :column-definitions="hcaContraventionColumns"
                                 title="HCA Contraventions"
                                 :initial-sort-field-index="4"
                             />
-                            <div v-if="!currentData?.hca_contravention?.length">
-                                <p>No HCA contraventions recorded.</p>
-                            </div>
+                            <EmptyState
+                                v-else
+                                message="No HCA contraventions recorded."
+                            />
                         </template>
                     </DetailsSection>
 
                     <DetailsSection
-                        section-title="8.5.2 Convictions"
+                        section-title="HCA Convictions"
+                        variant="subsection"
                         :visible="true"
+                        :class="{ 'empty-section': !hasConvictions }"
                     >
                         <template #sectionContent>
                             <StandardDataTable
+                                v-if="hasConvictions"
                                 :table-data="currentData?.conviction ?? []"
                                 :column-definitions="convictionColumns"
                                 title="HCA Convictions"
                                 :initial-sort-field-index="0"
                             />
-                            <div v-if="!currentData?.conviction?.length">
-                                <p>No HCA convictions recorded.</p>
-                            </div>
+                            <EmptyState
+                                v-else
+                                message="No HCA convictions recorded."
+                            />
                         </template>
                     </DetailsSection>
                 </template>

@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import {
-    getRelatedResourceData,
-    getResourceData,
-} from "@/bcap/components/pages/api.ts";
+import { useResourceData, useRelatedResourceData } from "@/bcap/composables/useResourceData.ts";
 import "primeicons/primeicons.css";
 import Section1 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue";
 import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
@@ -17,147 +14,101 @@ import Section8 from "@/bcap/components/pages/details/ArchaeologicalSite/section
 import Section9 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue";
 import type { DetailsData } from "@/bcap/types.ts";
 import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
-
-import DataTable from "primevue/datatable";
 import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
 import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
-
-type LangCode = string;
-interface Descriptor {
-    name: string;
-    // add more fields if needed
-}
-
-type ResourceDescriptors = Record<LangCode, Descriptor>;
+import DataTable from "primevue/datatable";
 
 const props = withDefaults(
     defineProps<{
         data: DetailsData;
-        resourceDescriptors?: ResourceDescriptors;
         languageCode?: string;
+        forceCollapsed?: boolean | undefined;
     }>(),
     {
-        resourceDescriptors: () => ({ en: { name: "Undefined" } }),
         languageCode: "en",
     },
 );
-type SiteDataCache = {
-    site: ArchaeologySiteSchema | null;
-    hria_discontinued_data: HriaDiscontinuedDataSchema | null;
-    site_visits: SiteVisitSchema[];
-};
-type ResourceCache = Record<string, SiteDataCache>;
 
-const resourceCache = ref<ResourceCache>({} as ResourceCache);
-const currentData = ref<ArchaeologySiteSchema>({} as ArchaeologySiteSchema);
-const siteVisitData = ref<SiteVisitSchema[]>({} as SiteVisitSchema[]);
-const hriaDiscontinuedData = ref<HriaDiscontinuedDataSchema>(
-    {} as HriaDiscontinuedDataSchema,
-);
+const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const siteDataLoading = ref(true);
-const siteVisitDataLoading = ref(true);
-const hriaDataLoading = ref(true);
+const { data: currentData, loading: siteDataLoading } =
+    useResourceData<ArchaeologySiteSchema>("archaeological_site", resourceId);
 
-watchEffect(async () => {
-    const resourceId: string = props.data?.resourceinstance_id;
-    if (!(resourceId in resourceCache.value)) {
-        resourceCache.value[resourceId] = {
-            site: null,
-            hria_discontinued_data: null,
-            site_visits: [],
-        };
-    }
+const { data: siteVisitData, loading: siteVisitDataLoading } =
+    useRelatedResourceData<SiteVisitSchema>("site_visit", resourceId);
 
-    getResourceData("archaeological_site", resourceId).then((data) => {
-        resourceCache.value[resourceId].site = data as ArchaeologySiteSchema;
-        currentData.value = (data ?? {}) as ArchaeologySiteSchema;
-        siteDataLoading.value = false;
-    });
-
-    getRelatedResourceData("site_visit", resourceId).then((data) => {
-        resourceCache.value[resourceId].site_visits = data as SiteVisitSchema[];
-        siteVisitData.value = data as SiteVisitSchema[];
-        siteVisitDataLoading.value = false;
-    });
-
-    getRelatedResourceData("hria_discontinued_data", resourceId).then(
-        (data) => {
-            const hriaData: HriaDiscontinuedDataSchema =
-                data && data.length > 0
-                    ? (data[0] as HriaDiscontinuedDataSchema)
-                    : ({} as HriaDiscontinuedDataSchema);
-            resourceCache.value[resourceId].hria_discontinued_data = hriaData;
-            hriaDiscontinuedData.value = hriaData;
-            hriaDataLoading.value = false;
-        },
-    );
-
-    console.log(Object.keys(resourceCache.value).length);
-});
+const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
+    useRelatedResourceData<HriaDiscontinuedDataSchema>("hria_discontinued_data", resourceId, true);
 </script>
 
 <template>
-    <!-- Hack to ensure styles come through -->
     <div style="display: none">
         <DataTable></DataTable>
-        <DetailsSection
-            section-title=""
-            :visible="false"
-        ></DetailsSection>
+        <DetailsSection section-title="" :visible="false"></DetailsSection>
     </div>
+
     <div class="container">
         <Section1
-            :data="currentData"
+            :data="(currentData as ArchaeologySiteSchema | undefined)"
             :loading="siteDataLoading"
-        ></Section1>
+            :force-collapsed="props.forceCollapsed"
+        />
         <Section2
-            :data="currentData.aliased_data?.identification_and_registration"
-            :hria-data="hriaDiscontinuedData"
+            :data="currentData?.aliased_data?.identification_and_registration"
+            :hria-data="(hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined)"
             :loading="siteDataLoading"
-        ></Section2>
+            :force-collapsed="props.forceCollapsed"
+        />
         <Section3
-            :data="siteVisitData"
+            :data="(siteVisitData as SiteVisitSchema[]) || []"
             :loading="siteVisitDataLoading"
-        ></Section3>
+            :force-collapsed="props.forceCollapsed"
+        />
         <Section4
             :data="currentData?.aliased_data?.heritage_site_location?.[0]?.aliased_data"
-            :site-visit-data="siteVisitData"
+            :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
+            :hria-data="(hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined)"
             :loading="siteDataLoading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section5
             :data="currentData?.aliased_data?.site_boundary"
-            :hria-data="hriaDiscontinuedData"
+            :hria-data="(hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined)"
             :loading="siteDataLoading || hriaDataLoading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section6
             :data="currentData?.aliased_data?.archaeological_data"
             :loading="siteDataLoading"
-        ></Section6>
+            :force-collapsed="props.forceCollapsed"
+        />
         <Section7
             :data="currentData?.aliased_data?.ancestral_remains"
-            :site-visit-data="siteVisitData"
+            :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
             :loading="siteDataLoading || siteVisitDataLoading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section8
-            :data="
-                currentData?.aliased_data?.remarks_and_restricted_information
-            "
+            :data="currentData?.aliased_data?.remarks_and_restricted_information"
+            :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
             :loading="siteDataLoading"
-        ></Section8>
+            :force-collapsed="props.forceCollapsed"
+        />
         <Section9
             :data="currentData?.aliased_data?.related_documents"
             :loading="siteDataLoading"
-        ></Section9>
-    </div>
-    <div>
-        <pre v-if="currentData.aliased_data">
-            {{ Object.keys(currentData?.aliased_data) }}
-        </pre>
+            :force-collapsed="props.forceCollapsed"
+        />
     </div>
 </template>
 
 <style>
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 dl {
     display: flex;
     flex-direction: column;
@@ -168,4 +119,3 @@ dt {
     padding-top: 0.75rem;
 }
 </style>
-<style scoped></style>

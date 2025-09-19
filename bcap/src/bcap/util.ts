@@ -24,6 +24,6 @@ export const getNodeDisplayValue = (row: unknown, path: string) => {
     return getDisplayValue(getNode(row, path));
 };
 
-export const isEmpty = (value: AliasedNodeData) => {
+export const isEmpty = (value: AliasedNodeData | null | undefined): boolean => {
     return !value?.node_value;
 };
