@@ -31,7 +31,7 @@ export type MapCardType = {
 
 export type PopupFeatureType = {
     active: () => boolean;
-    displayValues: Ref<DescriptorsType>;
+    displayValues: DescriptorsType | Ref<DescriptorsType>;
     editURL: string;
     featureid: string;
     map_popup: () => string;

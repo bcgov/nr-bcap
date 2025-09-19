@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, isRef, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import _ from 'underscore';
 import mapPopupProvider from 'utils/map-popup-provider';
@@ -84,9 +84,11 @@ const descriptionProperties = [
 ];
 function setDisplayValues() {
     props.popupFeatures.forEach((raw_feature: PopupFeatureType, index) => {
-        const feature: Ref<PopupFeatureType> =
-            ref<PopupFeatureType>(raw_feature);
-        features.value.push(ref(feature));
+        raw_feature.displayValues = isRef(raw_feature.displayValues)
+            ? raw_feature.displayValues
+            : ref(raw_feature.displayValues);
+        const feature: Ref<PopupFeatureType> = ref(raw_feature);
+        features.value.push(feature);
         if (feature.value.active()) {
             visibleFeature.value = feature.value;
             activeFeatureOffset.value = index;
