@@ -1,9 +1,12 @@
 import { ref, watchEffect, type Ref } from "vue";
-import { getResourceData, getRelatedResourceData } from "@/bcap/components/pages/api.ts";
+import {
+    getResourceData,
+    getRelatedResourceData,
+} from "@/bcap/components/pages/api.ts";
 
 export function useResourceData<T>(
     resourceType: string,
-    resourceId: Ref<string | undefined>
+    resourceId: Ref<string | undefined>,
 ) {
     const cache = ref<Record<string, T | null>>({});
     const current = ref<T | null>(null);
@@ -46,7 +49,7 @@ export function useResourceData<T>(
 export function useRelatedResourceData<T>(
     resourceType: string,
     resourceId: Ref<string | undefined>,
-    getFirst: boolean = false
+    getFirst: boolean = false,
 ) {
     const cache = ref<Record<string, T[] | T | null>>({});
     const current = ref<T[] | T | null>(null);
@@ -69,7 +72,10 @@ export function useRelatedResourceData<T>(
                 cache.value[id] = result as T[] | T;
                 current.value = cache.value[id];
             } catch (error) {
-                console.error(`Failed to fetch related ${resourceType}:`, error);
+                console.error(
+                    `Failed to fetch related ${resourceType}:`,
+                    error,
+                );
                 cache.value[id] = null;
                 current.value = null;
             } finally {

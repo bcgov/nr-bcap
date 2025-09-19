@@ -62,14 +62,16 @@ const newNameColumns = [
                             <dd>
                                 {{
                                     tempNumber?.aliased_data
-                                        ?.temporary_number_assigned_by?.display_value
+                                        ?.temporary_number_assigned_by
+                                        ?.display_value
                                 }}
                             </dd>
                             <dt>Assigned Date</dt>
                             <dd>
                                 {{
                                     tempNumber?.aliased_data
-                                        ?.temporary_number_assigned_date?.display_value
+                                        ?.temporary_number_assigned_date
+                                        ?.display_value
                                 }}
                             </dd>
                         </dl>

@@ -33,9 +33,11 @@ const hasGeoJsonData = computed(() => {
 });
 
 const hasBoundaryInfo = computed(() => {
-    return siteBoundary.value?.aliased_data?.accuracy_remarks?.display_value ||
-           siteBoundary.value?.aliased_data?.source_notes?.display_value ||
-           siteBoundary.value?.aliased_data?.latest_edit_type?.node_value;
+    return (
+        siteBoundary.value?.aliased_data?.accuracy_remarks?.display_value ||
+        siteBoundary.value?.aliased_data?.source_notes?.display_value ||
+        siteBoundary.value?.aliased_data?.latest_edit_type?.node_value
+    );
 });
 </script>
 
@@ -67,7 +69,8 @@ const hasBoundaryInfo = computed(() => {
                                     null,
                                     2,
                                 )
-                            }}</pre>
+                            }}</pre
+                        >
                     </div>
                     <EmptyState
                         v-else
@@ -108,8 +111,8 @@ const hasBoundaryInfo = computed(() => {
                                 <dt>Latest Edit Type</dt>
                                 <dd>
                                     {{
-                                        siteBoundary?.aliased_data?.latest_edit_type
-                                            ?.display_value
+                                        siteBoundary?.aliased_data
+                                            ?.latest_edit_type?.display_value
                                     }}
                                 </dd>
                             </div>

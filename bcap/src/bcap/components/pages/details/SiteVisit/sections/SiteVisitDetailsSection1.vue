@@ -19,11 +19,13 @@ const hasLocationData = computed(() => {
 });
 
 const hasLocationAndAccess = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.aliased_data?.location_and_access?.node_value;
+    return current.value?.aliased_data?.site_visit_location?.aliased_data
+        ?.location_and_access?.node_value;
 });
 
 const hasGeoJsonData = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.aliased_data?.site_visit_location?.node_value;
+    return current.value?.aliased_data?.site_visit_location?.aliased_data
+        ?.site_visit_location?.node_value;
 });
 </script>
 
@@ -55,7 +57,8 @@ const hasGeoJsonData = computed(() => {
                             <dt
                                 v-if="
                                     current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.latest_edit_type?.node_value
+                                        ?.aliased_data?.latest_edit_type
+                                        ?.node_value
                                 "
                             >
                                 Latest Edit Type
@@ -63,12 +66,14 @@ const hasGeoJsonData = computed(() => {
                             <dd
                                 v-if="
                                     current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.latest_edit_type?.node_value
+                                        ?.aliased_data?.latest_edit_type
+                                        ?.node_value
                                 "
                             >
                                 {{
                                     current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.latest_edit_type?.display_value
+                                        ?.aliased_data?.latest_edit_type
+                                        ?.display_value
                                 }}
                             </dd>
 
@@ -76,7 +81,8 @@ const hasGeoJsonData = computed(() => {
                             <dd>
                                 {{
                                     current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.accuracy_remarks?.display_value
+                                        ?.aliased_data?.accuracy_remarks
+                                        ?.display_value
                                 }}
                             </dd>
 
@@ -84,7 +90,8 @@ const hasGeoJsonData = computed(() => {
                             <dd>
                                 {{
                                     current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.source_notes?.display_value
+                                        ?.aliased_data?.source_notes
+                                        ?.display_value
                                 }}
                             </dd>
                         </dl>
@@ -108,14 +115,15 @@ const hasGeoJsonData = computed(() => {
                             "
                             >{{
                                 JSON.stringify(
-                                    current?.aliased_data
-                                        ?.site_visit_location?.aliased_data
-                                        ?.site_visit_location?.node_value,
+                                    current?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.site_visit_location
+                                        ?.node_value,
                                     null,
                                     2,
                                 )
                             }}
-            </pre>
+            </pre
+                        >
                     </div>
                     <EmptyState v-else />
                 </template>

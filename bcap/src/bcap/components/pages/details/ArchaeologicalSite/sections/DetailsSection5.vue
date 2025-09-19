@@ -22,13 +22,17 @@ const hasDimensions = computed(() => {
 });
 
 const hasBoundaryDescription = computed(() => {
-    return props.data?.aliased_data?.source_notes && !isEmpty(props.data.aliased_data.source_notes);
+    return (
+        props.data?.aliased_data?.source_notes &&
+        !isEmpty(props.data.aliased_data.source_notes)
+    );
 });
 
 const hasSpatialAccuracy = computed(() => {
-    return props.data?.aliased_data && (
-        !isEmpty(props.data.aliased_data.latest_edit_type) ||
-        !isEmpty(props.data.aliased_data.accuracy_remarks)
+    return (
+        props.data?.aliased_data &&
+        (!isEmpty(props.data.aliased_data.latest_edit_type) ||
+            !isEmpty(props.data.aliased_data.accuracy_remarks))
     );
 });
 </script>
@@ -48,34 +52,160 @@ const hasSpatialAccuracy = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasDimensions">
-                        <dt v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.length)">Length (m)</dt>
-                        <dd v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.length)">
-                            {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.length) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.length,
+                                )
+                            "
+                        >
+                            Length (m)
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.length,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.length,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.length_direction)">Length Direction</dt>
-                        <dd v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.length_direction)">
-                            {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.length_direction) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.length_direction,
+                                )
+                            "
+                        >
+                            Length Direction
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.length_direction,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.length_direction,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.width)">Width (m)</dt>
-                        <dd v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.width)">
-                            {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.width) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.width,
+                                )
+                            "
+                        >
+                            Width (m)
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.width,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.width,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.width_direction)">Width Direction</dt>
-                        <dd v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.width_direction)">
-                            {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.width_direction) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.width_direction,
+                                )
+                            "
+                        >
+                            Width Direction
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.width_direction,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.width_direction,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.site_area)">Area (m²)</dt>
-                        <dd v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.site_area)">
-                            {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.site_area) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.site_area,
+                                )
+                            "
+                        >
+                            Area (m²)
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.site_area,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.site_area,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.boundary_type)">Boundary Type</dt>
-                        <dd v-if="!isEmpty(props.hriaData.aliased_data.site_dimensions.aliased_data.boundary_type)">
-                            {{ getDisplayValue(props.hriaData.aliased_data.site_dimensions.aliased_data.boundary_type) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.boundary_type,
+                                )
+                            "
+                        >
+                            Boundary Type
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.boundary_type,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.hriaData.aliased_data.site_dimensions
+                                        .aliased_data.boundary_type,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -95,7 +225,11 @@ const hasSpatialAccuracy = computed(() => {
                     <dl v-if="hasBoundaryDescription">
                         <dt>Source Notes</dt>
                         <dd>
-                            {{ getDisplayValue(props.data.aliased_data.source_notes) }}
+                            {{
+                                getDisplayValue(
+                                    props.data.aliased_data.source_notes,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -113,14 +247,50 @@ const hasSpatialAccuracy = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasSpatialAccuracy">
-                        <dt v-if="!isEmpty(props.data.aliased_data.latest_edit_type)">Latest Edit Type</dt>
-                        <dd v-if="!isEmpty(props.data.aliased_data.latest_edit_type)">
-                            {{ getDisplayValue(props.data.aliased_data.latest_edit_type) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.data.aliased_data.latest_edit_type,
+                                )
+                            "
+                        >
+                            Latest Edit Type
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.data.aliased_data.latest_edit_type,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.data.aliased_data.latest_edit_type,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.data.aliased_data.accuracy_remarks)">Accuracy Remarks</dt>
-                        <dd v-if="!isEmpty(props.data.aliased_data.accuracy_remarks)">
-                            {{ getDisplayValue(props.data.aliased_data.accuracy_remarks) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.data.aliased_data.accuracy_remarks,
+                                )
+                            "
+                        >
+                            Accuracy Remarks
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.data.aliased_data.accuracy_remarks,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.data.aliased_data.accuracy_remarks,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState

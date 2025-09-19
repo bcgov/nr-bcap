@@ -11,15 +11,24 @@ const props = withDefaults(
 );
 
 const referencesData = computed(() => {
-    return props.data?.aliased_data?.references_and_documents?.aliased_data?.references || [];
+    return (
+        props.data?.aliased_data?.references_and_documents?.aliased_data
+            ?.references || []
+    );
 });
 
 const documentsData = computed(() => {
-    return props.data?.aliased_data?.references_and_documents?.aliased_data?.related_documents || [];
+    return (
+        props.data?.aliased_data?.references_and_documents?.aliased_data
+            ?.related_documents || []
+    );
 });
 
 const photosData = computed(() => {
-    return props.data?.aliased_data?.references_and_documents?.aliased_data?.photos || [];
+    return (
+        props.data?.aliased_data?.references_and_documents?.aliased_data
+            ?.photos || []
+    );
 });
 
 const hasReferences = computed(() => {

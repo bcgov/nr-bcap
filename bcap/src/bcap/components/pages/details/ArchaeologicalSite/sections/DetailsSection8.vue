@@ -74,8 +74,10 @@ const hasKeywords = computed(() => {
 });
 
 const hasGeneralRemarks = computed(() => {
-    return currentData.value?.general_remark_information &&
-           currentData.value.general_remark_information.length > 0;
+    return (
+        currentData.value?.general_remark_information &&
+        currentData.value.general_remark_information.length > 0
+    );
 });
 
 const hasRestrictedInfo = computed(() => {
@@ -83,18 +85,23 @@ const hasRestrictedInfo = computed(() => {
 });
 
 const hasDocuments = computed(() => {
-    return !isEmpty(currentData.value?.contravention_document) ||
-           !isEmpty(currentData.value?.restricted_document);
+    return (
+        !isEmpty(currentData.value?.contravention_document) ||
+        !isEmpty(currentData.value?.restricted_document)
+    );
 });
 
 const hasContraventions = computed(() => {
-    return currentData.value?.hca_contravention &&
-           currentData.value.hca_contravention.length > 0;
+    return (
+        currentData.value?.hca_contravention &&
+        currentData.value.hca_contravention.length > 0
+    );
 });
 
 const hasConvictions = computed(() => {
-    return currentData.value?.conviction &&
-           currentData.value.conviction.length > 0;
+    return (
+        currentData.value?.conviction && currentData.value.conviction.length > 0
+    );
 });
 </script>
 
@@ -113,7 +120,11 @@ const hasConvictions = computed(() => {
             >
                 <template #sectionContent>
                     <div v-if="hasKeywords">
-                        <div v-for="(keyword, index) in keywordsData" :key="index" class="keyword-item">
+                        <div
+                            v-for="(keyword, index) in keywordsData"
+                            :key="index"
+                            class="keyword-item"
+                        >
                             {{ getDisplayValue(keyword) }}
                         </div>
                     </div>
@@ -133,7 +144,9 @@ const hasConvictions = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasGeneralRemarks"
-                        :table-data="currentData?.general_remark_information ?? []"
+                        :table-data="
+                            currentData?.general_remark_information ?? []
+                        "
                         :column-definitions="generalRemarkColumns"
                         :initial-sort-field-index="0"
                     />
@@ -179,14 +192,50 @@ const hasConvictions = computed(() => {
                         <template #sectionContent>
                             <div v-if="hasDocuments">
                                 <dl>
-                                    <dt v-if="!isEmpty(currentData?.contravention_document)">Contravention Documents</dt>
-                                    <dd v-if="!isEmpty(currentData?.contravention_document)">
-                                        {{ getDisplayValue(currentData?.contravention_document) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                currentData?.contravention_document,
+                                            )
+                                        "
+                                    >
+                                        Contravention Documents
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                currentData?.contravention_document,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                currentData?.contravention_document,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(currentData?.restricted_document)">Restricted Documents</dt>
-                                    <dd v-if="!isEmpty(currentData?.restricted_document)">
-                                        {{ getDisplayValue(currentData?.restricted_document) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                currentData?.restricted_document,
+                                            )
+                                        "
+                                    >
+                                        Restricted Documents
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                currentData?.restricted_document,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                currentData?.restricted_document,
+                                            )
+                                        }}
                                     </dd>
                                 </dl>
                             </div>
@@ -203,7 +252,9 @@ const hasConvictions = computed(() => {
                 section-title="HCA Contraventions"
                 variant="subsection"
                 :visible="true"
-                :class="{ 'empty-section': !hasContraventions && !hasConvictions }"
+                :class="{
+                    'empty-section': !hasContraventions && !hasConvictions,
+                }"
             >
                 <template #sectionContent>
                     <DetailsSection
@@ -215,7 +266,9 @@ const hasConvictions = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasContraventions"
-                                :table-data="currentData?.hca_contravention ?? []"
+                                :table-data="
+                                    currentData?.hca_contravention ?? []
+                                "
                                 :column-definitions="hcaContraventionColumns"
                                 title="HCA Contraventions"
                                 :initial-sort-field-index="4"

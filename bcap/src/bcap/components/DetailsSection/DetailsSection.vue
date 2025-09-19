@@ -7,19 +7,23 @@ const props = defineProps<{
     sectionTitle: string;
     visible?: boolean;
     loading?: boolean;
-    variant?: 'section' | 'subsection';
+    variant?: "section" | "subsection";
     forceCollapsed?: boolean;
 }>();
 
 const sectionVisible = ref(props.visible ?? true);
 const isLoading = computed(() => props.loading ?? false);
-const componentVariant = computed(() => props.variant ?? 'section');
+const componentVariant = computed(() => props.variant ?? "section");
 
-watch(() => props.forceCollapsed, (newValue: boolean | undefined) => {
-    if (newValue !== undefined) {
-        sectionVisible.value = !newValue;
-    }
-}, { immediate: false });
+watch(
+    () => props.forceCollapsed,
+    (newValue: boolean | undefined) => {
+        if (newValue !== undefined) {
+            sectionVisible.value = !newValue;
+        }
+    },
+    { immediate: false },
+);
 </script>
 
 <template>
@@ -49,12 +53,19 @@ watch(() => props.forceCollapsed, (newValue: boolean | undefined) => {
         >
             <i
                 class="subsection-toggle-icon"
-                :class="sectionVisible ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                :class="
+                    sectionVisible
+                        ? 'pi pi-chevron-down'
+                        : 'pi pi-chevron-right'
+                "
             ></i>
             <h4 class="subsection-title">{{ props.sectionTitle }}</h4>
         </div>
 
-        <div v-if="sectionVisible" class="subsection-content">
+        <div
+            v-if="sectionVisible"
+            class="subsection-content"
+        >
             <ProgressSpinner
                 v-if="isLoading"
                 :style="{ width: '2rem', height: '2rem' }"

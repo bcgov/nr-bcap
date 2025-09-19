@@ -26,8 +26,12 @@ const materialRows = computed(
     () => arch.value?.aliased_data?.cultural_material || [],
 );
 const stratRows = computed(() => arch.value?.aliased_data?.stratigraphy || []);
-const chronologyRows = computed(() => arch.value?.aliased_data?.chronology || []);
-const hriaChronologyRows = computed(() => props.hriaData?.aliased_data?.chronology || []);
+const chronologyRows = computed(
+    () => arch.value?.aliased_data?.chronology || [],
+);
+const hriaChronologyRows = computed(
+    () => props.hriaData?.aliased_data?.chronology || [],
+);
 const disturbRows = computed(
     () => arch.value?.aliased_data?.site_disturbance || [],
 );

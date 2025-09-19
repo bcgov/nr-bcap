@@ -8,9 +8,7 @@ import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
 import type { ResourceInstanceValue } from "@/arches_component_lab/datatypes/resource-instance/types.ts";
 import type { ResourceInstanceListValue } from "@/arches_component_lab/datatypes/resource-instance-list/types.ts";
 
-import type {
-    ReferenceSelectValue,
-} from "@/arches_controlled_lists/datatypes/reference-select/types.js";
+import type { ReferenceSelectValue } from "@/arches_controlled_lists/datatypes/reference-select/types.js";
 
 import type {
     NumberValue,

@@ -88,25 +88,39 @@ const labelize = (key: string) =>
 
 const decisionData = computed(() => currentData.value?.site_decision);
 
-const { processedData: decisionTableData, isProcessing: isProcessingDecisions } = useHierarchicalData(
-    decisionData,
-    {
-        sourceField: 'site_decision',
-        hierarchicalFields: ['site_decision', 'decision_criteria'],
-        flatFields: ['decision_date', 'decision_made_by', 'decision_description', 'recommendation_date', 'recommended_by']
-    }
-);
+const {
+    processedData: decisionTableData,
+    isProcessing: isProcessingDecisions,
+} = useHierarchicalData(decisionData, {
+    sourceField: "site_decision",
+    hierarchicalFields: ["site_decision", "decision_criteria"],
+    flatFields: [
+        "decision_date",
+        "decision_made_by",
+        "decision_description",
+        "recommendation_date",
+        "recommended_by",
+    ],
+});
 
 const hasBasicInfo = computed(() => {
-    return id_fields.some(field => !isEmpty(currentData.value?.[field as IdFieldKey] as AliasedNodeData));
+    return id_fields.some(
+        (field) =>
+            !isEmpty(
+                currentData.value?.[field as IdFieldKey] as AliasedNodeData,
+            ),
+    );
 });
 
 const hasAdifRecord = computed(() => {
-    return currentHriaData.value?.aliased_data?.unreviewed_adif_record?.aliased_data?.unreviewed_adif_record.node_value;
+    return currentHriaData.value?.aliased_data?.unreviewed_adif_record
+        ?.aliased_data?.unreviewed_adif_record.node_value;
 });
 
 const hasAuthority = computed(() => {
-    return currentData.value?.authority && currentData.value.authority.length > 0;
+    return (
+        currentData.value?.authority && currentData.value.authority.length > 0
+    );
 });
 
 const hasDecisionHistory = computed(() => {
@@ -114,7 +128,9 @@ const hasDecisionHistory = computed(() => {
 });
 
 const hasSiteNames = computed(() => {
-    return currentData.value?.site_names && currentData.value.site_names.length > 0;
+    return (
+        currentData.value?.site_names && currentData.value.site_names.length > 0
+    );
 });
 
 const hasCurrentAlerts = computed(() => {
@@ -232,7 +248,13 @@ const parentSite = computed(() => {
                     <div v-if="hasCurrentAlerts">
                         <dl>
                             <dt>Site Alert</dt>
-                            <dd>{{ getDisplayValue(currentData?.site_alert as AliasedNodeData) }}</dd>
+                            <dd>
+                                {{
+                                    getDisplayValue(
+                                        currentData?.site_alert as AliasedNodeData,
+                                    )
+                                }}
+                            </dd>
                         </dl>
                     </div>
                     <EmptyState
@@ -251,9 +273,15 @@ const parentSite = computed(() => {
                 <template #sectionContent>
                     <div v-if="hasRelatedSites">
                         <dl>
-                            <dt v-if="!isEmpty(parentSite as AliasedNodeData)">Parent Site</dt>
+                            <dt v-if="!isEmpty(parentSite as AliasedNodeData)">
+                                Parent Site
+                            </dt>
                             <dd v-if="!isEmpty(parentSite as AliasedNodeData)">
-                                {{ getDisplayValue(parentSite as AliasedNodeData) }}
+                                {{
+                                    getDisplayValue(
+                                        parentSite as AliasedNodeData,
+                                    )
+                                }}
                             </dd>
                         </dl>
                     </div>
@@ -332,7 +360,6 @@ const parentSite = computed(() => {
                     </DetailsSection>
                 </template>
             </DetailsSection>
-
         </template>
     </DetailsSection>
 </template>

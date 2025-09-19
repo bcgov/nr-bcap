@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { useResourceData, useRelatedResourceData } from "@/bcap/composables/useResourceData.ts";
+import {
+    useResourceData,
+    useRelatedResourceData,
+} from "@/bcap/composables/useResourceData.ts";
 import "primeicons/primeicons.css";
 import Section1 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue";
 import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
@@ -38,24 +41,33 @@ const { data: siteVisitData, loading: siteVisitDataLoading } =
     useRelatedResourceData<SiteVisitSchema>("site_visit", resourceId);
 
 const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
-    useRelatedResourceData<HriaDiscontinuedDataSchema>("hria_discontinued_data", resourceId, true);
+    useRelatedResourceData<HriaDiscontinuedDataSchema>(
+        "hria_discontinued_data",
+        resourceId,
+        true,
+    );
 </script>
 
 <template>
     <div style="display: none">
         <DataTable></DataTable>
-        <DetailsSection section-title="" :visible="false"></DetailsSection>
+        <DetailsSection
+            section-title=""
+            :visible="false"
+        ></DetailsSection>
     </div>
 
     <div class="container">
         <Section1
-            :data="(currentData as ArchaeologySiteSchema | undefined)"
+            :data="currentData as ArchaeologySiteSchema | undefined"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section2
             :data="currentData?.aliased_data?.identification_and_registration"
-            :hria-data="(hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined)"
+            :hria-data="
+                hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined
+            "
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
@@ -65,15 +77,22 @@ const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
             :force-collapsed="props.forceCollapsed"
         />
         <Section4
-            :data="currentData?.aliased_data?.heritage_site_location?.[0]?.aliased_data"
+            :data="
+                currentData?.aliased_data?.heritage_site_location?.[0]
+                    ?.aliased_data
+            "
             :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
-            :hria-data="(hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined)"
+            :hria-data="
+                hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined
+            "
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section5
             :data="currentData?.aliased_data?.site_boundary"
-            :hria-data="(hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined)"
+            :hria-data="
+                hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined
+            "
             :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
@@ -89,7 +108,9 @@ const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
             :force-collapsed="props.forceCollapsed"
         />
         <Section8
-            :data="currentData?.aliased_data?.remarks_and_restricted_information"
+            :data="
+                currentData?.aliased_data?.remarks_and_restricted_information
+            "
             :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"

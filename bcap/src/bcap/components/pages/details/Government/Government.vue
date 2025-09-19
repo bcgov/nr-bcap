@@ -22,14 +22,17 @@ const props = withDefaults(
 const resourceId = computed(() => props.data?.resourceinstance_id);
 const { data: current, loading } = useResourceData<GovernmentSchema>(
     "local_government",
-    resourceId
+    resourceId,
 );
 </script>
 
 <template>
     <div style="display: none"><DataTable /></div>
     <div style="display: none">
-        <DetailsSection :visible="true" section-title="" />
+        <DetailsSection
+            :visible="true"
+            section-title=""
+        />
     </div>
 
     <div class="container">

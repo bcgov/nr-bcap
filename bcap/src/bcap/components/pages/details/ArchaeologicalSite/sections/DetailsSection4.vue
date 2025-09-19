@@ -25,11 +25,16 @@ const locationAndAccess = computed(() => {
     if (!props.siteVisitData?.length) return [];
 
     return props.siteVisitData
-        .map(visit => ({
-            location: visit.aliased_data?.site_visit_location?.aliased_data?.location_and_access,
-            visitName: visit.descriptors?.en?.name
+        .map((visit) => ({
+            location:
+                visit.aliased_data?.site_visit_location?.aliased_data
+                    ?.location_and_access,
+            visitName: visit.descriptors?.en?.name,
         }))
-        .filter(item => item.location && !isEmpty(item.location as AliasedNodeData));
+        .filter(
+            (item) =>
+                item.location && !isEmpty(item.location as AliasedNodeData),
+        );
 });
 
 const biogeographyColumns = [
@@ -77,16 +82,25 @@ const hasCoordinates = computed(() => {
 });
 
 const hasTenureAndReserves = computed(() => {
-    return props.data?.tenure_and_reserves && props.data.tenure_and_reserves.length > 0;
+    return (
+        props.data?.tenure_and_reserves &&
+        props.data.tenure_and_reserves.length > 0
+    );
 });
 
 const hasTenureRemarks = computed(() => {
-    return props.data?.tenure_remarks && Array.isArray(props.data.tenure_remarks) && props.data.tenure_remarks.length > 0;
+    return (
+        props.data?.tenure_remarks &&
+        Array.isArray(props.data.tenure_remarks) &&
+        props.data.tenure_remarks.length > 0
+    );
 });
 
 const hasDiscontinuedTenure = computed(() => {
-    return props.hriaData?.aliased_data?.hria_jursidiction_and_tenure &&
-           props.hriaData.aliased_data.hria_jursidiction_and_tenure.length > 0;
+    return (
+        props.hriaData?.aliased_data?.hria_jursidiction_and_tenure &&
+        props.hriaData.aliased_data.hria_jursidiction_and_tenure.length > 0
+    );
 });
 
 const hasLocationAndAccess = computed(() => {
@@ -98,7 +112,8 @@ const hasBcPropertyAddress = computed(() => {
 });
 
 const hasBcPropertyLegalDescription = computed(() => {
-    return props.data?.bc_property_address?.[0]?.aliased_data?.bc_property_legal_description?.[0]?.aliased_data;
+    return props.data?.bc_property_address?.[0]?.aliased_data
+        ?.bc_property_legal_description?.[0]?.aliased_data;
 });
 
 const hasAddressRemarks = computed(() => {
@@ -106,18 +121,26 @@ const hasAddressRemarks = computed(() => {
 });
 
 const hasDiscontinuedAddress = computed(() => {
-    return props.hriaData?.aliased_data?.discontinued_address_attributes &&
-           props.hriaData.aliased_data.discontinued_address_attributes.length > 0;
+    return (
+        props.hriaData?.aliased_data?.discontinued_address_attributes &&
+        props.hriaData.aliased_data.discontinued_address_attributes.length > 0
+    );
 });
 
 const hasAddressInfo = computed(() => {
-    return hasBcPropertyAddress.value || hasBcPropertyLegalDescription.value || hasAddressRemarks.value || hasDiscontinuedAddress.value;
+    return (
+        hasBcPropertyAddress.value ||
+        hasBcPropertyLegalDescription.value ||
+        hasAddressRemarks.value ||
+        hasDiscontinuedAddress.value
+    );
 });
 
 const hasGisElevation = computed(() => {
-    return props.data?.elevation?.aliased_data && (
-        !isEmpty(props.data.elevation.aliased_data.gis_lower_elevation) ||
-        !isEmpty(props.data.elevation.aliased_data.gis_upper_elevation)
+    return (
+        props.data?.elevation?.aliased_data &&
+        (!isEmpty(props.data.elevation.aliased_data.gis_lower_elevation) ||
+            !isEmpty(props.data.elevation.aliased_data.gis_upper_elevation))
     );
 });
 
@@ -150,29 +173,134 @@ const hasBiogeography = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasCoordinates">
-                        <dt v-if="!isEmpty(props.data.coordinates.aliased_data.utm_zone)">UTM Zone</dt>
-                        <dd v-if="!isEmpty(props.data.coordinates.aliased_data.utm_zone)">
-                            {{ getDisplayValue(props.data.coordinates.aliased_data.utm_zone) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .utm_zone,
+                                )
+                            "
+                        >
+                            UTM Zone
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .utm_zone,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.data.coordinates.aliased_data
+                                        .utm_zone,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.data.coordinates.aliased_data.utm_easting)">UTM Easting</dt>
-                        <dd v-if="!isEmpty(props.data.coordinates.aliased_data.utm_easting)">
-                            {{ getDisplayValue(props.data.coordinates.aliased_data.utm_easting) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .utm_easting,
+                                )
+                            "
+                        >
+                            UTM Easting
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .utm_easting,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.data.coordinates.aliased_data
+                                        .utm_easting,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.data.coordinates.aliased_data.utm_northing)">UTM Northing</dt>
-                        <dd v-if="!isEmpty(props.data.coordinates.aliased_data.utm_northing)">
-                            {{ getDisplayValue(props.data.coordinates.aliased_data.utm_northing) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .utm_northing,
+                                )
+                            "
+                        >
+                            UTM Northing
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .utm_northing,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.data.coordinates.aliased_data
+                                        .utm_northing,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.data.coordinates.aliased_data.latitude)">Latitude</dt>
-                        <dd v-if="!isEmpty(props.data.coordinates.aliased_data.latitude)">
-                            {{ getDisplayValue(props.data.coordinates.aliased_data.latitude) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .latitude,
+                                )
+                            "
+                        >
+                            Latitude
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .latitude,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.data.coordinates.aliased_data
+                                        .latitude,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(props.data.coordinates.aliased_data.longitude)">Longitude</dt>
-                        <dd v-if="!isEmpty(props.data.coordinates.aliased_data.longitude)">
-                            {{ getDisplayValue(props.data.coordinates.aliased_data.longitude) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .longitude,
+                                )
+                            "
+                        >
+                            Longitude
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    props.data.coordinates.aliased_data
+                                        .longitude,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    props.data.coordinates.aliased_data
+                                        .longitude,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -197,7 +325,9 @@ const hasBiogeography = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasTenureAndReserves"
-                                :table-data="props.data?.tenure_and_reserves ?? []"
+                                :table-data="
+                                    props.data?.tenure_and_reserves ?? []
+                                "
                                 :column-definitions="tenureColumns"
                                 :initial-sort-field-index="0"
                             />
@@ -237,7 +367,10 @@ const hasBiogeography = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasDiscontinuedTenure"
-                                :table-data="props.hriaData?.aliased_data?.hria_jursidiction_and_tenure ?? []"
+                                :table-data="
+                                    props.hriaData?.aliased_data
+                                        ?.hria_jursidiction_and_tenure ?? []
+                                "
                                 :column-definitions="discontinuedTenureColumns"
                                 :initial-sort-field-index="4"
                             />
@@ -262,8 +395,17 @@ const hasBiogeography = computed(() => {
                             v-for="(item, index) in locationAndAccess"
                             :key="index"
                         >
-                            <dt>{{ item.visitName || `Visit ${index + 1}` }} - Location and Access</dt>
-                            <dd>{{ getDisplayValue(item.location as AliasedNodeData) }}</dd>
+                            <dt>
+                                {{ item.visitName || `Visit ${index + 1}` }} -
+                                Location and Access
+                            </dt>
+                            <dd>
+                                {{
+                                    getDisplayValue(
+                                        item.location as AliasedNodeData,
+                                    )
+                                }}
+                            </dd>
                         </template>
                     </dl>
                     <EmptyState
@@ -289,24 +431,120 @@ const hasBiogeography = computed(() => {
                         >
                             <template #sectionContent>
                                 <dl v-if="hasBcPropertyAddress">
-                                    <dt v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.street_number)">Street Number</dt>
-                                    <dd v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.street_number)">
-                                        {{ getDisplayValue(props.data.bc_property_address[0].aliased_data.street_number) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.street_number,
+                                            )
+                                        "
+                                    >
+                                        Street Number
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.street_number,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.street_number,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.street_name)">Street Name</dt>
-                                    <dd v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.street_name)">
-                                        {{ getDisplayValue(props.data.bc_property_address[0].aliased_data.street_name) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.street_name,
+                                            )
+                                        "
+                                    >
+                                        Street Name
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.street_name,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.street_name,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.city)">City</dt>
-                                    <dd v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.city)">
-                                        {{ getDisplayValue(props.data.bc_property_address[0].aliased_data.city) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.city,
+                                            )
+                                        "
+                                    >
+                                        City
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.city,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.city,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.postal_code)">Postal Code</dt>
-                                    <dd v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.postal_code)">
-                                        {{ getDisplayValue(props.data.bc_property_address[0].aliased_data.postal_code) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.postal_code,
+                                            )
+                                        "
+                                    >
+                                        Postal Code
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.postal_code,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data.postal_code,
+                                            )
+                                        }}
                                     </dd>
                                 </dl>
                                 <EmptyState
@@ -320,23 +558,118 @@ const hasBiogeography = computed(() => {
                             section-title="Legal Description"
                             variant="subsection"
                             :visible="true"
-                            :class="{ 'empty-section': !hasBcPropertyLegalDescription }"
+                            :class="{
+                                'empty-section': !hasBcPropertyLegalDescription,
+                            }"
                         >
                             <template #sectionContent>
                                 <dl v-if="hasBcPropertyLegalDescription">
-                                    <dt v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.pid)">PID</dt>
-                                    <dd v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.pid)">
-                                        {{ getDisplayValue(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.pid) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data.pid,
+                                            )
+                                        "
+                                    >
+                                        PID
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data.pid,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data.pid,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.pin)">PIN</dt>
-                                    <dd v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.pin)">
-                                        {{ getDisplayValue(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.pin) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data.pin,
+                                            )
+                                        "
+                                    >
+                                        PIN
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data.pin,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data.pin,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.legal_description)">Legal Description</dt>
-                                    <dd v-if="!isEmpty(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.legal_description)">
-                                        {{ getDisplayValue(props.data.bc_property_address[0].aliased_data.bc_property_legal_description[0].aliased_data.legal_description) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data
+                                                    .legal_description,
+                                            )
+                                        "
+                                    >
+                                        Legal Description
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data
+                                                    .legal_description,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data
+                                                    .bc_property_address[0]
+                                                    .aliased_data
+                                                    .bc_property_legal_description[0]
+                                                    .aliased_data
+                                                    .legal_description,
+                                            )
+                                        }}
                                     </dd>
                                 </dl>
                                 <EmptyState
@@ -354,19 +687,85 @@ const hasBiogeography = computed(() => {
                         >
                             <template #sectionContent>
                                 <dl v-if="hasAddressRemarks">
-                                    <dt v-if="!isEmpty(props.data.address_remarks.aliased_data.address_and_legal_description_remarks)">Address and Legal Description Remarks</dt>
-                                    <dd v-if="!isEmpty(props.data.address_remarks.aliased_data.address_and_legal_description_remarks)">
-                                        {{ getDisplayValue(props.data.address_remarks.aliased_data.address_and_legal_description_remarks) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.address_remarks
+                                                    .aliased_data
+                                                    .address_and_legal_description_remarks,
+                                            )
+                                        "
+                                    >
+                                        Address and Legal Description Remarks
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.address_remarks
+                                                    .aliased_data
+                                                    .address_and_legal_description_remarks,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data.address_remarks
+                                                    .aliased_data
+                                                    .address_and_legal_description_remarks,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.address_remarks.aliased_data.entered_on)">Entered On</dt>
-                                    <dd v-if="!isEmpty(props.data.address_remarks.aliased_data.entered_on)">
-                                        {{ getDisplayValue(props.data.address_remarks.aliased_data.entered_on) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.address_remarks
+                                                    .aliased_data.entered_on,
+                                            )
+                                        "
+                                    >
+                                        Entered On
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.address_remarks
+                                                    .aliased_data.entered_on,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data.address_remarks
+                                                    .aliased_data.entered_on,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.address_remarks.aliased_data.entered_by)">Entered By</dt>
-                                    <dd v-if="!isEmpty(props.data.address_remarks.aliased_data.entered_by)">
-                                        {{ getDisplayValue(props.data.address_remarks.aliased_data.entered_by) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.address_remarks
+                                                    .aliased_data.entered_by,
+                                            )
+                                        "
+                                    >
+                                        Entered By
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.address_remarks
+                                                    .aliased_data.entered_by,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data.address_remarks
+                                                    .aliased_data.entered_by,
+                                            )
+                                        }}
                                     </dd>
                                 </dl>
                                 <EmptyState
@@ -380,13 +779,21 @@ const hasBiogeography = computed(() => {
                             section-title="Discontinued Address Attributes"
                             variant="subsection"
                             :visible="true"
-                            :class="{ 'empty-section': !hasDiscontinuedAddress }"
+                            :class="{
+                                'empty-section': !hasDiscontinuedAddress,
+                            }"
                         >
                             <template #sectionContent>
                                 <StandardDataTable
                                     v-if="hasDiscontinuedAddress"
-                                    :table-data="props.hriaData?.aliased_data?.discontinued_address_attributes ?? []"
-                                    :column-definitions="discontinuedAddressColumns"
+                                    :table-data="
+                                        props.hriaData?.aliased_data
+                                            ?.discontinued_address_attributes ??
+                                        []
+                                    "
+                                    :column-definitions="
+                                        discontinuedAddressColumns
+                                    "
                                     :initial-sort-field-index="9"
                                 />
                                 <EmptyState
@@ -419,14 +826,62 @@ const hasBiogeography = computed(() => {
                         >
                             <template #sectionContent>
                                 <dl v-if="hasGisElevation">
-                                    <dt v-if="!isEmpty(props.data.elevation.aliased_data.gis_lower_elevation)">Lower (m asl)</dt>
-                                    <dd v-if="!isEmpty(props.data.elevation.aliased_data.gis_lower_elevation)">
-                                        {{ getDisplayValue(props.data.elevation.aliased_data.gis_lower_elevation) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.elevation
+                                                    .aliased_data
+                                                    .gis_lower_elevation,
+                                            )
+                                        "
+                                    >
+                                        Lower (m asl)
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.elevation
+                                                    .aliased_data
+                                                    .gis_lower_elevation,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data.elevation
+                                                    .aliased_data
+                                                    .gis_lower_elevation,
+                                            )
+                                        }}
                                     </dd>
 
-                                    <dt v-if="!isEmpty(props.data.elevation.aliased_data.gis_upper_elevation)">Upper (m asl)</dt>
-                                    <dd v-if="!isEmpty(props.data.elevation.aliased_data.gis_upper_elevation)">
-                                        {{ getDisplayValue(props.data.elevation.aliased_data.gis_upper_elevation) }}
+                                    <dt
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.elevation
+                                                    .aliased_data
+                                                    .gis_upper_elevation,
+                                            )
+                                        "
+                                    >
+                                        Upper (m asl)
+                                    </dt>
+                                    <dd
+                                        v-if="
+                                            !isEmpty(
+                                                props.data.elevation
+                                                    .aliased_data
+                                                    .gis_upper_elevation,
+                                            )
+                                        "
+                                    >
+                                        {{
+                                            getDisplayValue(
+                                                props.data.elevation
+                                                    .aliased_data
+                                                    .gis_upper_elevation,
+                                            )
+                                        }}
                                     </dd>
                                 </dl>
                                 <EmptyState
@@ -445,11 +900,22 @@ const hasBiogeography = computed(() => {
                             <template #sectionContent>
                                 <dl v-if="hasElevationComments">
                                     <template
-                                        v-for="(comment, index) in props.data.elevation.aliased_data.elevation_comments"
+                                        v-for="(comment, index) in props.data
+                                            .elevation.aliased_data
+                                            .elevation_comments"
                                         :key="index"
                                     >
-                                        <dt>Elevation Remarks {{ index + 1 }}</dt>
-                                        <dd v-html="getDisplayValue(comment.aliased_data?.elevation_comments)"></dd>
+                                        <dt>
+                                            Elevation Remarks {{ index + 1 }}
+                                        </dt>
+                                        <dd
+                                            v-html="
+                                                getDisplayValue(
+                                                    comment.aliased_data
+                                                        ?.elevation_comments,
+                                                )
+                                            "
+                                        ></dd>
                                     </template>
                                 </dl>
                                 <EmptyState

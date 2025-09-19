@@ -3,33 +3,33 @@ import { ref, computed, watch } from "vue";
 import Button from "primevue/button";
 
 const emit = defineEmits<{
-    'visibility-changed': [hideEmpty: boolean];
-    'collapse-all': [];
-    'expand-all': [];
+    "visibility-changed": [hideEmpty: boolean];
+    "collapse-all": [];
+    "expand-all": [];
 }>();
 
 const hideEmptySections = ref(false);
 const allCollapsed = ref(false);
 
 const hideEmptyText = computed(() =>
-    hideEmptySections.value ? "Show Empty Sections" : "Hide Empty Sections"
+    hideEmptySections.value ? "Show Empty Sections" : "Hide Empty Sections",
 );
 
 const collapseExpandText = computed(() =>
-    allCollapsed.value ? "Expand All" : "Collapse All"
+    allCollapsed.value ? "Expand All" : "Collapse All",
 );
 
 watch(hideEmptySections, (newValue) => {
-    emit('visibility-changed', newValue);
+    emit("visibility-changed", newValue);
 });
 
 const toggleCollapseExpand = () => {
     allCollapsed.value = !allCollapsed.value;
 
     if (allCollapsed.value) {
-        emit('collapse-all');
+        emit("collapse-all");
     } else {
-        emit('expand-all');
+        emit("expand-all");
     }
 };
 </script>

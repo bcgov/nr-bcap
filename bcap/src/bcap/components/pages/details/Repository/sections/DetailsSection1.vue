@@ -27,24 +27,28 @@ const contactData = computed(() => {
 
 const hasBasicInfo = computed(() => {
     const data = repositoryData.value?.aliased_data;
-    return data && (
-        !isEmpty(data.repository_name) ||
-        !isEmpty(data.repository_location_code)
+    return (
+        data &&
+        (!isEmpty(data.repository_name) ||
+            !isEmpty(data.repository_location_code))
     );
 });
 
 const hasContactInfo = computed(() => {
     const data = contactData.value?.aliased_data;
-    return data && (
-        !isEmpty(data.contact_person) ||
-        !isEmpty(data.contact_email) ||
-        !isEmpty(data.contact_phone)
+    return (
+        data &&
+        (!isEmpty(data.contact_person) ||
+            !isEmpty(data.contact_email) ||
+            !isEmpty(data.contact_phone))
     );
 });
 
 const hasNotes = computed(() => {
-    return props.data?.aliased_data?.repository_notes &&
-           props.data.aliased_data.repository_notes.length > 0;
+    return (
+        props.data?.aliased_data?.repository_notes &&
+        props.data.aliased_data.repository_notes.length > 0
+    );
 });
 </script>
 
@@ -63,14 +67,56 @@ const hasNotes = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasBasicInfo">
-                        <dt v-if="!isEmpty(repositoryData?.aliased_data?.repository_name)">Repository Name</dt>
-                        <dd v-if="!isEmpty(repositoryData?.aliased_data?.repository_name)">
-                            {{ getDisplayValue(repositoryData?.aliased_data?.repository_name) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    repositoryData?.aliased_data
+                                        ?.repository_name,
+                                )
+                            "
+                        >
+                            Repository Name
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    repositoryData?.aliased_data
+                                        ?.repository_name,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    repositoryData?.aliased_data
+                                        ?.repository_name,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(repositoryData?.aliased_data?.repository_location_code)">Location Code</dt>
-                        <dd v-if="!isEmpty(repositoryData?.aliased_data?.repository_location_code)">
-                            {{ getDisplayValue(repositoryData?.aliased_data?.repository_location_code) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    repositoryData?.aliased_data
+                                        ?.repository_location_code,
+                                )
+                            "
+                        >
+                            Location Code
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    repositoryData?.aliased_data
+                                        ?.repository_location_code,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    repositoryData?.aliased_data
+                                        ?.repository_location_code,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -88,19 +134,73 @@ const hasNotes = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasContactInfo">
-                        <dt v-if="!isEmpty(contactData?.aliased_data?.contact_person)">Contact Person</dt>
-                        <dd v-if="!isEmpty(contactData?.aliased_data?.contact_person)">
-                            {{ getDisplayValue(contactData?.aliased_data?.contact_person) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    contactData?.aliased_data?.contact_person,
+                                )
+                            "
+                        >
+                            Contact Person
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    contactData?.aliased_data?.contact_person,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    contactData?.aliased_data?.contact_person,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(contactData?.aliased_data?.contact_email)">Email</dt>
-                        <dd v-if="!isEmpty(contactData?.aliased_data?.contact_email)">
-                            {{ getDisplayValue(contactData?.aliased_data?.contact_email) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    contactData?.aliased_data?.contact_email,
+                                )
+                            "
+                        >
+                            Email
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    contactData?.aliased_data?.contact_email,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    contactData?.aliased_data?.contact_email,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(contactData?.aliased_data?.contact_phone)">Phone</dt>
-                        <dd v-if="!isEmpty(contactData?.aliased_data?.contact_phone)">
-                            {{ getDisplayValue(contactData?.aliased_data?.contact_phone) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    contactData?.aliased_data?.contact_phone,
+                                )
+                            "
+                        >
+                            Phone
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    contactData?.aliased_data?.contact_phone,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    contactData?.aliased_data?.contact_phone,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -118,7 +218,12 @@ const hasNotes = computed(() => {
             >
                 <template #sectionContent>
                     <div v-if="hasNotes">
-                        <div v-for="(note, index) in props.data?.aliased_data?.repository_notes" :key="index" class="note-item">
+                        <div
+                            v-for="(note, index) in props.data?.aliased_data
+                                ?.repository_notes"
+                            :key="index"
+                            class="note-item"
+                        >
                             {{ note }}
                         </div>
                     </div>

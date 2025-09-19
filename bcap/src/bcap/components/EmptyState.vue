@@ -4,7 +4,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    message: "No data found"
+    message: "No data found",
 });
 </script>
 
@@ -14,5 +14,4 @@ const props = withDefaults(defineProps<Props>(), {
     </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

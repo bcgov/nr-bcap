@@ -5,9 +5,7 @@ import EmptyState from "@/bcap/components/EmptyState.vue";
 import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
 import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
 import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
-import type {
-    AliasedNodeData,
-} from "@/arches_component_lab/types.ts";
+import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
 import "primeicons/primeicons.css";
 
 const props = withDefaults(
@@ -59,13 +57,16 @@ const hasBiogeography = computed(() => {
 });
 
 const hasJurisdictionTenure = computed(() => {
-    return currentData.value?.hria_jursidiction_and_tenure &&
-           currentData.value.hria_jursidiction_and_tenure.length > 0;
+    return (
+        currentData.value?.hria_jursidiction_and_tenure &&
+        currentData.value.hria_jursidiction_and_tenure.length > 0
+    );
 });
 
 const hasChronology = computed(() => {
-    return currentData.value?.chronology &&
-           currentData.value.chronology.length > 0;
+    return (
+        currentData.value?.chronology && currentData.value.chronology.length > 0
+    );
 });
 
 const hasArchaeologicalSite = computed(() => {
@@ -88,19 +89,82 @@ const hasArchaeologicalSite = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasAdifRecord">
-                        <dt v-if="!isEmpty(currentData?.unreviewed_adif_record?.aliased_data?.unreviewed_adif_record)">Unreviewed ADIF Record</dt>
-                        <dd v-if="!isEmpty(currentData?.unreviewed_adif_record?.aliased_data?.unreviewed_adif_record)">
-                            {{ getDisplayValue(currentData?.unreviewed_adif_record?.aliased_data?.unreviewed_adif_record) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.unreviewed_adif_record,
+                                )
+                            "
+                        >
+                            Unreviewed ADIF Record
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.unreviewed_adif_record,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.unreviewed_adif_record,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.unreviewed_adif_record?.aliased_data?.site_entered_by)">Site Entered By</dt>
-                        <dd v-if="!isEmpty(currentData?.unreviewed_adif_record?.aliased_data?.site_entered_by)">
-                            {{ getDisplayValue(currentData?.unreviewed_adif_record?.aliased_data?.site_entered_by) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.site_entered_by,
+                                )
+                            "
+                        >
+                            Site Entered By
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.site_entered_by,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.site_entered_by,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.unreviewed_adif_record?.aliased_data?.site_entry_date)">Site Entry Date</dt>
-                        <dd v-if="!isEmpty(currentData?.unreviewed_adif_record?.aliased_data?.site_entry_date)">
-                            {{ getDisplayValue(currentData?.unreviewed_adif_record?.aliased_data?.site_entry_date) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.site_entry_date,
+                                )
+                            "
+                        >
+                            Site Entry Date
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.site_entry_date,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.site_entry_date,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -118,34 +182,160 @@ const hasArchaeologicalSite = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasSiteDimensions">
-                        <dt v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.length)">Length</dt>
-                        <dd v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.length)">
-                            {{ getDisplayValue(currentData?.site_dimensions?.aliased_data?.length) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.length,
+                                )
+                            "
+                        >
+                            Length
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.length,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.length,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.length_direction)">Length Direction</dt>
-                        <dd v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.length_direction)">
-                            {{ getDisplayValue(currentData?.site_dimensions?.aliased_data?.length_direction) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.length_direction,
+                                )
+                            "
+                        >
+                            Length Direction
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.length_direction,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.length_direction,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.width)">Width</dt>
-                        <dd v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.width)">
-                            {{ getDisplayValue(currentData?.site_dimensions?.aliased_data?.width) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.width,
+                                )
+                            "
+                        >
+                            Width
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.width,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.width,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.width_direction)">Width Direction</dt>
-                        <dd v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.width_direction)">
-                            {{ getDisplayValue(currentData?.site_dimensions?.aliased_data?.width_direction) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.width_direction,
+                                )
+                            "
+                        >
+                            Width Direction
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.width_direction,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.width_direction,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.site_area)">Site Area</dt>
-                        <dd v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.site_area)">
-                            {{ getDisplayValue(currentData?.site_dimensions?.aliased_data?.site_area) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.site_area,
+                                )
+                            "
+                        >
+                            Site Area
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.site_area,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.site_area,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.boundary_type)">Boundary Type</dt>
-                        <dd v-if="!isEmpty(currentData?.site_dimensions?.aliased_data?.boundary_type)">
-                            {{ getDisplayValue(currentData?.site_dimensions?.aliased_data?.boundary_type) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.boundary_type,
+                                )
+                            "
+                        >
+                            Boundary Type
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.boundary_type,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.site_dimensions?.aliased_data
+                                        ?.boundary_type,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -163,29 +353,134 @@ const hasArchaeologicalSite = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasBiogeography">
-                        <dt v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_type)">Biogeography Type</dt>
-                        <dd v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_type)">
-                            {{ getDisplayValue(currentData?.biogeography?.aliased_data?.biogeography_type) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_type,
+                                )
+                            "
+                        >
+                            Biogeography Type
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_type,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_type,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_name)">Biogeography Name</dt>
-                        <dd v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_name)">
-                            {{ getDisplayValue(currentData?.biogeography?.aliased_data?.biogeography_name) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_name,
+                                )
+                            "
+                        >
+                            Biogeography Name
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_name,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_name,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_description)">Biogeography Description</dt>
-                        <dd v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_description)">
-                            {{ getDisplayValue(currentData?.biogeography?.aliased_data?.biogeography_description) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_description,
+                                )
+                            "
+                        >
+                            Biogeography Description
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_description,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_description,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_entered_by)">Entered By</dt>
-                        <dd v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_entered_by)">
-                            {{ getDisplayValue(currentData?.biogeography?.aliased_data?.biogeography_entered_by) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_entered_by,
+                                )
+                            "
+                        >
+                            Entered By
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_entered_by,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_entered_by,
+                                )
+                            }}
                         </dd>
 
-                        <dt v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_entered_date)">Entered Date</dt>
-                        <dd v-if="!isEmpty(currentData?.biogeography?.aliased_data?.biogeography_entered_date)">
-                            {{ getDisplayValue(currentData?.biogeography?.aliased_data?.biogeography_entered_date) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_entered_date,
+                                )
+                            "
+                        >
+                            Entered Date
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_entered_date,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.biogeography?.aliased_data
+                                        ?.biogeography_entered_date,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState
@@ -204,7 +499,9 @@ const hasArchaeologicalSite = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasJurisdictionTenure"
-                        :table-data="currentData?.hria_jursidiction_and_tenure ?? []"
+                        :table-data="
+                            currentData?.hria_jursidiction_and_tenure ?? []
+                        "
                         :column-definitions="jurisdictionTenureColumns"
                         title="HRIA Jurisdiction and Tenure"
                         :initial-sort-field-index="4"
@@ -245,9 +542,30 @@ const hasArchaeologicalSite = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasArchaeologicalSite">
-                        <dt v-if="!isEmpty(currentData?.archaeological_site?.aliased_data?.archaeological_site)">Archaeological Site</dt>
-                        <dd v-if="!isEmpty(currentData?.archaeological_site?.aliased_data?.archaeological_site)">
-                            {{ getDisplayValue(currentData?.archaeological_site?.aliased_data?.archaeological_site) }}
+                        <dt
+                            v-if="
+                                !isEmpty(
+                                    currentData?.archaeological_site
+                                        ?.aliased_data?.archaeological_site,
+                                )
+                            "
+                        >
+                            Archaeological Site
+                        </dt>
+                        <dd
+                            v-if="
+                                !isEmpty(
+                                    currentData?.archaeological_site
+                                        ?.aliased_data?.archaeological_site,
+                                )
+                            "
+                        >
+                            {{
+                                getDisplayValue(
+                                    currentData?.archaeological_site
+                                        ?.aliased_data?.archaeological_site,
+                                )
+                            }}
                         </dd>
                     </dl>
                     <EmptyState

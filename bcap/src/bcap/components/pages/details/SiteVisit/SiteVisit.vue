@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { useResourceData, useRelatedResourceData } from "@/bcap/composables/useResourceData.ts";
+import {
+    useResourceData,
+    useRelatedResourceData,
+} from "@/bcap/composables/useResourceData.ts";
 import "primeicons/primeicons.css";
 import Section1 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection1.vue";
 import Section2 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection2.vue";
@@ -28,17 +31,25 @@ const props = withDefaults(
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const { data: current, loading } =
-    useResourceData<SiteVisitSchema>("site_visit", resourceId);
+const { data: current, loading } = useResourceData<SiteVisitSchema>(
+    "site_visit",
+    resourceId,
+);
 
-const { data: hriaData } =
-    useRelatedResourceData<HriaDiscontinuedDataSchema>("hria_discontinued_data", resourceId, true);
+const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
+    "hria_discontinued_data",
+    resourceId,
+    true,
+);
 </script>
 
 <template>
     <div style="display: none"><DataTable /></div>
     <div style="display: none">
-        <DetailsSection :visible="true" section-title="" />
+        <DetailsSection
+            :visible="true"
+            section-title=""
+        />
     </div>
 
     <div class="container">

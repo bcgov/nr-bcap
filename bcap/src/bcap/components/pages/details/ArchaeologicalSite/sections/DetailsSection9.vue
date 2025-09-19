@@ -63,8 +63,10 @@ const otherMapsColumns = [
 ];
 
 const hasReferences = computed(() => {
-    return currentData.value?.publication_reference &&
-           currentData.value.publication_reference.length > 0;
+    return (
+        currentData.value?.publication_reference &&
+        currentData.value.publication_reference.length > 0
+    );
 });
 
 const hasRelatedDocuments = computed(() => {
@@ -72,13 +74,16 @@ const hasRelatedDocuments = computed(() => {
 });
 
 const hasImages = computed(() => {
-    return currentData.value?.site_images &&
-           currentData.value.site_images.length > 0;
+    return (
+        currentData.value?.site_images &&
+        currentData.value.site_images.length > 0
+    );
 });
 
 const hasOtherMaps = computed(() => {
-    return currentData.value?.other_maps &&
-           currentData.value.other_maps.length > 0;
+    return (
+        currentData.value?.other_maps && currentData.value.other_maps.length > 0
+    );
 });
 </script>
 
