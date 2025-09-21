@@ -2,18 +2,18 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from "@/arches_component_lab/types.ts";
-import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
-import type { NonLocalizedTextValue } from "@/arches_component_lab/datatypes/non-localized-text/types.ts";
-import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
-import type { ResourceInstanceListValue } from "@/arches_component_lab/datatypes/resource-instance-list/types.ts";
+} from '@/arches_component_lab/types.ts';
+import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
+import type { NonLocalizedTextValue } from '@/arches_component_lab/datatypes/non-localized-text/types.ts';
+import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
+import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
 
 // Use the new reference / reference-list types exactly as provided:
 import type {
     ReferenceSelectValue,
     ReferenceSelectNodeValue,
     ReferenceSelectDetails,
-} from "@/arches_controlled_lists/datatypes/reference-select/types.js";
+} from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
 // ---------- Local helpers for primitives not in the bundle ----------
 export interface NumberValue extends AliasedNodeData {
@@ -31,7 +31,7 @@ export interface BooleanValue extends AliasedNodeData {
 // keeping your ReferenceSelectValue structure.
 export type NullableReferenceSelectValue =
     | ReferenceSelectValue
-    | (Omit<ReferenceSelectValue, "node_value"> & {
+    | (Omit<ReferenceSelectValue, 'node_value'> & {
           node_value: ReferenceSelectNodeValue[] | null;
           details: ReferenceSelectDetails[] | [];
       });

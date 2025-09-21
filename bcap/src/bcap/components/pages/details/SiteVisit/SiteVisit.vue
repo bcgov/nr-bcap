@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getResourceData } from "@/bcap/components/pages/api.ts";
-import "primeicons/primeicons.css";
-import Section1 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection1.vue";
-import Section2 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection2.vue";
-import Section3 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue";
-import Section4 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection4.vue";
-import Section5 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection5.vue";
-import Section6 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection6.vue";
-import DataTable from "primevue/datatable";
-import type { DetailsData } from "@/bcap/types.ts";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import { ref, watchEffect } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import { getResourceData } from '@/bcap/components/pages/api.ts';
+import 'primeicons/primeicons.css';
+import Section1 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection1.vue';
+import Section2 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection2.vue';
+import Section3 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue';
+import Section4 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection4.vue';
+import Section5 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection5.vue';
+import Section6 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection6.vue';
+import DataTable from 'primevue/datatable';
+import type { DetailsData } from '@/bcap/types.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -20,9 +20,9 @@ const props = withDefaults(
     }>(),
     {
         resourceDescriptors: () => ({
-            en: { name: "Undefined", map_popup: "", description: "" },
+            en: { name: 'Undefined', map_popup: '', description: '' },
         }),
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -35,7 +35,7 @@ watchEffect(async () => {
     const resourceId: string = props.data?.resourceinstance_id;
     if (!resourceId) return;
     if (!(resourceId in cache.value)) {
-        getResourceData("site_visit", resourceId).then((data) => {
+        getResourceData('site_visit', resourceId).then((data) => {
             cache.value[resourceId] = data as SiteVisitSchema;
             current.value = cache.value[resourceId];
             loading.value = false;

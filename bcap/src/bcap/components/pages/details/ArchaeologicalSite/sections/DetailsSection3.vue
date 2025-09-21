@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 
-import "primeicons/primeicons.css";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
-import SiteVisitDetailsSection3 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue";
+import 'primeicons/primeicons.css';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import SiteVisitDetailsSection3 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -13,7 +13,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 

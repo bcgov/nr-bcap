@@ -2,19 +2,19 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from "@/arches_component_lab/types.ts";
+} from '@/arches_component_lab/types.ts';
 
-import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
-import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
-import type { ResourceInstanceValue } from "@/arches_component_lab/datatypes/resource-instance/types.ts";
-import type { ResourceInstanceListValue } from "@/arches_component_lab/datatypes/resource-instance-list/types.ts";
+import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
+import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
+import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
+import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
 
 // Controlled list “reference / reference-list”
 import type {
     ReferenceSelectValue,
     ReferenceSelectNodeValue,
     ReferenceSelectDetails,
-} from "@/arches_controlled_lists/datatypes/reference-select/types.js";
+} from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
 // ---------- Small local helpers ----------
 export interface NumberValue extends AliasedNodeData {
@@ -32,7 +32,7 @@ export interface BooleanValue extends AliasedNodeData {
 export interface GeoJSONFeatureCollectionValue extends AliasedNodeData {
     display_value: string;
     node_value: {
-        type: "FeatureCollection";
+        type: 'FeatureCollection';
         features: unknown[]; // supply a stricter Feature type if you have one
     } | null;
     details: never[];
@@ -41,7 +41,7 @@ export interface GeoJSONFeatureCollectionValue extends AliasedNodeData {
 // Some reference nodes can be null; keep your ReferenceSelectValue shape
 export type NullableReferenceSelectValue =
     | ReferenceSelectValue
-    | (Omit<ReferenceSelectValue, "node_value" | "details"> & {
+    | (Omit<ReferenceSelectValue, 'node_value' | 'details'> & {
           node_value: ReferenceSelectNodeValue[] | null;
           details: ReferenceSelectDetails[] | [];
       });

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 // main.js or in your component's script setup
-import "primeicons/primeicons.css";
+import 'primeicons/primeicons.css';
 
-import type { RelatedDocumentsTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
+import type { RelatedDocumentsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 
 const props = defineProps<{
     data: RelatedDocumentsTile | undefined;
@@ -20,9 +20,9 @@ const currentData = computed<RelatedDocumentsTile | undefined>(
 
 /** Generic column definitions: configure any key/path + label */
 const siteDocumentsColumns = [
-    { field: "related_document_type", label: "Type" },
-    { field: "related_site_documents", label: "Document" },
-    { field: "related_document_description", label: "Description" },
+    { field: 'related_document_type', label: 'Type' },
+    { field: 'related_site_documents', label: 'Document' },
+    { field: 'related_document_description', label: 'Description' },
 ];
 </script>
 

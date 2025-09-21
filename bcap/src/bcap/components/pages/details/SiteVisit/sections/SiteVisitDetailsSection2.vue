@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
@@ -16,11 +16,11 @@ const newNames = computed(
 );
 
 const newNameColumns = [
-    { field: "name", label: "Name" },
-    { field: "name_type", label: "Name Type" },
-    { field: "assigned_or_reported_by", label: "Assigned/Reported By" },
-    { field: "assigned_or_reported_date", label: "Assigned/Reported Date" },
-    { field: "name_remarks", label: "Remarks" },
+    { field: 'name', label: 'Name' },
+    { field: 'name_type', label: 'Name Type' },
+    { field: 'assigned_or_reported_by', label: 'Assigned/Reported By' },
+    { field: 'assigned_or_reported_date', label: 'Assigned/Reported Date' },
+    { field: 'name_remarks', label: 'Remarks' },
 ];
 </script>
 

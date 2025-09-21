@@ -1,9 +1,9 @@
-import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     SiteVisitResponse,
     SiteVisitSchema,
-} from "@/bcap/schema/SiteVisitSchema.ts";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
+} from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 export const getResourceData = async (
     graph_slug: string,
@@ -28,7 +28,7 @@ export const getRelatedResourceData = async (
     const parsed: SiteVisitResponse | ErrorResponse = await response.json();
     if (!response.ok)
         throw new Error(
-            Object.values(parsed as ErrorResponse).join(",") ||
+            Object.values(parsed as ErrorResponse).join(',') ||
                 response.statusText,
         );
     return (parsed as SiteVisitResponse).results;

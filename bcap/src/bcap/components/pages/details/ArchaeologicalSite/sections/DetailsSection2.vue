@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from "@/arches_component_lab/types.ts";
+} from '@/arches_component_lab/types.ts';
 // main.js or in your component's script setup
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import "primeicons/primeicons.css";
-import type { IdentificationAndRegistrationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import 'primeicons/primeicons.css';
+import type { IdentificationAndRegistrationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -20,7 +20,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -39,43 +39,43 @@ const currentHriaData = computed<HriaDiscontinuedDataSchema | undefined>(
 );
 
 const id_fields = [
-    "borden_number",
-    "registration_date",
-    "registration_status",
-    "parcel_owner_type",
-    "register_type",
-    "site_creation_date",
-    "parent_site",
-    "site_alert",
-    "authority",
-    "site_names",
+    'borden_number',
+    'registration_date',
+    'registration_status',
+    'parcel_owner_type',
+    'register_type',
+    'site_creation_date',
+    'parent_site',
+    'site_alert',
+    'authority',
+    'site_names',
 ] as const;
 
 /** Generic column definitions: configure any key/path + label */
 const siteDecisionColumns = [
-    { field: "decision_date", label: "Decision Date" },
-    { field: "decision_made_by", label: "Decision Maker" },
-    { field: "site_decision", label: "Decision" },
-    { field: "decision_criteria", label: "Criteria" },
-    { field: "decision_description", label: "Description" },
-    { field: "recommendation_date", label: "Recommended On" },
-    { field: "recommended_by", label: "Recommended By" },
+    { field: 'decision_date', label: 'Decision Date' },
+    { field: 'decision_made_by', label: 'Decision Maker' },
+    { field: 'site_decision', label: 'Decision' },
+    { field: 'decision_criteria', label: 'Criteria' },
+    { field: 'decision_description', label: 'Description' },
+    { field: 'recommendation_date', label: 'Recommended On' },
+    { field: 'recommended_by', label: 'Recommended By' },
 ];
 
 const authorityColumns = [
-    { field: "responsible_government", label: "Government" },
-    { field: "legislative_act", label: "Legislative Act" },
-    { field: "reference_number", label: "Reference #" },
-    { field: "authority_start_date", label: "Start Date" },
-    { field: "authority_end_date", label: "End Date" },
-    { field: "authority_description", label: "Description" },
+    { field: 'responsible_government', label: 'Government' },
+    { field: 'legislative_act', label: 'Legislative Act' },
+    { field: 'reference_number', label: 'Reference #' },
+    { field: 'authority_start_date', label: 'Start Date' },
+    { field: 'authority_end_date', label: 'End Date' },
+    { field: 'authority_description', label: 'Description' },
 ];
 
 type IdFieldKey = (typeof id_fields)[number];
 
 // Turn "borden_number" -> "Borden Number"
 const labelize = (key: string) =>
-    key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 </script>
 
 <template>
