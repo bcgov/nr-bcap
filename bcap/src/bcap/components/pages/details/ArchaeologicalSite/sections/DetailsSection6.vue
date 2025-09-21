@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
-import { useHierarchicalData } from "@/bcap/composables/useHierarchicalData.ts";
+import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { ArchaeologicalDataTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
@@ -36,14 +36,14 @@ const typologyData = computed(() => currentData.value?.site_typology);
 const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     typologyData,
     {
-        sourceField: "typology_class",
+        sourceField: 'typology_class',
         hierarchicalFields: [
-            "typology_class",
-            "site_type",
-            "site_subtype",
-            "typology_descriptor",
+            'typology_class',
+            'site_type',
+            'site_subtype',
+            'typology_descriptor',
         ],
-        flatFields: ["typology_remark"],
+        flatFields: ['typology_remark'],
     },
 );
 </script>

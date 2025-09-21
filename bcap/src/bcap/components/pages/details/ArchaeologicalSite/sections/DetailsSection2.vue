@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import { useHierarchicalData } from "@/bcap/composables/useHierarchicalData.ts";
+import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
@@ -84,14 +84,14 @@ const {
     processedData: decisionTableData,
     isProcessing: isProcessingDecisions,
 } = useHierarchicalData(decisionData, {
-    sourceField: "site_decision",
-    hierarchicalFields: ["site_decision", "decision_criteria"],
+    sourceField: 'site_decision',
+    hierarchicalFields: ['site_decision', 'decision_criteria'],
     flatFields: [
-        "decision_date",
-        "decision_made_by",
-        "decision_description",
-        "recommendation_date",
-        "recommended_by",
+        'decision_date',
+        'decision_made_by',
+        'decision_description',
+        'recommendation_date',
+        'recommended_by',
     ],
 });
 </script>
