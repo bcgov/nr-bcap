@@ -46,6 +46,6 @@
     "**/*.test.ts",
     "**/build/**",
     "**/staticfiles/**",
-    "**/vite-shims/**"
+    "**/vite-shims/**",
   ]
 }

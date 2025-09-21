@@ -25,9 +25,14 @@
         "moment-timezone": "^0.5.45",
         "nomnom": "npm:@gerhobbelt/nomnom",
         "rimraf": "^5.0.7",
-        "underscore": "^1.13.6"
+        "underscore": "^1.13.6",
+        "@turf/helpers": "7.2.0",
+        "@turf/centroid": "7.2.0",
+        "@turf/bbox": "7.2.0",
+        "geojson": "0.5.0"
     },
     "devDependencies": {
+        "@maplibre/maplibre-gl-style-spec": "^24.1.1",
         "@primevue/auto-import-resolver": "^4.3.7",
         "@types/underscore": "^1.13.0",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
@@ -41,8 +46,7 @@
     "dependencies": {
         "@primeuix/styles": "^1.2.3",
         "@primeuix/themes": "^1.2.3",
-        "@turf/bbox": "^7.2.0",
-        "@turf/centroid": "^7.2.0",
+
         "ajv": "^8.17.1",
         "arches": "bcgov/arches#stable/8.0.3_bcgov_12377",
         "arches-component-lab": "archesproject/arches-component-lab#main",
