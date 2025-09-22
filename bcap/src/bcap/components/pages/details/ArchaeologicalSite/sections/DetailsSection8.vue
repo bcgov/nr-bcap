@@ -270,7 +270,6 @@ const hasConvictions = computed(() => {
                                     currentData?.hca_contravention ?? []
                                 "
                                 :column-definitions="hcaContraventionColumns"
-                                title="HCA Contraventions"
                                 :initial-sort-field-index="4"
                             />
                             <EmptyState
@@ -291,7 +290,6 @@ const hasConvictions = computed(() => {
                                 v-if="hasConvictions"
                                 :table-data="currentData?.conviction ?? []"
                                 :column-definitions="convictionColumns"
-                                title="HCA Convictions"
                                 :initial-sort-field-index="0"
                             />
                             <EmptyState

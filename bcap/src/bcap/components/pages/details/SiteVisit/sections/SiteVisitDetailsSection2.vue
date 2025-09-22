@@ -94,7 +94,6 @@ const newNameColumns = [
                         <StandardDataTable
                             :table-data="newNames"
                             :column-definitions="newNameColumns"
-                            title="New Site Names"
                         />
                     </div>
                     <EmptyState

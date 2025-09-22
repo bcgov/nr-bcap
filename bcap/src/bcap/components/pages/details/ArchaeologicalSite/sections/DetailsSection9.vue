@@ -105,7 +105,6 @@ const hasOtherMaps = computed(() => {
                         v-if="hasReferences"
                         :table-data="currentData?.publication_reference ?? []"
                         :column-definitions="referencesColumns"
-                        title="Publication References"
                         :initial-sort-field-index="2"
                     />
                     <EmptyState

@@ -503,7 +503,6 @@ const hasArchaeologicalSite = computed(() => {
                             currentData?.hria_jursidiction_and_tenure ?? []
                         "
                         :column-definitions="jurisdictionTenureColumns"
-                        title="HRIA Jurisdiction and Tenure"
                         :initial-sort-field-index="4"
                     />
                     <EmptyState
@@ -524,7 +523,6 @@ const hasArchaeologicalSite = computed(() => {
                         v-if="hasChronology"
                         :table-data="currentData?.chronology ?? []"
                         :column-definitions="chronologyColumns"
-                        title="Chronology"
                         :initial-sort-field-index="1"
                     />
                     <EmptyState

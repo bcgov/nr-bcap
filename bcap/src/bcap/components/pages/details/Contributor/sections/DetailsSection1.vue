@@ -263,7 +263,6 @@ const hasOrganizations = computed(() => {
                             []
                         "
                         :column-definitions="organizationColumns"
-                        title="Associated Organizations"
                         :initial-sort-field-index="1"
                     />
                     <EmptyState

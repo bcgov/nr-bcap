@@ -72,10 +72,10 @@ const authorityColumns = [
 ];
 
 const siteNamesColumns = [
-    { field: "site_name", label: "Site Name" },
-    { field: "site_name_type", label: "Site Name Type" },
-    { field: "site_name_remarks", label: "Site Name Remarks" },
-    { field: "date_assigned_or_reported", label: "Date Assigned or Reported" },
+    { field: "name", label: "Site Name" },
+    { field: "name_type", label: "Site Name Type" },
+    { field: "name_remarks", label: "Site Name Remarks" },
+    { field: "assigned_or_reported_date", label: "Date Assigned or Reported" },
     { field: "assigned_or_reported_by", label: "Assigned or Reported By" },
     { field: "entered_on", label: "Entered On" },
     { field: "entered_by", label: "Entered By" },
@@ -349,7 +349,6 @@ const parentSite = computed(() => {
                                 v-if="hasSiteNames"
                                 :table-data="currentData?.site_names ?? []"
                                 :column-definitions="siteNamesColumns"
-                                title="Site Names"
                                 :initial-sort-field-index="3"
                             />
                             <EmptyState
