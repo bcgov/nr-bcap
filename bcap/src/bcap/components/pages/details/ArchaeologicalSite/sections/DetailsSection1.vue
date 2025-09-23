@@ -31,14 +31,6 @@ const siteBoundary = computed<SiteBoundaryTile | undefined>(
 const hasGeoJsonData = computed(() => {
     return siteBoundary.value?.aliased_data?.site_boundary?.node_value;
 });
-
-const hasBoundaryInfo = computed(() => {
-    return (
-        siteBoundary.value?.aliased_data?.accuracy_remarks?.display_value ||
-        siteBoundary.value?.aliased_data?.source_notes?.display_value ||
-        siteBoundary.value?.aliased_data?.latest_edit_type?.node_value
-    );
-});
 </script>
 
 <template>
@@ -75,52 +67,6 @@ const hasBoundaryInfo = computed(() => {
                     <EmptyState
                         v-else
                         message="No site boundary data available."
-                    />
-                </template>
-            </DetailsSection>
-
-            <DetailsSection
-                section-title="Site Boundary Information"
-                variant="subsection"
-                :visible="true"
-                :class="{ 'empty-section': !hasBoundaryInfo }"
-            >
-                <template #sectionContent>
-                    <div v-if="hasBoundaryInfo">
-                        <dl>
-                            <dt>Accuracy Remarks</dt>
-                            <dd>
-                                {{
-                                    siteBoundary?.aliased_data.accuracy_remarks
-                                        ?.display_value
-                                }}
-                            </dd>
-                            <dt>Source Notes</dt>
-                            <dd>
-                                {{
-                                    siteBoundary?.aliased_data.source_notes
-                                        ?.display_value
-                                }}
-                            </dd>
-                            <div
-                                v-if="
-                                    siteBoundary?.aliased_data?.latest_edit_type
-                                        ?.node_value
-                                "
-                            >
-                                <dt>Latest Edit Type</dt>
-                                <dd>
-                                    {{
-                                        siteBoundary?.aliased_data
-                                            ?.latest_edit_type?.display_value
-                                    }}
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
-                    <EmptyState
-                        v-else
-                        message="No site boundary information available."
                     />
                 </template>
             </DetailsSection>

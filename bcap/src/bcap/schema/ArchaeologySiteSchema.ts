@@ -9,12 +9,24 @@ import type { StringValue } from "@/arches_component_lab/datatypes/string/types.
 import type { ResourceInstanceValue } from "@/arches_component_lab/datatypes/resource-instance/types.ts";
 import type { FileListValue } from "@/arches_component_lab/datatypes/file-list/types.ts";
 
+// New interface for individual spatial accuracy entries
+export interface SpatialAccuracyEntry extends AliasedTileData {
+    aliased_data: {
+        edit_type?: AliasedNodeData;
+        accuracy_remarks?: AliasedNodeData;
+        edited_on?: AliasedNodeData;
+        edited_by?: AliasedNodeData;
+    };
+}
+
 export interface SiteBoundaryTile extends AliasedTileData {
     aliased_data: {
         site_boundary?: AliasedNodeData;
         latest_edit_type?: AliasedNodeData;
         source_notes?: AliasedNodeData;
         accuracy_remarks?: AliasedNodeData;
+        spatial_accuracy_history?: SpatialAccuracyEntry[];
+        site_boundary_description?: AliasedNodeData;
     };
 }
 
