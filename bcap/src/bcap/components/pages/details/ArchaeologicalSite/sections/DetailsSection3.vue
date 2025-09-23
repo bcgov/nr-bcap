@@ -59,7 +59,7 @@ const hasSiteVisits = computed(() => {
                     </div>
                     <EmptyState
                         v-else
-                        message="No site visits recorded for this site."
+                        message="No site visits available for this site."
                     />
                 </template>
             </DetailsSection>

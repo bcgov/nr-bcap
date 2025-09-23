@@ -129,7 +129,7 @@ const hasRestrictedRemainsInfo = computed(() => {
                     </dl>
                     <EmptyState
                         v-else
-                        message="No restricted ancestral remains information recorded."
+                        message="No restricted ancestral remains information available."
                     />
                 </template>
             </DetailsSection>

@@ -259,7 +259,7 @@ const parentSite = computed(() => {
                     </div>
                     <EmptyState
                         v-else
-                        message="No current alerts recorded."
+                        message="No current alerts available."
                     />
                 </template>
             </DetailsSection>
@@ -287,7 +287,7 @@ const parentSite = computed(() => {
                     </div>
                     <EmptyState
                         v-else
-                        message="No related sites recorded."
+                        message="No related sites available."
                     />
                 </template>
             </DetailsSection>
@@ -307,7 +307,7 @@ const parentSite = computed(() => {
                     />
                     <EmptyState
                         v-else
-                        message="No authority information recorded."
+                        message="No authority information available."
                     />
                 </template>
             </DetailsSection>
@@ -353,7 +353,7 @@ const parentSite = computed(() => {
                             />
                             <EmptyState
                                 v-else
-                                message="No site names recorded."
+                                message="No site names available."
                             />
                         </template>
                     </DetailsSection>

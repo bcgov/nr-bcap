@@ -135,7 +135,7 @@ const siteVisitDetailsColumns = [
                     </div>
                     <EmptyState
                         v-else
-                        message="No site form authors recorded."
+                        message="No site form authors available."
                     />
                 </template>
             </DetailsSection>

@@ -98,7 +98,7 @@ const newNameColumns = [
                     </div>
                     <EmptyState
                         v-else
-                        message="No new site names recorded."
+                        message="No new site names available."
                     />
                 </template>
             </DetailsSection>

@@ -267,7 +267,7 @@ const hasOrganizations = computed(() => {
                     />
                     <EmptyState
                         v-else
-                        message="No associated organizations recorded."
+                        message="No associated organizations available."
                     />
                 </template>
             </DetailsSection>

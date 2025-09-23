@@ -274,7 +274,7 @@ const hasConvictions = computed(() => {
                             />
                             <EmptyState
                                 v-else
-                                message="No HCA contraventions recorded."
+                                message="No HCA contraventions available."
                             />
                         </template>
                     </DetailsSection>
@@ -294,7 +294,7 @@ const hasConvictions = computed(() => {
                             />
                             <EmptyState
                                 v-else
-                                message="No HCA convictions recorded."
+                                message="No HCA convictions available."
                             />
                         </template>
                     </DetailsSection>
