@@ -1,7 +1,7 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from "@/arches_component_lab/types.ts";
+} from '@/arches_component_lab/types.ts';
 
 export interface ContributorTile extends AliasedTileData {
     aliased_data: {

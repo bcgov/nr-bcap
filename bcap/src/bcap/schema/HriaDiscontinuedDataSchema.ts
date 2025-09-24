@@ -1,17 +1,17 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from "@/arches_component_lab/types.ts";
-import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
-import type { NonLocalizedTextValue } from "@/arches_component_lab/datatypes/non-localized-text/types.ts";
-import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
-import type { ResourceInstanceListValue } from "@/arches_component_lab/datatypes/resource-instance-list/types.ts";
-import type { ReferenceSelectValue } from "@/arches_controlled_lists/datatypes/reference-select/types.js";
+} from '@/arches_component_lab/types.ts';
+import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
+import type { NonLocalizedTextValue } from '@/arches_component_lab/datatypes/non-localized-text/types.ts';
+import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
+import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
+import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 import type {
     NumberValue,
     BooleanValue,
     NullableReferenceSelectValue,
-} from "@/bcap/types.ts";
+} from '@/bcap/types.ts';
 
 export interface BiogeographyTile extends AliasedTileData {
     aliased_data: {

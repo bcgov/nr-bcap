@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import { useResourceData } from "@/bcap/composables/useResourceData.ts";
-import "primeicons/primeicons.css";
-import Section1 from "@/bcap/components/pages/details/Repository/sections/DetailsSection1.vue";
-import DataTable from "primevue/datatable";
-import type { DetailsData } from "@/bcap/types.ts";
-import type { RepositorySchema } from "@/bcap/schema/RepositorySchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import { useResourceData } from '@/bcap/composables/useResourceData.ts';
+import 'primeicons/primeicons.css';
+import Section1 from '@/bcap/components/pages/details/Repository/sections/DetailsSection1.vue';
+import DataTable from 'primevue/datatable';
+import type { DetailsData } from '@/bcap/types.ts';
+import type { RepositorySchema } from '@/bcap/schema/RepositorySchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -15,13 +15,13 @@ const props = withDefaults(
         forceCollapsed?: boolean | undefined;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 const { data: current, loading } = useResourceData<RepositorySchema>(
-    "repository",
+    'repository',
     resourceId,
 );
 </script>

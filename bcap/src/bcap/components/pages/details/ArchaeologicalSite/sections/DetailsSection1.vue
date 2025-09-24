@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import "primeicons/primeicons.css";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import 'primeicons/primeicons.css';
 import type {
     ArchaeologySiteSchema,
     SiteBoundaryTile,
-} from "@/bcap/schema/ArchaeologySiteSchema.ts";
+} from '@/bcap/schema/ArchaeologySiteSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -16,7 +16,7 @@ const props = withDefaults(
     }>(),
     {
         loading: false,
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 

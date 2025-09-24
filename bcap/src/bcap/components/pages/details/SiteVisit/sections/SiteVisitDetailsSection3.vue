@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -14,7 +14,7 @@ const props = withDefaults(
         loading?: boolean;
         visible?: boolean;
     }>(),
-    { sectionTitle: "3. Site Visit Details", visible: true, loading: false },
+    { sectionTitle: '3. Site Visit Details', visible: true, loading: false },
 );
 
 const details = computed(() => props.data?.aliased_data?.site_visit_details);
@@ -44,23 +44,23 @@ const hasSiteFormAuthors = computed(() => {
 });
 
 const teamColumns = [
-    { field: "team_member", label: "Name" },
-    { field: "member_roles", label: "Role(s)" },
-    { field: "was_on_site", label: "On Site" },
+    { field: 'team_member', label: 'Name' },
+    { field: 'member_roles', label: 'Role(s)' },
+    { field: 'was_on_site', label: 'On Site' },
 ];
 
 const siteVisitDetailsColumns = [
-    { field: "site_visit_type", label: "Site Visit Type" },
-    { field: "last_date_of_site_visit", label: "Last Date On Site" },
-    { field: "project_description", label: "Site Visit Description" },
-    { field: "permitted", label: "Permitted" },
-    { field: "permit_number", label: "Permit Number" },
-    { field: "hca_permit_type", label: "Permit Type" },
-    { field: "permit_holder", label: "Permit Holder" },
-    { field: "affiliation", label: "Affiliation" },
-    { field: "issuing_agency", label: "Issuing Agency" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'site_visit_type', label: 'Site Visit Type' },
+    { field: 'last_date_of_site_visit', label: 'Last Date On Site' },
+    { field: 'project_description', label: 'Site Visit Description' },
+    { field: 'permitted', label: 'Permitted' },
+    { field: 'permit_number', label: 'Permit Number' },
+    { field: 'hca_permit_type', label: 'Permit Type' },
+    { field: 'permit_holder', label: 'Permit Holder' },
+    { field: 'affiliation', label: 'Affiliation' },
+    { field: 'issuing_agency', label: 'Issuing Agency' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 </script>
 

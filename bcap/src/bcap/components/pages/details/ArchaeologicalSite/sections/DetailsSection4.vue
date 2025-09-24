@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import "primeicons/primeicons.css";
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import 'primeicons/primeicons.css';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -17,7 +17,7 @@ const props = withDefaults(
         forceCollapsed?: boolean;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -38,43 +38,43 @@ const locationAndAccess = computed(() => {
 });
 
 const biogeographyColumns = [
-    { field: "biogeography_type", label: "Type" },
-    { field: "biogeography_name", label: "Name" },
-    { field: "biogeography_description", label: "Description" },
+    { field: 'biogeography_type', label: 'Type' },
+    { field: 'biogeography_name', label: 'Name' },
+    { field: 'biogeography_description', label: 'Description' },
 ];
 
 const tenureColumns = [
-    { field: "tenure_type", label: "Tenure Type" },
-    { field: "tenure_description", label: "Tenure Description" },
+    { field: 'tenure_type', label: 'Tenure Type' },
+    { field: 'tenure_description', label: 'Tenure Description' },
 ];
 
 const discontinuedTenureColumns = [
-    { field: "jurisdiction", label: "Jurisdiction" },
-    { field: "tenure_reserves_type", label: "Tenure/Reserves Type" },
-    { field: "description", label: "Description" },
-    { field: "tenure_remarks", label: "Tenure Remarks" },
-    { field: "modified_on", label: "Modified On" },
-    { field: "modified_by", label: "Modified By" },
+    { field: 'jurisdiction', label: 'Jurisdiction' },
+    { field: 'tenure_reserves_type', label: 'Tenure/Reserves Type' },
+    { field: 'description', label: 'Description' },
+    { field: 'tenure_remarks', label: 'Tenure Remarks' },
+    { field: 'modified_on', label: 'Modified On' },
+    { field: 'modified_by', label: 'Modified By' },
 ];
 
 const tenureRemarksColumns = [
-    { field: "tenure_remarks", label: "Tenure Remarks" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'tenure_remarks', label: 'Tenure Remarks' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 
 const discontinuedAddressColumns = [
-    { field: "street_number", label: "Street Number" },
-    { field: "street_name", label: "Street Name" },
-    { field: "city", label: "City" },
-    { field: "postal_code", label: "Postal Code" },
-    { field: "pid", label: "PID" },
-    { field: "pin", label: "PIN" },
-    { field: "legal_type", label: "Legal Type" },
-    { field: "legal_number", label: "Legal Number" },
-    { field: "legal_description", label: "Legal Description" },
-    { field: "modified_on", label: "Modified On" },
-    { field: "modified_by", label: "Modified By" },
+    { field: 'street_number', label: 'Street Number' },
+    { field: 'street_name', label: 'Street Name' },
+    { field: 'city', label: 'City' },
+    { field: 'postal_code', label: 'Postal Code' },
+    { field: 'pid', label: 'PID' },
+    { field: 'pin', label: 'PIN' },
+    { field: 'legal_type', label: 'Legal Type' },
+    { field: 'legal_number', label: 'Legal Number' },
+    { field: 'legal_description', label: 'Legal Description' },
+    { field: 'modified_on', label: 'Modified On' },
+    { field: 'modified_by', label: 'Modified By' },
 ];
 
 const hasCoordinates = computed(() => {

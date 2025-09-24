@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{

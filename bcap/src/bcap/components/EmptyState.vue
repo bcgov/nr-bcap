@@ -4,7 +4,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    message: "No data found",
+    message: 'No data found',
 });
 </script>
 

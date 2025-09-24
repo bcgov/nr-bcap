@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -45,62 +45,62 @@ const hasHriaChronology = computed(() => hriaChronologyRows.value.length > 0);
 const hasDisturbance = computed(() => disturbRows.value.length > 0);
 
 const cultureColumns = [
-    { field: "archaeological_culture", label: "Archaeological Culture Name" },
-    { field: "culture_remarks", label: "Remarks" },
+    { field: 'archaeological_culture', label: 'Archaeological Culture Name' },
+    { field: 'culture_remarks', label: 'Remarks' },
 ];
 
 const featureColumns = [
-    { field: "archaeological_feature", label: "Feature Type" },
-    { field: "feature_count", label: "# of Features" },
-    { field: "feature_remarks", label: "Feature Remarks" },
+    { field: 'archaeological_feature', label: 'Feature Type' },
+    { field: 'feature_count', label: '# of Features' },
+    { field: 'feature_remarks', label: 'Feature Remarks' },
 ];
 
 const materialColumns = [
-    { field: "cultural_material_type", label: "Material Type" },
-    { field: "cultural_material_status", label: "Status" },
-    { field: "cultural_material_details", label: "Details" },
-    { field: "number_of_artifacts", label: "# of Artifacts" },
-    { field: "repository", label: "Repository" },
+    { field: 'cultural_material_type', label: 'Material Type' },
+    { field: 'cultural_material_status', label: 'Status' },
+    { field: 'cultural_material_details', label: 'Details' },
+    { field: 'number_of_artifacts', label: '# of Artifacts' },
+    { field: 'repository', label: 'Repository' },
 ];
 
-const stratColumns = [{ field: "stratigraphy", label: "Stratigraphy" }];
+const stratColumns = [{ field: 'stratigraphy', label: 'Stratigraphy' }];
 
 const chronologyColumns = [
-    { field: "determination_method", label: "Method" },
-    { field: "information_source", label: "Source" },
-    { field: "chronology_remarks", label: "Chronology Remarks" },
-    { field: "start_year", label: "From Date" },
-    { field: "start_year_qualifier", label: "From Date Qualifier" },
-    { field: "start_year_calendar", label: "From Date Calendar" },
-    { field: "end_year", label: "To Date" },
-    { field: "end_year_qualifier", label: "To Date Qualifier" },
-    { field: "end_year_calendar", label: "To Date Calendar" },
+    { field: 'determination_method', label: 'Method' },
+    { field: 'information_source', label: 'Source' },
+    { field: 'chronology_remarks', label: 'Chronology Remarks' },
+    { field: 'start_year', label: 'From Date' },
+    { field: 'start_year_qualifier', label: 'From Date Qualifier' },
+    { field: 'start_year_calendar', label: 'From Date Calendar' },
+    { field: 'end_year', label: 'To Date' },
+    { field: 'end_year_qualifier', label: 'To Date Qualifier' },
+    { field: 'end_year_calendar', label: 'To Date Calendar' },
 ];
 
 const hriaChronologyColumns = [
-    { field: "determination_method", label: "Method" },
-    { field: "information_source", label: "Source" },
-    { field: "chronology_remarks", label: "Chronology Remarks" },
-    { field: "start_year", label: "From Date" },
-    { field: "start_year_qualifier", label: "From Date Qualifier" },
-    { field: "start_year_calendar", label: "From Date Calendar" },
-    { field: "end_year", label: "To Date" },
-    { field: "end_year_qualifier", label: "To Date Qualifier" },
-    { field: "end_year_calendar", label: "To Date Calendar" },
-    { field: "rcd_unadjusted", label: "RCD Unadjusted" },
-    { field: "rcd_unadjusted_var", label: "RCD Unadjusted Var (+/-)" },
-    { field: "rcd_adjusted", label: "RCD Adjusted" },
-    { field: "rcd_adjusted_var", label: "RCD Adjusted Var (+/-)" },
-    { field: "rcd_lab_code", label: "RCD Lab Code" },
-    { field: "rcd_lab_number", label: "RCD Lab Number" },
-    { field: "modified_on", label: "Modified On" },
-    { field: "modified_by", label: "Modified By" },
+    { field: 'determination_method', label: 'Method' },
+    { field: 'information_source', label: 'Source' },
+    { field: 'chronology_remarks', label: 'Chronology Remarks' },
+    { field: 'start_year', label: 'From Date' },
+    { field: 'start_year_qualifier', label: 'From Date Qualifier' },
+    { field: 'start_year_calendar', label: 'From Date Calendar' },
+    { field: 'end_year', label: 'To Date' },
+    { field: 'end_year_qualifier', label: 'To Date Qualifier' },
+    { field: 'end_year_calendar', label: 'To Date Calendar' },
+    { field: 'rcd_unadjusted', label: 'RCD Unadjusted' },
+    { field: 'rcd_unadjusted_var', label: 'RCD Unadjusted Var (+/-)' },
+    { field: 'rcd_adjusted', label: 'RCD Adjusted' },
+    { field: 'rcd_adjusted_var', label: 'RCD Adjusted Var (+/-)' },
+    { field: 'rcd_lab_code', label: 'RCD Lab Code' },
+    { field: 'rcd_lab_number', label: 'RCD Lab Number' },
+    { field: 'modified_on', label: 'Modified On' },
+    { field: 'modified_by', label: 'Modified By' },
 ];
 
 const disturbColumns = [
-    { field: "disturbance_period", label: "When" },
-    { field: "disturbance_cause", label: "Cause of Disturbance" },
-    { field: "disturbance_remarks", label: "Disturbance Remarks" },
+    { field: 'disturbance_period', label: 'When' },
+    { field: 'disturbance_cause', label: 'Cause of Disturbance' },
+    { field: 'disturbance_remarks', label: 'Disturbance Remarks' },
 ];
 </script>
 

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import { useHierarchicalData } from "@/bcap/composables/useHierarchicalData.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from "@/arches_component_lab/types.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import "primeicons/primeicons.css";
-import type { IdentificationAndRegistrationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
+} from '@/arches_component_lab/types.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import 'primeicons/primeicons.css';
+import type { IdentificationAndRegistrationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -21,7 +21,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -40,51 +40,51 @@ const currentHriaData = computed<HriaDiscontinuedDataSchema | undefined>(
 );
 
 const id_fields = [
-    "borden_number",
-    "registration_date",
-    "registration_status",
-    "parcel_owner_type",
-    "register_type",
-    "site_creation_date",
+    'borden_number',
+    'registration_date',
+    'registration_status',
+    'parcel_owner_type',
+    'register_type',
+    'site_creation_date',
 ] as const;
 
 const siteDecisionColumns = [
-    { field: "decision_date", label: "Decision Date" },
-    { field: "decision_made_by", label: "Decision Maker" },
-    { field: "site_decision", label: "Decision" },
-    { field: "decision_criteria", label: "Criteria" },
-    { field: "decision_description", label: "Description" },
-    { field: "recommendation_date", label: "Recommended On" },
-    { field: "recommended_by", label: "Recommended By" },
+    { field: 'decision_date', label: 'Decision Date' },
+    { field: 'decision_made_by', label: 'Decision Maker' },
+    { field: 'site_decision', label: 'Decision' },
+    { field: 'decision_criteria', label: 'Criteria' },
+    { field: 'decision_description', label: 'Description' },
+    { field: 'recommendation_date', label: 'Recommended On' },
+    { field: 'recommended_by', label: 'Recommended By' },
 ];
 
 const authorityColumns = [
-    { field: "responsible_government", label: "Government" },
-    { field: "legal_instrument", label: "Legal Instrument" },
-    { field: "act_section", label: "Act/Section" },
-    { field: "protection_type", label: "Protection Type" },
-    { field: "reference_number", label: "Reference #" },
-    { field: "authority_start_date", label: "Start Date" },
-    { field: "authority_end_date", label: "Expiry Date" },
-    { field: "authority_description", label: "Description" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'responsible_government', label: 'Government' },
+    { field: 'legal_instrument', label: 'Legal Instrument' },
+    { field: 'act_section', label: 'Act/Section' },
+    { field: 'protection_type', label: 'Protection Type' },
+    { field: 'reference_number', label: 'Reference #' },
+    { field: 'authority_start_date', label: 'Start Date' },
+    { field: 'authority_end_date', label: 'Expiry Date' },
+    { field: 'authority_description', label: 'Description' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 
 const siteNamesColumns = [
-    { field: "name", label: "Site Name" },
-    { field: "name_type", label: "Site Name Type" },
-    { field: "name_remarks", label: "Site Name Remarks" },
-    { field: "assigned_or_reported_date", label: "Date Assigned or Reported" },
-    { field: "assigned_or_reported_by", label: "Assigned or Reported By" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'name', label: 'Site Name' },
+    { field: 'name_type', label: 'Site Name Type' },
+    { field: 'name_remarks', label: 'Site Name Remarks' },
+    { field: 'assigned_or_reported_date', label: 'Date Assigned or Reported' },
+    { field: 'assigned_or_reported_by', label: 'Assigned or Reported By' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 
 type IdFieldKey = (typeof id_fields)[number];
 
 const labelize = (key: string) =>
-    key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 const decisionData = computed(() => currentData.value?.site_decision);
 
@@ -92,14 +92,14 @@ const {
     processedData: decisionTableData,
     isProcessing: isProcessingDecisions,
 } = useHierarchicalData(decisionData, {
-    sourceField: "site_decision",
-    hierarchicalFields: ["site_decision", "decision_criteria"],
+    sourceField: 'site_decision',
+    hierarchicalFields: ['site_decision', 'decision_criteria'],
     flatFields: [
-        "decision_date",
-        "decision_made_by",
-        "decision_description",
-        "recommendation_date",
-        "recommended_by",
+        'decision_date',
+        'decision_made_by',
+        'decision_description',
+        'recommendation_date',
+        'recommended_by',
     ],
 });
 

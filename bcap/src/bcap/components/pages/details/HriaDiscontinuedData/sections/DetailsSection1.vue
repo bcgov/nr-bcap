@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
-import "primeicons/primeicons.css";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
@@ -15,7 +15,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -24,24 +24,24 @@ const currentData = computed(() => {
 });
 
 const jurisdictionTenureColumns = [
-    { field: "site_jurisdiction", label: "Site Jurisdiction" },
-    { field: "tenure_type", label: "Tenure Type" },
-    { field: "tenure_identifier", label: "Tenure Identifier" },
-    { field: "tenure_remarks", label: "Tenure Remarks" },
-    { field: "jurisdiction_entered_date", label: "Entered Date" },
-    { field: "jurisdiction_entered_by", label: "Entered By" },
+    { field: 'site_jurisdiction', label: 'Site Jurisdiction' },
+    { field: 'tenure_type', label: 'Tenure Type' },
+    { field: 'tenure_identifier', label: 'Tenure Identifier' },
+    { field: 'tenure_remarks', label: 'Tenure Remarks' },
+    { field: 'jurisdiction_entered_date', label: 'Entered Date' },
+    { field: 'jurisdiction_entered_by', label: 'Entered By' },
 ];
 
 const chronologyColumns = [
-    { field: "determination_method", label: "Method" },
-    { field: "start_year", label: "Start Year" },
-    { field: "start_year_qualifier", label: "Start Qualifier" },
-    { field: "start_year_calendar", label: "Start Calendar" },
-    { field: "end_year", label: "End Year" },
-    { field: "end_year_qualifier", label: "End Qualifier" },
-    { field: "end_year_calendar", label: "End Calendar" },
-    { field: "information_source", label: "Source" },
-    { field: "chronology_remarks", label: "Remarks" },
+    { field: 'determination_method', label: 'Method' },
+    { field: 'start_year', label: 'Start Year' },
+    { field: 'start_year_qualifier', label: 'Start Qualifier' },
+    { field: 'start_year_calendar', label: 'Start Calendar' },
+    { field: 'end_year', label: 'End Year' },
+    { field: 'end_year_qualifier', label: 'End Qualifier' },
+    { field: 'end_year_calendar', label: 'End Calendar' },
+    { field: 'information_source', label: 'Source' },
+    { field: 'chronology_remarks', label: 'Remarks' },
 ];
 
 const hasAdifRecord = computed(() => {

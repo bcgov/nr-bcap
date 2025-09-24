@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import type {
     HcaPermitSchema,
     PermitIdentificationTile,
-} from "@/bcap/schema/HcaPermitSchema.ts";
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
-import "primeicons/primeicons.css";
+} from '@/bcap/schema/HcaPermitSchema.ts';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
@@ -17,7 +17,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 

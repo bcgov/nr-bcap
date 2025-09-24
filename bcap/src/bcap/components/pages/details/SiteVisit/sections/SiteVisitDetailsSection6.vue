@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
@@ -30,15 +30,15 @@ const hasRemarks = computed(() => {
 });
 
 const recColumns = [
-    { field: "recorders_recommendation", label: "Recorder's Recommendations" },
+    { field: 'recorders_recommendation', label: "Recorder's Recommendations" },
 ];
 
 const generalRemarkColumns = [
-    { field: "remark_date", label: "Date" },
-    { field: "remark", label: "General Remarks" },
-    { field: "remark_source", label: "Source" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'remark_date', label: 'Date' },
+    { field: 'remark', label: 'General Remarks' },
+    { field: 'remark_source', label: 'Source' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 </script>
 

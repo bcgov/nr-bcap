@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import {
     useResourceData,
     useRelatedResourceData,
-} from "@/bcap/composables/useResourceData.ts";
-import "primeicons/primeicons.css";
-import Section1 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue";
-import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
-import Section3 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection3.vue";
-import Section4 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection4.vue";
-import Section5 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection5.vue";
-import Section6 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue";
-import Section7 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection7.vue";
-import Section8 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue";
-import Section9 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue";
-import type { DetailsData } from "@/bcap/types.ts";
-import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
-import DataTable from "primevue/datatable";
+} from '@/bcap/composables/useResourceData.ts';
+import 'primeicons/primeicons.css';
+import Section1 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue';
+import Section2 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue';
+import Section3 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection3.vue';
+import Section4 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection4.vue';
+import Section5 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection5.vue';
+import Section6 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue';
+import Section7 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection7.vue';
+import Section8 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue';
+import Section9 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue';
+import type { DetailsData } from '@/bcap/types.ts';
+import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import DataTable from 'primevue/datatable';
 
 const props = withDefaults(
     defineProps<{
@@ -28,21 +28,21 @@ const props = withDefaults(
         forceCollapsed?: boolean | undefined;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
 const { data: currentData, loading: siteDataLoading } =
-    useResourceData<ArchaeologySiteSchema>("archaeological_site", resourceId);
+    useResourceData<ArchaeologySiteSchema>('archaeological_site', resourceId);
 
 const { data: siteVisitData, loading: siteVisitDataLoading } =
-    useRelatedResourceData<SiteVisitSchema>("site_visit", resourceId);
+    useRelatedResourceData<SiteVisitSchema>('site_visit', resourceId);
 
 const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
     useRelatedResourceData<HriaDiscontinuedDataSchema>(
-        "hria_discontinued_data",
+        'hria_discontinued_data',
         resourceId,
         true,
     );

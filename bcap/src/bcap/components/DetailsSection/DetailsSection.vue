@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import FieldSet from "primevue/fieldset";
-import ProgressSpinner from "primevue/progressspinner";
+import { computed, ref, watch } from 'vue';
+import FieldSet from 'primevue/fieldset';
+import ProgressSpinner from 'primevue/progressspinner';
 
 const props = defineProps<{
     sectionTitle: string;
     visible?: boolean;
     loading?: boolean;
-    variant?: "section" | "subsection";
+    variant?: 'section' | 'subsection';
     forceCollapsed?: boolean;
 }>();
 
 const sectionVisible = ref(props.visible ?? true);
 const isLoading = computed(() => props.loading ?? false);
-const componentVariant = computed(() => props.variant ?? "section");
+const componentVariant = computed(() => props.variant ?? 'section');
 
 watch(
     () => props.forceCollapsed,

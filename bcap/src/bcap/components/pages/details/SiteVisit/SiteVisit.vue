@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import {
     useResourceData,
     useRelatedResourceData,
-} from "@/bcap/composables/useResourceData.ts";
-import "primeicons/primeicons.css";
-import Section1 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection1.vue";
-import Section2 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection2.vue";
-import Section3 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue";
-import Section4 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection4.vue";
-import Section5 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection5.vue";
-import Section6 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection6.vue";
-import Section7 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection7.vue";
-import DataTable from "primevue/datatable";
-import type { DetailsData } from "@/bcap/types.ts";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
+} from '@/bcap/composables/useResourceData.ts';
+import 'primeicons/primeicons.css';
+import Section1 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection1.vue';
+import Section2 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection2.vue';
+import Section3 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue';
+import Section4 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection4.vue';
+import Section5 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection5.vue';
+import Section6 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection6.vue';
+import Section7 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection7.vue';
+import DataTable from 'primevue/datatable';
+import type { DetailsData } from '@/bcap/types.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -25,19 +25,19 @@ const props = withDefaults(
         forceCollapsed?: boolean | undefined;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
 const { data: current, loading } = useResourceData<SiteVisitSchema>(
-    "site_visit",
+    'site_visit',
     resourceId,
 );
 
 const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
-    "hria_discontinued_data",
+    'hria_discontinued_data',
     resourceId,
     true,
 );

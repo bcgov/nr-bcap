@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import "primeicons/primeicons.css";
-import type { RelatedDocumentsTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import 'primeicons/primeicons.css';
+import type { RelatedDocumentsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -14,7 +14,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -31,35 +31,35 @@ const relatedDocumentsData = computed(() => {
 });
 
 const referencesColumns = [
-    { field: "reference_type", label: "Reference Type" },
-    { field: "reference_title", label: "Title" },
-    { field: "publication_year", label: "Year" },
-    { field: "reference_authors", label: "Author(s)" },
-    { field: "reference_remarks", label: "Remarks" },
+    { field: 'reference_type', label: 'Reference Type' },
+    { field: 'reference_title', label: 'Title' },
+    { field: 'publication_year', label: 'Year' },
+    { field: 'reference_authors', label: 'Author(s)' },
+    { field: 'reference_remarks', label: 'Remarks' },
 ];
 
 const relatedDocumentsColumns = [
-    { field: "related_document_type", label: "Document Type" },
-    { field: "related_document_description", label: "Document Description" },
-    { field: "related_site_documents", label: "Document" },
+    { field: 'related_document_type', label: 'Document Type' },
+    { field: 'related_document_description', label: 'Document Description' },
+    { field: 'related_site_documents', label: 'Document' },
 ];
 
 const imagesColumns = [
-    { field: "image_type", label: "Image Type" },
-    { field: "repository", label: "Repository" },
-    { field: "photographer", label: "Photographer" },
-    { field: "image_description", label: "Description" },
-    { field: "image_caption", label: "Image Caption" },
-    { field: "image_date", label: "Image Date" },
-    { field: "modified_on", label: "Modified On" },
-    { field: "modified_by", label: "Modified By" },
+    { field: 'image_type', label: 'Image Type' },
+    { field: 'repository', label: 'Repository' },
+    { field: 'photographer', label: 'Photographer' },
+    { field: 'image_description', label: 'Description' },
+    { field: 'image_caption', label: 'Image Caption' },
+    { field: 'image_date', label: 'Image Date' },
+    { field: 'modified_on', label: 'Modified On' },
+    { field: 'modified_by', label: 'Modified By' },
 ];
 
 const otherMapsColumns = [
-    { field: "map_name", label: "Map Name" },
-    { field: "map_scale", label: "Map Scale" },
-    { field: "modified_on", label: "Modified On" },
-    { field: "modified_by", label: "Modified By" },
+    { field: 'map_name', label: 'Map Name' },
+    { field: 'map_scale', label: 'Map Scale' },
+    { field: 'modified_on', label: 'Modified On' },
+    { field: 'modified_by', label: 'Modified By' },
 ];
 
 const hasReferences = computed(() => {

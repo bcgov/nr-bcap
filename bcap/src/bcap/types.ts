@@ -1,10 +1,10 @@
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 import type {
     ReferenceSelectValue,
     ReferenceSelectNodeValue,
     ReferenceSelectDetails,
-} from "@/arches_controlled_lists/datatypes/reference-select/types.js";
+} from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
 export interface TileReference {
     resourceinstance_id: string;
@@ -34,7 +34,7 @@ export interface BooleanValue extends AliasedNodeData {
 export interface GeoJSONFeatureCollectionValue extends AliasedNodeData {
     display_value: string;
     node_value: {
-        type: "FeatureCollection";
+        type: 'FeatureCollection';
         features: unknown[];
     } | null;
     details: never[];
@@ -42,7 +42,7 @@ export interface GeoJSONFeatureCollectionValue extends AliasedNodeData {
 
 export type NullableReferenceSelectValue =
     | ReferenceSelectValue
-    | (Omit<ReferenceSelectValue, "node_value"> & {
+    | (Omit<ReferenceSelectValue, 'node_value'> & {
           node_value: ReferenceSelectNodeValue[] | null;
           details: ReferenceSelectDetails[] | [];
       });

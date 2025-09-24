@@ -1,8 +1,8 @@
-import { ref, watchEffect, type Ref } from "vue";
+import { ref, watchEffect, type Ref } from 'vue';
 import {
     getResourceData,
     getRelatedResourceData,
-} from "@/bcap/components/pages/api.ts";
+} from '@/bcap/components/pages/api.ts';
 
 export function useResourceData<T>(
     resourceType: string,

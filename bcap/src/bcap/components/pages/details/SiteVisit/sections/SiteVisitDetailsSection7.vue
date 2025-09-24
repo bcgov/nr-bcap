@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
@@ -44,24 +44,24 @@ const hasPhotos = computed(() => {
 });
 
 const referencesColumns = [
-    { field: "reference_type", label: "Reference Type" },
-    { field: "reference_title", label: "Title" },
-    { field: "publication_year", label: "Year" },
-    { field: "reference_authors", label: "Author(s)" },
-    { field: "reference_remarks", label: "Remarks" },
+    { field: 'reference_type', label: 'Reference Type' },
+    { field: 'reference_title', label: 'Title' },
+    { field: 'publication_year', label: 'Year' },
+    { field: 'reference_authors', label: 'Author(s)' },
+    { field: 'reference_remarks', label: 'Remarks' },
 ];
 
 const relatedDocumentsColumns = [
-    { field: "related_document_type", label: "Document Type" },
-    { field: "related_document_description", label: "Document Description" },
-    { field: "related_site_documents", label: "Document" },
+    { field: 'related_document_type', label: 'Document Type' },
+    { field: 'related_document_description', label: 'Document Description' },
+    { field: 'related_site_documents', label: 'Document' },
 ];
 
 const photosColumns = [
-    { field: "photo_title", label: "Photo Title" },
-    { field: "photo_description", label: "Description" },
-    { field: "photographer", label: "Photographer" },
-    { field: "photo_date", label: "Date" },
+    { field: 'photo_title', label: 'Photo Title' },
+    { field: 'photo_description', label: 'Description' },
+    { field: 'photographer', label: 'Photographer' },
+    { field: 'photo_date', label: 'Date' },
 ];
 </script>
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import type { RepositorySchema } from "@/bcap/schema/RepositorySchema.ts";
-import "primeicons/primeicons.css";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import type { RepositorySchema } from '@/bcap/schema/RepositorySchema.ts';
+import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
@@ -13,7 +13,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 

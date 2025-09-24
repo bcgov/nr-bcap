@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type {
     ContributorSchema,
     ContributorTile,
-} from "@/bcap/schema/ContributorSchema.ts";
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
-import "primeicons/primeicons.css";
+} from '@/bcap/schema/ContributorSchema.ts';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
@@ -18,7 +18,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -27,9 +27,9 @@ const currentData = computed<ContributorTile | undefined>(() => {
 });
 
 const organizationColumns = [
-    { field: "associated_organization", label: "Organization" },
-    { field: "start_date", label: "Start Date" },
-    { field: "end_date", label: "End Date" },
+    { field: 'associated_organization', label: 'Organization' },
+    { field: 'start_date', label: 'Start Date' },
+    { field: 'end_date', label: 'End Date' },
 ];
 
 const hasBasicInfo = computed(() => {

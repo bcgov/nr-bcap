@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
@@ -19,12 +19,12 @@ const hasRemains = computed(() => {
 });
 
 const remainsColumns = [
-    { field: "ancestral_remains_type", label: "Type" },
-    { field: "ancestral_remains_status", label: "Status" },
-    { field: "ancestral_remains_remarks", label: "Remarks" },
-    { field: "multiple_burials", label: "Multiple Burials" },
-    { field: "minimum_number_of_individuals", label: "Minimum # Individuals" },
-    { field: "ancestral_remains_repository", label: "Repository" },
+    { field: 'ancestral_remains_type', label: 'Type' },
+    { field: 'ancestral_remains_status', label: 'Status' },
+    { field: 'ancestral_remains_remarks', label: 'Remarks' },
+    { field: 'multiple_burials', label: 'Multiple Burials' },
+    { field: 'minimum_number_of_individuals', label: 'Minimum # Individuals' },
+    { field: 'ancestral_remains_repository', label: 'Repository' },
 ];
 </script>
 

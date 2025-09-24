@@ -2,12 +2,12 @@ import type {
     AliasedData,
     AliasedNodeData,
     AliasedTileData,
-} from "@/arches_component_lab/types.ts";
-import type { ReferenceSelectValue } from "@/arches_controlled_lists/datatypes/reference-select/types.ts";
-import type { DateValue } from "@/arches_component_lab/datatypes/date/types.ts";
-import type { StringValue } from "@/arches_component_lab/datatypes/string/types.ts";
-import type { ResourceInstanceValue } from "@/arches_component_lab/datatypes/resource-instance/types.ts";
-import type { FileListValue } from "@/arches_component_lab/datatypes/file-list/types.ts";
+} from '@/arches_component_lab/types.ts';
+import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
+import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
+import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
+import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
+import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
 
 // New interface for individual spatial accuracy entries
 export interface SpatialAccuracyEntry extends AliasedTileData {

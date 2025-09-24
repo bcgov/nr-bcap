@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import "primeicons/primeicons.css";
-import type { RemarksAndRestrictedInformationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import 'primeicons/primeicons.css';
+import type { RemarksAndRestrictedInformationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -16,7 +16,7 @@ const props = withDefaults(
     }>(),
     {
         loading: false,
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 
@@ -29,33 +29,33 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
 );
 
 const generalRemarkColumns = [
-    { field: "general_remark_date", label: "Date" },
-    { field: "general_remark", label: "General Remarks" },
-    { field: "general_remark_source", label: "Source" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'general_remark_date', label: 'Date' },
+    { field: 'general_remark', label: 'General Remarks' },
+    { field: 'general_remark_source', label: 'Source' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 
 const restrictedRemarkColumns = [
-    { field: "restricted_remark", label: "Restricted Remarks" },
-    { field: "restricted_entry_date", label: "Entered On" },
-    { field: "restricted_person", label: "Entered By" },
+    { field: 'restricted_remark', label: 'Restricted Remarks' },
+    { field: 'restricted_entry_date', label: 'Entered On' },
+    { field: 'restricted_person', label: 'Entered By' },
 ];
 
 const hcaContraventionColumns = [
-    { field: "inventory_remarks", label: "Inventory Remarks" },
-    { field: "address", label: "Address" },
-    { field: "pid", label: "PID" },
-    { field: "nros_file_number", label: "NROS File #" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'inventory_remarks', label: 'Inventory Remarks' },
+    { field: 'address', label: 'Address' },
+    { field: 'pid', label: 'PID' },
+    { field: 'nros_file_number', label: 'NROS File #' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 
 const convictionColumns = [
-    { field: "conviction_date", label: "Conviction Date" },
-    { field: "inventory_remarks", label: "Inventory Remarks" },
-    { field: "entered_on", label: "Entered On" },
-    { field: "entered_by", label: "Entered By" },
+    { field: 'conviction_date', label: 'Conviction Date' },
+    { field: 'inventory_remarks', label: 'Inventory Remarks' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 
 const keywordsData = computed(() => {
