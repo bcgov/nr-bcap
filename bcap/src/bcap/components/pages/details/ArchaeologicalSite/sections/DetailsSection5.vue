@@ -294,7 +294,10 @@ const spatialAccuracyColumns = [
                 section-title="Spatial Accuracy"
                 variant="subsection"
                 :visible="true"
-                :class="{ 'empty-section': !hasSpatialAccuracy && !hasSpatialAccuracyHistory }"
+                :class="{
+                    'empty-section':
+                        !hasSpatialAccuracy && !hasSpatialAccuracyHistory,
+                }"
             >
                 <template #sectionContent>
                     <div v-if="hasSpatialAccuracy || hasSpatialAccuracyHistory">
@@ -309,7 +312,8 @@ const spatialAccuracyColumns = [
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data.aliased_data.latest_edit_type,
+                                                props.data.aliased_data
+                                                    .latest_edit_type,
                                             )
                                         "
                                     >
@@ -318,13 +322,15 @@ const spatialAccuracyColumns = [
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data.aliased_data.latest_edit_type,
+                                                props.data.aliased_data
+                                                    .latest_edit_type,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data.aliased_data.latest_edit_type,
+                                                props.data.aliased_data
+                                                    .latest_edit_type,
                                             )
                                         }}
                                     </dd>
@@ -332,7 +338,8 @@ const spatialAccuracyColumns = [
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data.aliased_data.accuracy_remarks,
+                                                props.data.aliased_data
+                                                    .accuracy_remarks,
                                             )
                                         "
                                     >
@@ -341,13 +348,15 @@ const spatialAccuracyColumns = [
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data.aliased_data.accuracy_remarks,
+                                                props.data.aliased_data
+                                                    .accuracy_remarks,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data.aliased_data.accuracy_remarks,
+                                                props.data.aliased_data
+                                                    .accuracy_remarks,
                                             )
                                         }}
                                     </dd>
@@ -363,12 +372,17 @@ const spatialAccuracyColumns = [
                             section-title="Historical Spatial Accuracy"
                             variant="subsection"
                             :visible="true"
-                            :class="{ 'empty-section': !hasSpatialAccuracyHistory }"
+                            :class="{
+                                'empty-section': !hasSpatialAccuracyHistory,
+                            }"
                         >
                             <template #sectionContent>
                                 <StandardDataTable
                                     v-if="hasSpatialAccuracyHistory"
-                                    :table-data="props.data.aliased_data.spatial_accuracy_history ?? []"
+                                    :table-data="
+                                        props.data.aliased_data
+                                            .spatial_accuracy_history ?? []
+                                    "
                                     :column-definitions="spatialAccuracyColumns"
                                     :initial-sort-field-index="2"
                                 />
