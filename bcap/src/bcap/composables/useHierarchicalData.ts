@@ -1,8 +1,8 @@
-import { ref, watch, type Ref } from "vue";
+import { ref, watch, type Ref } from 'vue';
 import type {
     AliasedTileData,
     AliasedNodeData,
-} from "@/arches_component_lab/types.ts";
+} from '@/arches_component_lab/types.ts';
 
 interface HierarchicalFieldConfig {
     sourceField: string;
@@ -89,7 +89,7 @@ export function useHierarchicalData(
                         config.hierarchicalFields.forEach((field, idx) => {
                             aliasedData[field] = {
                                 node_value: hierarchy[idx] || null,
-                                display_value: hierarchy[idx] || "",
+                                display_value: hierarchy[idx] || '',
                                 details: [],
                             };
                         });
@@ -99,7 +99,7 @@ export function useHierarchicalData(
 
                             aliasedData[field] = fieldData || {
                                 node_value: null,
-                                display_value: "",
+                                display_value: '',
                                 details: [],
                             };
                         });

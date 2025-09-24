@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import { computed } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
@@ -15,7 +15,7 @@ const recRows = computed(
             ?.recommendation || [],
 );
 const recColumns = [
-    { field: "recorders_recommendation", label: "Recommendation" },
+    { field: 'recorders_recommendation', label: 'Recommendation' },
 ];
 const remarkRows = computed(
     () =>
@@ -23,9 +23,9 @@ const remarkRows = computed(
             ?.general_remark || [],
 );
 const remarkColumns = [
-    { field: "remark_source", label: "Source" },
-    { field: "remark_date", label: "Date" },
-    { field: "remark", label: "Remark" },
+    { field: 'remark_source', label: 'Source' },
+    { field: 'remark_date', label: 'Date' },
+    { field: 'remark', label: 'Remark' },
 ];
 </script>
 

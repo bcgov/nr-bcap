@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import { ref, watchEffect } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import {
     getRelatedResourceData,
     getResourceData,
-} from "@/bcap/components/pages/api.ts";
-import "primeicons/primeicons.css";
-import Section1 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue";
-import Section2 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue";
-import Section3 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection3.vue";
-import Section6 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue";
-import Section8 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue";
-import Section9 from "@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue";
-import type { DetailsData } from "@/bcap/types.ts";
-import type { ArchaeologySiteSchema } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+} from '@/bcap/components/pages/api.ts';
+import 'primeicons/primeicons.css';
+import Section1 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection1.vue';
+import Section2 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection2.vue';
+import Section3 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection3.vue';
+import Section6 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection6.vue';
+import Section8 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue';
+import Section9 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue';
+import type { DetailsData } from '@/bcap/types.ts';
+import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 
-import DataTable from "primevue/datatable";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
+import DataTable from 'primevue/datatable';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 type LangCode = string;
 interface Descriptor {
@@ -34,8 +34,8 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        resourceDescriptors: () => ({ en: { name: "Undefined" } }),
-        languageCode: "en",
+        resourceDescriptors: () => ({ en: { name: 'Undefined' } }),
+        languageCode: 'en',
     },
 );
 type SiteDataCache = {
@@ -66,19 +66,19 @@ watchEffect(async () => {
         };
     }
 
-    getResourceData("archaeological_site", resourceId).then((data) => {
+    getResourceData('archaeological_site', resourceId).then((data) => {
         resourceCache.value[resourceId].site = data as ArchaeologySiteSchema;
         currentData.value = (data ?? {}) as ArchaeologySiteSchema;
         siteDataLoading.value = false;
     });
 
-    getRelatedResourceData("site_visit", resourceId).then((data) => {
+    getRelatedResourceData('site_visit', resourceId).then((data) => {
         resourceCache.value[resourceId].site_visits = data as SiteVisitSchema[];
         siteVisitData.value = data as SiteVisitSchema[];
         siteVisitDataLoading.value = false;
     });
 
-    getRelatedResourceData("hria_discontinued_data", resourceId).then(
+    getRelatedResourceData('hria_discontinued_data', resourceId).then(
         (data) => {
             const hriaData: HriaDiscontinuedDataSchema =
                 data && data.length > 0

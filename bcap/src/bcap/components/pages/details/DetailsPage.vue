@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DetailsData } from "@/bcap/types.ts";
-import ArchaeologicalSite from "@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue";
-import SiteVisit from "@/bcap/components/pages/details/SiteVisit/SiteVisit.vue";
+import type { DetailsData } from '@/bcap/types.ts';
+import ArchaeologicalSite from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue';
+import SiteVisit from '@/bcap/components/pages/details/SiteVisit/SiteVisit.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -9,7 +9,7 @@ const props = withDefaults(
         languageCode?: string;
     }>(),
     {
-        languageCode: "en",
+        languageCode: 'en',
     },
 );
 </script>

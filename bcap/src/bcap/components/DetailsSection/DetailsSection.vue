@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import FieldSet from "primevue/fieldset";
-import ProgressSpinner from "primevue/progressspinner";
+import { computed, ref } from 'vue';
+import FieldSet from 'primevue/fieldset';
+import ProgressSpinner from 'primevue/progressspinner';
 const props = defineProps<{
     sectionTitle: string;
     visible?: boolean;
