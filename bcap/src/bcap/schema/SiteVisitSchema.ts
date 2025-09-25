@@ -1,56 +1,21 @@
 // ---------- Imports ----------
-import type {
-    AliasedNodeData,
-    AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
 import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
 
-// Controlled list “reference / reference-list”
 import type {
-    ReferenceSelectValue,
-    ReferenceSelectNodeValue,
-    ReferenceSelectDetails,
-} from '@/arches_controlled_lists/datatypes/reference-select/types.js';
+    NumberValue,
+    BooleanValue,
+    GeoJSONFeatureCollectionValue,
+    NullableReferenceSelectValue,
+} from '@/bcap/types.ts';
 
-// ---------- Small local helpers ----------
-export interface NumberValue extends AliasedNodeData {
-    display_value: string;
-    node_value: number | null;
-    details: never[];
-}
+import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
-export interface BooleanValue extends AliasedNodeData {
-    display_value: string;
-    node_value: boolean | null;
-    details: never[];
-}
-
-export interface GeoJSONFeatureCollectionValue extends AliasedNodeData {
-    display_value: string;
-    node_value: {
-        type: 'FeatureCollection';
-        features: unknown[]; // supply a stricter Feature type if you have one
-    } | null;
-    details: never[];
-}
-
-// Some reference nodes can be null; keep your ReferenceSelectValue shape
-export type NullableReferenceSelectValue =
-    | ReferenceSelectValue
-    | (Omit<ReferenceSelectValue, 'node_value' | 'details'> & {
-          node_value: ReferenceSelectNodeValue[] | null;
-          details: ReferenceSelectDetails[] | [];
-      });
-
-// ====================================================================
-// Site Visit tiles (datatype-specific leaf nodes)
-// ====================================================================
-
-// --- site_visit_location ---
+// ---------- Site Visit Location ----------
 export interface SiteVisitLocationTile extends AliasedTileData {
     aliased_data: {
         source_notes: StringValue; // string (i18n)
@@ -214,6 +179,42 @@ export interface RemarksAndRecommendationsTile extends AliasedTileData {
     };
 }
 
+// --- references_and_documents ---
+export interface ReferencesTile extends AliasedTileData {
+    aliased_data: {
+        reference_type: ReferenceSelectValue;
+        reference_title: StringValue;
+        publication_year: StringValue;
+        reference_authors: StringValue;
+        reference_remarks: StringValue;
+    };
+}
+
+export interface RelatedDocumentsTile extends AliasedTileData {
+    aliased_data: {
+        related_document_type: ReferenceSelectValue;
+        related_document_description: StringValue;
+        related_site_documents: ResourceInstanceValue;
+    };
+}
+
+export interface PhotosTile extends AliasedTileData {
+    aliased_data: {
+        photo_title: StringValue;
+        photo_description: StringValue;
+        photographer: ResourceInstanceValue;
+        photo_date: DateValue;
+    };
+}
+
+export interface ReferencesAndDocumentsTile extends AliasedTileData {
+    aliased_data: {
+        references: ReferencesTile[];
+        related_documents: RelatedDocumentsTile[];
+        photos: PhotosTile[];
+    };
+}
+
 // ====================================================================
 // Root objects
 // ====================================================================
@@ -224,6 +225,7 @@ export interface SiteVisitAliasedDataRoot {
     site_visit_details: SiteVisitDetailsTile;
     archaeological_data: ArchaeologicalDataTile;
     remarks_and_recommendations: RemarksAndRecommendationsTile;
+    references_and_documents: ReferencesAndDocumentsTile;
 }
 
 export interface SiteVisitSchema {

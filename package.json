@@ -13,7 +13,7 @@
         "gettext:compile": "vue-gettext-compile",
         "prettier:check": "prettier  --check **/src",
         "prettier:fix": "prettier --write",
-        "prettier:fix:all": "npm run prettier:fix **/src",
+        "prettier:fix:all": "npm run prettier:fix --single-quote **/src",
         "ts:check": "vue-tsc --noEmit",
         "ts:watch": "vue-tsc --watch --noEmit",
         "start": "cross-env webpack serve --config ./webpack/webpack.config.dev.js",

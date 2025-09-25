@@ -1,40 +1,15 @@
 // ---------- Datatype-specific node values (from your bundles) ----------
-import type {
-    AliasedNodeData,
-    AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
 import type { NonLocalizedTextValue } from '@/arches_component_lab/datatypes/non-localized-text/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
-
-// Use the new reference / reference-list types exactly as provided:
+import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 import type {
-    ReferenceSelectValue,
-    ReferenceSelectNodeValue,
-    ReferenceSelectDetails,
-} from '@/arches_controlled_lists/datatypes/reference-select/types.js';
-
-// ---------- Local helpers for primitives not in the bundle ----------
-export interface NumberValue extends AliasedNodeData {
-    display_value: string;
-    node_value: number | null;
-    details: never[];
-}
-export interface BooleanValue extends AliasedNodeData {
-    display_value: string;
-    node_value: boolean | null;
-    details: never[];
-}
-
-// Some payloads return null for reference nodes; allow that while
-// keeping your ReferenceSelectValue structure.
-export type NullableReferenceSelectValue =
-    | ReferenceSelectValue
-    | (Omit<ReferenceSelectValue, 'node_value'> & {
-          node_value: ReferenceSelectNodeValue[] | null;
-          details: ReferenceSelectDetails[] | [];
-      });
+    NumberValue,
+    BooleanValue,
+    NullableReferenceSelectValue,
+} from '@/bcap/types.ts';
 
 // ====================================================================
 // Tiles specialized to THIS JSON (with datatype-specific leaf nodes)
@@ -50,8 +25,9 @@ export interface BiogeographyTile extends AliasedTileData {
         biogeography_description: StringValue; // string (i18n)
     };
 }
+
 // aliased_data.unreviewed_adif_record
-export interface UnreviewedAdifRecordTile {
+export interface UnreviewedAdifRecordTile extends AliasedTileData {
     aliased_data: {
         unreviewed_adif_record: BooleanValue; // boolean
         site_entered_by: NonLocalizedTextValue; // non-localized-string
@@ -81,7 +57,7 @@ export interface HriaJurisdictionAndTenureTile extends AliasedTileData {
 }
 
 // aliased_data.chronology[] (semantic)
-export interface ChronologyTile {
+export interface ChronologyTile extends AliasedTileData {
     aliased_data: {
         end_year_qualifier: NullableReferenceSelectValue; // reference (nullable in payload)
         end_year_calendar: ReferenceSelectValue; // reference
@@ -102,6 +78,7 @@ export interface ChronologyTile {
         modified_on: DateValue; // date
     };
 }
+
 // aliased_data.site_dimensions
 export interface SiteDimensionsTile extends AliasedTileData {
     aliased_data: {
@@ -115,23 +92,37 @@ export interface SiteDimensionsTile extends AliasedTileData {
         boundary_type: StringValue; // string (i18n)
     };
 }
+
+export interface DiscontinuedAddressAttributesTile extends AliasedTileData {
+    aliased_data: {
+        street_number: StringValue;
+        street_name: StringValue;
+        city: StringValue;
+        postal_code: StringValue;
+        discontinued_address_attributes?: DiscontinuedAddressAttributesTile[];
+        pid: StringValue;
+        pin: StringValue;
+        legal_type: StringValue;
+        legal_number: StringValue;
+        legal_description: StringValue;
+        modified_on: DateValue;
+        modified_by: NonLocalizedTextValue;
+    };
+}
+
 // ====================================================================
 // Top-level object for THIS JSON
 // ====================================================================
-export interface HriaDiscontinuedDataSchema {
-    resourceinstanceid: string;
-
+export interface HriaDiscontinuedDataSchema extends AliasedTileData {
     aliased_data: {
-        biogeography: BiogeographyTile;
-        unreviewed_adif_record: UnreviewedAdifRecordTile;
-        archaeological_site: ArchaeologicalSiteTile;
-
-        hria_jursidiction_and_tenure: HriaJurisdictionAndTenureTile[];
-        chronology: ChronologyTile[];
-        site_dimensions: SiteDimensionsTile;
+        biogeography?: BiogeographyTile;
+        unreviewed_adif_record?: UnreviewedAdifRecordTile;
+        archaeological_site?: ArchaeologicalSiteTile;
+        hria_jursidiction_and_tenure?: HriaJurisdictionAndTenureTile[];
+        chronology?: ChronologyTile[];
+        site_dimensions?: SiteDimensionsTile;
     };
 
-    // Extra metadata present in your payload
     graph_has_different_publication: boolean;
     name: string;
     descriptors: Record<

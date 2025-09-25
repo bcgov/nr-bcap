@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
-import { getResourceData } from '@/bcap/components/pages/api.ts';
+import {
+    useResourceData,
+    useRelatedResourceData,
+} from '@/bcap/composables/useResourceData.ts';
 import 'primeicons/primeicons.css';
 import Section1 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection1.vue';
 import Section2 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection2.vue';
@@ -9,43 +12,39 @@ import Section3 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVis
 import Section4 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection4.vue';
 import Section5 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection5.vue';
 import Section6 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection6.vue';
+import Section7 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection7.vue';
 import DataTable from 'primevue/datatable';
 import type { DetailsData } from '@/bcap/types.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
         data: DetailsData;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
-        resourceDescriptors: () => ({
-            en: { name: 'Undefined', map_popup: '', description: '' },
-        }),
         languageCode: 'en',
+        forceCollapsed: undefined,
     },
 );
 
-type Cache = Record<string, SiteVisitSchema | null>;
-const cache = ref<Cache>({});
-const current = ref<SiteVisitSchema | null>(null);
-const loading = ref(true);
+const resourceId = computed(() => props.data?.resourceinstance_id);
 
-watchEffect(async () => {
-    const resourceId: string = props.data?.resourceinstance_id;
-    if (!resourceId) return;
-    if (!(resourceId in cache.value)) {
-        getResourceData('site_visit', resourceId).then((data) => {
-            cache.value[resourceId] = data as SiteVisitSchema;
-            current.value = cache.value[resourceId];
-            loading.value = false;
-        });
-    }
-});
+const { data: current, loading } = useResourceData<SiteVisitSchema>(
+    'site_visit',
+    resourceId,
+);
+
+const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
+    'hria_discontinued_data',
+    resourceId,
+    true,
+);
 </script>
 
 <template>
-    <!-- Hack to ensure DataTable styles register -->
     <div style="display: none"><DataTable /></div>
     <div style="display: none">
         <DetailsSection
@@ -53,30 +52,43 @@ watchEffect(async () => {
             section-title=""
         />
     </div>
+
     <div class="container">
         <Section1
             :data="current || undefined"
             :loading="loading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section2
             :data="current || undefined"
             :loading="loading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section3
             :data="current || undefined"
             :loading="loading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section4
             :data="current || undefined"
+            :hria-data="(hriaData as HriaDiscontinuedDataSchema) || undefined"
             :loading="loading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section5
             :data="current || undefined"
             :loading="loading"
+            :force-collapsed="props.forceCollapsed"
         />
         <Section6
             :data="current || undefined"
             :loading="loading"
+            :force-collapsed="props.forceCollapsed"
+        />
+        <Section7
+            :data="current || undefined"
+            :loading="loading"
+            :force-collapsed="props.forceCollapsed"
         />
     </div>
 </template>
@@ -87,22 +99,14 @@ watchEffect(async () => {
     flex-direction: column;
     gap: 1rem;
 }
-.report-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-.report-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-}
+
 dl {
     display: flex;
     flex-direction: column;
     padding-bottom: 1rem;
 }
+
 dt {
     min-width: 20rem;
 }
 </style>
-<style scoped></style>
