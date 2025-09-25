@@ -12,9 +12,11 @@ const props = withDefaults(
         data: ArchaeologicalDataTile | undefined;
         loading?: boolean;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        forceCollapsed: undefined,
     },
 );
 
@@ -70,6 +72,7 @@ const hasTypologyRemarks = computed(() => {
         section-title="6. Archaeological Data"
         :loading="props.loading || isProcessing"
         :visible="true"
+        :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
             <DetailsSection

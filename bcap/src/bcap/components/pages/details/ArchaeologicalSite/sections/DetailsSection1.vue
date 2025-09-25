@@ -33,10 +33,12 @@ const props = withDefaults(
         data: ArchaeologySiteSchema | undefined;
         loading?: boolean;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
         loading: false,
         languageCode: 'en',
+        forceCollapsed: undefined,
     },
 );
 
@@ -76,6 +78,7 @@ const siteBoundaryNode = computed<
         section-title="1. Spatial View"
         :visible="true"
         :loading="props.loading"
+        :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
             <DetailsSection

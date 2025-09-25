@@ -19,9 +19,11 @@ const props = withDefaults(
         hriaData: HriaDiscontinuedDataSchema | undefined;
         loading?: boolean;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        forceCollapsed: undefined,
     },
 );
 
@@ -152,6 +154,7 @@ const parentSite = computed(() => {
         section-title="2. ID & Registration"
         :loading="props.loading || isProcessingDecisions"
         :visible="true"
+        :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
             <DetailsSection
