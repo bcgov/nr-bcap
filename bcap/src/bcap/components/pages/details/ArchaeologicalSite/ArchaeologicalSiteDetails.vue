@@ -84,7 +84,7 @@ const typedHriaData = computed(() => hriaDiscontinuedData.value as HriaDiscontin
             :force-collapsed="props.forceCollapsed"
         />
         <Section4
-            :data="typedCurrentData?.aliased_data?.heritage_site_location?.[0] as SiteLocationTile | undefined"
+            :data="(typedCurrentData?.aliased_data?.heritage_site_location?.[0] as SiteLocationTile) || undefined"
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
             :loading="siteDataLoading"

@@ -127,9 +127,9 @@ const hasAddressRemarks = computed(() => {
 
 const hasDiscontinuedAddress = computed(() => {
     return (
-        (props.hriaData?.aliased_data as any)?.discontinued_address_attributes &&
-        Array.isArray((props.hriaData?.aliased_data as any).discontinued_address_attributes) &&
-        (props.hriaData?.aliased_data as any).discontinued_address_attributes.length > 0
+        (props.hriaData?.aliased_data as unknown as { discontinued_address_attributes?: unknown[] })?.discontinued_address_attributes &&
+        Array.isArray((props.hriaData?.aliased_data as unknown as { discontinued_address_attributes?: unknown[] }).discontinued_address_attributes) &&
+        (props.hriaData?.aliased_data as unknown as { discontinued_address_attributes?: unknown[] }).discontinued_address_attributes!.length > 0
     );
 });
 

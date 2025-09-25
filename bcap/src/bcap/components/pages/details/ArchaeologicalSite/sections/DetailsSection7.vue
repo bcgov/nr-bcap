@@ -25,7 +25,7 @@ const props = withDefaults(
 
 const hasRestrictedRemainsInfo = computed(() => {
     const remark = props.data?.aliased_data?.restricted_ancestral_remains_remark;
-    return (remark as any)?.aliased_data;
+    return (remark as unknown as { aliased_data?: unknown })?.aliased_data;
 });
 </script>
 
