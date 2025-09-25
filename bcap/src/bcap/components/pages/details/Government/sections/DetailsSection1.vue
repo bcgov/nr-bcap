@@ -8,7 +8,6 @@ import type {
     GovernmentNameTile,
     GovernmentLocationTile,
 } from '@/bcap/schema/GovernmentSchema.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
@@ -16,9 +15,11 @@ const props = withDefaults(
         data: GovernmentSchema | undefined;
         loading?: boolean;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        forceCollapsed: undefined
     },
 );
 

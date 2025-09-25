@@ -6,17 +6,21 @@ import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { RemarksAndRestrictedInformationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{
         data: RemarksAndRestrictedInformationTile | undefined;
-        siteVisitData?: any[];
+        siteVisitData?: SiteVisitSchema[];
         loading?: boolean;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
+        siteVisitData: () => [],
         loading: false,
         languageCode: 'en',
+        forceCollapsed: undefined,
     },
 );
 
@@ -28,6 +32,7 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
     },
 );
 
+/** Generic column definitions: configure any key/path + label */
 const generalRemarkColumns = [
     { field: 'general_remark_date', label: 'Date' },
     { field: 'general_remark', label: 'General Remarks' },
@@ -110,6 +115,7 @@ const hasConvictions = computed(() => {
         section-title="8. Remarks & Restricted Information"
         :loading="props.loading"
         :visible="true"
+        :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
             <DetailsSection

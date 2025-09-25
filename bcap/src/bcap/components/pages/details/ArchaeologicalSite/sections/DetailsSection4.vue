@@ -6,18 +6,23 @@ import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: any;
-        siteVisitData: any[];
-        hriaData: any;
+        data: SiteLocationTile | undefined;
+        siteVisitData: SiteVisitSchema[];
+        hriaData: HriaDiscontinuedDataSchema | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        loading: false,
+        forceCollapsed: undefined,
     },
 );
 
@@ -123,6 +128,7 @@ const hasAddressRemarks = computed(() => {
 const hasDiscontinuedAddress = computed(() => {
     return (
         props.hriaData?.aliased_data?.discontinued_address_attributes &&
+        Array.isArray(props.hriaData.aliased_data.discontinued_address_attributes) &&
         props.hriaData.aliased_data.discontinued_address_attributes.length > 0
     );
 });
@@ -176,8 +182,8 @@ const hasBiogeography = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .utm_zone,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_zone,
                                 )
                             "
                         >
@@ -186,15 +192,15 @@ const hasBiogeography = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .utm_zone,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_zone,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.data.coordinates.aliased_data
-                                        .utm_zone,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_zone,
                                 )
                             }}
                         </dd>
@@ -202,8 +208,8 @@ const hasBiogeography = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .utm_easting,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_easting,
                                 )
                             "
                         >
@@ -212,15 +218,15 @@ const hasBiogeography = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .utm_easting,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_easting,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.data.coordinates.aliased_data
-                                        .utm_easting,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_easting,
                                 )
                             }}
                         </dd>
@@ -228,8 +234,8 @@ const hasBiogeography = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .utm_northing,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_northing,
                                 )
                             "
                         >
@@ -238,15 +244,15 @@ const hasBiogeography = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .utm_northing,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_northing,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.data.coordinates.aliased_data
-                                        .utm_northing,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.utm_northing,
                                 )
                             }}
                         </dd>
@@ -254,8 +260,8 @@ const hasBiogeography = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .latitude,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.latitude,
                                 )
                             "
                         >
@@ -264,15 +270,15 @@ const hasBiogeography = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .latitude,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.latitude,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.data.coordinates.aliased_data
-                                        .latitude,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.latitude,
                                 )
                             }}
                         </dd>
@@ -280,8 +286,8 @@ const hasBiogeography = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .longitude,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.longitude,
                                 )
                             "
                         >
@@ -290,15 +296,15 @@ const hasBiogeography = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.data.coordinates.aliased_data
-                                        .longitude,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.longitude,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.data.coordinates.aliased_data
-                                        .longitude,
+                                    props.data?.coordinates?.aliased_data
+                                        ?.longitude,
                                 )
                             }}
                         </dd>
@@ -435,8 +441,8 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.street_number,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.street_number,
                                             )
                                         "
                                     >
@@ -446,16 +452,16 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.street_number,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.street_number,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.street_number,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.street_number,
                                             )
                                         }}
                                     </dd>
@@ -464,8 +470,8 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.street_name,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.street_name,
                                             )
                                         "
                                     >
@@ -475,16 +481,16 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.street_name,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.street_name,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.street_name,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.street_name,
                                             )
                                         }}
                                     </dd>
@@ -493,8 +499,8 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.city,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.city,
                                             )
                                         "
                                     >
@@ -504,16 +510,16 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.city,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.city,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.city,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.city,
                                             )
                                         }}
                                     </dd>
@@ -522,8 +528,8 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.postal_code,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.postal_code,
                                             )
                                         "
                                     >
@@ -533,16 +539,16 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.postal_code,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.postal_code,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data.postal_code,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data?.postal_code,
                                             )
                                         }}
                                     </dd>
@@ -568,10 +574,10 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data.pid,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data?.pid,
                                             )
                                         "
                                     >
@@ -581,20 +587,20 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data.pid,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data?.pid,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data.pid,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data?.pid,
                                             )
                                         }}
                                     </dd>
@@ -603,10 +609,10 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data.pin,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data?.pin,
                                             )
                                         "
                                     >
@@ -616,20 +622,20 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data.pin,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data?.pin,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data.pin,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data?.pin,
                                             )
                                         }}
                                     </dd>
@@ -638,11 +644,11 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data
-                                                    .legal_description,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data
+                                                    ?.legal_description,
                                             )
                                         "
                                     >
@@ -652,22 +658,22 @@ const hasBiogeography = computed(() => {
                                         v-if="
                                             !isEmpty(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data
-                                                    .legal_description,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data
+                                                    ?.legal_description,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
                                                 props.data
-                                                    .bc_property_address[0]
-                                                    .aliased_data
-                                                    .bc_property_legal_description[0]
-                                                    .aliased_data
-                                                    .legal_description,
+                                                    ?.bc_property_address?.[0]
+                                                    ?.aliased_data
+                                                    ?.bc_property_legal_description?.[0]
+                                                    ?.aliased_data
+                                                    ?.legal_description,
                                             )
                                         }}
                                     </dd>
@@ -690,9 +696,9 @@ const hasBiogeography = computed(() => {
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data.address_remarks
-                                                    .aliased_data
-                                                    .address_and_legal_description_remarks,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data
+                                                    ?.address_and_legal_description_remarks,
                                             )
                                         "
                                     >
@@ -701,17 +707,17 @@ const hasBiogeography = computed(() => {
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data.address_remarks
-                                                    .aliased_data
-                                                    .address_and_legal_description_remarks,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data
+                                                    ?.address_and_legal_description_remarks,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data.address_remarks
-                                                    .aliased_data
-                                                    .address_and_legal_description_remarks,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data
+                                                    ?.address_and_legal_description_remarks,
                                             )
                                         }}
                                     </dd>
@@ -719,8 +725,8 @@ const hasBiogeography = computed(() => {
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data.address_remarks
-                                                    .aliased_data.entered_on,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data?.entered_on,
                                             )
                                         "
                                     >
@@ -729,15 +735,15 @@ const hasBiogeography = computed(() => {
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data.address_remarks
-                                                    .aliased_data.entered_on,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data?.entered_on,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data.address_remarks
-                                                    .aliased_data.entered_on,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data?.entered_on,
                                             )
                                         }}
                                     </dd>
@@ -745,8 +751,8 @@ const hasBiogeography = computed(() => {
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data.address_remarks
-                                                    .aliased_data.entered_by,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data?.entered_by,
                                             )
                                         "
                                     >
@@ -755,15 +761,15 @@ const hasBiogeography = computed(() => {
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data.address_remarks
-                                                    .aliased_data.entered_by,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data?.entered_by,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data.address_remarks
-                                                    .aliased_data.entered_by,
+                                                props.data?.address_remarks
+                                                    ?.aliased_data?.entered_by,
                                             )
                                         }}
                                     </dd>
@@ -785,11 +791,9 @@ const hasBiogeography = computed(() => {
                         >
                             <template #sectionContent>
                                 <StandardDataTable
-                                    v-if="hasDiscontinuedAddress"
+                                    v-if="hasDiscontinuedAddress && props.hriaData?.aliased_data?.discontinued_address_attributes"
                                     :table-data="
-                                        props.hriaData?.aliased_data
-                                            ?.discontinued_address_attributes ??
-                                        []
+                                        props.hriaData.aliased_data.discontinued_address_attributes
                                     "
                                     :column-definitions="
                                         discontinuedAddressColumns
@@ -829,9 +833,9 @@ const hasBiogeography = computed(() => {
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data.elevation
-                                                    .aliased_data
-                                                    .gis_lower_elevation,
+                                                props.data?.elevation
+                                                    ?.aliased_data
+                                                    ?.gis_lower_elevation,
                                             )
                                         "
                                     >
@@ -840,17 +844,17 @@ const hasBiogeography = computed(() => {
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data.elevation
-                                                    .aliased_data
-                                                    .gis_lower_elevation,
+                                                props.data?.elevation
+                                                    ?.aliased_data
+                                                    ?.gis_lower_elevation,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data.elevation
-                                                    .aliased_data
-                                                    .gis_lower_elevation,
+                                                props.data?.elevation
+                                                    ?.aliased_data
+                                                    ?.gis_lower_elevation,
                                             )
                                         }}
                                     </dd>
@@ -858,9 +862,9 @@ const hasBiogeography = computed(() => {
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data.elevation
-                                                    .aliased_data
-                                                    .gis_upper_elevation,
+                                                props.data?.elevation
+                                                    ?.aliased_data
+                                                    ?.gis_upper_elevation,
                                             )
                                         "
                                     >
@@ -869,17 +873,17 @@ const hasBiogeography = computed(() => {
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data.elevation
-                                                    .aliased_data
-                                                    .gis_upper_elevation,
+                                                props.data?.elevation
+                                                    ?.aliased_data
+                                                    ?.gis_upper_elevation,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data.elevation
-                                                    .aliased_data
-                                                    .gis_upper_elevation,
+                                                props.data?.elevation
+                                                    ?.aliased_data
+                                                    ?.gis_upper_elevation,
                                             )
                                         }}
                                     </dd>
@@ -901,8 +905,8 @@ const hasBiogeography = computed(() => {
                                 <dl v-if="hasElevationComments">
                                     <template
                                         v-for="(comment, index) in props.data
-                                            .elevation.aliased_data
-                                            .elevation_comments"
+                                            ?.elevation?.aliased_data
+                                            ?.elevation_comments"
                                         :key="index"
                                     >
                                         <dt>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { DetailsData } from '@/bcap/types.ts';
-import ArchaeologicalSite from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSite.vue';
-import SiteVisit from '@/bcap/components/pages/details/SiteVisit/SiteVisit.vue';
-import HcaPermit from '@/bcap/components/pages/details/HcaPermit/HcaPermit.vue';
-import Contributor from '@/bcap/components/pages/details/Contributor/Contributor.vue';
-import Government from '@/bcap/components/pages/details/Government/Government.vue';
-import HriaDiscontinuedData from '@/bcap/components/pages/details/HriaDiscontinuedData/HriaDiscontinuedData.vue';
-import LegislativeAct from '@/bcap/components/pages/details/LegislativeAct/LegislativeAct.vue';
-import Repository from '@/bcap/components/pages/details/Repository/Repository.vue';
+import ArchaeologicalSite from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSiteDetails.vue';
+import SiteVisit from '@/bcap/components/pages/details/SiteVisit/SiteVisitDetails.vue';
+import HcaPermit from '@/bcap/components/pages/details/HcaPermit/HcaPermitDetails.vue';
+import Contributor from '@/bcap/components/pages/details/Contributor/ContributorDetails.vue';
+import Government from '@/bcap/components/pages/details/Government/GovernmentDetails.vue';
+import HriaDiscontinuedData from '@/bcap/components/pages/details/HriaDiscontinuedData/HriaDiscontinuedDataDetails.vue';
+import LegislativeAct from '@/bcap/components/pages/details/LegislativeAct/LegislativeActDetails.vue';
+import Repository from '@/bcap/components/pages/details/Repository/RepositoryDetails.vue';
 import SectionControls from '@/bcap/components/SectionControls.vue';
 
 const props = withDefaults(

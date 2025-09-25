@@ -48,6 +48,7 @@ const id_fields = [
     'site_creation_date',
 ] as const;
 
+/** Generic column definitions: configure any key/path + label */
 const siteDecisionColumns = [
     { field: 'decision_date', label: 'Decision Date' },
     { field: 'decision_made_by', label: 'Decision Maker' },

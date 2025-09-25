@@ -11,9 +11,12 @@ const props = withDefaults(
         data: SiteVisitSchema[] | undefined;
         loading?: boolean;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        loading: false,
+        forceCollapsed: undefined,
     },
 );
 
@@ -37,6 +40,7 @@ const hasSiteVisits = computed(() => {
         section-title="3. Site Visits"
         :visible="true"
         :loading="props.loading"
+        :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
             <DetailsSection
@@ -48,9 +52,9 @@ const hasSiteVisits = computed(() => {
                 <template #sectionContent>
                     <div v-if="hasSiteVisits">
                         <SiteVisitDetailsSection3
-                            variant="subsection"
                             v-for="visit in currentData"
                             :key="visit.resourceinstanceid"
+                            variant="subsection"
                             :data="visit"
                             :visible="false"
                             :section-title="sectionTitle(visit)"

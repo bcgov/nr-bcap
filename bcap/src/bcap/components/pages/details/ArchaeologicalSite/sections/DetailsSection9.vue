@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { RelatedDocumentsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
@@ -12,9 +11,12 @@ const props = withDefaults(
         data: RelatedDocumentsTile | undefined;
         loading?: boolean;
         languageCode?: string;
+        forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        loading: false,
+        forceCollapsed: undefined,
     },
 );
 
@@ -92,6 +94,7 @@ const hasOtherMaps = computed(() => {
         section-title="9. References & Related Documents"
         :loading="props.loading"
         :visible="true"
+        :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
             <DetailsSection

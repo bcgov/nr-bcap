@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import type { Logger } from "vite";
+import type { Logger, PluginOption } from "vite";
 import path from "path";
 import vue from "@vitejs/plugin-vue";
 import fs from "fs";
@@ -106,9 +106,9 @@ function MultiRootBareJsResolver() {
                 ...exts.map((e) => stem + e),
                 ...exts.map((e) => path.join(stem, "index" + e)),
             ];
-            out(
-                `Trying to resolve bare import ${spec} as ${candidates.join(",")}`,
-            );
+            // out(
+            //     `Trying to resolve bare import ${spec} as ${candidates.join(",")}`,
+            // );
             for (const p of candidates) {
                 try {
                     if (fs.statSync(p).isFile()) return p;
@@ -131,19 +131,19 @@ function MultiRootBareJsResolver() {
                 (importer && VITE_INTERNAL.test(importer)) ||
                 HAS_QUERY.test(source)
             ) {
-                out("skip internal/virtual", { source, importer });
+                // out("skip internal/virtual", { source, importer });
                 return null; // let Vite/plugin-vue handle it
             }
             // let Vite/aliases try first
-            out(`In resolveId: source ${source}`);
+            // out(`In resolveId: source ${source}`);
             const prior = await (this as any).resolve(source, importer, {
                 skipSelf: true,
             });
-            out(`prior? ${prior}`);
-            console.error(prior);
+            // out(`prior? ${prior}`);
+            // console.error(prior);
             if (prior && fs.statSync(prior.id).isFile()) return prior;
 
-            out(`isBare(${source}) = ${isBare(source)}`);
+            // out(`isBare(${source}) = ${isBare(source)}`);
             if (!isBare(source)) return null;
 
             const file = tryResolve(source);
@@ -182,7 +182,7 @@ function MultiRootFailoverResolver() {
                     id,
                 );
             const isLibrary = /^(js-cookie)\/.*$/.test(id);
-            out(`resolveId(${id} ? library? ${isLibrary})`);
+            // out(`resolveId(${id} ? library? ${isLibrary})`);
             if ((!isArchesSymbol && !isLegacyNs) || isLibrary) return null;
 
             // keep ?query (e.g., template imports that Vite appends)
@@ -239,6 +239,67 @@ function HtmAsString() {
     };
 }
 
+// Absolute UMD paths
+const JQ_PATH = path.resolve(__dirname, "node_modules/jquery/dist/jquery.js");
+const ML_UMD_PATH = path.resolve(
+    __dirname,
+    "node_modules/maplibre-gl/dist/maplibre-gl.js",
+);
+
+function injectUmdsInOrder(): PluginOption {
+    return {
+        name: "inject-umd-order-jquery-then-maplibre",
+        enforce: "pre",
+
+        buildStart() {
+            if (fs.existsSync(JQ_PATH)) {
+                this.emitFile({
+                    type: "asset",
+                    name: "vendor/jquery.js",
+                    source: fs.readFileSync(JQ_PATH),
+                });
+            } else {
+                this.warn(`[inject-umd] jQuery not found at: ${JQ_PATH}`);
+            }
+            if (fs.existsSync(ML_UMD_PATH)) {
+                this.emitFile({
+                    type: "asset",
+                    name: "vendor/maplibre-gl.js",
+                    source: fs.readFileSync(ML_UMD_PATH),
+                });
+            } else {
+                this.warn(`[inject-umd] MapLibre not found at: ${ML_UMD_PATH}`);
+            }
+        },
+
+        transformIndexHtml(html) {
+            const jqFs = JQ_PATH.split(path.sep).join("/");
+            const mlFs = ML_UMD_PATH.split(path.sep).join("/");
+            const isProd = process.env.NODE_ENV === "production";
+
+            // ORDER MATTERS: jQuery first, then MapLibre
+            const tags = [
+                {
+                    tag: "script",
+                    attrs: {
+                        src: isProd ? "/vendor/jquery.js" : `/@fs/${jqFs}`,
+                    },
+                    injectTo: "head",
+                } as const,
+                {
+                    tag: "script",
+                    attrs: {
+                        src: isProd ? "/vendor/maplibre-gl.js" : `/@fs/${mlFs}`,
+                    },
+                    injectTo: "head",
+                } as const,
+            ];
+
+            return { html, tags };
+        },
+    } satisfies PluginOption;
+}
+
 export default defineConfig({
     appType: "custom", // <- critical: no SPA HTML fallback
     // Vite-only URLs live under this prefix; Django serves everything else.
@@ -246,6 +307,7 @@ export default defineConfig({
     // root: path.resolve(__dirname, 'bcap'),
 
     plugins: [
+        injectUmdsInOrder(),
         MultiRootBareJsResolver(),
         vue(),
         MultiRootFailoverResolver(),
@@ -253,6 +315,7 @@ export default defineConfig({
     ],
 
     resolve: {
+        mainFields: ["module", "jsnext:main", "browser", "main"],
         preserveSymlinks: true,
         dedupe: ["vue"], // safe to keep; has no effect if you’re not using Vue
         alias: [
@@ -270,12 +333,12 @@ export default defineConfig({
             },
             {
                 find: /^jquery$/,
-                replacement: "/@fs/web_root/bcap/vite-shims/jquery-global.js",
+                replacement: "/@fs/web_root/bcap/vite-shims/jquery-global.ts",
             },
             {
                 find: /^underscore$/,
                 replacement:
-                    "/@fs/web_root/bcap/vite-shims/underscore-global.js",
+                    "/@fs/web_root/bcap/vite-shims/underscore-global.ts",
             },
             {
                 find: /^backbone$/,
@@ -290,6 +353,16 @@ export default defineConfig({
                 replacement:
                     "/@fs/web_root/bcap/vite-shims/knockout-mapping-global.js",
             },
+            {
+                find: /^maplibre-gl$/,
+                replacement:
+                    "/@fs/web_root/bcap/vite-shims/maplibre-gl-shim.ts",
+            },
+            // {
+            //     find: /^@mapbox\/geojson-extent$/,
+            //     replacement:
+            //         "/@fs/web_root/bcap/vite-shims/knockout-mapping-global.js",
+            // },
 
             // neutralize accidental module imports for libs the page already provides
             {
@@ -350,7 +423,11 @@ export default defineConfig({
                 replacement:
                     "/@fs/web_root/bcap/node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js",
             },
-
+            // {
+            //     find: /^maplibre-gl$/,
+            //     replacement:
+            //         "/@fs/web_root/bcap/node_modules/maplibre-gl/dist/maplibre-gl.js?module",
+            // },
             {
                 find: "@/bcap",
                 replacement: path.resolve(
@@ -363,6 +440,15 @@ export default defineConfig({
                     path.join(
                         __dirname,
                         "./../bcgov-arches-common/bcgov_arches_common/src/bcgov_arches_common",
+                    ),
+                ),
+            },
+            {
+                find: "@/arches_component_lab",
+                replacement: path.resolve(
+                    path.join(
+                        __dirname,
+                        "./../arches-component-lab/arches_component_lab/src/arches_component_lab",
                     ),
                 ),
             },
@@ -397,7 +483,7 @@ export default defineConfig({
         noDiscovery: true, // <-- don’t even crawl for candidates
         entries: [], // <-- explicit: nothing to warm/scan
         include: [],
-        exclude: ["vue"],
+        exclude: ["vue", "maplibre-gl", "jquery"],
         esbuildOptions: { preserveSymlinks: true },
     },
     server: {

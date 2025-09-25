@@ -25,10 +25,11 @@ const props = withDefaults(
     defineProps<{
         data: DetailsData;
         languageCode?: string;
-        forceCollapsed?: boolean | undefined;
+        forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        forceCollapsed: undefined,
     },
 );
 
@@ -46,6 +47,13 @@ const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
         resourceId,
         true,
     );
+
+// Computed properties to handle type casting
+const typedCurrentData = computed(() => currentData.value as ArchaeologySiteSchema | undefined);
+
+const typedSiteVisitData = computed(() => (siteVisitData.value || []) as SiteVisitSchema[]);
+
+const typedHriaData = computed(() => hriaDiscontinuedData.value as HriaDiscontinuedDataSchema | undefined);
 </script>
 
 <template>
@@ -59,64 +67,53 @@ const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
 
     <div class="container">
         <Section1
-            :data="currentData as ArchaeologySiteSchema | undefined"
+            :data="typedCurrentData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section2
-            :data="currentData?.aliased_data?.identification_and_registration"
-            :hria-data="
-                hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined
-            "
+            :data="typedCurrentData?.aliased_data?.identification_and_registration"
+            :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section3
-            :data="(siteVisitData as SiteVisitSchema[]) || []"
+            :data="typedSiteVisitData"
             :loading="siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section4
-            :data="
-                currentData?.aliased_data?.heritage_site_location?.[0]
-                    ?.aliased_data
-            "
-            :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
-            :hria-data="
-                hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined
-            "
+            :data="typedCurrentData?.aliased_data?.heritage_site_location?.[0]?.aliased_data"
+            :site-visit-data="typedSiteVisitData"
+            :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section5
-            :data="currentData?.aliased_data?.site_boundary"
-            :hria-data="
-                hriaDiscontinuedData as HriaDiscontinuedDataSchema | undefined
-            "
+            :data="typedCurrentData?.aliased_data?.site_boundary"
+            :hria-data="typedHriaData"
             :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section6
-            :data="currentData?.aliased_data?.archaeological_data"
+            :data="typedCurrentData?.aliased_data?.archaeological_data"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section7
-            :data="currentData?.aliased_data?.ancestral_remains"
-            :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
+            :data="typedCurrentData?.aliased_data?.ancestral_remains"
+            :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading || siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section8
-            :data="
-                currentData?.aliased_data?.remarks_and_restricted_information
-            "
-            :site-visit-data="(siteVisitData as SiteVisitSchema[]) || []"
+            :data="typedCurrentData?.aliased_data?.remarks_and_restricted_information"
+            :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />
         <Section9
-            :data="currentData?.aliased_data?.related_documents"
+            :data="typedCurrentData?.aliased_data?.related_documents"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
         />

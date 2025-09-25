@@ -4,11 +4,12 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
         data: SiteVisitSchema | undefined;
-        hriaData: any;
+        hriaData: HriaDiscontinuedDataSchema | undefined;
         loading?: boolean;
     }>(),
     { loading: false },

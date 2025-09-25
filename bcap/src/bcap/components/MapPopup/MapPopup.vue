@@ -1,23 +1,32 @@
-<script setup>
-import { computed, onMounted, ref } from 'vue';
+<script setup lang="ts">
+import { computed, isRef, onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import _ from 'underscore';
 import mapPopupProvider from 'utils/map-popup-provider';
 
-const props = defineProps({
-    loading: Boolean,
-    urls: Object,
-    popupFeatures: Array,
-    translations: Object,
-    showEditButton: Boolean,
-    showFilterByFeatureButton: Boolean,
-});
+import type {
+    DescriptorsType,
+    PopupFeatureType,
+    DescriptorKey,
+    Translations,
+} from '@/bcap/components/MapPopup/types.ts';
+import type { BcapURLs } from '@/bcap/types.ts';
+
+const props = defineProps<{
+    loading: boolean;
+    urls: BcapURLs;
+    popupFeatures: PopupFeatureType[];
+    translations: Translations;
+    showEditButton: boolean;
+    showFilterByFeatureButton: boolean;
+}>();
 
 const emit = defineEmits(['advance-feature', 'send-feature-to-map-filter']);
 const visibleFeature = ref();
-const features = ref([]);
+const features = ref([] as Ref<PopupFeatureType>[]);
 const activeFeatureOffset = ref(0);
 
-function advanceFeature(direction) {
+function advanceFeature(direction: string) {
     if (direction === 'left') {
         activeFeatureOffset.value =
             activeFeatureOffset.value === 0
@@ -33,31 +42,34 @@ function advanceFeature(direction) {
     // emit("advance-feature", direction);
 }
 
-const currentFeature = computed(() => {
+const currentFeature = computed<PopupFeatureType>(() => {
     return features.value[activeFeatureOffset.value].value;
 });
 
-function showExpandButton(feature) {
+function showExpandButton(feature: PopupFeatureType | undefined) {
     if (!feature) return false;
     return typeof feature.showExpandButton === 'function'
         ? feature.showExpandButton()
         : !!feature.showExpandButton;
 }
 
-function openReport(id) {
+function openReport(id: string) {
     window.open(props.urls.resource_report + id);
 }
 
-function openEdit(id) {
+function openEdit(id: string) {
     window.open(props.urls.resource_editor + id);
 }
 
-function sendFeatureToMapFilter(feature, useAsFilter) {
+function sendFeatureToMapFilter(
+    feature: PopupFeatureType,
+    useAsFilter: boolean,
+) {
     mapPopupProvider.sendFeatureToMapFilter(feature, useAsFilter);
     emit('send-feature-to-map-filter', feature, useAsFilter);
 }
 
-function showFilterByFeature(feature) {
+function showFilterByFeature(feature: PopupFeatureType | undefined) {
     if (!feature) return false;
     return typeof feature?.showFilterByFeature === 'function'
         ? feature.showFilterByFeature(feature)
@@ -71,9 +83,12 @@ const descriptionProperties = [
     'geometries',
 ];
 function setDisplayValues() {
-    props.popupFeatures.forEach((raw_feature, index) => {
-        const feature = ref(raw_feature);
-        features.value.push(ref(feature));
+    props.popupFeatures.forEach((raw_feature: PopupFeatureType, index) => {
+        raw_feature.displayValues = isRef(raw_feature.displayValues)
+            ? raw_feature.displayValues
+            : ref(raw_feature.displayValues);
+        const feature: Ref<PopupFeatureType> = ref(raw_feature);
+        features.value.push(feature);
         if (feature.value.active()) {
             visibleFeature.value = feature.value;
             activeFeatureOffset.value = index;
@@ -84,12 +99,19 @@ function setDisplayValues() {
         )
             .then((response) => response.json())
             .then((data) => {
-                feature.value.displayValues = ref({});
-                descriptionProperties.forEach(
-                    (prop) => (feature.value.displayValues[prop] = data[prop]),
-                );
+                const displayValues: Partial<DescriptorsType> = {};
+                const keys = descriptionProperties as DescriptorKey[];
+
+                keys.forEach((prop) => {
+                    const val = data[prop];
+                    if (typeof val === 'string') {
+                        displayValues[prop] = data[prop];
+                    }
+                });
+                feature.value.displayValues =
+                    displayValues as Ref<DescriptorsType>;
                 console.log(feature.value.displayValues);
-                feature.value.permissions = data['permissions'];
+                feature.value.permissions = data["permissions"];
                 feature.value.loading = false;
             })
             .catch((error) => {
@@ -100,7 +122,10 @@ function setDisplayValues() {
 
 /* eslint-disable */
 function getActiveFeature() {
-    return _.find(props.popupFeatures, (feature) => feature.active);
+    return _.find(
+        props.popupFeatures,
+        (feature: PopupFeatureType) => feature.active,
+    );
 }
 /* eslint-enable */
 
@@ -143,6 +168,7 @@ onMounted(() => {
             </div>
 
             <div class="hover-feature-body">
+                <!-- eslint-disable vue/no-v-html -->
                 <div
                     class="hover-feature"
                     :style="{

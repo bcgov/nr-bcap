@@ -22,10 +22,11 @@ const props = withDefaults(
     defineProps<{
         data: DetailsData;
         languageCode?: string;
-        forceCollapsed?: boolean | undefined;
+        forceCollapsed?: boolean;
     }>(),
     {
         languageCode: 'en',
+        forceCollapsed: undefined,
     },
 );
 

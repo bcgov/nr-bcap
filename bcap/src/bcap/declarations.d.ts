@@ -31,6 +31,7 @@ declare global {
         register(opts: {
             name: string;
             createApp: unknown;
+            services?: unknown[];
             component: unknown;
             source?: string;
         }): void;

@@ -7,7 +7,6 @@ import type {
     HcaPermitSchema,
     PermitIdentificationTile,
 } from '@/bcap/schema/HcaPermitSchema.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(

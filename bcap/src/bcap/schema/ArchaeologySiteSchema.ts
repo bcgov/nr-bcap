@@ -3,13 +3,12 @@ import type {
     AliasedNodeData,
     AliasedTileData,
 } from '@/arches_component_lab/types.ts';
+import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts';
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
 import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
-import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
 
-// New interface for individual spatial accuracy entries
 export interface SpatialAccuracyEntry extends AliasedTileData {
     aliased_data: {
         edit_type?: AliasedNodeData;
@@ -21,7 +20,7 @@ export interface SpatialAccuracyEntry extends AliasedTileData {
 
 export interface SiteBoundaryTile extends AliasedTileData {
     aliased_data: {
-        site_boundary?: AliasedNodeData;
+        site_boundary?: AliasedGeojsonFeatureCollectionNode;
         latest_edit_type?: AliasedNodeData;
         source_notes?: AliasedNodeData;
         accuracy_remarks?: AliasedNodeData;
@@ -90,6 +89,7 @@ export interface IdentificationAndRegistrationTile extends AliasedTileData {
     site_decision?: SiteDecisionTile[];
 }
 
+// 3) Archaeological Data
 export interface SiteTypologyTile extends AliasedTileData {
     typology_class?: AliasedNodeData;
     site_type?: AliasedNodeData;
@@ -110,6 +110,7 @@ export interface ArchaeologicalDataTile extends AliasedTileData {
     site_typology_remarks?: AliasedTileData[];
 }
 
+// 4) Ancestral Remains
 export interface AncestralRemainsTile extends AliasedTileData {
     aliased_data: AliasedData;
 }
@@ -156,11 +157,47 @@ export interface SiteLocationBiogeographyTile extends AliasedTileData {
     };
 }
 
+export interface TenureAndReservesTile extends AliasedTileData {
+    aliased_data: {
+        tenure_type?: AliasedNodeData;
+        tenure_description?: AliasedNodeData;
+    };
+}
+
+export interface TenureRemarksTile extends AliasedTileData {
+    aliased_data: {
+        tenure_remarks?: AliasedNodeData;
+        entered_on?: AliasedNodeData;
+        entered_by?: AliasedNodeData;
+    };
+}
+
+export interface AddressRemarksTile extends AliasedTileData {
+    aliased_data: {
+        address_and_legal_description_remarks?: AliasedNodeData;
+        entered_on?: AliasedNodeData;
+        entered_by?: AliasedNodeData;
+    };
+}
+
+export interface CoordinatesTile extends AliasedTileData {
+    aliased_data: {
+        utm_zone?: AliasedNodeData;
+        utm_easting?: AliasedNodeData;
+        utm_northing?: AliasedNodeData;
+        latitude?: AliasedNodeData;
+        longitude?: AliasedNodeData;
+    };
+}
+
 export interface SiteLocationTile extends AliasedTileData {
+    coordinates?: CoordinatesTile;
+    tenure_and_reserves?: TenureAndReservesTile[];
+    tenure_remarks?: TenureRemarksTile[];
     bc_property_address?: BcPropertyAddressTile[];
+    address_remarks?: AddressRemarksTile;
     elevation?: ElevationTile;
     biogeography?: SiteLocationBiogeographyTile[];
-    site_tenure?: any;
 }
 
 export interface GeneralRemarkTile extends AliasedTileData {

@@ -5,7 +5,6 @@ import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(

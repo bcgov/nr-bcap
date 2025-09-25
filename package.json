@@ -2,7 +2,7 @@
     "name": "bcap",
     "license": "AGPL-3.0-only",
     "scripts": {
-        "build_development": "npm i typescript@5.6.2 && npm run eslint:check && npm run ts:check && cross-env webpack --config ./webpack/webpack.config.dev.js",
+        "build_development": "npm i typescript@5.6.2 && npm run eslint:check && cross-env webpack --config ./webpack/webpack.config.dev.js",
         "build_production": "npm run eslint:check && npm run ts:check && cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.prod.js",
         "build_test": "npm run eslint:check && npm run ts:check && cross-env webpack --config ./webpack/webpack.config.dev.js --env test=true",
         "eslint:check": "eslint **/src/bcap",
@@ -25,10 +25,16 @@
         "moment-timezone": "^0.5.45",
         "nomnom": "npm:@gerhobbelt/nomnom",
         "rimraf": "^5.0.7",
-        "underscore": "^1.13.6"
+        "underscore": "^1.13.6",
+        "@turf/helpers": "7.2.0",
+        "@turf/centroid": "7.2.0",
+        "@turf/bbox": "7.2.0",
+        "geojson": "0.5.0"
     },
     "devDependencies": {
+        "@maplibre/maplibre-gl-style-spec": "^24.1.1",
         "@primevue/auto-import-resolver": "^4.3.7",
+        "@types/underscore": "^1.13.0",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
         "eslint-config-prettier": "^10.1.5",
         "prettier": "^3.6.2",
@@ -38,16 +44,20 @@
         "webpack-bundle-tracker": "^3.2.1"
     },
     "dependencies": {
+        "@primeuix/styles": "^1.2.3",
         "@primeuix/themes": "^1.2.3",
         "ajv": "^8.17.1",
-        "arches": "bcgov/arches#stable/8.0.3_bcgov_12377",
+        "arches": "bcgov/arches#stable/8.0.3_bcgov_12377_12434",
         "arches-component-lab": "archesproject/arches-component-lab#main",
         "arches-controlled-lists": "archesproject/arches-controlled-lists#main",
-        "bcgov_arches_common": "github:bcgov/bcgov-arches-common#brf/feat/214_upgrade_to_v8_take2",
+        "bcgov_arches_common": "bcgov/bcgov-arches-common#brf/feat/214_upgrade_to_v8_take2",
         "datatables.net": "^1.13.11",
         "eslint-config-prettier": "^10.1.5",
         "js-cookie": "^3.0.5",
-        "typescript": "^5.6.2"
+        "maplibre-gl": "^5.7.2",
+        "primevue": "^4.3.9",
+        "typescript": "^5.6.2",
+        "underscore": "^1.13.6"
     },
     "nodeModulesPaths": {}
 }
