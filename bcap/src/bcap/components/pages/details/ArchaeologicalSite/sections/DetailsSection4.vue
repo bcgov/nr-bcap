@@ -127,9 +127,9 @@ const hasAddressRemarks = computed(() => {
 
 const hasDiscontinuedAddress = computed(() => {
     return (
-        props.hriaData?.aliased_data?.discontinued_address_attributes &&
-        Array.isArray(props.hriaData.aliased_data.discontinued_address_attributes) &&
-        props.hriaData.aliased_data.discontinued_address_attributes.length > 0
+        (props.hriaData?.aliased_data as any)?.discontinued_address_attributes &&
+        Array.isArray((props.hriaData?.aliased_data as any).discontinued_address_attributes) &&
+        (props.hriaData?.aliased_data as any).discontinued_address_attributes.length > 0
     );
 });
 
@@ -151,7 +151,8 @@ const hasGisElevation = computed(() => {
 });
 
 const hasElevationComments = computed(() => {
-    return props.data?.elevation?.aliased_data?.elevation_comments?.length > 0;
+    return props.data?.elevation?.aliased_data?.elevation_comments &&
+           props.data.elevation.aliased_data.elevation_comments.length > 0;
 });
 
 const hasElevation = computed(() => {
@@ -791,9 +792,9 @@ const hasBiogeography = computed(() => {
                         >
                             <template #sectionContent>
                                 <StandardDataTable
-                                    v-if="hasDiscontinuedAddress && props.hriaData?.aliased_data?.discontinued_address_attributes"
+                                    v-if="hasDiscontinuedAddress && (props.hriaData?.aliased_data as any)?.discontinued_address_attributes"
                                     :table-data="
-                                        props.hriaData.aliased_data.discontinued_address_attributes
+                                        (props.hriaData?.aliased_data as any)?.discontinued_address_attributes
                                     "
                                     :column-definitions="
                                         discontinuedAddressColumns

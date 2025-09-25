@@ -93,6 +93,23 @@ export interface SiteDimensionsTile extends AliasedTileData {
     };
 }
 
+export interface DiscontinuedAddressAttributesTile extends AliasedTileData {
+    aliased_data: {
+        street_number: StringValue;
+        street_name: StringValue;
+        city: StringValue;
+        postal_code: StringValue;
+        discontinued_address_attributes?: DiscontinuedAddressAttributesTile[];
+        pid: StringValue;
+        pin: StringValue;
+        legal_type: StringValue;
+        legal_number: StringValue;
+        legal_description: StringValue;
+        modified_on: DateValue;
+        modified_by: NonLocalizedTextValue;
+    };
+}
+
 // ====================================================================
 // Top-level object for THIS JSON
 // ====================================================================

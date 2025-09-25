@@ -19,6 +19,7 @@ import type { DetailsData } from '@/bcap/types.ts';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import DataTable from 'primevue/datatable';
 
 const props = withDefaults(
@@ -83,7 +84,7 @@ const typedHriaData = computed(() => hriaDiscontinuedData.value as HriaDiscontin
             :force-collapsed="props.forceCollapsed"
         />
         <Section4
-            :data="typedCurrentData?.aliased_data?.heritage_site_location?.[0]?.aliased_data"
+            :data="typedCurrentData?.aliased_data?.heritage_site_location?.[0] as SiteLocationTile | undefined"
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
             :loading="siteDataLoading"

@@ -71,7 +71,7 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
         />
         <Section4
             :data="current || undefined"
-            :hria-data="hriaData"
+            :hria-data="hriaData as HriaDiscontinuedDataSchema | undefined"
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
         />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, Ref } from 'vue';
+import { computed, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { VIEW } from '@/arches_component_lab/widgets/constants.ts';
