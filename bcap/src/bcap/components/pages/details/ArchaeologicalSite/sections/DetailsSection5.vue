@@ -76,8 +76,8 @@ const spatialAccuracyColumns = [
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.length,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data?.length,
                                 )
                             "
                         >
@@ -86,15 +86,15 @@ const spatialAccuracyColumns = [
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.length,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data?.length,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.length,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data?.length,
                                 )
                             }}
                         </dd>
@@ -102,8 +102,9 @@ const spatialAccuracyColumns = [
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.length_direction,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.length_direction,
                                 )
                             "
                         >
@@ -112,15 +113,17 @@ const spatialAccuracyColumns = [
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.length_direction,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.length_direction,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.length_direction,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.length_direction,
                                 )
                             }}
                         </dd>
@@ -128,8 +131,8 @@ const spatialAccuracyColumns = [
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.width,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data?.width,
                                 )
                             "
                         >
@@ -138,15 +141,15 @@ const spatialAccuracyColumns = [
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.width,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data?.width,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.width,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data?.width,
                                 )
                             }}
                         </dd>
@@ -154,8 +157,9 @@ const spatialAccuracyColumns = [
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.width_direction,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.width_direction,
                                 )
                             "
                         >
@@ -164,15 +168,17 @@ const spatialAccuracyColumns = [
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.width_direction,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.width_direction,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.width_direction,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.width_direction,
                                 )
                             }}
                         </dd>
@@ -180,8 +186,9 @@ const spatialAccuracyColumns = [
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.site_area,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.site_area,
                                 )
                             "
                         >
@@ -190,15 +197,17 @@ const spatialAccuracyColumns = [
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.site_area,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.site_area,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.site_area,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.site_area,
                                 )
                             }}
                         </dd>
@@ -206,8 +215,9 @@ const spatialAccuracyColumns = [
                         <dt
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.boundary_type,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.boundary_type,
                                 )
                             "
                         >
@@ -216,15 +226,17 @@ const spatialAccuracyColumns = [
                         <dd
                             v-if="
                                 !isEmpty(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.boundary_type,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.boundary_type,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    props.hriaData?.aliased_data?.site_dimensions
-                                        ?.aliased_data?.boundary_type,
+                                    props.hriaData?.aliased_data
+                                        ?.site_dimensions?.aliased_data
+                                        ?.boundary_type,
                                 )
                             }}
                         </dd>
@@ -246,18 +258,14 @@ const spatialAccuracyColumns = [
                     <dl v-if="hasBoundaryDescription">
                         <dt
                             v-if="
-                                !isEmpty(
-                                    props.data?.aliased_data?.source_notes,
-                                )
+                                !isEmpty(props.data?.aliased_data?.source_notes)
                             "
                         >
                             Source Notes
                         </dt>
                         <dd
                             v-if="
-                                !isEmpty(
-                                    props.data?.aliased_data?.source_notes,
-                                )
+                                !isEmpty(props.data?.aliased_data?.source_notes)
                             "
                         >
                             {{

@@ -16,7 +16,7 @@ const props = withDefaults(
     }>(),
     {
         languageCode: 'en',
-        forceCollapsed: undefined
+        forceCollapsed: undefined,
     },
 );
 

@@ -111,7 +111,7 @@ function setDisplayValues() {
                 feature.value.displayValues =
                     displayValues as Ref<DescriptorsType>;
                 console.log(feature.value.displayValues);
-                feature.value.permissions = data["permissions"];
+                feature.value.permissions = data['permissions'];
                 feature.value.loading = false;
             })
             .catch((error) => {

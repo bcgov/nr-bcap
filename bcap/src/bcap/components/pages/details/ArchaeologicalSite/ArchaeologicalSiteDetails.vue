@@ -50,11 +50,17 @@ const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
     );
 
 // Computed properties to handle type casting
-const typedCurrentData = computed(() => currentData.value as ArchaeologySiteSchema | undefined);
+const typedCurrentData = computed(
+    () => currentData.value as ArchaeologySiteSchema | undefined,
+);
 
-const typedSiteVisitData = computed(() => (siteVisitData.value || []) as SiteVisitSchema[]);
+const typedSiteVisitData = computed(
+    () => (siteVisitData.value || []) as SiteVisitSchema[],
+);
 
-const typedHriaData = computed(() => hriaDiscontinuedData.value as HriaDiscontinuedDataSchema | undefined);
+const typedHriaData = computed(
+    () => hriaDiscontinuedData.value as HriaDiscontinuedDataSchema | undefined,
+);
 </script>
 
 <template>
@@ -73,7 +79,9 @@ const typedHriaData = computed(() => hriaDiscontinuedData.value as HriaDiscontin
             :force-collapsed="props.forceCollapsed"
         />
         <Section2
-            :data="typedCurrentData?.aliased_data?.identification_and_registration"
+            :data="
+                typedCurrentData?.aliased_data?.identification_and_registration
+            "
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
@@ -84,7 +92,11 @@ const typedHriaData = computed(() => hriaDiscontinuedData.value as HriaDiscontin
             :force-collapsed="props.forceCollapsed"
         />
         <Section4
-            :data="(typedCurrentData?.aliased_data?.heritage_site_location?.[0] as SiteLocationTile) || undefined"
+            :data="
+                (typedCurrentData?.aliased_data
+                    ?.heritage_site_location?.[0] as SiteLocationTile) ||
+                undefined
+            "
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
@@ -108,7 +120,10 @@ const typedHriaData = computed(() => hriaDiscontinuedData.value as HriaDiscontin
             :force-collapsed="props.forceCollapsed"
         />
         <Section8
-            :data="typedCurrentData?.aliased_data?.remarks_and_restricted_information"
+            :data="
+                typedCurrentData?.aliased_data
+                    ?.remarks_and_restricted_information
+            "
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
