@@ -56,11 +56,13 @@ class ResourceEditLogView(APIView):
                 nodegroup_id = self._get_nodegroup_id_from_alias(graph, nodegroup_alias)
 
                 if not nodegroup_id:
-                    return Response({
-                        "modified_on": None,
-                        "modified_by": None,
-                        "error": f"Could not resolve nodegroup alias '{nodegroup_alias}'"
-                    })
+                    return Response(
+                        {
+                            "modified_on": None,
+                            "modified_by": None,
+                            "error": f"Could not resolve nodegroup alias '{nodegroup_alias}'",
+                        }
+                    )
 
             if tile_id:
                 modification_data = self._get_tile_modification(pk, tile_id)
@@ -75,11 +77,9 @@ class ResourceEditLogView(APIView):
             error = "Error fetching audit log information."
             logger.exception(error)
 
-            return Response({
-                "modified_on": None,
-                "modified_by": None,
-                "error": error
-            }, status=500)
+            return Response(
+                {"modified_on": None, "modified_by": None, "error": error}, status=500
+            )
 
     def _get_nodegroup_id_from_alias(self, graph: str, alias: str) -> str | None:
         with connection.cursor() as cursor:
@@ -92,15 +92,14 @@ class ResourceEditLogView(APIView):
                 LIMIT 1
             """
 
-            cursor.execute(
-                query,
-                [graph, alias]
-            )
+            cursor.execute(query, [graph, alias])
 
             result = cursor.fetchone()
             return result[0] if result else None
 
-    def _get_nodegroup_modification(self, resource_id: str, nodegroup_id: str) -> dict[str, Any]:
+    def _get_nodegroup_modification(
+        self, resource_id: str, nodegroup_id: str
+    ) -> dict[str, Any]:
         with connection.cursor() as cursor:
             # Find child nodegroups
             query = """
@@ -111,10 +110,7 @@ class ResourceEditLogView(APIView):
                 AND t_parent.resourceinstanceid = %s::uuid
             """
 
-            cursor.execute(
-                query,
-                [nodegroup_id, resource_id]
-            )
+            cursor.execute(query, [nodegroup_id, resource_id])
 
             child_nodegroups = [row[0] for row in cursor.fetchall()]
             all_nodegroups = [nodegroup_id, *child_nodegroups]
@@ -161,7 +157,7 @@ class ResourceEditLogView(APIView):
                 "modified_on": None,
                 "modified_by": None,
                 "nodegroup_id": nodegroup_id,
-                "error": "No modifications found"
+                "error": "No modifications found",
             }
 
     def _get_tile_modification(self, resource_id: str, tile_id: str) -> dict[str, Any]:
@@ -188,10 +184,7 @@ class ResourceEditLogView(APIView):
                 LIMIT 1
             """
 
-            cursor.execute(
-                query,
-                [resource_id, tile_id]
-            )
+            cursor.execute(query, [resource_id, tile_id])
 
             row = cursor.fetchone()
 
@@ -202,7 +195,7 @@ class ResourceEditLogView(APIView):
                 "modified_on": None,
                 "modified_by": None,
                 "tile_id": tile_id,
-                "error": "No modifications found for this tile"
+                "error": "No modifications found for this tile",
             }
 
     def _get_resource_modification(self, resource_id: str) -> dict[str, Any]:
@@ -228,10 +221,7 @@ class ResourceEditLogView(APIView):
                 LIMIT 1
             """
 
-            cursor.execute(
-                query,
-                [resource_id]
-            )
+            cursor.execute(query, [resource_id])
 
             row = cursor.fetchone()
 
@@ -241,7 +231,7 @@ class ResourceEditLogView(APIView):
             return {
                 "modified_on": None,
                 "modified_by": None,
-                "error": "No modifications found"
+                "error": "No modifications found",
             }
 
     def _format_response(self, row) -> dict[str, Any]:
@@ -273,7 +263,7 @@ class ResourceEditLogView(APIView):
             "transaction_id": str(transaction_id) if transaction_id else None,
             "edit_type": edit_type,
             "user_email": user_email,
-            "is_system_edit": not bool(username or first_name or last_name)
+            "is_system_edit": not bool(username or first_name or last_name),
         }
 
         if tile_id:
