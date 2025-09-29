@@ -100,7 +100,6 @@ class ResourceEditLogView(APIView):
     def _get_nodegroup_modification(self, resource_id: str, nodegroup_id: str) -> dict[str, Any]:
         with connection.cursor() as cursor:
             # Find child nodegroups
-
             query = """
                 SELECT DISTINCT t_child.nodegroupid::text
                 FROM tiles t_parent
