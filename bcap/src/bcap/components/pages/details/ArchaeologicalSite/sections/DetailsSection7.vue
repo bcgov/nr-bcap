@@ -7,7 +7,7 @@ import { useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
 import 'primeicons/primeicons.css';
 import type { AncestralRemainsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
+import type { AliasedTileData, AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -31,7 +31,7 @@ const restrictedRemainsSource = computed(() => {
     return props.data?.aliased_data?.restricted_ancestral_remains_remark as AliasedTileData | undefined;
 });
 
-const { processedData: restrictedRemainsData } = useSingleTileEditLog(
+const { processedData: restrictedRemainsDataRaw } = useSingleTileEditLog(
     restrictedRemainsSource,
     toRef(props, 'editLogData'),
     {
@@ -39,6 +39,21 @@ const { processedData: restrictedRemainsData } = useSingleTileEditLog(
         enteredByField: 'remains_remark_made_by'
     }
 );
+
+const restrictedRemainsData = computed(() => {
+    const data = restrictedRemainsDataRaw.value;
+    if (!data) return null;
+
+    return {
+        ...data,
+        aliased_data: {
+            ...data.aliased_data,
+            remains_remark_entry_date: data.aliased_data?.remains_remark_entry_date as AliasedNodeData | undefined,
+            remains_remark_made_by: data.aliased_data?.remains_remark_made_by as AliasedNodeData | undefined,
+            restricted_ancestral_remains_remark: data.aliased_data?.restricted_ancestral_remains_remark as AliasedNodeData | undefined
+        }
+    };
+});
 
 const hasRestrictedRemainsInfo = computed(() => {
     return restrictedRemainsData.value?.aliased_data;

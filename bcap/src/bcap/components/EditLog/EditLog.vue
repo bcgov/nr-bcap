@@ -15,8 +15,6 @@ export interface EditLogResponse {
     nodegroup_id?: string | null;
 }
 
-export type { EditLogResponse };
-
 const props = defineProps<{
     resourceId: string;
     graph: string;

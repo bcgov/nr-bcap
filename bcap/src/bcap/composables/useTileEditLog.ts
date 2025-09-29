@@ -1,5 +1,5 @@
 import { ref, watch, type Ref } from 'vue';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
+import type { AliasedTileData, AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 export interface EditLogEntry {
     entered_on: string | null;
@@ -14,25 +14,33 @@ export function applyEditLogToTile(
     enteredOnField = 'entered_on',
     enteredByField = 'entered_by'
 ): AliasedTileData {
-    const tileEditData = editLogData?.[`tile_${tile.tileid}`];
+    const tileEditData = tile.tileid ? editLogData?.[`tile_${tile.tileid}`] : undefined;
 
     if (!tileEditData?.entered_on && !tileEditData?.entered_by) {
         return tile;
     }
 
+    const updatedAliasedData = { ...(tile.aliased_data || {}) };
+
+    if (tileEditData?.entered_on) {
+        updatedAliasedData[enteredOnField] = {
+            node_value: tileEditData.entered_on,
+            display_value: tileEditData.entered_on,
+            details: []
+        } as AliasedNodeData;
+    }
+
+    if (tileEditData?.entered_by) {
+        updatedAliasedData[enteredByField] = {
+            node_value: tileEditData.entered_by,
+            display_value: tileEditData.entered_by,
+            details: []
+        } as AliasedNodeData;
+    }
+
     return {
         ...tile,
-        aliased_data: {
-            ...(tile.aliased_data || {}),
-            [enteredOnField]: tileEditData?.entered_on ? {
-                node_value: tileEditData.entered_on,
-                display_value: tileEditData.entered_on
-            } : tile.aliased_data?.[enteredOnField],
-            [enteredByField]: tileEditData?.entered_by ? {
-                node_value: tileEditData.entered_by,
-                display_value: tileEditData.entered_by
-            } : tile.aliased_data?.[enteredByField]
-        }
+        aliased_data: updatedAliasedData
     };
 }
 
@@ -110,14 +118,18 @@ export function collectTileIds(data: unknown, paths: string[][]): string[] {
 
         if (Array.isArray(value)) {
             value.forEach(item => {
-                if ((item as AliasedTileData)?.tileid) {
-                    tileIds.push((item as AliasedTileData).tileid);
+                const tileData = item as AliasedTileData;
+
+                if (tileData?.tileid) {
+                    tileIds.push(tileData.tileid);
                 }
             });
-        }
+        } else {
+            const tileData = value as AliasedTileData;
 
-        if ((value as AliasedTileData)?.tileid) {
-            tileIds.push((value as AliasedTileData).tileid);
+            if (tileData?.tileid) {
+                tileIds.push(tileData.tileid);
+            }
         }
     };
 

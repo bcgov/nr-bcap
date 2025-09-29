@@ -5,6 +5,7 @@ import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { useTileEditLog, useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -27,10 +28,27 @@ const { processedData: newNamesTableData } = useTileEditLog(
     toRef(props, 'editLogData')
 );
 
-const { processedData: tempNumberData } = useSingleTileEditLog(
+const { processedData: tempNumberDataRaw } = useSingleTileEditLog(
     tempNumber,
     toRef(props, 'editLogData')
 );
+
+const tempNumberData = computed(() => {
+    const data = tempNumberDataRaw.value;
+    if (!data) return null;
+
+    return {
+        ...data,
+        aliased_data: {
+            ...data.aliased_data,
+            entered_on: data.aliased_data?.entered_on as AliasedNodeData | undefined,
+            entered_by: data.aliased_data?.entered_by as AliasedNodeData | undefined,
+            temporary_number: data.aliased_data?.temporary_number as AliasedNodeData | undefined,
+            temporary_number_assigned_by: data.aliased_data?.temporary_number_assigned_by as AliasedNodeData | undefined,
+            temporary_number_assigned_date: data.aliased_data?.temporary_number_assigned_date as AliasedNodeData | undefined
+        }
+    };
+});
 
 const hasTemporaryNumber = computed(() => {
     return tempNumber.value?.aliased_data?.temporary_number?.node_value;

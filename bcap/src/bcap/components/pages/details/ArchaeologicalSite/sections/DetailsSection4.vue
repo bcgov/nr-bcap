@@ -125,7 +125,13 @@ const hasBcPropertyLegalDescription = computed(() => {
 });
 
 const hasAddressRemarks = computed(() => {
-    return props.data?.address_remarks?.aliased_data || Object.keys(props.editLogData || {}).length > 0;
+    const data = addressRemarksData.value?.aliased_data;
+
+    return data && (
+        !isEmpty(data?.address_and_legal_description_remarks as AliasedNodeData) ||
+        data?.entered_on ||
+        data?.entered_by
+    );
 });
 
 const hasDiscontinuedAddress = computed(() => {
@@ -190,10 +196,25 @@ const { processedData: tenureRemarksTableData } = useTileEditLog(
     toRef(props, 'editLogData')
 );
 
-const { processedData: addressRemarksData } = useSingleTileEditLog(
+const { processedData: addressRemarksDataRaw } = useSingleTileEditLog(
     addressRemarksSource,
     toRef(props, 'editLogData')
 );
+
+const addressRemarksData = computed(() => {
+    const data = addressRemarksDataRaw.value;
+    if (!data) return null;
+
+    return {
+        ...data,
+        aliased_data: {
+            ...data.aliased_data,
+            entered_on: data.aliased_data?.entered_on as AliasedNodeData | undefined,
+            entered_by: data.aliased_data?.entered_by as AliasedNodeData | undefined,
+            address_and_legal_description_remarks: data.aliased_data?.address_and_legal_description_remarks as AliasedNodeData | undefined
+        }
+    };
+});
 </script>
 
 <template>
