@@ -1,19 +1,35 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import { useTileEditLog, useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
-    { loading: false },
+    defineProps<{
+        data: SiteVisitSchema | undefined;
+        loading?: boolean;
+        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+    }>(),
+    {
+        loading: false,
+        editLogData: () => ({}),
+    },
 );
 
 const idTile = computed(() => props.data?.aliased_data?.identification);
 const tempNumber = computed(() => idTile.value?.aliased_data?.temporary_number);
-const newNames = computed(
-    () => idTile.value?.aliased_data?.new_site_names || [],
+const newNames = computed(() => idTile.value?.aliased_data?.new_site_names || []);
+
+const { processedData: newNamesTableData } = useTileEditLog(
+    newNames,
+    toRef(props, 'editLogData')
+);
+
+const { processedData: tempNumberData } = useSingleTileEditLog(
+    tempNumber,
+    toRef(props, 'editLogData')
 );
 
 const hasTemporaryNumber = computed(() => {
@@ -21,7 +37,7 @@ const hasTemporaryNumber = computed(() => {
 });
 
 const hasNewNames = computed(() => {
-    return newNames.value && newNames.value.length > 0;
+    return newNamesTableData.value && newNamesTableData.value.length > 0;
 });
 
 const newNameColumns = [
@@ -49,19 +65,19 @@ const newNameColumns = [
                 :class="{ 'empty-section': !hasTemporaryNumber }"
             >
                 <template #sectionContent>
-                    <div v-if="tempNumber">
+                    <div v-if="tempNumberData">
                         <dl>
                             <dt>Temporary Number</dt>
                             <dd>
                                 {{
-                                    tempNumber?.aliased_data?.temporary_number
+                                    tempNumberData?.aliased_data?.temporary_number
                                         ?.display_value
                                 }}
                             </dd>
                             <dt>Assigned By</dt>
                             <dd>
                                 {{
-                                    tempNumber?.aliased_data
+                                    tempNumberData?.aliased_data
                                         ?.temporary_number_assigned_by
                                         ?.display_value
                                 }}
@@ -69,10 +85,38 @@ const newNameColumns = [
                             <dt>Assigned Date</dt>
                             <dd>
                                 {{
-                                    tempNumber?.aliased_data
+                                    tempNumberData?.aliased_data
                                         ?.temporary_number_assigned_date
                                         ?.display_value
                                 }}
+                            </dd>
+                            <dt
+                                v-if="
+                                    tempNumberData?.aliased_data?.entered_on?.display_value
+                                "
+                            >
+                                Entered On
+                            </dt>
+                            <dd
+                                v-if="
+                                    tempNumberData?.aliased_data?.entered_on?.display_value
+                                "
+                            >
+                                {{ tempNumberData.aliased_data.entered_on.display_value }}
+                            </dd>
+                            <dt
+                                v-if="
+                                    tempNumberData?.aliased_data?.entered_by?.display_value
+                                "
+                            >
+                                Entered By
+                            </dt>
+                            <dd
+                                v-if="
+                                    tempNumberData?.aliased_data?.entered_by?.display_value
+                                "
+                            >
+                                {{ tempNumberData.aliased_data.entered_by.display_value }}
                             </dd>
                         </dl>
                     </div>
@@ -92,7 +136,7 @@ const newNameColumns = [
                 <template #sectionContent>
                     <div v-if="hasNewNames">
                         <StandardDataTable
-                            :table-data="newNames"
+                            :table-data="newNamesTableData"
                             :column-definitions="newNameColumns"
                         />
                     </div>

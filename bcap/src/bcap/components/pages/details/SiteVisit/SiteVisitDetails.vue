@@ -23,10 +23,12 @@ const props = withDefaults(
         data: DetailsData;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -63,11 +65,13 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
             :data="current || undefined"
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section3
             :data="current || undefined"
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section4
             :data="current || undefined"
@@ -84,6 +88,7 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
             :data="current || undefined"
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section7
             :data="current || undefined"

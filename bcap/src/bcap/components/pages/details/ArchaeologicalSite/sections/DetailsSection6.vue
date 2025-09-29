@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
+import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { ArchaeologicalDataTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
@@ -13,10 +14,12 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -54,16 +57,19 @@ const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     },
 );
 
-const typologyRemarksData = computed(() => {
-    return currentData.value?.site_typology_remarks || [];
-});
+const typologyRemarksData = computed(() => currentData.value?.site_typology_remarks || []);
+
+const { processedData: typologyRemarksTableData } = useTileEditLog(
+    typologyRemarksData,
+    toRef(props, 'editLogData')
+);
 
 const hasTypology = computed(() => {
     return typologyTableData.value && typologyTableData.value.length > 0;
 });
 
 const hasTypologyRemarks = computed(() => {
-    return typologyRemarksData.value && typologyRemarksData.value.length > 0;
+    return typologyRemarksTableData.value && typologyRemarksTableData.value.length > 0;
 });
 </script>
 
@@ -104,7 +110,7 @@ const hasTypologyRemarks = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasTypologyRemarks"
-                        :table-data="typologyRemarksData"
+                        :table-data="typologyRemarksTableData"
                         :column-definitions="typologyRemarksColumns"
                         :initial-sort-field-index="1"
                     />

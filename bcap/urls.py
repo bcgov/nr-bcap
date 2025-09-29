@@ -10,6 +10,7 @@ from bcap.views.api import (
     UserProfile,
     RelatedSiteVisits,
     ControlledListHierarchy,
+    ResourceEditLogView
 )
 from bcap.views.resource import ResourceReportView
 from bcgov_arches_common.views.map import BCTileserverProxyView
@@ -67,6 +68,11 @@ urlpatterns = [
         bc_path_prefix(r"^api/hierarchy/(?P<list_item_id>%s)/$" % uuid_regex),
         ControlledListHierarchy.as_view(),
         name="controlled_list_hierarchy",
+    ),
+    path(
+        'bcap/api/resources/<str:graph>/<str:pk>/edit-log/',
+        ResourceEditLogView.as_view(),
+        name='resource_edit_log'
     ),
     re_path(
         bc_path_prefix(r"^user_profile$"),

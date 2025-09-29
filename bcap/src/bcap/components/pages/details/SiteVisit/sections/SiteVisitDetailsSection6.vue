@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
-    { loading: false },
+    defineProps<{
+        data: SiteVisitSchema | undefined;
+        loading?: boolean;
+        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+    }>(),
+    {
+        loading: false,
+        editLogData: () => ({}),
+    },
 );
 
 const recRows = computed(
@@ -21,16 +29,10 @@ const generalRemarkRows = computed(
             ?.general_remark || [],
 );
 
-const hasRecommendations = computed(() => {
-    return recRows.value && recRows.value.length > 0;
-});
-
-const hasRemarks = computed(() => {
-    return generalRemarkRows.value && generalRemarkRows.value.length > 0;
-});
-
 const recColumns = [
     { field: 'recorders_recommendation', label: "Recorder's Recommendations" },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 
 const generalRemarkColumns = [
@@ -40,6 +42,24 @@ const generalRemarkColumns = [
     { field: 'entered_on', label: 'Entered On' },
     { field: 'entered_by', label: 'Entered By' },
 ];
+
+const { processedData: recommendationsTableData } = useTileEditLog(
+    recRows,
+    toRef(props, 'editLogData')
+);
+
+const { processedData: generalRemarksTableData } = useTileEditLog(
+    generalRemarkRows,
+    toRef(props, 'editLogData')
+);
+
+const hasRecommendations = computed(() => {
+    return recommendationsTableData.value && recommendationsTableData.value.length > 0;
+});
+
+const hasRemarks = computed(() => {
+    return generalRemarksTableData.value && generalRemarksTableData.value.length > 0;
+});
 </script>
 
 <template>
@@ -58,7 +78,7 @@ const generalRemarkColumns = [
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasRecommendations"
-                        :table-data="recRows"
+                        :table-data="recommendationsTableData"
                         :column-definitions="recColumns"
                     />
                     <EmptyState
@@ -77,7 +97,7 @@ const generalRemarkColumns = [
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasRemarks"
-                        :table-data="generalRemarkRows"
+                        :table-data="generalRemarksTableData"
                         :column-definitions="generalRemarkColumns"
                     />
                     <EmptyState
@@ -89,5 +109,3 @@ const generalRemarkColumns = [
         </template>
     </DetailsSection>
 </template>
-
-<style scoped></style>

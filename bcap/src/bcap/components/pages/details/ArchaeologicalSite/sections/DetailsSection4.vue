@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
-import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
-import 'primeicons/primeicons.css';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import { computed, toRef } from "vue";
+import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
+import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
+import { useTileEditLog, useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
+import "primeicons/primeicons.css";
+import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
+import type { SiteLocationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
+import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
 
 const props = withDefaults(
     defineProps<{
@@ -18,11 +19,13 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
     }>(),
     {
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -122,7 +125,7 @@ const hasBcPropertyLegalDescription = computed(() => {
 });
 
 const hasAddressRemarks = computed(() => {
-    return props.data?.address_remarks?.aliased_data;
+    return props.data?.address_remarks?.aliased_data || Object.keys(props.editLogData || {}).length > 0;
 });
 
 const hasDiscontinuedAddress = computed(() => {
@@ -178,6 +181,19 @@ const hasElevation = computed(() => {
 const hasBiogeography = computed(() => {
     return props.data?.biogeography && props.data.biogeography.length > 0;
 });
+
+const tenureRemarksData = computed(() => props.data?.tenure_remarks || []);
+const addressRemarksSource = computed(() => props.data?.address_remarks);
+
+const { processedData: tenureRemarksTableData } = useTileEditLog(
+    tenureRemarksData,
+    toRef(props, 'editLogData')
+);
+
+const { processedData: addressRemarksData } = useSingleTileEditLog(
+    addressRemarksSource,
+    toRef(props, 'editLogData')
+);
 </script>
 
 <template>
@@ -370,7 +386,7 @@ const hasBiogeography = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasTenureRemarks"
-                                :table-data="props.data?.tenure_remarks ?? []"
+                                :table-data="tenureRemarksTableData"
                                 :column-definitions="tenureRemarksColumns"
                                 :initial-sort-field-index="1"
                             />
@@ -712,12 +728,11 @@ const hasBiogeography = computed(() => {
                             :class="{ 'empty-section': !hasAddressRemarks }"
                         >
                             <template #sectionContent>
-                                <dl v-if="hasAddressRemarks">
+                                <dl v-if="addressRemarksData">
                                     <dt
                                         v-if="
                                             !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data
+                                                addressRemarksData?.aliased_data
                                                     ?.address_and_legal_description_remarks,
                                             )
                                         "
@@ -727,16 +742,14 @@ const hasBiogeography = computed(() => {
                                     <dd
                                         v-if="
                                             !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data
+                                                addressRemarksData?.aliased_data
                                                     ?.address_and_legal_description_remarks,
                                             )
                                         "
                                     >
                                         {{
                                             getDisplayValue(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data
+                                                addressRemarksData?.aliased_data
                                                     ?.address_and_legal_description_remarks,
                                             )
                                         }}
@@ -744,53 +757,35 @@ const hasBiogeography = computed(() => {
 
                                     <dt
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_on,
-                                            )
+                                            addressRemarksData?.aliased_data?.entered_on?.display_value
                                         "
                                     >
                                         Entered On
                                     </dt>
                                     <dd
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_on,
-                                            )
+                                            addressRemarksData?.aliased_data?.entered_on?.display_value
                                         "
                                     >
                                         {{
-                                            getDisplayValue(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_on,
-                                            )
+                                            addressRemarksData.aliased_data.entered_on.display_value
                                         }}
                                     </dd>
 
                                     <dt
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_by,
-                                            )
+                                            addressRemarksData?.aliased_data?.entered_by?.display_value
                                         "
                                     >
                                         Entered By
                                     </dt>
                                     <dd
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_by,
-                                            )
+                                            addressRemarksData?.aliased_data?.entered_by?.display_value
                                         "
                                     >
                                         {{
-                                            getDisplayValue(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_by,
-                                            )
+                                            addressRemarksData.aliased_data.entered_by.display_value
                                         }}
                                     </dd>
                                 </dl>
@@ -937,14 +932,14 @@ const hasBiogeography = computed(() => {
                                         <dt>
                                             Elevation Remarks {{ index + 1 }}
                                         </dt>
-                                        <dd
-                                            v-html="
+                                        <dd>
+                                            {{
                                                 getDisplayValue(
                                                     comment.aliased_data
                                                         ?.elevation_comments,
                                                 )
-                                            "
-                                        ></dd>
+                                            }}
+                                        </dd>
                                     </template>
                                 </dl>
                                 <EmptyState

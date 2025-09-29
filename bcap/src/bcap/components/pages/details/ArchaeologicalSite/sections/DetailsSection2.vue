@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
+import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
@@ -20,10 +21,12 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -50,7 +53,6 @@ const id_fields = [
     'site_creation_date',
 ] as const;
 
-/** Generic column definitions: configure any key/path + label */
 const siteDecisionColumns = [
     { field: 'decision_date', label: 'Decision Date' },
     { field: 'decision_made_by', label: 'Decision Maker' },
@@ -106,6 +108,19 @@ const {
     ],
 });
 
+const authorityData = computed(() => currentData.value?.authority || []);
+const siteNamesData = computed(() => currentData.value?.site_names || []);
+
+const { processedData: authorityTableData } = useTileEditLog(
+    authorityData,
+    toRef(props, 'editLogData')
+);
+
+const { processedData: siteNamesTableData } = useTileEditLog(
+    siteNamesData,
+    toRef(props, 'editLogData')
+);
+
 const hasBasicInfo = computed(() => {
     return id_fields.some(
         (field) =>
@@ -121,9 +136,7 @@ const hasAdifRecord = computed(() => {
 });
 
 const hasAuthority = computed(() => {
-    return (
-        currentData.value?.authority && currentData.value.authority.length > 0
-    );
+    return authorityTableData.value && authorityTableData.value.length > 0;
 });
 
 const hasDecisionHistory = computed(() => {
@@ -131,9 +144,7 @@ const hasDecisionHistory = computed(() => {
 });
 
 const hasSiteNames = computed(() => {
-    return (
-        currentData.value?.site_names && currentData.value.site_names.length > 0
-    );
+    return siteNamesTableData.value && siteNamesTableData.value.length > 0;
 });
 
 const hasCurrentAlerts = computed(() => {
@@ -305,7 +316,7 @@ const parentSite = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasAuthority"
-                        :table-data="currentData?.authority ?? []"
+                        :table-data="authorityTableData"
                         :column-definitions="authorityColumns"
                         :initial-sort-field-index="3"
                     />
@@ -351,7 +362,7 @@ const parentSite = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasSiteNames"
-                                :table-data="currentData?.site_names ?? []"
+                                :table-data="siteNamesTableData"
                                 :column-definitions="siteNamesColumns"
                                 :initial-sort-field-index="3"
                             />
