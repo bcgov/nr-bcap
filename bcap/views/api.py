@@ -71,11 +71,14 @@ class ResourceEditLogView(APIView):
 
             return Response(modification_data)
 
-        except Exception as e:
+        except Exception:
+            error = "Error fetching audit log information."
+            logger.exception(error)
+
             return Response({
                 "modified_on": None,
                 "modified_by": None,
-                "error": str(e)
+                "error": error
             }, status=500)
 
     def _get_nodegroup_id_from_alias(self, graph: str, alias: str) -> str | None:
