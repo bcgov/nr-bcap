@@ -7,7 +7,10 @@ import { useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
 import 'primeicons/primeicons.css';
 import type { AncestralRemainsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { AliasedTileData, AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type {
+    AliasedTileData,
+    AliasedNodeData,
+} from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -16,7 +19,10 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         siteVisitData: () => [],
@@ -28,7 +34,9 @@ const props = withDefaults(
 );
 
 const restrictedRemainsSource = computed(() => {
-    return props.data?.aliased_data?.restricted_ancestral_remains_remark as AliasedTileData | undefined;
+    return props.data?.aliased_data?.restricted_ancestral_remains_remark as
+        | AliasedTileData
+        | undefined;
 });
 
 const { processedData: restrictedRemainsDataRaw } = useSingleTileEditLog(
@@ -36,8 +44,8 @@ const { processedData: restrictedRemainsDataRaw } = useSingleTileEditLog(
     toRef(props, 'editLogData'),
     {
         enteredOnField: 'remains_remark_entry_date',
-        enteredByField: 'remains_remark_made_by'
-    }
+        enteredByField: 'remains_remark_made_by',
+    },
 );
 
 const restrictedRemainsData = computed(() => {
@@ -48,10 +56,15 @@ const restrictedRemainsData = computed(() => {
         ...data,
         aliased_data: {
             ...data.aliased_data,
-            remains_remark_entry_date: data.aliased_data?.remains_remark_entry_date as AliasedNodeData | undefined,
-            remains_remark_made_by: data.aliased_data?.remains_remark_made_by as AliasedNodeData | undefined,
-            restricted_ancestral_remains_remark: data.aliased_data?.restricted_ancestral_remains_remark as AliasedNodeData | undefined
-        }
+            remains_remark_entry_date: data.aliased_data
+                ?.remains_remark_entry_date as AliasedNodeData | undefined,
+            remains_remark_made_by: data.aliased_data
+                ?.remains_remark_made_by as AliasedNodeData | undefined,
+            restricted_ancestral_remains_remark: data.aliased_data
+                ?.restricted_ancestral_remains_remark as
+                | AliasedNodeData
+                | undefined,
+        },
     };
 });
 
@@ -104,35 +117,41 @@ const hasRestrictedRemainsInfo = computed(() => {
 
                         <dt
                             v-if="
-                                restrictedRemainsData?.aliased_data?.remains_remark_entry_date?.display_value
+                                restrictedRemainsData?.aliased_data
+                                    ?.remains_remark_entry_date?.display_value
                             "
                         >
                             Entered On
                         </dt>
                         <dd
                             v-if="
-                                restrictedRemainsData?.aliased_data?.remains_remark_entry_date?.display_value
+                                restrictedRemainsData?.aliased_data
+                                    ?.remains_remark_entry_date?.display_value
                             "
                         >
                             {{
-                                restrictedRemainsData.aliased_data.remains_remark_entry_date.display_value
+                                restrictedRemainsData.aliased_data
+                                    .remains_remark_entry_date.display_value
                             }}
                         </dd>
 
                         <dt
                             v-if="
-                                restrictedRemainsData?.aliased_data?.remains_remark_made_by?.display_value
+                                restrictedRemainsData?.aliased_data
+                                    ?.remains_remark_made_by?.display_value
                             "
                         >
                             Entered By
                         </dt>
                         <dd
                             v-if="
-                                restrictedRemainsData?.aliased_data?.remains_remark_made_by?.display_value
+                                restrictedRemainsData?.aliased_data
+                                    ?.remains_remark_made_by?.display_value
                             "
                         >
                             {{
-                                restrictedRemainsData.aliased_data.remains_remark_made_by.display_value
+                                restrictedRemainsData.aliased_data
+                                    .remains_remark_made_by.display_value
                             }}
                         </dd>
                     </dl>

@@ -21,7 +21,10 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         languageCode: 'en',
@@ -113,12 +116,12 @@ const siteNamesData = computed(() => currentData.value?.site_names || []);
 
 const { processedData: authorityTableData } = useTileEditLog(
     authorityData,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const { processedData: siteNamesTableData } = useTileEditLog(
     siteNamesData,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const hasBasicInfo = computed(() => {

@@ -16,7 +16,10 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         siteVisitData: () => [],
@@ -65,10 +68,16 @@ const convictionColumns = [
     { field: 'entered_by', label: 'Entered By' },
 ];
 
-const generalRemarksData = computed(() => currentData.value?.general_remark_information || []);
-const hcaContraventionsData = computed(() => currentData.value?.hca_contravention || []);
+const generalRemarksData = computed(
+    () => currentData.value?.general_remark_information || [],
+);
+const hcaContraventionsData = computed(
+    () => currentData.value?.hca_contravention || [],
+);
 const convictionsData = computed(() => currentData.value?.conviction || []);
-const restrictedInfoData = computed(() => currentData.value?.restricted_information_n1 || []);
+const restrictedInfoData = computed(
+    () => currentData.value?.restricted_information_n1 || [],
+);
 const keywordsData = computed(() => {
     const keywords = currentData.value?.remark_keyword;
     if (!keywords) return [];
@@ -77,21 +86,23 @@ const keywordsData = computed(() => {
 
 const { processedData: generalRemarksTableData } = useTileEditLog(
     generalRemarksData,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const { processedData: hcaContraventionsTableData } = useTileEditLog(
     hcaContraventionsData,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const { processedData: convictionsTableData } = useTileEditLog(
     convictionsData,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const hasKeywords = computed(() => keywordsData.value.length > 0);
-const hasGeneralRemarks = computed(() => generalRemarksTableData.value.length > 0);
+const hasGeneralRemarks = computed(
+    () => generalRemarksTableData.value.length > 0,
+);
 const hasRestrictedInfo = computed(() => restrictedInfoData.value.length > 0);
 
 const hasDocuments = computed(() => {
@@ -101,7 +112,9 @@ const hasDocuments = computed(() => {
     );
 });
 
-const hasContraventions = computed(() => hcaContraventionsTableData.value.length > 0);
+const hasContraventions = computed(
+    () => hcaContraventionsTableData.value.length > 0,
+);
 const hasConvictions = computed(() => convictionsTableData.value.length > 0);
 </script>
 

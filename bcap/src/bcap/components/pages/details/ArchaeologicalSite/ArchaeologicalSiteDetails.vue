@@ -27,7 +27,10 @@ const props = withDefaults(
         data: DetailsData;
         languageCode?: string;
         forceCollapsed?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         languageCode: 'en',
@@ -80,7 +83,9 @@ const typedHriaData = computed(
             :force-collapsed="props.forceCollapsed"
         />
         <Section2
-            :data="typedCurrentData?.aliased_data?.identification_and_registration"
+            :data="
+                typedCurrentData?.aliased_data?.identification_and_registration
+            "
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"

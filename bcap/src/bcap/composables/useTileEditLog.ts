@@ -1,5 +1,8 @@
 import { ref, watch, type Ref } from 'vue';
-import type { AliasedTileData, AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type {
+    AliasedTileData,
+    AliasedNodeData,
+} from '@/arches_component_lab/types.ts';
 
 export interface EditLogEntry {
     entered_on: string | null;
@@ -12,9 +15,11 @@ export function applyEditLogToTile(
     tile: AliasedTileData,
     editLogData: EditLogData | undefined,
     enteredOnField = 'entered_on',
-    enteredByField = 'entered_by'
+    enteredByField = 'entered_by',
 ): AliasedTileData {
-    const tileEditData = tile.tileid ? editLogData?.[`tile_${tile.tileid}`] : undefined;
+    const tileEditData = tile.tileid
+        ? editLogData?.[`tile_${tile.tileid}`]
+        : undefined;
 
     if (!tileEditData?.entered_on && !tileEditData?.entered_by) {
         return tile;
@@ -26,7 +31,7 @@ export function applyEditLogToTile(
         updatedAliasedData[enteredOnField] = {
             node_value: tileEditData.entered_on,
             display_value: tileEditData.entered_on,
-            details: []
+            details: [],
         } as AliasedNodeData;
     }
 
@@ -34,13 +39,13 @@ export function applyEditLogToTile(
         updatedAliasedData[enteredByField] = {
             node_value: tileEditData.entered_by,
             display_value: tileEditData.entered_by,
-            details: []
+            details: [],
         } as AliasedNodeData;
     }
 
     return {
         ...tile,
-        aliased_data: updatedAliasedData
+        aliased_data: updatedAliasedData,
     };
 }
 
@@ -50,7 +55,7 @@ export function useTileEditLog(
     options?: {
         enteredOnField?: string;
         enteredByField?: string;
-    }
+    },
 ) {
     const processedData = ref<AliasedTileData[]>([]);
 
@@ -63,14 +68,19 @@ export function useTileEditLog(
             const items = sourceData.value || [];
 
             processedData.value = items.map((item: AliasedTileData) =>
-                applyEditLogToTile(item, editLogData.value, enteredOnField, enteredByField)
+                applyEditLogToTile(
+                    item,
+                    editLogData.value,
+                    enteredOnField,
+                    enteredByField,
+                ),
             );
         },
-        { immediate: true, deep: true }
+        { immediate: true, deep: true },
     );
 
     return {
-        processedData
+        processedData,
     };
 }
 
@@ -80,7 +90,7 @@ export function useSingleTileEditLog(
     options?: {
         enteredOnField?: string;
         enteredByField?: string;
-    }
+    },
 ) {
     const processedData = ref<AliasedTileData | null>(null);
 
@@ -99,14 +109,14 @@ export function useSingleTileEditLog(
                 sourceData.value,
                 editLogData.value,
                 enteredOnField,
-                enteredByField
+                enteredByField,
             );
         },
-        { immediate: true, deep: true }
+        { immediate: true, deep: true },
     );
 
     return {
-        processedData
+        processedData,
     };
 }
 
@@ -117,7 +127,7 @@ export function collectTileIds(data: unknown, paths: string[][]): string[] {
         if (!value) return;
 
         if (Array.isArray(value)) {
-            value.forEach(item => {
+            value.forEach((item) => {
                 const tileData = item as AliasedTileData;
 
                 if (tileData?.tileid) {
@@ -133,7 +143,7 @@ export function collectTileIds(data: unknown, paths: string[][]): string[] {
         }
     };
 
-    paths.forEach(path => {
+    paths.forEach((path) => {
         let current: unknown = data;
 
         for (const key of path) {

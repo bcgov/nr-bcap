@@ -3,7 +3,10 @@ import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
-import { useTileEditLog, useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import {
+    useTileEditLog,
+    useSingleTileEditLog,
+} from '@/bcap/composables/useTileEditLog.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
@@ -11,7 +14,10 @@ const props = withDefaults(
     defineProps<{
         data: SiteVisitSchema | undefined;
         loading?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         loading: false,
@@ -21,16 +27,18 @@ const props = withDefaults(
 
 const idTile = computed(() => props.data?.aliased_data?.identification);
 const tempNumber = computed(() => idTile.value?.aliased_data?.temporary_number);
-const newNames = computed(() => idTile.value?.aliased_data?.new_site_names || []);
+const newNames = computed(
+    () => idTile.value?.aliased_data?.new_site_names || [],
+);
 
 const { processedData: newNamesTableData } = useTileEditLog(
     newNames,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const { processedData: tempNumberDataRaw } = useSingleTileEditLog(
     tempNumber,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const tempNumberData = computed(() => {
@@ -41,12 +49,20 @@ const tempNumberData = computed(() => {
         ...data,
         aliased_data: {
             ...data.aliased_data,
-            entered_on: data.aliased_data?.entered_on as AliasedNodeData | undefined,
-            entered_by: data.aliased_data?.entered_by as AliasedNodeData | undefined,
-            temporary_number: data.aliased_data?.temporary_number as AliasedNodeData | undefined,
-            temporary_number_assigned_by: data.aliased_data?.temporary_number_assigned_by as AliasedNodeData | undefined,
-            temporary_number_assigned_date: data.aliased_data?.temporary_number_assigned_date as AliasedNodeData | undefined
-        }
+            entered_on: data.aliased_data?.entered_on as
+                | AliasedNodeData
+                | undefined,
+            entered_by: data.aliased_data?.entered_by as
+                | AliasedNodeData
+                | undefined,
+            temporary_number: data.aliased_data?.temporary_number as
+                | AliasedNodeData
+                | undefined,
+            temporary_number_assigned_by: data.aliased_data
+                ?.temporary_number_assigned_by as AliasedNodeData | undefined,
+            temporary_number_assigned_date: data.aliased_data
+                ?.temporary_number_assigned_date as AliasedNodeData | undefined,
+        },
     };
 });
 
@@ -88,8 +104,8 @@ const newNameColumns = [
                             <dt>Temporary Number</dt>
                             <dd>
                                 {{
-                                    tempNumberData?.aliased_data?.temporary_number
-                                        ?.display_value
+                                    tempNumberData?.aliased_data
+                                        ?.temporary_number?.display_value
                                 }}
                             </dd>
                             <dt>Assigned By</dt>
@@ -110,31 +126,41 @@ const newNameColumns = [
                             </dd>
                             <dt
                                 v-if="
-                                    tempNumberData?.aliased_data?.entered_on?.display_value
+                                    tempNumberData?.aliased_data?.entered_on
+                                        ?.display_value
                                 "
                             >
                                 Entered On
                             </dt>
                             <dd
                                 v-if="
-                                    tempNumberData?.aliased_data?.entered_on?.display_value
+                                    tempNumberData?.aliased_data?.entered_on
+                                        ?.display_value
                                 "
                             >
-                                {{ tempNumberData.aliased_data.entered_on.display_value }}
+                                {{
+                                    tempNumberData.aliased_data.entered_on
+                                        .display_value
+                                }}
                             </dd>
                             <dt
                                 v-if="
-                                    tempNumberData?.aliased_data?.entered_by?.display_value
+                                    tempNumberData?.aliased_data?.entered_by
+                                        ?.display_value
                                 "
                             >
                                 Entered By
                             </dt>
                             <dd
                                 v-if="
-                                    tempNumberData?.aliased_data?.entered_by?.display_value
+                                    tempNumberData?.aliased_data?.entered_by
+                                        ?.display_value
                                 "
                             >
-                                {{ tempNumberData.aliased_data.entered_by.display_value }}
+                                {{
+                                    tempNumberData.aliased_data.entered_by
+                                        .display_value
+                                }}
                             </dd>
                         </dl>
                     </div>

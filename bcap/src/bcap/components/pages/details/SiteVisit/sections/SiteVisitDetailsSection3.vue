@@ -4,7 +4,10 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import { useTileEditLog, useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import {
+    useTileEditLog,
+    useSingleTileEditLog,
+} from '@/bcap/composables/useTileEditLog.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
@@ -14,7 +17,10 @@ const props = withDefaults(
         sectionTitle?: string;
         loading?: boolean;
         visible?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         sectionTitle: '3. Site Visit Details',
@@ -25,41 +31,62 @@ const props = withDefaults(
 );
 
 const details = computed(() => props.data?.aliased_data?.site_visit_details);
-const teamTile = computed(() => details.value?.aliased_data?.site_visit_team_n1);
-const teamMembers = computed(() => teamTile.value?.aliased_data?.team_member || []);
+const teamTile = computed(
+    () => details.value?.aliased_data?.site_visit_team_n1,
+);
+const teamMembers = computed(
+    () => teamTile.value?.aliased_data?.team_member || [],
+);
 const siteFormAuthorsField = computed(() => {
-    return details.value?.aliased_data?.site_form_authors as AliasedNodeData | undefined;
+    return details.value?.aliased_data?.site_form_authors as
+        | AliasedNodeData
+        | undefined;
 });
 
 const { processedData: teamMembersTableData } = useTileEditLog(
     teamMembers,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const { processedData: siteVisitDetailsProcessed } = useSingleTileEditLog(
     details,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const siteVisitDetailsTableData = computed(() => {
     if (!siteVisitDetailsProcessed.value) return [];
 
-    return [{
-        ...siteVisitDetailsProcessed.value,
-        site_visit_type: siteVisitDetailsProcessed.value.aliased_data?.site_visit_type,
-        last_date_of_site_visit: siteVisitDetailsProcessed.value.aliased_data?.last_date_of_site_visit,
-        first_date_of_site_visit: siteVisitDetailsProcessed.value.aliased_data?.first_date_of_site_visit,
-        project_description: siteVisitDetailsProcessed.value.aliased_data?.project_description,
-        associated_permit: siteVisitDetailsProcessed.value.aliased_data?.associated_permit,
-        affiliation: siteVisitDetailsProcessed.value.aliased_data?.affiliation,
-        entered_on: siteVisitDetailsProcessed.value.aliased_data?.entered_on,
-        entered_by: siteVisitDetailsProcessed.value.aliased_data?.entered_by,
-    }];
+    return [
+        {
+            ...siteVisitDetailsProcessed.value,
+            site_visit_type:
+                siteVisitDetailsProcessed.value.aliased_data?.site_visit_type,
+            last_date_of_site_visit:
+                siteVisitDetailsProcessed.value.aliased_data
+                    ?.last_date_of_site_visit,
+            first_date_of_site_visit:
+                siteVisitDetailsProcessed.value.aliased_data
+                    ?.first_date_of_site_visit,
+            project_description:
+                siteVisitDetailsProcessed.value.aliased_data
+                    ?.project_description,
+            associated_permit:
+                siteVisitDetailsProcessed.value.aliased_data?.associated_permit,
+            affiliation:
+                siteVisitDetailsProcessed.value.aliased_data?.affiliation,
+            entered_on:
+                siteVisitDetailsProcessed.value.aliased_data?.entered_on,
+            entered_by:
+                siteVisitDetailsProcessed.value.aliased_data?.entered_by,
+        },
+    ];
 });
 
 const hasDetails = computed(() => details.value?.aliased_data);
 const hasTeamMembers = computed(() => teamMembersTableData.value.length > 0);
-const hasSiteFormAuthors = computed(() => siteFormAuthorsField.value && !isEmpty(siteFormAuthorsField.value));
+const hasSiteFormAuthors = computed(
+    () => siteFormAuthorsField.value && !isEmpty(siteFormAuthorsField.value),
+);
 
 const teamColumns = [
     { field: 'team_member', label: 'Name' },

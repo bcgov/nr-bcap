@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 import Button from 'primevue/button';
 
 export interface EditLogResponse {
@@ -29,7 +29,12 @@ const props = defineProps<{
 const emit = defineEmits<{
     loaded: [data: EditLogResponse];
     error: [error: string];
-    populateAllFields: [results: Record<string, { entered_on: string | null; entered_by: string | null }>];
+    populateAllFields: [
+        results: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >,
+    ];
 }>();
 
 const loading = ref(false);
@@ -38,7 +43,7 @@ const dataLoaded = ref(false);
 
 const formatDisplayName = (response: EditLogResponse): string => {
     if (!response.modified_by) {
-        return "Unknown";
+        return 'Unknown';
     }
 
     if (response.is_system_edit) {
@@ -49,7 +54,7 @@ const formatDisplayName = (response: EditLogResponse): string => {
 };
 
 const formatDate = (dateString: string | null): string => {
-    if (!dateString) return "Unknown";
+    if (!dateString) return 'Unknown';
 
     try {
         const date = new Date(dateString);
@@ -66,7 +71,7 @@ const loadEditLog = async (
         tileId?: string;
         nodegroupId?: string;
         nodegroupAlias?: string;
-    }
+    },
 ): Promise<EditLogResponse | null> => {
     try {
         const params = new URLSearchParams();
@@ -87,38 +92,48 @@ const loadEditLog = async (
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`Failed to load edit information: ${response.status}`);
+            throw new Error(
+                `Failed to load edit information: ${response.status}`,
+            );
         }
 
         const result: EditLogResponse = await response.json();
         return result;
     } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+        const errorMessage =
+            err instanceof Error ? err.message : 'Unknown error occurred';
         error.value = errorMessage;
-        console.error("Error loading edit log:", err);
+        console.error('Error loading edit log:', err);
         return null;
     }
 };
 
 const populateAllEnteredFields = async () => {
     loading.value = true;
-    const results: Record<string, { entered_on: string | null; entered_by: string | null }> = {};
+    const results: Record<
+        string,
+        { entered_on: string | null; entered_by: string | null }
+    > = {};
 
     try {
         // If specific tile IDs are provided, fetch data for each
         if (props.tileIds && props.tileIds.length > 0) {
             const promises = props.tileIds.map(async (tileId) => {
-                const result = await loadEditLog(props.resourceId, props.graph, {
-                    tileId: tileId
-                });
+                const result = await loadEditLog(
+                    props.resourceId,
+                    props.graph,
+                    {
+                        tileId: tileId,
+                    },
+                );
 
                 if (result) {
                     return {
                         tileId: tileId,
                         data: {
                             entered_on: formatDate(result.modified_on),
-                            entered_by: formatDisplayName(result)
-                        }
+                            entered_by: formatDisplayName(result),
+                        },
                     };
                 }
                 return null;
@@ -135,17 +150,21 @@ const populateAllEnteredFields = async () => {
         // If nodegroup configs provided
         else if (props.nodegroupConfigs && props.nodegroupConfigs.length > 0) {
             const promises = props.nodegroupConfigs.map(async (config) => {
-                const result = await loadEditLog(props.resourceId, props.graph, {
-                    nodegroupAlias: config.alias
-                });
+                const result = await loadEditLog(
+                    props.resourceId,
+                    props.graph,
+                    {
+                        nodegroupAlias: config.alias,
+                    },
+                );
 
                 if (result) {
                     return {
                         alias: config.alias,
                         data: {
                             entered_on: formatDate(result.modified_on),
-                            entered_by: formatDisplayName(result)
-                        }
+                            entered_by: formatDisplayName(result),
+                        },
                     };
                 }
 
@@ -166,7 +185,7 @@ const populateAllEnteredFields = async () => {
             if (result) {
                 results['resource'] = {
                     entered_on: formatDate(result.modified_on),
-                    entered_by: formatDisplayName(result)
+                    entered_by: formatDisplayName(result),
                 };
             }
         }

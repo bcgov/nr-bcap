@@ -10,7 +10,10 @@ const props = withDefaults(
     defineProps<{
         data: SiteVisitSchema | undefined;
         loading?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         loading: false,
@@ -45,20 +48,26 @@ const generalRemarkColumns = [
 
 const { processedData: recommendationsTableData } = useTileEditLog(
     recRows,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const { processedData: generalRemarksTableData } = useTileEditLog(
     generalRemarkRows,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const hasRecommendations = computed(() => {
-    return recommendationsTableData.value && recommendationsTableData.value.length > 0;
+    return (
+        recommendationsTableData.value &&
+        recommendationsTableData.value.length > 0
+    );
 });
 
 const hasRemarks = computed(() => {
-    return generalRemarksTableData.value && generalRemarksTableData.value.length > 0;
+    return (
+        generalRemarksTableData.value &&
+        generalRemarksTableData.value.length > 0
+    );
 });
 </script>
 

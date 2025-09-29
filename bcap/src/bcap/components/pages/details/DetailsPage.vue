@@ -29,14 +29,15 @@ const props = withDefaults(
 
 const hideEmptySections = ref(false);
 const forceCollapsed = ref<boolean | undefined>(undefined);
-const editLogData = ref<Record<string, { entered_on: string | null; entered_by: string | null }>>({});
+const editLogData = ref<
+    Record<string, { entered_on: string | null; entered_by: string | null }>
+>({});
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const { data: resourceData } = useResourceData<ArchaeologySiteSchema | SiteVisitSchema>(
-    props.data.graph_slug,
-    resourceId
-);
+const { data: resourceData } = useResourceData<
+    ArchaeologySiteSchema | SiteVisitSchema
+>(props.data.graph_slug, resourceId);
 
 const allTileIds = computed(() => {
     const tileIds: string[] = [];
@@ -46,20 +47,59 @@ const allTileIds = computed(() => {
     if (props.data.graph_slug === 'archaeological_site') {
         const data = resourceData.value as ArchaeologySiteSchema;
         const editLogTiles = [
-            ['aliased_data', 'identification_and_registration', 'aliased_data', 'authority'],
-            ['aliased_data', 'identification_and_registration', 'aliased_data', 'site_names'],
-            ['aliased_data', 'identification_and_registration', 'aliased_data', 'site_decision'],
+            [
+                'aliased_data',
+                'identification_and_registration',
+                'aliased_data',
+                'authority',
+            ],
+            [
+                'aliased_data',
+                'identification_and_registration',
+                'aliased_data',
+                'site_names',
+            ],
+            [
+                'aliased_data',
+                'identification_and_registration',
+                'aliased_data',
+                'site_decision',
+            ],
             ['aliased_data', 'heritage_site_location', '0', 'tenure_remarks'],
             ['aliased_data', 'heritage_site_location', '0', 'address_remarks'],
-            ['aliased_data', 'archaeological_data', 'aliased_data', 'site_typology_remarks'],
-            ['aliased_data', 'ancestral_remains', 'aliased_data', 'restricted_ancestral_remains_remark'],
-            ['aliased_data', 'remarks_and_restricted_information', 'aliased_data', 'general_remark_information'],
-            ['aliased_data', 'remarks_and_restricted_information', 'aliased_data', 'hca_contravention'],
-            ['aliased_data', 'remarks_and_restricted_information', 'aliased_data', 'conviction'],
+            [
+                'aliased_data',
+                'archaeological_data',
+                'aliased_data',
+                'site_typology_remarks',
+            ],
+            [
+                'aliased_data',
+                'ancestral_remains',
+                'aliased_data',
+                'restricted_ancestral_remains_remark',
+            ],
+            [
+                'aliased_data',
+                'remarks_and_restricted_information',
+                'aliased_data',
+                'general_remark_information',
+            ],
+            [
+                'aliased_data',
+                'remarks_and_restricted_information',
+                'aliased_data',
+                'hca_contravention',
+            ],
+            [
+                'aliased_data',
+                'remarks_and_restricted_information',
+                'aliased_data',
+                'conviction',
+            ],
         ];
         return collectTileIds(data, editLogTiles);
-    }
-    else if (props.data.graph_slug === 'site_visit') {
+    } else if (props.data.graph_slug === 'site_visit') {
         const data = resourceData.value as SiteVisitSchema;
 
         const siteVisitDetailsTile = data.aliased_data?.site_visit_details;
@@ -68,7 +108,8 @@ const allTileIds = computed(() => {
             tileIds.push(siteVisitDetailsTile.tileid);
         }
 
-        const remarksRecs = data.aliased_data?.remarks_and_recommendations?.aliased_data;
+        const remarksRecs =
+            data.aliased_data?.remarks_and_recommendations?.aliased_data;
         if (remarksRecs) {
             if (remarksRecs.recommendation) {
                 remarksRecs.recommendation.forEach((rec: AliasedTileData) => {
@@ -76,9 +117,11 @@ const allTileIds = computed(() => {
                 });
             }
             if (remarksRecs.general_remark) {
-                remarksRecs.general_remark.forEach((remark: AliasedTileData) => {
-                    if (remark.tileid) tileIds.push(remark.tileid);
-                });
+                remarksRecs.general_remark.forEach(
+                    (remark: AliasedTileData) => {
+                        if (remark.tileid) tileIds.push(remark.tileid);
+                    },
+                );
             }
         }
 
@@ -88,17 +131,23 @@ const allTileIds = computed(() => {
                 tileIds.push(identification.temporary_number.tileid);
             }
             if (identification.new_site_names) {
-                identification.new_site_names.forEach((name: AliasedTileData) => {
-                    if (name.tileid) tileIds.push(name.tileid);
-                });
+                identification.new_site_names.forEach(
+                    (name: AliasedTileData) => {
+                        if (name.tileid) tileIds.push(name.tileid);
+                    },
+                );
             }
         }
 
-        const teamTile = data.aliased_data?.site_visit_details?.aliased_data?.site_visit_team_n1;
+        const teamTile =
+            data.aliased_data?.site_visit_details?.aliased_data
+                ?.site_visit_team_n1;
         if (teamTile?.aliased_data?.team_member) {
-            teamTile.aliased_data.team_member.forEach((member: AliasedTileData) => {
-                if (member.tileid) tileIds.push(member.tileid);
-            });
+            teamTile.aliased_data.team_member.forEach(
+                (member: AliasedTileData) => {
+                    if (member.tileid) tileIds.push(member.tileid);
+                },
+            );
         }
     }
 
@@ -123,7 +172,12 @@ const handleExpandAll = () => {
     }, 100);
 };
 
-const handlePopulateAllFields = (results: Record<string, { entered_on: string | null; entered_by: string | null }>) => {
+const handlePopulateAllFields = (
+    results: Record<
+        string,
+        { entered_on: string | null; entered_by: string | null }
+    >,
+) => {
     editLogData.value = results;
 };
 </script>
@@ -140,7 +194,13 @@ const handlePopulateAllFields = (results: Record<string, { entered_on: string | 
                 @expand-all="handleExpandAll"
             >
                 <EditLog
-                    v-if="resourceId && allTileIds.length > 0 && ['archaeological_site', 'site_visit'].includes(props.data.graph_slug)"
+                    v-if="
+                        resourceId &&
+                        allTileIds.length > 0 &&
+                        ['archaeological_site', 'site_visit'].includes(
+                            props.data.graph_slug,
+                        )
+                    "
                     :resource-id="resourceId"
                     :graph="props.data.graph_slug"
                     :tile-ids="allTileIds"

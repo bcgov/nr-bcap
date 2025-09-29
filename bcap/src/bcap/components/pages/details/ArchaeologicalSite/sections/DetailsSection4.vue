@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { computed, toRef } from "vue";
-import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
-import EmptyState from "@/bcap/components/EmptyState.vue";
-import { getDisplayValue, isEmpty } from "@/bcap/util.ts";
-import { useTileEditLog, useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
-import StandardDataTable from "@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue";
-import "primeicons/primeicons.css";
-import type { AliasedNodeData } from "@/arches_component_lab/types.ts";
-import type { SiteLocationTile } from "@/bcap/schema/ArchaeologySiteSchema.ts";
-import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
-import type { HriaDiscontinuedDataSchema } from "@/bcap/schema/HriaDiscontinuedDataSchema.ts";
+import { computed, toRef } from 'vue';
+import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import EmptyState from '@/bcap/components/EmptyState.vue';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import {
+    useTileEditLog,
+    useSingleTileEditLog,
+} from '@/bcap/composables/useTileEditLog.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import 'primeicons/primeicons.css';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -19,7 +22,10 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         languageCode: 'en',
@@ -127,10 +133,13 @@ const hasBcPropertyLegalDescription = computed(() => {
 const hasAddressRemarks = computed(() => {
     const data = addressRemarksData.value?.aliased_data;
 
-    return data && (
-        !isEmpty(data?.address_and_legal_description_remarks as AliasedNodeData) ||
-        data?.entered_on ||
-        data?.entered_by
+    return (
+        data &&
+        (!isEmpty(
+            data?.address_and_legal_description_remarks as AliasedNodeData,
+        ) ||
+            data?.entered_on ||
+            data?.entered_by)
     );
 });
 
@@ -193,12 +202,12 @@ const addressRemarksSource = computed(() => props.data?.address_remarks);
 
 const { processedData: tenureRemarksTableData } = useTileEditLog(
     tenureRemarksData,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const { processedData: addressRemarksDataRaw } = useSingleTileEditLog(
     addressRemarksSource,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const addressRemarksData = computed(() => {
@@ -209,10 +218,17 @@ const addressRemarksData = computed(() => {
         ...data,
         aliased_data: {
             ...data.aliased_data,
-            entered_on: data.aliased_data?.entered_on as AliasedNodeData | undefined,
-            entered_by: data.aliased_data?.entered_by as AliasedNodeData | undefined,
-            address_and_legal_description_remarks: data.aliased_data?.address_and_legal_description_remarks as AliasedNodeData | undefined
-        }
+            entered_on: data.aliased_data?.entered_on as
+                | AliasedNodeData
+                | undefined,
+            entered_by: data.aliased_data?.entered_by as
+                | AliasedNodeData
+                | undefined,
+            address_and_legal_description_remarks: data.aliased_data
+                ?.address_and_legal_description_remarks as
+                | AliasedNodeData
+                | undefined,
+        },
     };
 });
 </script>
@@ -778,35 +794,41 @@ const addressRemarksData = computed(() => {
 
                                     <dt
                                         v-if="
-                                            addressRemarksData?.aliased_data?.entered_on?.display_value
+                                            addressRemarksData?.aliased_data
+                                                ?.entered_on?.display_value
                                         "
                                     >
                                         Entered On
                                     </dt>
                                     <dd
                                         v-if="
-                                            addressRemarksData?.aliased_data?.entered_on?.display_value
+                                            addressRemarksData?.aliased_data
+                                                ?.entered_on?.display_value
                                         "
                                     >
                                         {{
-                                            addressRemarksData.aliased_data.entered_on.display_value
+                                            addressRemarksData.aliased_data
+                                                .entered_on.display_value
                                         }}
                                     </dd>
 
                                     <dt
                                         v-if="
-                                            addressRemarksData?.aliased_data?.entered_by?.display_value
+                                            addressRemarksData?.aliased_data
+                                                ?.entered_by?.display_value
                                         "
                                     >
                                         Entered By
                                     </dt>
                                     <dd
                                         v-if="
-                                            addressRemarksData?.aliased_data?.entered_by?.display_value
+                                            addressRemarksData?.aliased_data
+                                                ?.entered_by?.display_value
                                         "
                                     >
                                         {{
-                                            addressRemarksData.aliased_data.entered_by.display_value
+                                            addressRemarksData.aliased_data
+                                                .entered_by.display_value
                                         }}
                                     </dd>
                                 </dl>

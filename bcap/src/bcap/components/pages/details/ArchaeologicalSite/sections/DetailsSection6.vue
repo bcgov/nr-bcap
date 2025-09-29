@@ -14,7 +14,10 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
-        editLogData?: Record<string, { entered_on: string | null; entered_by: string | null }>;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         languageCode: 'en',
@@ -57,11 +60,13 @@ const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     },
 );
 
-const typologyRemarksData = computed(() => currentData.value?.site_typology_remarks || []);
+const typologyRemarksData = computed(
+    () => currentData.value?.site_typology_remarks || [],
+);
 
 const { processedData: typologyRemarksTableData } = useTileEditLog(
     typologyRemarksData,
-    toRef(props, 'editLogData')
+    toRef(props, 'editLogData'),
 );
 
 const hasTypology = computed(() => {
@@ -69,7 +74,10 @@ const hasTypology = computed(() => {
 });
 
 const hasTypologyRemarks = computed(() => {
-    return typologyRemarksTableData.value && typologyRemarksTableData.value.length > 0;
+    return (
+        typologyRemarksTableData.value &&
+        typologyRemarksTableData.value.length > 0
+    );
 });
 </script>
 
