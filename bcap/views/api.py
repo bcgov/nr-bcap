@@ -8,9 +8,10 @@ from django.utils.translation import gettext as _
 from rest_framework.exceptions import ValidationError
 from rest_framework.settings import api_settings
 from rest_framework.response import Response
-from arches.app.models.models import ResourceInstance
+from arches.app.models.models import ResourceInstance, EditLog, Node
 from django.core.exceptions import FieldError
-from django.db import connection
+from django.db.models import F
+from django.contrib.auth.models import User
 
 from arches import VERSION as arches_version
 
@@ -33,6 +34,7 @@ from arches_querysets.rest_framework.serializers import (
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_controlled_lists.models import ListItem, ListItemValue
 from typing import Any, ClassVar
+from arches.app.models.models import TileModel
 
 
 logger = logging.getLogger(__name__)
@@ -82,171 +84,112 @@ class ResourceEditLogView(APIView):
             )
 
     def _get_nodegroup_id_from_alias(self, graph: str, alias: str) -> str | None:
-        with connection.cursor() as cursor:
-            query = """
-                SELECT DISTINCT n.nodegroupid::text
-                FROM nodes n
-                INNER JOIN graphs g ON n.graphid = g.graphid
-                WHERE g.slug = %s
-                AND n.alias = %s
-                LIMIT 1
-            """
+        try:
+            node = Node.objects.filter(
+                graph__slug=graph,
+                alias=alias,
+                pk=F('nodegroup_id')
+            ).values('nodegroup_id').first()
 
-            cursor.execute(query, [graph, alias])
+            return str(node['nodegroup_id']) if node else None
+        except Exception:
+            logger.exception(f"Error resolving nodegroup alias: {alias}")
+            return None
 
-            result = cursor.fetchone()
-            return result[0] if result else None
+    def _get_nodegroup_modification(self, resource_id: str, nodegroup_id: str) -> dict[str, Any]:
+        # Find child nodegroups
+        parent_tiles = TileModel.objects.filter(
+            nodegroup_id=nodegroup_id,
+            resourceinstance_id=resource_id
+        ).values_list('tileid', flat=True)
 
-    def _get_nodegroup_modification(
-        self, resource_id: str, nodegroup_id: str
-    ) -> dict[str, Any]:
-        with connection.cursor() as cursor:
-            # Find child nodegroups
-            query = """
-                SELECT DISTINCT t_child.nodegroupid::text
-                FROM tiles t_parent
-                INNER JOIN tiles t_child ON t_child.parenttileid = t_parent.tileid
-                WHERE t_parent.nodegroupid = %s::uuid
-                AND t_parent.resourceinstanceid = %s::uuid
-            """
+        # Get child tiles
+        child_nodegroups = TileModel.objects.filter(
+            parenttile_id__in=parent_tiles
+        ).values_list('nodegroup_id', flat=True).distinct()
 
-            cursor.execute(query, [nodegroup_id, resource_id])
+        # Combine parent and child nodegroups
+        all_nodegroups = [nodegroup_id, *list(child_nodegroups)]
 
-            child_nodegroups = [row[0] for row in cursor.fetchall()]
-            all_nodegroups = [nodegroup_id, *child_nodegroups]
+        # Get the edit log entry
+        edit_log = EditLog.objects.filter(
+            resourceinstanceid=resource_id,
+            nodegroupid__in=all_nodegroups
+        ).order_by('-timestamp').first()
 
-            # Get most recent edit from these nodegroups
-            query = """
-                SELECT
-                    el.timestamp,
-                    COALESCE(el.user_username, au.username) as username,
-                    COALESCE(el.user_firstname, au.first_name) as first_name,
-                    COALESCE(el.user_lastname, au.last_name) as last_name,
-                    el.edittype,
-                    el.transactionid,
-                    el.user_email,
-                    el.userid,
-                    el.tileinstanceid,
-                    el.nodegroupid,
-                    n.alias
-                FROM public.edit_log el
-                LEFT JOIN public.auth_user au ON el.userid::integer = au.id
-                LEFT JOIN nodes n ON el.nodegroupid::uuid = n.nodegroupid
-                WHERE el.resourceinstanceid = %s
-            """
+        if edit_log:
+            # Get nodegroup alias
+            nodegroup_alias = None
 
-            params = [resource_id]
+            if edit_log.nodegroupid:
+                node = Node.objects.filter(
+                    nodegroup_id=edit_log.nodegroupid,
+                    pk=F('nodegroup_id')
+                ).values('alias').first()
 
-            if len(all_nodegroups) == 1:
-                query += " AND el.nodegroupid = %s"
-                params.append(all_nodegroups[0])
-            else:
-                placeholders = ",".join(["%s"] * len(all_nodegroups))
-                query += f" AND el.nodegroupid IN ({placeholders})"
-                params.extend(all_nodegroups)
+                nodegroup_alias = node['alias'] if node else None
 
-            query += " ORDER BY el.timestamp DESC LIMIT 1"
+            return self._format_response_from_object(edit_log, nodegroup_alias)
 
-            cursor.execute(query, params)
-            row = cursor.fetchone()
-
-            if row:
-                return self._format_response(row)
-
-            return {
-                "modified_on": None,
-                "modified_by": None,
-                "nodegroup_id": nodegroup_id,
-                "error": "No modifications found",
-            }
+        return {
+            "modified_on": None,
+            "modified_by": None,
+            "nodegroup_id": nodegroup_id,
+            "error": "No modifications found",
+        }
 
     def _get_tile_modification(self, resource_id: str, tile_id: str) -> dict[str, Any]:
-        """Get modification info for a specific tile."""
+        """Get modification info for a specific tile using Django ORM."""
 
-        with connection.cursor() as cursor:
-            query = """
-                SELECT
-                    el.timestamp,
-                    COALESCE(el.user_username, au.username) as username,
-                    COALESCE(el.user_firstname, au.first_name) as first_name,
-                    COALESCE(el.user_lastname, au.last_name) as last_name,
-                    el.edittype,
-                    el.transactionid,
-                    el.user_email,
-                    el.userid,
-                    el.tileinstanceid,
-                    el.nodegroupid
-                FROM public.edit_log el
-                LEFT JOIN public.auth_user au ON el.userid::integer = au.id
-                WHERE el.resourceinstanceid = %s
-                  AND el.tileinstanceid = %s
-                ORDER BY el.timestamp DESC
-                LIMIT 1
-            """
+        edit_log = EditLog.objects.filter(
+            resourceinstanceid=resource_id,
+            tileinstanceid=tile_id
+        ).order_by('-timestamp').first()
 
-            cursor.execute(query, [resource_id, tile_id])
+        if edit_log:
+            return self._format_response_from_object(edit_log)
 
-            row = cursor.fetchone()
-
-            if row:
-                return self._format_response(row)
-
-            return {
-                "modified_on": None,
-                "modified_by": None,
-                "tile_id": tile_id,
-                "error": "No modifications found for this tile",
-            }
+        return {
+            "modified_on": None,
+            "modified_by": None,
+            "tile_id": tile_id,
+            "error": "No modifications found for this tile",
+        }
 
     def _get_resource_modification(self, resource_id: str) -> dict[str, Any]:
-        """Get the most recent modification for the entire resource."""
+        """Get the most recent modification for the entire resource using Django ORM."""
 
-        with connection.cursor() as cursor:
-            query = """
-                SELECT
-                    el.timestamp,
-                    COALESCE(el.user_username, au.username) as username,
-                    COALESCE(el.user_firstname, au.first_name) as first_name,
-                    COALESCE(el.user_lastname, au.last_name) as last_name,
-                    el.edittype,
-                    el.transactionid,
-                    el.user_email,
-                    el.userid,
-                    el.tileinstanceid,
-                    el.nodegroupid
-                FROM public.edit_log el
-                LEFT JOIN public.auth_user au ON el.userid::integer = au.id
-                WHERE el.resourceinstanceid = %s
-                ORDER BY el.timestamp DESC
-                LIMIT 1
-            """
+        edit_log = EditLog.objects.filter(
+            resourceinstanceid=resource_id
+        ).order_by('-timestamp').first()
 
-            cursor.execute(query, [resource_id])
+        if edit_log:
+            return self._format_response_from_object(edit_log)
 
-            row = cursor.fetchone()
+        return {
+            "modified_on": None,
+            "modified_by": None,
+            "error": "No modifications found",
+        }
 
-            if row:
-                return self._format_response(row)
+    def _format_response_from_object(self, edit_log: EditLog, nodegroup_alias: str | None = None) -> dict[str, Any]:
+        """Format response from an EditLog object."""
 
-            return {
-                "modified_on": None,
-                "modified_by": None,
-                "error": "No modifications found",
-            }
+        username = edit_log.user_username
+        first_name = edit_log.user_firstname
+        last_name = edit_log.user_lastname
 
-    def _format_response(self, row) -> dict[str, Any]:
-        """Format response with user name handling."""
+        if not any([username, first_name, last_name]) and edit_log.userid:
+            try:
+                user_id = int(edit_log.userid)
+                user = User.objects.filter(id=user_id).first()
 
-        timestamp = row[0]
-        username = row[1]
-        first_name = row[2]
-        last_name = row[3]
-        edit_type = row[4]
-        transaction_id = row[5] if len(row) > 5 else None
-        user_email = row[6] if len(row) > 6 else None
-        tile_id = row[8] if len(row) > 8 else None
-        nodegroup_id = row[9] if len(row) > 9 else None
-        nodegroup_alias = row[10] if len(row) > 10 else None
+                if user:
+                    username = username or user.username
+                    first_name = first_name or user.first_name
+                    last_name = last_name or user.last_name
+            except (ValueError, TypeError):
+                pass
 
         if first_name and last_name:
             display_name = f"{first_name} {last_name}"
@@ -255,22 +198,22 @@ class ResourceEditLogView(APIView):
         elif first_name:
             display_name = first_name
         else:
-            display_name = self._get_system_user_name(edit_type)
+            display_name = self._get_system_user_name(edit_log.edittype)
 
         result = {
-            "modified_on": timestamp.isoformat() if timestamp else None,
+            "modified_on": edit_log.timestamp.isoformat() if edit_log.timestamp else None,
             "modified_by": display_name,
-            "transaction_id": str(transaction_id) if transaction_id else None,
-            "edit_type": edit_type,
-            "user_email": user_email,
+            "transaction_id": str(edit_log.transactionid) if edit_log.transactionid else None,
+            "edit_type": edit_log.edittype,
+            "user_email": edit_log.user_email,
             "is_system_edit": not bool(username or first_name or last_name),
         }
 
-        if tile_id:
-            result["tile_id"] = str(tile_id)
+        if edit_log.tileinstanceid:
+            result["tile_id"] = str(edit_log.tileinstanceid)
 
-        if nodegroup_id:
-            result["nodegroup_id"] = str(nodegroup_id)
+        if edit_log.nodegroupid:
+            result["nodegroup_id"] = str(edit_log.nodegroupid)
 
         if nodegroup_alias:
             result["nodegroup_alias"] = nodegroup_alias

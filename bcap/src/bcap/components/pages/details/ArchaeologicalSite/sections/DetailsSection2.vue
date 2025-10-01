@@ -5,6 +5,8 @@ import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
 import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
@@ -21,10 +23,7 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
-        editLogData?: Record<
-            string,
-            { entered_on: string | null; entered_by: string | null }
-        >;
+        editLogData?: EditLogData;
     }>(),
     {
         languageCode: 'en',
@@ -75,8 +74,8 @@ const authorityColumns = [
     { field: 'authority_start_date', label: 'Start Date' },
     { field: 'authority_end_date', label: 'Expiry Date' },
     { field: 'authority_description', label: 'Description' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const siteNamesColumns = [
@@ -85,8 +84,8 @@ const siteNamesColumns = [
     { field: 'name_remarks', label: 'Site Name Remarks' },
     { field: 'assigned_or_reported_date', label: 'Date Assigned or Reported' },
     { field: 'assigned_or_reported_by', label: 'Assigned or Reported By' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 type IdFieldKey = (typeof id_fields)[number];

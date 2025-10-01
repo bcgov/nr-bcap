@@ -8,6 +8,8 @@ import {
     useTileEditLog,
     useSingleTileEditLog,
 } from '@/bcap/composables/useTileEditLog.ts';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
@@ -17,10 +19,7 @@ const props = withDefaults(
         sectionTitle?: string;
         loading?: boolean;
         visible?: boolean;
-        editLogData?: Record<
-            string,
-            { entered_on: string | null; entered_by: string | null }
-        >;
+        editLogData?: EditLogData;
     }>(),
     {
         sectionTitle: '3. Site Visit Details',
@@ -48,36 +47,30 @@ const { processedData: teamMembersTableData } = useTileEditLog(
     toRef(props, 'editLogData'),
 );
 
-const { processedData: siteVisitDetailsProcessed } = useSingleTileEditLog(
+const { processedData: siteVisitDetailsData } = useSingleTileEditLog(
     details,
     toRef(props, 'editLogData'),
 );
 
 const siteVisitDetailsTableData = computed(() => {
-    if (!siteVisitDetailsProcessed.value) return [];
+    if (!siteVisitDetailsData.value) return [];
 
     return [
         {
-            ...siteVisitDetailsProcessed.value,
+            ...siteVisitDetailsData.value,
             site_visit_type:
-                siteVisitDetailsProcessed.value.aliased_data?.site_visit_type,
+                siteVisitDetailsData.value.aliased_data?.site_visit_type,
             last_date_of_site_visit:
-                siteVisitDetailsProcessed.value.aliased_data
+                siteVisitDetailsData.value.aliased_data
                     ?.last_date_of_site_visit,
             first_date_of_site_visit:
-                siteVisitDetailsProcessed.value.aliased_data
+                siteVisitDetailsData.value.aliased_data
                     ?.first_date_of_site_visit,
             project_description:
-                siteVisitDetailsProcessed.value.aliased_data
-                    ?.project_description,
+                siteVisitDetailsData.value.aliased_data?.project_description,
             associated_permit:
-                siteVisitDetailsProcessed.value.aliased_data?.associated_permit,
-            affiliation:
-                siteVisitDetailsProcessed.value.aliased_data?.affiliation,
-            entered_on:
-                siteVisitDetailsProcessed.value.aliased_data?.entered_on,
-            entered_by:
-                siteVisitDetailsProcessed.value.aliased_data?.entered_by,
+                siteVisitDetailsData.value.aliased_data?.associated_permit,
+            affiliation: siteVisitDetailsData.value.aliased_data?.affiliation,
         },
     ];
 });
@@ -92,8 +85,8 @@ const teamColumns = [
     { field: 'team_member', label: 'Name' },
     { field: 'member_roles', label: 'Role(s)' },
     { field: 'was_on_site', label: 'On Site' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const siteVisitDetailsColumns = [
@@ -102,8 +95,8 @@ const siteVisitDetailsColumns = [
     { field: 'project_description', label: 'Site Visit Description' },
     { field: 'associated_permit', label: 'Associated Permit' },
     { field: 'affiliation', label: 'Affiliation' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 </script>
 

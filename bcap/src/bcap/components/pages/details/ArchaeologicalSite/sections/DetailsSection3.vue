@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import SiteVisitDetailsSection3 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue';
@@ -12,11 +13,13 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: EditLogData;
     }>(),
     {
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -59,11 +62,12 @@ const hasSiteVisits = computed(() => {
                             :visible="false"
                             :section-title="sectionTitle(visit)"
                             :language-code="languageCode"
+                            :edit-log-data="editLogData"
                         />
                     </div>
                     <EmptyState
                         v-else
-                        message="No site visits available for this site."
+                        message="No site visit(s) available for this site."
                     />
                 </template>
             </DetailsSection>

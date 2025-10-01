@@ -1,79 +1,65 @@
 import { ref, watch, type Ref } from 'vue';
 import type {
     AliasedTileData,
-    AliasedNodeData,
+    AliasedNodegroupData,
 } from '@/arches_component_lab/types.ts';
-
-export interface EditLogEntry {
-    entered_on: string | null;
-    entered_by: string | null;
-}
-
-export type EditLogData = Record<string, EditLogEntry>;
+import type {
+    EditLogData,
+    AliasedTileDataWithAudit,
+    AliasedNodeDataWithAudit,
+} from '@/bcgov_arches_common/types.ts';
+import {
+    DEFAULT_ENTERED_ON_FIELD,
+    DEFAULT_ENTERED_BY_FIELD,
+} from '@/bcgov_arches_common/constants.ts';
 
 export function applyEditLogToTile(
     tile: AliasedTileData,
     editLogData: EditLogData | undefined,
-    enteredOnField = 'entered_on',
-    enteredByField = 'entered_by',
-): AliasedTileData {
+): AliasedTileDataWithAudit {
     const tileEditData = tile.tileid
         ? editLogData?.[`tile_${tile.tileid}`]
         : undefined;
 
-    if (!tileEditData?.entered_on && !tileEditData?.entered_by) {
-        return tile;
-    }
-
-    const updatedAliasedData = { ...(tile.aliased_data || {}) };
-
-    if (tileEditData?.entered_on) {
-        updatedAliasedData[enteredOnField] = {
-            node_value: tileEditData.entered_on,
-            display_value: tileEditData.entered_on,
-            details: [],
-        } as AliasedNodeData;
-    }
-
-    if (tileEditData?.entered_by) {
-        updatedAliasedData[enteredByField] = {
-            node_value: tileEditData.entered_by,
-            display_value: tileEditData.entered_by,
-            details: [],
-        } as AliasedNodeData;
+    if (
+        !tileEditData?.[DEFAULT_ENTERED_ON_FIELD] &&
+        !tileEditData?.[DEFAULT_ENTERED_BY_FIELD]
+    ) {
+        return {
+            ...tile,
+            aliased_data: tile.aliased_data as Record<
+                string,
+                AliasedNodeDataWithAudit | AliasedNodegroupData | null
+            >,
+        } as AliasedTileDataWithAudit;
     }
 
     return {
         ...tile,
-        aliased_data: updatedAliasedData,
-    };
+        aliased_data: tile.aliased_data as Record<
+            string,
+            AliasedNodeDataWithAudit | AliasedNodegroupData | null
+        >,
+        audit: {
+            [DEFAULT_ENTERED_ON_FIELD]: tileEditData[DEFAULT_ENTERED_ON_FIELD],
+            [DEFAULT_ENTERED_BY_FIELD]: tileEditData[DEFAULT_ENTERED_BY_FIELD],
+        },
+    } as AliasedTileDataWithAudit;
 }
 
 export function useTileEditLog(
     sourceData: Ref<AliasedTileData[] | undefined>,
     editLogData: Ref<EditLogData | undefined>,
-    options?: {
-        enteredOnField?: string;
-        enteredByField?: string;
-    },
 ) {
-    const processedData = ref<AliasedTileData[]>([]);
-
-    const enteredOnField = options?.enteredOnField || 'entered_on';
-    const enteredByField = options?.enteredByField || 'entered_by';
+    const processedData = ref<AliasedTileDataWithAudit[]>([]);
 
     watch(
         () => [sourceData.value, editLogData.value],
         () => {
             const items = sourceData.value || [];
 
-            processedData.value = items.map((item: AliasedTileData) =>
-                applyEditLogToTile(
-                    item,
-                    editLogData.value,
-                    enteredOnField,
-                    enteredByField,
-                ),
+            processedData.value = items.map((item) =>
+                applyEditLogToTile(item, editLogData.value),
             );
         },
         { immediate: true, deep: true },
@@ -87,15 +73,8 @@ export function useTileEditLog(
 export function useSingleTileEditLog(
     sourceData: Ref<AliasedTileData | undefined>,
     editLogData: Ref<EditLogData | undefined>,
-    options?: {
-        enteredOnField?: string;
-        enteredByField?: string;
-    },
 ) {
-    const processedData = ref<AliasedTileData | null>(null);
-
-    const enteredOnField = options?.enteredOnField || 'entered_on';
-    const enteredByField = options?.enteredByField || 'entered_by';
+    const processedData = ref<AliasedTileDataWithAudit | null>(null);
 
     watch(
         () => [sourceData.value, editLogData.value],
@@ -108,8 +87,6 @@ export function useSingleTileEditLog(
             processedData.value = applyEditLogToTile(
                 sourceData.value,
                 editLogData.value,
-                enteredOnField,
-                enteredByField,
             );
         },
         { immediate: true, deep: true },

@@ -95,6 +95,7 @@ const typedHriaData = computed(
             :data="typedSiteVisitData"
             :loading="siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section4
             :data="

@@ -4,16 +4,15 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
     defineProps<{
         data: SiteVisitSchema | undefined;
         loading?: boolean;
-        editLogData?: Record<
-            string,
-            { entered_on: string | null; entered_by: string | null }
-        >;
+        editLogData?: EditLogData;
     }>(),
     {
         loading: false,
@@ -34,16 +33,16 @@ const generalRemarkRows = computed(
 
 const recColumns = [
     { field: 'recorders_recommendation', label: "Recorder's Recommendations" },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const generalRemarkColumns = [
     { field: 'remark_date', label: 'Date' },
     { field: 'remark', label: 'General Remarks' },
     { field: 'remark_source', label: 'Source' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const { processedData: recommendationsTableData } = useTileEditLog(

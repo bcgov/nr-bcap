@@ -1,19 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Button from 'primevue/button';
-
-export interface EditLogResponse {
-    modified_on: string | null;
-    modified_by: string | null;
-    transaction_id?: string | null;
-    edit_type?: string | null;
-    user_email?: string | null;
-    is_system_edit?: boolean;
-    method_used?: string;
-    error?: string;
-    tile_id?: string | null;
-    nodegroup_id?: string | null;
-}
+import type {
+    EditLogResponse,
+    EditLogEntry,
+} from '@/bcgov_arches_common/types.ts';
 
 const props = defineProps<{
     resourceId: string;
@@ -29,12 +20,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     loaded: [data: EditLogResponse];
     error: [error: string];
-    populateAllFields: [
-        results: Record<
-            string,
-            { entered_on: string | null; entered_by: string | null }
-        >,
-    ];
+    populateAllFields: [results: Record<string, EditLogEntry>];
 }>();
 
 const loading = ref(false);
@@ -110,10 +96,7 @@ const loadEditLog = async (
 
 const populateAllEnteredFields = async () => {
     loading.value = true;
-    const results: Record<
-        string,
-        { entered_on: string | null; entered_by: string | null }
-    > = {};
+    const results: Record<string, EditLogEntry> = {};
 
     try {
         // If specific tile IDs are provided, fetch data for each
@@ -133,7 +116,7 @@ const populateAllEnteredFields = async () => {
                         data: {
                             entered_on: formatDate(result.modified_on),
                             entered_by: formatDisplayName(result),
-                        },
+                        } as EditLogEntry,
                     };
                 }
                 return null;
@@ -164,7 +147,7 @@ const populateAllEnteredFields = async () => {
                         data: {
                             entered_on: formatDate(result.modified_on),
                             entered_by: formatDisplayName(result),
-                        },
+                        } as EditLogEntry,
                     };
                 }
 
@@ -203,8 +186,8 @@ const populateAllEnteredFields = async () => {
 
 <template>
     <Button
-        :label="loading ? 'Loading...' : 'Populate All Entered On/By Fields'"
-        :icon="loading ? 'pi pi-spinner pi-spin' : 'pi pi-user-edit'"
+        :label="loading ? 'Loading...' : 'Audit info'"
+        :icon="loading ? 'pi pi-spinner pi-spin' : 'pi pi-eye'"
         :disabled="loading"
         class="control-button"
         severity="info"
