@@ -103,6 +103,3 @@ class OAuthTokenRefreshTest(TestCase, BCAPOAuthTestMixin):
                 response = self.client.get(next_url, follow=False)
 
         self.assertNotIn("oauth_token", self.client.session)
-
-        # response = self.client.get("/bcap/index.htm", follow=True)
-        # self.assertNotIn("oauth_token", self.client.session)
