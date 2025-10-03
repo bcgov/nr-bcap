@@ -40,8 +40,8 @@ describe('formatDateTime', () => {
 
 describe('getDisplayValue', () => {
     it('returns empty string for null/undefined', () => {
-        expect(getDisplayValue(null as any)).toBe('');
-        expect(getDisplayValue(undefined as any)).toBe('');
+        expect(getDisplayValue(null as unknown)).toBe('');
+        expect(getDisplayValue(undefined as unknown)).toBe('');
     });
 
     it('returns empty string when node_value is falsy ("", 0, false, null)', () => {
@@ -50,28 +50,28 @@ describe('getDisplayValue', () => {
                 display_value: 'X',
                 node_value: '',
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe('');
         expect(
             getDisplayValue({
                 display_value: 'X',
                 node_value: 0,
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe('');
         expect(
             getDisplayValue({
                 display_value: 'X',
                 node_value: false,
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe('');
         expect(
             getDisplayValue({
                 display_value: 'X',
                 node_value: null,
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe('');
     });
 
@@ -81,36 +81,36 @@ describe('getDisplayValue', () => {
                 display_value: 'Shown',
                 node_value: 123,
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe('Shown');
         expect(
             getDisplayValue({
                 display_value: 'Shown',
                 node_value: 'value',
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe('Shown');
         expect(
             getDisplayValue({
                 display_value: 'Shown',
                 node_value: { a: 1 },
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe('Shown');
     });
 });
 
 describe('getNodeDisplayValue (integration with getNode)', () => {
     it('returns empty string if row is null or not an object', () => {
-        expect(getNodeDisplayValue(null as any, 'k')).toBe('');
-        expect(getNodeDisplayValue(42 as any, 'k')).toBe('');
+        expect(getNodeDisplayValue(null as unknown, 'k')).toBe('');
+        expect(getNodeDisplayValue(42 as unknown, 'k')).toBe('');
     });
 
     it('returns empty when aliased_data is missing or not an object', () => {
-        expect(getNodeDisplayValue({} as any, 'k')).toBe('');
-        expect(getNodeDisplayValue({ aliased_data: 'nope' } as any, 'k')).toBe(
-            '',
-        );
+        expect(getNodeDisplayValue({} as unknown, 'k')).toBe('');
+        expect(
+            getNodeDisplayValue({ aliased_data: 'nope' } as unknown, 'k'),
+        ).toBe('');
     });
 
     it('returns empty when key is missing or not an object', () => {
@@ -159,63 +159,78 @@ describe('getNodeDisplayValue (integration with getNode)', () => {
 
 describe('isEmpty', () => {
     it('treats null/undefined as empty', () => {
-        expect(isEmpty(null as any)).toBe(true);
-        expect(isEmpty(undefined as any)).toBe(true);
+        expect(isEmpty(null as unknown)).toBe(true);
+        expect(isEmpty(undefined as unknown)).toBe(true);
     });
 
     it('treats falsy node_value as empty', () => {
         expect(
-            isEmpty({ display_value: 'X', node_value: 0, details: [] } as any),
+            isEmpty({
+                display_value: 'X',
+                node_value: 0,
+                details: [],
+            } as unknown),
         ).toBe(true);
         expect(
-            isEmpty({ display_value: 'X', node_value: '', details: [] } as any),
+            isEmpty({
+                display_value: 'X',
+                node_value: '',
+                details: [],
+            } as unknown),
         ).toBe(true);
         expect(
             isEmpty({
                 display_value: 'X',
                 node_value: false,
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe(true);
         expect(
             isEmpty({
                 display_value: 'X',
                 node_value: null,
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe(true);
     });
 
     it('treats truthy node_value as not empty', () => {
         expect(
-            isEmpty({ display_value: 'X', node_value: 1, details: [] } as any),
+            isEmpty({
+                display_value: 'X',
+                node_value: 1,
+                details: [],
+            } as unknown),
         ).toBe(false);
         expect(
             isEmpty({
                 display_value: 'X',
                 node_value: 'y',
                 details: [],
-            } as any),
+            } as unknown),
         ).toBe(false);
     });
 });
 
 describe('isAliasedNodeData (type guard)', () => {
     it('returns false for non-objects or null', () => {
-        expect(isAliasedNodeData(null as any)).toBe(false);
-        expect(isAliasedNodeData(123 as any)).toBe(false);
-        expect(isAliasedNodeData('x' as any)).toBe(false);
+        expect(isAliasedNodeData(null as unknown)).toBe(false);
+        expect(isAliasedNodeData(123 as unknown)).toBe(false);
+        expect(isAliasedNodeData('x' as unknown)).toBe(false);
     });
 
     it('returns false when required keys are missing', () => {
         expect(
-            isAliasedNodeData({ display_value: 'X', node_value: 'v' } as any),
+            isAliasedNodeData({
+                display_value: 'X',
+                node_value: 'v',
+            } as unknown),
         ).toBe(false);
-        expect(isAliasedNodeData({ node_value: 'v', details: [] } as any)).toBe(
-            false,
-        );
         expect(
-            isAliasedNodeData({ display_value: 'X', details: [] } as any),
+            isAliasedNodeData({ node_value: 'v', details: [] } as unknown),
+        ).toBe(false);
+        expect(
+            isAliasedNodeData({ display_value: 'X', details: [] } as unknown),
         ).toBe(false);
     });
 
