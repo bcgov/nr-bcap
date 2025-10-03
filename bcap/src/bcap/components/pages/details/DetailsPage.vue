@@ -3,6 +3,7 @@ import { ref, computed, type Ref } from 'vue';
 import type { DetailsData } from '@/bcap/types.ts';
 import { formatDateTime } from '@/bcap/util.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import EditLog from '@/bcgov_arches_common/components/EditLog/EditLog.vue';
 import ArchaeologicalSite from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSiteDetails.vue';
 import SiteVisit from '@/bcap/components/pages/details/SiteVisit/SiteVisitDetails.vue';
 import HcaPermit from '@/bcap/components/pages/details/HcaPermit/HcaPermitDetails.vue';
@@ -12,8 +13,7 @@ import HriaDiscontinuedData from '@/bcap/components/pages/details/HriaDiscontinu
 import LegislativeAct from '@/bcap/components/pages/details/LegislativeAct/LegislativeActDetails.vue';
 import Repository from '@/bcap/components/pages/details/Repository/RepositoryDetails.vue';
 import SectionControls from '@/bcap/components/SectionControls.vue';
-import EditLog from '@/bcap/components/EditLog/EditLog.vue';
-import { collectTileIds } from '@/bcap/composables/useTileEditLog.ts';
+import { collectTileIds } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import {
     useResourceData,
     useRelatedResourceData,
