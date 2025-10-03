@@ -3,7 +3,7 @@ import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
-import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
