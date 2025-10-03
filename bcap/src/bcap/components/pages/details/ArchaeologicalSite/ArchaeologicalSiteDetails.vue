@@ -27,10 +27,15 @@ const props = withDefaults(
         data: DetailsData;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: Record<
+            string,
+            { entered_on: string | null; entered_by: string | null }
+        >;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -49,7 +54,6 @@ const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
         true,
     );
 
-// Computed properties to handle type casting
 const typedCurrentData = computed(
     () => currentData.value as ArchaeologySiteSchema | undefined,
 );
@@ -85,11 +89,13 @@ const typedHriaData = computed(
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section3
             :data="typedSiteVisitData"
             :loading="siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section4
             :data="
@@ -101,6 +107,7 @@ const typedHriaData = computed(
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section5
             :data="typedCurrentData?.aliased_data?.site_boundary"
@@ -112,12 +119,14 @@ const typedHriaData = computed(
             :data="typedCurrentData?.aliased_data?.archaeological_data"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section7
             :data="typedCurrentData?.aliased_data?.ancestral_remains"
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading || siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section8
             :data="
@@ -127,6 +136,7 @@ const typedHriaData = computed(
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section9
             :data="typedCurrentData?.aliased_data?.related_documents"

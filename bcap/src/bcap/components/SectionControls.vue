@@ -39,7 +39,7 @@ const toggleCollapseExpand = () => {
         <div class="control-group">
             <Button
                 :label="hideEmptyText"
-                :icon="hideEmptySections ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                :icon="hideEmptySections ? 'pi pi-eye' : 'pi pi-eye-slash'"
                 class="control-button"
                 severity="secondary"
                 @click="hideEmptySections = !hideEmptySections"
@@ -52,6 +52,8 @@ const toggleCollapseExpand = () => {
                 severity="primary"
                 @click="toggleCollapseExpand"
             />
+
+            <slot></slot>
         </div>
     </div>
 </template>
