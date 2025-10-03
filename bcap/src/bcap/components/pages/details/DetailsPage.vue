@@ -3,6 +3,7 @@ import { ref, computed, type Ref } from 'vue';
 import type { DetailsData } from '@/bcap/types.ts';
 import { formatDateTime } from '@/bcap/util.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { getEditLogForTile } from '@/bcgov_arches_common/components/EditLog/api.ts';
 import EditLog from '@/bcgov_arches_common/components/EditLog/EditLog.vue';
 import ArchaeologicalSite from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSiteDetails.vue';
 import SiteVisit from '@/bcap/components/pages/details/SiteVisit/SiteVisitDetails.vue';
@@ -190,12 +191,10 @@ const fetchSiteVisitEditLogs = async () => {
 
             const fetchPromises = tileIds.map(async (tileId) => {
                 try {
-                    const response = await fetch(
-                        `/bcap/api/resources/site_visit/${visitResourceId}/edit-log/?tile_id=${tileId}`,
+                    const data = await getEditLogForTile(
+                        visitResourceId,
+                        tileId,
                     );
-                    if (!response.ok) return null;
-
-                    const data = await response.json();
                     return {
                         tileId,
                         editLog: {
@@ -338,7 +337,6 @@ const handlePopulateAllFields = async (results: EditLogData) => {
                         )
                     "
                     :resource-id="resourceId"
-                    :graph="props.data.graph_slug"
                     :tile-ids="allTileIds"
                     @populate-all-fields="handlePopulateAllFields"
                 />
