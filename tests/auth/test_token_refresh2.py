@@ -93,13 +93,13 @@ class OAuthTokenRefreshTest(TestCase, BCAPOAuthTestMixin):
             response = self.client.get("/bcap/", follow=False)
 
             if response.status_code in (301, 302):
-                next_url = response.get('Location')
+                next_url = response.get("Location")
                 response = self.client.get(next_url, follow=False)
 
         if response.status_code in (301, 302):
-            next_url = response.get('Location')
+            next_url = response.get("Location")
 
-            if next_url not in ['/bcap/index.htm', '/bcap/', '/bcap']:
+            if next_url not in ["/bcap/index.htm", "/bcap/", "/bcap"]:
                 response = self.client.get(next_url, follow=False)
 
         self.assertNotIn("oauth_token", self.client.session)
