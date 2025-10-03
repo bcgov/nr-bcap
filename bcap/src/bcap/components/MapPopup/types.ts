@@ -1,5 +1,3 @@
-import type { Ref } from 'vue';
-
 export type DescriptorsType = {
     displayname: string;
     graph_name: string;
@@ -26,15 +24,17 @@ export type PermissionsType = {
 };
 
 export type MapCardType = {
-    showDetailsFromFilter: (arg0: string) => void;
+    showDetailsFromFilter: (arg0: string | (() => string)) => void;
 };
 
 export type PopupFeatureType = {
     active: () => boolean;
-    displayValues: DescriptorsType | Ref<DescriptorsType>;
+    displayValues: DescriptorsType;
     editURL: string;
     featureid: string;
     map_popup: () => string;
+    displayname: () => string;
+    feature: object;
     mapCard: MapCardType;
     permissions: PermissionsType;
     showAll: () => boolean;
@@ -43,7 +43,7 @@ export type PopupFeatureType = {
     showFilterByFeature: (arg0: PopupFeatureType) => boolean;
     showFilterByFeatureButton: boolean;
     loading: boolean;
-    resourceinstanceid: string;
+    resourceinstanceid: string | (() => string);
     reportURL: string;
     toggleShowAll: () => void;
     tileid: string;
