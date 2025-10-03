@@ -1,5 +1,25 @@
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
+export const formatDateTime = (isoString: string | null): string | null => {
+    if (!isoString) return null;
+
+    const date = new Date(isoString);
+    const dateStr = date.toLocaleDateString('en-CA');
+
+    const timeStr = date
+        .toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+        })
+        .toLowerCase()
+        .replace('am', 'a.m.')
+        .replace('pm', 'p.m.');
+
+    return `${dateStr}, ${timeStr}`;
+};
+
 /** Resolve a key (inside aliased_data) to an AliasedNodeData */
 function getNode(row: unknown, key: string): AliasedNodeData | null {
     if (!row || typeof row !== 'object') return null;
@@ -27,3 +47,11 @@ export const getNodeDisplayValue = (row: unknown, path: string) => {
 export const isEmpty = (value: AliasedNodeData | null | undefined): boolean => {
     return !value?.node_value;
 };
+
+export function isAliasedNodeData(value: unknown): value is AliasedNodeData {
+    if (!value || typeof value !== 'object') return false;
+    const maybe = value as Partial<AliasedNodeData>;
+    return (
+        'display_value' in maybe && 'node_value' in maybe && 'details' in maybe
+    );
+}

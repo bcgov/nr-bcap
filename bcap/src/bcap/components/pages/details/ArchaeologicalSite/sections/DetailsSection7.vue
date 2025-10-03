@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { getDisplayValue, isAliasedNodeData, isEmpty } from '@/bcap/util.ts';
+import { useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
 import type { AncestralRemainsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -14,19 +17,44 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: EditLogData;
     }>(),
     {
         siteVisitData: () => [],
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
+const restrictedRemainsSource = computed(() => {
+    return props.data?.aliased_data?.restricted_ancestral_remains_remark as
+        | AliasedTileData
+        | undefined;
+});
+
+const { processedData: restrictedRemainsData } = useSingleTileEditLog(
+    restrictedRemainsSource,
+    toRef(props, 'editLogData'),
+);
+
 const hasRestrictedRemainsInfo = computed(() => {
-    const remark =
-        props.data?.aliased_data?.restricted_ancestral_remains_remark;
-    return (remark as unknown as { aliased_data?: unknown })?.aliased_data;
+    return restrictedRemainsData.value?.aliased_data;
+});
+
+const restrictedRemarksText = computed(() => {
+    const remarks =
+        restrictedRemainsData.value?.aliased_data
+            ?.restricted_ancestral_remains_remark;
+    return isAliasedNodeData(remarks) ? getDisplayValue(remarks) : '';
+});
+
+const hasRestrictedRemarks = computed(() => {
+    const remarks =
+        restrictedRemainsData.value?.aliased_data
+            ?.restricted_ancestral_remains_remark;
+    return isAliasedNodeData(remarks) && !isEmpty(remarks);
 });
 </script>
 
@@ -46,103 +74,25 @@ const hasRestrictedRemainsInfo = computed(() => {
             >
                 <template #sectionContent>
                     <dl v-if="hasRestrictedRemainsInfo">
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data
-                                        ?.restricted_ancestral_remains_remark,
-                                )
-                            "
-                        >
+                        <dt v-if="hasRestrictedRemarks">
                             Restricted Ancestral Remains Remarks
                         </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data
-                                        ?.restricted_ancestral_remains_remark,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data
-                                        ?.restricted_ancestral_remains_remark,
-                                )
-                            }}
+                        <dd v-if="hasRestrictedRemarks">
+                            {{ restrictedRemarksText }}
                         </dd>
 
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data?.remains_remark_entry_date,
-                                )
-                            "
-                        >
+                        <dt v-if="restrictedRemainsData?.audit?.entered_on">
                             Entered On
                         </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data?.remains_remark_entry_date,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data?.remains_remark_entry_date,
-                                )
-                            }}
+                        <dd v-if="restrictedRemainsData?.audit?.entered_on">
+                            {{ restrictedRemainsData.audit.entered_on }}
                         </dd>
 
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data?.remains_remark_made_by,
-                                )
-                            "
-                        >
+                        <dt v-if="restrictedRemainsData?.audit?.entered_by">
                             Entered By
                         </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data?.remains_remark_made_by,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    (
-                                        props.data?.aliased_data
-                                            ?.restricted_ancestral_remains_remark as any
-                                    )?.aliased_data?.remains_remark_made_by,
-                                )
-                            }}
+                        <dd v-if="restrictedRemainsData?.audit?.entered_by">
+                            {{ restrictedRemainsData.audit.entered_by }}
                         </dd>
                     </dl>
                     <EmptyState
