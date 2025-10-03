@@ -85,49 +85,60 @@ class ResourceEditLogView(APIView):
 
     def _get_nodegroup_id_from_alias(self, graph: str, alias: str) -> str | None:
         try:
-            node = Node.objects.filter(
-                graph__slug=graph,
-                alias=alias,
-                pk=F('nodegroup_id')
-            ).values('nodegroup_id').first()
+            node = (
+                Node.objects.filter(
+                    graph__slug=graph, alias=alias, pk=F("nodegroup_id")
+                )
+                .values("nodegroup_id")
+                .first()
+            )
 
-            return str(node['nodegroup_id']) if node else None
+            return str(node["nodegroup_id"]) if node else None
         except Exception:
             logger.exception(f"Error resolving nodegroup alias: {alias}")
             return None
 
-    def _get_nodegroup_modification(self, resource_id: str, nodegroup_id: str) -> dict[str, Any]:
+    def _get_nodegroup_modification(
+        self, resource_id: str, nodegroup_id: str
+    ) -> dict[str, Any]:
         # Find child nodegroups
         parent_tiles = TileModel.objects.filter(
-            nodegroup_id=nodegroup_id,
-            resourceinstance_id=resource_id
-        ).values_list('tileid', flat=True)
+            nodegroup_id=nodegroup_id, resourceinstance_id=resource_id
+        ).values_list("tileid", flat=True)
 
         # Get child tiles
-        child_nodegroups = TileModel.objects.filter(
-            parenttile_id__in=parent_tiles
-        ).values_list('nodegroup_id', flat=True).distinct()
+        child_nodegroups = (
+            TileModel.objects.filter(parenttile_id__in=parent_tiles)
+            .values_list("nodegroup_id", flat=True)
+            .distinct()
+        )
 
         # Combine parent and child nodegroups
         all_nodegroups = [nodegroup_id, *list(child_nodegroups)]
 
         # Get the edit log entry
-        edit_log = EditLog.objects.filter(
-            resourceinstanceid=resource_id,
-            nodegroupid__in=all_nodegroups
-        ).order_by('-timestamp').first()
+        edit_log = (
+            EditLog.objects.filter(
+                resourceinstanceid=resource_id, nodegroupid__in=all_nodegroups
+            )
+            .order_by("-timestamp")
+            .first()
+        )
 
         if edit_log:
             # Get nodegroup alias
             nodegroup_alias = None
 
             if edit_log.nodegroupid:
-                node = Node.objects.filter(
-                    nodegroup_id=edit_log.nodegroupid,
-                    pk=F('nodegroup_id')
-                ).values('alias').first()
+                node = (
+                    Node.objects.filter(
+                        nodegroup_id=edit_log.nodegroupid, pk=F("nodegroup_id")
+                    )
+                    .values("alias")
+                    .first()
+                )
 
-                nodegroup_alias = node['alias'] if node else None
+                nodegroup_alias = node["alias"] if node else None
 
             return self._format_response_from_object(edit_log, nodegroup_alias)
 
@@ -141,10 +152,13 @@ class ResourceEditLogView(APIView):
     def _get_tile_modification(self, resource_id: str, tile_id: str) -> dict[str, Any]:
         """Get modification info for a specific tile using Django ORM."""
 
-        edit_log = EditLog.objects.filter(
-            resourceinstanceid=resource_id,
-            tileinstanceid=tile_id
-        ).order_by('-timestamp').first()
+        edit_log = (
+            EditLog.objects.filter(
+                resourceinstanceid=resource_id, tileinstanceid=tile_id
+            )
+            .order_by("-timestamp")
+            .first()
+        )
 
         if edit_log:
             return self._format_response_from_object(edit_log)
@@ -159,9 +173,11 @@ class ResourceEditLogView(APIView):
     def _get_resource_modification(self, resource_id: str) -> dict[str, Any]:
         """Get the most recent modification for the entire resource using Django ORM."""
 
-        edit_log = EditLog.objects.filter(
-            resourceinstanceid=resource_id
-        ).order_by('-timestamp').first()
+        edit_log = (
+            EditLog.objects.filter(resourceinstanceid=resource_id)
+            .order_by("-timestamp")
+            .first()
+        )
 
         if edit_log:
             return self._format_response_from_object(edit_log)
@@ -172,7 +188,9 @@ class ResourceEditLogView(APIView):
             "error": "No modifications found",
         }
 
-    def _format_response_from_object(self, edit_log: EditLog, nodegroup_alias: str | None = None) -> dict[str, Any]:
+    def _format_response_from_object(
+        self, edit_log: EditLog, nodegroup_alias: str | None = None
+    ) -> dict[str, Any]:
         """Format response from an EditLog object."""
 
         username = edit_log.user_username
@@ -201,9 +219,13 @@ class ResourceEditLogView(APIView):
             display_name = self._get_system_user_name(edit_log.edittype)
 
         result = {
-            "modified_on": edit_log.timestamp.isoformat() if edit_log.timestamp else None,
+            "modified_on": (
+                edit_log.timestamp.isoformat() if edit_log.timestamp else None
+            ),
             "modified_by": display_name,
-            "transaction_id": str(edit_log.transactionid) if edit_log.transactionid else None,
+            "transaction_id": (
+                str(edit_log.transactionid) if edit_log.transactionid else None
+            ),
             "edit_type": edit_log.edittype,
             "user_email": edit_log.user_email,
             "is_system_edit": not bool(username or first_name or last_name),
