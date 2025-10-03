@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { getDisplayValue, isAliasedNodeData, isEmpty } from '@/bcap/util.ts';
+import {
+    useTileEditLog,
+    useSingleTileEditLog,
+} from '@/bcap/composables/useTileEditLog.ts';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
@@ -18,11 +24,13 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: EditLogData;
     }>(),
     {
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -64,8 +72,8 @@ const discontinuedTenureColumns = [
 
 const tenureRemarksColumns = [
     { field: 'tenure_remarks', label: 'Tenure Remarks' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const discontinuedAddressColumns = [
@@ -122,7 +130,23 @@ const hasBcPropertyLegalDescription = computed(() => {
 });
 
 const hasAddressRemarks = computed(() => {
-    return props.data?.address_remarks?.aliased_data;
+    const data = addressRemarksData.value;
+    return (
+        data &&
+        (!isEmpty(
+            data.aliased_data
+                ?.address_and_legal_description_remarks as AliasedNodeData,
+        ) ||
+            data.audit?.entered_on ||
+            data.audit?.entered_by)
+    );
+});
+
+const addressRemarksText = computed(() => {
+    const remarks =
+        addressRemarksData.value?.aliased_data
+            ?.address_and_legal_description_remarks;
+    return isAliasedNodeData(remarks) ? getDisplayValue(remarks) : '';
 });
 
 const hasDiscontinuedAddress = computed(() => {
@@ -178,6 +202,19 @@ const hasElevation = computed(() => {
 const hasBiogeography = computed(() => {
     return props.data?.biogeography && props.data.biogeography.length > 0;
 });
+
+const tenureRemarksData = computed(() => props.data?.tenure_remarks || []);
+const addressRemarksSource = computed(() => props.data?.address_remarks);
+
+const { processedData: tenureRemarksTableData } = useTileEditLog(
+    tenureRemarksData,
+    toRef(props, 'editLogData'),
+);
+
+const { processedData: addressRemarksData } = useSingleTileEditLog(
+    addressRemarksSource,
+    toRef(props, 'editLogData'),
+);
 </script>
 
 <template>
@@ -370,7 +407,7 @@ const hasBiogeography = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasTenureRemarks"
-                                :table-data="props.data?.tenure_remarks ?? []"
+                                :table-data="tenureRemarksTableData"
                                 :column-definitions="tenureRemarksColumns"
                                 :initial-sort-field-index="1"
                             />
@@ -712,85 +749,49 @@ const hasBiogeography = computed(() => {
                             :class="{ 'empty-section': !hasAddressRemarks }"
                         >
                             <template #sectionContent>
-                                <dl v-if="hasAddressRemarks">
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data
-                                                    ?.address_and_legal_description_remarks,
-                                            )
-                                        "
-                                    >
+                                <dl v-if="addressRemarksData">
+                                    <dt v-if="addressRemarksText">
                                         Address and Legal Description Remarks
                                     </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data
-                                                    ?.address_and_legal_description_remarks,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data
-                                                    ?.address_and_legal_description_remarks,
-                                            )
-                                        }}
+                                    <dd v-if="addressRemarksText">
+                                        {{ addressRemarksText }}
                                     </dd>
 
                                     <dt
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_on,
-                                            )
+                                            addressRemarksData?.audit
+                                                ?.entered_on
                                         "
                                     >
                                         Entered On
                                     </dt>
                                     <dd
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_on,
-                                            )
+                                            addressRemarksData?.audit
+                                                ?.entered_on
                                         "
                                     >
                                         {{
-                                            getDisplayValue(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_on,
-                                            )
+                                            addressRemarksData.audit.entered_on
                                         }}
                                     </dd>
 
                                     <dt
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_by,
-                                            )
+                                            addressRemarksData?.audit
+                                                ?.entered_by
                                         "
                                     >
                                         Entered By
                                     </dt>
                                     <dd
                                         v-if="
-                                            !isEmpty(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_by,
-                                            )
+                                            addressRemarksData?.audit
+                                                ?.entered_by
                                         "
                                     >
                                         {{
-                                            getDisplayValue(
-                                                props.data?.address_remarks
-                                                    ?.aliased_data?.entered_by,
-                                            )
+                                            addressRemarksData.audit.entered_by
                                         }}
                                     </dd>
                                 </dl>
@@ -937,14 +938,14 @@ const hasBiogeography = computed(() => {
                                         <dt>
                                             Elevation Remarks {{ index + 1 }}
                                         </dt>
-                                        <dd
-                                            v-html="
+                                        <dd>
+                                            {{
                                                 getDisplayValue(
                                                     comment.aliased_data
                                                         ?.elevation_comments,
                                                 )
-                                            "
-                                        ></dd>
+                                            }}
+                                        </dd>
                                     </template>
                                 </dl>
                                 <EmptyState

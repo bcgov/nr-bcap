@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { RemarksAndRestrictedInformationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
@@ -15,12 +18,14 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: EditLogData;
     }>(),
     {
         siteVisitData: () => [],
         loading: false,
         languageCode: 'en',
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -32,13 +37,12 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
     },
 );
 
-/** Generic column definitions: configure any key/path + label */
 const generalRemarkColumns = [
     { field: 'general_remark_date', label: 'Date' },
     { field: 'general_remark', label: 'General Remarks' },
     { field: 'general_remark_source', label: 'Source' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const restrictedRemarkColumns = [
@@ -52,42 +56,53 @@ const hcaContraventionColumns = [
     { field: 'address', label: 'Address' },
     { field: 'pid', label: 'PID' },
     { field: 'nros_file_number', label: 'NROS File #' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const convictionColumns = [
     { field: 'conviction_date', label: 'Conviction Date' },
     { field: 'inventory_remarks', label: 'Inventory Remarks' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
+const generalRemarksData = computed(
+    () => currentData.value?.general_remark_information || [],
+);
+const hcaContraventionsData = computed(
+    () => currentData.value?.hca_contravention || [],
+);
+const convictionsData = computed(() => currentData.value?.conviction || []);
+const restrictedInfoData = computed(
+    () => currentData.value?.restricted_information_n1 || [],
+);
 const keywordsData = computed(() => {
     const keywords = currentData.value?.remark_keyword;
     if (!keywords) return [];
-
     return Array.isArray(keywords) ? keywords : [keywords];
 });
 
-const restrictedInfoData = computed(() => {
-    return currentData.value?.restricted_information_n1 || [];
-});
+const { processedData: generalRemarksTableData } = useTileEditLog(
+    generalRemarksData,
+    toRef(props, 'editLogData'),
+);
 
-const hasKeywords = computed(() => {
-    return keywordsData.value && keywordsData.value.length > 0;
-});
+const { processedData: hcaContraventionsTableData } = useTileEditLog(
+    hcaContraventionsData,
+    toRef(props, 'editLogData'),
+);
 
-const hasGeneralRemarks = computed(() => {
-    return (
-        currentData.value?.general_remark_information &&
-        currentData.value.general_remark_information.length > 0
-    );
-});
+const { processedData: convictionsTableData } = useTileEditLog(
+    convictionsData,
+    toRef(props, 'editLogData'),
+);
 
-const hasRestrictedInfo = computed(() => {
-    return restrictedInfoData.value && restrictedInfoData.value.length > 0;
-});
+const hasKeywords = computed(() => keywordsData.value.length > 0);
+const hasGeneralRemarks = computed(
+    () => generalRemarksTableData.value.length > 0,
+);
+const hasRestrictedInfo = computed(() => restrictedInfoData.value.length > 0);
 
 const hasDocuments = computed(() => {
     return (
@@ -96,18 +111,10 @@ const hasDocuments = computed(() => {
     );
 });
 
-const hasContraventions = computed(() => {
-    return (
-        currentData.value?.hca_contravention &&
-        currentData.value.hca_contravention.length > 0
-    );
-});
-
-const hasConvictions = computed(() => {
-    return (
-        currentData.value?.conviction && currentData.value.conviction.length > 0
-    );
-});
+const hasContraventions = computed(
+    () => hcaContraventionsTableData.value.length > 0,
+);
+const hasConvictions = computed(() => convictionsTableData.value.length > 0);
 </script>
 
 <template>
@@ -150,9 +157,7 @@ const hasConvictions = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasGeneralRemarks"
-                        :table-data="
-                            currentData?.general_remark_information ?? []
-                        "
+                        :table-data="generalRemarksTableData"
                         :column-definitions="generalRemarkColumns"
                         :initial-sort-field-index="0"
                     />
@@ -272,9 +277,7 @@ const hasConvictions = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasContraventions"
-                                :table-data="
-                                    currentData?.hca_contravention ?? []
-                                "
+                                :table-data="hcaContraventionsTableData"
                                 :column-definitions="hcaContraventionColumns"
                                 :initial-sort-field-index="4"
                             />
@@ -294,7 +297,7 @@ const hasConvictions = computed(() => {
                         <template #sectionContent>
                             <StandardDataTable
                                 v-if="hasConvictions"
-                                :table-data="currentData?.conviction ?? []"
+                                :table-data="convictionsTableData"
                                 :column-definitions="convictionColumns"
                                 :initial-sort-field-index="0"
                             />

@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
+import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { ArchaeologicalDataTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
@@ -13,10 +16,12 @@ const props = withDefaults(
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
+        editLogData?: EditLogData;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
+        editLogData: () => ({}),
     },
 );
 
@@ -35,8 +40,8 @@ const typologyColumns = [
 
 const typologyRemarksColumns = [
     { field: 'site_typology_remarks', label: 'Site Typology Remarks' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
 const typologyData = computed(() => currentData.value?.site_typology);
@@ -54,16 +59,24 @@ const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     },
 );
 
-const typologyRemarksData = computed(() => {
-    return currentData.value?.site_typology_remarks || [];
-});
+const typologyRemarksData = computed(
+    () => currentData.value?.site_typology_remarks || [],
+);
+
+const { processedData: typologyRemarksTableData } = useTileEditLog(
+    typologyRemarksData,
+    toRef(props, 'editLogData'),
+);
 
 const hasTypology = computed(() => {
     return typologyTableData.value && typologyTableData.value.length > 0;
 });
 
 const hasTypologyRemarks = computed(() => {
-    return typologyRemarksData.value && typologyRemarksData.value.length > 0;
+    return (
+        typologyRemarksTableData.value &&
+        typologyRemarksTableData.value.length > 0
+    );
 });
 </script>
 
@@ -104,7 +117,7 @@ const hasTypologyRemarks = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasTypologyRemarks"
-                        :table-data="typologyRemarksData"
+                        :table-data="typologyRemarksTableData"
                         :column-definitions="typologyRemarksColumns"
                         :initial-sort-field-index="1"
                     />
