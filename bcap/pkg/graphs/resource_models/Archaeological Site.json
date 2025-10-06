@@ -468,7 +468,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "HCA Contravention"
+                        "en": "HCA Contraventions"
                     },
                     "nodegroup_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
                     "sortorder": 5,
@@ -850,7 +850,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Conviction"
+                        "en": "HCA Convictions"
                     },
                     "nodegroup_id": "c5159e8e-619f-11f0-acf4-3a7a4e6803c5",
                     "sortorder": 6,
@@ -1104,6 +1104,27 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Entered On",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "13c21a4d-9163-43b9-8b0d-4e7895d86a48",
+                    "label": {
+                        "en": "Entered On"
+                    },
+                    "node_id": "f65f3568-a87c-4144-a530-44f7244fe6e1",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
                     "card_id": "14179b58-64ad-11f0-a4ef-6e5bb479055b",
                     "config": {
                         "defaultValue": {
@@ -1177,6 +1198,27 @@
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
                 {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Conviction Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "18bc45c3-18e2-402e-9cd1-7726ac83cf8a",
+                    "label": {
+                        "en": "Conviction Date"
+                    },
+                    "node_id": "c515a532-619f-11f0-acf4-3a7a4e6803c5",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
                     "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultValue": {
@@ -1201,7 +1243,7 @@
                         "en": "Inventory Remarks"
                     },
                     "node_id": "41fb5e20-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 2,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1393,7 +1435,7 @@
                         "en": "NROS File #"
                     },
                     "node_id": "41fb603c-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 5,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1566,7 +1608,7 @@
                         "en": "PID"
                     },
                     "node_id": "41fb5f7e-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 4,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1698,6 +1740,28 @@
                     "widget_id": "10000000-0000-0000-0000-000000000008"
                 },
                 {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Entered By",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "4a259c34-5b24-4d92-9757-ea7eb065d8bd",
+                    "label": {
+                        "en": "Entered By"
+                    },
+                    "node_id": "ed3fd7eb-c642-4bfd-b4ab-babb1e89ebd5",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
                     "card_id": "a9ce5a20-d085-4fa2-9f5b-2b812223b3d1",
                     "config": {
                         "i18n_properties": [
@@ -1730,17 +1794,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Person",
+                        "label": "Entered By",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "4d2c9c6f-fa0a-4743-a831-fed58ed5199d",
                     "label": {
-                        "en": "Person"
+                        "en": "Entered By"
                     },
                     "node_id": "41fb5d62-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 1,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1985,7 +2049,7 @@
                         "en": "Address"
                     },
                     "node_id": "41fb5eca-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 3,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2161,7 +2225,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "HCA Entry Date",
+                        "label": "Entered On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -2169,10 +2233,10 @@
                     },
                     "id": "89549890-ea8f-4a57-9cf4-625cdd2e31ab",
                     "label": {
-                        "en": "HCA Entry Date"
+                        "en": "Entered On"
                     },
                     "node_id": "41fb5c72-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 0,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -2203,6 +2267,36 @@
                     },
                     "node_id": "b442cce2-62c8-11f0-a80e-76ff5c50888d",
                     "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Inventory Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "8eb7c6d9-760a-4633-ba7b-2c9a26e61952",
+                    "label": {
+                        "en": "Inventory Remarks"
+                    },
+                    "node_id": "c515a668-619f-11f0-acf4-3a7a4e6803c5",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -3839,6 +3933,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "c5159e8e-619f-11f0-acf4-3a7a4e6803c5",
+                    "edgeid": "388e3391-9cf2-4058-9fc0-e47ebc98e329",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "rangenode_id": "ed3fd7eb-c642-4bfd-b4ab-babb1e89ebd5",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
                     "edgeid": "41fb826a-61a5-11f0-9674-3a7a4e6803c5",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4065,6 +4169,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
                     "rangenode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "c5159e8e-619f-11f0-acf4-3a7a4e6803c5",
+                    "edgeid": "7352733d-578b-4d7c-8661-6c521599d9f7",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "f65f3568-a87c-4144-a530-44f7244fe6e1",
                     "source_identifier_id": null
                 },
                 {
@@ -8376,6 +8490,42 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "conviction_person",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance-list",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Conviction Person",
+                    "nodegroup_id": "c5159e8e-619f-11f0-acf4-3a7a4e6803c5",
+                    "nodeid": "ed3fd7eb-c642-4bfd-b4ab-babb1e89ebd5",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "pid",
                     "config": {},
                     "datatype": "non-localized-string",
@@ -8394,6 +8544,31 @@
                     "nodeid": "f5c343f3-217f-4ff0-a414-5dcaff74d2fa",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "conviction_entry_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD"
+                    },
+                    "datatype": "date",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Conviction Entry Date",
+                    "nodegroup_id": "c5159e8e-619f-11f0-acf4-3a7a4e6803c5",
+                    "nodeid": "f65f3568-a87c-4144-a530-44f7244fe6e1",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -8602,9 +8777,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "a8dd373c-e912-4f46-bf57-68790eb3a15c",
-                "published_time": "2025-09-17T18:09:37.313"
+                "notes": "Update Convictions and Contraventions to match mockup",
+                "publicationid": "34f18619-0181-42cd-b850-08852c55b2d1",
+                "published_time": "2025-10-06T19:49:47.751"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
