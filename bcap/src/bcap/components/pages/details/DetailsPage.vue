@@ -36,6 +36,8 @@ const props = withDefaults(
 const hideEmptySections = ref(false);
 const forceCollapsed = ref<boolean | undefined>(undefined);
 const editLogData = ref<EditLogData>({});
+const auditFieldsVisible = ref(false);
+const siteVisitAuditDataLoad = ref(false);
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
@@ -111,6 +113,8 @@ const archSiteTileIds = computed(() => {
             'aliased_data',
             'conviction',
         ],
+        ['aliased_data', 'related_documents', 'aliased_data', 'site_images'],
+        ['aliased_data', 'related_documents', 'aliased_data', 'other_maps'],
     ];
     return collectTileIds(data, editLogTiles);
 });
@@ -181,7 +185,8 @@ const siteVisitTileMap = computed(() => {
 const fetchSiteVisitEditLogs = async () => {
     if (
         props.data.graph_slug !== 'archaeological_site' ||
-        siteVisitTileMap.value.size === 0
+        siteVisitTileMap.value.size === 0 ||
+        siteVisitAuditDataLoad.value
     )
         return;
 
@@ -227,6 +232,7 @@ const fetchSiteVisitEditLogs = async () => {
     allResults.forEach((result) => {
         Object.assign(editLogData.value, result);
     });
+    siteVisitAuditDataLoad.value = true;
 };
 
 const allTileIds = computed(() => {
@@ -308,16 +314,19 @@ const handleExpandAll = () => {
     }, 100);
 };
 
-const handlePopulateAllFields = async (results: EditLogData) => {
+const showAuditFields = async (results: EditLogData) => {
     Object.assign(editLogData.value, results);
 
     if (props.data.graph_slug === 'archaeological_site') {
-        await fetchSiteVisitEditLogs();
+        await fetchSiteVisitEditLogs().then(() => {
+            auditFieldsVisible.value = !auditFieldsVisible.value;
+        });
     }
 };
 </script>
 
 <template>
+    <div>{{ allTileIds }}</div>
     <div
         class="details-page-container"
         :class="{ 'hide-empty': hideEmptySections }"
@@ -338,7 +347,8 @@ const handlePopulateAllFields = async (results: EditLogData) => {
                     "
                     :resource-id="resourceId"
                     :tile-ids="allTileIds"
-                    @populate-all-fields="handlePopulateAllFields"
+                    :audit-fields-visible="auditFieldsVisible"
+                    @show-audit-fields="showAuditFields"
                 />
             </SectionControls>
         </div>
@@ -349,6 +359,7 @@ const handlePopulateAllFields = async (results: EditLogData) => {
             :language-code="props.languageCode"
             :force-collapsed="forceCollapsed"
             :edit-log-data="editLogData"
+            :show-audit-fields="auditFieldsVisible"
         />
         <SiteVisit
             v-else-if="props.data.graph_slug === 'site_visit'"
