@@ -400,11 +400,11 @@
                     "card_id": "c0e4a234-d288-419c-895c-74b9c24ec95f",
                     "config": {
                         "defaultValue": null,
-                        "label": "Unreviewed ADIF record"
+                        "label": "Unreviewed ADIF Record"
                     },
                     "id": "7b3eb0f5-0aaf-4290-8376-bbce958de37d",
                     "label": {
-                        "en": "Unreviewed ADIF record"
+                        "en": "Unreviewed ADIF Record"
                     },
                     "node_id": "17b5a9f8-1971-11f0-b493-0242ac170008",
                     "sortorder": 0,
@@ -734,7 +734,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Site Entry Date",
+                        "label": "Entered On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -742,10 +742,10 @@
                     },
                     "id": "a012d8c7-cf23-42a5-aae2-1031aaec93d6",
                     "label": {
-                        "en": "Site Entry Date"
+                        "en": "Entered On"
                     },
                     "node_id": "1c5d8ec0-1972-11f0-a6b9-0242ac170008",
-                    "sortorder": 3,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -897,7 +897,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Site Entered By",
+                        "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -907,7 +907,7 @@
                     },
                     "id": "b1dab206-d148-4241-94d0-4cca08468b2b",
                     "label": {
-                        "en": "Site Entered By"
+                        "en": "Entered By"
                     },
                     "node_id": "7cc93814-5cf1-11f0-aa13-0242ac170007",
                     "sortorder": 2,
