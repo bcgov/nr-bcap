@@ -326,7 +326,6 @@ const showAuditFields = async (results: EditLogData) => {
 </script>
 
 <template>
-    <div>{{ allTileIds }}</div>
     <div
         class="details-page-container"
         :class="{ 'hide-empty': hideEmptySections }"
