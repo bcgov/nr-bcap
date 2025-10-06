@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, isRef, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import _ from 'underscore';
 import mapPopupProvider from 'utils/map-popup-provider';
+import mapFilterUtils from 'utils/map-filter-utils';
 
 import type {
     DescriptorsType,
@@ -23,27 +24,37 @@ const props = defineProps<{
 
 const emit = defineEmits(['advance-feature', 'send-feature-to-map-filter']);
 const visibleFeature = ref();
-const features = ref([] as Ref<PopupFeatureType>[]);
+const features: Ref<PopupFeatureType>[] = [];
 const activeFeatureOffset = ref(0);
 
 function advanceFeature(direction: string) {
     if (direction === 'left') {
         activeFeatureOffset.value =
             activeFeatureOffset.value === 0
-                ? features.value.length - 1
+                ? features.length - 1
                 : activeFeatureOffset.value - 1;
     } else {
         activeFeatureOffset.value =
-            activeFeatureOffset.value === features.value.length - 1
+            activeFeatureOffset.value === features.length - 1
                 ? 0
                 : activeFeatureOffset.value + 1;
     }
-    visibleFeature.value = features.value[activeFeatureOffset.value].value;
+    visibleFeature.value = features[activeFeatureOffset.value].value;
     // emit("advance-feature", direction);
 }
 
-const currentFeature = computed<PopupFeatureType>(() => {
-    return features.value[activeFeatureOffset.value].value;
+const currentDisplayValues = computed<Partial<DescriptorsType>>(() => {
+    return (
+        (visibleFeature?.value?.displayValues as Partial<DescriptorsType>) ??
+        ({} as Partial<DescriptorsType>)
+    );
+});
+
+const visibleFeatureIsArchesResource = computed(() => {
+    return (
+        visibleFeature?.value?.feature &&
+        mapFilterUtils.isArchesGeometry(visibleFeature.value.feature)
+    );
 });
 
 function showExpandButton(feature: PopupFeatureType | undefined) {
@@ -84,39 +95,51 @@ const descriptionProperties = [
 ];
 function setDisplayValues() {
     props.popupFeatures.forEach((raw_feature: PopupFeatureType, index) => {
-        raw_feature.displayValues = isRef(raw_feature.displayValues)
-            ? raw_feature.displayValues
-            : ref(raw_feature.displayValues);
+        // raw_feature.displayValues = isRef(raw_feature.displayValues)
+        //     ? raw_feature.displayValues
+        //     : ref(raw_feature.displayValues);
         const feature: Ref<PopupFeatureType> = ref(raw_feature);
-        features.value.push(feature);
+        // const feature = raw_feature;
+        features.push(feature);
         if (feature.value.active()) {
             visibleFeature.value = feature.value;
             activeFeatureOffset.value = index;
             console.log(`Setting index to ${index}`);
         }
-        fetch(
-            props.urls.resource_descriptors + feature.value.resourceinstanceid,
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                const displayValues: Partial<DescriptorsType> = {};
-                const keys = descriptionProperties as DescriptorKey[];
+        console.log('visible feature', visibleFeature.value);
+        if (mapFilterUtils.isArchesGeometry(feature.value.feature)) {
+            fetch(
+                props.urls.resource_descriptors +
+                    feature.value.resourceinstanceid,
+            )
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Got display values from server');
+                    // const displayValues: Ref<Partial<DescriptorsType>> = ref(
+                    //     {},
+                    // );
+                    const keys = descriptionProperties as DescriptorKey[];
 
-                keys.forEach((prop) => {
-                    const val = data[prop];
-                    if (typeof val === 'string') {
-                        displayValues[prop] = data[prop];
-                    }
+                    keys.forEach((prop: keyof DescriptorsType) => {
+                        const val = data[prop];
+                        if (typeof val === 'string') {
+                            feature.value.displayValues[prop] = data[prop];
+                        }
+                    });
+                    console.log(feature.value.displayValues);
+                    feature.value.permissions = data['permissions'];
+                })
+                .catch((error) => {
+                    console.log(error);
                 });
-                feature.value.displayValues =
-                    displayValues as Ref<DescriptorsType>;
-                console.log(feature.value.displayValues);
-                feature.value.permissions = data['permissions'];
-                feature.value.loading = false;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        } else {
+            // It's a WMS layer
+            feature.value.displayValues['map_popup'] =
+                feature.value.map_popup();
+            feature.value.displayValues['displayname'] =
+                feature.value.displayname();
+        }
+        feature.value.loading = false;
     });
 }
 
@@ -131,6 +154,9 @@ function getActiveFeature() {
 
 onMounted(() => {
     console.log('Component is mounted!');
+    props.popupFeatures.forEach((feature: PopupFeatureType) => {
+        feature.displayValues = {} as DescriptorsType;
+    });
     setDisplayValues();
 });
 </script>
@@ -162,7 +188,7 @@ onMounted(() => {
                         <i class="fa fa-angle-right"></i>
                     </div>
                     <div class="hover-feature-title">
-                        {{ visibleFeature?.displayValues?.displayname }}
+                        {{ currentDisplayValues.displayname }}
                     </div>
                 </div>
             </div>
@@ -179,7 +205,7 @@ onMounted(() => {
                             ? 'scroll'
                             : 'hidden',
                     }"
-                    v-html="visibleFeature?.map_popup()"
+                    v-html="currentDisplayValues.map_popup"
                 ></div>
 
                 <div
@@ -191,7 +217,7 @@ onMounted(() => {
                 </div>
 
                 <div
-                    v-if="visibleFeature?.resourceinstanceid"
+                    v-if="visibleFeatureIsArchesResource"
                     class="hover-feature-metadata-block"
                 >
                     <div class="hover-feature-metadata">
@@ -210,11 +236,11 @@ onMounted(() => {
             <div class="hover-feature-footer">
                 <div>
                     <a
-                        v-if="visibleFeature?.resourceinstanceid"
+                        v-if="visibleFeatureIsArchesResource"
                         href="javascript:void(0)"
                         @click="
-                            currentFeature?.mapCard.showDetailsFromFilter(
-                                currentFeature.resourceinstanceid,
+                            visibleFeature?.mapCard.showDetailsFromFilter(
+                                visibleFeature.resourceinstanceid,
                             )
                         "
                     >
@@ -223,9 +249,7 @@ onMounted(() => {
                     </a>
 
                     <a
-                        v-if="
-                            visibleFeature?.resourceinstanceid && showEditButton
-                        "
+                        v-if="visibleFeatureIsArchesResource && showEditButton"
                         href="javascript:void(0)"
                         @click="openReport(visibleFeature?.resourceinstanceid)"
                     >
@@ -234,9 +258,7 @@ onMounted(() => {
                     </a>
 
                     <a
-                        v-if="
-                            visibleFeature?.resourceinstanceid && showEditButton
-                        "
+                        v-if="visibleFeatureIsArchesResource && showEditButton"
                         href="javascript:void(0)"
                         @click="openEdit(visibleFeature?.resourceinstanceid)"
                     >
