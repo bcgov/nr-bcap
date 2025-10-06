@@ -525,7 +525,7 @@
                         "en": "Remark Keyword"
                     },
                     "nodegroup_id": "dc827931-05ed-43e4-8da6-e99c0d02dae7",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -608,7 +608,7 @@
                         "en": "Site Tenure Remarks"
                     },
                     "nodegroup_id": "4598a202-197c-11f0-b2a5-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -936,7 +936,7 @@
                         "en": "Site Tenure"
                     },
                     "nodegroup_id": "40a52cd0-197b-11f0-8d46-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
