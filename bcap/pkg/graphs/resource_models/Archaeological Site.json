@@ -468,7 +468,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "HCA Contravention"
+                        "en": "HCA Contraventions"
                     },
                     "nodegroup_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
                     "sortorder": 5,
@@ -850,7 +850,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Conviction"
+                        "en": "HCA Convictions"
                     },
                     "nodegroup_id": "c5159e8e-619f-11f0-acf4-3a7a4e6803c5",
                     "sortorder": 6,
@@ -1177,6 +1177,27 @@
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
                 {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Conviction Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "18bc45c3-18e2-402e-9cd1-7726ac83cf8a",
+                    "label": {
+                        "en": "Conviction Date"
+                    },
+                    "node_id": "c515a532-619f-11f0-acf4-3a7a4e6803c5",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
                     "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultValue": {
@@ -1201,7 +1222,7 @@
                         "en": "Inventory Remarks"
                     },
                     "node_id": "41fb5e20-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 2,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1393,7 +1414,7 @@
                         "en": "NROS File #"
                     },
                     "node_id": "41fb603c-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 5,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1566,7 +1587,7 @@
                         "en": "PID"
                     },
                     "node_id": "41fb5f7e-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 4,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1722,28 +1743,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ca0c43ff-af73-4349-bafd-53ff9f22eebd"
-                },
-                {
-                    "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Person",
-                        "placeholder": {
-                            "en": ""
-                        }
-                    },
-                    "id": "4d2c9c6f-fa0a-4743-a831-fed58ed5199d",
-                    "label": {
-                        "en": "Person"
-                    },
-                    "node_id": "41fb5d62-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "a9ce5a20-d085-4fa2-9f5b-2b812223b3d1",
@@ -1985,7 +1984,7 @@
                         "en": "Address"
                     },
                     "node_id": "41fb5eca-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 3,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2157,27 +2156,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000004"
                 },
                 {
-                    "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD",
-                        "defaultValue": "",
-                        "label": "HCA Entry Date",
-                        "maxDate": false,
-                        "minDate": false,
-                        "placeholder": "Enter date",
-                        "viewMode": "days"
-                    },
-                    "id": "89549890-ea8f-4a57-9cf4-625cdd2e31ab",
-                    "label": {
-                        "en": "HCA Entry Date"
-                    },
-                    "node_id": "41fb5c72-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000004"
-                },
-                {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultValue": {
@@ -2203,6 +2181,36 @@
                     },
                     "node_id": "b442cce2-62c8-11f0-a80e-76ff5c50888d",
                     "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "c515a08c-619f-11f0-acf4-3a7a4e6803c5",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Inventory Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "8eb7c6d9-760a-4633-ba7b-2c9a26e61952",
+                    "label": {
+                        "en": "Inventory Remarks"
+                    },
+                    "node_id": "c515a668-619f-11f0-acf4-3a7a4e6803c5",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -3865,26 +3873,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at",
                     "rangenode_id": "41fb5eca-61a5-11f0-9674-3a7a4e6803c5",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
-                    "edgeid": "41fb8580-61a5-11f0-9674-3a7a4e6803c5",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
-                    "rangenode_id": "41fb5c72-61a5-11f0-9674-3a7a4e6803c5",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
-                    "edgeid": "41fb8652-61a5-11f0-9674-3a7a4e6803c5",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
-                    "rangenode_id": "41fb5d62-61a5-11f0-9674-3a7a4e6803c5",
                     "source_identifier_id": null
                 },
                 {
@@ -6304,67 +6292,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "hca_entry_date",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD"
-                    },
-                    "datatype": "date",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "HCA Entry Date",
-                    "nodegroup_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
-                    "nodeid": "41fb5c72-61a5-11f0-9674-3a7a4e6803c5",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P117_occurs_during",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "contravention_person",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Contributor",
-                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
-                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "useOntologyRelationship": false
-                            }
-                        ],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Contravention Person",
-                    "nodegroup_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
-                    "nodeid": "41fb5d62-61a5-11f0-9674-3a7a4e6803c5",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "inventory_remark",
                     "config": {
                         "en": ""
@@ -8602,9 +8529,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "a8dd373c-e912-4f46-bf57-68790eb3a15c",
-                "published_time": "2025-09-17T18:09:37.313"
+                "notes": "Remove Entered On/Entered By fields; to be populated dynamically",
+                "publicationid": "1e1f1680-3af6-453b-a090-b9eb76c638d6",
+                "published_time": "2025-10-07T02:34:14.646"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
