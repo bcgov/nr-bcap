@@ -31,11 +31,13 @@ const props = withDefaults(
             string,
             { entered_on: string | null; entered_by: string | null }
         >;
+        showAuditFields?: boolean;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -136,12 +138,15 @@ const typedHriaData = computed(
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section9
             :data="typedCurrentData?.aliased_data?.related_documents"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
+            :edit-log-data="props.editLogData"
         />
     </div>
 </template>

@@ -3,6 +3,8 @@ import { ref, computed, type Ref } from 'vue';
 import type { DetailsData } from '@/bcap/types.ts';
 import { formatDateTime } from '@/bcap/util.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { getEditLogForTile } from '@/bcgov_arches_common/components/EditLog/api.ts';
+import EditLog from '@/bcgov_arches_common/components/EditLog/EditLog.vue';
 import ArchaeologicalSite from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSiteDetails.vue';
 import SiteVisit from '@/bcap/components/pages/details/SiteVisit/SiteVisitDetails.vue';
 import HcaPermit from '@/bcap/components/pages/details/HcaPermit/HcaPermitDetails.vue';
@@ -12,8 +14,7 @@ import HriaDiscontinuedData from '@/bcap/components/pages/details/HriaDiscontinu
 import LegislativeAct from '@/bcap/components/pages/details/LegislativeAct/LegislativeActDetails.vue';
 import Repository from '@/bcap/components/pages/details/Repository/RepositoryDetails.vue';
 import SectionControls from '@/bcap/components/SectionControls.vue';
-import EditLog from '@/bcap/components/EditLog/EditLog.vue';
-import { collectTileIds } from '@/bcap/composables/useTileEditLog.ts';
+import { collectTileIds } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import {
     useResourceData,
     useRelatedResourceData,
@@ -35,6 +36,8 @@ const props = withDefaults(
 const hideEmptySections = ref(false);
 const forceCollapsed = ref<boolean | undefined>(undefined);
 const editLogData = ref<EditLogData>({});
+const auditFieldsVisible = ref(false);
+const siteVisitAuditDataLoad = ref(false);
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
@@ -110,6 +113,8 @@ const archSiteTileIds = computed(() => {
             'aliased_data',
             'conviction',
         ],
+        ['aliased_data', 'related_documents', 'aliased_data', 'site_images'],
+        ['aliased_data', 'related_documents', 'aliased_data', 'other_maps'],
     ];
     return collectTileIds(data, editLogTiles);
 });
@@ -180,7 +185,8 @@ const siteVisitTileMap = computed(() => {
 const fetchSiteVisitEditLogs = async () => {
     if (
         props.data.graph_slug !== 'archaeological_site' ||
-        siteVisitTileMap.value.size === 0
+        siteVisitTileMap.value.size === 0 ||
+        siteVisitAuditDataLoad.value
     )
         return;
 
@@ -190,12 +196,10 @@ const fetchSiteVisitEditLogs = async () => {
 
             const fetchPromises = tileIds.map(async (tileId) => {
                 try {
-                    const response = await fetch(
-                        `/bcap/api/resources/site_visit/${visitResourceId}/edit-log/?tile_id=${tileId}`,
+                    const data = await getEditLogForTile(
+                        visitResourceId,
+                        tileId,
                     );
-                    if (!response.ok) return null;
-
-                    const data = await response.json();
                     return {
                         tileId,
                         editLog: {
@@ -228,6 +232,7 @@ const fetchSiteVisitEditLogs = async () => {
     allResults.forEach((result) => {
         Object.assign(editLogData.value, result);
     });
+    siteVisitAuditDataLoad.value = true;
 };
 
 const allTileIds = computed(() => {
@@ -309,11 +314,13 @@ const handleExpandAll = () => {
     }, 100);
 };
 
-const handlePopulateAllFields = async (results: EditLogData) => {
+const showAuditFields = async (results: EditLogData) => {
     Object.assign(editLogData.value, results);
 
     if (props.data.graph_slug === 'archaeological_site') {
-        await fetchSiteVisitEditLogs();
+        await fetchSiteVisitEditLogs().then(() => {
+            auditFieldsVisible.value = !auditFieldsVisible.value;
+        });
     }
 };
 </script>
@@ -338,9 +345,9 @@ const handlePopulateAllFields = async (results: EditLogData) => {
                         )
                     "
                     :resource-id="resourceId"
-                    :graph="props.data.graph_slug"
                     :tile-ids="allTileIds"
-                    @populate-all-fields="handlePopulateAllFields"
+                    :audit-fields-visible="auditFieldsVisible"
+                    @show-audit-fields="showAuditFields"
                 />
             </SectionControls>
         </div>
@@ -351,6 +358,7 @@ const handlePopulateAllFields = async (results: EditLogData) => {
             :language-code="props.languageCode"
             :force-collapsed="forceCollapsed"
             :edit-log-data="editLogData"
+            :show-audit-fields="auditFieldsVisible"
         />
         <SiteVisit
             v-else-if="props.data.graph_slug === 'site_visit'"

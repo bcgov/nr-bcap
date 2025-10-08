@@ -3,7 +3,7 @@ import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isAliasedNodeData, isEmpty } from '@/bcap/util.ts';
-import { useSingleTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import { useSingleTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
 import type { AncestralRemainsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';

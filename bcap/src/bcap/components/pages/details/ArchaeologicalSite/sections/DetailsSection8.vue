@@ -3,13 +3,14 @@ import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import { useTileEditLog } from '@/bcap/composables/useTileEditLog.ts';
+import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type { RemarksAndRestrictedInformationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -19,6 +20,7 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         siteVisitData: () => [],
@@ -26,6 +28,7 @@ const props = withDefaults(
         languageCode: 'en',
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -37,35 +40,75 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
     },
 );
 
-const generalRemarkColumns = [
-    { field: 'general_remark_date', label: 'Date' },
-    { field: 'general_remark', label: 'General Remarks' },
-    { field: 'general_remark_source', label: 'Source' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+const generalRemarkColumns = computed<ColumnDefinition[]>(() => {
+    return [
+        { field: 'general_remark_date', label: 'Date' },
+        { field: 'general_remark', label: 'General Remarks' },
+        { field: 'general_remark_source', label: 'Source' },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_ON,
+            label: 'Entered On',
+            visible: props.showAuditFields,
+        },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_BY,
+            label: 'Entered By',
+            visible: props.showAuditFields,
+        },
+    ];
+});
 
-const restrictedRemarkColumns = [
-    { field: 'restricted_remark', label: 'Restricted Remarks' },
-    { field: 'restricted_entry_date', label: 'Entered On' },
-    { field: 'restricted_person', label: 'Entered By' },
-];
+const restrictedRemarkColumns = computed<ColumnDefinition[]>(() => {
+    return [
+        { field: 'restricted_remark', label: 'Restricted Remarks' },
+        {
+            field: 'restricted_entry_date',
+            label: 'Entered On',
+            visible: props.showAuditFields,
+        },
+        {
+            field: 'restricted_person',
+            label: 'Entered By',
+            visible: props.showAuditFields,
+        },
+    ];
+});
 
-const hcaContraventionColumns = [
-    { field: 'inventory_remarks', label: 'Inventory Remarks' },
-    { field: 'address', label: 'Address' },
-    { field: 'pid', label: 'PID' },
-    { field: 'nros_file_number', label: 'NROS File #' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+const hcaContraventionColumns = computed<ColumnDefinition[]>(() => {
+    return [
+        { field: 'inventory_remarks', label: 'Inventory Remarks' },
+        { field: 'address', label: 'Address' },
+        { field: 'pid', label: 'PID' },
+        { field: 'nros_file_number', label: 'NROS File #' },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_ON,
+            label: 'Entered On',
+            visible: props.showAuditFields,
+        },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_BY,
+            label: 'Entered By',
+            visible: props.showAuditFields,
+        },
+    ];
+});
 
-const convictionColumns = [
-    { field: 'conviction_date', label: 'Conviction Date' },
-    { field: 'inventory_remarks', label: 'Inventory Remarks' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+const convictionColumns = computed<ColumnDefinition[]>(() => {
+    return [
+        { field: 'conviction_date', label: 'Conviction Date' },
+        { field: 'inventory_remarks', label: 'Inventory Remarks' },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_ON,
+            label: 'Entered On',
+            visible: props.showAuditFields,
+        },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_BY,
+            label: 'Entered By',
+            visible: props.showAuditFields,
+        },
+    ];
+});
 
 const generalRemarksData = computed(
     () => currentData.value?.general_remark_information || [],
