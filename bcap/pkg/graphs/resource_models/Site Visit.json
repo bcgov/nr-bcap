@@ -86,6 +86,35 @@
                 },
                 {
                     "active": true,
+                    "cardid": "6a33bf71-fc42-4f4f-94cd-872301972084",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "Areas of the overall Site Boundary that are recommended to be non-protected."
+                    },
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Recommended Unprotected Areas"
+                    },
+                    "nodegroup_id": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "6d906048-140d-11f0-b9bb-0242ac170007",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -769,7 +798,7 @@
                         "en": "Affiliation"
                     },
                     "node_id": "69273f50-4c9c-11f0-9f73-0242ac170007",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -903,7 +932,7 @@
                         "en": "HCA Permit"
                     },
                     "node_id": "b03790fe-df58-11ef-8fa3-0242ac170009",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1204,7 +1233,7 @@
                         "en": "Archaeological Site"
                     },
                     "node_id": "cd722a58-df58-11ef-8fa3-0242ac170009",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1280,6 +1309,22 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Nonpermitted Site Visit"
+                    },
+                    "id": "96337e45-796c-4f55-b58d-c88ac7890d33",
+                    "label": {
+                        "en": "Nonpermitted Site Visit"
+                    },
+                    "node_id": "fb01d6a1-cac8-4b16-8f2c-5472213aeec6",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "0346bc9c-d235-4313-adc8-d0e210b2ef25"
                 },
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
@@ -1568,6 +1613,54 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "6a33bf71-fc42-4f4f-94cd-872301972084",
+                    "config": {
+                        "basemap": "British Columbia Roads",
+                        "bearing": 0,
+                        "centerX": "-124.0446468956967",
+                        "centerY": "55.11654770248046",
+                        "defaultValue": "",
+                        "defaultValueType": "",
+                        "featureColor": "#FF0000",
+                        "featureLineWidth": 1,
+                        "featurePointSize": 3,
+                        "geocodePlaceholder": "Search",
+                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
+                        "geocoderVisible": true,
+                        "geometryTypes": [
+                            {
+                                "id": "Point",
+                                "text": "Point"
+                            },
+                            {
+                                "id": "Line",
+                                "text": "Line"
+                            },
+                            {
+                                "id": "Polygon",
+                                "text": "Polygon"
+                            }
+                        ],
+                        "label": "Recommended Unprotected Areas",
+                        "maxZoom": 20,
+                        "minZoom": 0,
+                        "overlayConfigs": [],
+                        "overlayOpacity": 0,
+                        "pitch": 0,
+                        "rerender": true,
+                        "zoom": "4"
+                    },
+                    "id": "c79fd21e-7e7f-4739-95af-5d222c13bee7",
+                    "label": {
+                        "en": "Recommended Unprotected Areas"
+                    },
+                    "node_id": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000007"
                 },
                 {
                     "card_id": "290cd148-e9a9-45c9-b649-065e59e893fa",
@@ -2056,6 +2149,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
+                    "edgeid": "1e60cd59-b4e7-4add-9eca-695438a53bdb",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "rangenode_id": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "3648fb88-1401-11f0-acd5-0242ac170007",
                     "edgeid": "1e7ee2bf-2396-418a-ad4c-e7fef673ba24",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2122,6 +2225,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P9_consists_of",
                     "rangenode_id": "720dd6dc-1408-11f0-9e93-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
+                    "edgeid": "5e32f4cd-2bee-4e0e-95b3-d418554b8c54",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "fb01d6a1-cac8-4b16-8f2c-5472213aeec6",
                     "source_identifier_id": null
                 },
                 {
@@ -2766,6 +2879,13 @@
                     "parentnodegroup_id": "0484d0b8-1410-11f0-8419-0242ac170007"
                 },
                 {
+                    "cardinality": "1",
+                    "grouping_node_id": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
+                    "legacygroupid": null,
+                    "nodegroupid": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
+                    "parentnodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007"
+                },
+                {
                     "cardinality": "n",
                     "grouping_node_id": "22508fc8-1402-11f0-acd5-0242ac170007",
                     "legacygroupid": null,
@@ -3022,6 +3142,52 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E64_End_of_Existence",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P115i_is_finished_by",
                     "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "new_node",
+                    "config": {
+                        "addToMap": false,
+                        "advancedStyle": "",
+                        "advancedStyling": false,
+                        "clusterDistance": 20,
+                        "clusterMaxZoom": 5,
+                        "clusterMinPoints": 3,
+                        "fillColor": "rgba(130, 130, 130, 0.5)",
+                        "haloRadius": 4,
+                        "haloWeight": 4,
+                        "layerActivated": true,
+                        "layerIcon": "",
+                        "layerLegend": "",
+                        "layerName": "",
+                        "lineColor": "rgba(130, 130, 130, 0.7)",
+                        "lineHaloColor": "rgba(200, 200, 200, 0.5)",
+                        "outlineColor": "rgba(200, 200, 200, 0.7)",
+                        "outlineWeight": 2,
+                        "pointColor": "rgba(130, 130, 130, 0.7)",
+                        "pointHaloColor": "rgba(200, 200, 200, 0.5)",
+                        "radius": 2,
+                        "simplification": 0.3,
+                        "weight": 2
+                    },
+                    "datatype": "geojson-feature-collection",
+                    "description": "Areas of the overall Site Boundary that are recommended to be non-protected.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Recommended Unprotected Areas",
+                    "nodegroup_id": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
+                    "nodeid": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E47_Spatial_Coordinates",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4505,7 +4671,7 @@
                     "nodeid": "cca03a72-13fe-11f0-99e9-0242ac170007",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4615,7 +4781,7 @@
                     "nodeid": "cf40f158-13f0-11f0-9404-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E17_Type_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4640,7 +4806,7 @@
                     "nodeid": "cf40f40a-13f0-11f0-9404-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4797,6 +4963,40 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "nonpermitted_site_visit",
+                    "config": {
+                        "falseLabel": {
+                            "en": "Permitted"
+                        },
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
+                        "trueLabel": {
+                            "en": "Non-permitted"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Nonpermitted Site Visit",
+                    "nodegroup_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
+                    "nodeid": "fb01d6a1-cac8-4b16-8f2c-5472213aeec6",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "site_disturbance",
                     "config": {
                         "en": ""
@@ -4929,9 +5129,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "abc03039-211d-48bf-ae9d-16bfedd83dbb",
-                "published_time": "2025-07-23T19:21:46.217"
+                "notes": "Added Recommended Unprotected and Non-permitted nodes",
+                "publicationid": "11ab3338-757f-4200-9a0b-87e63af8228e",
+                "published_time": "2025-10-08T21:16:23.175"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -5032,9 +5232,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "b5d7f74e79 2025-09-09 14:54:48 -0700",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.10.14-linuxkit"
     }
 }
