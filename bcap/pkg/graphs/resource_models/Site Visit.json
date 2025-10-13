@@ -439,33 +439,6 @@
                 },
                 {
                     "active": true,
-                    "cardid": "e0869769-b48e-4c39-9b2c-c33fbb5b406a",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": "{\"en\": \"\"}",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Biogeography"
-                    },
-                    "nodegroup_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "sortorder": 3,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
                     "cardid": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -2156,16 +2129,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "edgeid": "11c6e70a-a6e2-4cbb-816a-ea49921e0f5d",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
-                    "rangenode_id": "c9d882b6-5b3d-45ef-a62d-9469f827fa83",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "887edb3a-df58-11ef-8fa3-0242ac170009",
                     "edgeid": "15d274e3-044a-4030-97e2-fc8b7ecb86e1",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2242,16 +2205,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P9_consists_of",
                     "rangenode_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "edgeid": "4a194aa6-ce80-4c1f-8e48-5224a4f59a27",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "rangenode_id": "28ab4766-d80c-453a-9fbb-703f915693fb",
                     "source_identifier_id": null
                 },
                 {
@@ -2786,16 +2739,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "edgeid": "d78f358b-a0b6-4116-99a4-1c3640c6b39d",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
-                    "rangenode_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "e9f36b4e-140d-11f0-b9bb-0242ac170007",
                     "edgeid": "dfb7d211-72d9-4c99-a8e2-9edd5d91b138",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2812,16 +2755,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P10i_contains",
                     "rangenode_id": "2423be32-1403-11f0-ae97-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "edgeid": "e2eae525-02e5-468e-9c97-de8f25651e4e",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "973d1d01-8720-4e45-a1c1-b2ca65a26c5f",
                     "source_identifier_id": null
                 },
                 {
@@ -3049,13 +2982,6 @@
                     "legacygroupid": null,
                     "nodegroupid": "cf40edc0-13f0-11f0-9404-0242ac170007",
                     "parentnodegroup_id": null
-                },
-                {
-                    "cardinality": "n",
-                    "grouping_node_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "legacygroupid": null,
-                    "nodegroupid": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "parentnodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007"
                 },
                 {
                     "cardinality": "n",
@@ -3314,32 +3240,6 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "biogeography_type",
-                    "config": {
-                        "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography Type",
-                    "nodegroup_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "nodeid": "28ab4766-d80c-453a-9fbb-703f915693fb",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": "7d44d5e8-70b3-49b8-af88-6ed5f263442b"
                 },
                 {
                     "alias": "archaeological_data",
@@ -4251,29 +4151,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "biogeography_description",
-                    "config": {},
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography Description",
-                    "nodegroup_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "nodeid": "973d1d01-8720-4e45-a1c1-b2ca65a26c5f",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": "7d44d5e8-70b3-49b8-af88-6ed5f263442b"
-                },
-                {
                     "alias": "archaeological_feature",
                     "config": {
                         "controlledList": "d3b24bed-65fb-5e43-9479-1d3e0cba482c",
@@ -4774,29 +4651,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "biogeography_name",
-                    "config": {},
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography Name",
-                    "nodegroup_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "nodeid": "c9d882b6-5b3d-45ef-a62d-9469f827fa83",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": "7d44d5e8-70b3-49b8-af88-6ed5f263442b"
-                },
-                {
                     "alias": "location_and_access",
                     "config": {
                         "en": ""
@@ -5058,31 +4912,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "biogeography",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "semantic",
-                    "description": "{\"en\": \"\"}",
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography",
-                    "nodegroup_id": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "nodeid": "eba9069f-aab9-42e9-a2ee-4a923e5d8c1d",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
-                    "sortorder": 5,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": "7d44d5e8-70b3-49b8-af88-6ed5f263442b"
-                },
-                {
                     "alias": "archaeological_culture",
                     "config": {
                         "controlledList": "117a187a-9864-5efa-aa7d-d823dddf2ca8",
@@ -5300,9 +5129,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "f978b023-2f85-4986-9e62-ec2407ec5266",
-                "published_time": "2025-10-13T19:23:11.576"
+                "notes": "Added Recommended Unprotected and Non-permitted nodes",
+                "publicationid": "11ab3338-757f-4200-9a0b-87e63af8228e",
+                "published_time": "2025-10-08T21:16:23.175"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -5403,9 +5232,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "b5d7f74e79 2025-09-09 14:54:48 -0700",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.10.14-linuxkit"
     }
 }
