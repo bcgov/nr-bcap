@@ -86,6 +86,33 @@
                 },
                 {
                     "active": true,
+                    "cardid": "4c611685-0f1a-442d-b938-c4f95fa732ee",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Biogeography"
+                    },
+                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "6a33bf71-fc42-4f4f-94cd-872301972084",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -894,6 +921,62 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
+                    "config": {
+                        "defaultValue": {
+                            "__ko_mapping__": {
+                                "copiedProperties": {},
+                                "copy": [],
+                                "ignore": [],
+                                "include": [
+                                    "_destroy"
+                                ],
+                                "mappedProperties": {
+                                    "en": true,
+                                    "en.direction": true,
+                                    "en.value": true
+                                },
+                                "observe": []
+                            },
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Biogeography Description",
+                        "maxLength": null,
+                        "placeholder": {
+                            "__ko_mapping__": {
+                                "copiedProperties": {},
+                                "copy": [],
+                                "ignore": [],
+                                "include": [
+                                    "_destroy"
+                                ],
+                                "mappedProperties": {
+                                    "en": true
+                                },
+                                "observe": []
+                            },
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "474abb9c-d2f0-44bd-820b-6b9a007c681b",
+                    "label": {
+                        "en": "Biogeography Description"
+                    },
+                    "node_id": "95e5f9b6-71cd-4769-b365-9155442954ec",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultResourceInstance": [],
@@ -914,6 +997,27 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
+                    "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
+                    "config": {
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Biogeography Type",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "4d0d8b6c-0e91-417e-9ef5-6ae30c3eed24",
+                    "label": {
+                        "en": "Biogeography Type"
+                    },
+                    "node_id": "5270c773-125c-4223-868e-badeb5cf5f78",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
@@ -1362,6 +1466,62 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000008"
+                },
+                {
+                    "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
+                    "config": {
+                        "defaultValue": {
+                            "__ko_mapping__": {
+                                "copiedProperties": {},
+                                "copy": [],
+                                "ignore": [],
+                                "include": [
+                                    "_destroy"
+                                ],
+                                "mappedProperties": {
+                                    "en": true,
+                                    "en.direction": true,
+                                    "en.value": true
+                                },
+                                "observe": []
+                            },
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Biogeography Name",
+                        "maxLength": null,
+                        "placeholder": {
+                            "__ko_mapping__": {
+                                "copiedProperties": {},
+                                "copy": [],
+                                "ignore": [],
+                                "include": [
+                                    "_destroy"
+                                ],
+                                "mappedProperties": {
+                                    "en": true
+                                },
+                                "observe": []
+                            },
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "bafb1e15-78dc-4ef7-b0c0-e329b31e6ccc",
+                    "label": {
+                        "en": "Biogeography Name"
+                    },
+                    "node_id": "5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
@@ -2109,6 +2269,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "edgeid": "0d41b246-c673-48d8-982b-16340e725ae7",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
+                    "rangenode_id": "5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "840c5b80-d932-11ef-92f0-005056a3bc47",
                     "edgeid": "0ffa7a73-c141-40a2-a891-1da7ddd76c6e",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2199,6 +2369,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "edgeid": "38016a1f-d8fb-4ca7-adf1-42ce71b3dc31",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "rangenode_id": "95e5f9b6-71cd-4769-b365-9155442954ec",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "3648fb88-1401-11f0-acd5-0242ac170007",
                     "edgeid": "40a08098-ec6f-45ce-a548-07228f723d01",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2245,6 +2425,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106i_forms_part_of",
                     "rangenode_id": "6d905dbe-140d-11f0-b9bb-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
+                    "edgeid": "698a6b41-5278-4201-9c7f-9d8b5774483f",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
                     "source_identifier_id": null
                 },
                 {
@@ -2475,6 +2665,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "rangenode_id": "ab674670-140d-11f0-b9bb-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "edgeid": "9e91624e-1cc7-421a-a95a-d1e714a0e670",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "rangenode_id": "5270c773-125c-4223-868e-badeb5cf5f78",
                     "source_identifier_id": null
                 },
                 {
@@ -2905,6 +3105,13 @@
                     "legacygroupid": null,
                     "nodegroupid": "37bdda22-140d-11f0-b9bb-0242ac170007",
                     "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "legacygroupid": null,
+                    "nodegroupid": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "parentnodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007"
                 },
                 {
                     "cardinality": "n",
@@ -3382,6 +3589,55 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "biogeography_type",
+                    "config": {
+                        "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography Type",
+                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "nodeid": "5270c773-125c-4223-868e-badeb5cf5f78",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "biogeography_name",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography Name",
+                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "nodeid": "5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "cultural_material_status",
                     "config": {
                         "controlledList": "c2cbf04a-5112-5264-a05d-ba348a2bdfcd",
@@ -3520,6 +3776,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
                     "sortorder": 6,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "biogeography",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography",
+                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "nodeid": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4045,6 +4324,29 @@
                     "nodeid": "8cf43cd4-61ab-11f0-be7c-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "biogeography_description",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography Description",
+                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "nodeid": "95e5f9b6-71cd-4769-b365-9155442954ec",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -5129,9 +5431,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Added Recommended Unprotected and Non-permitted nodes",
-                "publicationid": "11ab3338-757f-4200-9a0b-87e63af8228e",
-                "published_time": "2025-10-08T21:16:23.175"
+                "notes": null,
+                "publicationid": "57ea9a2f-e6a2-4bb5-8d1b-88b567bb5db0",
+                "published_time": "2025-10-13T20:01:30.058"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -5232,9 +5534,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "b5d7f74e79 2025-09-09 14:54:48 -0700",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
