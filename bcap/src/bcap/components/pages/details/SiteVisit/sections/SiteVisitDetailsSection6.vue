@@ -32,7 +32,11 @@ const generalRemarkRows = computed(
 );
 
 const recColumns = [
-    { field: 'recorders_recommendation', label: "Recorder's Recommendations", isHtml: true },
+    {
+        field: 'recorders_recommendation',
+        label: "Recorder's Recommendations",
+        isHtml: true,
+    },
     { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
     { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];

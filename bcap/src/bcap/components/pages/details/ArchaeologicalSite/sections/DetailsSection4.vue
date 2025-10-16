@@ -2,7 +2,12 @@
 import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isAliasedNodeData, isEmpty, sanitizeHtml } from '@/bcap/util.ts';
+import {
+    getDisplayValue,
+    isAliasedNodeData,
+    isEmpty,
+    sanitizeHtml,
+} from '@/bcap/util.ts';
 import {
     useTileEditLog,
     useSingleTileEditLog,
@@ -756,10 +761,11 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
                                     <!-- eslint-disable vue/no-v-html -->
                                     <dd
                                         v-if="addressRemarksText"
-                                        v-html="sanitizeHtml(addressRemarksText)"
+                                        v-html="
+                                            sanitizeHtml(addressRemarksText)
+                                        "
                                     ></dd>
                                     <!-- eslint-enable vue/no-v-html -->
-
 
                                     <dt
                                         v-if="
@@ -949,7 +955,7 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
                                                     getDisplayValue(
                                                         comment.aliased_data
                                                             ?.elevation_comments,
-                                                    )
+                                                    ),
                                                 )
                                             "
                                         ></dd>

@@ -53,7 +53,7 @@ const relatedDocumentsColumns = computed<ColumnDefinition[]>(() => {
         {
             field: 'related_document_description',
             label: 'Document Description',
-            isHtml: true
+            isHtml: true,
         },
         { field: 'related_site_documents', label: 'Document' },
     ];

@@ -64,7 +64,9 @@ const materialColumns = [
     { field: 'repository', label: 'Repository' },
 ];
 
-const stratColumns = [{ field: 'stratigraphy', label: 'Stratigraphy', isHtml: true }];
+const stratColumns = [
+    { field: 'stratigraphy', label: 'Stratigraphy', isHtml: true },
+];
 
 const chronologyColumns = [
     { field: 'determination_method', label: 'Method' },
@@ -101,7 +103,11 @@ const hriaChronologyColumns = [
 const disturbColumns = [
     { field: 'disturbance_period', label: 'When' },
     { field: 'disturbance_cause', label: 'Cause of Disturbance' },
-    { field: 'disturbance_remarks', label: 'Disturbance Remarks', isHtml: true },
+    {
+        field: 'disturbance_remarks',
+        label: 'Disturbance Remarks',
+        isHtml: true,
+    },
 ];
 </script>
 

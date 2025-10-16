@@ -101,8 +101,8 @@ const typedHriaData = computed(
         />
         <Section4
             :data="
-                (typedCurrentData?.aliased_data
-                    ?.heritage_site_location?.[0]?.aliased_data as unknown as SiteLocationTile) || undefined
+                (typedCurrentData?.aliased_data?.heritage_site_location?.[0]
+                    ?.aliased_data as unknown as SiteLocationTile) || undefined
             "
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
