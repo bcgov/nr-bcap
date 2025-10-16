@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import 'primeicons/primeicons.css';
 import type { SiteBoundaryTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
@@ -49,11 +50,28 @@ const hasSpatialAccuracyHistory = computed(() => {
     );
 });
 
+const siteBoundaryAnnotations = computed((): AliasedTileDataWithAudit[] => {
+    const data = props.hriaData?.aliased_data as { site_boundary_annotations?: AliasedTileDataWithAudit[] };
+    return data?.site_boundary_annotations ?? [];
+});
+
+const hasHistoricalSpatialAccuracy = computed(() => {
+    return siteBoundaryAnnotations.value.length > 0;
+});
+
 const spatialAccuracyColumns = [
     { field: 'edit_type', label: 'Edit Type' },
     { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
     { field: 'edited_on', label: 'Edited On' },
     { field: 'edited_by', label: 'Edited By' },
+];
+
+const historicalSpatialAccuracyColumns = [
+    { field: 'source_notes', label: 'Source Notes' },
+    { field: 'latest_edit_type', label: 'Edit Type' },
+    { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
+    { field: 'entered_on', label: 'Entered On' },
+    { field: 'entered_by', label: 'Entered By' },
 ];
 </script>
 
@@ -391,19 +409,28 @@ const spatialAccuracyColumns = [
                             variant="subsection"
                             :visible="true"
                             :class="{
-                                'empty-section': !hasSpatialAccuracyHistory,
+                                'empty-section': !hasSpatialAccuracyHistory && !hasHistoricalSpatialAccuracy,
                             }"
                         >
                             <template #sectionContent>
-                                <StandardDataTable
-                                    v-if="hasSpatialAccuracyHistory"
-                                    :table-data="
-                                        props.data?.aliased_data
-                                            ?.spatial_accuracy_history ?? []
-                                    "
-                                    :column-definitions="spatialAccuracyColumns"
-                                    :initial-sort-field-index="2"
-                                />
+                                <div v-if="hasSpatialAccuracyHistory || hasHistoricalSpatialAccuracy">
+                                    <StandardDataTable
+                                        v-if="hasSpatialAccuracyHistory"
+                                        :table-data="
+                                            props.data?.aliased_data
+                                                ?.spatial_accuracy_history ?? []
+                                        "
+                                        :column-definitions="spatialAccuracyColumns"
+                                        :initial-sort-field-index="2"
+                                    />
+
+                                    <StandardDataTable
+                                        v-if="hasHistoricalSpatialAccuracy"
+                                        :table-data="siteBoundaryAnnotations"
+                                        :column-definitions="historicalSpatialAccuracyColumns"
+                                        :initial-sort-field-index="3"
+                                    />
+                                </div>
                                 <EmptyState
                                     v-else
                                     message="No historical spatial accuracy records available."
