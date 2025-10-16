@@ -47,24 +47,24 @@ const hasDisturbance = computed(() => disturbRows.value.length > 0);
 
 const cultureColumns = [
     { field: 'archaeological_culture', label: 'Archaeological Culture Name' },
-    { field: 'culture_remarks', label: 'Remarks' },
+    { field: 'culture_remarks', label: 'Remarks', isHtml: true },
 ];
 
 const featureColumns = [
     { field: 'archaeological_feature', label: 'Feature Type' },
     { field: 'feature_count', label: '# of Features' },
-    { field: 'feature_remarks', label: 'Feature Remarks' },
+    { field: 'feature_remarks', label: 'Feature Remarks', isHtml: true },
 ];
 
 const materialColumns = [
     { field: 'cultural_material_type', label: 'Material Type' },
     { field: 'cultural_material_status', label: 'Status' },
-    { field: 'cultural_material_details', label: 'Details' },
+    { field: 'cultural_material_details', label: 'Details', isHtml: true },
     { field: 'number_of_artifacts', label: '# of Artifacts' },
     { field: 'repository', label: 'Repository' },
 ];
 
-const stratColumns = [{ field: 'stratigraphy', label: 'Stratigraphy' }];
+const stratColumns = [{ field: 'stratigraphy', label: 'Stratigraphy', isHtml: true }];
 
 const chronologyColumns = [
     { field: 'determination_method', label: 'Method' },
@@ -101,7 +101,7 @@ const hriaChronologyColumns = [
 const disturbColumns = [
     { field: 'disturbance_period', label: 'When' },
     { field: 'disturbance_cause', label: 'Cause of Disturbance' },
-    { field: 'disturbance_remarks', label: 'Disturbance Remarks' },
+    { field: 'disturbance_remarks', label: 'Disturbance Remarks', isHtml: true },
 ];
 </script>
 

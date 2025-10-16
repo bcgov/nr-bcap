@@ -2,7 +2,7 @@
 import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isAliasedNodeData, isEmpty } from '@/bcap/util.ts';
+import { getDisplayValue, isAliasedNodeData, isEmpty, sanitizeHtml } from '@/bcap/util.ts';
 import {
     useTileEditLog,
     useSingleTileEditLog,
@@ -753,9 +753,13 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
                                     <dt v-if="addressRemarksText">
                                         Address and Legal Description Remarks
                                     </dt>
-                                    <dd v-if="addressRemarksText">
-                                        {{ addressRemarksText }}
-                                    </dd>
+                                    <!-- eslint-disable vue/no-v-html -->
+                                    <dd
+                                        v-if="addressRemarksText"
+                                        v-html="sanitizeHtml(addressRemarksText)"
+                                    ></dd>
+                                    <!-- eslint-enable vue/no-v-html -->
+
 
                                     <dt
                                         v-if="
@@ -938,14 +942,18 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
                                         <dt>
                                             Elevation Remarks {{ index + 1 }}
                                         </dt>
-                                        <dd>
-                                            {{
-                                                getDisplayValue(
-                                                    comment.aliased_data
-                                                        ?.elevation_comments,
+                                        <!-- eslint-disable vue/no-v-html -->
+                                        <dd
+                                            v-html="
+                                                sanitizeHtml(
+                                                    getDisplayValue(
+                                                        comment.aliased_data
+                                                            ?.elevation_comments,
+                                                    )
                                                 )
-                                            }}
-                                        </dd>
+                                            "
+                                        ></dd>
+                                        <!-- eslint-enable vue/no-v-html -->
                                     </template>
                                 </dl>
                                 <EmptyState

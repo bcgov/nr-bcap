@@ -53,6 +53,7 @@ const relatedDocumentsColumns = computed<ColumnDefinition[]>(() => {
         {
             field: 'related_document_description',
             label: 'Document Description',
+            isHtml: true
         },
         { field: 'related_site_documents', label: 'Document' },
     ];
@@ -63,7 +64,7 @@ const imagesColumns = computed<ColumnDefinition[]>(() => {
         { field: 'image_type', label: 'Image Type' },
         { field: 'repository', label: 'Repository' },
         { field: 'photographer', label: 'Photographer' },
-        { field: 'image_description', label: 'Description' },
+        { field: 'image_description', label: 'Description', isHtml: true },
         { field: 'image_caption', label: 'Image Caption' },
         { field: 'image_date', label: 'Image Date' },
         {
