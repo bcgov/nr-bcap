@@ -51,7 +51,9 @@ const hasSpatialAccuracyHistory = computed(() => {
 });
 
 const siteBoundaryAnnotations = computed((): AliasedTileDataWithAudit[] => {
-    const data = props.hriaData?.aliased_data as { site_boundary_annotations?: AliasedTileDataWithAudit[] };
+    const data = props.hriaData?.aliased_data as {
+        site_boundary_annotations?: AliasedTileDataWithAudit[];
+    };
     return data?.site_boundary_annotations ?? [];
 });
 
@@ -409,25 +411,36 @@ const historicalSpatialAccuracyColumns = [
                             variant="subsection"
                             :visible="true"
                             :class="{
-                                'empty-section': !hasSpatialAccuracyHistory && !hasHistoricalSpatialAccuracy,
+                                'empty-section':
+                                    !hasSpatialAccuracyHistory &&
+                                    !hasHistoricalSpatialAccuracy,
                             }"
                         >
                             <template #sectionContent>
-                                <div v-if="hasSpatialAccuracyHistory || hasHistoricalSpatialAccuracy">
+                                <div
+                                    v-if="
+                                        hasSpatialAccuracyHistory ||
+                                        hasHistoricalSpatialAccuracy
+                                    "
+                                >
                                     <StandardDataTable
                                         v-if="hasSpatialAccuracyHistory"
                                         :table-data="
                                             props.data?.aliased_data
                                                 ?.spatial_accuracy_history ?? []
                                         "
-                                        :column-definitions="spatialAccuracyColumns"
+                                        :column-definitions="
+                                            spatialAccuracyColumns
+                                        "
                                         :initial-sort-field-index="2"
                                     />
 
                                     <StandardDataTable
                                         v-if="hasHistoricalSpatialAccuracy"
                                         :table-data="siteBoundaryAnnotations"
-                                        :column-definitions="historicalSpatialAccuracyColumns"
+                                        :column-definitions="
+                                            historicalSpatialAccuracyColumns
+                                        "
                                         :initial-sort-field-index="3"
                                     />
                                 </div>
