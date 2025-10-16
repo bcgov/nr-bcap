@@ -21,7 +21,7 @@ const hasRemains = computed(() => {
 const remainsColumns = [
     { field: 'ancestral_remains_type', label: 'Type' },
     { field: 'ancestral_remains_status', label: 'Status' },
-    { field: 'ancestral_remains_remarks', label: 'Remarks' },
+    { field: 'ancestral_remains_remarks', label: 'Remarks', isHtml: true },
     { field: 'multiple_burials', label: 'Multiple Burials' },
     { field: 'minimum_number_of_individuals', label: 'Minimum # Individuals' },
     { field: 'ancestral_remains_repository', label: 'Repository' },
