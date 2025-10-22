@@ -924,20 +924,6 @@
                     "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
                     "config": {
                         "defaultValue": {
-                            "__ko_mapping__": {
-                                "copiedProperties": {},
-                                "copy": [],
-                                "ignore": [],
-                                "include": [
-                                    "_destroy"
-                                ],
-                                "mappedProperties": {
-                                    "en": true,
-                                    "en.direction": true,
-                                    "en.value": true
-                                },
-                                "observe": []
-                            },
                             "en": {
                                 "direction": "ltr",
                                 "value": ""
@@ -949,18 +935,6 @@
                         "label": "Biogeography Description",
                         "maxLength": null,
                         "placeholder": {
-                            "__ko_mapping__": {
-                                "copiedProperties": {},
-                                "copy": [],
-                                "ignore": [],
-                                "include": [
-                                    "_destroy"
-                                ],
-                                "mappedProperties": {
-                                    "en": true
-                                },
-                                "observe": []
-                            },
                             "en": "Enter text"
                         },
                         "uneditable": false,
@@ -1471,20 +1445,6 @@
                     "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
                     "config": {
                         "defaultValue": {
-                            "__ko_mapping__": {
-                                "copiedProperties": {},
-                                "copy": [],
-                                "ignore": [],
-                                "include": [
-                                    "_destroy"
-                                ],
-                                "mappedProperties": {
-                                    "en": true,
-                                    "en.direction": true,
-                                    "en.value": true
-                                },
-                                "observe": []
-                            },
                             "en": {
                                 "direction": "ltr",
                                 "value": ""
@@ -1496,18 +1456,6 @@
                         "label": "Biogeography Name",
                         "maxLength": null,
                         "placeholder": {
-                            "__ko_mapping__": {
-                                "copiedProperties": {},
-                                "copy": [],
-                                "ignore": [],
-                                "include": [
-                                    "_destroy"
-                                ],
-                                "mappedProperties": {
-                                    "en": true
-                                },
-                                "observe": []
-                            },
                             "en": "Enter text"
                         },
                         "uneditable": false,
