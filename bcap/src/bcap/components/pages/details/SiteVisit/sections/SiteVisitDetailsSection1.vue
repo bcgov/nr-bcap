@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
@@ -27,6 +28,26 @@ const hasGeoJsonData = computed(() => {
     return current.value?.aliased_data?.site_visit_location?.aliased_data
         ?.site_visit_location?.node_value;
 });
+
+const hasBiogeography = computed(() => {
+    let biogeographyData =
+        current.value?.aliased_data?.site_visit_location?.aliased_data
+            ?.biogeography;
+    return biogeographyData && biogeographyData.length > 0;
+});
+
+const biogeographyRows = computed(() => {
+    return (
+        current.value?.aliased_data?.site_visit_location?.aliased_data
+            ?.biogeography || []
+    );
+});
+
+const biogeographyColumns = [
+    { field: 'biogeography_type', label: 'Type' },
+    { field: 'biogeography_name', label: 'Name' },
+    { field: 'biogeography_description', label: 'Description' },
+];
 </script>
 
 <template>
@@ -101,6 +122,26 @@ const hasGeoJsonData = computed(() => {
             </DetailsSection>
 
             <DetailsSection
+                section-title="Biogeography"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasBiogeography }"
+            >
+                <template #sectionContent>
+                    <StandardDataTable
+                        v-if="hasBiogeography"
+                        :table-data="biogeographyRows ? biogeographyRows : []"
+                        :column-definitions="biogeographyColumns"
+                        :initial-sort-field-index="0"
+                    />
+                    <EmptyState
+                        v-else
+                        message="No biogeography information available."
+                    />
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
                 section-title="Site Visit Location (GeoJSON)"
                 variant="subsection"
                 :visible="false"
@@ -121,25 +162,15 @@ const hasGeoJsonData = computed(() => {
                                     null,
                                     2,
                                 )
-                            }}
-            </pre
+                            }}</pre
                         >
                     </div>
-                    <EmptyState v-else />
+                    <EmptyState
+                        v-else
+                        message="No site visit location data available."
+                    />
                 </template>
             </DetailsSection>
         </template>
     </DetailsSection>
 </template>
-
-<style>
-dl {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 1rem;
-}
-dt {
-    min-width: 20rem;
-}
-</style>
-<style scoped></style>
