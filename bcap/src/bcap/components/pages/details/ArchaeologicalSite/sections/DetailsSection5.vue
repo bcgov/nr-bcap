@@ -68,8 +68,7 @@ const hasSpatialAccuracy = computed(() => {
 });
 
 const hasSpatialAccuracyHistory = computed(() => {
-    const history = currentSiteBoundary.value?.spatial_accuracy_history;
-    return Array.isArray(history) && history.length > 0;
+    return siteBoundaryAnnotations.value.length > 0;
 });
 
 const siteBoundaryAnnotations = computed((): AliasedTileDataWithAudit[] => {
@@ -79,39 +78,26 @@ const siteBoundaryAnnotations = computed((): AliasedTileDataWithAudit[] => {
     return data?.site_boundary_annotations ?? [];
 });
 
-const hasHistoricalSpatialAccuracy = computed(() => {
-    return siteBoundaryAnnotations.value.length > 0;
-});
-
 const currentSpatialAccuracyColumns = [
-    { field: 'source_notes', label: 'Source Notes' },
     { field: 'latest_edit_type', label: 'Edit Type' },
     { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
-
-const spatialAccuracyColumns = [
-    { field: 'edit_type', label: 'Edit Type' },
-    { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
-    { field: 'edited_on', label: 'Edited On' },
-    { field: 'edited_by', label: 'Edited By' },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Edited On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Edited By' },
 ];
 
 const historicalSpatialAccuracyColumns = [
     { field: 'source_notes', label: 'Source Notes' },
-    { field: 'latest_edit_type', label: 'Edit Type' },
     { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
-    { field: 'entered_on', label: 'Entered On' },
-    { field: 'entered_by', label: 'Entered By' },
+    { field: 'entered_on', label: 'Edited On' },
+    { field: 'entered_by', label: 'Edited By' },
 ];
 </script>
 
 <template>
     <DetailsSection
-        section-title="5. Site Boundary Details"
-        :loading="props.loading"
+        section-title="5. Site Boundary"
         :visible="true"
+        :loading="props.loading"
         :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
@@ -397,39 +383,18 @@ const historicalSpatialAccuracyColumns = [
                             variant="subsection"
                             :visible="true"
                             :class="{
-                                'empty-section':
-                                    !hasSpatialAccuracyHistory &&
-                                    !hasHistoricalSpatialAccuracy,
+                                'empty-section': !hasSpatialAccuracyHistory,
                             }"
                         >
                             <template #sectionContent>
-                                <div
-                                    v-if="
-                                        hasSpatialAccuracyHistory ||
-                                        hasHistoricalSpatialAccuracy
+                                <StandardDataTable
+                                    v-if="hasSpatialAccuracyHistory"
+                                    :table-data="siteBoundaryAnnotations"
+                                    :column-definitions="
+                                        historicalSpatialAccuracyColumns
                                     "
-                                >
-                                    <StandardDataTable
-                                        v-if="hasSpatialAccuracyHistory"
-                                        :table-data="
-                                            (currentSiteBoundary?.spatial_accuracy_history as AliasedTileDataWithAudit[]) ??
-                                            []
-                                        "
-                                        :column-definitions="
-                                            spatialAccuracyColumns
-                                        "
-                                        :initial-sort-field-index="2"
-                                    />
-
-                                    <StandardDataTable
-                                        v-if="hasHistoricalSpatialAccuracy"
-                                        :table-data="siteBoundaryAnnotations"
-                                        :column-definitions="
-                                            historicalSpatialAccuracyColumns
-                                        "
-                                        :initial-sort-field-index="3"
-                                    />
-                                </div>
+                                    :initial-sort-field-index="2"
+                                />
                                 <EmptyState
                                     v-else
                                     message="No historical spatial accuracy records available."
