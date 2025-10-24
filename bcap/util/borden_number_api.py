@@ -7,33 +7,28 @@ from bcap.util.bcap_aliases import (
     BCAPSiteAliases as site_aliases,
     GraphSlugs as slugs,
 )
-from bcap.util.hria_db import HriaDao
 from django.conf import settings
+from bcap.models.borden_number import BordenNumberCounter
 
 import urllib3
 
 
-# API to get next borden number sequence, check if a borden number already exists and
-# reserve a borden number in HRIA
+# @todo - How do we handle multiple geometries?
 class BordenNumberApi:
     _datatype_factory = None
     _url = "https://openmaps.gov.bc.ca/geo/pub/WHSE_ARCHAEOLOGY.RAAD_BORDENGRID/ows?service=WFS&request=GetFeature&outputFormat=json&version=2.3.0&typeNames=WHSE_ARCHAEOLOGY.RAAD_BORDENGRID&cql_filter=DWITHIN(GEOMETRY,POINT(%s%%20%s),1,meters)"
 
     geom_node = None
-    officially_recognized_node = None
 
     def __init__(self):
         super().__init__()
 
     def _initialize_models(self):
-        if not self.geom_node or not self.officially_recognized_node:
+        if not self.geom_node:
             self._datatype_factory = DataTypeFactory()
             graph = models.GraphModel.objects.filter(slug=slugs.HERITAGE_SITE).first()
             self.geom_node = models.Node.objects.filter(
                 alias=site_aliases.SITE_BOUNDARY, graph=graph
-            ).first()
-            self.officially_recognized_node = models.Node.objects.filter(
-                alias=site_aliases.OFFICIALLY_RECOGNIZED_SITE, graph=graph
             ).first()
 
     def _get_borden_grid(self, resourceinstanceid):
@@ -46,6 +41,9 @@ class BordenNumberApi:
         # geometry = datatype.get_display_value(tile, self.node)
         # print("Tile data: %s" % tile.data)
         geometry = tile.data[str(self.geom_node.nodeid)]
+        return self._get_borden_grid_for_geometry(geometry)
+
+    def _get_borden_grid_for_geometry(self, geometry):
 
         # print('Geometry: %s %s' % (geometry, type(geometry)))
         utils = geo_utils.GeoUtils()
@@ -74,32 +72,17 @@ class BordenNumberApi:
 
         return borden_grid
 
-    def get_next_borden_number(self, resourceinstanceid):
+    def get_next_borden_number(self, resourceinstanceid=None, geometry=None):
         self._initialize_models()
-        borden_grid = self._get_borden_grid(resourceinstanceid)
-        dao = HriaDao()
-        return dao.get_next_borden_sequence(borden_grid)
+        if resourceinstanceid:
+            borden_grid = self._get_borden_grid(resourceinstanceid)
+        elif geometry:
+            borden_grid = self._get_borden_grid_for_geometry(geometry)
+        else:
+            raise Exception("Must provide either resourceinstanceid or geometry")
 
-    @staticmethod
-    def validate_borden_number(borden_number, resourceinstanceid):
-        return HriaDao().validate_borden_number(borden_number, resourceinstanceid)
+        return BordenNumberCounter.peek_next_borden_number(borden_grid)
 
-    def reserve_borden_number(self, borden_number, resourceinstanceid):
-        self._initialize_models()
-        is_heritage_site = "Y"
-        tile = models.TileModel.objects.filter(
-            resourceinstance_id=resourceinstanceid,
-            nodegroup_id=self.officially_recognized_node.nodegroup_id,
-        ).first()
-
-        # print("Got tile: %s" % tile)
-        if tile and tile.data:
-            is_heritage_site = (
-                "Y" if tile.data[str(self.officially_recognized_node.nodeid)] else "N"
-            )
-
-        HriaDao().reserve_borden_number(
-            borden_number=borden_number,
-            is_heritage_site=is_heritage_site,
-            resourceinstanceid=resourceinstanceid,
-        )
+    @classmethod
+    def reserve_borden_number(cls, borden_grid):
+        BordenNumberCounter.allocate_next_borden_number(borden_grid)
