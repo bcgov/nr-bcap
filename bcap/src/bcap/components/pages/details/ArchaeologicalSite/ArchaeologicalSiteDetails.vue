@@ -116,6 +116,7 @@ const typedHriaData = computed(
             :hria-data="typedHriaData"
             :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :edit-log-data="props.editLogData"
         />
         <Section6
             :data="typedCurrentData?.aliased_data?.archaeological_data"
