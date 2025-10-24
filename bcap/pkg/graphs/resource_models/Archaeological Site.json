@@ -3257,17 +3257,6 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Borden Number",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
                     },
                     "id": "e38c20d1-e5d9-4d92-b8cd-c825a6875adb",
                     "label": {
@@ -3277,7 +3266,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                    "widget_id": "10000000-0000-0000-0000-000000000101"
                 },
                 {
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
@@ -7067,10 +7056,8 @@
                 },
                 {
                     "alias": "borden_number",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "non-localized-string",
+                    "config": null,
+                    "datatype": "borden-number-datatype",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,

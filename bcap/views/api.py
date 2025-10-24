@@ -38,13 +38,29 @@ logger = logging.getLogger(__name__)
 class BordenNumber(APIBase):
     api = BordenNumberApi()
 
-    # Generate a new borden number in HRIA and return it
+    # Generate a new borden number and return it -- NB - this doesn't reserve it at this point
     def get(self, request, resourceinstanceid):
-        new_borden_number = self.api.get_next_borden_number(resourceinstanceid)
+        new_borden_number = self.api.get_next_borden_number(
+            resourceinstanceid=resourceinstanceid
+        )
         # print("Got borden grid: %s" % borden_grid)
         return_data = '{"status": "success", "borden_number": "%s"}' % new_borden_number
         return_bytes = return_data.encode("utf-8")
         return HttpResponse(return_bytes, content_type="application/json")
+
+    # Reserve a borden number for BCRHP. Borden numbers are automatically reserved for BCAP
+    # by way of saving the card with a new borden number.
+    def post(self, request):
+        geometry = request.POST.site_boundary
+        borden_number = request.POST.borden_number
+        reserve = request.POST.reserve_borden_number
+
+        if reserve == "true":
+            self.api.reserve_borden_number(geometry)
+        new_borden_number = self.api.get_next_borden_number(resourceinstanceid)
+        return_data = '{"status": "success", borden_number: "%s" }' % new_borden_number
+        return_bytes = return_data.encode("utf-8")
+        return JSONResponse(return_bytes, content_type="application/json")
 
 
 class LegislativeAct(APIBase):
