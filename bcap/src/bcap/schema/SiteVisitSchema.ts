@@ -1,6 +1,8 @@
 // ---------- Imports ----------
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
-
+import type {
+    AliasedNodeData,
+    AliasedTileData,
+} from '@/arches_component_lab/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
@@ -15,6 +17,15 @@ import type {
 
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
+// ---------- Site Visit Location: Biogeography ----------
+export interface SiteVisitLocationBiogeographyTile extends AliasedTileData {
+    aliased_data: {
+        biogeography_description?: AliasedNodeData;
+        biogeography_name?: AliasedNodeData;
+        biogeography_type?: AliasedNodeData;
+    };
+}
+
 // ---------- Site Visit Location ----------
 export interface SiteVisitLocationTile extends AliasedTileData {
     aliased_data: {
@@ -23,6 +34,7 @@ export interface SiteVisitLocationTile extends AliasedTileData {
         latest_edit_type: ReferenceSelectValue; // reference
         site_visit_location: GeoJSONFeatureCollectionValue; // geojson-feature-collection
         location_and_access: StringValue; // string (i18n)
+        biogeography?: SiteVisitLocationBiogeographyTile[];
     };
 }
 

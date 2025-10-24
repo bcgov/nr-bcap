@@ -81,6 +81,7 @@ const archSiteTileIds = computed(() => {
             'aliased_data',
             'site_decision',
         ],
+        ['aliased_data', 'site_boundary'],
         ['aliased_data', 'heritage_site_location', '0', 'tenure_remarks'],
         ['aliased_data', 'heritage_site_location', '0', 'address_remarks'],
         [

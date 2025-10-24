@@ -1,4 +1,10 @@
+import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+
+export const sanitizeHtml = (html: string | undefined): string => {
+    if (!html) return '';
+    return DOMPurify.sanitize(html);
+};
 
 export const formatDateTime = (isoString: string | null): string | null => {
     if (!isoString) return null;

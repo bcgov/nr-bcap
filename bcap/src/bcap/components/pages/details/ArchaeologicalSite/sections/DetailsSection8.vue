@@ -43,7 +43,7 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
 const generalRemarkColumns = computed<ColumnDefinition[]>(() => {
     return [
         { field: 'general_remark_date', label: 'Date' },
-        { field: 'general_remark', label: 'General Remarks' },
+        { field: 'general_remark', label: 'General Remarks', isHtml: true },
         { field: 'general_remark_source', label: 'Source' },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
