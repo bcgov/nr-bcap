@@ -58,6 +58,12 @@ urlpatterns = [
         BordenNumber.as_view(),
         name="borden_number",
     ),
+    # Used by BCRHP to get & reserve a borden number
+    re_path(
+        bc_path_prefix(r"^borden_number$"),
+        BordenNumber.as_view(),
+        name="borden_number",
+    ),
     re_path(
         bc_path_prefix(r"^legislative_act/(?P<act_id>%s)$" % uuid_regex),
         LegislativeAct.as_view(),
