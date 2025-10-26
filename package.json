@@ -1,7 +1,7 @@
 {
     "name": "bcap",
     "license": "AGPL-3.0-only",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "scripts": {
         "build_development": "npm i typescript@5.6.2 && npm run eslint:check && cross-env webpack --config ./webpack/webpack.config.dev.js",
         "build_production": "npm run eslint:check && npm run ts:check && cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.prod.js",
@@ -48,7 +48,7 @@
         "@primeuix/styles": "^1.2.3",
         "@primeuix/themes": "^1.2.3",
         "ajv": "^8.17.1",
-        "arches": "bcgov/arches#stable/8.0.3_bcgov_12377_12434",
+        "arches": "bcgov/arches#stable/8.0.3_bcgov_12377_12434_12294_12491",
         "arches-component-lab": "archesproject/arches-component-lab#main",
         "arches-controlled-lists": "archesproject/arches-controlled-lists#main",
         "bcgov_arches_common": "bcgov/bcgov-arches-common#dev/2.0.x",
