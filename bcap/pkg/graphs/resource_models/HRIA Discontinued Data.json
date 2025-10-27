@@ -53,7 +53,7 @@
                         "en": "Site Boundary Annotations"
                     },
                     "nodegroup_id": "5f70b149-49a1-49ab-89de-5d964d7b2dd8",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
