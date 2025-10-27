@@ -198,7 +198,7 @@ export interface BcapURLs {
     resource_copy: string;
     resource_data: string;
     resource_descriptors: string;
-    resource_edit_log: (resourceId: string) => string;
+    resource_edit_log: string;
     resource_editor: string;
     resource_permission_data: string;
     resource_report: string;
@@ -228,18 +228,4 @@ export interface BcapURLs {
     url_subpath: string;
     validatejson: string;
     workflow_history: string;
-}
-
-export interface ArchesAPI {
-    context_root: string;
-    prefix: string;
-    urls: BcapURLs;
-}
-
-declare global {
-    interface Window {
-        arches: ArchesAPI;
-    }
-
-    const arches: ArchesAPI;
 }
