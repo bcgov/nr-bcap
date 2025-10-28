@@ -1935,6 +1935,17 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
+                    "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
+                    "config": {},
+                    "id": "64e6c156-e3f9-4021-ab7e-f527b72a37f8",
+                    "label": null,
+                    "node_id": "f5c343f3-217f-4ff0-a414-5dcaff74d2fa",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
                     "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
@@ -3257,6 +3268,11 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
+                        "defaultValue": "",
+                        "maxLength": 9,
+                        "placeholder": "XxYy-9999",
+                        "uneditable": false,
+                        "width": "10%"
                     },
                     "id": "e38c20d1-e5d9-4d92-b8cd-c825a6875adb",
                     "label": {
@@ -7056,7 +7072,7 @@
                 },
                 {
                     "alias": "borden_number",
-                    "config": null,
+                    "config": {},
                     "datatype": "borden-number-datatype",
                     "description": null,
                     "exportable": false,
@@ -8757,9 +8773,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "b5d7f74e79 2025-09-09 14:54:48 -0700",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "b5d7f74e7 2025-09-09 14:54:48 -0700",
         "os": "Linux",
-        "os version": "6.10.14-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
