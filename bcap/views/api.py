@@ -40,11 +40,16 @@ class BordenNumber(APIBase):
 
     # Generate a new borden number and return it -- NB - this doesn't reserve it at this point
     def get(self, request, resourceinstanceid):
-        new_borden_number = self.api.get_next_borden_number(
-            resourceinstanceid=resourceinstanceid
-        )
-        # print("Got borden grid: %s" % borden_grid)
-        return_data = '{"status": "success", "borden_number": "%s"}' % new_borden_number
+        try:
+            new_borden_number = self.api.get_next_borden_number(
+                resourceinstanceid=resourceinstanceid
+            )
+            # print("Got borden grid: %s" % borden_grid)
+            return_data = (
+                '{"status": "success", "borden_number": "%s"}' % new_borden_number
+            )
+        except Exception as e:
+            return_data = '{"status": "error", "message": "%s"}' % str(e)
         return_bytes = return_data.encode("utf-8")
         return HttpResponse(return_bytes, content_type="application/json")
 
