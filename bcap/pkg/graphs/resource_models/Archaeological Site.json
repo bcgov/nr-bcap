@@ -965,7 +965,7 @@
                         "en": "Unprotected Areas"
                     },
                     "nodegroup_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
-                    "sortorder": 0,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -1877,7 +1877,7 @@
                         "en": "Unprotected Areas"
                     },
                     "node_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
-                    "sortorder": 0,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000007"

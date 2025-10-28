@@ -107,7 +107,7 @@
                         "en": "Biogeography"
                     },
                     "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "sortorder": 0,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -136,7 +136,7 @@
                         "en": "Recommended Unprotected Areas"
                     },
                     "nodegroup_id": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
-                    "sortorder": 0,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -1765,7 +1765,7 @@
                         "en": "Recommended Unprotected Areas"
                     },
                     "node_id": "2068ab5d-88ad-43fb-9c79-e3751666bbb5",
-                    "sortorder": 0,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000007"
