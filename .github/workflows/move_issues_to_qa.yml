@@ -25,7 +25,7 @@ jobs:
         env:
           # 🚨 SECRETS & IDs: Update these values
           GH_TOKEN: ${{ secrets.PROJECT_PAT }} # Your PAT with 'project' and 'repo' scopes
-          PROJECT_ID: 285     # The ID of your GitHub Project (V2)
+          PROJECT_ID: ${{ vars.PROJECT_ID }}     # The ID of your GitHub Project (V2)
           STATUS_FIELD_ID: ${{ vars.STATUS_FIELD_ID }} # Your Status field ID
           DONE_OPTION_ID: ${{ vars.QA_STATUS_OPTION_ID }}  # The ID for the 'Done' option in your Status field
           PR_NODE_ID: ${{ github.event.pull_request.node_id }}
