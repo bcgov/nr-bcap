@@ -1,8 +1,9 @@
-import $ from 'jquery';
-import ko from 'knockout';
-import arches from 'arches';
-import WidgetViewModel from 'viewmodels/widget';
-import bordenNumberWidgetTemplate from 'templates/views/components/widgets/borden-number-widget.htm';
+import $ from "jquery";
+import ko from "knockout";
+import arches from "arches";
+import WidgetViewModel from "viewmodels/widget";
+import AlertViewModel from "viewmodels/alert";
+import bordenNumberWidgetTemplate from "templates/views/components/widgets/borden-number-widget.htm";
 
 /**
  * registers a text-widget component for use in forms
@@ -17,11 +18,11 @@ import bordenNumberWidgetTemplate from 'templates/views/components/widgets/borde
 
 const BordenNumberWidget = function (params) {
     params.configKeys = [
-        'placeholder',
-        'width',
-        'maxLength',
-        'defaultValue',
-        'uneditable',
+        "placeholder",
+        "width",
+        "maxLength",
+        "defaultValue",
+        "uneditable",
     ];
 
     WidgetViewModel.apply(this, [params]);
@@ -46,15 +47,26 @@ const BordenNumberWidget = function (params) {
         }).done(function (data) {
             console.log(`Data: ${JSON.stringify(data)}`);
             console.log(data);
-            if (data.status === 'success') {
+            if (data.status === "success") {
                 self.value(data.borden_number);
+            } else {
+                self.form.alert(
+                    new AlertViewModel(
+                        "ep-alert-red",
+                        "Error",
+                        data.message,
+                        null,
+                        function () {},
+                    ),
+                );
+                // self.form.alert(data.message);
             }
             self.form.loading(false);
         });
     };
 };
 
-export default ko.components.register('borden-number-widget', {
+export default ko.components.register("borden-number-widget", {
     viewModel: BordenNumberWidget,
     template: bordenNumberWidgetTemplate,
 });
