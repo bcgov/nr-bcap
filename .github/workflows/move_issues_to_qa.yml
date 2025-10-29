@@ -1,0 +1,98 @@
+name: 🚀 Move Linked Issues to Done on PR Merge
+
+on:
+  pull_request:
+    types: [closed] # Triggers when a PR is closed (merged or unmerged)
+
+jobs:
+  move-issues:
+    # ⚠️ CRITICAL: Only run if the PR was actually merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # Needed to read issue links
+      pull-requests: read
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GitHub CLI
+        uses: cli/cli-action@v3
+
+      - name: Find Linked Issues and Move to Done
+        env:
+          # 🚨 SECRETS & IDs: Update these values
+          GH_TOKEN: ${{ secrets.PROJECT_PAT }} # Your PAT with 'project' and 'repo' scopes
+          PROJECT_ID: 285     # The ID of your GitHub Project (V2)
+          STATUS_FIELD_ID: ${{ vars.STATUS_FIELD_ID }} # Your Status field ID
+          DONE_OPTION_ID: ${{ vars.QA_STATUS_OPTION_ID }}  # The ID for the 'Done' option in your Status field
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+          
+        run: |
+          # 1. Get the Node IDs of issues linked by the PR
+          LINKED_ISSUE_IDS=$(gh api graphql -f query='
+            query($pr:ID!) {
+              node(id: $pr) {
+                ... on PullRequest {
+                  closingIssuesReferences(first: 100) {
+                    nodes {
+                      id
+                    }
+                  }
+                }
+              }
+            }' -f pr=$PR_NODE_ID --jq '.data.node.closingIssuesReferences.nodes[].id')
+
+          if [ -z "$LINKED_ISSUE_IDS" ]; then
+            echo "No closing issues referenced in the PR description. Exiting."
+            exit 0
+          fi
+
+          echo "Found linked issues with Node IDs:"
+          echo "$LINKED_ISSUE_IDS"
+
+          # 2. Loop through each linked Issue ID
+          for ISSUE_NODE_ID in $LINKED_ISSUE_IDS; do
+            echo "Processing issue: $ISSUE_NODE_ID"
+            
+            # Find the Issue's Project Item ID (card ID)
+            PROJECT_ITEM_ID=$(gh api graphql -f query='
+              query($issueId:ID!) {
+                node(id: $issueId) {
+                  ... on Issue {
+                    projectItems(first: 1, includeArchived: false) {
+                      nodes {
+                        id
+                      }
+                    }
+                  }
+                }
+              }' -f issueId=$ISSUE_NODE_ID --jq '.data.node.projectItems.nodes[0].id' -H "GraphQL-Features: projects_next_graphql")
+
+            if [ "$PROJECT_ITEM_ID" == "null" ] || [ -z "$PROJECT_ITEM_ID" ]; then
+                echo "Issue $ISSUE_NODE_ID is not currently in the project. Skipping update."
+                continue
+            fi
+
+            echo "Project Item ID found: $PROJECT_ITEM_ID"
+
+            # 3. Update the Status field of the Project Item to 'Done'
+            gh api graphql -f query='
+              mutation($itemId:ID!, $projectId:ID!, $fieldId:ID!, $optionId:String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  itemId: $itemId,
+                  projectId: $projectId,
+                  fieldId: $fieldId,
+                  value: { singleSelectOptionId: $optionId }
+                }) {
+                  projectV2Item {
+                    id
+                  }
+                }
+              }' -f itemId=$PROJECT_ITEM_ID -f projectId=$PROJECT_ID -f fieldId=$STATUS_FIELD_ID -f optionId=$DONE_OPTION_ID
+            
+            echo "Successfully moved issue $ISSUE_NODE_ID to Done status."
+
+          done
