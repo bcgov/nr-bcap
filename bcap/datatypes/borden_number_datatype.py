@@ -29,6 +29,8 @@ class BordenNumberDataType(NonLocalizedStringDataType):
     def pre_tile_save(self, tile, nodeid):
         logger.debug("Tile: %s" % tile.data)
         value = tile.data[nodeid]
+        if value is None or value == "":
+            return
         borden_grid = re.sub("-.*", "", value)
         # print("Saving %s:%s" % (tile.resourceinstance_id, value))
         logger.debug(
