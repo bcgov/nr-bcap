@@ -1,3 +1,5 @@
+from traceback import print_exception
+
 from django.http import HttpResponse, Http404
 from arches.app.views.api import MVT as MVTBase
 import logging
@@ -16,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONSerializer
-from bcap.util.borden_number_api import BordenNumberApi
+from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
 from bcap.util.business_data_proxy import LegislativeActDataProxy
 from arches.app.models import models
 from bcap.util.mvt_tiler import MVTTiler
@@ -39,12 +41,21 @@ class BordenNumber(APIBase):
     api = BordenNumberApi()
 
     # Generate a new borden number and return it -- NB - this doesn't reserve it at this point
-    def get(self, request, resourceinstanceid):
-        new_borden_number = self.api.get_next_borden_number(
-            resourceinstanceid=resourceinstanceid
-        )
-        # print("Got borden grid: %s" % borden_grid)
-        return_data = '{"status": "success", "borden_number": "%s"}' % new_borden_number
+    def get(self, request, resourceinstanceid=None):
+        try:
+            new_borden_number = self.api.get_next_borden_number(
+                resourceinstanceid=resourceinstanceid
+            )
+            # print("Got borden grid: %s" % borden_grid)
+            return_data = (
+                '{"status": "success", "borden_number": "%s"}' % new_borden_number
+            )
+        except MissingGeometryError as e:
+            return_data = '{"status": "error", "message": "%s"}' % str(e)
+        except Exception as e:
+            logger.error(f"Unable to generate borden number: %s", e)
+            print_exception(e)
+            return_data = '{"status": "error", "message": "An unexpected error occurred. Please contact system support."}'
         return_bytes = return_data.encode("utf-8")
         return HttpResponse(return_bytes, content_type="application/json")
 
@@ -57,7 +68,7 @@ class BordenNumber(APIBase):
 
         if reserve == "true":
             self.api.reserve_borden_number(geometry)
-        new_borden_number = self.api.get_next_borden_number(resourceinstanceid)
+        new_borden_number = self.api.get_next_borden_number(geometry=geometry)
         return_data = '{"status": "success", borden_number: "%s" }' % new_borden_number
         return_bytes = return_data.encode("utf-8")
         return JSONResponse(return_bytes, content_type="application/json")

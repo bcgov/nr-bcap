@@ -1013,7 +1013,7 @@
                     "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 },
                 {
                     "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
@@ -4570,7 +4570,7 @@
                         "searchDsl": "",
                         "searchString": ""
                     },
-                    "datatype": "resource-instance",
+                    "datatype": "resource-instance-list",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,

@@ -59,8 +59,9 @@ urlpatterns = [
         name="borden_number",
     ),
     # Used by BCRHP to get & reserve a borden number
+    # Make trailing slash optional to catch request from resource that hasn't been persisted
     re_path(
-        bc_path_prefix(r"^borden_number$"),
+        bc_path_prefix(r"^borden_number/?$"),
         BordenNumber.as_view(),
         name="borden_number",
     ),

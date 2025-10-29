@@ -13,6 +13,10 @@ from bcap.models.borden_number import BordenNumberCounter
 import urllib3
 
 
+class MissingGeometryError(Exception):
+    pass
+
+
 # @todo - How do we handle multiple geometries?
 class BordenNumberApi:
     _datatype_factory = None
@@ -36,6 +40,10 @@ class BordenNumberApi:
             resourceinstance_id=resourceinstanceid,
             nodegroup_id=self.geom_node.nodegroup_id,
         ).first()
+        if not tile:
+            raise MissingGeometryError(
+                "Site boundary must be created prior to generating a Borden Number"
+            )
         # print("Got tile: %s" % tile)
         datatype = self._datatype_factory.get_instance(self.geom_node.datatype)
         # geometry = datatype.get_display_value(tile, self.node)
@@ -79,7 +87,9 @@ class BordenNumberApi:
         elif geometry:
             borden_grid = self._get_borden_grid_for_geometry(geometry)
         else:
-            raise Exception("Must provide either resourceinstanceid or geometry")
+            raise MissingGeometryError(
+                "Request must provide either a resourceinstanceid or a geometry"
+            )
 
         return BordenNumberCounter.peek_next_borden_number(borden_grid)
 
