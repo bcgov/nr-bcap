@@ -163,7 +163,7 @@
                         "en": "Unprotected Areas"
                     },
                     "nodegroup_id": "931463f2-bb5b-4342-927b-15bb7c20a0a8",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
