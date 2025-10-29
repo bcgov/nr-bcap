@@ -143,6 +143,7 @@ export interface BcapURLs {
     from_sparql_endpoint: string;
     function_manager: (graphid: string) => string;
     geojson: string;
+    get_api_resource_edit_log: (resourceId: string) => string;
     get_concept_collections: string;
     get_domain_connections: (graphid: string) => string;
     get_dsl: string;
