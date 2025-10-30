@@ -330,7 +330,7 @@
                         "en": "RCD Lab Code"
                     },
                     "node_id": "b91b62d2-52b6-11f0-99ae-2a3f36199137",
-                    "sortorder": 1,
+                    "sortorder": 13,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -342,7 +342,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "RCD Adjusted Var",
+                        "label": "RCD Adjusted Var (+/-)",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -352,10 +352,10 @@
                     },
                     "id": "3b0a7586-2786-4f8f-9aa2-b27182182ef4",
                     "label": {
-                        "en": "RCD Adjusted Var"
+                        "en": "RCD Adjusted Var (+/-)"
                     },
                     "node_id": "e5a2ae94-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 5,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -428,7 +428,7 @@
                         "en": "RCD Unadjusted"
                     },
                     "node_id": "c29d6d8a-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 2,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -544,7 +544,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "End Year",
+                        "label": "To Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -552,10 +552,10 @@
                     },
                     "id": "7e48c8ba-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "End Year"
+                        "en": "To Date"
                     },
                     "node_id": "7e48c63a-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 14,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -566,17 +566,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Start Year Calendar",
+                        "label": "From Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48c932-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Start Year Calendar"
+                        "en": "From Date Calendar"
                     },
                     "node_id": "7e48c798-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 12,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -587,17 +587,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Start Year Qualifier",
+                        "label": "From Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48c996-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Start Year Qualifier"
+                        "en": "From Date Qualifier"
                     },
                     "node_id": "7e48c842-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 13,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -608,17 +608,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "End Year Qualifier",
+                        "label": "To Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48c9fa-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "End Year Qualifier"
+                        "en": "To Date Qualifier"
                     },
                     "node_id": "7e48c1a8-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 15,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -629,17 +629,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "End Year Calendar",
+                        "label": "To Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48ca54-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "End Year Calendar"
+                        "en": "To Date Calendar"
                     },
                     "node_id": "7e48c2ac-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 16,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -656,7 +656,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Source of Dates",
+                        "label": "Source",
                         "maxLength": "250",
                         "placeholder": {
                             "en": "E.g. City of Surrey"
@@ -666,10 +666,10 @@
                     },
                     "id": "7e48cab8-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Source of Dates"
+                        "en": "Source"
                     },
                     "node_id": "7e48c586-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 9,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -702,7 +702,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "Start Year",
+                        "label": "From Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -710,10 +710,10 @@
                     },
                     "id": "7e48cb8a-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Start Year"
+                        "en": "From Date"
                     },
                     "node_id": "7e48c4d2-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 11,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -743,7 +743,7 @@
                         "en": "Chronology Remarks"
                     },
                     "node_id": "7e48c36a-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 10,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -754,14 +754,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Determination Method",
+                        "label": "Method",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48cc52-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Determination Method"
+                        "en": "Method"
                     },
                     "node_id": "7e48c41e-52b2-11f0-9251-2a3f36199137",
                     "sortorder": 0,
@@ -943,7 +943,7 @@
                         "en": "Modified By"
                     },
                     "node_id": "04caad14-52b7-11f0-9897-2a3f36199137",
-                    "sortorder": 7,
+                    "sortorder": 16,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -1113,7 +1113,7 @@
                         "en": "RCD Lab Number"
                     },
                     "node_id": "c236d708-52b5-11f0-84ae-2a3f36199137",
-                    "sortorder": 6,
+                    "sortorder": 14,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -1138,7 +1138,7 @@
                         "en": "RCD Adjusted"
                     },
                     "node_id": "db704864-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 4,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -1159,7 +1159,7 @@
                         "en": "Modified On"
                     },
                     "node_id": "1fe5cf0c-52b7-11f0-9897-2a3f36199137",
-                    "sortorder": 8,
+                    "sortorder": 15,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1171,7 +1171,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "RCD Unadjusted Var",
+                        "label": "RCD Unadjusted Var (+/-)",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -1181,10 +1181,10 @@
                     },
                     "id": "c14aacbb-88fa-4474-b0aa-b997c8ccb455",
                     "label": {
-                        "en": "RCD Unadjusted Var"
+                        "en": "RCD Unadjusted Var (+/-)"
                     },
                     "node_id": "cdd4b32a-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 3,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -2128,7 +2128,7 @@
                     "nodeid": "04caad14-52b7-11f0-9897-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 10,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2287,7 +2287,7 @@
                     "nodeid": "1fe5cf0c-52b7-11f0-9897-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E61_Time_Primitive",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L31_has_starting_date-time",
-                    "sortorder": 11,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2730,13 +2730,13 @@
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "End Year Qualifier",
+                    "name": "To Date Qualifier",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c1a8-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMgeo/SP14_Time_Expression",
@@ -2756,13 +2756,13 @@
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "End Year Calendar",
+                    "name": "To Date Calendar",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c2ac-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMgeo/SP11_Temporal_Reference_System",
@@ -2807,13 +2807,13 @@
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Determination Method",
+                    "name": "Method",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c41e-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
@@ -2832,13 +2832,13 @@
                     "exportable": true,
                     "fieldname": "EVNT_ST_YR",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Start Year",
+                    "name": "From Date",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c4d2-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
@@ -2857,13 +2857,13 @@
                     "exportable": false,
                     "fieldname": "datesource",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Information Source",
+                    "name": "Source",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c586-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
@@ -2882,13 +2882,13 @@
                     "exportable": true,
                     "fieldname": "EVNT_ND_YR",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "End Year",
+                    "name": "To Date",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c63a-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
@@ -2933,13 +2933,13 @@
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Start Year Calendar",
+                    "name": "From Date Calendar",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c798-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMgeo/SP11_Temporal_Reference_System",
@@ -2959,13 +2959,13 @@
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Start Year Qualifier",
+                    "name": "From Date Qualifier",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "7e48c842-52b2-11f0-9251-2a3f36199137",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMgeo/SP14_Time_Expression",
@@ -3166,7 +3166,7 @@
                     "nodeid": "b91b62d2-52b6-11f0-99ae-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L4_has_preferred_label",
-                    "sortorder": 3,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3328,13 +3328,13 @@
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "RCD Unadjusted Var",
+                    "name": "RCD Unadjusted Var (+/-)",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "cdd4b32a-52c7-11f0-8f82-3e35adbf154c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -3426,13 +3426,13 @@
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "RCD Adjusted Var",
+                    "name": "RCD Adjusted Var (+/-)",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "e5a2ae94-52c7-11f0-8f82-3e35adbf154c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -3521,9 +3521,9 @@
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                 "most_recent_edit_id": null,
-                "notes": "Remove edit type",
-                "publicationid": "53ddefe8-11c9-429d-b510-bf28aeb526b3",
-                "published_time": "2025-10-23T21:27:28.662"
+                "notes": null,
+                "publicationid": "d6125ea4-ef57-488e-9f2a-c37f7b01e486",
+                "published_time": "2025-10-30T23:37:48.099"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -3625,7 +3625,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "b5d7f74e7 2025-09-09 14:54:48 -0700",
+        "git hash": "599549e8b 2025-10-25 14:19:16 -0700",
         "os": "Linux",
         "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
