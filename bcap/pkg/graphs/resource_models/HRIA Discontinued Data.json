@@ -53,7 +53,7 @@
                         "en": "Site Boundary Annotations"
                     },
                     "nodegroup_id": "5f70b149-49a1-49ab-89de-5d964d7b2dd8",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -163,7 +163,7 @@
                         "en": "Unprotected Areas"
                     },
                     "nodegroup_id": "931463f2-bb5b-4342-927b-15bb7c20a0a8",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
