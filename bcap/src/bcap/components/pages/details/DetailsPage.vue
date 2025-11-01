@@ -62,6 +62,7 @@ const archSiteTileIds = computed(() => {
         return tileIds;
 
     const data = resourceData.value as ArchaeologySiteSchema;
+
     const editLogTiles = [
         [
             'aliased_data',
@@ -86,6 +87,15 @@ const archSiteTileIds = computed(() => {
         ['aliased_data', 'heritage_site_location', '0', 'address_remarks'],
         [
             'aliased_data',
+            'heritage_site_location',
+            '0',
+            'aliased_data',
+            'elevation',
+            'aliased_data',
+            'elevation_comments',
+        ],
+        [
+            'aliased_data',
             'archaeological_data',
             'aliased_data',
             'site_typology_remarks',
@@ -106,6 +116,12 @@ const archSiteTileIds = computed(() => {
             'aliased_data',
             'remarks_and_restricted_information',
             'aliased_data',
+            'restricted_information',
+        ],
+        [
+            'aliased_data',
+            'remarks_and_restricted_information',
+            'aliased_data',
             'hca_contravention',
         ],
         [
@@ -117,7 +133,10 @@ const archSiteTileIds = computed(() => {
         ['aliased_data', 'related_documents', 'aliased_data', 'site_images'],
         ['aliased_data', 'related_documents', 'aliased_data', 'other_maps'],
     ];
-    return collectTileIds(data, editLogTiles);
+
+    const collected = collectTileIds(data, editLogTiles);
+
+    return collected;
 });
 
 const siteVisitTileMap = computed(() => {
@@ -167,6 +186,7 @@ const siteVisitTileMap = computed(() => {
         const teamTile =
             visit.aliased_data?.site_visit_details?.aliased_data
                 ?.site_visit_team_n1;
+
         if (teamTile?.aliased_data?.team_member) {
             teamTile.aliased_data.team_member.forEach(
                 (member: AliasedTileData) => {
@@ -322,6 +342,8 @@ const showAuditFields = async (results: EditLogData) => {
         await fetchSiteVisitEditLogs().then(() => {
             auditFieldsVisible.value = !auditFieldsVisible.value;
         });
+    } else {
+        auditFieldsVisible.value = !auditFieldsVisible.value;
     }
 };
 </script>

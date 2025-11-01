@@ -222,7 +222,7 @@ export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
     contravention_document?: AliasedNodeData;
     restricted_document?: AliasedNodeData;
     hca_contravention: AliasedTileData[];
-    restricted_information_n1: RestrictedRemarkTile[];
+    restricted_information: RestrictedRemarkTile[];
     conviction: AliasedTileData[];
 }
 
