@@ -118,7 +118,7 @@ const hcaContraventionsData = computed(
 );
 const convictionsData = computed(() => currentData.value?.conviction || []);
 const restrictedInfoData = computed(
-    () => currentData.value?.restricted_information_n1 || [],
+    () => currentData.value?.restricted_information || [],
 );
 const keywordsData = computed(() => {
     const keywords = currentData.value?.remark_keyword;

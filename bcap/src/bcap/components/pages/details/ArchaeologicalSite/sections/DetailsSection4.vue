@@ -66,6 +66,12 @@ const tenureColumns = [
     { field: 'tenure_description', label: 'Tenure Description' },
 ];
 
+const elevationCommentsColumns = [
+    { field: 'elevation_comments', label: 'Elevation Remarks', isHtml: true },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
+];
+
 const discontinuedTenureColumns = [
     { field: 'jurisdiction', label: 'Jurisdiction' },
     { field: 'tenure_reserves_type', label: 'Tenure/Reserves Type' },
@@ -210,6 +216,9 @@ const hasBiogeography = computed(() => {
 
 const tenureRemarksData = computed(() => props.data?.tenure_remarks || []);
 const addressRemarksSource = computed(() => props.data?.address_remarks);
+const elevationCommentsData = computed(
+    () => props.data?.elevation?.aliased_data?.elevation_comments || [],
+);
 
 const { processedData: tenureRemarksTableData } = useTileEditLog(
     tenureRemarksData,
@@ -218,6 +227,11 @@ const { processedData: tenureRemarksTableData } = useTileEditLog(
 
 const { processedData: addressRemarksData } = useSingleTileEditLog(
     addressRemarksSource,
+    toRef(props, 'editLogData'),
+);
+
+const { processedData: elevationCommentsTableData } = useTileEditLog(
+    elevationCommentsData,
     toRef(props, 'editLogData'),
 );
 </script>
@@ -938,30 +952,14 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
                             :class="{ 'empty-section': !hasElevationComments }"
                         >
                             <template #sectionContent>
-                                <dl v-if="hasElevationComments">
-                                    <template
-                                        v-for="(comment, index) in props.data
-                                            ?.elevation?.aliased_data
-                                            ?.elevation_comments"
-                                        :key="index"
-                                    >
-                                        <dt>
-                                            Elevation Remarks {{ index + 1 }}
-                                        </dt>
-                                        <!-- eslint-disable vue/no-v-html -->
-                                        <dd
-                                            v-html="
-                                                sanitizeHtml(
-                                                    getDisplayValue(
-                                                        comment.aliased_data
-                                                            ?.elevation_comments,
-                                                    ),
-                                                )
-                                            "
-                                        ></dd>
-                                        <!-- eslint-enable vue/no-v-html -->
-                                    </template>
-                                </dl>
+                                <StandardDataTable
+                                    v-if="hasElevationComments"
+                                    :table-data="elevationCommentsTableData"
+                                    :column-definitions="
+                                        elevationCommentsColumns
+                                    "
+                                    :initial-sort-field-index="1"
+                                />
                                 <EmptyState
                                     v-else
                                     message="No elevation remarks available."
