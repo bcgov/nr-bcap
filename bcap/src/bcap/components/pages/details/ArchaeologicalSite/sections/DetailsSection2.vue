@@ -67,9 +67,9 @@ const siteDecisionColumns = [
 
 const authorityColumns = [
     { field: 'responsible_government', label: 'Government' },
-    { field: 'legal_instrument', label: 'Legal Instrument' },
-    { field: 'act_section', label: 'Act/Section' },
-    { field: 'protection_type', label: 'Protection Type' },
+    { field: 'authority_legal_instrument', label: 'Legal Instrument' },
+    { field: 'legislative_act', label: 'Act/Section' },
+    { field: 'authority_protection_type', label: 'Protection Type' },
     { field: 'reference_number', label: 'Reference #' },
     { field: 'authority_start_date', label: 'Start Date' },
     { field: 'authority_end_date', label: 'Expiry Date' },

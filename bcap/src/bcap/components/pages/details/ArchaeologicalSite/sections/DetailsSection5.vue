@@ -295,29 +295,6 @@ const historicalSpatialAccuracyColumns = [
                         <dt
                             v-if="
                                 !isEmpty(
-                                    currentSiteBoundary?.source_notes as AliasedNodeData,
-                                )
-                            "
-                        >
-                            Source Notes
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    currentSiteBoundary?.source_notes as AliasedNodeData,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    currentSiteBoundary?.source_notes as AliasedNodeData,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
                                     currentSiteBoundary?.site_boundary_description as AliasedNodeData,
                                 )
                             "
