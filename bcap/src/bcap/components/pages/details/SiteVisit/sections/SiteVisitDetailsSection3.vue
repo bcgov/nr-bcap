@@ -20,12 +20,14 @@ const props = withDefaults(
         loading?: boolean;
         visible?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         sectionTitle: '3. Site Visit Details',
         visible: true,
         loading: false,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -81,23 +83,39 @@ const hasSiteFormAuthors = computed(
     () => siteFormAuthorsField.value && !isEmpty(siteFormAuthorsField.value),
 );
 
-const teamColumns = [
+const teamColumns = computed(() => [
     { field: 'team_member', label: 'Name' },
     { field: 'member_roles', label: 'Role(s)' },
     { field: 'was_on_site', label: 'On Site' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
-const siteVisitDetailsColumns = [
+const siteVisitDetailsColumns = computed(() => [
     { field: 'site_visit_type', label: 'Site Visit Type' },
     { field: 'last_date_of_site_visit', label: 'Last Date On Site' },
     { field: 'project_description', label: 'Site Visit Description' },
     { field: 'associated_permit', label: 'Associated Permit' },
     { field: 'affiliation', label: 'Affiliation' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 </script>
 
 <template>

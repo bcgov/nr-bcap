@@ -25,12 +25,14 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -61,11 +63,19 @@ const tenureColumns = [
     { field: 'tenure_description', label: 'Tenure Description' },
 ];
 
-const elevationCommentsColumns = [
+const elevationCommentsColumns = computed(() => [
     { field: 'elevation_comments', label: 'Elevation Remarks', isHtml: true },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const discontinuedTenureColumns = [
     { field: 'jurisdiction', label: 'Jurisdiction' },
@@ -76,21 +86,37 @@ const discontinuedTenureColumns = [
     { field: 'modified_by', label: 'Modified By' },
 ];
 
-const tenureRemarksColumns = [
+const tenureRemarksColumns = computed(() => [
     { field: 'tenure_remarks', label: 'Tenure Remarks' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
-const addressRemarksColumns = [
+const addressRemarksColumns = computed(() => [
     {
         field: 'address_and_legal_description_remarks',
         label: 'Address and Legal Description Remarks',
         isHtml: true,
     },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const discontinuedAddressColumns = [
     { field: 'street_number', label: 'Street Number' },

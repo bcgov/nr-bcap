@@ -22,6 +22,7 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         siteVisitData: () => [],
@@ -29,6 +30,7 @@ const props = withDefaults(
         languageCode: 'en',
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -45,11 +47,19 @@ const typologyColumns = [
     { field: 'typology_descriptor', label: 'Descriptor' },
 ];
 
-const typologyRemarksColumns = [
+const typologyRemarksColumns = computed(() => [
     { field: 'site_typology_remarks', label: 'Site Typology Remarks' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const featureColumns = [
     { field: 'archaeological_feature', label: 'Feature Type' },

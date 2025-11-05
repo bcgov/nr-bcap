@@ -21,12 +21,14 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -157,28 +159,44 @@ const discontinuedDimensionsColumns = [
     { field: 'modified_by', label: 'Modified By' },
 ];
 
-const siteBoundaryDescriptionColumns = [
+const siteBoundaryDescriptionColumns = computed(() => [
     {
         field: 'site_boundary_description',
         label: 'Site Boundary Description',
         isHtml: true,
     },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
-const currentSpatialAccuracyColumns = [
+const currentSpatialAccuracyColumns = computed(() => [
     { field: 'latest_edit_type', label: 'Edit Type' },
     { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Edited On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Edited By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const historicalSpatialAccuracyColumns = [
     { field: 'source_notes', label: 'Source Notes' },
     { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
-    { field: 'entered_on', label: 'Edited On' },
-    { field: 'entered_by', label: 'Edited By' },
+    { field: 'entered_on', label: 'Edited On', visible: props.showAuditFields },
+    { field: 'entered_by', label: 'Edited By', visible: props.showAuditFields },
 ];
 </script>
 

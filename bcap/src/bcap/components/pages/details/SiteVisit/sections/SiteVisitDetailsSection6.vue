@@ -13,10 +13,12 @@ const props = withDefaults(
         data: SiteVisitSchema | undefined;
         loading?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         loading: false,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -31,23 +33,39 @@ const generalRemarkRows = computed(
             ?.general_remark || [],
 );
 
-const recColumns = [
+const recColumns = computed(() => [
     {
         field: 'recorders_recommendation',
         label: "Recorder's Recommendations",
         isHtml: true,
     },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
-const generalRemarkColumns = [
+const generalRemarkColumns = computed(() => [
     { field: 'remark_date', label: 'Date' },
     { field: 'remark', label: 'General Remarks' },
     { field: 'remark_source', label: 'Source' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const { processedData: recommendationsTableData } = useTileEditLog(
     recRows,

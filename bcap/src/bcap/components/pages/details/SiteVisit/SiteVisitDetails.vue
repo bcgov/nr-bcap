@@ -27,11 +27,13 @@ const props = withDefaults(
             string,
             { entered_on: string | null; entered_by: string | null }
         >;
+        showAuditFields?: boolean;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -68,12 +70,14 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
             :data="current || undefined"
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section3
             :data="current || undefined"
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section4
@@ -91,6 +95,7 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
             :data="current || undefined"
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section7
