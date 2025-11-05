@@ -2,12 +2,7 @@
 import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import {
-    getDisplayValue,
-    isAliasedNodeData,
-    isEmpty,
-    sanitizeHtml,
-} from '@/bcap/util.ts';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import {
     useTileEditLog,
     useSingleTileEditLog,
@@ -87,6 +82,16 @@ const tenureRemarksColumns = [
     { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
 ];
 
+const addressRemarksColumns = [
+    {
+        field: 'address_and_legal_description_remarks',
+        label: 'Address and Legal Description Remarks',
+        isHtml: true,
+    },
+    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
+    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
+];
+
 const discontinuedAddressColumns = [
     { field: 'street_number', label: 'Street Number' },
     { field: 'street_name', label: 'Street Name' },
@@ -151,13 +156,6 @@ const hasAddressRemarks = computed(() => {
             data.audit?.entered_on ||
             data.audit?.entered_by)
     );
-});
-
-const addressRemarksText = computed(() => {
-    const remarks =
-        addressRemarksData.value?.aliased_data
-            ?.address_and_legal_description_remarks;
-    return isAliasedNodeData(remarks) ? getDisplayValue(remarks) : '';
 });
 
 const hasDiscontinuedAddress = computed(() => {
@@ -229,6 +227,19 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
     addressRemarksSource,
     toRef(props, 'editLogData'),
 );
+
+const addressRemarksTableData = computed(() => {
+    if (!addressRemarksData.value) return [];
+
+    return [
+        {
+            ...addressRemarksData.value,
+            address_and_legal_description_remarks:
+                addressRemarksData.value.aliased_data
+                    ?.address_and_legal_description_remarks,
+        },
+    ];
+});
 
 const { processedData: elevationCommentsTableData } = useTileEditLog(
     elevationCommentsData,
@@ -396,7 +407,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
             >
                 <template #sectionContent>
                     <DetailsSection
-                        section-title="Auto-populated Tenure and Reserves"
+                        section-title="Tenure and Reserves"
                         variant="subsection"
                         :visible="true"
                         :class="{ 'empty-section': !hasTenureAndReserves }"
@@ -412,7 +423,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             />
                             <EmptyState
                                 v-else
-                                message="No auto-populated tenure and reserves information available."
+                                message="No tenure and reserves information available."
                             />
                         </template>
                     </DetailsSection>
@@ -509,128 +520,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             :class="{ 'empty-section': !hasBcPropertyAddress }"
                         >
                             <template #sectionContent>
-                                <dl v-if="hasBcPropertyAddress">
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.street_number,
-                                            )
-                                        "
-                                    >
-                                        Street Number
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.street_number,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.street_number,
-                                            )
-                                        }}
-                                    </dd>
-
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.street_name,
-                                            )
-                                        "
-                                    >
-                                        Street Name
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.street_name,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.street_name,
-                                            )
-                                        }}
-                                    </dd>
-
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.city,
-                                            )
-                                        "
-                                    >
-                                        City
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.city,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.city,
-                                            )
-                                        }}
-                                    </dd>
-
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.postal_code,
-                                            )
-                                        "
-                                    >
-                                        Postal Code
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.postal_code,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data?.postal_code,
-                                            )
-                                        }}
-                                    </dd>
-                                </dl>
                                 <EmptyState
-                                    v-else
                                     message="No street address information available."
                                 />
                             </template>
@@ -645,117 +535,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             }"
                         >
                             <template #sectionContent>
-                                <dl v-if="hasBcPropertyLegalDescription">
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data?.pid,
-                                            )
-                                        "
-                                    >
-                                        PID
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data?.pid,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data?.pid,
-                                            )
-                                        }}
-                                    </dd>
-
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data?.pin,
-                                            )
-                                        "
-                                    >
-                                        PIN
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data?.pin,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data?.pin,
-                                            )
-                                        }}
-                                    </dd>
-
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data
-                                                    ?.legal_description,
-                                            )
-                                        "
-                                    >
-                                        Legal Description
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data
-                                                    ?.legal_description,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                props.data
-                                                    ?.bc_property_address?.[0]
-                                                    ?.aliased_data
-                                                    ?.bc_property_legal_description?.[0]
-                                                    ?.aliased_data
-                                                    ?.legal_description,
-                                            )
-                                        }}
-                                    </dd>
-                                </dl>
                                 <EmptyState
-                                    v-else
                                     message="No legal description information available."
                                 />
                             </template>
@@ -768,57 +548,11 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             :class="{ 'empty-section': !hasAddressRemarks }"
                         >
                             <template #sectionContent>
-                                <dl v-if="addressRemarksData">
-                                    <dt v-if="addressRemarksText">
-                                        Address and Legal Description Remarks
-                                    </dt>
-                                    <!-- eslint-disable vue/no-v-html -->
-                                    <dd
-                                        v-if="addressRemarksText"
-                                        v-html="
-                                            sanitizeHtml(addressRemarksText)
-                                        "
-                                    ></dd>
-                                    <!-- eslint-enable vue/no-v-html -->
-
-                                    <dt
-                                        v-if="
-                                            addressRemarksData?.audit
-                                                ?.entered_on
-                                        "
-                                    >
-                                        Entered On
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            addressRemarksData?.audit
-                                                ?.entered_on
-                                        "
-                                    >
-                                        {{
-                                            addressRemarksData.audit.entered_on
-                                        }}
-                                    </dd>
-
-                                    <dt
-                                        v-if="
-                                            addressRemarksData?.audit
-                                                ?.entered_by
-                                        "
-                                    >
-                                        Entered By
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            addressRemarksData?.audit
-                                                ?.entered_by
-                                        "
-                                    >
-                                        {{
-                                            addressRemarksData.audit.entered_by
-                                        }}
-                                    </dd>
-                                </dl>
+                                <StandardDataTable
+                                    v-if="hasAddressRemarks"
+                                    :table-data="addressRemarksTableData"
+                                    :column-definitions="addressRemarksColumns"
+                                />
                                 <EmptyState
                                     v-else
                                     message="No address remarks available."
@@ -827,7 +561,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                         </DetailsSection>
 
                         <DetailsSection
-                            section-title="Discontinued Address Attributes"
+                            section-title="Discontinued Attributes"
                             variant="subsection"
                             :visible="true"
                             :class="{
