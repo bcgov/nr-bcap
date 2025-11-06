@@ -151,7 +151,8 @@ const typedHriaData = computed(
         />
         <Section9
             :data="typedCurrentData?.aliased_data?.related_documents"
-            :loading="siteDataLoading"
+            :hria-data="typedHriaData"
+            :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"

@@ -7,11 +7,16 @@ import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
 import type { RelatedDocumentsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type {
+    HriaDiscontinuedDataSchema,
+    OtherMapsTile,
+} from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 
 const props = withDefaults(
     defineProps<{
         data: RelatedDocumentsTile | undefined;
+        hriaData?: HriaDiscontinuedDataSchema;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -24,6 +29,7 @@ const props = withDefaults(
         forceCollapsed: undefined,
         editLogData: () => ({}),
         showAuditFields: false,
+        hriaData: undefined,
     },
 );
 
@@ -82,15 +88,15 @@ const imagesColumns = computed<ColumnDefinition[]>(() => {
 
 const otherMapsColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'map_name', label: 'Map Name' },
-        { field: 'map_scale', label: 'Map Scale' },
+        { field: 'other_maps_map_name', label: 'Map Name' },
+        { field: 'other_maps_map_scale', label: 'Map Scale' },
         {
-            field: 'entered_on',
+            field: 'other_maps_modified_on',
             label: 'Modified On',
             visible: props.showAuditFields,
         },
         {
-            field: 'entered_by',
+            field: 'other_maps_modified_by',
             label: 'Modified By',
             visible: props.showAuditFields,
         },
@@ -117,10 +123,15 @@ const { processedData: siteImagesTableData } = useTileEditLog(
 
 const hasImages = computed(() => siteImagesTableData.value.length > 0);
 
+const otherMapsData = computed<OtherMapsTile[]>(() => {
+    const hriaData = props.hriaData as HriaDiscontinuedDataSchema | undefined;
+    const maps = hriaData?.aliased_data?.other_maps;
+    if (!maps) return [];
+    return Array.isArray(maps) ? maps : [maps];
+});
+
 const hasOtherMaps = computed(() => {
-    return (
-        currentData.value?.other_maps && currentData.value.other_maps.length > 0
-    );
+    return otherMapsData.value.length > 0;
 });
 </script>
 
@@ -201,7 +212,7 @@ const hasOtherMaps = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasOtherMaps"
-                        :table-data="currentData?.other_maps ?? []"
+                        :table-data="otherMapsData"
                         :column-definitions="otherMapsColumns"
                         :initial-sort-field-index="2"
                     />
