@@ -17,10 +17,12 @@ const props = withDefaults(
         data: SiteVisitSchema | undefined;
         loading?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         loading: false,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -48,15 +50,23 @@ const hasNewNames = computed(() => {
     return newNamesTableData.value && newNamesTableData.value.length > 0;
 });
 
-const newNameColumns = [
+const newNameColumns = computed(() => [
     { field: 'name', label: 'Site Name' },
     { field: 'name_type', label: 'Site Name Type' },
     { field: 'name_remarks', label: 'Site Name Remarks' },
     { field: 'assigned_or_reported_date', label: 'Date Assigned or Reported' },
     { field: 'assigned_or_reported_by', label: 'Assigned or Reported By' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const tempNumberText = computed(() => {
     const tempNum = tempNumberData.value?.aliased_data?.temporary_number;

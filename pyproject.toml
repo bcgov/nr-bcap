@@ -23,11 +23,11 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "arches @ git+https://github.com/bcgov/arches@stable/8.0.3_bcgov_12377_12434_12294_12491",
+    "arches @ git+https://github.com/bcgov/arches@stable/8.0.6_bcgov_12377",
     "arches-component-lab",
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common@dev/2.0.x",
     "arches-querysets",
-    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@main",
+    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@stable/1.0.0",
     "boto3==1.26",
     "django-migrate-sql-deux==1.1.1",
     "django-pgtrigger==4.15.2",

@@ -5,7 +5,7 @@ import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { isEmpty } from '@/bcap/util.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
@@ -21,12 +21,14 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -43,14 +45,51 @@ const currentSiteBoundary = computed(() => {
     return siteBoundaryWithAudit.value?.[0]?.aliased_data;
 });
 
+const siteBoundaryDescriptionTableData = computed(() => {
+    if (!siteBoundaryWithAudit.value?.[0]) return [];
+
+    return [
+        {
+            ...siteBoundaryWithAudit.value[0],
+            site_boundary_description:
+                siteBoundaryWithAudit.value[0].aliased_data
+                    ?.site_boundary_description,
+        },
+    ];
+});
+
 const hasDimensions = computed(() => {
-    return props.hriaData?.aliased_data?.site_dimensions?.aliased_data;
+    const dims = props.hriaData?.aliased_data?.site_dimensions?.aliased_data;
+    if (!dims) return false;
+
+    return (
+        !isEmpty(dims.length) ||
+        !isEmpty(dims.length_direction) ||
+        !isEmpty(dims.width) ||
+        !isEmpty(dims.width_direction) ||
+        !isEmpty(dims.site_area) ||
+        (!isEmpty(dims.boundary_type) && dims.boundary_type?.display_value)
+    );
 });
 
 const hasBoundaryDescription = computed(() => {
     return (
-        currentSiteBoundary.value?.source_notes ||
-        currentSiteBoundary.value?.site_boundary_description
+        siteBoundaryDescriptionTableData.value?.some((item) => {
+            const description = item.aliased_data?.site_boundary_description;
+
+            if (!description || Array.isArray(description)) return false;
+
+            const displayValue =
+                'display_value' in description
+                    ? description.display_value
+                    : null;
+
+            return (
+                displayValue &&
+                typeof displayValue === 'string' &&
+                displayValue.trim() !== ''
+            );
+        }) ?? false
     );
 });
 
@@ -78,18 +117,86 @@ const siteBoundaryAnnotations = computed((): AliasedTileDataWithAudit[] => {
     return data?.site_boundary_annotations ?? [];
 });
 
-const currentSpatialAccuracyColumns = [
+const gisDimensionsTableData = computed(() => {
+    const tile = props.hriaData?.aliased_data?.site_dimensions;
+    if (!tile?.aliased_data) return [];
+
+    return [
+        {
+            ...tile,
+            length: tile.aliased_data.length,
+            length_direction: tile.aliased_data.length_direction,
+            width: tile.aliased_data.width,
+            width_direction: tile.aliased_data.width_direction,
+            site_area: tile.aliased_data.site_area,
+        },
+    ];
+});
+
+const discontinuedDimensionsTableData = computed(() => {
+    return [];
+});
+
+const hasDiscontinuedDimensions = computed(() => {
+    return discontinuedDimensionsTableData.value.length > 0;
+});
+
+const gisDimensionsColumns = [
+    { field: 'length', label: 'Length (m)' },
+    { field: 'length_direction', label: 'Length Direction' },
+    { field: 'width', label: 'Width (m)' },
+    { field: 'width_direction', label: 'Width Direction' },
+    { field: 'site_area', label: 'Area (m²)' },
+];
+
+const discontinuedDimensionsColumns = [
+    { field: 'length', label: 'Length' },
+    { field: 'length_direction', label: 'Length Direction' },
+    { field: 'width', label: 'Width' },
+    { field: 'width_direction', label: 'Width Direction' },
+    { field: 'boundary_type', label: 'Boundary Type' },
+    { field: 'modified_on', label: 'Modified On' },
+    { field: 'modified_by', label: 'Modified By' },
+];
+
+const siteBoundaryDescriptionColumns = computed(() => [
+    {
+        field: 'site_boundary_description',
+        label: 'Site Boundary Description',
+        isHtml: true,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
+
+const currentSpatialAccuracyColumns = computed(() => [
     { field: 'latest_edit_type', label: 'Edit Type' },
     { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Edited On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Edited By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const historicalSpatialAccuracyColumns = [
     { field: 'source_notes', label: 'Source Notes' },
     { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
-    { field: 'entered_on', label: 'Edited On' },
-    { field: 'entered_by', label: 'Edited By' },
+    { field: 'entered_on', label: 'Edited On', visible: props.showAuditFields },
+    { field: 'entered_by', label: 'Edited By', visible: props.showAuditFields },
 ];
 </script>
 
@@ -108,178 +215,34 @@ const historicalSpatialAccuracyColumns = [
                 :class="{ 'empty-section': !hasDimensions }"
             >
                 <template #sectionContent>
-                    <dl v-if="hasDimensions">
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data?.length,
-                                )
-                            "
-                        >
-                            Length (m)
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data?.length,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data?.length,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.length_direction,
-                                )
-                            "
-                        >
-                            Length Direction
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.length_direction,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.length_direction,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data?.width,
-                                )
-                            "
-                        >
-                            Width (m)
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data?.width,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data?.width,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.width_direction,
-                                )
-                            "
-                        >
-                            Width Direction
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.width_direction,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.width_direction,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.site_area,
-                                )
-                            "
-                        >
-                            Area (m²)
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.site_area,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.site_area,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.boundary_type,
-                                )
-                            "
-                        >
-                            Boundary Type
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.boundary_type,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    props.hriaData?.aliased_data
-                                        ?.site_dimensions?.aliased_data
-                                        ?.boundary_type,
-                                )
-                            }}
-                        </dd>
-                    </dl>
+                    <StandardDataTable
+                        v-if="hasDimensions"
+                        :table-data="gisDimensionsTableData"
+                        :column-definitions="gisDimensionsColumns"
+                    />
                     <EmptyState
                         v-else
                         message="No dimension information available."
+                    />
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
+                section-title="Discontinued Attributes"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasDiscontinuedDimensions }"
+            >
+                <template #sectionContent>
+                    <StandardDataTable
+                        v-if="hasDiscontinuedDimensions"
+                        :table-data="discontinuedDimensionsTableData"
+                        :column-definitions="discontinuedDimensionsColumns"
+                        :initial-sort-field-index="5"
+                    />
+                    <EmptyState
+                        v-else
+                        message="No discontinued dimension information available."
                     />
                 </template>
             </DetailsSection>
@@ -291,53 +254,11 @@ const historicalSpatialAccuracyColumns = [
                 :class="{ 'empty-section': !hasBoundaryDescription }"
             >
                 <template #sectionContent>
-                    <dl v-if="hasBoundaryDescription">
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    currentSiteBoundary?.source_notes as AliasedNodeData,
-                                )
-                            "
-                        >
-                            Source Notes
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    currentSiteBoundary?.source_notes as AliasedNodeData,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    currentSiteBoundary?.source_notes as AliasedNodeData,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    currentSiteBoundary?.site_boundary_description as AliasedNodeData,
-                                )
-                            "
-                        >
-                            Site Boundary Description
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    currentSiteBoundary?.site_boundary_description as AliasedNodeData,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    currentSiteBoundary?.site_boundary_description as AliasedNodeData,
-                                )
-                            }}
-                        </dd>
-                    </dl>
+                    <StandardDataTable
+                        v-if="hasBoundaryDescription"
+                        :table-data="siteBoundaryDescriptionTableData"
+                        :column-definitions="siteBoundaryDescriptionColumns"
+                    />
                     <EmptyState
                         v-else
                         message="No site boundary description available."

@@ -24,11 +24,13 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         languageCode: 'en',
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -65,28 +67,44 @@ const siteDecisionColumns = [
     { field: 'recommended_by', label: 'Recommended By' },
 ];
 
-const authorityColumns = [
+const authorityColumns = computed(() => [
     { field: 'responsible_government', label: 'Government' },
-    { field: 'legal_instrument', label: 'Legal Instrument' },
-    { field: 'act_section', label: 'Act/Section' },
-    { field: 'protection_type', label: 'Protection Type' },
+    { field: 'authority_legal_instrument', label: 'Legal Instrument' },
+    { field: 'legislative_act', label: 'Act/Section' },
+    { field: 'authority_protection_type', label: 'Protection Type' },
     { field: 'reference_number', label: 'Reference #' },
     { field: 'authority_start_date', label: 'Start Date' },
     { field: 'authority_end_date', label: 'Expiry Date' },
     { field: 'authority_description', label: 'Description' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
-const siteNamesColumns = [
+const siteNamesColumns = computed(() => [
     { field: 'name', label: 'Site Name' },
     { field: 'name_type', label: 'Site Name Type' },
     { field: 'name_remarks', label: 'Site Name Remarks' },
     { field: 'assigned_or_reported_date', label: 'Date Assigned or Reported' },
     { field: 'assigned_or_reported_by', label: 'Assigned or Reported By' },
-    { field: EDIT_LOG_FIELDS.ENTERED_ON, label: 'Entered On' },
-    { field: EDIT_LOG_FIELDS.ENTERED_BY, label: 'Entered By' },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 type IdFieldKey = (typeof id_fields)[number];
 

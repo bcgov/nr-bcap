@@ -91,12 +91,14 @@ const typedHriaData = computed(
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section3
             :data="typedSiteVisitData"
             :loading="siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section4
@@ -108,6 +110,7 @@ const typedHriaData = computed(
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section5
@@ -115,6 +118,7 @@ const typedHriaData = computed(
             :hria-data="typedHriaData"
             :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section6
@@ -123,6 +127,7 @@ const typedHriaData = computed(
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section7
@@ -130,6 +135,7 @@ const typedHriaData = computed(
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading || siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
+            :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
         />
         <Section8
@@ -145,7 +151,8 @@ const typedHriaData = computed(
         />
         <Section9
             :data="typedCurrentData?.aliased_data?.related_documents"
-            :loading="siteDataLoading"
+            :hria-data="typedHriaData"
+            :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"

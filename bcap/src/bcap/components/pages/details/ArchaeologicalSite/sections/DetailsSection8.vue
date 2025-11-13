@@ -76,9 +76,9 @@ const restrictedRemarkColumns = computed<ColumnDefinition[]>(() => {
 
 const hcaContraventionColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'inventory_remarks', label: 'Inventory Remarks' },
-        { field: 'address', label: 'Address' },
-        { field: 'pid', label: 'PID' },
+        { field: 'inventory_remark', label: 'Inventory Remarks' },
+        { field: 'contravention_address', label: 'Address' },
+        { field: 'contravention_pid', label: 'PID' },
         { field: 'nros_file_number', label: 'NROS File #' },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
@@ -96,7 +96,7 @@ const hcaContraventionColumns = computed<ColumnDefinition[]>(() => {
 const convictionColumns = computed<ColumnDefinition[]>(() => {
     return [
         { field: 'conviction_date', label: 'Conviction Date' },
-        { field: 'inventory_remarks', label: 'Inventory Remarks' },
+        { field: 'conviction_details', label: 'Inventory Remarks' },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',

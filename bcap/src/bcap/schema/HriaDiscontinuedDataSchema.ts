@@ -110,6 +110,16 @@ export interface DiscontinuedAddressAttributesTile extends AliasedTileData {
     };
 }
 
+// aliased_data.other_maps[] (semantic)
+export interface OtherMapsTile extends AliasedTileData {
+    aliased_data: {
+        other_maps_map_name: StringValue; // string (i18n)
+        other_maps_map_scale: StringValue; // string (i18n)
+        other_maps_modified_on: DateValue; // date
+        other_maps_modified_by: ResourceInstanceListValue; // resource-instance-list (contributor)
+    };
+}
+
 // ====================================================================
 // Top-level object for THIS JSON
 // ====================================================================
@@ -121,6 +131,7 @@ export interface HriaDiscontinuedDataSchema extends AliasedTileData {
         hria_jursidiction_and_tenure?: HriaJurisdictionAndTenureTile[];
         chronology?: ChronologyTile[];
         site_dimensions?: SiteDimensionsTile;
+        other_maps?: OtherMapsTile[];
     };
 
     graph_has_different_publication: boolean;
