@@ -14,12 +14,14 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         languageCode: 'en',
         loading: false,
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
@@ -63,6 +65,7 @@ const hasSiteVisits = computed(() => {
                             :section-title="sectionTitle(visit)"
                             :language-code="languageCode"
                             :edit-log-data="editLogData"
+                            :show-audit-fields="showAuditFields"
                         />
                     </div>
                     <EmptyState
