@@ -65,7 +65,7 @@ const materialColumns = [
 ];
 
 const stratColumns = [
-    { field: 'stratigraphy', label: 'Stratigraphy', isHtml: true },
+    { field: 'stratigraphy', label: 'Stratigraphy Remarks', isHtml: true },
 ];
 
 const chronologyColumns = [

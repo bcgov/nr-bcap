@@ -98,7 +98,7 @@ const archSiteTileIds = computed(() => {
             'aliased_data',
             'archaeological_data',
             'aliased_data',
-            'site_typology_remarks',
+            'site_typology',
         ],
         [
             'aliased_data',

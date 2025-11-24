@@ -176,6 +176,12 @@ export interface RecommendationTile extends AliasedTileData {
     };
 }
 
+export interface ArchaeologyBranchRecommendationTile extends AliasedTileData {
+    aliased_data: {
+        archaeology_branch_recommendation: StringValue; // string (i18n)
+    };
+}
+
 export interface GeneralRemarkTile extends AliasedTileData {
     aliased_data: {
         remark_source: ReferenceSelectValue; // reference
@@ -187,6 +193,7 @@ export interface GeneralRemarkTile extends AliasedTileData {
 export interface RemarksAndRecommendationsTile extends AliasedTileData {
     aliased_data: {
         recommendation: RecommendationTile[]; // semantic
+        archaeology_branch_recommendation: ArchaeologyBranchRecommendationTile[];
         general_remark: GeneralRemarkTile[]; // semantic
     };
 }
