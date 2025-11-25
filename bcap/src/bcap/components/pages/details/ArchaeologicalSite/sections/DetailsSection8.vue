@@ -2,15 +2,20 @@
 import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { getDisplayValue } from '@/bcap/util.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
-import type { RemarksAndRestrictedInformationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type {
+    RemarksAndRestrictedInformationTile,
+    ContraventionDocumentTile,
+    RestrictedDocumentTile,
+} from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
+import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -40,6 +45,51 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
     },
 );
 
+function formatFileLink(path: string): string {
+    if (!path) return '';
+    const filename = path.split('/').pop() || 'Download';
+    const href = path.startsWith('/') ? path : `/files/${path}`;
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${filename}</a>`;
+}
+
+function transformDocumentsWithLinks<T extends AliasedTileData>(
+    documents: T[],
+    fieldName: string,
+): T[] {
+    const expandedRows: T[] = [];
+
+    documents.forEach((doc, docIndex) => {
+        const aliasedData = doc.aliased_data as Record<string, unknown>;
+        const fieldData = aliasedData?.[fieldName] as
+            | { display_value?: string; node_value?: string }
+            | undefined;
+        const pathValue = fieldData?.display_value || fieldData?.node_value;
+
+        if (!pathValue) {
+            expandedRows.push(doc);
+            return;
+        }
+
+        const paths = pathValue.split(' | ').map((p) => p.trim()).filter(Boolean);
+
+        paths.forEach((path, pathIndex) => {
+            expandedRows.push({
+                ...doc,
+                tileid: `${doc.tileid || docIndex}-${pathIndex}`,
+                aliased_data: {
+                    ...aliasedData,
+                    [fieldName]: {
+                        ...fieldData,
+                        display_value: formatFileLink(path),
+                    },
+                },
+            } as T);
+        });
+    });
+
+    return expandedRows;
+}
+
 const generalRemarkColumns = computed<ColumnDefinition[]>(() => {
     return [
         { field: 'general_remark_date', label: 'Date' },
@@ -68,6 +118,38 @@ const restrictedRemarkColumns = computed<ColumnDefinition[]>(() => {
         },
         {
             field: 'restricted_person',
+            label: 'Entered By',
+            visible: props.showAuditFields,
+        },
+    ];
+});
+
+const contraventionDocumentColumns = computed<ColumnDefinition[]>(() => {
+    return [
+        { field: 'contravention_document', label: 'Document', isHtml: true },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_ON,
+            label: 'Entered On',
+            visible: props.showAuditFields,
+        },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_BY,
+            label: 'Entered By',
+            visible: props.showAuditFields,
+        },
+    ];
+});
+
+const restrictedDocumentColumns = computed<ColumnDefinition[]>(() => {
+    return [
+        { field: 'restricted_document', label: 'Document', isHtml: true },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_ON,
+            label: 'Entered On',
+            visible: props.showAuditFields,
+        },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_BY,
             label: 'Entered By',
             visible: props.showAuditFields,
         },
@@ -126,6 +208,26 @@ const keywordsData = computed(() => {
     return Array.isArray(keywords) ? keywords : [keywords];
 });
 
+const contraventionDocumentsData = computed(() => {
+    const docs = currentData.value?.contravention_document;
+    if (!docs) return [];
+    const docsArray = Array.isArray(docs) ? docs : [docs];
+    return transformDocumentsWithLinks(
+        docsArray as ContraventionDocumentTile[],
+        'contravention_document',
+    );
+});
+
+const restrictedDocumentsData = computed(() => {
+    const docs = currentData.value?.restricted_document;
+    if (!docs) return [];
+    const docsArray = Array.isArray(docs) ? docs : [docs];
+    return transformDocumentsWithLinks(
+        docsArray as RestrictedDocumentTile[],
+        'restricted_document',
+    );
+});
+
 const { processedData: generalRemarksTableData } = useTileEditLog(
     generalRemarksData,
     toRef(props, 'editLogData'),
@@ -141,23 +243,40 @@ const { processedData: convictionsTableData } = useTileEditLog(
     toRef(props, 'editLogData'),
 );
 
+const { processedData: contraventionDocumentsTableData } = useTileEditLog(
+    contraventionDocumentsData,
+    toRef(props, 'editLogData'),
+);
+
+const { processedData: restrictedDocumentsTableData } = useTileEditLog(
+    restrictedDocumentsData,
+    toRef(props, 'editLogData'),
+);
+
 const hasKeywords = computed(() => keywordsData.value.length > 0);
 const hasGeneralRemarks = computed(
     () => generalRemarksTableData.value.length > 0,
 );
 const hasRestrictedInfo = computed(() => restrictedInfoData.value.length > 0);
 
-const hasDocuments = computed(() => {
-    return (
-        !isEmpty(currentData.value?.contravention_document) ||
-        !isEmpty(currentData.value?.restricted_document)
-    );
-});
+const hasContraventionDocuments = computed(
+    () => contraventionDocumentsTableData.value.length > 0,
+);
+const hasRestrictedDocuments = computed(
+    () => restrictedDocumentsTableData.value.length > 0,
+);
 
 const hasContraventions = computed(
     () => hcaContraventionsTableData.value.length > 0,
 );
 const hasConvictions = computed(() => convictionsTableData.value.length > 0);
+
+const hasHcaContraventionsSection = computed(
+    () =>
+        hasContraventions.value ||
+        hasContraventionDocuments.value ||
+        hasConvictions.value,
+);
 </script>
 
 <template>
@@ -241,58 +360,14 @@ const hasConvictions = computed(() => convictionsTableData.value.length > 0);
                         section-title="Restricted Documents"
                         variant="subsection"
                         :visible="true"
-                        :class="{ 'empty-section': !hasDocuments }"
+                        :class="{ 'empty-section': !hasRestrictedDocuments }"
                     >
                         <template #sectionContent>
-                            <div v-if="hasDocuments">
-                                <dl>
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                currentData?.contravention_document,
-                                            )
-                                        "
-                                    >
-                                        Contravention Documents
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                currentData?.contravention_document,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                currentData?.contravention_document,
-                                            )
-                                        }}
-                                    </dd>
-
-                                    <dt
-                                        v-if="
-                                            !isEmpty(
-                                                currentData?.restricted_document,
-                                            )
-                                        "
-                                    >
-                                        Restricted Documents
-                                    </dt>
-                                    <dd
-                                        v-if="
-                                            !isEmpty(
-                                                currentData?.restricted_document,
-                                            )
-                                        "
-                                    >
-                                        {{
-                                            getDisplayValue(
-                                                currentData?.restricted_document,
-                                            )
-                                        }}
-                                    </dd>
-                                </dl>
-                            </div>
+                            <StandardDataTable
+                                v-if="hasRestrictedDocuments"
+                                :table-data="restrictedDocumentsTableData"
+                                :column-definitions="restrictedDocumentColumns"
+                            />
                             <EmptyState
                                 v-else
                                 message="No restricted documents available."
@@ -307,7 +382,7 @@ const hasConvictions = computed(() => convictionsTableData.value.length > 0);
                 variant="subsection"
                 :visible="true"
                 :class="{
-                    'empty-section': !hasContraventions && !hasConvictions,
+                    'empty-section': !hasHcaContraventionsSection,
                 }"
             >
                 <template #sectionContent>
@@ -327,6 +402,29 @@ const hasConvictions = computed(() => convictionsTableData.value.length > 0);
                             <EmptyState
                                 v-else
                                 message="No HCA contraventions available."
+                            />
+                        </template>
+                    </DetailsSection>
+
+                    <DetailsSection
+                        section-title="Contravention Documents"
+                        variant="subsection"
+                        :visible="true"
+                        :class="{
+                            'empty-section': !hasContraventionDocuments,
+                        }"
+                    >
+                        <template #sectionContent>
+                            <StandardDataTable
+                                v-if="hasContraventionDocuments"
+                                :table-data="contraventionDocumentsTableData"
+                                :column-definitions="
+                                    contraventionDocumentColumns
+                                "
+                            />
+                            <EmptyState
+                                v-else
+                                message="No contravention documents available."
                             />
                         </template>
                     </DetailsSection>
