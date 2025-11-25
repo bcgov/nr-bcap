@@ -59,7 +59,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
         aliases.TYPOLOGY_CLASS,
     ]
     _popup_nodes = [aliases.CITY, "address"]
-    _card_nodes = [aliases.CITY, aliases.REGISTRATION_STATUS]
+    _card_nodes = [aliases.REGISTRATION_STATUS, aliases.NAME, aliases.TYPOLOGY_CLASS]
     _address_nodes = [
         [aliases.STREET_NUMBER, aliases.STREET_NAME],
         [aliases.CITY, "postal_code"],
