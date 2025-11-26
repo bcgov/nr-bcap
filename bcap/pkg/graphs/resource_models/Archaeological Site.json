@@ -1524,10 +1524,10 @@
                 {
                     "card_id": "2ad1641e-50ad-11f0-a6c8-0242ac170006",
                     "config": {
-                        "acceptedFiles": ".pdf",
+                        "acceptedFiles": ".csv, .doc, .docx, .eml, .pdf, .xls, .xlsx",
                         "defaultValue": [],
                         "label": "Document",
-                        "maxFilesize": "200",
+                        "maxFilesize": "1024",
                         "rerender": true
                     },
                     "id": "2ad1678e-50ad-11f0-a6c8-0242ac170006",
@@ -1664,10 +1664,10 @@
                 {
                     "card_id": "1bebc5d0-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
-                        "acceptedFiles": ".pdf, .png, .jpeg, .jpg, .gif, .xlsx, .csv",
+                        "acceptedFiles": ".csv, .doc, .docx, .eml, .pdf, .xls, .xlsx",
                         "defaultValue": [],
                         "label": "Contraventions Documents",
-                        "maxFilesize": "200",
+                        "maxFilesize": "1024",
                         "rerender": true
                     },
                     "id": "3f28f2c3-6782-4738-873a-8bf852071aa4",
@@ -1797,10 +1797,10 @@
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "acceptedFiles": ".pdf",
+                        "acceptedFiles": ".csv, .doc, .docx, .eml, .pdf, .xls, .xlsx",
                         "defaultValue": [],
                         "label": "Reference File",
-                        "maxFilesize": "200",
+                        "maxFilesize": "1024",
                         "rerender": true
                     },
                     "id": "5399a358-5ad2-4559-b5a5-c821480908c2",
