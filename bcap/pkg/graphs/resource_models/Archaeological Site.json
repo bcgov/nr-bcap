@@ -1492,7 +1492,7 @@
                 {
                     "card_id": "2ad1641e-50ad-11f0-a6c8-0242ac170006",
                     "config": {
-                        "acceptedFiles": ".csv, .doc, .docx, .eml, .pdf, .xls, .xlsx",
+                        "acceptedFiles": "",
                         "defaultValue": [],
                         "label": "Document",
                         "maxFilesize": "1024",
