@@ -121,7 +121,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                     return_value += BCAPSiteDescriptors._format_value(
                         "Address", BCAPSiteDescriptors._get_address(resource), config
                     )
-                elif alias == "typologyies":
+                elif alias == "typologies":
                     typology_classes, typology_values = (
                         BCAPSiteDescriptors._get_typologies(resource.resourceinstanceid)
                     )
@@ -206,7 +206,6 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
 
         for tile in tiles:
             if tile:
-                print(tile.data)
                 display_values.append(
                     datatype.get_display_value(
                         tile, BCAPSiteDescriptors._nodes[node_alias]
@@ -227,7 +226,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                 value.remove("")
             value = ", ".join(sorted(value))
 
-        if value is None:
+        if not value:
             return ""
         elif config["show_name"]:
             return (
