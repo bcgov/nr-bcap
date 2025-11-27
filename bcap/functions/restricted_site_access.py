@@ -1,6 +1,6 @@
 from guardian.shortcuts import get_perms, assign_perm, remove_perm
 from bcap.functions.admin_only_access import AdminOnlyAccess
-from bcap.util.business_data_proxy import HeritageSiteDataProxy
+from bcap.util.business_data_proxy import ArchaeologicalSiteDataProxy
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000002003",
@@ -26,7 +26,7 @@ class RestrictedSiteAccess(AdminOnlyAccess):
         pass
 
     def post_save(self, tile, request, context):
-        if HeritageSiteDataProxy().is_site_public(tile.resourceinstance):
+        if ArchaeologicalSiteDataProxy().is_site_public(tile.resourceinstance):
             remove_perm(
                 "no_access_to_resourceinstance",
                 self.get_guest_group(),

@@ -2,7 +2,7 @@ from arches.app.models.graph import Graph
 from arches.app.models.models import Group, User
 from arches.app.models.resource import Resource
 import logging
-from .business_data_proxy import HeritageSiteDataProxy
+from .business_data_proxy import ArchaeologicalSiteDataProxy
 from guardian.shortcuts import (
     assign_perm,
     get_perms,
@@ -106,4 +106,4 @@ class HeritageSitePermissionManager(AdminOnlyPermissionManager):
         self._populate_restricted_objects()
 
     def _is_resource_restricted(self, obj):
-        return not HeritageSiteDataProxy().is_site_public(obj)
+        return not ArchaeologicalSiteDataProxy().is_site_public(obj)

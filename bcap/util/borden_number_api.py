@@ -30,7 +30,9 @@ class BordenNumberApi:
     def _initialize_models(self):
         if not self.geom_node:
             self._datatype_factory = DataTypeFactory()
-            graph = models.GraphModel.objects.filter(slug=slugs.HERITAGE_SITE).first()
+            graph = models.GraphModel.objects.filter(
+                slug=slugs.ARCHAEOLOGICAL_SITE
+            ).first()
             self.geom_node = models.Node.objects.filter(
                 alias=site_aliases.SITE_BOUNDARY, graph=graph
             ).first()
