@@ -2,7 +2,7 @@ from arches.app.functions.primary_descriptors import AbstractPrimaryDescriptorsF
 from arches.app.models import models
 from arches.app.datatypes.datatypes import DataTypeFactory
 from bcap.util.bcap_aliases import BCAPSiteAliases as aliases
-from bcap.views.api import get_hierarchy_for_list_item
+from bcap.util.controlled_list import get_hierarchy_for_list_item
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001002",
