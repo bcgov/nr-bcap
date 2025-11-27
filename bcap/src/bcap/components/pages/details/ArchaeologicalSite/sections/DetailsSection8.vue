@@ -15,7 +15,10 @@ import type {
 } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
+import {
+    applyFileLinks,
+    expandDocumentRows,
+} from '@/bcgov_arches_common/utils/document.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -44,51 +47,6 @@ const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
             | undefined;
     },
 );
-
-function formatFileLink(path: string): string {
-    if (!path) return '';
-    const filename = path.split('/').pop() || 'Download';
-    const href = path.startsWith('/') ? path : `/files/${path}`;
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${filename}</a>`;
-}
-
-function transformDocumentsWithLinks<T extends AliasedTileData>(
-    documents: T[],
-    fieldName: string,
-): T[] {
-    const expandedRows: T[] = [];
-
-    documents.forEach((doc, docIndex) => {
-        const aliasedData = doc.aliased_data as Record<string, unknown>;
-        const fieldData = aliasedData?.[fieldName] as
-            | { display_value?: string; node_value?: string }
-            | undefined;
-        const pathValue = fieldData?.display_value || fieldData?.node_value;
-
-        if (!pathValue) {
-            expandedRows.push(doc);
-            return;
-        }
-
-        const paths = pathValue.split(' | ').map((p) => p.trim()).filter(Boolean);
-
-        paths.forEach((path, pathIndex) => {
-            expandedRows.push({
-                ...doc,
-                tileid: `${doc.tileid || docIndex}-${pathIndex}`,
-                aliased_data: {
-                    ...aliasedData,
-                    [fieldName]: {
-                        ...fieldData,
-                        display_value: formatFileLink(path),
-                    },
-                },
-            } as T);
-        });
-    });
-
-    return expandedRows;
-}
 
 const generalRemarkColumns = computed<ColumnDefinition[]>(() => {
     return [
@@ -208,21 +166,21 @@ const keywordsData = computed(() => {
     return Array.isArray(keywords) ? keywords : [keywords];
 });
 
-const contraventionDocumentsData = computed(() => {
+const contraventionDocumentsExpanded = computed(() => {
     const docs = currentData.value?.contravention_document;
     if (!docs) return [];
     const docsArray = Array.isArray(docs) ? docs : [docs];
-    return transformDocumentsWithLinks(
+    return expandDocumentRows(
         docsArray as ContraventionDocumentTile[],
         'contravention_document',
     );
 });
 
-const restrictedDocumentsData = computed(() => {
+const restrictedDocumentsExpanded = computed(() => {
     const docs = currentData.value?.restricted_document;
     if (!docs) return [];
     const docsArray = Array.isArray(docs) ? docs : [docs];
-    return transformDocumentsWithLinks(
+    return expandDocumentRows(
         docsArray as RestrictedDocumentTile[],
         'restricted_document',
     );
@@ -243,14 +201,25 @@ const { processedData: convictionsTableData } = useTileEditLog(
     toRef(props, 'editLogData'),
 );
 
-const { processedData: contraventionDocumentsTableData } = useTileEditLog(
-    contraventionDocumentsData,
+const { processedData: contraventionDocumentsProcessed } = useTileEditLog(
+    contraventionDocumentsExpanded,
     toRef(props, 'editLogData'),
 );
 
-const { processedData: restrictedDocumentsTableData } = useTileEditLog(
-    restrictedDocumentsData,
+const { processedData: restrictedDocumentsProcessed } = useTileEditLog(
+    restrictedDocumentsExpanded,
     toRef(props, 'editLogData'),
+);
+
+const contraventionDocumentsTableData = computed(() =>
+    applyFileLinks(
+        contraventionDocumentsProcessed.value,
+        'contravention_document',
+    ),
+);
+
+const restrictedDocumentsTableData = computed(() =>
+    applyFileLinks(restrictedDocumentsProcessed.value, 'restricted_document'),
 );
 
 const hasKeywords = computed(() => keywordsData.value.length > 0);

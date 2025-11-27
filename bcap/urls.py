@@ -1,8 +1,7 @@
 from django.urls import include, path, re_path
 from django.conf import settings
-from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
-from django.urls.resolvers import RegexPattern
+from arches.app.views.file import FileView
 from bcap.views.api import (
     BordenNumber,
     MVT,
@@ -13,111 +12,90 @@ from bcap.views.api import (
 )
 from bcap.views.resource import ResourceReportView
 from bcgov_arches_common.views.map import BCTileserverProxyView
-import re
-
-uuid_regex = settings.UUID_REGEX
-
-path_prefix_re = re.compile(r"^(\^)(.*)$")
 
 
-def bc_path_prefix(path=""):
-    if not settings.BCGOV_PROXY_PREFIX:
-        return path
-    else:
-        if not path:
-            return settings.BCGOV_PROXY_PREFIX
-        new_path = path_prefix_re.sub(r"\1%s\2", path)
-        return new_path % settings.BCGOV_PROXY_PREFIX
+PREFIX = (
+    settings.BCGOV_PROXY_PREFIX.rstrip("/")
+    if settings.BCGOV_PROXY_PREFIX
+    else ""
+)
 
-
-class BCRegexPattern(RegexPattern):
-    def __init__(self, regexpattern):
-        super().__init__(
-            bc_path_prefix(regexpattern.regex.pattern),
-            regexpattern.name,
-            regexpattern._is_endpoint,
-        )
-
-
-bc_url_resolver = re_path((r"^"), include("arches.urls"))
-
-
-for pattern in bc_url_resolver.url_patterns:
-    # print("Before: %s" % pattern.pattern)
-    pattern.pattern = BCRegexPattern(pattern.pattern)
-    # print("After: %s" % pattern.pattern)
 
 urlpatterns = [
-    re_path(
-        bc_path_prefix(r"^bctileserver/(?P<path>.*)$"),
+    path(
+        f"{PREFIX}/localfiles/<uuid:fileid>",
+        FileView.as_view(),
+        name="localfiles",
+    ),
+    path(
+        f"{PREFIX}/bctileserver/<path:path>",
         BCTileserverProxyView.as_view(),
         name="bcap_tile_server",
     ),
-    re_path(
-        bc_path_prefix(r"^borden_number/(?P<resourceinstanceid>%s)$" % uuid_regex),
+    path(
+        f"{PREFIX}/borden_number/<uuid:resourceinstanceid>",
         BordenNumber.as_view(),
         name="borden_number",
     ),
     # Used by BCRHP to get & reserve a borden number
     # Make trailing slash optional to catch request from resource that hasn't been persisted
-    re_path(
-        bc_path_prefix(r"^borden_number/?$"),
+    path(
+        f"{PREFIX}/borden_number/",
         BordenNumber.as_view(),
-        name="borden_number",
+        name="borden_number_slash",
     ),
-    re_path(
-        bc_path_prefix(r"^legislative_act/(?P<act_id>%s)$" % uuid_regex),
+    path(
+        f"{PREFIX}/borden_number",
+        BordenNumber.as_view(),
+        name="borden_number_bare",
+    ),
+    path(
+        f"{PREFIX}/legislative_act/<uuid:act_id>",
         LegislativeAct.as_view(),
         name="legislative_act",
     ),
-    re_path(
-        bc_path_prefix(r"^api/hierarchy/(?P<list_item_id>%s)/$" % uuid_regex),
+    path(
+        f"{PREFIX}/api/hierarchy/<uuid:list_item_id>/",
         ControlledListHierarchy.as_view(),
         name="controlled_list_hierarchy",
     ),
-    re_path(
-        bc_path_prefix(r"^user_profile$"),
+    path(
+        f"{PREFIX}/user_profile",
         UserProfile.as_view(),
         name="user_profile",
     ),
+    # MVT requires regex due to literal {z}, {x}, {y} placeholders
     re_path(
-        bc_path_prefix(
-            r"^mvt/(?P<nodeid>%s)/(?P<zoom>[0-9]+|\{z\})/(?P<x>[0-9]+|\{x\})/(?P<y>[0-9]+|\{y\}).pbf$"
-            % uuid_regex
-        ),
+        rf"^{PREFIX}/mvt/(?P<nodeid>[0-9a-fA-F]{{8}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{12}})/(?P<zoom>[0-9]+|\{{z\}})/(?P<x>[0-9]+|\{{x\}})/(?P<y>[0-9]+|\{{y\}}).pbf$",
         MVT.as_view(),
         name="mvt",
     ),
-    re_path(
-        bc_path_prefix(r"^report/(?P<resourceid>%s)$" % uuid_regex),
+    path(
+        f"{PREFIX}/report/<uuid:resourceid>",
         ResourceReportView.as_view(),
         name="resource_report",
     ),
     path(
-        f"{bc_path_prefix()}api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
+        f"{PREFIX}/api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
         RelatedSiteVisits.as_view(),
         name="api-related-site-resources",
     ),
     path(
-        f"{bc_path_prefix()}api/arch_site_related_resources/<slug:graph>",
+        f"{PREFIX}/api/arch_site_related_resources/<slug:graph>",
         RelatedSiteVisits.as_view(),
         name="api-related-sites-resources",
     ),
-    path(bc_path_prefix(), include("bcgov_arches_common.urls")),
-    path(bc_path_prefix(), include("arches_controlled_lists.urls")),
-    path(bc_path_prefix(), include("arches_component_lab.urls")),
-    path(bc_path_prefix(), include("arches_querysets.urls")),
+    path(f"{PREFIX}/", include("bcgov_arches_common.urls")),
+    path(f"{PREFIX}/", include("arches_controlled_lists.urls")),
+    path(f"{PREFIX}/", include("arches_component_lab.urls")),
+    path(f"{PREFIX}/", include("arches_querysets.urls")),
+    path(f"{PREFIX}/", include("arches.urls")),
 ]
-# Ensure Arches core urls are superseded by project-level urls
-urlpatterns.append(path("", include("arches.urls")))
 
 handler400 = "arches.app.views.main.custom_400"
 handler403 = "arches.app.views.main.custom_403"
 handler404 = "arches.app.views.main.custom_404"
 handler500 = "arches.app.views.main.custom_500"
-
-# Adds URL pattern to serve media files during development
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Only handle i18n routing in active project. This will still handle the routes provided by Arches core and Arches applications,
 # but handling i18n routes in multiple places causes application errors.
