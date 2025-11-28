@@ -217,11 +217,23 @@ export interface RestrictedRemarkTile extends AliasedTileData {
     };
 }
 
+export interface ContraventionDocumentTile extends AliasedTileData {
+    aliased_data: {
+        contravention_document?: AliasedNodeData;
+    };
+}
+
+export interface RestrictedDocumentTile extends AliasedTileData {
+    aliased_data: {
+        restricted_document?: AliasedNodeData;
+    };
+}
+
 export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
     general_remark_information: GeneralRemarkTile[];
     remark_keyword?: AliasedNodeData;
-    contravention_document?: AliasedNodeData;
-    restricted_document?: AliasedNodeData;
+    contravention_document?: ContraventionDocumentTile[];
+    restricted_document?: RestrictedDocumentTile[];
     hca_contravention: AliasedTileData[];
     restricted_information: RestrictedRemarkTile[];
     conviction: AliasedTileData[];

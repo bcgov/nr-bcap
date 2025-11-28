@@ -55,22 +55,22 @@ SEARCH_COMPONENT_LOCATIONS.append("bcap.search_components")
 
 LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
 
-FILE_TYPE_CHECKING = "strict"
+FILE_TYPE_CHECKING = "lenient"
 FILE_TYPES = [
-    "bmp",
+    "csv",
+    "doc",
+    "docx",
+    "eml",
     "gif",
     "jpg",
     "jpeg",
+    "json",
     "pdf",
     "png",
-    "psd",
-    "rtf",
-    "tif",
-    "tiff",
+    "txt",
+    "xls",
     "xlsx",
-    "csv",
     "zip",
-    "json",
 ]
 FILENAME_GENERATOR = "bcap.util.storage_filename_generator.generate_filename"
 UPLOADED_FILES_DIR = "uploadedfiles"
@@ -324,15 +324,20 @@ SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(
 )
 WSGI_APPLICATION = "bcap.wsgi.application"
 
-# URL that handles the media served from MEDIA_ROOT, used for managing stored files.
-# It must end in a slash if set to a non-empty value.
-MEDIA_URL = "/localfiles/"
-
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 MEDIA_ROOT = os.path.join(APP_ROOT)
 
 # when hosting Arches under a sub path set this value to the sub path eg : "/{sub_path}/"
 FORCE_SCRIPT_NAME = get_env_variable("FORCE_SCRIPT_NAME")
+
+# URL that handles the media served from MEDIA_ROOT, used for managing stored files.
+# It must end in a slash if set to a non-empty value.
+if BCGOV_PROXY_PREFIX:
+    MEDIA_URL = "/" + BCGOV_PROXY_PREFIX + "localfiles/"
+elif FORCE_SCRIPT_NAME:
+    MEDIA_URL = FORCE_SCRIPT_NAME + "localfiles/"
+else:
+    MEDIA_URL = "/localfiles/"
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"

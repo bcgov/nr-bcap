@@ -566,9 +566,7 @@
                 {
                     "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Member Role(s)",
                         "placeholder": {
                             "en": "Select an option"
@@ -588,9 +586,7 @@
                     "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Team Member",
                         "placeholder": {
                             "en": ""
@@ -611,11 +607,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "# of Features",
                         "max": "",
                         "min": "",
@@ -646,9 +638,7 @@
                 {
                     "card_id": "a0c7cec6-1401-11f0-acd5-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Feature Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -667,9 +657,7 @@
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Site Visit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -694,9 +682,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
@@ -718,9 +704,7 @@
                 {
                     "card_id": "962503ce-61ab-11f0-be7c-3a7a4e6803c5",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Source",
                         "placeholder": {
                             "en": "Select an option"
@@ -766,9 +750,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Culture Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -790,9 +772,7 @@
                 {
                     "card_id": "fab4bca8-1408-11f0-9e93-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Archaeological Culture",
                         "placeholder": {
                             "en": "Select an option"
@@ -812,9 +792,7 @@
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Affiliation",
                         "placeholder": {
                             "en": ""
@@ -839,9 +817,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Feature Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -869,9 +845,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Stratigraphy Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -899,9 +873,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "General Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -929,9 +901,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Biogeography Description",
                         "maxLength": null,
                         "placeholder": {
@@ -954,9 +924,7 @@
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Site Form Authors",
                         "placeholder": {
                             "en": ""
@@ -975,9 +943,7 @@
                 {
                     "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Biogeography Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -997,9 +963,7 @@
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "HCA Permit",
                         "placeholder": {
                             "en": ""
@@ -1024,9 +988,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Location and Access",
                         "maxLength": null,
                         "placeholder": {
@@ -1054,9 +1016,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Name Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1084,9 +1044,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Name",
                         "maxLength": "250",
                         "placeholder": {
@@ -1108,9 +1066,7 @@
                 {
                     "card_id": "6d906048-140d-11f0-b9bb-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Name Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1130,9 +1086,7 @@
                     "card_id": "6d906048-140d-11f0-b9bb-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assigned or Reported By",
                         "placeholder": {
                             "en": ""
@@ -1172,9 +1126,7 @@
                 {
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1193,9 +1145,7 @@
                 {
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1220,9 +1170,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1262,11 +1210,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Minimum # Individuals",
                         "max": "",
                         "min": "",
@@ -1295,12 +1239,38 @@
                     "widget_id": "10000000-0000-0000-0000-000000000008"
                 },
                 {
+                    "card_id": "8cf43bc6-61ab-11f0-be7c-3a7a4e6803c5",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Archaeology Branch Recommendations",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "78ba6bbd-8916-4ffc-98b9-4cb28ba1c2e6",
+                    "label": {
+                        "en": "Archaeology Branch Recommendations"
+                    },
+                    "node_id": "fadb061b-2be7-4a0b-810a-51d8cee25bf8",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Archaeological Site",
                         "placeholder": {
                             "en": ""
@@ -1346,9 +1316,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Recorder\u2019s Recommendations",
                         "maxLength": null,
                         "placeholder": {
@@ -1370,9 +1338,7 @@
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Cultural Material Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1409,11 +1375,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Number of Artifacts",
                         "max": "",
                         "min": "",
@@ -1450,9 +1412,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Biogeography Name",
                         "maxLength": null,
                         "placeholder": {
@@ -1495,9 +1455,7 @@
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "From Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
@@ -1516,9 +1474,7 @@
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "From Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
@@ -1537,9 +1493,7 @@
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "To Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
@@ -1558,9 +1512,7 @@
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "To Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
@@ -1585,9 +1537,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Source",
                         "maxLength": "250",
                         "placeholder": {
@@ -1631,9 +1581,7 @@
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Event",
                         "options": [],
                         "placeholder": {
@@ -1680,9 +1628,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Chronology Remarks",
                         "maxLength": "250",
                         "placeholder": {
@@ -1704,9 +1650,7 @@
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Method",
                         "placeholder": {
                             "en": "Select an option"
@@ -1774,9 +1718,7 @@
                     "card_id": "290cd148-e9a9-45c9-b649-065e59e893fa",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assigned By",
                         "placeholder": {
                             "en": ""
@@ -1795,9 +1737,7 @@
                 {
                     "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Latest Edit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1822,9 +1762,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Accuracy Remarks",
                         "maxLength": "500",
                         "placeholder": {
@@ -1852,9 +1790,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Source Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -1928,9 +1864,7 @@
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Cultural Material Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1976,9 +1910,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Temporary Number",
                         "maxLength": null,
                         "placeholder": {
@@ -2006,9 +1938,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Cultural Material Details",
                         "maxLength": null,
                         "placeholder": {
@@ -2031,9 +1961,7 @@
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Repository",
                         "placeholder": {
                             "en": ""
@@ -2052,9 +1980,7 @@
                 {
                     "card_id": "fb55932c-140c-11f0-b9bb-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Disturbance Cause",
                         "placeholder": {
                             "en": "Select an option"
@@ -2073,9 +1999,7 @@
                 {
                     "card_id": "fb55932c-140c-11f0-b9bb-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Disturbance Period",
                         "placeholder": {
                             "en": "Select an option"
@@ -2100,9 +2024,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Disturbance Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2125,9 +2047,7 @@
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Repository",
                         "placeholder": {
                             "en": ""
@@ -2323,6 +2243,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "rangenode_id": "95e5f9b6-71cd-4769-b365-9155442954ec",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "8cf43a0e-61ab-11f0-be7c-3a7a4e6803c5",
+                    "edgeid": "3c40e4f7-bd94-4f40-b7fc-9b59825d695e",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "rangenode_id": "fadb061b-2be7-4a0b-810a-51d8cee25bf8",
                     "source_identifier_id": null
                 },
                 {
@@ -3185,10 +3115,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3997,10 +3924,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -5213,15 +5137,35 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "archaeology_branch_recommendation",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Archaeology Branch Recommendation",
+                    "nodegroup_id": "8cf43a0e-61ab-11f0-be7c-3a7a4e6803c5",
+                    "nodeid": "fadb061b-2be7-4a0b-810a-51d8cee25bf8",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "nonpermitted_site_visit",
                     "config": {
                         "falseLabel": {
                             "en": "Permitted"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Non-permitted"
                         }
@@ -5379,9 +5323,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Re-apply HCA Permit 1:m config",
-                "publicationid": "d7179fa0-de71-4b2f-80af-5d6910236acc",
-                "published_time": "2025-11-03T16:37:49.123"
+                "notes": null,
+                "publicationid": "1441b867-4a6e-47e6-8c4f-469e467ac31e",
+                "published_time": "2025-11-20T20:28:43.502"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -5483,7 +5427,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "599549e8b 2025-10-25 14:19:16 -0700",
         "os": "Linux",
         "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
