@@ -13,6 +13,7 @@ from bcap.views.api import (
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcgov_arches_common.views.map import BCTileserverProxyView
 
+uuid_regex = settings.UUID_REGEX
 
 PREFIX = settings.BCGOV_PROXY_PREFIX.rstrip("/") if settings.BCGOV_PROXY_PREFIX else ""
 
@@ -62,7 +63,9 @@ urlpatterns = [
     ),
     # MVT requires regex due to literal {z}, {x}, {y} placeholders
     re_path(
-        f"^{PREFIX}/mvt/(?P<nodeid>[0-9a-fA-F]{{8}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{12}})/(?P<zoom>[0-9]+|\{{z\}})/(?P<x>[0-9]+|\{{x\}})/(?P<y>[0-9]+|\{{y\}}).pbf$",
+        rf"^{PREFIX}"
+        + r"/mvt/(?P<nodeid>%s)/(?P<zoom>[0-9]+|\{z\})/(?P<x>[0-9]+|\{x\})/(?P<y>[0-9]+|\{y\}).pbf$"
+        % uuid_regex,
         MVT.as_view(),
         name="mvt",
     ),
