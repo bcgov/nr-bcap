@@ -389,6 +389,7 @@ const showAuditFields = async (results: EditLogData) => {
             :language-code="languageCode"
             :force-collapsed="forceCollapsed"
             :edit-log-data="editLogData"
+            :show-audit-fields="auditFieldsVisible"
         />
         <HcaPermit
             v-else-if="props.data.graph_slug === 'hca_permit'"

@@ -4,6 +4,7 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { useResourceData } from '@/bcap/composables/useResourceData.ts';
 import {
     useTileEditLog,
     useSingleTileEditLog,
@@ -11,6 +12,7 @@ import {
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { HcaPermitSchema } from '@/bcap/schema/HcaPermitSchema.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
@@ -44,6 +46,20 @@ const siteFormAuthorsField = computed(() => {
         | undefined;
 });
 
+const associatedPermitId = computed(() => {
+    const permitField = details.value?.aliased_data?.associated_permit;
+    return permitField?.details?.[0]?.resource_id;
+});
+
+const { data: permitData } = useResourceData<HcaPermitSchema>(
+    'hca_permit',
+    associatedPermitId,
+);
+
+const permitDetails = computed(() => {
+    return permitData.value?.aliased_data?.permit_identification?.aliased_data;
+});
+
 const { processedData: teamMembersTableData } = useTileEditLog(
     teamMembers,
     toRef(props, 'editLogData'),
@@ -54,27 +70,61 @@ const { processedData: siteVisitDetailsData } = useSingleTileEditLog(
     toRef(props, 'editLogData'),
 );
 
+const permittedValue = computed(() => {
+    const nonPermittedField =
+        siteVisitDetailsData.value?.aliased_data?.nonpermitted_site_visit;
+
+    if (nonPermittedField && 'node_value' in nonPermittedField) {
+        const nonPermitted = nonPermittedField.node_value;
+        if (nonPermitted === undefined || nonPermitted === null)
+            return 'Unknown';
+
+        return nonPermitted ? 'No' : 'Yes';
+    }
+
+    return 'Unknown';
+});
+
 const siteVisitDetailsTableData = computed(() => {
     if (!siteVisitDetailsData.value) return [];
 
-    return [
-        {
-            ...siteVisitDetailsData.value,
-            site_visit_type:
-                siteVisitDetailsData.value.aliased_data?.site_visit_type,
-            last_date_of_site_visit:
-                siteVisitDetailsData.value.aliased_data
-                    ?.last_date_of_site_visit,
-            first_date_of_site_visit:
-                siteVisitDetailsData.value.aliased_data
-                    ?.first_date_of_site_visit,
-            project_description:
-                siteVisitDetailsData.value.aliased_data?.project_description,
-            associated_permit:
-                siteVisitDetailsData.value.aliased_data?.associated_permit,
-            affiliation: siteVisitDetailsData.value.aliased_data?.affiliation,
+    const row = {
+        ...siteVisitDetailsData.value,
+        [EDIT_LOG_FIELDS.ENTERED_ON]:
+            siteVisitDetailsData.value?.audit?.entered_on,
+        [EDIT_LOG_FIELDS.ENTERED_BY]:
+            siteVisitDetailsData.value?.audit?.entered_by,
+        aliased_data: {
+            ...siteVisitDetailsData.value.aliased_data,
+            permitted: {
+                node_value: permittedValue.value,
+                display_value: permittedValue.value,
+                details: [],
+            },
+            permit_number: permitDetails.value?.permit_number || {
+                node_value: null,
+                display_value: '',
+                details: [],
+            },
+            permit_type: permitDetails.value?.hca_permit_type || {
+                node_value: null,
+                display_value: '',
+                details: [],
+            },
+            permit_holder: permitDetails.value?.permit_holder || {
+                node_value: null,
+                display_value: '',
+                details: [],
+            },
+            issuing_agency: permitDetails.value?.issuing_agency || {
+                node_value: null,
+                display_value: '',
+                details: [],
+            },
         },
-    ];
+    };
+
+    return [row];
 });
 
 const hasDetails = computed(() => details.value?.aliased_data);
@@ -103,8 +153,12 @@ const siteVisitDetailsColumns = computed(() => [
     { field: 'site_visit_type', label: 'Site Visit Type' },
     { field: 'last_date_of_site_visit', label: 'Last Date On Site' },
     { field: 'project_description', label: 'Site Visit Description' },
-    { field: 'associated_permit', label: 'Associated Permit' },
+    { field: 'permitted', label: 'Permitted' },
+    { field: 'permit_number', label: 'Permit Number' },
+    { field: 'permit_type', label: 'Permit Type' },
+    { field: 'permit_holder', label: 'Permit Holder' },
     { field: 'affiliation', label: 'Affiliation' },
+    { field: 'issuing_agency', label: 'Issuing Agency' },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
@@ -156,6 +210,28 @@ const siteVisitDetailsColumns = computed(() => [
             </DetailsSection>
 
             <DetailsSection
+                section-title="Site Form Authors"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasSiteFormAuthors }"
+            >
+                <template #sectionContent>
+                    <div v-if="hasSiteFormAuthors">
+                        <dl>
+                            <dt>Authors</dt>
+                            <dd>
+                                {{ getDisplayValue(siteFormAuthorsField) }}
+                            </dd>
+                        </dl>
+                    </div>
+                    <EmptyState
+                        v-else
+                        message="No site form authors available."
+                    />
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
                 section-title="Site Visit Team"
                 variant="subsection"
                 :visible="true"
@@ -169,27 +245,7 @@ const siteVisitDetailsColumns = computed(() => [
                     />
                     <EmptyState
                         v-else
-                        message="No team member information available."
-                    />
-                </template>
-            </DetailsSection>
-
-            <DetailsSection
-                section-title="Site Form Author(s)"
-                variant="subsection"
-                :visible="true"
-                :class="{ 'empty-section': !hasSiteFormAuthors }"
-            >
-                <template #sectionContent>
-                    <div v-if="hasSiteFormAuthors">
-                        <dl>
-                            <dt>Site Form Author(s)</dt>
-                            <dd>{{ getDisplayValue(siteFormAuthorsField) }}</dd>
-                        </dl>
-                    </div>
-                    <EmptyState
-                        v-else
-                        message="No site form authors available."
+                        message="No team members available."
                     />
                 </template>
             </DetailsSection>
@@ -197,13 +253,4 @@ const siteVisitDetailsColumns = computed(() => [
     </DetailsSection>
 </template>
 
-<style>
-dl {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 1rem;
-}
-dt {
-    min-width: 20rem;
-}
-</style>
+<style scoped></style>

@@ -10,7 +10,7 @@ from bcap.views.api import (
     RelatedSiteVisits,
     ControlledListHierarchy,
 )
-from bcap.views.resource import ResourceReportView
+from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcgov_arches_common.views.map import BCTileserverProxyView
 
 
@@ -74,6 +74,11 @@ urlpatterns = [
         f"{PREFIX}/report/<uuid:resourceid>",
         ResourceReportView.as_view(),
         name="resource_report",
+    ),
+    re_path(
+        bc_path_prefix(r"^resource/history$"),
+        ResourceEditLogView.as_view(),
+        name="edit_history",
     ),
     path(
         f"{PREFIX}/api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
