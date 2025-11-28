@@ -299,7 +299,6 @@ type ArchaeologySiteAliasedData = {
     related_documents?: RelatedDocumentsTile;
 };
 
-export interface ArchaeologySiteSchema
-    extends ArchesResourceInstanceData<ArchaeologySiteAliasedData> {
+export interface ArchaeologySiteSchema extends ArchesResourceInstanceData<ArchaeologySiteAliasedData> {
     aliased_data: ArchaeologySiteAliasedData;
 }
