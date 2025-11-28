@@ -12,6 +12,7 @@ import type {
     OtherMapsTile,
 } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
+import { expandDocumentRows } from '@/bcgov_arches_common/utils/document.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -42,7 +43,8 @@ const currentData = computed<RelatedDocumentsTile | undefined>(
 const relatedDocumentsData = computed(() => {
     const docs = currentData.value?.related_site_documents;
     if (!docs) return [];
-    return Array.isArray(docs) ? docs : [docs];
+    const docsArray = Array.isArray(docs) ? docs : [docs];
+    return expandDocumentRows(docsArray, 'related_site_documents');
 });
 
 const referencesColumns: ColumnDefinition[] = [
@@ -61,7 +63,7 @@ const relatedDocumentsColumns = computed<ColumnDefinition[]>(() => {
             label: 'Document Description',
             isHtml: true,
         },
-        { field: 'related_site_documents', label: 'Document' },
+        { field: 'related_site_documents', label: 'Document', isHtml: true },
     ];
 });
 

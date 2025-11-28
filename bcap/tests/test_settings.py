@@ -17,6 +17,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from bcap.settings import *
+
+TEST_ROOT = os.path.dirname(__file__)
 import arches
 import os
 import inspect
@@ -104,26 +106,23 @@ DATATYPE_LOCATIONS.append("tests.fixtures.datatypes")
 SILENCED_SYSTEM_CHECKS += [
     "arches.E001",  # Dummy cache in production
     "arches.E002",  # Arches requirement invalid
+    "urls.W005",  # URL namespace not unique
 ]
 
 # Authlib configuration for test (local fake provider)
 AUTHLIB_OAUTH_CLIENTS = {
     "default": {
-        "client_id": get_env_variable("OAUTH_CLIENT_ID", "test-client-id"),
-        "client_secret": get_env_variable("OAUTH_CLIENT_SECRET", "test-client-secret"),
-        "authorize_url": get_env_variable(
-            "OAUTH_AUTH_ENDPOINT", "http://localhost:9999/fake-oauth/authorize"
-        ),
-        "access_token_url": get_env_variable(
-            "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
-        ),
-        "refresh_token_url": get_env_variable(
-            "OAUTH_TOKEN_ENDPOINT", "http://localhost:9999/fake-oauth/token"
-        ),
-        "server_metadata_url": get_env_variable(
-            "OAUTH_SERVER_METADATA_URL",
-            "http://localhost:9999/fake-oauth/.well-known/openid-configuration",
-        ),
+        "client_id": get_env_variable("OAUTH_CLIENT_ID") or "test-client-id",
+        "client_secret": get_env_variable("OAUTH_CLIENT_SECRET")
+        or "test-client-secret",
+        "authorize_url": get_env_variable("OAUTH_AUTH_ENDPOINT")
+        or "http://localhost:9999/fake-oauth/authorize",
+        "access_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT")
+        or "http://localhost:9999/fake-oauth/token",
+        "refresh_token_url": get_env_variable("OAUTH_TOKEN_ENDPOINT")
+        or "http://localhost:9999/fake-oauth/token",
+        "server_metadata_url": get_env_variable("OAUTH_SERVER_METADATA_URL")
+        or "http://localhost:9999/fake-oauth/.well-known/openid-configuration",
         "client_kwargs": {
             "scope": "openid profile email",
             "token_endpoint_auth_method": "client_secret_post",
@@ -166,8 +165,8 @@ if DOCKER:
     except ImportError:
         pass
 
-ELASTICSEARCH_CONNECTION_OPTIONS["verify_certs"] = True
-ELASTICSEARCH_CONNECTION_OPTIONS["ca_certs"] = ELASTICSEARCH_CERT_LOCATION
+ELASTICSEARCH_CONNECTION_OPTIONS["verify_certs"] = False
+ELASTICSEARCH_CONNECTION_OPTIONS["ca_certs"] = None
 print(ELASTICSEARCH_CONNECTION_OPTIONS)
 print(ROOT_DIR)
 print(TEST_ROOT)
