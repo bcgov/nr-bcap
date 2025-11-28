@@ -3,6 +3,7 @@ source =
     bcap/
 
 omit =
+    bcap/tests/*
     */python?.?/*
     */migrations/*
     */settings*.py
