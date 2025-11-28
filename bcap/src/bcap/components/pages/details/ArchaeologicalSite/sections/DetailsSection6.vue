@@ -11,6 +11,7 @@ import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 import type { AliasedTileData } from '@/arches_component_lab/types.ts';
+import { isAliasedNodeData } from '@/bcap/util.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
@@ -48,7 +49,7 @@ const typologyColumns = [
 ];
 
 const typologyRemarksColumns = computed(() => [
-    { field: 'site_typology_remarks', label: 'Site Typology Remarks' },
+    { field: 'typology_remark', label: 'Site Typology Remarks', isHtml: true },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
@@ -141,9 +142,25 @@ const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
     },
 );
 
-const typologyRemarksData = computed(
-    () => currentData.value?.site_typology_remarks || [],
-);
+const typologyRemarksData = computed(() => {
+    if (!currentData.value?.site_typology) return [];
+
+    return currentData.value.site_typology
+        .filter((tile) => {
+            const remark = tile.aliased_data?.typology_remark;
+            return (
+                isAliasedNodeData(remark) &&
+                remark.display_value &&
+                remark.display_value.trim() !== ''
+            );
+        })
+        .map((tile) => ({
+            ...tile,
+            aliased_data: {
+                typology_remark: tile.aliased_data?.typology_remark,
+            },
+        }));
+});
 
 const { processedData: typologyRemarksTableData } = useTileEditLog(
     typologyRemarksData,

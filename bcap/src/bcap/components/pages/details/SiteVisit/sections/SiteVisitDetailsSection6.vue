@@ -27,6 +27,13 @@ const recRows = computed(
         props.data?.aliased_data?.remarks_and_recommendations?.aliased_data
             ?.recommendation || [],
 );
+
+const archaeologyBranchRecRows = computed(
+    () =>
+        props.data?.aliased_data?.remarks_and_recommendations?.aliased_data
+            ?.archaeology_branch_recommendation || [],
+);
+
 const generalRemarkRows = computed(
     () =>
         props.data?.aliased_data?.remarks_and_recommendations?.aliased_data
@@ -36,6 +43,24 @@ const generalRemarkRows = computed(
 const recColumns = computed(() => [
     {
         field: 'recorders_recommendation',
+        label: "Recorder's Recommendations",
+        isHtml: true,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
+
+const archaeologyBranchRecColumns = computed(() => [
+    {
+        field: 'archaeology_branch_recommendation',
         label: "Recorder's Recommendations",
         isHtml: true,
     },
@@ -72,6 +97,11 @@ const { processedData: recommendationsTableData } = useTileEditLog(
     toRef(props, 'editLogData'),
 );
 
+const { processedData: archaeologyBranchRecTableData } = useTileEditLog(
+    archaeologyBranchRecRows,
+    toRef(props, 'editLogData'),
+);
+
 const { processedData: generalRemarksTableData } = useTileEditLog(
     generalRemarkRows,
     toRef(props, 'editLogData'),
@@ -81,6 +111,13 @@ const hasRecommendations = computed(() => {
     return (
         recommendationsTableData.value &&
         recommendationsTableData.value.length > 0
+    );
+});
+
+const hasArchaeologyBranchRec = computed(() => {
+    return (
+        archaeologyBranchRecTableData.value &&
+        archaeologyBranchRecTableData.value.length > 0
     );
 });
 
@@ -114,6 +151,25 @@ const hasRemarks = computed(() => {
                     <EmptyState
                         v-else
                         message="No recommendations available."
+                    />
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
+                section-title="Archaeology Branch Recommendations"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasArchaeologyBranchRec }"
+            >
+                <template #sectionContent>
+                    <StandardDataTable
+                        v-if="hasArchaeologyBranchRec"
+                        :table-data="archaeologyBranchRecTableData"
+                        :column-definitions="archaeologyBranchRecColumns"
+                    />
+                    <EmptyState
+                        v-else
+                        message="No archaeology branch recommendations available."
                     />
                 </template>
             </DetailsSection>
