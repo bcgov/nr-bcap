@@ -46,6 +46,7 @@ runs:
         echo
         echo "bcap/urls.py around the offending line:"
         nl -ba bcap/urls.py | sed -n '60,110p' || echo "bcap/urls.py not found"
+      shell: bash
 
     - name: Ensure frontend configuration files exist
       run: |
