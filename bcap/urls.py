@@ -62,7 +62,7 @@ urlpatterns = [
     ),
     # MVT requires regex due to literal {z}, {x}, {y} placeholders
     re_path(
-        rf"^{PREFIX}/mvt/(?P<nodeid>[0-9a-fA-F]{{8}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{12}})/(?P<zoom>[0-9]+|\{{z\}})/(?P<x>[0-9]+|\{{x\}})/(?P<y>[0-9]+|\{{y\}}).pbf$",
+        f"^{PREFIX}/mvt/(?P<nodeid>[0-9a-fA-F]{{8}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{12}})/(?P<zoom>[0-9]+|\{{z\}})/(?P<x>[0-9]+|\{{x\}})/(?P<y>[0-9]+|\{{y\}}).pbf$",
         MVT.as_view(),
         name="mvt",
     ),
