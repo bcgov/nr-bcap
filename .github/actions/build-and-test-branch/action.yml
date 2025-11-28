@@ -36,6 +36,17 @@ runs:
         echo Python packages installed
       shell: bash
 
+    - name: Debug what urls.py looks like in CI
+      run: |
+        echo "HEAD SHA:"
+        git rev-parse HEAD
+        echo
+        echo "Any bc_path_prefix in this checkout?"
+        grep -R --line-number "bc_path_prefix" . || echo "No matches"
+        echo
+        echo "bcap/urls.py around the offending line:"
+        nl -ba bcap/urls.py | sed -n '60,110p' || echo "bcap/urls.py not found"
+
     - name: Ensure frontend configuration files exist
       run: |
           python manage.py check
