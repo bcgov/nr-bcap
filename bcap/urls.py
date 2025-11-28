@@ -75,8 +75,8 @@ urlpatterns = [
         ResourceReportView.as_view(),
         name="resource_report",
     ),
-    re_path(
-        bc_path_prefix(r"^resource/history$"),
+    path(
+        f"{PREFIX}/resource/history",
         ResourceEditLogView.as_view(),
         name="edit_history",
     ),
