@@ -165,8 +165,8 @@ if DOCKER:
     except ImportError:
         pass
 
-ELASTICSEARCH_CONNECTION_OPTIONS['verify_certs'] = False
-ELASTICSEARCH_CONNECTION_OPTIONS['ca_certs'] = None
+ELASTICSEARCH_CONNECTION_OPTIONS["verify_certs"] = False
+ELASTICSEARCH_CONNECTION_OPTIONS["ca_certs"] = None
 print(ELASTICSEARCH_CONNECTION_OPTIONS)
 print(ROOT_DIR)
 print(TEST_ROOT)
