@@ -14,11 +14,7 @@ from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcgov_arches_common.views.map import BCTileserverProxyView
 
 
-PREFIX = (
-    settings.BCGOV_PROXY_PREFIX.rstrip("/")
-    if settings.BCGOV_PROXY_PREFIX
-    else ""
-)
+PREFIX = settings.BCGOV_PROXY_PREFIX.rstrip("/") if settings.BCGOV_PROXY_PREFIX else ""
 
 
 urlpatterns = [
