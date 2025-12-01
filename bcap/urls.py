@@ -15,85 +15,85 @@ from bcgov_arches_common.views.map import BCTileserverProxyView
 
 uuid_regex = settings.UUID_REGEX
 
-PREFIX = settings.BCGOV_PROXY_PREFIX.rstrip("/") if settings.BCGOV_PROXY_PREFIX else ""
+PREFIX = settings.BCGOV_PROXY_PREFIX.rstrip("/") + "/" if settings.BCGOV_PROXY_PREFIX else ""
 
 
 urlpatterns = [
     path(
-        f"{PREFIX}/localfiles/<uuid:fileid>",
+        f"{PREFIX}localfiles/<uuid:fileid>",
         FileView.as_view(),
         name="localfiles",
     ),
     path(
-        f"{PREFIX}/bctileserver/<path:path>",
+        f"{PREFIX}bctileserver/<path:path>",
         BCTileserverProxyView.as_view(),
         name="bcap_tile_server",
     ),
     path(
-        f"{PREFIX}/borden_number/<uuid:resourceinstanceid>",
+        f"{PREFIX}borden_number/<uuid:resourceinstanceid>",
         BordenNumber.as_view(),
         name="borden_number",
     ),
     # Used by BCRHP to get & reserve a borden number
     # Make trailing slash optional to catch request from resource that hasn't been persisted
     path(
-        f"{PREFIX}/borden_number/",
+        f"{PREFIX}borden_number/",
         BordenNumber.as_view(),
         name="borden_number_slash",
     ),
     path(
-        f"{PREFIX}/borden_number",
+        f"{PREFIX}borden_number",
         BordenNumber.as_view(),
         name="borden_number_bare",
     ),
     path(
-        f"{PREFIX}/legislative_act/<uuid:act_id>",
+        f"{PREFIX}legislative_act/<uuid:act_id>",
         LegislativeAct.as_view(),
         name="legislative_act",
     ),
     path(
-        f"{PREFIX}/api/hierarchy/<uuid:list_item_id>/",
+        f"{PREFIX}api/hierarchy/<uuid:list_item_id>/",
         ControlledListHierarchy.as_view(),
         name="controlled_list_hierarchy",
     ),
     path(
-        f"{PREFIX}/user_profile",
+        f"{PREFIX}user_profile",
         UserProfile.as_view(),
         name="user_profile",
     ),
     # MVT requires regex due to literal {z}, {x}, {y} placeholders
     re_path(
         rf"^{PREFIX}"
-        + r"/mvt/(?P<nodeid>%s)/(?P<zoom>[0-9]+|\{z\})/(?P<x>[0-9]+|\{x\})/(?P<y>[0-9]+|\{y\}).pbf$"
+        + r"mvt/(?P<nodeid>%s)/(?P<zoom>[0-9]+|\{z\})/(?P<x>[0-9]+|\{x\})/(?P<y>[0-9]+|\{y\}).pbf$"
         % uuid_regex,
         MVT.as_view(),
         name="mvt",
     ),
     path(
-        f"{PREFIX}/report/<uuid:resourceid>",
+        f"{PREFIX}report/<uuid:resourceid>",
         ResourceReportView.as_view(),
         name="resource_report",
     ),
     path(
-        f"{PREFIX}/resource/history",
+        f"{PREFIX}resource/history",
         ResourceEditLogView.as_view(),
         name="edit_history",
     ),
     path(
-        f"{PREFIX}/api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
+        f"{PREFIX}api/arch_site_related_resources/<slug:graph>/<uuid:pk>",
         RelatedSiteVisits.as_view(),
         name="api-related-site-resources",
     ),
     path(
-        f"{PREFIX}/api/arch_site_related_resources/<slug:graph>",
+        f"{PREFIX}api/arch_site_related_resources/<slug:graph>",
         RelatedSiteVisits.as_view(),
         name="api-related-sites-resources",
     ),
-    path(f"{PREFIX}/", include("bcgov_arches_common.urls")),
-    path(f"{PREFIX}/", include("arches_controlled_lists.urls")),
-    path(f"{PREFIX}/", include("arches_component_lab.urls")),
-    path(f"{PREFIX}/", include("arches_querysets.urls")),
-    path(f"{PREFIX}/", include("arches.urls")),
+    path(f"{PREFIX}", include("bcgov_arches_common.urls")),
+    path(f"{PREFIX}", include("arches_controlled_lists.urls")),
+    path(f"{PREFIX}", include("arches_component_lab.urls")),
+    path(f"{PREFIX}", include("arches_querysets.urls")),
+    path(f"{PREFIX}", include("arches.urls")),
 ]
 
 handler400 = "arches.app.views.main.custom_400"
