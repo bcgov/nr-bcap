@@ -15,7 +15,9 @@ from bcgov_arches_common.views.map import BCTileserverProxyView
 
 uuid_regex = settings.UUID_REGEX
 
-PREFIX = settings.BCGOV_PROXY_PREFIX.rstrip("/") + "/" if settings.BCGOV_PROXY_PREFIX else ""
+PREFIX = (
+    settings.BCGOV_PROXY_PREFIX.rstrip("/") + "/" if settings.BCGOV_PROXY_PREFIX else ""
+)
 
 
 urlpatterns = [
