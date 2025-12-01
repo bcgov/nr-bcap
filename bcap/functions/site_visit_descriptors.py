@@ -1,5 +1,5 @@
 from arches.app.models import models
-from bcap.util.bcap_aliases import SiteVisitAliases as aliases
+from bcap.util.aliases.site_visit import SiteVisitAliases as aliases
 from bcgov_arches_common.functions.abstract_primary_descriptors import (
     AbstractPrimaryDescriptors as AbstractDescriptors,
 )

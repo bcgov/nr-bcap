@@ -1,5 +1,7 @@
 from arches.app.models import models
 from bcap.util.bcap_aliases import GraphSlugs, LegislativeActAliases, BCAPSiteAliases
+from bcap.util.aliases.hria_discontinued_data import HriaDiscontinuedDataAliases
+from bcap.util.aliases.site_visit import SiteVisitAliases
 from bcgov_arches_common.util.graph_lookup import GraphLookup
 from arches.settings import LANGUAGE_CODE
 
@@ -77,12 +79,50 @@ class BusinessDataProxy:
         )
 
 
-class HeritageSiteDataProxy(BusinessDataProxy):
+class SiteVisitDataProxy(BusinessDataProxy):
+    def __init__(self):
+        super(SiteVisitDataProxy, self).__init__(
+            GraphSlugs.SITE_VISIT, SiteVisitAliases.get_aliases().values()
+        )
+
+
+class HriaDiscontinuedDataProxy(BusinessDataProxy):
+    def __init__(self):
+        super(HriaDiscontinuedDataProxy, self).__init__(
+            GraphSlugs.HRIA_DISCONTINUED_DATA,
+            HriaDiscontinuedDataAliases.get_aliases().values(),
+        )
+
+
+class ArchaeologicalSiteDataProxy(BusinessDataProxy):
 
     def __init__(self):
-        super(HeritageSiteDataProxy, self).__init__(
-            GraphSlugs.HERITAGE_SITE, BCAPSiteAliases.get_aliases().values()
+        super(ArchaeologicalSiteDataProxy, self).__init__(
+            GraphSlugs.ARCHAEOLOGICAL_SITE, BCAPSiteAliases.get_aliases().values()
         )
+
+    def get_related_resources(
+        self,
+        arch_site_resourceinstanceid,
+        related_resource_graph_slug,
+        related_resource_node_alias=None,
+    ):
+        arch_site_graph = models.Graph.objects.get(
+            slug=GraphSlugs.ARCHAEOLOGICAL_SITE, source_identifier_id__isnull=True
+        )
+        related_resource_graph = models.Graph.objects.get(
+            slug=related_resource_graph_slug, source_identifier_id__isnull=True
+        )
+        site_visits = (
+            models.ResourceXResource.objects.filter(
+                to_resource=arch_site_resourceinstanceid,
+                from_resource_graph_id=related_resource_graph.graphid,
+                to_resource_graph_id=arch_site_graph.graphid,
+            )
+            .select_related("from_resource")
+            .all()
+        )
+        return [visit.from_resource for visit in site_visits]
 
     def is_site_public(self, resourceinstance):
         return (
