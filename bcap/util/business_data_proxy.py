@@ -1,5 +1,6 @@
 from arches.app.models import models
-from bcap.util.bcap_aliases import GraphSlugs, LegislativeActAliases
+from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.aliases.legislative_act import LegislativeActAliases
 from bcap.util.aliases.archaeological_site import (
     ArchaeologicalSiteAliases as BCAPSiteAliases,
 )
