@@ -1,7 +1,7 @@
 from arches.app.functions.primary_descriptors import AbstractPrimaryDescriptorsFunction
 from arches.app.models import models
 from arches.app.datatypes.datatypes import DataTypeFactory
-from bcap.util.bcap_aliases import BCAPSiteAliases as aliases
+from bcap.util.aliases.archaeological_site import ArchaeologicalSiteAliases as aliases
 from bcap.util.controlled_list import get_hierarchy_for_list_item
 
 details = {

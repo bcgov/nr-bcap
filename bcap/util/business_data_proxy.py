@@ -1,5 +1,8 @@
 from arches.app.models import models
-from bcap.util.bcap_aliases import GraphSlugs, LegislativeActAliases, BCAPSiteAliases
+from bcap.util.bcap_aliases import GraphSlugs, LegislativeActAliases
+from bcap.util.aliases.archaeological_site import (
+    ArchaeologicalSiteAliases as BCAPSiteAliases,
+)
 from bcap.util.aliases.hria_discontinued_data import HriaDiscontinuedDataAliases
 from bcap.util.aliases.site_visit import SiteVisitAliases
 from bcgov_arches_common.util.graph_lookup import GraphLookup

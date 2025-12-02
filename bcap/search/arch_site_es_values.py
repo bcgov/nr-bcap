@@ -3,7 +3,8 @@ from arches.app.search.elasticsearch_dsl_builder import (
     Match,
     Nested,
 )
-from bcap.util.bcap_aliases import BCAPSiteAliases as bsa, GraphSlugs
+from bcap.util.bcap_aliases import GraphSlugs
+
 from bcap.util.aliases.site_visit import SiteVisitAliases as sva
 from bcap.util.aliases.hria_discontinued_data import HriaDiscontinuedDataAliases as hdda
 from bcap.util.business_data_proxy import (
