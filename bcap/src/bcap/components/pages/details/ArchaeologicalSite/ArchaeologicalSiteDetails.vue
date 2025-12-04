@@ -49,6 +49,12 @@ const { data: currentData, loading: siteDataLoading } =
 const { data: siteVisitData, loading: siteVisitDataLoading } =
     useRelatedResourceData<SiteVisitSchema>('site_visit', resourceId);
 
+const { data: childSiteData, loading: childSiteDataLoading } =
+    useRelatedResourceData<ArchaeologySiteSchema>(
+        'archaeological_site',
+        resourceId,
+    );
+
 const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
     useRelatedResourceData<HriaDiscontinuedDataSchema>(
         'hria_discontinued_data',
@@ -62,6 +68,10 @@ const typedCurrentData = computed(
 
 const typedSiteVisitData = computed(
     () => (siteVisitData.value || []) as SiteVisitSchema[],
+);
+
+const typedChildSiteData = computed(
+    () => childSiteData.value as ArchaeologySiteSchema[] | undefined,
 );
 
 const typedHriaData = computed(
@@ -89,7 +99,8 @@ const typedHriaData = computed(
                 typedCurrentData?.aliased_data?.identification_and_registration
             "
             :hria-data="typedHriaData"
-            :loading="siteDataLoading"
+            :child-site-data="typedChildSiteData"
+            :loading="siteDataLoading || childSiteDataLoading"
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"

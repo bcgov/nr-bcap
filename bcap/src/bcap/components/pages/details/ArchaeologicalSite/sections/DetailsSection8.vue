@@ -15,6 +15,7 @@ import type {
 } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
+import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
 import {
     applyFileLinks,
     expandDocumentRows,
@@ -84,7 +85,12 @@ const restrictedRemarkColumns = computed<ColumnDefinition[]>(() => {
 
 const contraventionDocumentColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'contravention_document', label: 'Document', isHtml: true },
+        {
+            field: 'contravention_document',
+            label: 'Document',
+            isHtml: true,
+            displayFunction: formatFilenameUrl,
+        },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',
@@ -100,7 +106,12 @@ const contraventionDocumentColumns = computed<ColumnDefinition[]>(() => {
 
 const restrictedDocumentColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'restricted_document', label: 'Document', isHtml: true },
+        {
+            field: 'restricted_document',
+            label: 'Document',
+            isHtml: true,
+            displayFunction: formatFilenameUrl,
+        },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',

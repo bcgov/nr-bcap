@@ -1,4 +1,7 @@
-from bcap.util.bcap_aliases import GraphSlugs, BCAPSiteSubmissionAliases as aliases
+from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.aliases.archaeological_site_submission import (
+    BCAPSiteSubmissionAliases as aliases,
+)
 from bcgov_arches_common.util.bc_primary_descriptors_function import (
     BCPrimaryDescriptorsFunction,
 )
