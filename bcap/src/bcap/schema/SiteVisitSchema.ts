@@ -204,7 +204,7 @@ export interface ReferencesTile extends AliasedTileData {
     aliased_data: {
         reference_type: ReferenceSelectValue;
         reference_title: StringValue;
-        publication_year: StringValue;
+        reference_year: StringValue;
         reference_authors: StringValue;
         reference_remarks: StringValue;
     };
