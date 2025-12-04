@@ -13,6 +13,7 @@ import type {
 } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { expandDocumentRows } from '@/bcgov_arches_common/utils/document.ts';
+import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -57,18 +58,29 @@ const referencesColumns: ColumnDefinition[] = [
 
 const relatedDocumentsColumns = computed<ColumnDefinition[]>(() => {
     return [
+        {
+            field: 'related_site_documents',
+            label: 'Document',
+            isHtml: true,
+            displayFunction: formatFilenameUrl,
+        },
         { field: 'related_document_type', label: 'Document Type' },
         {
             field: 'related_document_description',
             label: 'Document Description',
             isHtml: true,
         },
-        { field: 'related_site_documents', label: 'Document', isHtml: true },
     ];
 });
 
 const imagesColumns = computed<ColumnDefinition[]>(() => {
     return [
+        {
+            field: 'site_images',
+            label: 'Image',
+            isHtml: true,
+            displayFunction: formatFilenameUrl,
+        },
         { field: 'image_type', label: 'Image Type' },
         { field: 'repository', label: 'Repository' },
         { field: 'photographer', label: 'Photographer' },

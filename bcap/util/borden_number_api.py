@@ -4,9 +4,12 @@ from django.contrib.gis.geos import Point
 from arches.app.utils import geo_utils
 import json
 from bcap.util.bcap_aliases import (
-    BCAPSiteAliases as site_aliases,
     GraphSlugs as slugs,
 )
+from bcap.util.aliases.archaeological_site import (
+    ArchaeologicalSiteAliases as site_aliases,
+)
+
 from django.conf import settings
 from bcap.models.borden_number import BordenNumberCounter
 
@@ -30,7 +33,9 @@ class BordenNumberApi:
     def _initialize_models(self):
         if not self.geom_node:
             self._datatype_factory = DataTypeFactory()
-            graph = models.GraphModel.objects.filter(slug=slugs.HERITAGE_SITE).first()
+            graph = models.GraphModel.objects.filter(
+                slug=slugs.ARCHAEOLOGICAL_SITE
+            ).first()
             self.geom_node = models.Node.objects.filter(
                 alias=site_aliases.SITE_BOUNDARY, graph=graph
             ).first()

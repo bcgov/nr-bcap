@@ -13,13 +13,17 @@ import type {
 } from '@/arches_component_lab/types.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
-import type { IdentificationAndRegistrationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type {
+    ArchaeologySiteSchema,
+    IdentificationAndRegistrationTile,
+} from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
 const props = withDefaults(
     defineProps<{
         data: IdentificationAndRegistrationTile | undefined;
         hriaData: HriaDiscontinuedDataSchema | undefined;
+        childSiteData: ArchaeologySiteSchema[] | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -47,6 +51,19 @@ const currentHriaData = computed<HriaDiscontinuedDataSchema | undefined>(
         return props.hriaData as HriaDiscontinuedDataSchema | undefined;
     },
 );
+
+const currentChildSiteData = computed<ArchaeologySiteSchema[] | undefined>(
+    (): ArchaeologySiteSchema[] | undefined => {
+        return props.childSiteData as ArchaeologySiteSchema[] | undefined;
+    },
+);
+
+const childSiteBordenNumbers = computed(() => {
+    return (currentChildSiteData.value ?? [])
+        .map((childSite) => childSite.descriptors?.en?.name)
+        .sort()
+        .join(' ');
+});
 
 const id_fields = [
     'borden_number',
@@ -172,7 +189,10 @@ const hasCurrentAlerts = computed(() => {
 });
 
 const hasRelatedSites = computed(() => {
-    return !isEmpty(currentData.value?.parent_site as AliasedNodeData);
+    return (
+        !isEmpty(currentData.value?.parent_site as AliasedNodeData) ||
+        (currentChildSiteData.value?.length ?? 0) > 0
+    );
 });
 
 const parentSite = computed(() => {
@@ -307,16 +327,20 @@ const parentSite = computed(() => {
             >
                 <template #sectionContent>
                     <div v-if="hasRelatedSites">
-                        <dl>
-                            <dt v-if="!isEmpty(parentSite as AliasedNodeData)">
-                                Parent Site
-                            </dt>
+                        <dl v-if="!isEmpty(parentSite as AliasedNodeData)">
+                            <dt>Parent Site</dt>
                             <dd v-if="!isEmpty(parentSite as AliasedNodeData)">
                                 {{
                                     getDisplayValue(
                                         parentSite as AliasedNodeData,
                                     )
                                 }}
+                            </dd>
+                        </dl>
+                        <dl v-if="currentChildSiteData?.length ?? 0 > 0">
+                            <dt>Child Sites</dt>
+                            <dd>
+                                {{ childSiteBordenNumbers }}
                             </dd>
                         </dl>
                     </div>

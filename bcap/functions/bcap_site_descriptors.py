@@ -1,7 +1,8 @@
 from arches.app.functions.primary_descriptors import AbstractPrimaryDescriptorsFunction
 from arches.app.models import models
 from arches.app.datatypes.datatypes import DataTypeFactory
-from bcap.util.bcap_aliases import BCAPSiteAliases as aliases
+from bcap.util.aliases.archaeological_site import ArchaeologicalSiteAliases as aliases
+from bcap.util.controlled_list import get_hierarchy_for_list_item
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001002",
@@ -59,7 +60,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
         aliases.TYPOLOGY_CLASS,
     ]
     _popup_nodes = [aliases.CITY, "address"]
-    _card_nodes = [aliases.CITY, aliases.REGISTRATION_STATUS]
+    _card_nodes = [aliases.REGISTRATION_STATUS, aliases.NAME, "typologies"]
     _address_nodes = [
         [aliases.STREET_NUMBER, aliases.STREET_NAME],
         [aliases.CITY, "postal_code"],
@@ -120,12 +121,16 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                     return_value += BCAPSiteDescriptors._format_value(
                         "Address", BCAPSiteDescriptors._get_address(resource), config
                     )
-                # elif alias == "construction_date":
-                #     return_value += BCAPSiteDescriptors._format_value(
-                #         "Construction Date",
-                #         BCAPSiteDescriptors._get_construction_date(resource),
-                #         config,
-                #     )
+                elif alias == "typologies":
+                    typology_classes, typology_values = (
+                        BCAPSiteDescriptors._get_typologies(resource.resourceinstanceid)
+                    )
+                    return_value += BCAPSiteDescriptors._format_value(
+                        "Site Class", typology_classes, config
+                    )
+                    return_value += BCAPSiteDescriptors._format_value(
+                        "Descriptor", typology_values, config
+                    )
                 elif alias in display_values:
                     return_value += BCAPSiteDescriptors._format_value(
                         nodes[alias].name, display_values[alias], config
@@ -135,6 +140,42 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
 
         except ValueError as e:
             print(e, "invalid nodegroupid participating in descriptor function.")
+
+    @staticmethod
+    def _get_typologies(resourceinstanceid):
+        datatype = BCAPSiteDescriptors._datatypes[aliases.TYPOLOGY_CLASS]
+        typology_values = []
+        typology_classes = set()
+        tiles = (
+            models.TileModel.objects.filter(
+                nodegroup_id=BCAPSiteDescriptors._nodes[
+                    aliases.TYPOLOGY_CLASS
+                ].nodegroup_id
+            )
+            .filter(resourceinstance_id=resourceinstanceid)
+            .all()
+        )
+
+        for tile in tiles:
+            if tile:
+                ref_value = datatype.to_python(
+                    tile.data[
+                        str(BCAPSiteDescriptors._nodes[aliases.TYPOLOGY_CLASS].nodeid)
+                    ]
+                )
+                typology_values.append(
+                    datatype.get_display_value(
+                        tile, BCAPSiteDescriptors._nodes[aliases.TYPOLOGY_CLASS]
+                    )
+                )
+                typology_class = get_hierarchy_for_list_item(
+                    ref_value[0].labels[0].list_item_id
+                )
+                typology_classes.add(
+                    typology_class[0] if len(typology_class) > 0 else None
+                )
+
+        return list(typology_classes), typology_values
 
     @staticmethod
     def _get_value_from_node(node_alias, resourceinstanceid=None, data_tile=None):
@@ -185,7 +226,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                 value.remove("")
             value = ", ".join(sorted(value))
 
-        if value is None:
+        if not value:
             return ""
         elif config["show_name"]:
             return (

@@ -3,6 +3,8 @@ import type {
     AliasedNodeData,
     AliasedTileData,
 } from '@/arches_component_lab/types.ts';
+import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
+import type { ArchesResourceInstanceData } from '@/bcgov_arches_common/types.ts';
 import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts';
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
@@ -258,6 +260,7 @@ export interface RelatedSiteDocumentsTile extends AliasedTileData {
 
 export interface SiteImagesTile extends AliasedTileData {
     aliased_data: {
+        site_images?: FileListValue;
         image_type?: AliasedNodeData;
         repository?: AliasedNodeData;
         photographer?: AliasedNodeData;
@@ -287,15 +290,17 @@ export interface RelatedDocumentsTile extends AliasedTileData {
     other_maps?: OtherMapsTile[];
 }
 
-export interface ArchaeologySiteSchema extends AliasedTileData {
-    aliased_data: {
-        site_boundary?: SiteBoundaryTile;
-        identification_and_registration?: IdentificationAndRegistrationTile;
-        archaeological_data?: ArchaeologicalDataTile;
-        heritage_site_location?: SiteLocationTile[];
-        site_location?: SiteLocationTile;
-        ancestral_remains?: AncestralRemainsTile;
-        remarks_and_restricted_information?: RemarksAndRestrictedInformationTile;
-        related_documents?: RelatedDocumentsTile;
-    };
+type ArchaeologySiteAliasedData = {
+    site_boundary?: SiteBoundaryTile;
+    identification_and_registration?: IdentificationAndRegistrationTile;
+    archaeological_data?: ArchaeologicalDataTile;
+    heritage_site_location?: SiteLocationTile[];
+    site_location?: SiteLocationTile;
+    ancestral_remains?: AncestralRemainsTile;
+    remarks_and_restricted_information?: RemarksAndRestrictedInformationTile;
+    related_documents?: RelatedDocumentsTile;
+};
+
+export interface ArchaeologySiteSchema extends ArchesResourceInstanceData<ArchaeologySiteAliasedData> {
+    aliased_data: ArchaeologySiteAliasedData;
 }
