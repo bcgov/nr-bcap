@@ -3,6 +3,7 @@ import type {
     AliasedNodeData,
     AliasedTileData,
 } from '@/arches_component_lab/types.ts';
+import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
 import type { ArchesResourceInstanceData } from '@/bcgov_arches_common/types.ts';
 import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts';
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
@@ -259,6 +260,7 @@ export interface RelatedSiteDocumentsTile extends AliasedTileData {
 
 export interface SiteImagesTile extends AliasedTileData {
     aliased_data: {
+        site_images?: FileListValue;
         image_type?: AliasedNodeData;
         repository?: AliasedNodeData;
         photographer?: AliasedNodeData;
