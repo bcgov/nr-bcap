@@ -794,7 +794,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Publication Reference"
+                        "en": "References"
                     },
                     "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
                     "sortorder": 6,
@@ -1007,7 +1007,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Description",
                         "maxLength": null,
                         "placeholder": {
@@ -1030,7 +1032,9 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Act/Section",
                         "placeholder": {
                             "en": ""
@@ -1050,7 +1054,9 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Government",
                         "placeholder": {
                             "en": ""
@@ -1075,7 +1081,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "General Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1103,7 +1111,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Street Number",
                         "maxLength": "50",
                         "placeholder": {
@@ -1131,7 +1141,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Remark",
                         "maxLength": null,
                         "placeholder": {
@@ -1154,7 +1166,9 @@
                     "card_id": "14179b58-64ad-11f0-a4ef-6e5bb479055b",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Made By",
                         "placeholder": {
                             "en": ""
@@ -1221,7 +1235,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Inventory Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1249,7 +1265,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "City",
                         "maxLength": "80",
                         "placeholder": {
@@ -1277,7 +1295,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Street Name",
                         "maxLength": "80",
                         "placeholder": {
@@ -1305,7 +1325,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Postal Code",
                         "maxLength": "7",
                         "placeholder": {
@@ -1333,7 +1355,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Legal Description",
                         "maxLength": "250",
                         "placeholder": {
@@ -1376,7 +1400,9 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Registration Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1401,7 +1427,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "NROS File #",
                         "maxLength": null,
                         "placeholder": {
@@ -1445,7 +1473,9 @@
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Person",
                         "placeholder": {
                             "en": ""
@@ -1470,7 +1500,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Document Description",
                         "maxLength": "250",
                         "placeholder": {
@@ -1511,7 +1543,9 @@
                 {
                     "card_id": "2ad1641e-50ad-11f0-a6c8-0242ac170006",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Document Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1536,7 +1570,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Tenure Type",
                         "maxLength": null,
                         "placeholder": {
@@ -1564,7 +1600,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "PID",
                         "maxLength": null,
                         "placeholder": {
@@ -1605,7 +1643,9 @@
                 {
                     "card_id": "068500bc-0d07-11ed-8804-5254008afee6",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "BCAP Submission Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1649,7 +1689,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "HCA Contraventions",
                         "maxLength": null,
                         "placeholder": {
@@ -1673,7 +1715,11 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "GIS Upper Elevation",
                         "max": "",
                         "min": "",
@@ -1730,7 +1776,9 @@
                 {
                     "card_id": "a9ce5a20-d085-4fa2-9f5b-2b812223b3d1",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "External URL Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1774,7 +1822,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Boundary Description",
                         "maxLength": null,
                         "placeholder": {
@@ -1796,7 +1846,9 @@
                 {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Protection Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1815,7 +1867,9 @@
                 {
                     "card_id": "6cc30640-0d06-11ed-8804-5254008afee6",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Registry Types",
                         "placeholder": {
                             "en": "Select all applicable options"
@@ -1883,7 +1937,9 @@
                     "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Government Name",
                         "placeholder": {
                             "en": ""
@@ -1908,7 +1964,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Legal Description Internal Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -1931,7 +1989,9 @@
                     "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2000,7 +2060,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference Number",
                         "maxLength": "80",
                         "placeholder": {
@@ -2028,7 +2090,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Official Recognition Internal Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -2056,7 +2120,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Address",
                         "maxLength": null,
                         "placeholder": {
@@ -2084,7 +2150,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alert Subject",
                         "maxLength": null,
                         "placeholder": {
@@ -2133,7 +2201,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2175,7 +2245,9 @@
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Entered By",
                         "placeholder": {
                             "en": ""
@@ -2215,7 +2287,9 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Register Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -2261,7 +2335,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Parcel Owner Type",
                         "maxLength": null,
                         "placeholder": {
@@ -2289,7 +2365,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Inventory Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2317,7 +2395,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alert Details",
                         "maxLength": null,
                         "placeholder": {
@@ -2360,7 +2440,9 @@
                 {
                     "card_id": "05baee08-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Source",
                         "placeholder": {
                             "en": "Select an option"
@@ -2385,7 +2467,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Tenure Identifier",
                         "maxLength": null,
                         "placeholder": {
@@ -2408,7 +2492,9 @@
                     "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Legislative Act",
                         "placeholder": {
                             "en": ""
@@ -2433,7 +2519,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Restricted Information",
                         "maxLength": null,
                         "placeholder": {
@@ -2461,7 +2549,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Accuracy Remarks",
                         "maxLength": "500",
                         "placeholder": {
@@ -2541,7 +2631,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Source Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -2569,8 +2661,10 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Reference Remarks",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2580,10 +2674,10 @@
                     },
                     "id": "bb15843e-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Reference Remarks"
+                        "en": "Remarks"
                     },
                     "node_id": "bb15818c-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2591,7 +2685,9 @@
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -2602,7 +2698,7 @@
                         "en": "Reference Type"
                     },
                     "node_id": "bb157f66-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -2612,7 +2708,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "Reference Year",
+                        "label": "Year",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -2620,7 +2716,7 @@
                     },
                     "id": "bb158574-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Reference Year"
+                        "en": "Year"
                     },
                     "node_id": "bb15809c-01d8-11f0-850c-0242ac170007",
                     "sortorder": 2,
@@ -2632,18 +2728,20 @@
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
-                        "label": "Reference Authors",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Authors",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "bb1585ec-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Reference Authors"
+                        "en": "Authors"
                     },
                     "node_id": "bb15829a-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 4,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -2657,8 +2755,10 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Reference Title",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Title",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2668,10 +2768,10 @@
                     },
                     "id": "bb158664-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Reference Title"
+                        "en": "Title"
                     },
                     "node_id": "bb157e3a-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2685,7 +2785,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Location Description",
                         "maxLength": null,
                         "placeholder": {
@@ -2734,7 +2836,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Convictions",
                         "maxLength": null,
                         "placeholder": {
@@ -2762,7 +2866,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Copyright",
                         "maxLength": "80",
                         "placeholder": {
@@ -2784,7 +2890,9 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -2846,7 +2954,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image Description",
                         "maxLength": null,
                         "placeholder": {
@@ -2868,7 +2978,9 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image View",
                         "placeholder": {
                             "en": "Select an option"
@@ -2893,7 +3005,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Photographer",
                         "maxLength": "80",
                         "placeholder": {
@@ -2921,7 +3035,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image Feature(s)",
                         "maxLength": "250",
                         "placeholder": {
@@ -2963,7 +3079,9 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference #",
                         "maxLength": null,
                         "placeholder": {
@@ -2991,7 +3109,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Name Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3019,7 +3139,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Name",
                         "maxLength": "250",
                         "placeholder": {
@@ -3041,7 +3163,9 @@
                 {
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Name Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3061,7 +3185,9 @@
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Assigned or Reported By",
                         "placeholder": {
                             "en": ""
@@ -3102,7 +3228,9 @@
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Parent Site",
                         "placeholder": {
                             "en": ""
@@ -3121,7 +3249,9 @@
                 {
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Typology Class",
                         "placeholder": {
                             "en": "Select an option"
@@ -3140,7 +3270,9 @@
                 {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Latest Edit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3165,7 +3297,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Restricted Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3193,7 +3327,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "General Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3235,7 +3371,9 @@
                 {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Legal Instrument",
                         "placeholder": {
                             "en": "Select an option"
@@ -3255,7 +3393,9 @@
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alert Branch Contact",
                         "placeholder": {
                             "en": ""
@@ -3280,7 +3420,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Elevation Comments",
                         "maxLength": null,
                         "placeholder": {
@@ -3304,7 +3446,11 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "GIS Lower Elevation",
                         "max": "",
                         "min": "",
@@ -3373,7 +3519,9 @@
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Decision Made By",
                         "placeholder": {
                             "en": ""
@@ -3392,7 +3540,9 @@
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Decision",
                         "placeholder": {
                             "en": "Select an option"
@@ -3412,7 +3562,9 @@
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Recommended By",
                         "placeholder": {
                             "en": ""
@@ -3458,7 +3610,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Decision Description",
                         "maxLength": null,
                         "placeholder": {
@@ -8131,7 +8285,10 @@
                         "falseLabel": {
                             "en": "Additional Image"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Primary Image"
                         }
@@ -8162,7 +8319,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8406,7 +8566,10 @@
                         "falseLabel": {
                             "en": "Unrestricted"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Restricted"
                         }

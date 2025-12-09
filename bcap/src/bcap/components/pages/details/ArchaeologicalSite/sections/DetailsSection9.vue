@@ -51,7 +51,7 @@ const relatedDocumentsData = computed(() => {
 const referencesColumns: ColumnDefinition[] = [
     { field: 'reference_type', label: 'Reference Type' },
     { field: 'reference_title', label: 'Title' },
-    { field: 'publication_year', label: 'Year' },
+    { field: 'reference_year', label: 'Year' },
     { field: 'reference_authors', label: 'Author(s)' },
     { field: 'reference_remarks', label: 'Remarks' },
 ];

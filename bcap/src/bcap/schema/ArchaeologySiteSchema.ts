@@ -244,7 +244,7 @@ export interface PublicationReferenceTile extends AliasedTileData {
     aliased_data: {
         reference_type?: AliasedNodeData;
         reference_title?: AliasedNodeData;
-        publication_year?: AliasedNodeData;
+        reference_year?: AliasedNodeData;
         reference_authors?: AliasedNodeData;
         reference_remarks?: AliasedNodeData;
     };
