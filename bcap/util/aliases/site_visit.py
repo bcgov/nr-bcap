@@ -11,6 +11,7 @@ class SiteVisitAliases(AbstractAliases):
     ARCHAEOLOGICAL_CULTURE = "archaeological_culture"
     ARCHAEOLOGICAL_FEATURE = "archaeological_feature"
     ARCHAEOLOGICAL_SITE = "archaeological_site"
+    ARCHAEOLOGY_BRANCH_RECOMMENDATION = "archaeology_branch_recommendation"
     ASSIGNED_OR_REPORTED_BY = "assigned_or_reported_by"
     ASSIGNED_OR_REPORTED_DATE = "assigned_or_reported_date"
     ASSOCIATED_PERMIT = "associated_permit"
