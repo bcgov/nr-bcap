@@ -531,62 +531,6 @@
                 },
                 {
                     "active": true,
-                    "cardid": "6cc302c6-0d06-11ed-8804-5254008afee6",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": "",
-                    "description": "",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "helpenabled": true,
-                    "helptext": {
-                        "en": "<p>Define the designation or protection status.</p>\n\n<p><u>Designation or Protection Start Date</u></p>\n\n<p>Enter the date the site was formally recognized by Bylaw, Council Resolution, Order in Council, etc.</p>\n\n<p><u>Designation or Protection End Date</u></p>\n\n<p>Enter the date the site was no longer formally recognized or protected and add a note to explain the expiry. The end date is the date that the decision was enacted through any of the following:</p>\n\n<ul>\n\t<li>De-designation or revocation</li>\n\t<li>Cancellation of a Heritage Tax Exemption</li>\n\t<li>Cancellation of a Heritage Revitalization Agreement</li>\n\t<li>De-listing from a Community Heritage Register</li>\n\t<li>Exclusion of Heritage Property from a Heritage Conservation Area</li>\n\t<li>Etc.</li>\n</ul>\n\n<p><u>Legislative Act</u></p>\n\n<p>Select the relevant legislation that the site is formally recognized under. Either scroll through the options or start typing:</p>\n\n<ul>\n\t<li>the authority (e.g. Provincial)</li>\n\t<li>name of the act (e.g. Heritage Conservation Act)</li>\n\t<li>the recognition type (e.g. Designation)</li>\n</ul>\n\n<p><u>Government Name</u></p>\n\n<p>Select the appropriate government authority that administered the recognition.</p>\n\n<p><u>Reference Number</u></p>\n\n<p>Enter how the decision was enacted and the corresponding reference number if applicable.</p>\n\n<p>Examples: Bylaw 12-983;&nbsp;OIC 1946; Council Resolution (for Municipalities); Board Resolution (for Regional Districts)</p>\n\n<p><u>Official Recognition Internal Notes</u></p>\n\n<p>Add remarks related to the official recognition and specifically to explain an expiry date.</p>\n\n<p>Example: Removed from Local Government Community Heritage Register 18 October 2012 due to fire that destroyed the building.</p>\nAdd multiple entries as applicable."
-                    },
-                    "helptitle": {
-                        "en": "Official Recognition Details Help"
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Official Recognition Details"
-                    },
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
-                    "cardid": "6cc30640-0d06-11ed-8804-5254008afee6",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": "",
-                    "description": {
-                        "en": "Captures information about special status, protection, or privileges afforded under law.\n\nApplies to: Heritage Resource, Heritage Resource Model"
-                    },
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "helpenabled": true,
-                    "helptext": {
-                        "en": "<p>Enter the official recognition status.</p>\n\n<p>&nbsp;</p>\n\n<p><u>Registration Status</u></p>\n\n<p>Select the appropriation status information based on the following definitions.</p>\n\n<p>Registered &ndash; the heritage site is officially recognized by a legislative enactment from the province, municipality, or regional district.</p>\n\n<p>Federal Jurisdiction &ndash; The authority for the site is the federal government and is included for information purposes. It is not subject to provincial or local government legislation.</p>\n\n<p>Recorded/Unprotected &ndash; a heritage site that has never been recognized or protected but is recorded for information purposes only.</p>\n\n<p>Legacy &ndash; Use when the official recognition of the site was removed due to de-designation, destruction, removal from a Community Heritage Register, or otherwise no longer has reason to be on the official Register. Register type should be Non-Designated.</p>\n\n<p>Cancelled Record &ndash; The record is cancelled when it&rsquo;s determined to be obsolete, such as when the record is erroneous or when information has been moved to another record but the Borden number is retained for any associated files. This status is preferred over deleting records if it has been in existence for a while.</p>\n\n<p>&nbsp;</p>\n\n<p><u>Officially Recognized</u></p>\n\n<p>Yes &ndash; The heritage site is officially recognized and eligible for inclusion on the BC Archaeology Portal because its heritage value has been recognized or protected through a legislative enactment by the Province, municipality, or regional district. This selection also includes federally designated national heritage sites in BC for information purposes.</p>\n\n<p>No &ndash; The heritage site is currently not officially recognized or protected. This includes de-designated heritage sites, revocations, and destroyed heritage sites. This selection also includes reported, non-designated heritage sites and structures, including sites in federal jurisdiction for information purposes.</p>\n\n<p>&nbsp;</p>\n\n<p><u>Registry Types</u></p>\n\n<p>Select the appropriate Registry type(s):</p>\n\n<p>Agreement with First Nations - Heritage sites and objects protected by Sec 4, HCA</p>\n\n<p>Archaeological Site - Sites automatically protected under Sec 12.1, HCA including: burial sites; Indigenous rock paintings; Indigenous rock carvings; Pre-1846 sites; heritage wrecks over 2 years old; and other archaeological sites as defined by regulation</p>\n\n<p>CMT - Culturally Modified Trees</p>\n\n<p>Heritage Wreck - Plane wrecks or shipwrecks over two years old as defined by Sec 12.1, HCA</p>\n\n<p>Non-Designated Historic Site - Heritage sites recorded but not protected or recognized by any legislation</p>\n\n<p>Palaeontological Site &ndash; Fossil sites</p>\n\n<p>Prescribed Heritage Property - Heritage sites prescribed by regulation under Sec 3(1)(f), HCA.&nbsp;This includes Sec 18 sites.</p>\n\n<p>Provincial Heritage Object - Objects protected under Sec 9, HCA</p>\n\n<p>Provincial Heritage Site - Sites protected under Sec 9, HCA</p>\n\n<p>Provincial Heritage Property - Heritage sites protected under Sec 11.1, HCA</p>\n\n<p>Traditional Use Site &ndash; Non-archaeological, non-protected Indigenous sites such as berry picking areas, spiritual areas, etc.</p>\n\n<p>Trail - Heritage trails</p>\nSelect multiple registry types as applicable."
-                    },
-                    "helptitle": {
-                        "en": "Official Recognition Information Help"
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Official Recognition Information"
-                    },
-                    "nodegroup_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "sortorder": 7,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
                     "cardid": "723de196-a9df-4e40-9b69-33a9cdabf5f0",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -1865,27 +1809,6 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
-                    "card_id": "6cc30640-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Registry Types",
-                        "placeholder": {
-                            "en": "Select all applicable options"
-                        }
-                    },
-                    "id": "5bbae878-76b4-449e-8f00-a6afb8ca61b1",
-                    "label": {
-                        "en": "Registry Types"
-                    },
-                    "node_id": "8e61e1bc-2495-11ed-8f55-5254008afee6",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
                     "card_id": "f6318b41-d259-48e6-808e-9cf2355fe0e8",
                     "config": {
                         "basemap": "British Columbia Roads",
@@ -1932,28 +1855,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000007"
-                },
-                {
-                    "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Government Name",
-                        "placeholder": {
-                            "en": ""
-                        }
-                    },
-                    "id": "62c656f0-1394-4300-babb-bf4e0d0ea174",
-                    "label": {
-                        "en": "Government Name"
-                    },
-                    "node_id": "50c26f28-3b93-11ee-ac05-080027b7463b",
-                    "sortorder": 3,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
@@ -2008,108 +1909,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
-                },
-                {
-                    "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD",
-                        "defaultValue": "",
-                        "label": "Designation or Protection Start Date",
-                        "maxDate": false,
-                        "minDate": false,
-                        "placeholder": "Enter date",
-                        "viewMode": "days"
-                    },
-                    "id": "6cc3114e-0d06-11ed-8804-5254008afee6",
-                    "label": {
-                        "en": "Designation or Protection Start Date"
-                    },
-                    "node_id": "6cc30f6e-0d06-11ed-8804-5254008afee6",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000004"
-                },
-                {
-                    "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD",
-                        "defaultValue": "",
-                        "label": "Designation or Protection End Date",
-                        "maxDate": false,
-                        "minDate": false,
-                        "placeholder": "Enter date",
-                        "viewMode": "days"
-                    },
-                    "id": "6cc3120c-0d06-11ed-8804-5254008afee6",
-                    "label": {
-                        "en": "Designation or Protection End Date"
-                    },
-                    "node_id": "6cc30d5c-0d06-11ed-8804-5254008afee6",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000004"
-                },
-                {
-                    "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Reference Number",
-                        "maxLength": "80",
-                        "placeholder": {
-                            "en": "E.g. Bylaw 123"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "6cc31536-0d06-11ed-8804-5254008afee6",
-                    "label": {
-                        "en": "Reference Number"
-                    },
-                    "node_id": "6cc30b36-0d06-11ed-8804-5254008afee6",
-                    "sortorder": 4,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
-                    "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Official Recognition Internal Notes",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": ""
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "6cc315d6-0d06-11ed-8804-5254008afee6",
-                    "label": {
-                        "en": "Official Recognition Internal Notes"
-                    },
-                    "node_id": "6cc30c44-0d06-11ed-8804-5254008afee6",
-                    "sortorder": 5,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
@@ -2487,28 +2286,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
-                    "card_id": "6cc302c6-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Legislative Act",
-                        "placeholder": {
-                            "en": ""
-                        }
-                    },
-                    "id": "a640ecb8-9d91-40aa-b8a0-5837e14d2796",
-                    "label": {
-                        "en": "Legislative Act"
-                    },
-                    "node_id": "1f28339e-3b93-11ee-b4c5-080027b7463b",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
@@ -3479,22 +3256,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000008"
                 },
                 {
-                    "card_id": "6cc30640-0d06-11ed-8804-5254008afee6",
-                    "config": {
-                        "defaultValue": true,
-                        "label": "Officially Recognized"
-                    },
-                    "id": "f24f17cd-c9fb-4954-a374-da7a406d1c42",
-                    "label": {
-                        "en": "Officially Recognized"
-                    },
-                    "node_id": "d2d91b6a-dfb3-11ed-b47a-5254004d77d3",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000006"
-                },
-                {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
@@ -3864,16 +3625,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "19d560d2-0d05-11ed-a4d8-5254008afee6",
-                    "edgeid": "15fa1069-ea96-4e08-b78c-f2c70d3fd10d",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "rangenode_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "b18223c2-13ef-11f0-8695-0242ac170007",
                     "edgeid": "1825c79d-11da-45c3-821c-cae8bab37068",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -3940,16 +3691,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "rangenode_id": "1b622ab6-0d0f-11ed-98c2-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "1eb19fe8-4fc5-4bcd-9199-a23b547422df",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P16_used_specific_object",
-                    "rangenode_id": "1f28339e-3b93-11ee-b4c5-080027b7463b",
                     "source_identifier_id": null
                 },
                 {
@@ -4184,66 +3925,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "6cc30e6a-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "6cc32120-0d06-11ed-8804-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P78_is_identified_by",
-                    "rangenode_id": "6cc30d5c-0d06-11ed-8804-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30e6a-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "6cc3226a-0d06-11ed-8804-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P78_is_identified_by",
-                    "rangenode_id": "6cc30f6e-0d06-11ed-8804-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "6cc3236e-0d06-11ed-8804-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P94i_was_created_by",
-                    "rangenode_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "6cc32472-0d06-11ed-8804-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "6cc30c44-0d06-11ed-8804-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "6cc32756-0d06-11ed-8804-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span",
-                    "rangenode_id": "6cc30e6a-0d06-11ed-8804-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "6cc32940-0d06-11ed-8804-5254008afee6",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "6cc30b36-0d06-11ed-8804-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "19d560d2-0d05-11ed-a4d8-5254008afee6",
                     "edgeid": "6d4481b3-b2f1-4753-bcce-b66e25b3d2a8",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4360,16 +4041,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
                     "rangenode_id": "8511d07c-197a-11f0-8f07-0242ac170008",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "9200e7c4-061a-4d95-8d9b-97b47f3a1388",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "8e61e1bc-2495-11ed-8f55-5254008afee6",
                     "source_identifier_id": null
                 },
                 {
@@ -4734,16 +4405,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "cb0380eb-1a48-493a-8d5c-ac50f2bbebbb",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
-                    "rangenode_id": "50c26f28-3b93-11ee-ac05-080027b7463b",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "347e24f8-01d8-11f0-850c-0242ac170007",
                     "edgeid": "ccdbee22-c3c6-4322-992d-4227718fef08",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4880,16 +4541,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "a1032cd8-1a66-11ed-a3cf-5254008afee6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "edgeid": "eca8ff7e-78de-4565-92c0-971e6dede1fb",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "rangenode_id": "d2d91b6a-dfb3-11ed-b47a-5254004d77d3",
                     "source_identifier_id": null
                 },
                 {
@@ -5201,20 +4852,6 @@
                     "legacygroupid": null,
                     "nodegroupid": "4598a202-197c-11f0-b2a5-0242ac170008",
                     "parentnodegroup_id": "40a52cd0-197b-11f0-8d46-0242ac170008"
-                },
-                {
-                    "cardinality": "n",
-                    "grouping_node_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "legacygroupid": null,
-                    "nodegroupid": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "parentnodegroup_id": "6cc30474-0d06-11ed-8804-5254008afee6"
-                },
-                {
-                    "cardinality": "1",
-                    "grouping_node_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "legacygroupid": null,
-                    "nodegroupid": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "parentnodegroup_id": null
                 },
                 {
                     "cardinality": "1",
@@ -6091,57 +5728,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "legislative_act2",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "52dd40f2-1dee-45d2-b72c-234c8cbb5418",
-                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Legislative Act",
-                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
-                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "useOntologyRelationship": false
-                            }
-                        ],
-                        "searchDsl": {
-                            "bool": {
-                                "filter": [
-                                    {
-                                        "terms": {
-                                            "graph_id": [
-                                                "52dd40f2-1dee-45d2-b72c-234c8cbb5418"
-                                            ]
-                                        }
-                                    }
-                                ],
-                                "must": [],
-                                "must_not": [],
-                                "should": []
-                            }
-                        },
-                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=55&resource-type-filter=%5B%7B%22graphid%22%3A%2252dd40f2-1dee-45d2-b72c-234c8cbb5418%22%2C%22name%22%3A%22Legislative+Act%22%2C%22inverted%22%3Afalse%7D%5D&sort-results=asc"
-                    },
-                    "datatype": "resource-instance",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "LEG_ACT",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Legislative Act2",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "1f28339e-3b93-11ee-b4c5-080027b7463b",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P16_used_specific_object",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "external_url_type",
                     "config": {
                         "controlledList": "4236434c-d8ec-5173-a986-945ddeccc545",
@@ -6726,42 +6312,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "responsible_government2",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "aacf8bb6-3f6e-46d9-a551-b0749d7efffc",
-                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Government",
-                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
-                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "useOntologyRelationship": false
-                            }
-                        ],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "RCGNTN_GVT",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Responsible Government2",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "50c26f28-3b93-11ee-ac05-080027b7463b",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "gis_upper_elevation",
                     "config": {
                         "en": ""
@@ -6904,175 +6454,6 @@
                     "nodeid": "63e48668-58f0-49fa-8767-abf412f54921",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "protection_event",
-                    "config": {},
-                    "datatype": "semantic",
-                    "description": "",
-                    "exportable": false,
-                    "fieldname": "",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Protection Event",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E65_Creation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P94i_was_created_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "bc_right",
-                    "config": {},
-                    "datatype": "semantic",
-                    "description": "Captures information about special status, protection, or privileges afforded under law.\n\nApplies to: Heritage Resource, Heritage Resource Model",
-                    "exportable": false,
-                    "fieldname": "",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "BC Right",
-                    "nodegroup_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E30_Right",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 6,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "reference_number2",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": "What is this?",
-                    "exportable": true,
-                    "fieldname": "RFRNC_NMBR",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Reference Number2",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "6cc30b36-0d06-11ed-8804-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "protection_notes",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": "desig_note",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Protection Notes",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "6cc30c44-0d06-11ed-8804-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "designation_or_protection_end_date",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD"
-                    },
-                    "datatype": "date",
-                    "description": "Represents a single node in a graph",
-                    "exportable": true,
-                    "fieldname": "RCGNTN_END",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Designation or Protection End Date",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "6cc30d5c-0d06-11ed-8804-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E49_Time_Appellation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P78_is_identified_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "timespan_of_designation_or_protection",
-                    "config": {},
-                    "datatype": "semantic",
-                    "description": "Represents a single node in a graph",
-                    "exportable": false,
-                    "fieldname": "",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Timespan of Designation or Protection",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "6cc30e6a-0d06-11ed-8804-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "designation_or_protection_start_date",
-                    "config": {
-                        "dateFormat": "YYYY-MM-DD"
-                    },
-                    "datatype": "date",
-                    "description": "Represents a single node in a graph",
-                    "exportable": true,
-                    "fieldname": "RCGNTN_ST",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Designation or Protection Start Date",
-                    "nodegroup_id": "6cc30064-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "6cc30f6e-0d06-11ed-8804-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E49_Time_Appellation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P78_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -7360,32 +6741,6 @@
                     "nodeid": "85dcf57e-1978-11f0-8713-0242ac170008",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E4_Period",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P4i_is_time-span_of",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "registry_types2",
-                    "config": {
-                        "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "multiValue": true
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "RGSTRY_TYP",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Registry Types2",
-                    "nodegroup_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "8e61e1bc-2495-11ed-8f55-5254008afee6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E17_Type_Assignment",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -8314,40 +7669,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "officially_recognized_site",
-                    "config": {
-                        "falseLabel": {
-                            "en": "No"
-                        },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
-                        "trueLabel": {
-                            "en": "Yes"
-                        }
-                    },
-                    "datatype": "boolean",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "OFFCLLY_RD",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Officially Recognized Site",
-                    "nodegroup_id": "6cc30474-0d06-11ed-8804-5254008afee6",
-                    "nodeid": "d2d91b6a-dfb3-11ed-b47a-5254004d77d3",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "site_names",
                     "config": {
                         "en": ""
@@ -8882,9 +8203,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "f3ff1545-b4ac-4903-9c7b-df65882ff34f",
-                "published_time": "2025-11-26T08:12:12.726"
+                "notes": "Remove duplicate BC Right section of the model",
+                "publicationid": "8417194f-613c-444a-904b-324509a8f39b",
+                "published_time": "2025-12-10T01:03:12.564"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -8983,9 +8304,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "599549e8b 2025-10-25 14:19:16 -0700",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "a67a23c71b 2025-08-14 16:46:56 -0700",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.12.54-linuxkit"
     }
 }
