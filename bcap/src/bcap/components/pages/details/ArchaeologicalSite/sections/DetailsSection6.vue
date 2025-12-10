@@ -113,8 +113,8 @@ const hriaChronologyColumns = [
     { field: 'rcd_adjusted_var', label: 'RCD Adjusted Var (+/-)' },
     { field: 'rcd_lab_code', label: 'RCD Lab Code' },
     { field: 'rcd_lab_number', label: 'RCD Lab Number' },
-    { field: 'modified_on', label: 'Modified On' },
-    { field: 'modified_by', label: 'Modified By' },
+    { field: 'chronology_modified_on', label: 'Modified On' },
+    { field: 'chronology_modified_by', label: 'Modified By' },
 ];
 
 const disturbColumns = [

@@ -2247,7 +2247,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "modified_by",
+                    "alias": "chronology_modified_by",
                     "config": {
                         "en": ""
                     },
@@ -2262,7 +2262,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Modified By",
+                    "name": "Chronology Modified By",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "04caad14-52b7-11f0-9897-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -2429,7 +2429,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "modified_on",
+                    "alias": "chronology_modified_on",
                     "config": {
                         "dateFormat": "YYYY-MM-DD"
                     },
@@ -2444,7 +2444,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Modified On",
+                    "name": "Chronology Modified On",
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "nodeid": "1fe5cf0c-52b7-11f0-9897-2a3f36199137",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E61_Time_Primitive",
@@ -3242,7 +3242,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "entered_by",
+                    "alias": "site_boundary_entered_by",
                     "config": {},
                     "datatype": "non-localized-string",
                     "description": null,
@@ -3255,7 +3255,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Entered By",
+                    "name": "Site Boundary Entered By",
                     "nodegroup_id": "143fc2f7-da1b-4373-bc8c-debfa5369a8c",
                     "nodeid": "8c558214-a1c0-42eb-810d-461e8d5399ef",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -3438,7 +3438,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "entered_on",
+                    "alias": "site_bounary_entered_on",
                     "config": {
                         "dateFormat": "YYYY-MM-DD"
                     },
@@ -3453,7 +3453,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Entered On",
+                    "name": "Site Bounary Entered On",
                     "nodegroup_id": "143fc2f7-da1b-4373-bc8c-debfa5369a8c",
                     "nodeid": "bfb4f304-79f9-408f-a6bf-5859431c8c70",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E50_Date",
@@ -3765,9 +3765,9 @@
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                 "most_recent_edit_id": null,
-                "notes": "Other Maps",
-                "publicationid": "2f7d6ef8-528e-4815-870e-bacd10a36fa2",
-                "published_time": "2025-11-05T22:34:18.451"
+                "notes": "Clarify audit field names",
+                "publicationid": "87ca8afb-2491-4c75-997b-4357046dc043",
+                "published_time": "2025-12-10T01:16:48.636"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -3868,9 +3868,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "599549e8b 2025-10-25 14:19:16 -0700",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "a67a23c71b 2025-08-14 16:46:56 -0700",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.12.54-linuxkit"
     }
 }
