@@ -3171,7 +3171,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "new_node",
+                    "alias": "unprotected_areas",
                     "config": {
                         "addToMap": false,
                         "advancedStyle": "",
@@ -3765,9 +3765,9 @@
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                 "most_recent_edit_id": null,
-                "notes": "Clarify audit field names",
-                "publicationid": "87ca8afb-2491-4c75-997b-4357046dc043",
-                "published_time": "2025-12-10T01:16:48.636"
+                "notes": null,
+                "publicationid": "39b76a12-f7df-4b4b-9b05-27fa2001f552",
+                "published_time": "2025-12-10T01:42:59.385"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
