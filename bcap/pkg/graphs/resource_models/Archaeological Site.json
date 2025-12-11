@@ -4682,16 +4682,6 @@
                     "function_id": "60000000-0000-0000-0000-000000001002",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "id": "d735b1a4-4c55-49c9-8db2-7b40c71559c5"
-                },
-                {
-                    "config": {
-                        "class_name": "RestrictedSiteAccess",
-                        "module": "bcap.functions.restricted_site_access",
-                        "triggering_nodegroups": []
-                    },
-                    "function_id": "60000000-0000-0000-0000-000000002003",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "id": "fdffa7b1-d422-4495-9e2e-3e51843e4f0e"
                 }
             ],
             "graphid": "cef9c510-e3e6-4057-ac08-89ad926180b4",

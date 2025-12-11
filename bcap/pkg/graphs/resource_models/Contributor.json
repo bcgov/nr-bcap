@@ -604,7 +604,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=0&exportsystemvalues=false&csrfmiddlewaretoken=M34mB5bTfWytwnkRIoRq9IKgeLnot4lm&advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"891278e4-5d67-571a-a0c4-414896d36d1c\"}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"\"}}]"
+                        "searchString": "/bcap/search?advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A[{\"labels\"%3A[{\"id\"%3A\"891278e4-5d67-571a-a0c4-414896d36d1c\"%2C\"language_id\"%3A\"en\"%2C\"list_item_id\"%3A\"fd2053d3-c010-519a-97e5-52f3c7b508e2\"%2C\"value\"%3A\"Organization\"%2C\"valuetype_id\"%3A\"prefLabel\"}]%2C\"uri\"%3A\"%2Fbcap%2Fplugins%2Fcontrolled-list-manager%2Fitem%2Ffd2053d3-c010-519a-97e5-52f3c7b508e2\"}]}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"f\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -888,15 +888,15 @@
                 {
                     "alias": "contributor_type",
                     "config": {
+                        "controlledList": "6a2bcd73-f98f-5d3f-bec5-e2c9566d2d81",
                         "graphs": [],
                         "i18n_config": {
                             "fn": "arches.app.datatypes.datatypes.DomainDataType"
                         },
+                        "multiValue": false,
                         "options": [],
                         "searchDsl": "",
-                        "searchString": "",
-                        "controlledList": "6a2bcd73-f98f-5d3f-bec5-e2c9566d2d81",
-                        "multiValue": false
+                        "searchString": ""
                     },
                     "datatype": "reference",
                     "description": "Either Person or Company",
@@ -999,9 +999,9 @@
             "publication": {
                 "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "2f403eb3-16ed-490b-8799-93b512d5518b",
-                "published_time": "2025-07-23T19:21:49.617"
+                "notes": "Fix organization picklist",
+                "publicationid": "df2f072c-83d7-485d-9e41-87efbebd1858",
+                "published_time": "2025-12-11T00:04:04.081"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1102,9 +1102,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "a67a23c71b 2025-08-14 16:46:56 -0700",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.12.54-linuxkit"
     }
 }

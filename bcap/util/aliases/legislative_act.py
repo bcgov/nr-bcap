@@ -2,9 +2,8 @@ from bcap.util.bcap_aliases import AbstractAliases
 
 
 class LegislativeActAliases(AbstractAliases):
-    ACT_SECTION = "act_section"
-    ACT_STATUS = "act_status"
     ACTIVE = "active"
+    ACT_SECTION = "act_section"
     AUTHORITY = "authority"
     CITATION = "citation"
     DOCUMENT = "document"
