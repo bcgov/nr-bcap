@@ -48,7 +48,9 @@ class CustomSearchValue(EsMappingModifier):
                 resourceinstance, GraphSlugs.HRIA_DISCONTINUED_DATA
             )
 
-            if CustomSearchValue.hria_discontinued_proxy.get_value_from_node(
+            if len(
+                hria_discontinued
+            ) > 0 and CustomSearchValue.hria_discontinued_proxy.get_value_from_node(
                 hdda.UNREVIEWED_ADIF_RECORD,
                 hria_discontinued[0].resourceinstanceid,
                 use_boolean_label=False,
