@@ -71,12 +71,12 @@ const restrictedRemarkColumns = computed<ColumnDefinition[]>(() => {
     return [
         { field: 'restricted_remark', label: 'Restricted Remarks' },
         {
-            field: 'restricted_entry_date',
+            field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',
             visible: props.showAuditFields,
         },
         {
-            field: 'restricted_person',
+            field: EDIT_LOG_FIELDS.ENTERED_BY,
             label: 'Entered By',
             visible: props.showAuditFields,
         },
@@ -168,7 +168,7 @@ const hcaContraventionsData = computed(
     () => currentData.value?.hca_contravention || [],
 );
 const convictionsData = computed(() => currentData.value?.conviction || []);
-const restrictedInfoData = computed(
+const restrictedInfoDataRaw = computed(
     () => currentData.value?.restricted_information || [],
 );
 const keywordsData = computed(() => {
@@ -209,6 +209,11 @@ const { processedData: hcaContraventionsTableData } = useTileEditLog(
 
 const { processedData: convictionsTableData } = useTileEditLog(
     convictionsData,
+    toRef(props, 'editLogData'),
+);
+
+const { processedData: restrictedInfoData } = useTileEditLog(
+    restrictedInfoDataRaw,
     toRef(props, 'editLogData'),
 );
 
@@ -410,7 +415,7 @@ const hasHcaContraventionsSection = computed(
                     </DetailsSection>
 
                     <DetailsSection
-                        section-title="HCA Convictions"
+                        section-title="Convictions"
                         variant="subsection"
                         :visible="true"
                         :class="{ 'empty-section': !hasConvictions }"
@@ -420,11 +425,10 @@ const hasHcaContraventionsSection = computed(
                                 v-if="hasConvictions"
                                 :table-data="convictionsTableData"
                                 :column-definitions="convictionColumns"
-                                :initial-sort-field-index="0"
                             />
                             <EmptyState
                                 v-else
-                                message="No HCA convictions available."
+                                message="No convictions available."
                             />
                         </template>
                     </DetailsSection>

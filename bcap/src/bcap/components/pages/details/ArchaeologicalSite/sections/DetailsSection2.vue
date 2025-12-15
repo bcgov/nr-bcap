@@ -15,9 +15,11 @@ import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTabl
 import 'primeicons/primeicons.css';
 import type {
     ArchaeologySiteSchema,
+    CurrentAlertTile,
     IdentificationAndRegistrationTile,
 } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -123,6 +125,22 @@ const siteNamesColumns = computed(() => [
     },
 ]);
 
+const alertColumns = computed<ColumnDefinition[]>(() => [
+    { field: 'alert_subject', label: 'Subject' },
+    { field: 'alert_details', label: 'Details', isHtml: true },
+    { field: 'alert_branch_contact', label: 'Branch Contact' },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
+
 type IdFieldKey = (typeof id_fields)[number];
 
 const labelize = (key: string) =>
@@ -148,6 +166,18 @@ const {
 const authorityData = computed(() => currentData.value?.authority || []);
 const siteNamesData = computed(() => currentData.value?.site_names || []);
 
+const siteAlertDataRaw = computed((): CurrentAlertTile[] => {
+    const alert = currentData.value?.site_alert;
+    if (!alert) return [];
+
+    const alertArray = Array.isArray(alert) ? alert : [alert];
+
+    return alertArray.filter(
+        (item): item is CurrentAlertTile =>
+            typeof item === 'object' && item !== null && 'tileid' in item,
+    );
+});
+
 const { processedData: authorityTableData } = useTileEditLog(
     authorityData,
     toRef(props, 'editLogData'),
@@ -155,6 +185,11 @@ const { processedData: authorityTableData } = useTileEditLog(
 
 const { processedData: siteNamesTableData } = useTileEditLog(
     siteNamesData,
+    toRef(props, 'editLogData'),
+);
+
+const { processedData: alertTableData } = useTileEditLog(
+    siteAlertDataRaw,
     toRef(props, 'editLogData'),
 );
 
@@ -185,7 +220,7 @@ const hasSiteNames = computed(() => {
 });
 
 const hasCurrentAlerts = computed(() => {
-    return !isEmpty(currentData.value?.site_alert as AliasedNodeData);
+    return alertTableData.value && alertTableData.value.length > 0;
 });
 
 const hasRelatedSites = computed(() => {
@@ -300,18 +335,11 @@ const parentSite = computed(() => {
                 :class="{ 'empty-section': !hasCurrentAlerts }"
             >
                 <template #sectionContent>
-                    <div v-if="hasCurrentAlerts">
-                        <dl>
-                            <dt>Site Alert</dt>
-                            <dd>
-                                {{
-                                    getDisplayValue(
-                                        currentData?.site_alert as AliasedNodeData,
-                                    )
-                                }}
-                            </dd>
-                        </dl>
-                    </div>
+                    <StandardDataTable
+                        v-if="hasCurrentAlerts"
+                        :table-data="alertTableData"
+                        :column-definitions="alertColumns"
+                    />
                     <EmptyState
                         v-else
                         message="No current alerts available."

@@ -2,13 +2,15 @@
 import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { getDisplayValue, isAliasedNodeData, isEmpty } from '@/bcap/util.ts';
-import { useSingleTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
+import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
+import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
+import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
+import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 import 'primeicons/primeicons.css';
 import type { AncestralRemainsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -18,6 +20,7 @@ const props = withDefaults(
         languageCode?: string;
         forceCollapsed?: boolean;
         editLogData?: EditLogData;
+        showAuditFields?: boolean;
     }>(),
     {
         siteVisitData: () => [],
@@ -25,36 +28,53 @@ const props = withDefaults(
         loading: false,
         forceCollapsed: undefined,
         editLogData: () => ({}),
+        showAuditFields: false,
     },
 );
 
-const restrictedRemainsSource = computed(() => {
-    return props.data?.aliased_data?.restricted_ancestral_remains_remark as
-        | AliasedTileData
-        | undefined;
+const restrictedRemainsDataRaw = computed((): AliasedTileData[] => {
+    const remark =
+        props.data?.aliased_data?.restricted_ancestral_remains_remark;
+    if (!remark) return [];
+
+    const remarkArray = Array.isArray(remark) ? remark : [remark];
+
+    return remarkArray.filter(
+        (item): item is AliasedTileData =>
+            typeof item === 'object' && item !== null && 'tileid' in item,
+    );
 });
 
-const { processedData: restrictedRemainsData } = useSingleTileEditLog(
-    restrictedRemainsSource,
+const { processedData: restrictedRemainsTableData } = useTileEditLog(
+    restrictedRemainsDataRaw,
     toRef(props, 'editLogData'),
 );
 
 const hasRestrictedRemainsInfo = computed(() => {
-    return restrictedRemainsData.value?.aliased_data;
+    return (
+        restrictedRemainsTableData.value &&
+        restrictedRemainsTableData.value.length > 0
+    );
 });
 
-const restrictedRemarksText = computed(() => {
-    const remarks =
-        restrictedRemainsData.value?.aliased_data
-            ?.restricted_ancestral_remains_remark;
-    return isAliasedNodeData(remarks) ? getDisplayValue(remarks) : '';
-});
-
-const hasRestrictedRemarks = computed(() => {
-    const remarks =
-        restrictedRemainsData.value?.aliased_data
-            ?.restricted_ancestral_remains_remark;
-    return isAliasedNodeData(remarks) && !isEmpty(remarks);
+const restrictedRemainsColumns = computed<ColumnDefinition[]>(() => {
+    return [
+        {
+            field: 'restricted_ancestral_remains_remark',
+            label: 'Restricted Ancestral Remains Remarks',
+            isHtml: true,
+        },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_ON,
+            label: 'Entered On',
+            visible: props.showAuditFields,
+        },
+        {
+            field: EDIT_LOG_FIELDS.ENTERED_BY,
+            label: 'Entered By',
+            visible: props.showAuditFields,
+        },
+    ];
 });
 </script>
 
@@ -73,28 +93,11 @@ const hasRestrictedRemarks = computed(() => {
                 :class="{ 'empty-section': !hasRestrictedRemainsInfo }"
             >
                 <template #sectionContent>
-                    <dl v-if="hasRestrictedRemainsInfo">
-                        <dt v-if="hasRestrictedRemarks">
-                            Restricted Ancestral Remains Remarks
-                        </dt>
-                        <dd v-if="hasRestrictedRemarks">
-                            {{ restrictedRemarksText }}
-                        </dd>
-
-                        <dt v-if="restrictedRemainsData?.audit?.entered_on">
-                            Entered On
-                        </dt>
-                        <dd v-if="restrictedRemainsData?.audit?.entered_on">
-                            {{ restrictedRemainsData.audit.entered_on }}
-                        </dd>
-
-                        <dt v-if="restrictedRemainsData?.audit?.entered_by">
-                            Entered By
-                        </dt>
-                        <dd v-if="restrictedRemainsData?.audit?.entered_by">
-                            {{ restrictedRemainsData.audit.entered_by }}
-                        </dd>
-                    </dl>
+                    <StandardDataTable
+                        v-if="hasRestrictedRemainsInfo"
+                        :table-data="restrictedRemainsTableData"
+                        :column-definitions="restrictedRemainsColumns"
+                    />
                     <EmptyState
                         v-else
                         message="No restricted ancestral remains information available."

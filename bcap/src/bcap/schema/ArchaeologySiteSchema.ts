@@ -9,7 +9,6 @@ import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
-import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
 
 export interface SpatialAccuracyEntry extends AliasedTileData {
     aliased_data: {
@@ -58,9 +57,7 @@ export interface CurrentAlertTile extends AliasedTileData {
     aliased_data: {
         alert_subject?: AliasedNodeData;
         alert_details?: AliasedNodeData;
-        branch_contact?: AliasedNodeData;
-        entered_on?: AliasedNodeData;
-        entered_by?: AliasedNodeData;
+        alert_branch_contact?: AliasedNodeData;
     };
 }
 
@@ -212,8 +209,6 @@ export interface GeneralRemarkTile extends AliasedTileData {
 
 export interface RestrictedRemarkTile extends AliasedTileData {
     aliased_data: {
-        restricted_entry_date?: DateValue;
-        restricted_person?: ResourceInstanceValue;
         restricted_remark?: StringValue;
     };
 }
@@ -301,6 +296,7 @@ type ArchaeologySiteAliasedData = {
     related_documents?: RelatedDocumentsTile;
 };
 
-export interface ArchaeologySiteSchema extends ArchesResourceInstanceData<ArchaeologySiteAliasedData> {
+export interface ArchaeologySiteSchema
+    extends ArchesResourceInstanceData<ArchaeologySiteAliasedData> {
     aliased_data: ArchaeologySiteAliasedData;
 }
