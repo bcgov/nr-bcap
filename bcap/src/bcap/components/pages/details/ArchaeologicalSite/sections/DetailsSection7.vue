@@ -7,9 +7,11 @@ import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 import 'primeicons/primeicons.css';
-import type { AncestralRemainsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type {
+    AncestralRemainsTile,
+    RestrictedAncestralRemainsRemarkTile,
+} from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 
 const props = withDefaults(
@@ -32,18 +34,15 @@ const props = withDefaults(
     },
 );
 
-const restrictedRemainsDataRaw = computed((): AliasedTileData[] => {
-    const remark =
-        props.data?.aliased_data?.restricted_ancestral_remains_remark;
-    if (!remark) return [];
+const restrictedRemainsDataRaw = computed(
+    (): RestrictedAncestralRemainsRemarkTile[] => {
+        const remark =
+            props.data?.aliased_data?.restricted_ancestral_remains_remark;
+        if (!remark) return [];
 
-    const remarkArray = Array.isArray(remark) ? remark : [remark];
-
-    return remarkArray.filter(
-        (item): item is AliasedTileData =>
-            typeof item === 'object' && item !== null && 'tileid' in item,
-    );
-});
+        return Array.isArray(remark) ? remark : [remark];
+    },
+);
 
 const { processedData: restrictedRemainsTableData } = useTileEditLog(
     restrictedRemainsDataRaw,

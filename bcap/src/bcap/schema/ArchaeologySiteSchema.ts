@@ -1,5 +1,4 @@
 import type {
-    AliasedData,
     AliasedNodeData,
     AliasedTileData,
 } from '@/arches_component_lab/types.ts';
@@ -82,7 +81,7 @@ export interface IdentificationAndRegistrationTile extends AliasedTileData {
     register_type?: AliasedNodeData;
     parent_site?: AliasedNodeData;
     child_sites?: AliasedNodeData[];
-    site_alert?: CurrentAlertTile[] | CurrentAlertTile | AliasedNodeData;
+    site_alert?: CurrentAlertTile[] | CurrentAlertTile;
     authority?: AuthorityTile[];
     site_names?: SiteNamesTile[];
     site_decision?: SiteDecisionTile[];
@@ -110,8 +109,18 @@ export interface ArchaeologicalDataTile extends AliasedTileData {
 }
 
 // 4) Ancestral Remains
+export interface RestrictedAncestralRemainsRemarkTile extends AliasedTileData {
+    aliased_data: {
+        restricted_ancestral_remains_remark?: AliasedNodeData;
+    };
+}
+
 export interface AncestralRemainsTile extends AliasedTileData {
-    aliased_data: AliasedData;
+    aliased_data: {
+        restricted_ancestral_remains_remark?:
+            | RestrictedAncestralRemainsRemarkTile[]
+            | RestrictedAncestralRemainsRemarkTile;
+    };
 }
 
 export interface BcPropertyLegalDescriptionTile extends AliasedTileData {

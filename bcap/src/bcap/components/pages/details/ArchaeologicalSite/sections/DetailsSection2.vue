@@ -15,7 +15,6 @@ import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTabl
 import 'primeicons/primeicons.css';
 import type {
     ArchaeologySiteSchema,
-    CurrentAlertTile,
     IdentificationAndRegistrationTile,
 } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
@@ -166,16 +165,11 @@ const {
 const authorityData = computed(() => currentData.value?.authority || []);
 const siteNamesData = computed(() => currentData.value?.site_names || []);
 
-const siteAlertDataRaw = computed((): CurrentAlertTile[] => {
+const siteAlertDataRaw = computed(() => {
     const alert = currentData.value?.site_alert;
     if (!alert) return [];
 
-    const alertArray = Array.isArray(alert) ? alert : [alert];
-
-    return alertArray.filter(
-        (item): item is CurrentAlertTile =>
-            typeof item === 'object' && item !== null && 'tileid' in item,
-    );
+    return Array.isArray(alert) ? alert : [alert];
 });
 
 const { processedData: authorityTableData } = useTileEditLog(
