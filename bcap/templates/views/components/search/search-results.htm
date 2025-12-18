@@ -2,6 +2,309 @@
 {% load template_tags %}
 {% load i18n %}
 
+<div
+    id="translation-state-banner"
+    style="display: none; padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 10px;"
+>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <i class="fa fa-exchange" style="margin-right: 5px;"></i>
+            <span id="translation-state-text"></span>
+        </div>
+        <button
+            id="clear-translation-banner-btn"
+            class="btn btn-sm btn-outline-secondary"
+            style="margin-left: 10px;"
+        >
+            <i class="fa fa-times"></i> {% trans "Clear Translation" %}
+        </button>
+    </div>
+    <div id="original-search-info" style="margin-top: 5px; font-size: 0.85em; color: #666;"></div>
+</div>
+
+<div
+    class="site-translator-container"
+    style="padding: 10px; border-bottom: 1px solid #ddd; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"
+>
+    <select
+        id="target-resource-type"
+        class="form-control input-sm"
+        style="width: auto; min-width: 200px;"
+    >
+        <option value="">{% trans "Loading..." %}</option>
+    </select>
+
+    <button
+        id="translate-to-resource-type-btn"
+        class="btn btn-primary btn-sm"
+        title="{% trans 'Convert current search results to their related resources of the selected type' %}"
+    >
+        <i class="fa fa-exchange"></i> {% trans "Translate" %}
+    </button>
+
+    <span id="translate-status" style="margin-left: 10px; display: none;"></span>
+</div>
+
+<script>
+(function() {
+    let translation_state = {
+        original_query: null,
+        chain: []
+    };
+
+    function get_csrf_token() {
+        let cookie_value = null;
+        if (document.cookie && document.cookie !== "") {
+            let cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === "csrftoken=") {
+                    cookie_value = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookie_value;
+    }
+
+    function get_shared_state() {
+        let search_results_el = document.getElementById("search-results-list");
+        if (!search_results_el) {
+            return null;
+        }
+        let context = ko.contextFor(search_results_el);
+        if (context && context.$root && context.$root.sharedStateObject) {
+            return context.$root.sharedStateObject;
+        }
+        return null;
+    }
+
+    function update_translation_banner() {
+        let banner = document.getElementById("translation-state-banner");
+        let state_text = document.getElementById("translation-state-text");
+        let original_info = document.getElementById("original-search-info");
+
+        if (!translation_state.chain || translation_state.chain.length === 0) {
+            banner.style.display = "none";
+            return;
+        }
+
+        banner.style.display = "block";
+
+        let chain_text = translation_state.chain.map(function(step) {
+            return step.target_name + " (" + step.count + ")";
+        }).join(" -> ");
+
+        state_text.textContent = "Showing: " + chain_text;
+
+        if (translation_state.original_query) {
+            let search_desc = [];
+            Object.keys(translation_state.original_query).forEach(function(key) {
+                if (key !== "paging-filter" && key !== "ids") {
+                    let value = translation_state.original_query[key];
+                    if (value) {
+                        let display_value = typeof value === "string" ? value : JSON.stringify(value);
+                        search_desc.push(key + ": " + display_value.substring(0, 50));
+                    }
+                }
+            });
+            if (search_desc.length > 0) {
+                original_info.textContent = "Original search: " + search_desc.join(", ");
+                original_info.style.display = "block";
+            } else {
+                original_info.style.display = "none";
+            }
+        } else {
+            original_info.style.display = "none";
+        }
+    }
+
+    function clear_translation() {
+        let shared_state = get_shared_state();
+        if (!shared_state) {
+            console.error("Could not get shared state");
+            return;
+        }
+
+        let original = translation_state.original_query;
+
+        translation_state.original_query = null;
+        translation_state.chain = [];
+
+        if (original && Object.keys(original).length > 0) {
+            shared_state.query(original);
+        } else {
+            shared_state.query({});
+        }
+
+        update_translation_banner();
+    }
+
+    function load_resource_types() {
+        let select = document.getElementById("target-resource-type");
+        let base_url = window.location.pathname.split("/search")[0];
+
+        fetch(base_url + "/api/translatable-resource-types", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            select.innerHTML = "";
+
+            if (data.status === "success" && data.resource_types) {
+                data.resource_types.forEach(function(resource_type) {
+                    let option = document.createElement("option");
+                    option.value = resource_type.graphid;
+                    option.textContent = resource_type.name;
+                    select.appendChild(option);
+                });
+            } else {
+                let option = document.createElement("option");
+                option.value = "";
+                option.textContent = "No resource types available";
+                select.appendChild(option);
+            }
+
+            update_translation_banner();
+        })
+        .catch(function(error) {
+            console.error("Error loading resource types:", error);
+            select.innerHTML = "<option value=''>Error loading types</option>";
+        });
+    }
+
+    function translate_to_resource_type() {
+        let btn = document.getElementById("translate-to-resource-type-btn");
+        let status = document.getElementById("translate-status");
+        let select = document.getElementById("target-resource-type");
+        let target_graph_id = select.value;
+
+        if (!target_graph_id) {
+            status.style.display = "inline";
+            status.style.color = "orange";
+            status.textContent = "Please select a target resource type.";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Translating...';
+        status.style.display = "none";
+
+        let shared_state = get_shared_state();
+        if (!shared_state) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-exchange"></i> Translate';
+            status.style.display = "inline";
+            status.style.color = "red";
+            status.textContent = "Could not access search state.";
+            return;
+        }
+
+        let current_query = shared_state.query();
+
+        let form_data = new FormData();
+        form_data.append("target_graph_id", target_graph_id);
+        form_data.append("csrfmiddlewaretoken", get_csrf_token());
+
+        if (translation_state.original_query) {
+            Object.keys(translation_state.original_query).forEach(function(key) {
+                if (key !== "paging-filter" && key !== "ids") {
+                    form_data.append(key, translation_state.original_query[key]);
+                }
+            });
+        } else {
+            Object.keys(current_query).forEach(function(key) {
+                if (key !== "paging-filter" && key !== "ids") {
+                    form_data.append(key, current_query[key]);
+                }
+            });
+
+            let original = {};
+            Object.keys(current_query).forEach(function(key) {
+                if (key !== "ids" && key !== "paging-filter") {
+                    original[key] = current_query[key];
+                }
+            });
+            translation_state.original_query = original;
+        }
+
+        let base_url = window.location.pathname.split("/search")[0];
+        fetch(base_url + "/api/translate-to-resource-type", {
+            method: "POST",
+            body: form_data,
+            credentials: "same-origin"
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-exchange"></i> Translate';
+
+            if (data.status === "success" && data.resource_ids && data.resource_ids.length > 0) {
+                status.style.display = "inline";
+                status.style.color = "green";
+                status.textContent = "Translated " + data.original_count + " to " + data.total_translated + " " + data.target_resource_type_name + ".";
+
+                translation_state.chain = [{
+                    source_name: data.source_resource_type_name || "search results",
+                    target_name: data.target_resource_type_name,
+                    count: data.total_translated,
+                    original_count: data.original_count
+                }];
+
+                let paging_filter = shared_state.getFilter("paging-filter");
+                if (paging_filter) {
+                    paging_filter.userRequestedNewPage = true;
+                    paging_filter.preventLoop = true;
+                }
+
+                let new_query = {
+                    "ids": JSON.stringify(data.resource_ids),
+                    "paging-filter": 1
+                };
+                shared_state.query(new_query);
+
+                if (paging_filter) {
+                    paging_filter.page(1);
+                }
+
+                update_translation_banner();
+            } else {
+                status.style.display = "inline";
+                status.style.color = "orange";
+                status.textContent = "No related resources found for the selected type.";
+            }
+        })
+        .catch(function(error) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-exchange"></i> Translate';
+            status.style.display = "inline";
+            status.style.color = "red";
+            status.textContent = "An error occurred.";
+            console.error("Translation error:", error);
+        });
+    }
+
+    let translate_btn = document.getElementById("translate-to-resource-type-btn");
+    if (translate_btn) {
+        translate_btn.addEventListener("click", translate_to_resource_type);
+    }
+
+    let clear_btn = document.getElementById("clear-translation-banner-btn");
+    if (clear_btn) {
+        clear_btn.addEventListener("click", clear_translation);
+    }
+
+    load_resource_types();
+})();
+</script>
+
 <div id="search-results-list" style="display: none;" role="list" tabindex="-1" data-bind="foreach: results, visible: true,
     attr: {'aria-label': $root.translations.searchResults}
 ">
