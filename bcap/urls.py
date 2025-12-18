@@ -9,6 +9,8 @@ from bcap.views.api import (
     UserProfile,
     RelatedSiteVisits,
     ControlledListHierarchy,
+    TranslatableResourceTypesView,
+    TranslateToResourceTypeView,
 )
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcgov_arches_common.views.map import BCTileserverProxyView
@@ -90,6 +92,16 @@ urlpatterns = [
         f"{PREFIX}api/arch_site_related_resources/<slug:graph>",
         RelatedSiteVisits.as_view(),
         name="api-related-sites-resources",
+    ),
+    path(
+        f"{PREFIX}api/translate-to-resource-type",
+        TranslateToResourceTypeView.as_view(),
+        name="translate_to_resource_type"
+    ),
+    path(
+        f"{PREFIX}api/translatable-resource-types",
+        TranslatableResourceTypesView.as_view(),
+        name="translatable_resource_types"
     ),
     path(f"{PREFIX}", include("bcgov_arches_common.urls")),
     path(f"{PREFIX}", include("arches_controlled_lists.urls")),

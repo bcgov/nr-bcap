@@ -1,0 +1,69 @@
+{% load i18n %}
+
+<div class="search-filter-container translate-to-resource-type-filter">
+    <div class="filter-header">
+        <h4>{% trans "Translate to Resource Type" %}</h4>
+    </div>
+
+    <div class="filter-body">
+        <p class="help-text">
+            {% trans "Convert current search results to their related resources of the selected type." %}
+        </p>
+
+        <!-- ko if: is_loading_types -->
+        <div class="loading-indicator">
+            <i class="fa fa-spinner fa-spin"></i>
+            {% trans "Loading resource types..." %}
+        </div>
+        <!-- /ko -->
+
+        <!-- ko ifnot: is_loading_types -->
+        <div class="form-group">
+            <label for="target-resource-type">{% trans "Target Resource Type" %}</label>
+            <select
+                id="target-resource-type"
+                class="form-control"
+                data-bind="
+                    options: available_resource_types,
+                    optionsText: 'name',
+                    optionsValue: 'graphid',
+                    value: selected_resource_type
+                "
+            ></select>
+        </div>
+
+        <button
+            class="btn btn-primary btn-block"
+            data-bind="
+                click: translate_to_resource_type,
+                disable: is_translating() || !selected_resource_type()
+            "
+        >
+            <!-- ko if: is_translating -->
+            <i class="fa fa-spinner fa-spin"></i>
+            {% trans "Translating..." %}
+            <!-- /ko -->
+            <!-- ko ifnot: is_translating -->
+            <i class="fa fa-exchange"></i>
+            {% trans "Translate" %}
+            <!-- /ko -->
+        </button>
+        <!-- /ko -->
+
+        <!-- ko if: translation_error -->
+        <div class="alert alert-warning" style="margin-top: 10px;">
+            <span data-bind="text: translation_error"></span>
+        </div>
+        <!-- /ko -->
+
+        <!-- ko if: translation_result -->
+        <div class="alert alert-success" style="margin-top: 10px;">
+            {% trans "Translated" %}
+            <span data-bind="text: translation_result().original"></span>
+            {% trans "results to" %}
+            <span data-bind="text: translation_result().total"></span>
+            <span data-bind="text: translation_result().target_name"></span>.
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
