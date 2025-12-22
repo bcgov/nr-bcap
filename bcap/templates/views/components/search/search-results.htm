@@ -4,22 +4,21 @@
 
 <div
     id="translation-state-banner"
-    style="display: none; padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 10px;"
+    style="display: none; padding: 8px 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 10px;"
 >
     <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <i class="fa fa-exchange" style="margin-right: 5px;"></i>
+        <div style="font-size: 0.85em;">
             <span id="translation-state-text"></span>
         </div>
         <button
             id="clear-translation-banner-btn"
             class="btn btn-sm btn-outline-secondary"
             style="margin-left: 10px;"
+            title="{% trans "Clear Translation" %}"
         >
-            <i class="fa fa-times"></i> {% trans "Clear Translation" %}
+            <i class="fa fa-times"></i>
         </button>
     </div>
-    <div id="original-search-info" style="margin-top: 5px; font-size: 0.85em; color: #666;"></div>
 </div>
 
 <div
@@ -49,7 +48,8 @@
 (function() {
     let translation_state = {
         original_query: null,
-        chain: []
+        chain: [],
+        source_mapping: {}
     };
 
     function get_csrf_token() {
@@ -82,7 +82,6 @@
     function update_translation_banner() {
         let banner = document.getElementById("translation-state-banner");
         let state_text = document.getElementById("translation-state-text");
-        let original_info = document.getElementById("original-search-info");
 
         if (!translation_state.chain || translation_state.chain.length === 0) {
             banner.style.display = "none";
@@ -91,32 +90,9 @@
 
         banner.style.display = "block";
 
-        let chain_text = translation_state.chain.map(function(step) {
-            return step.target_name + " (" + step.count + ")";
-        }).join(" -> ");
+        let last_step = translation_state.chain[translation_state.chain.length - 1];
 
-        state_text.textContent = "Showing: " + chain_text;
-
-        if (translation_state.original_query) {
-            let search_desc = [];
-            Object.keys(translation_state.original_query).forEach(function(key) {
-                if (key !== "paging-filter" && key !== "ids") {
-                    let value = translation_state.original_query[key];
-                    if (value) {
-                        let display_value = typeof value === "string" ? value : JSON.stringify(value);
-                        search_desc.push(key + ": " + display_value.substring(0, 50));
-                    }
-                }
-            });
-            if (search_desc.length > 0) {
-                original_info.textContent = "Original search: " + search_desc.join(", ");
-                original_info.style.display = "block";
-            } else {
-                original_info.style.display = "none";
-            }
-        } else {
-            original_info.style.display = "none";
-        }
+        state_text.textContent = "Translated " + last_step.original_count + " " + last_step.source_name + "(s) to " + last_step.count + " " + last_step.target_name + "(s).";
     }
 
     function clear_translation() {
@@ -130,6 +106,7 @@
 
         translation_state.original_query = null;
         translation_state.chain = [];
+        translation_state.source_mapping = {};
 
         if (original && Object.keys(original).length > 0) {
             shared_state.query(original);
@@ -247,9 +224,9 @@
             btn.innerHTML = '<i class="fa fa-exchange"></i> Translate';
 
             if (data.status === "success" && data.resource_ids && data.resource_ids.length > 0) {
-                status.style.display = "inline";
-                status.style.color = "green";
-                status.textContent = "Translated " + data.original_count + " to " + data.total_translated + " " + data.target_resource_type_name + ".";
+                status.style.display = "none";
+
+                translation_state.source_mapping = data.source_mapping || {};
 
                 translation_state.chain = [{
                     source_name: data.source_resource_type_name || "search results",
@@ -290,6 +267,14 @@
             console.error("Translation error:", error);
         });
     }
+
+    window.get_translation_source = function(resourceinstanceid) {
+        let sources = translation_state.source_mapping[resourceinstanceid];
+        if (sources && sources.length > 0) {
+            return sources.join(", ");
+        }
+        return null;
+    };
 
     let translate_btn = document.getElementById("translate-to-resource-type-btn");
     if (translate_btn) {
@@ -348,6 +333,16 @@
                     <!--/ko-->
                 </p>
 
+                <!--ko if: window.get_translation_source && window.get_translation_source(resourceinstanceid) -->
+                <div
+                    class="search-listing-source"
+                    style="font-size: 0.8em; color: #155724; background-color: #d4edda; padding: 6px 12px; border-radius: 3px; margin: 8px 0; display: inline-block;"
+                >
+                    <i class="fa fa-link" style="margin-right: 6px;"></i>
+                    Related to: <strong data-bind="text: window.get_translation_source(resourceinstanceid)"></strong>
+                </div>
+                <!--/ko-->
+
                 <div class="search-listing-body" data-bind="html: displaydescription">
 
                 </div>
@@ -387,7 +382,7 @@
                 </a>
                 <!--/ko-->
 
-                <!-- ko if: !!$parent.mapFilter -->
+                <!-- ko if: !$parent.mapFilter -->
                 <button class="search-candidate-link" data-bind="visible: point, click: mapLinkClicked,
                     attr:{'aria-label': $root.translations.viewMap},
                 ">
