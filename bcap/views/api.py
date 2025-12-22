@@ -304,23 +304,47 @@ class TranslateToResourceTypeView(View):
 
         return str(name)
 
-    def _get_related_resources(self, resource_ids: list, target_graph_id: str) -> set:
-        related_ids = set()
+    def _get_related_resources_with_sources(self, resource_ids: list, target_graph_id: str) -> dict:
+        from arches.app.models.resource import Resource
+
+        source_names = {}
+        for rid in resource_ids:
+            resource = Resource.objects.filter(resourceinstanceid=rid).first()
+            if resource:
+                name = resource.displayname()
+                source_names[rid] = name if name else str(rid)
+
+        target_to_sources = {}
 
         relationships_from = ResourceXResource.objects.filter(
             from_resource_id__in=resource_ids,
             to_resource_graph_id=target_graph_id
-        ).values_list("to_resource_id", flat=True)
+        ).values_list("from_resource_id", "to_resource_id")
+
+        for from_id, to_id in relationships_from:
+            if to_id:
+                target_id = str(to_id)
+                source_name = source_names.get(str(from_id), str(from_id))
+                if target_id not in target_to_sources:
+                    target_to_sources[target_id] = []
+                if source_name not in target_to_sources[target_id]:
+                    target_to_sources[target_id].append(source_name)
 
         relationships_to = ResourceXResource.objects.filter(
             to_resource_id__in=resource_ids,
             from_resource_graph_id=target_graph_id
-        ).values_list("from_resource_id", flat=True)
+        ).values_list("to_resource_id", "from_resource_id")
 
-        related_ids.update(str(rid) for rid in relationships_from if rid)
-        related_ids.update(str(rid) for rid in relationships_to if rid)
+        for to_id, from_id in relationships_to:
+            if from_id:
+                target_id = str(from_id)
+                source_name = source_names.get(str(to_id), str(to_id))
+                if target_id not in target_to_sources:
+                    target_to_sources[target_id] = []
+                if source_name not in target_to_sources[target_id]:
+                    target_to_sources[target_id].append(source_name)
 
-        return related_ids
+        return target_to_sources
 
     def _get_source_graph_name(self, resource_ids: list) -> str:
         if not resource_ids:
@@ -361,7 +385,7 @@ class TranslateToResourceTypeView(View):
             source_name = self._get_source_graph_name(resource_ids)
         else:
             resource_ids = self._get_all_resource_ids_from_search(request)
-            source_name = "search results"
+            source_name = self._get_source_graph_name(resource_ids)
 
         original_count = len(resource_ids)
 
@@ -371,7 +395,7 @@ class TranslateToResourceTypeView(View):
                 "message": "No resources to translate."
             })
 
-        related_resource_ids = self._get_related_resources(
+        target_to_sources = self._get_related_resources_with_sources(
             resource_ids,
             target_graph_id
         )
@@ -380,11 +404,12 @@ class TranslateToResourceTypeView(View):
 
         return JsonResponse({
             "status": "success",
-            "resource_ids": list(related_resource_ids),
-            "total_translated": len(related_resource_ids),
+            "resource_ids": list(target_to_sources.keys()),
+            "total_translated": len(target_to_sources),
             "original_count": original_count,
             "source_resource_type_name": source_name,
-            "target_resource_type_name": target_name
+            "target_resource_type_name": target_name,
+            "source_mapping": target_to_sources
         })
 
 
