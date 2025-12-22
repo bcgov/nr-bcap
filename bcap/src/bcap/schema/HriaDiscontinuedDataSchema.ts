@@ -1,4 +1,3 @@
-// ---------- Datatype-specific node values (from your bundles) ----------
 import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
 import type { NonLocalizedTextValue } from '@/arches_component_lab/datatypes/non-localized-text/types.ts';
@@ -7,143 +6,136 @@ import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 import type {
     NumberValue,
-    BooleanValue,
     NullableReferenceSelectValue,
 } from '@/bcap/types.ts';
 
-// ====================================================================
-// Tiles specialized to THIS JSON (with datatype-specific leaf nodes)
-// ====================================================================
-
-// aliased_data.biogeography
 export interface BiogeographyTile extends AliasedTileData {
     aliased_data: {
-        biogeography_type: NonLocalizedTextValue; // non-localized-string
-        biogeography_entered_by: NonLocalizedTextValue; // non-localized-string
-        biogeography_entered_date: DateValue; // date
-        biogeography_name: StringValue; // string (i18n)
-        biogeography_description: StringValue; // string (i18n)
+        biogeography_description: StringValue;
+        biogeography_entered_by: NonLocalizedTextValue;
+        biogeography_entered_date: DateValue;
+        biogeography_name: StringValue;
+        biogeography_type: NonLocalizedTextValue;
     };
 }
 
-// aliased_data.unreviewed_adif_record
 export interface UnreviewedAdifRecordTile extends AliasedTileData {
     aliased_data: {
-        unreviewed_adif_record: BooleanValue; // boolean
-        site_entered_by: NonLocalizedTextValue; // non-localized-string
-        site_entry_date: DateValue; // date
+        site_entered_by: NonLocalizedTextValue;
+        site_entry_date: DateValue;
+        unreviewed_adif_record: NonLocalizedTextValue;
     };
 }
 
-// aliased_data.archaeological_site
-// Mapping says "resource-instance", but this payload shows an array.
-// Support both single and array shapes via a union.
 export interface ArchaeologicalSiteTile extends AliasedTileData {
     aliased_data: {
         archaeological_site: ResourceInstanceListValue;
     };
 }
 
-// aliased_data.hria_jursidiction_and_tenure[] (semantic)
 export interface HriaJurisdictionAndTenureTile extends AliasedTileData {
     aliased_data: {
-        site_jurisdiction: StringValue; // string (i18n)
-        tenure_identifier: StringValue; // string (i18n)
-        jurisdiction_entered_by: StringValue; // string (i18n)
-        jurisdiction_entered_date: DateValue; // date
-        tenure_type: StringValue; // string (i18n)
-        tenure_remarks: StringValue; // string (i18n)
+        jurisdiction_entered_by: StringValue;
+        jurisdiction_entered_date: DateValue;
+        site_jurisdiction: StringValue;
+        tenure_identifier: StringValue;
+        tenure_remarks: StringValue;
+        tenure_type: StringValue;
     };
 }
 
-// aliased_data.chronology[] (semantic)
 export interface ChronologyTile extends AliasedTileData {
     aliased_data: {
-        end_year_qualifier: NullableReferenceSelectValue; // reference (nullable in payload)
-        end_year_calendar: ReferenceSelectValue; // reference
-        determination_method: ReferenceSelectValue; // reference
-        start_year: DateValue; // date
-        end_year: DateValue; // date
-        start_year_calendar: ReferenceSelectValue; // reference
-        start_year_qualifier: NullableReferenceSelectValue; // reference (nullable in payload)
-        information_source: StringValue; // string (i18n)
-        chronology_remarks: StringValue; // string (i18n)
-        rcd_lab_code: NonLocalizedTextValue; // non-localized-string
-        rcd_unadjusted: NonLocalizedTextValue; // non-localized-string
-        rcd_unadjusted_var: NonLocalizedTextValue; // non-localized-string
-        rcd_adjusted: NonLocalizedTextValue; // non-localized-string
-        rcd_adjusted_var: NonLocalizedTextValue; // non-localized-string
-        rcd_lab_number: NonLocalizedTextValue; // non-localized-string
-        modified_by: NonLocalizedTextValue; // non-localized-string
-        modified_on: DateValue; // date
+        chronology_modified_by: NonLocalizedTextValue;
+        chronology_modified_on: DateValue;
+        chronology_remarks: StringValue;
+        determination_method: ReferenceSelectValue;
+        end_year: DateValue;
+        end_year_calendar: ReferenceSelectValue;
+        end_year_qualifier: NullableReferenceSelectValue;
+        information_source: StringValue;
+        rcd_adjusted: NonLocalizedTextValue;
+        rcd_adjusted_var: NonLocalizedTextValue;
+        rcd_lab_code: NonLocalizedTextValue;
+        rcd_lab_number: NonLocalizedTextValue;
+        rcd_unadjusted: NonLocalizedTextValue;
+        rcd_unadjusted_var: NonLocalizedTextValue;
+        start_year: DateValue;
+        start_year_calendar: ReferenceSelectValue;
+        start_year_qualifier: NullableReferenceSelectValue;
     };
 }
 
-// aliased_data.site_dimensions
 export interface SiteDimensionsTile extends AliasedTileData {
     aliased_data: {
-        length: NumberValue; // number
-        dimension_entered_by: NonLocalizedTextValue; // non-localized-string
-        dimension_entered_date: DateValue; // date
-        length_direction: NonLocalizedTextValue; // non-localized-string
-        width_direction: NonLocalizedTextValue; // non-localized-string
-        width: NumberValue; // number
-        site_area: NumberValue; // number
-        boundary_type: StringValue; // string (i18n)
+        boundary_type: StringValue;
+        dimension_entered_by: NonLocalizedTextValue;
+        dimension_entered_date: DateValue;
+        length: NumberValue;
+        length_direction: NonLocalizedTextValue;
+        site_area: NumberValue;
+        width: NumberValue;
+        width_direction: NonLocalizedTextValue;
     };
 }
 
 export interface DiscontinuedAddressAttributesTile extends AliasedTileData {
     aliased_data: {
-        street_number: StringValue;
-        street_name: StringValue;
         city: StringValue;
-        postal_code: StringValue;
         discontinued_address_attributes?: DiscontinuedAddressAttributesTile[];
+        legal_description: StringValue;
+        legal_number: StringValue;
+        legal_type: StringValue;
+        modified_by: NonLocalizedTextValue;
+        modified_on: DateValue;
         pid: StringValue;
         pin: StringValue;
-        legal_type: StringValue;
-        legal_number: StringValue;
-        legal_description: StringValue;
-        modified_on: DateValue;
-        modified_by: NonLocalizedTextValue;
+        postal_code: StringValue;
+        street_name: StringValue;
+        street_number: StringValue;
     };
 }
 
-// aliased_data.other_maps[] (semantic)
 export interface OtherMapsTile extends AliasedTileData {
     aliased_data: {
-        other_maps_map_name: StringValue; // string (i18n)
-        other_maps_map_scale: StringValue; // string (i18n)
-        other_maps_modified_on: DateValue; // date
-        other_maps_modified_by: ResourceInstanceListValue; // resource-instance-list (contributor)
+        other_maps_map_name: StringValue;
+        other_maps_map_scale: StringValue;
+        other_maps_modified_by: ResourceInstanceListValue;
+        other_maps_modified_on: DateValue;
     };
 }
 
-// ====================================================================
-// Top-level object for THIS JSON
-// ====================================================================
+export interface SiteBoundaryAnnotationsTile extends AliasedTileData {
+    aliased_data: {
+        accuracy_remarks: StringValue;
+        site_boundary_entered_by: NonLocalizedTextValue;
+        site_boundary_entered_on: DateValue;
+        source_notes: StringValue;
+    };
+}
+
 export interface HriaDiscontinuedDataSchema extends AliasedTileData {
     aliased_data: {
-        biogeography?: BiogeographyTile;
-        unreviewed_adif_record?: UnreviewedAdifRecordTile;
         archaeological_site?: ArchaeologicalSiteTile;
-        hria_jursidiction_and_tenure?: HriaJurisdictionAndTenureTile[];
+        biogeography?: BiogeographyTile[];
         chronology?: ChronologyTile[];
-        site_dimensions?: SiteDimensionsTile;
+        hria_jursidiction_and_tenure?: HriaJurisdictionAndTenureTile[];
         other_maps?: OtherMapsTile[];
+        site_boundary_annotations?: SiteBoundaryAnnotationsTile[];
+        site_dimensions?: SiteDimensionsTile;
+        unreviewed_adif_record?: UnreviewedAdifRecordTile;
     };
 
-    graph_has_different_publication: boolean;
-    name: string;
+    createdtime: string;
     descriptors: Record<
         string,
-        { name: string; map_popup: string; description: string }
+        { description: string; map_popup: string; name: string }
     >;
-    legacyid: string;
-    createdtime: string; // ISO timestamp
     graph: string;
+    graph_has_different_publication: boolean;
     graph_publication: string;
-    resource_instance_lifecycle_state: string;
+    legacyid: string;
+    name: string;
     principaluser: string | null;
+    resource_instance_lifecycle_state: string;
 }
