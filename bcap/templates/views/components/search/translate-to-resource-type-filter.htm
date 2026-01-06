@@ -51,18 +51,25 @@
         <!-- /ko -->
 
         <!-- ko if: translation_error -->
-        <div class="alert alert-warning" style="margin-top: 10px;">
+        <div
+            class="alert alert-warning"
+            style="margin-top: 10px;"
+        >
             <span data-bind="text: translation_error"></span>
         </div>
         <!-- /ko -->
 
         <!-- ko if: translation_result -->
-        <div class="alert alert-success" style="margin-top: 10px;">
+        <div
+            class="alert alert-success"
+            style="margin-top: 10px;"
+        >
             {% trans "Translated" %}
             <span data-bind="text: translation_result().original"></span>
             {% trans "results to" %}
             <span data-bind="text: translation_result().total"></span>
-            <span data-bind="text: translation_result().target_name"></span>.
+            <span data-bind="text: translation_result().target_name"></span>
+            .
         </div>
         <!-- /ko -->
     </div>
