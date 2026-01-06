@@ -1,41 +1,40 @@
-from traceback import print_exception
-
 import json
 import logging
 
-from django.http import HttpResponse, Http404
-from arches.app.views.api import MVT as MVTBase
-from arches.app.views.api import APIBase
+from traceback import print_exception
+
+from django.core.exceptions import FieldError
+from django.http import Http404, HttpResponse, JsonResponse
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.parsers import JSONParser
-from django.utils.translation import gettext as _
-from rest_framework.exceptions import ValidationError
 from rest_framework.settings import api_settings
-from arches.app.models.models import ResourceInstance
-from django.core.exceptions import FieldError
-from django.http import JsonResponse
-from django.views import View
 
 from arches import VERSION as arches_version
-
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from arches.app.utils.response import JSONResponse
-from arches.app.utils.betterJSONSerializer import JSONSerializer
-from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
-from bcap.util.business_data_proxy import LegislativeActDataProxy
 from arches.app.models import models
-from bcap.util.mvt_tiler import MVTTiler
-
+from arches.app.models.models import GraphModel, ResourceInstance, ResourceXResource
+from arches.app.models.system_settings import settings
+from arches.app.search.components.base import SearchFilterFactory
+from arches.app.search.mappings import RESOURCES_INDEX
+from arches.app.search.search_engine_factory import SearchEngineInstance
+from arches.app.utils.betterJSONSerializer import JSONSerializer
+from arches.app.utils.response import JSONResponse
+from arches.app.views.api import APIBase, MVT as MVTBase
+from arches_controlled_lists.models import ListItem, ListItemValue
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
-from arches_querysets.rest_framework.serializers import (
-    ArchesResourceSerializer,
-)
+from arches_querysets.rest_framework.serializers import ArchesResourceSerializer
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
-from arches_controlled_lists.models import ListItem, ListItemValue
-from arches.app.models.models import GraphModel, ResourceXResource
+
+from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
+from bcap.util.business_data_proxy import LegislativeActDataProxy
+from bcap.util.mvt_tiler import MVTTiler
 
 
 logger = logging.getLogger(__name__)
@@ -177,25 +176,28 @@ class ResourceGraphs(APIBase):
     def get(self, request):
         from arches.app.models.system_settings import settings
 
-        graphs = models.GraphModel.objects.filter(
-            isresource=True,
-            is_active=True
-        ).exclude(
-            pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID
-        ).exclude(
-            source_identifier__isnull=False
-        ).values("graphid", "name", "iconclass")
+        graphs = (
+            models.GraphModel.objects.filter(isresource=True, is_active=True)
+            .exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
+            .exclude(source_identifier__isnull=False)
+            .values("graphid", "name", "iconclass")
+        )
 
         graph_list = []
+
         for graph in graphs:
             name = graph["name"]
+
             if isinstance(name, dict):
                 name = name.get("en", list(name.values())[0] if name else "")
-            graph_list.append({
-                "graphid": str(graph["graphid"]),
-                "name": name,
-                "iconclass": graph["iconclass"]
-            })
+
+            graph_list.append(
+                {
+                    "graphid": str(graph["graphid"]),
+                    "name": name,
+                    "iconclass": graph["iconclass"],
+                }
+            )
 
         graph_list.sort(key=lambda x: x["name"])
 
@@ -204,18 +206,14 @@ class ResourceGraphs(APIBase):
 
 class TranslatableResourceTypesView(View):
     def get(self, request):
-        from arches.app.models.system_settings import settings
-
         resource_types = []
 
-        graphs = GraphModel.objects.filter(
-            isresource=True,
-            is_active=True
-        ).exclude(
-            pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID
-        ).exclude(
-            source_identifier__isnull=False
-        ).values("graphid", "name", "iconclass")
+        graphs = (
+            GraphModel.objects.filter(isresource=True, is_active=True)
+            .exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
+            .exclude(source_identifier__isnull=False)
+            .values("graphid", "name", "iconclass")
+        )
 
         for graph in graphs:
             name = graph["name"]
@@ -224,35 +222,31 @@ class TranslatableResourceTypesView(View):
             else:
                 name = str(name)
 
-            resource_types.append({
-                "graphid": str(graph["graphid"]),
-                "name": name,
-                "iconclass": graph["iconclass"] or "fa fa-question"
-            })
+            resource_types.append(
+                {
+                    "graphid": str(graph["graphid"]),
+                    "name": name,
+                    "iconclass": graph["iconclass"] or "fa fa-question",
+                }
+            )
 
         resource_types.sort(key=lambda x: x["name"])
 
-        return JsonResponse({
-            "status": "success",
-            "resource_types": resource_types
-        })
+        return JsonResponse({"status": "success", "resource_types": resource_types})
 
 
 class TranslateToResourceTypeView(View):
-    def _get_all_resource_ids_from_search(self, request) -> list:
-        from arches.app.search.components.base import SearchFilterFactory
-        from arches.app.search.mappings import RESOURCES_INDEX
-        from arches.app.search.search_engine_factory import SearchEngineInstance
-
+    def _get_all_resource_ids_from_search(self, request) -> tuple:
         search_filter_factory = SearchFilterFactory(request)
         searchview_instance = search_filter_factory.get_searchview_instance()
 
         if not searchview_instance:
-            return []
+            return [], 0
 
-        response_object, search_query_object = searchview_instance.handle_search_results_query(
-            search_filter_factory,
-            returnDsl=True
+        response_object, search_query_object = (
+            searchview_instance.handle_search_results_query(
+                search_filter_factory, returnDsl=True
+            )
         )
 
         query = search_query_object["query"].dsl
@@ -263,6 +257,12 @@ class TranslateToResourceTypeView(View):
         query.pop("from", None)
 
         query["_source"] = False
+        query["size"] = 0
+        query["track_total_hits"] = True
+
+        count_results = SearchEngineInstance.search(index=RESOURCES_INDEX, body=query)
+        total_count = count_results.get("hits", {}).get("total", {}).get("value", 0)
+
         query["size"] = 500
 
         resource_ids = []
@@ -278,6 +278,7 @@ class TranslateToResourceTypeView(View):
                 break
 
             hits = results.get("hits", {}).get("hits", [])
+
             if not hits:
                 break
 
@@ -289,7 +290,7 @@ class TranslateToResourceTypeView(View):
 
             batch_from += 500
 
-        return resource_ids
+        return resource_ids, total_count
 
     def _get_graph_name(self, graph_id: str) -> str:
         graph = GraphModel.objects.filter(graphid=graph_id).first()
@@ -304,12 +305,16 @@ class TranslateToResourceTypeView(View):
 
         return str(name)
 
-    def _get_related_resources_with_sources(self, resource_ids: list, target_graph_id: str) -> dict:
+    def _get_related_resources_with_sources(
+        self, resource_ids: list, target_graph_id: str
+    ) -> dict:
         from arches.app.models.resource import Resource
 
         source_names = {}
+
         for rid in resource_ids:
             resource = Resource.objects.filter(resourceinstanceid=rid).first()
+
             if resource:
                 name = resource.displayname()
                 source_names[rid] = name if name else str(rid)
@@ -317,30 +322,32 @@ class TranslateToResourceTypeView(View):
         target_to_sources = {}
 
         relationships_from = ResourceXResource.objects.filter(
-            from_resource_id__in=resource_ids,
-            to_resource_graph_id=target_graph_id
+            from_resource_id__in=resource_ids, to_resource_graph_id=target_graph_id
         ).values_list("from_resource_id", "to_resource_id")
 
         for from_id, to_id in relationships_from:
             if to_id:
                 target_id = str(to_id)
                 source_name = source_names.get(str(from_id), str(from_id))
+
                 if target_id not in target_to_sources:
                     target_to_sources[target_id] = []
+
                 if source_name not in target_to_sources[target_id]:
                     target_to_sources[target_id].append(source_name)
 
         relationships_to = ResourceXResource.objects.filter(
-            to_resource_id__in=resource_ids,
-            from_resource_graph_id=target_graph_id
+            to_resource_id__in=resource_ids, from_resource_graph_id=target_graph_id
         ).values_list("to_resource_id", "from_resource_id")
 
         for to_id, from_id in relationships_to:
             if from_id:
                 target_id = str(from_id)
                 source_name = source_names.get(str(to_id), str(to_id))
+
                 if target_id not in target_to_sources:
                     target_to_sources[target_id] = []
+
                 if source_name not in target_to_sources[target_id]:
                     target_to_sources[target_id].append(source_name)
 
@@ -350,9 +357,11 @@ class TranslateToResourceTypeView(View):
         if not resource_ids:
             return "Unknown"
 
-        resource = ResourceInstance.objects.filter(
-            resourceinstanceid=resource_ids[0]
-        ).select_related("graph").first()
+        resource = (
+            ResourceInstance.objects.filter(resourceinstanceid=resource_ids[0])
+            .select_related("graph")
+            .first()
+        )
 
         if not resource or not resource.graph:
             return "Unknown"
@@ -365,60 +374,70 @@ class TranslateToResourceTypeView(View):
         return str(name)
 
     def post(self, request):
+        max_source_resources = 1000
+
         target_graph_id = request.POST.get("target_graph_id")
         source_ids_json = request.POST.get("source_ids")
 
         if not target_graph_id:
-            return JsonResponse({
-                "status": "error",
-                "message": "No target resource type specified."
-            })
+            return JsonResponse(
+                {"status": "error", "message": "No target resource type specified."}
+            )
 
         if source_ids_json:
             try:
                 resource_ids = json.loads(source_ids_json)
             except json.JSONDecodeError:
-                return JsonResponse({
-                    "status": "error",
-                    "message": "Invalid source IDs format."
-                })
+                return JsonResponse(
+                    {"status": "error", "message": "Invalid source IDs format."}
+                )
+
+            total_count = len(resource_ids)
             source_name = self._get_source_graph_name(resource_ids)
         else:
-            resource_ids = self._get_all_resource_ids_from_search(request)
+            resource_ids, total_count = self._get_all_resource_ids_from_search(request)
             source_name = self._get_source_graph_name(resource_ids)
 
-        original_count = len(resource_ids)
+        if total_count > max_source_resources:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": f"Search results exceed the {max_source_resources:,} resource limit ({total_count:,} found). Please filter your results before translating.",
+                }
+            )
 
         if not resource_ids:
-            return JsonResponse({
-                "status": "error",
-                "message": "No resources to translate."
-            })
+            return JsonResponse(
+                {"status": "error", "message": "No resources to translate."}
+            )
 
         target_to_sources = self._get_related_resources_with_sources(
-            resource_ids,
-            target_graph_id
+            resource_ids, target_graph_id
         )
 
         target_name = self._get_graph_name(target_graph_id)
 
-        return JsonResponse({
-            "status": "success",
-            "resource_ids": list(target_to_sources.keys()),
-            "total_translated": len(target_to_sources),
-            "original_count": original_count,
-            "source_resource_type_name": source_name,
-            "target_resource_type_name": target_name,
-            "source_mapping": target_to_sources
-        })
+        return JsonResponse(
+            {
+                "status": "success",
+                "resource_ids": list(target_to_sources.keys()),
+                "total_translated": len(target_to_sources),
+                "original_count": total_count,
+                "source_resource_type_name": source_name,
+                "target_resource_type_name": target_name,
+                "source_mapping": target_to_sources,
+            }
+        )
 
 
 class UserProfile(APIBase):
     def get(self, request):
         user_profile = models.User.objects.get(id=request.user.pk)
+
         group_names = [
             group.name for group in models.Group.objects.filter(user=user_profile).all()
         ]
+
         return JSONResponse(
             JSONSerializer().serializeToPython(
                 {
