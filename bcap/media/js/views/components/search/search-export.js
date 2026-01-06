@@ -1,14 +1,13 @@
-import $ from "jquery";
-import ko from "knockout";
-import arches from "arches";
-import searchExportTemplate from "templates/views/components/search/search-export.htm";
-import "bindings/fadeVisible";
-import "bindings/clipboard";
-import "views/components/simple-switch";
+import $ from 'jquery';
+import ko from 'knockout';
+import arches from 'arches';
+import searchExportTemplate from 'templates/views/components/search/search-export.htm';
+import 'bindings/fadeVisible';
+import 'bindings/clipboard';
+import 'views/components/simple-switch';
 
-
-const componentName = "search-export";
-const viewModel = function(sharedStateObject) {
+const componentName = 'search-export';
+const viewModel = function (sharedStateObject) {
     var self = this;
 
     this.total = sharedStateObject.total;
@@ -16,35 +15,38 @@ const viewModel = function(sharedStateObject) {
     this.selectedPopup = sharedStateObject.selectedPopup;
     this.downloadStarted = ko.observable(false);
     this.reportlink = ko.observable(false);
-    this.format = ko.observable("tilecsv");
+    this.format = ko.observable('tilecsv');
     this.precision = ko.observable(6);
     this.result = ko.observable();
     this.emailInput = ko.observable(arches.userEmail);
     this.exportName = ko.observable();
     this.celeryRunning = ko.observable(arches.celeryRunning);
-    this.hasExportHtmlTemplates = ko.observable(arches.exportHtmlTemplates.length > 0);
+    this.hasExportHtmlTemplates = ko.observable(
+        arches.exportHtmlTemplates.length > 0,
+    );
     this.downloadPending = ko.observable(false);
-    this.hasResourceTypeFilter = ko.observable(!!sharedStateObject.query()["resource-type-filter"]);
+    this.hasResourceTypeFilter = ko.observable(
+        !!sharedStateObject.query()['resource-type-filter'],
+    );
     this.exportSystemValues = ko.observable(false);
-    this.copyGeojsonText = ko.observable("");
+    this.copyGeojsonText = ko.observable('');
     this.showCopyText = ko.observable(false);
 
-    this.query.subscribe(function(val) {
-        if (val["resource-type-filter"]) {
+    this.query.subscribe(function (val) {
+        if (val['resource-type-filter']) {
             self.hasResourceTypeFilter(true);
-        }
-        else {
+        } else {
             self.hasResourceTypeFilter(false);
         }
     });
 
-    this.hasResourceTypeFilter.subscribe(function(val) {
+    this.hasResourceTypeFilter.subscribe(function (val) {
         if (!val) {
-            self.format("tilecsv");
+            self.format('tilecsv');
         }
     });
 
-    this.url = ko.computed(function() {
+    this.url = ko.computed(function () {
         var url = arches.urls.export_results;
         var urlparams = Object.assign({}, ko.unwrap(self.query));
         urlparams.format = self.format();
@@ -52,28 +54,30 @@ const viewModel = function(sharedStateObject) {
         urlparams.precision = self.precision();
         urlparams.total = self.total();
         urlparams.exportsystemvalues = self.exportSystemValues();
-        url = url + "?" + $.param(urlparams);
+        url = url + '?' + $.param(urlparams);
         return url;
     });
 
-    this.geojsonUrl = ko.pureComputed(function() {
-        if (ko.unwrap(self.format()) === "geojson") {
-            var exportPath = self.url().replace("search/export_results", "api/search/export_results");
+    this.geojsonUrl = ko.pureComputed(function () {
+        if (ko.unwrap(self.format()) === 'geojson') {
+            var exportPath = self
+                .url()
+                .replace('search/export_results', 'api/search/export_results');
             return window.location.origin + exportPath;
         } else {
             return null;
         }
     });
 
-    this.copyGeojsonUrlText = function() {
-        self.copyGeojsonText("Geojson url copied to clipboard.");
+    this.copyGeojsonUrlText = function () {
+        self.copyGeojsonText('Geojson url copied to clipboard.');
         self.showCopyText(true);
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             self.showCopyText(false);
         }, 6000);
     };
 
-    this.getExportData = function() {
+    this.getExportData = function () {
         var payload = Object.assign({}, ko.unwrap(this.query));
         self.downloadPending(true);
         payload.format = this.format();
@@ -81,24 +85,24 @@ const viewModel = function(sharedStateObject) {
         payload.precision = this.precision();
         payload.total = this.total();
         payload.email = this.emailInput();
-        payload.exportName = this.exportName() || "Arches Export";
+        payload.exportName = this.exportName() || 'Arches Export';
         payload.exportsystemvalues = this.exportSystemValues();
         $.ajax({
-            type: "GET",
+            type: 'GET',
             url: arches.urls.export_results,
-            data: payload
-        }).done(function(response) {
+            data: payload,
+        }).done(function (response) {
             self.downloadPending(false);
             self.downloadStarted(true);
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 self.downloadStarted(false);
             }, 9000);
             self.result(response.message);
         });
     };
 
-    this.executeExport = function(limit) {
-        if (ko.unwrap(self.format()) === "geojson" && this.total() <= limit) {
+    this.executeExport = function (limit) {
+        if (ko.unwrap(self.format()) === 'geojson' && this.total() <= limit) {
             window.open(this.geojsonUrl());
         } else if (this.total() > limit) {
             this.getExportData();
