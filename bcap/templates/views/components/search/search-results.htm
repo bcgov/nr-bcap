@@ -23,12 +23,12 @@
 
 <div
     class="site-translator-container"
-    style="padding: 10px; border-bottom: 1px solid #ddd; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"
+    style="padding: 10px 0; border-bottom: 1px solid #ddd; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"
 >
     <select
         id="target-resource-type"
         class="form-control input-sm"
-        style="width: auto; min-width: 200px;"
+        style="flex: 1 1 0; min-width: 200px;"
     >
         <option value="">{% trans "Loading..." %}</option>
     </select>
@@ -38,263 +38,407 @@
         class="btn btn-primary btn-sm"
         title="{% trans 'Convert current search results to their related resources of the selected type' %}"
     >
-        <i class="fa fa-exchange"></i> {% trans "Translate" %}
+        {% trans "Translate" %}
     </button>
 
-    <span id="translate-status" style="margin-left: 10px; display: none;"></span>
+    <span
+        id="translate-status"
+        style="margin-left: 10px; display: none;"
+    ></span>
 </div>
 
 <script>
-(function() {
-    let translation_state = {
-        original_query: null,
-        chain: [],
-        source_mapping: {}
-    };
+    (function () {
+        let SELECTORS = {
+            banner: 'translation-state-banner',
+            banner_text: 'translation-state-text',
+            clear_banner_btn: 'clear-translation-banner-btn',
+            clear_filters_btn: '.clear-filter',
+            resource_type_select: 'target-resource-type',
+            search_results_list: 'search-results-list',
+            status: 'translate-status',
+            translate_btn: 'translate-to-resource-type-btn',
+        };
 
-    function get_csrf_token() {
-        let cookie_value = null;
-        if (document.cookie && document.cookie !== "") {
-            let cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === "csrftoken=") {
-                    cookie_value = decodeURIComponent(cookie.substring(10));
-                    break;
+        let BUTTON_STATES = {
+            default: 'Translate',
+            loading: '<i class="fa fa-spinner fa-spin"></i> Translating...',
+        };
+
+        let translation_state = {
+            chain: [],
+            original_query: null,
+            source_mapping: {},
+
+            reset() {
+                this.chain = [];
+                this.original_query = null;
+                this.source_mapping = {};
+            },
+
+            has_translation() {
+                return this.chain.length > 0;
+            },
+
+            get_last_step() {
+                return this.chain[this.chain.length - 1] || null;
+            },
+        };
+
+        let dom = {
+            get(id) {
+                return document.getElementById(id);
+            },
+
+            query(selector) {
+                return document.querySelector(selector);
+            },
+
+            set_display(element, visible) {
+                if (element) {
+                    element.style.display = visible ? 'block' : 'none';
                 }
-            }
-        }
-        return cookie_value;
-    }
+            },
 
-    function get_shared_state() {
-        let search_results_el = document.getElementById("search-results-list");
-        if (!search_results_el) {
-            return null;
-        }
-        let context = ko.contextFor(search_results_el);
-        if (context && context.$root && context.$root.sharedStateObject) {
-            return context.$root.sharedStateObject;
-        }
-        return null;
-    }
+            set_status(message, color) {
+                let status = this.get(SELECTORS.status);
 
-    function update_translation_banner() {
-        let banner = document.getElementById("translation-state-banner");
-        let state_text = document.getElementById("translation-state-text");
+                if (!status) {
+                    return;
+                }
 
-        if (!translation_state.chain || translation_state.chain.length === 0) {
-            banner.style.display = "none";
-            return;
-        }
+                status.style.display = message ? 'inline' : 'none';
+                status.style.color = color || 'inherit';
+                status.textContent = message || '';
+            },
 
-        banner.style.display = "block";
+            set_button_loading(button, loading) {
+                if (!button) {
+                    return;
+                }
 
-        let last_step = translation_state.chain[translation_state.chain.length - 1];
+                button.disabled = loading;
+                button.innerHTML = loading ? BUTTON_STATES.loading : BUTTON_STATES.default;
+            },
 
-        state_text.textContent = "Translated " + last_step.original_count + " " + last_step.source_name + "(s) to " + last_step.count + " " + last_step.target_name + "(s).";
-    }
+            populate_select(select, items, value_key, text_key) {
+                if (!select) {
+                    return;
+                }
 
-    function clear_translation() {
-        let shared_state = get_shared_state();
-        if (!shared_state) {
-            console.error("Could not get shared state");
-            return;
-        }
+                select.innerHTML = '';
 
-        let original = translation_state.original_query;
-
-        translation_state.original_query = null;
-        translation_state.chain = [];
-        translation_state.source_mapping = {};
-
-        if (original && Object.keys(original).length > 0) {
-            shared_state.query(original);
-        } else {
-            shared_state.query({});
-        }
-
-        update_translation_banner();
-    }
-
-    function load_resource_types() {
-        let select = document.getElementById("target-resource-type");
-        let base_url = window.location.pathname.split("/search")[0];
-
-        fetch(base_url + "/api/translatable-resource-types", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            select.innerHTML = "";
-
-            if (data.status === "success" && data.resource_types) {
-                data.resource_types.forEach(function(resource_type) {
-                    let option = document.createElement("option");
-                    option.value = resource_type.graphid;
-                    option.textContent = resource_type.name;
+                items.forEach(function (item) {
+                    let option = document.createElement('option');
+                    option.value = item[value_key];
+                    option.textContent = item[text_key];
                     select.appendChild(option);
                 });
-            } else {
-                let option = document.createElement("option");
-                option.value = "";
-                option.textContent = "No resource types available";
+            },
+
+            set_select_error(select, message) {
+                if (!select) {
+                    return;
+                }
+
+                select.innerHTML = '';
+
+                let option = document.createElement('option');
+                option.value = '';
+                option.textContent = message;
                 select.appendChild(option);
+            },
+        };
+
+        let utils = {
+            get_base_url() {
+                return window.location.pathname.split('/search')[0];
+            },
+
+            get_csrf_token() {
+                let match = document.cookie.match(/csrftoken=([^;]+)/);
+                return match ? decodeURIComponent(match[1]) : null;
+            },
+
+            clean_source_name(name) {
+                if (!name || !name.trim()) {
+                    return null;
+                }
+
+                return name.trim().replace(/,\s*$/, '');
+            },
+
+            filter_query_keys(query, exclude_keys) {
+                let filtered = {};
+
+                Object.keys(query).forEach(function (key) {
+                    if (exclude_keys.indexOf(key) === -1) {
+                        filtered[key] = query[key];
+                    }
+                });
+
+                return filtered;
+            },
+        };
+
+        let shared_state = {
+            get() {
+                let el = dom.get(SELECTORS.search_results_list);
+
+                if (!el) {
+                    return null;
+                }
+
+                let context = ko.contextFor(el);
+
+                return context && context.$root && context.$root.sharedStateObject
+                    ? context.$root.sharedStateObject
+                    : null;
+            },
+
+            get_query() {
+                let state = this.get();
+                return state ? state.query() : {};
+            },
+
+            set_query(query) {
+                let state = this.get();
+
+                if (state) {
+                    state.query(query);
+                }
+            },
+
+            get_paging_filter() {
+                let state = this.get();
+                return state ? state.getFilter('paging-filter') : null;
+            },
+
+            reset_paging() {
+                let paging = this.get_paging_filter();
+
+                if (paging) {
+                    paging.userRequestedNewPage = true;
+                    paging.preventLoop = true;
+                    paging.page(1);
+                }
+            },
+        };
+
+        let api = {
+            async fetch_resource_types() {
+                let url = utils.get_base_url() + '/api/translatable-resource-types';
+
+                let response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                return response.json();
+            },
+
+            async translate(target_graph_id, query_params, source_ids) {
+                let url = utils.get_base_url() + '/api/translate-to-resource-type';
+                let form_data = new FormData();
+
+                form_data.append('target_graph_id', target_graph_id);
+                form_data.append('csrfmiddlewaretoken', utils.get_csrf_token());
+
+                if (source_ids) {
+                    form_data.append('source_ids', source_ids);
+                } else {
+                    Object.keys(query_params).forEach(function (key) {
+                        form_data.append(key, query_params[key]);
+                    });
+                }
+
+                let response = await fetch(url, {
+                    method: 'POST',
+                    body: form_data,
+                    credentials: 'same-origin',
+                });
+
+                return response.json();
+            },
+        };
+
+        let ui = {
+            update_banner() {
+                let banner = dom.get(SELECTORS.banner);
+                let text_el = dom.get(SELECTORS.banner_text);
+
+                if (!translation_state.has_translation()) {
+                    dom.set_display(banner, false);
+                    return;
+                }
+
+                dom.set_display(banner, true);
+                let step = translation_state.get_last_step();
+                text_el.textContent = `Translated ${step.original_count} ${step.source_name}(s) to ${step.count} ${step.target_name}(s).`;
+            },
+        };
+
+        let actions = {
+            async load_resource_types() {
+                let select = dom.get(SELECTORS.resource_type_select);
+
+                try {
+                    let data = await api.fetch_resource_types();
+
+                    if (data.status === 'success' && data.resource_types) {
+                        dom.populate_select(select, data.resource_types, 'graphid', 'name');
+                    } else {
+                        dom.set_select_error(select, 'No resource types available');
+                    }
+                } catch (error) {
+                    console.error('Error loading resource types:', error);
+                    dom.set_select_error(select, 'Error loading types');
+                }
+
+                ui.update_banner();
+            },
+
+            async translate() {
+                let select = dom.get(SELECTORS.resource_type_select);
+                let btn = dom.get(SELECTORS.translate_btn);
+                let target_graph_id = select.value;
+
+                if (!target_graph_id) {
+                    dom.set_status('Please select a target resource type.', 'orange');
+                    return;
+                }
+
+                if (!shared_state.get()) {
+                    dom.set_status('Could not access search state.', 'red');
+                    return;
+                }
+
+                dom.set_button_loading(btn, true);
+                dom.set_status(null);
+
+                let current_query = shared_state.get_query();
+                let query_to_use = translation_state.original_query || current_query;
+                let source_ids = null;
+
+                if (!translation_state.original_query && current_query['ids']) {
+                    source_ids = current_query['ids'];
+                }
+
+                try {
+                    let query_params = utils.filter_query_keys(query_to_use, ['paging-filter', 'ids']);
+                    let data = await api.translate(target_graph_id, query_params, source_ids);
+
+                    dom.set_button_loading(btn, false);
+
+                    if (data.status === 'success' && data.resource_ids && data.resource_ids.length > 0) {
+                        if (!translation_state.original_query) {
+                            translation_state.original_query = utils.filter_query_keys(current_query, [
+                                'paging-filter',
+                            ]);
+                        }
+
+                        translation_state.source_mapping = data.source_mapping || {};
+
+                        translation_state.chain = [
+                            {
+                                count: data.total_translated,
+                                original_count: data.original_count,
+                                source_name: data.source_resource_type_name || 'search results',
+                                target_name: data.target_resource_type_name,
+                            },
+                        ];
+
+                        shared_state.set_query({
+                            ids: JSON.stringify(data.resource_ids),
+                            'paging-filter': 1,
+                            tiles: true,
+                        });
+
+                        shared_state.reset_paging();
+                        ui.update_banner();
+                    } else if (data.status === 'error') {
+                        dom.set_status(data.message, 'red');
+                    } else {
+                        dom.set_status('No related resources found for the selected type.', 'orange');
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                    dom.set_button_loading(btn, false);
+                    dom.set_status('An error occurred.', 'red');
+                }
+            },
+
+            clear() {
+                if (!shared_state.get()) {
+                    console.error('Could not get shared state');
+                    return;
+                }
+
+                let original = translation_state.original_query;
+                translation_state.reset();
+
+                if (original && Object.keys(original).length > 0) {
+                    shared_state.set_query(original);
+                } else {
+                    shared_state.set_query({});
+                }
+
+                ui.update_banner();
+            },
+        };
+
+        function init() {
+            let translate_btn = dom.get(SELECTORS.translate_btn);
+            let clear_banner_btn = dom.get(SELECTORS.clear_banner_btn);
+            let clear_filters_btn = dom.query(SELECTORS.clear_filters_btn);
+
+            if (translate_btn) {
+                translate_btn.addEventListener('click', actions.translate);
             }
 
-            update_translation_banner();
-        })
-        .catch(function(error) {
-            console.error("Error loading resource types:", error);
-            select.innerHTML = "<option value=''>Error loading types</option>";
-        });
-    }
-
-    function translate_to_resource_type() {
-        let btn = document.getElementById("translate-to-resource-type-btn");
-        let status = document.getElementById("translate-status");
-        let select = document.getElementById("target-resource-type");
-        let target_graph_id = select.value;
-
-        if (!target_graph_id) {
-            status.style.display = "inline";
-            status.style.color = "orange";
-            status.textContent = "Please select a target resource type.";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Translating...';
-        status.style.display = "none";
-
-        let shared_state = get_shared_state();
-        if (!shared_state) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa fa-exchange"></i> Translate';
-            status.style.display = "inline";
-            status.style.color = "red";
-            status.textContent = "Could not access search state.";
-            return;
-        }
-
-        let current_query = shared_state.query();
-
-        let form_data = new FormData();
-        form_data.append("target_graph_id", target_graph_id);
-        form_data.append("csrfmiddlewaretoken", get_csrf_token());
-
-        if (translation_state.original_query) {
-            Object.keys(translation_state.original_query).forEach(function(key) {
-                if (key !== "paging-filter" && key !== "ids") {
-                    form_data.append(key, translation_state.original_query[key]);
-                }
-            });
-        } else {
-            Object.keys(current_query).forEach(function(key) {
-                if (key !== "paging-filter" && key !== "ids") {
-                    form_data.append(key, current_query[key]);
-                }
-            });
-
-            let original = {};
-            Object.keys(current_query).forEach(function(key) {
-                if (key !== "ids" && key !== "paging-filter") {
-                    original[key] = current_query[key];
-                }
-            });
-            translation_state.original_query = original;
-        }
-
-        let base_url = window.location.pathname.split("/search")[0];
-        fetch(base_url + "/api/translate-to-resource-type", {
-            method: "POST",
-            body: form_data,
-            credentials: "same-origin"
-        })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa fa-exchange"></i> Translate';
-
-            if (data.status === "success" && data.resource_ids && data.resource_ids.length > 0) {
-                status.style.display = "none";
-
-                translation_state.source_mapping = data.source_mapping || {};
-
-                translation_state.chain = [{
-                    source_name: data.source_resource_type_name || "search results",
-                    target_name: data.target_resource_type_name,
-                    count: data.total_translated,
-                    original_count: data.original_count
-                }];
-
-                let paging_filter = shared_state.getFilter("paging-filter");
-                if (paging_filter) {
-                    paging_filter.userRequestedNewPage = true;
-                    paging_filter.preventLoop = true;
-                }
-
-                let new_query = {
-                    "ids": JSON.stringify(data.resource_ids),
-                    "paging-filter": 1
-                };
-                shared_state.query(new_query);
-
-                if (paging_filter) {
-                    paging_filter.page(1);
-                }
-
-                update_translation_banner();
-            } else {
-                status.style.display = "inline";
-                status.style.color = "orange";
-                status.textContent = "No related resources found for the selected type.";
+            if (clear_banner_btn) {
+                clear_banner_btn.addEventListener('click', actions.clear);
             }
-        })
-        .catch(function(error) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa fa-exchange"></i> Translate';
-            status.style.display = "inline";
-            status.style.color = "red";
-            status.textContent = "An error occurred.";
-            console.error("Translation error:", error);
-        });
-    }
 
-    window.get_translation_source = function(resourceinstanceid) {
-        let sources = translation_state.source_mapping[resourceinstanceid];
-        if (sources && sources.length > 0) {
-            return sources.join(", ");
+            if (clear_filters_btn) {
+                clear_filters_btn.addEventListener('click', actions.clear);
+            }
+
+            actions.load_resource_types();
         }
-        return null;
-    };
 
-    let translate_btn = document.getElementById("translate-to-resource-type-btn");
-    if (translate_btn) {
-        translate_btn.addEventListener("click", translate_to_resource_type);
-    }
+        window.clear_translation = actions.clear;
 
-    let clear_btn = document.getElementById("clear-translation-banner-btn");
-    if (clear_btn) {
-        clear_btn.addEventListener("click", clear_translation);
-    }
+        window.get_translation_source = function (resourceinstanceid) {
+            let sources = translation_state.source_mapping[resourceinstanceid];
 
-    load_resource_types();
-})();
+            if (!sources || sources.length === 0) {
+                return null;
+            }
+
+            let cleaned = sources.map(utils.clean_source_name).filter(Boolean);
+
+            return cleaned.length > 0 ? cleaned.join(', ') : null;
+        };
+
+        init();
+    })();
 </script>
 
-<div id="search-results-list" style="display: none;" role="list" tabindex="-1" data-bind="foreach: results, visible: true,
+<div
+    id="search-results-list"
+    style="display: none;"
+    role="list"
+    tabindex="-1"
+    data-bind="foreach: results, visible: true,
     attr: {'aria-label': $root.translations.searchResults}
-">
-
-    <div class="search-listing" role="listitem" data-bind="event: { mouseover: mouseoverInstance, mouseout: mouseoverInstance('')}, css: {'selected': selected()}">
+"
+>
+    <div
+        class="search-listing"
+        role="listitem"
+        data-bind="event: { mouseover: mouseoverInstance, mouseout: mouseoverInstance('')}, css: {'selected': selected()}"
+    >
         <div style="display: flex">
             <div class="search-thumbnail-container">
                 <div
@@ -307,9 +451,17 @@
                         }
                     "
                 >
-                    <img class="search-thumbnail-image" data-bind="attr:{src: thumbnail}" alt="">
+                    <img
+                        class="search-thumbnail-image"
+                        data-bind="attr:{src: thumbnail}"
+                        alt=""
+                    />
                 </div>
-                <img class="search-hover-image" data-bind="attr:{src: thumbnail}" alt="">
+                <img
+                    class="search-hover-image"
+                    data-bind="attr:{src: thumbnail}"
+                    alt=""
+                />
             </div>
             <div style="flex: 1">
                 <p
@@ -317,17 +469,30 @@
                     data-bind="css: {'i18n-alt': $parent.alternativelanguage}"
                 >
                     <!--ko if: canEdit -->
-                    <a class="search-candidate-title" href="#" data-bind="onEnterkeyClick, onSpaceClick,
+                    <a
+                        class="search-candidate-title"
+                        href="#"
+                        data-bind="onEnterkeyClick, onSpaceClick,
                         click:  $parent.viewReport.bind($parent),
                         attr: {'aria-label': $root.translations.viewResourceReport(displayname)},
-                    ">
-                        <i class="search-listing-icon" data-bind="css: iconclass"></i>
+                    "
+                    >
+                        <i
+                            class="search-listing-icon"
+                            data-bind="css: iconclass"
+                        ></i>
                         <span data-bind="html: displayname"></span>
                     </a>
                     <!--/ko-->
                     <!--ko if: !canEdit -->
-                    <span class="search-candidate-title" data-bind="attr: {'aria-label': $root.translations.viewResourceReport(displayname)}">
-                        <i class="search-listing-icon" data-bind="css: iconclass"></i>
+                    <span
+                        class="search-candidate-title"
+                        data-bind="attr: {'aria-label': $root.translations.viewResourceReport(displayname)}"
+                    >
+                        <i
+                            class="search-listing-icon"
+                            data-bind="css: iconclass"
+                        ></i>
                         <span data-bind="html: displayname"></span>
                     </span>
                     <!--/ko-->
@@ -336,16 +501,20 @@
                 <!--ko if: window.get_translation_source && window.get_translation_source(resourceinstanceid) -->
                 <div
                     class="search-listing-source"
-                    style="font-size: 0.8em; color: #155724; background-color: #d4edda; padding: 6px 12px; border-radius: 3px; margin: 8px 0; display: inline-block;"
+                    style="font-size: 0.8em; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 6px 12px; border-radius: 3px; margin: 8px 0; display: inline-flex; align-items: center; gap: 6px;"
                 >
-                    <i class="fa fa-link" style="margin-right: 6px;"></i>
-                    Related to: <strong data-bind="text: window.get_translation_source(resourceinstanceid)"></strong>
+                    <i class="fa fa-link"></i>
+                    <span>
+                        Related to:
+                        <strong data-bind="text: window.get_translation_source(resourceinstanceid)"></strong>
+                    </span>
                 </div>
                 <!--/ko-->
 
-                <div class="search-listing-body" data-bind="html: displaydescription">
-
-                </div>
+                <div
+                    class="search-listing-body"
+                    data-bind="html: displaydescription"
+                ></div>
             </div>
         </div>
         <div class="search-listing-footer">
@@ -365,27 +534,37 @@
                 <!--/ko-->
 
                 <!-- ko if: !!$parent.details -->
-                <button class="search-candidate-link" data-bind="onEnterkeyClick, onSpaceClick, click: showDetails,
+                <button
+                    class="search-candidate-link"
+                    data-bind="onEnterkeyClick, onSpaceClick, click: showDetails,
                     attr: {'aria-label': $root.translations.viewResourceDetails(displayname)},
-                ">
+                "
+                >
                     <i class="fa fa-info-circle"></i>
                     <span data-bind="text: $root.translations.details"></span>
                 </button>
                 <!-- /ko -->
 
                 <!--ko if: canEdit -->
-                <a class="search-candidate-link" href="#" data-bind="onEnterkeyClick, onSpaceClick, click: $parent.editResource.bind($parent),
+                <a
+                    class="search-candidate-link"
+                    href="#"
+                    data-bind="onEnterkeyClick, onSpaceClick, click: $parent.editResource.bind($parent),
                     attr: {'aria-label': $root.translations.editResource(displayname)},
-                ">
+                "
+                >
                     <i class="ion-ios-refresh-empty"></i>
                     <span data-bind="text: $root.translations.edit"></span>
                 </a>
                 <!--/ko-->
 
                 <!-- ko if: !$parent.mapFilter -->
-                <button class="search-candidate-link" data-bind="visible: point, click: mapLinkClicked,
+                <button
+                    class="search-candidate-link"
+                    data-bind="visible: point, click: mapLinkClicked,
                     attr:{'aria-label': $root.translations.viewMap},
-                ">
+                "
+                >
                     <i class="fa fa-map-marker"></i>
                     <span data-bind="text: $root.translations.map"></span>
                 </button>
@@ -394,34 +573,39 @@
 
             <div>
                 <!--ko ifnot: $root.resourceEditorContext -->
-                    <!--ko if: !!$parent.relatedResourcesManager && canRead -->
-                    <button class="search-candidate-link" data-bind="onEnterkeyClick, onSpaceClick, click: showrelated,
+                <!--ko if: !!$parent.relatedResourcesManager && canRead -->
+                <button
+                    class="search-candidate-link"
+                    data-bind="onEnterkeyClick, onSpaceClick, click: showrelated,
                         attr: {'aria-label': $root.translations.viewRelatedResources(displayname)},
-                    ">
-                        <i class="fa fa-code-fork"></i>
-                        <span data-bind="text: $root.translations.relatedResources"></span>
-                    </button>
-                    <!--/ko-->
+                    "
+                >
+                    <i class="fa fa-code-fork"></i>
+                    <span data-bind="text: $root.translations.relatedResources"></span>
+                </button>
+                <!--/ko-->
                 <!--/ko-->
 
                 <!--ko if: $root.resourceEditorContext -->
-                    <!--ko if: relatable & $root.editingInstanceId != resourceinstanceid -->
-                    <button class="search-candidate-link" data-bind="onEnterkeyClick, onSpaceClick, click: function(val){relationshipcandidacy(val); showrelated()},
+                <!--ko if: relatable & $root.editingInstanceId != resourceinstanceid -->
+                <button
+                    class="search-candidate-link"
+                    data-bind="onEnterkeyClick, onSpaceClick, click: function(val){relationshipcandidacy(val); showrelated()},
                         attr: {'aria-label': $root.translations.viewRelatedResources(displayname)},
-                    ">
-                        <i class="fa fa-code-fork"></i>
-                        <span data-bind="text: $root.translations.relateResource"></span>
-                    </button>
-                    <!--/ko-->
-                    <!--ko if: relatable == false || $root.editingInstanceId == resourceinstanceid -->
-                    <span class="search-candidate-link unrelatable-search-result">
-                        <i class="fa fa-code-fork"></i>
-                        <span data-bind="text: $root.translations.cannotBeRelated"></span>
-                    </span>
-                    <!--/ko-->
+                    "
+                >
+                    <i class="fa fa-code-fork"></i>
+                    <span data-bind="text: $root.translations.relateResource"></span>
+                </button>
+                <!--/ko-->
+                <!--ko if: relatable == false || $root.editingInstanceId == resourceinstanceid -->
+                <span class="search-candidate-link unrelatable-search-result">
+                    <i class="fa fa-code-fork"></i>
+                    <span data-bind="text: $root.translations.cannotBeRelated"></span>
+                </span>
+                <!--/ko-->
                 <!--/ko-->
             </div>
         </div>
     </div>
-
 </div>
