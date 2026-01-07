@@ -210,11 +210,15 @@
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": ""
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"22f3e2b1-a0a3-4c2e-adfb-51be822ed8e2\",\"language_id\":\"en\",\"list_item_id\":\"72b30f11-a739-529f-9858-665166bb1a30\",\"value\":\"Permit Holder\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/72b30f11-a739-529f-9858-665166bb1a30\"}]}}]"
                     },
                     "datatype": "resource-instance-list",
                     "description": null,
@@ -369,8 +373,8 @@
                 "graph_id": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
                 "most_recent_edit_id": null,
                 "notes": null,
-                "publicationid": "2bcb29f5-e8f1-4723-bb0a-4143c5fa8186",
-                "published_time": "2025-07-23T19:21:50.002"
+                "publicationid": "5a83e11c-5fac-40de-88cd-3e5501e8b9ad",
+                "published_time": "2026-01-07T17:52:18.396"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -472,7 +476,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
         "os": "Linux",
         "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
