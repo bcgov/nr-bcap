@@ -34,9 +34,7 @@ const props = withDefaults(
 );
 
 const details = computed(() => props.data?.aliased_data?.site_visit_details);
-const teamTile = computed(
-    () => details.value?.aliased_data?.site_visit_team_n1,
-);
+const teamTile = computed(() => details.value?.aliased_data?.site_visit_team);
 const teamMembers = computed(
     () => teamTile.value?.aliased_data?.team_member || [],
 );
