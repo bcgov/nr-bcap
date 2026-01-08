@@ -10,8 +10,6 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from oauth2_provider.models import AccessToken, get_application_model
 
-from django.urls import resolve
-
 
 @override_settings(ROOT_URLCONF="bcap.tests.test_urls")
 class BordenNumberExternalViewTests(TestCase):
@@ -52,10 +50,6 @@ class BordenNumberExternalViewTests(TestCase):
     def test_post_requires_bearer_token(self):
         resp = self.client.post(self.url, data=self.post_data)
 
-        print("URL:", self.url)
-        print("Resolved view:", resolve(self.url).func)
-        print("Redirect Location:", resp.get("Location"))
-
         # django-oauth-toolkit ProtectedResourceView returns 401 for missing/invalid token
         self.assertEqual(resp.status_code, 403)
 
@@ -72,10 +66,6 @@ class BordenNumberExternalViewTests(TestCase):
             data=self.post_data,
             HTTP_AUTHORIZATION=f"Bearer {self.access_token.token}",
         )
-
-        print("URL:", self.url)
-        print("Resolved view:", resolve(self.url).func)
-        print("Redirect Location:", resp.get("Location"))
 
         self.assertEqual(resp.status_code, 200)
         post_impl_patch.assert_called_once()
