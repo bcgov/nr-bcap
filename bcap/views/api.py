@@ -1,3 +1,4 @@
+import json
 from traceback import print_exception
 
 from django.http import HttpResponse, Http404
@@ -31,17 +32,17 @@ from arches_querysets.rest_framework.serializers import (
 )
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_controlled_lists.models import ListItem, ListItemValue
-
+from oauth2_provider.views.generic import ProtectedResourceView
+import re
 
 logger = logging.getLogger(__name__)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class BordenNumber(APIBase):
+class BordenNumberBase:
     api = BordenNumberApi()
 
     # Generate a new borden number and return it -- NB - this doesn't reserve it at this point
-    def get(self, request, resourceinstanceid=None):
+    def _get_impl(self, request, resourceinstanceid=None):
         try:
             new_borden_number = self.api.get_next_borden_number(
                 resourceinstanceid=resourceinstanceid
@@ -61,17 +62,43 @@ class BordenNumber(APIBase):
 
     # Reserve a borden number for BCRHP. Borden numbers are automatically reserved for BCAP
     # by way of saving the card with a new borden number.
-    def post(self, request):
-        geometry = request.POST.site_boundary
-        borden_number = request.POST.borden_number
-        reserve = request.POST.reserve_borden_number
+    def _post_impl(self, request):
+        geometry_str = request.POST["site_boundary"]
+        geometry = json.loads(geometry_str)
+        # borden_number = request.POST["borden_number"]
+        reserve = (
+            request.POST["reserve_borden_number"].lower()
+            if "reserve_borden_number" in request.POST
+            else "false"
+        )
 
-        if reserve == "true":
-            self.api.reserve_borden_number(geometry)
         new_borden_number = self.api.get_next_borden_number(geometry=geometry)
-        return_data = '{"status": "success", borden_number: "%s" }' % new_borden_number
+        if reserve == "true":
+            new_borden_number = self.api.reserve_borden_number(
+                re.sub("-.*", "", new_borden_number)
+            )
+        return_data = (
+            '{"status": "success", "borden_number": "%s" }' % new_borden_number
+        )
         return_bytes = return_data.encode("utf-8")
         return JSONResponse(return_bytes, content_type="application/json")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class BordenNumber(APIBase, BordenNumberBase):
+    """
+    Existing internal endpoint – unchanged semantics.
+    """
+
+    def get(self, request, resourceinstanceid=None):
+        return self._get_impl(request, resourceinstanceid)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class BordenNumberExternal(ProtectedResourceView, BordenNumberBase):
+
+    def post(self, request, *args, **kwargs):
+        return self._post_impl(request)
 
 
 class LegislativeAct(APIBase):

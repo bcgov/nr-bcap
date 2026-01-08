@@ -476,6 +476,8 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/auth",
                 "/bcap/auth/eoauth_start",
                 "/bcap/auth/eoauth_cb",
+                "/bcap/o/token",
+                # "/bcap/api/borden-number"
             ],
         },
     }

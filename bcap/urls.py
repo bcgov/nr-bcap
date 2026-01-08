@@ -4,6 +4,7 @@ from django.conf.urls.i18n import i18n_patterns
 from arches.app.views.file import FileView
 from bcap.views.api import (
     BordenNumber,
+    BordenNumberExternal,
     MVT,
     LegislativeAct,
     UserProfile,
@@ -37,17 +38,7 @@ urlpatterns = [
         name="borden_number",
     ),
     # Used by BCRHP to get & reserve a borden number
-    # Make trailing slash optional to catch request from resource that hasn't been persisted
-    path(
-        f"{PREFIX}borden_number/",
-        BordenNumber.as_view(),
-        name="borden_number_slash",
-    ),
-    path(
-        f"{PREFIX}borden_number",
-        BordenNumber.as_view(),
-        name="borden_number_bare",
-    ),
+    path(f"{PREFIX}api/borden-number/", BordenNumberExternal.as_view(), name="borden-number-external"),
     path(
         f"{PREFIX}legislative_act/<uuid:act_id>",
         LegislativeAct.as_view(),
