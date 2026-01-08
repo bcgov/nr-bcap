@@ -38,7 +38,11 @@ urlpatterns = [
         name="borden_number",
     ),
     # Used by BCRHP to get & reserve a borden number
-    path(f"{PREFIX}api/borden-number/", BordenNumberExternal.as_view(), name="borden-number-external"),
+    path(
+        f"{PREFIX}api/borden-number/",
+        BordenNumberExternal.as_view(),
+        name="borden-number-external",
+    ),
     path(
         f"{PREFIX}legislative_act/<uuid:act_id>",
         LegislativeAct.as_view(),
