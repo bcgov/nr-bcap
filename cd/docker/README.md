@@ -1,6 +1,6 @@
-## BC Register of Historic Places system Docker deployment configuration
+## BC Archaological Portal Docker deployment configuration
 
-This directory contains BCRHP-specific assets required to deploy to the Ministry environments. It uses
+This directory contains BCAP-specific assets required to deploy to the Ministry environments. It uses
 the Docker deployment container (found in GitHub here https://github.com/bferguso/arches_deployer.git)
 and the Arches Ansible scripts (available here: https://github.com/bferguso/arches-ansible.git).
 
@@ -24,8 +24,8 @@ be created from that with application-specific container configuration.
 
 ### Configuration directory for deploying 
 The following files need to be configured in the `config/` directory:
-1. `deployment_secrets.j2` - copy to `deployment_secrets` and populate. Contains secrets required to deploy BCRHP, not part of the application configuration
+1. `deployment_secrets.j2` - copy to `deployment_secrets` and populate. Contains secrets required to deploy BCAP, not part of the application configuration
 2. `app_env` - common configuration for all instances
 3. `instance_env` - copy to instance-specific filename (eg `dlvr_env`, `test_env` or `prod_env` and add configuration)
 
-Most non-sensitive configuration is provided in the `/bcrhp/cd/config/` directory.
+Most non-sensitive configuration is provided in the `/bcap/cd/config/` directory.
