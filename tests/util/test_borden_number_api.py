@@ -1,10 +1,14 @@
 # bcap/tests/util/test_borden_number_api.py
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from uuid import uuid4
 from contextlib import ExitStack
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-from django.test import TestCase, override_settings
+from django.db import close_old_connections, connection, connections
+from django.test import TestCase, TransactionTestCase, override_settings
 
 from bcap.util.borden_number_api import (
     BordenNumberApi,
@@ -242,7 +246,71 @@ class BordenNumberApiTests(TestCase):
             p["proxy_mgr_cls"].assert_called_once_with("http://proxy.local:8080")
             p["pool_mgr_cls"].assert_not_called()
 
-    def test_reserve_borden_number_calls_allocate(self):
-        with patch("bcap.util.borden_number_api.BordenNumberCounter") as counter_patch:
-            BordenNumberApi.reserve_borden_number("EhRa")
-            counter_patch.allocate_next_borden_number.assert_called_once_with("EhRa")
+
+class BordenNumberApiReserveDbTests(TransactionTestCase):
+    """
+    DB-backed tests for reserve_borden_number using the configured Postgres DB and
+    the real table `bcap_borden_number_counters`.
+    """
+
+    @classmethod
+    def tearDownClass(cls):
+        connections.close_all()
+        super().tearDownClass()
+
+    def _fake_grid(self) -> str:
+        # borden_grid is max_length=4
+        return uuid4().hex[:4].upper()
+
+    def _reset_grid(self, borden_grid: str) -> None:
+        # Ensure a clean starting point so expected sequences are deterministic.
+        with connection.cursor() as cur:
+            cur.execute(
+                "DELETE FROM bcap_borden_number_counters WHERE borden_grid = %s",
+                [borden_grid],
+            )
+
+    @staticmethod
+    def _seq_from_borden_number(value: str) -> int:
+        # Expected format: "GRID-<int>"
+        return int(str(value).rsplit("-", 1)[1])
+
+    def test_reserve_borden_number_increments_each_call(self):
+        borden_grid = self._fake_grid()
+        self._reset_grid(borden_grid)
+
+        first = BordenNumberApi.reserve_borden_number(borden_grid)
+        second = BordenNumberApi.reserve_borden_number(borden_grid)
+
+        self.assertNotEqual(first, second)
+        self.assertEqual(self._seq_from_borden_number(first), 1)
+        self.assertEqual(self._seq_from_borden_number(second), 2)
+
+    def test_reserve_borden_number_is_thread_safe(self):
+        borden_grid = self._fake_grid()
+        self._reset_grid(borden_grid)
+
+        n_calls = 40
+        barrier = threading.Barrier(n_calls)
+
+        def worker() -> str:
+            # Each thread should use a clean connection state.
+            close_old_connections()
+            try:
+                barrier.wait()
+                return BordenNumberApi.reserve_borden_number(borden_grid)
+            finally:
+                connections["default"].close()
+
+        with ThreadPoolExecutor(max_workers=n_calls) as pool:
+            results = list(pool.map(lambda _: worker(), range(n_calls)))
+
+        # Core property: no duplicates.
+        self.assertEqual(len(results), n_calls)
+        self.assertEqual(
+            len(set(results)), n_calls, msg=f"Duplicates detected: {results}"
+        )
+
+        # Stronger property: because we reset to empty, sequences should be 1..n_calls.
+        seqs = sorted(self._seq_from_borden_number(r) for r in results)
+        self.assertEqual(seqs, list(range(1, n_calls + 1)))

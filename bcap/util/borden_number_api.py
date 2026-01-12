@@ -100,4 +100,4 @@ class BordenNumberApi:
 
     @classmethod
     def reserve_borden_number(cls, borden_grid):
-        BordenNumberCounter.allocate_next_borden_number(borden_grid)
+        return BordenNumberCounter.allocate_next_borden_number(borden_grid)
