@@ -1,0 +1,22 @@
+# Instance-specific environment files
+DJANGO_KEY=
+
+# Application database password
+DB_PASSWORD=
+
+# Password used by DataBC to export data. Should this be moved to deployment_secrets?
+DB_DATABC_PASSWORD=
+
+S3_BUCKET=
+S3_ACCESS_KEY_ID=
+S3_SECRET_ACCESS_KEY=
+
+MAPBOX_KEY=
+PLANET_API_KEY=
+ES_API_KEY=
+HRIA_DB_PASSWORD=
+OAUTH_CLIENT_SECRET=
+
+# Client ID and secret (hashed) to setup the BCRHP Borden Number generation API OAuth2 provider
+BCRHP_API_CLIENT_ID=
+BCRHP_API_CLIENT_SECRET=

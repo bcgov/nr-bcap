@@ -1,0 +1,9 @@
+# App-specific environment files
+# This is set in the container environment$
+# APP_ACRONYM="" # eg bcrhp
+GITHUB_APP_REPO=bcgov/nr-bcap
+
+FORCE_CORE_PIP_INSTALL=True
+CORE_REPO_TAG=stable/8.0.6_bcgov_12377
+COMMON_REPO_TAG=dev/2.0.x
+CONFIG_BRANCH=brf/feat/updates_for_bcrhp_borden_number_api

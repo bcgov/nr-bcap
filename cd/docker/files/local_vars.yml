@@ -1,0 +1,30 @@
+ansible_sudo_passwd: "{{ lookup('ansible.builtin.env', 'IDIR_PASSWORD') }}"
+default_github_token: "{{ lookup('ansible.builtin.env', 'GITHUB_TOKEN') }}"
+db_admin_password: "{{ lookup('ansible.builtin.env', 'DB_ADMIN_PASSWORD') }}"
+
+app_acronym: "{{ lookup('ansible.builtin.env', 'APP_ACRONYM') }}"
+github_app_repo: "{{ lookup('ansible.builtin.env', 'GITHUB_APP_REPO') }}"
+
+# Working with dev release so the version number doesn't change. Need to force reinstall
+force_core_pip_install: "{{ lookup('ansible.builtin.env', 'FORCE_CORE_PIP_INSTALL') }}"
+core_repo_tag: "{{ lookup('ansible.builtin.env', 'CORE_REPO_TAG') }}"
+common_repo_tag: "{{ lookup('ansible.builtin.env', 'COMMON_REPO_TAG') }}"
+config_branch: "{{ lookup('ansible.builtin.env', 'CONFIG_BRANCH') }}"
+
+# Used to setup OAUTH2 App for the BCRHP API used to generate Borden Numbers
+bcrhp_api_client_id: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_ID') }}"
+# This is the hashed version for DB injection
+bcrhp_api_client_secret: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_SECRET') }}"
+
+# Required for 7.6.x
+python_executable: /usr/bin/python3.12
+
+# If this is set to true the django migrate will be run.
+#perform_migration: True
+#migrate_as_superuser: True
+#migrations:
+#  - ""
+#  - "bcap 1081_drop_materialized_views"
+#  - "models"
+
+
