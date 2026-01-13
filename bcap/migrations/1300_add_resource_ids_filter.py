@@ -9,9 +9,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             sql="""
-                DELETE FROM search_component
-                WHERE componentname IN ('ids-filter', 'ids');
-
                 INSERT INTO search_component (
                     searchcomponentid,
                     name,
@@ -23,20 +20,17 @@ class Migration(migrations.Migration):
                     componentname,
                     config
                 ) VALUES (
-                    'f0e0c7d8-a9b8-4567-cdef-123456789abc',
-                    'Resource IDs Filter',
+                    'f1856bfb-c3c4-4d67-8f23-0aa3eef3a160',
+                    'ResourceIds Filter',
                     '',
-                    'ids_filter.py',
-                    'IdsFilter',
-                    'filter',
-                    '',
+                    'ids.py',
+                    'ResourceIdsFilter',
+                    'ids-filter-type',
+                    NULL,
                     'ids',
                     '{}'::jsonb
                 )
-                ON CONFLICT (searchcomponentid) DO UPDATE SET
-                    componentname = EXCLUDED.componentname,
-                    modulename = EXCLUDED.modulename,
-                    classname = EXCLUDED.classname;
+                ON CONFLICT (searchcomponentid) DO NOTHING;
             """,
             reverse_sql="""
                 DELETE FROM search_component

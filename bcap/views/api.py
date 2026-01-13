@@ -3,8 +3,9 @@ import logging
 
 from traceback import print_exception
 
+from django.conf import settings
 from django.core.exceptions import FieldError
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
@@ -281,8 +282,35 @@ class TranslatableResourceTypesView(View):
 
 
 class TranslateToResourceTypeView(View):
-    def _get_all_resource_ids_from_search(self, request) -> tuple:
-        search_filter_factory = SearchFilterFactory(request)
+    def _create_search_request(self, request: HttpRequest) -> HttpRequest:
+        from django.http import QueryDict
+
+        search_request = HttpRequest()
+        search_request.method = "GET"
+        search_request.user = request.user
+        search_request.session = request.session
+
+        get_params = QueryDict(mutable=True)
+        get_params["paging-filter"] = "1"
+
+        excluded_keys = {
+            "paging-filter",
+            "target_graph_id",
+            "source_ids",
+            "csrfmiddlewaretoken",
+        }
+
+        for key, value in request.POST.items():
+            if key not in excluded_keys and value:
+                get_params[key] = value
+
+        search_request.GET = get_params
+
+        return search_request
+
+    def _get_all_resource_ids_from_search(self, request: HttpRequest) -> tuple:
+        search_request = self._create_search_request(request)
+        search_filter_factory = SearchFilterFactory(search_request)
         searchview_instance = search_filter_factory.get_searchview_instance()
 
         if not searchview_instance:
@@ -358,43 +386,50 @@ class TranslateToResourceTypeView(View):
         source_names = {}
 
         for rid in resource_ids:
+            rid_str = str(rid)
             resource = Resource.objects.filter(resourceinstanceid=rid).first()
 
             if resource:
                 name = resource.displayname()
-                source_names[rid] = name if name else str(rid)
+                if name:
+                    name = name.rstrip(", ").rstrip(",").strip()
+                source_names[rid_str] = name if name else rid_str
 
-        target_to_sources = {}
+        target_to_source_ids = {}
 
         relationships_from = ResourceXResource.objects.filter(
             from_resource_id__in=resource_ids, to_resource_graph_id=target_graph_id
-        ).values_list("from_resource_id", "to_resource_id")
+        )
 
-        for from_id, to_id in relationships_from:
-            if to_id:
-                target_id = str(to_id)
-                source_name = source_names.get(str(from_id), str(from_id))
+        for rel in relationships_from:
+            target_id = str(rel.to_resource_id)
+            source_id = str(rel.from_resource_id)
 
-                if target_id not in target_to_sources:
-                    target_to_sources[target_id] = []
+            if target_id not in target_to_source_ids:
+                target_to_source_ids[target_id] = set()
 
-                if source_name not in target_to_sources[target_id]:
-                    target_to_sources[target_id].append(source_name)
+            target_to_source_ids[target_id].add(source_id)
 
         relationships_to = ResourceXResource.objects.filter(
             to_resource_id__in=resource_ids, from_resource_graph_id=target_graph_id
-        ).values_list("to_resource_id", "from_resource_id")
+        )
 
-        for to_id, from_id in relationships_to:
-            if from_id:
-                target_id = str(from_id)
-                source_name = source_names.get(str(to_id), str(to_id))
+        for rel in relationships_to:
+            target_id = str(rel.from_resource_id)
+            source_id = str(rel.to_resource_id)
 
-                if target_id not in target_to_sources:
-                    target_to_sources[target_id] = []
+            if target_id not in target_to_source_ids:
+                target_to_source_ids[target_id] = set()
 
-                if source_name not in target_to_sources[target_id]:
-                    target_to_sources[target_id].append(source_name)
+            target_to_source_ids[target_id].add(source_id)
+
+        target_to_sources = {}
+        for target_id, source_id_set in target_to_source_ids.items():
+            source_name_list = []
+            for source_id in source_id_set:
+                source_name = source_names.get(source_id, source_id)
+                source_name_list.append(source_name)
+            target_to_sources[target_id] = source_name_list
 
         return target_to_sources
 
@@ -419,7 +454,7 @@ class TranslateToResourceTypeView(View):
         return str(name)
 
     def post(self, request):
-        max_source_resources = 1000
+        max_source_resources = settings.TRANSLATE_RESOURCE_TYPE_MAX_SOURCES
 
         target_graph_id = request.POST.get("target_graph_id")
         source_ids_json = request.POST.get("source_ids")
