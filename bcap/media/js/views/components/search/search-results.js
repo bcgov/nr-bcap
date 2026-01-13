@@ -296,8 +296,16 @@ export default ko.components.register(componentName, {
                             ? thumbnailUrl
                             : undefined;
 
+                    var sources = null;
+                    if (window.get_translation_source) {
+                        sources = window.get_translation_source(
+                            result._source.resourceinstanceid,
+                        );
+                    }
+
                     this.results.push({
                         displayname: result._source.displayname,
+                        graph_id: result._source.graph_id,
                         thumbnail: thumbnail,
                         resourceinstanceid: result._source.resourceinstanceid,
                         displaydescription: result._source.displaydescription,
@@ -334,6 +342,8 @@ export default ko.components.register(componentName, {
                         editUrl:
                             arches.urls.resource_editor +
                             result._source.resourceinstanceid,
+                        translationSources: ko.observableArray(sources || []),
+                        showAllSources: ko.observable(false),
                         mapLinkClicked: function () {
                             self.selectedResourceId(
                                 result._source.resourceinstanceid,
@@ -355,7 +365,6 @@ export default ko.components.register(componentName, {
                         isPrincipal: result['is_principal'],
                         canRead: result['can_read'],
                         canEdit: result['can_edit'],
-                        // can_delete: result._source.permissions.users_without_delete_perm.indexOf(this.userid) < 0,
                     });
                 }, this);
             }

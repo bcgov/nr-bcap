@@ -3,429 +3,6 @@
 {% load i18n %}
 
 <div
-    id="translation-state-banner"
-    style="display: none; padding: 8px 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 10px;"
->
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-size: 0.85em;">
-            <span id="translation-state-text"></span>
-        </div>
-        <button
-            id="clear-translation-banner-btn"
-            class="btn btn-sm btn-outline-secondary"
-            style="margin-left: 10px;"
-            title="{% trans "Clear Translation" %}"
-        >
-            <i class="fa fa-times"></i>
-        </button>
-    </div>
-</div>
-
-<div
-    class="site-translator-container"
-    style="padding: 10px 0; border-bottom: 1px solid #ddd; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"
->
-    <select
-        id="target-resource-type"
-        class="form-control input-sm"
-        style="flex: 1 1 0; min-width: 200px;"
-    >
-        <option value="">{% trans "Loading..." %}</option>
-    </select>
-
-    <button
-        id="translate-to-resource-type-btn"
-        class="btn btn-primary btn-sm"
-        title="{% trans 'Convert current search results to their related resources of the selected type' %}"
-    >
-        {% trans "Translate" %}
-    </button>
-
-    <span
-        id="translate-status"
-        style="margin-left: 10px; display: none;"
-    ></span>
-</div>
-
-<script>
-    (function () {
-        let SELECTORS = {
-            banner: 'translation-state-banner',
-            banner_text: 'translation-state-text',
-            clear_banner_btn: 'clear-translation-banner-btn',
-            clear_filters_btn: '.clear-filter',
-            resource_type_select: 'target-resource-type',
-            search_results_list: 'search-results-list',
-            status: 'translate-status',
-            translate_btn: 'translate-to-resource-type-btn',
-        };
-
-        let BUTTON_STATES = {
-            default: 'Translate',
-            loading: '<i class="fa fa-spinner fa-spin"></i> Translating...',
-        };
-
-        let translation_state = {
-            chain: [],
-            original_query: null,
-            source_mapping: {},
-
-            reset() {
-                this.chain = [];
-                this.original_query = null;
-                this.source_mapping = {};
-            },
-
-            has_translation() {
-                return this.chain.length > 0;
-            },
-
-            get_last_step() {
-                return this.chain[this.chain.length - 1] || null;
-            },
-        };
-
-        let dom = {
-            get(id) {
-                return document.getElementById(id);
-            },
-
-            query(selector) {
-                return document.querySelector(selector);
-            },
-
-            set_display(element, visible) {
-                if (element) {
-                    element.style.display = visible ? 'block' : 'none';
-                }
-            },
-
-            set_status(message, color) {
-                let status = this.get(SELECTORS.status);
-
-                if (!status) {
-                    return;
-                }
-
-                status.style.display = message ? 'inline' : 'none';
-                status.style.color = color || 'inherit';
-                status.textContent = message || '';
-            },
-
-            set_button_loading(button, loading) {
-                if (!button) {
-                    return;
-                }
-
-                button.disabled = loading;
-                button.innerHTML = loading ? BUTTON_STATES.loading : BUTTON_STATES.default;
-            },
-
-            populate_select(select, items, value_key, text_key) {
-                if (!select) {
-                    return;
-                }
-
-                select.innerHTML = '';
-
-                items.forEach(function (item) {
-                    let option = document.createElement('option');
-                    option.value = item[value_key];
-                    option.textContent = item[text_key];
-                    select.appendChild(option);
-                });
-            },
-
-            set_select_error(select, message) {
-                if (!select) {
-                    return;
-                }
-
-                select.innerHTML = '';
-
-                let option = document.createElement('option');
-                option.value = '';
-                option.textContent = message;
-                select.appendChild(option);
-            },
-        };
-
-        let utils = {
-            get_base_url() {
-                return window.location.pathname.split('/search')[0];
-            },
-
-            get_csrf_token() {
-                let match = document.cookie.match(/csrftoken=([^;]+)/);
-                return match ? decodeURIComponent(match[1]) : null;
-            },
-
-            clean_source_name(name) {
-                if (!name || !name.trim()) {
-                    return null;
-                }
-
-                return name.trim().replace(/,\s*$/, '');
-            },
-
-            filter_query_keys(query, exclude_keys) {
-                let filtered = {};
-
-                Object.keys(query).forEach(function (key) {
-                    if (exclude_keys.indexOf(key) === -1) {
-                        filtered[key] = query[key];
-                    }
-                });
-
-                return filtered;
-            },
-        };
-
-        let shared_state = {
-            get() {
-                let el = dom.get(SELECTORS.search_results_list);
-
-                if (!el) {
-                    return null;
-                }
-
-                let context = ko.contextFor(el);
-
-                return context && context.$root && context.$root.sharedStateObject
-                    ? context.$root.sharedStateObject
-                    : null;
-            },
-
-            get_query() {
-                let state = this.get();
-                return state ? state.query() : {};
-            },
-
-            set_query(query) {
-                let state = this.get();
-
-                if (state) {
-                    state.query(query);
-                }
-            },
-
-            get_paging_filter() {
-                let state = this.get();
-                return state ? state.getFilter('paging-filter') : null;
-            },
-
-            reset_paging() {
-                let paging = this.get_paging_filter();
-
-                if (paging) {
-                    paging.userRequestedNewPage = true;
-                    paging.preventLoop = true;
-                    paging.page(1);
-                }
-            },
-        };
-
-        let api = {
-            async fetch_resource_types() {
-                let url = utils.get_base_url() + '/api/translatable-resource-types';
-
-                let response = await fetch(url, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-
-                return response.json();
-            },
-
-            async translate(target_graph_id, query_params, source_ids) {
-                let url = utils.get_base_url() + '/api/translate-to-resource-type';
-                let form_data = new FormData();
-
-                form_data.append('target_graph_id', target_graph_id);
-                form_data.append('csrfmiddlewaretoken', utils.get_csrf_token());
-
-                if (source_ids) {
-                    form_data.append('source_ids', source_ids);
-                } else {
-                    Object.keys(query_params).forEach(function (key) {
-                        form_data.append(key, query_params[key]);
-                    });
-                }
-
-                let response = await fetch(url, {
-                    method: 'POST',
-                    body: form_data,
-                    credentials: 'same-origin',
-                });
-
-                return response.json();
-            },
-        };
-
-        let ui = {
-            update_banner() {
-                let banner = dom.get(SELECTORS.banner);
-                let text_el = dom.get(SELECTORS.banner_text);
-
-                if (!translation_state.has_translation()) {
-                    dom.set_display(banner, false);
-                    return;
-                }
-
-                dom.set_display(banner, true);
-                let step = translation_state.get_last_step();
-                text_el.textContent = `Translated ${step.original_count} ${step.source_name}(s) to ${step.count} ${step.target_name}(s).`;
-            },
-        };
-
-        let actions = {
-            async load_resource_types() {
-                let select = dom.get(SELECTORS.resource_type_select);
-
-                try {
-                    let data = await api.fetch_resource_types();
-
-                    if (data.status === 'success' && data.resource_types) {
-                        dom.populate_select(select, data.resource_types, 'graphid', 'name');
-                    } else {
-                        dom.set_select_error(select, 'No resource types available');
-                    }
-                } catch (error) {
-                    console.error('Error loading resource types:', error);
-                    dom.set_select_error(select, 'Error loading types');
-                }
-
-                ui.update_banner();
-            },
-
-            async translate() {
-                let select = dom.get(SELECTORS.resource_type_select);
-                let btn = dom.get(SELECTORS.translate_btn);
-                let target_graph_id = select.value;
-
-                if (!target_graph_id) {
-                    dom.set_status('Please select a target resource type.', 'orange');
-                    return;
-                }
-
-                if (!shared_state.get()) {
-                    dom.set_status('Could not access search state.', 'red');
-                    return;
-                }
-
-                dom.set_button_loading(btn, true);
-                dom.set_status(null);
-
-                let current_query = shared_state.get_query();
-                let query_to_use = translation_state.original_query || current_query;
-                let source_ids = null;
-
-                if (!translation_state.original_query && current_query['ids']) {
-                    source_ids = current_query['ids'];
-                }
-
-                try {
-                    let query_params = utils.filter_query_keys(query_to_use, ['paging-filter', 'ids']);
-                    let data = await api.translate(target_graph_id, query_params, source_ids);
-
-                    dom.set_button_loading(btn, false);
-
-                    if (data.status === 'success' && data.resource_ids && data.resource_ids.length > 0) {
-                        if (!translation_state.original_query) {
-                            translation_state.original_query = utils.filter_query_keys(current_query, [
-                                'paging-filter',
-                            ]);
-                        }
-
-                        translation_state.source_mapping = data.source_mapping || {};
-
-                        translation_state.chain = [
-                            {
-                                count: data.total_translated,
-                                original_count: data.original_count,
-                                source_name: data.source_resource_type_name || 'search results',
-                                target_name: data.target_resource_type_name,
-                            },
-                        ];
-
-                        shared_state.set_query({
-                            ids: JSON.stringify(data.resource_ids),
-                            'paging-filter': 1,
-                            tiles: true,
-                        });
-
-                        shared_state.reset_paging();
-                        ui.update_banner();
-                    } else if (data.status === 'error') {
-                        dom.set_status(data.message, 'red');
-                    } else {
-                        dom.set_status('No related resources found for the selected type.', 'orange');
-                    }
-                } catch (error) {
-                    console.error('Translation error:', error);
-                    dom.set_button_loading(btn, false);
-                    dom.set_status('An error occurred.', 'red');
-                }
-            },
-
-            clear() {
-                if (!shared_state.get()) {
-                    console.error('Could not get shared state');
-                    return;
-                }
-
-                let original = translation_state.original_query;
-                translation_state.reset();
-
-                if (original && Object.keys(original).length > 0) {
-                    shared_state.set_query(original);
-                } else {
-                    shared_state.set_query({});
-                }
-
-                ui.update_banner();
-            },
-        };
-
-        function init() {
-            let translate_btn = dom.get(SELECTORS.translate_btn);
-            let clear_banner_btn = dom.get(SELECTORS.clear_banner_btn);
-            let clear_filters_btn = dom.query(SELECTORS.clear_filters_btn);
-
-            if (translate_btn) {
-                translate_btn.addEventListener('click', actions.translate);
-            }
-
-            if (clear_banner_btn) {
-                clear_banner_btn.addEventListener('click', actions.clear);
-            }
-
-            if (clear_filters_btn) {
-                clear_filters_btn.addEventListener('click', actions.clear);
-            }
-
-            actions.load_resource_types();
-        }
-
-        window.clear_translation = actions.clear;
-
-        window.get_translation_source = function (resourceinstanceid) {
-            let sources = translation_state.source_mapping[resourceinstanceid];
-
-            if (!sources || sources.length === 0) {
-                return null;
-            }
-
-            let cleaned = sources.map(utils.clean_source_name).filter(Boolean);
-
-            return cleaned.length > 0 ? cleaned.join(', ') : null;
-        };
-
-        init();
-    })();
-</script>
-
-<div
     id="search-results-list"
     style="display: none;"
     role="list"
@@ -498,16 +75,49 @@
                     <!--/ko-->
                 </p>
 
-                <!--ko if: window.get_translation_source && window.get_translation_source(resourceinstanceid) -->
+                <!--ko if: translationSources() && translationSources().length > 0 -->
                 <div
                     class="search-listing-source"
-                    style="font-size: 0.8em; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 6px 12px; border-radius: 3px; margin: 8px 0; display: inline-flex; align-items: center; gap: 6px;"
+                    style="font-size: 0.8em; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 6px 12px; border-radius: 3px; margin: 8px 0;"
                 >
-                    <i class="fa fa-link"></i>
-                    <span>
-                        Related to:
-                        <strong data-bind="text: window.get_translation_source(resourceinstanceid)"></strong>
-                    </span>
+                    <div style="display: flex; align-items: flex-start; gap: 6px;">
+                        <i
+                            class="fa fa-link"
+                            style="margin-top: 2px;"
+                        ></i>
+                        <div style="flex: 1;">
+                            <span
+                                data-bind="text: 'Related to ' + translationSources().length + (translationSources().length === 1 ? ' instance' : ' instances') + ':'"
+                            ></span>
+                            <!-- ko foreach: showAllSources() ? translationSources() : translationSources().slice(0, 3) -->
+                            <strong data-bind="text: $data"></strong>
+                            <!--ko if: $index() < $parent.translationSources().length - 1 && ($parent.showAllSources() || $index() < 2) -->
+                            <span>,</span>
+                            <!--/ko-->
+                            <!-- /ko -->
+                            <!-- ko if: translationSources().length > 3 && !showAllSources() -->
+                            <span>
+                                and
+                                <a
+                                    href="#"
+                                    style="color: #155724; text-decoration: underline;"
+                                    data-bind="click: function() { showAllSources(true); return false; }, text: (translationSources().length - 3) + ' more...'"
+                                ></a>
+                            </span>
+                            <!-- /ko -->
+                            <!-- ko if: translationSources().length > 3 && showAllSources() -->
+                            <span>
+                                <a
+                                    href="#"
+                                    style="color: #155724; text-decoration: underline;"
+                                    data-bind="click: function() { showAllSources(false); return false; }"
+                                >
+                                    Show less
+                                </a>
+                            </span>
+                            <!-- /ko -->
+                        </div>
+                    </div>
                 </div>
                 <!--/ko-->
 
@@ -558,7 +168,7 @@
                 </a>
                 <!--/ko-->
 
-                <!-- ko if: !$parent.mapFilter -->
+                <!-- ko if: !!$parent.mapFilter -->
                 <button
                     class="search-candidate-link"
                     data-bind="visible: point, click: mapLinkClicked,
