@@ -191,7 +191,7 @@ const siteVisitTileMap = computed(() => {
 
         const teamTile =
             visit.aliased_data?.site_visit_details?.aliased_data
-                ?.site_visit_team_n1;
+                ?.site_visit_team;
 
         if (teamTile?.aliased_data?.team_member) {
             teamTile.aliased_data.team_member.forEach(
@@ -310,7 +310,7 @@ const allTileIds = computed(() => {
 
         const teamTile =
             data.aliased_data?.site_visit_details?.aliased_data
-                ?.site_visit_team_n1;
+                ?.site_visit_team;
         if (teamTile?.aliased_data?.team_member) {
             teamTile.aliased_data.team_member.forEach(
                 (member: AliasedTileData) => {
