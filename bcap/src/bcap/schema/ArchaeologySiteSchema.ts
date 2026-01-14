@@ -1,5 +1,4 @@
 import type {
-    AliasedData,
     AliasedNodeData,
     AliasedTileData,
 } from '@/arches_component_lab/types.ts';
@@ -9,7 +8,6 @@ import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
-import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
 
 export interface SpatialAccuracyEntry extends AliasedTileData {
     aliased_data: {
@@ -58,9 +56,7 @@ export interface CurrentAlertTile extends AliasedTileData {
     aliased_data: {
         alert_subject?: AliasedNodeData;
         alert_details?: AliasedNodeData;
-        branch_contact?: AliasedNodeData;
-        entered_on?: AliasedNodeData;
-        entered_by?: AliasedNodeData;
+        alert_branch_contact?: AliasedNodeData;
     };
 }
 
@@ -85,7 +81,7 @@ export interface IdentificationAndRegistrationTile extends AliasedTileData {
     register_type?: AliasedNodeData;
     parent_site?: AliasedNodeData;
     child_sites?: AliasedNodeData[];
-    site_alert?: CurrentAlertTile[] | CurrentAlertTile | AliasedNodeData;
+    site_alert?: CurrentAlertTile[] | CurrentAlertTile;
     authority?: AuthorityTile[];
     site_names?: SiteNamesTile[];
     site_decision?: SiteDecisionTile[];
@@ -113,8 +109,18 @@ export interface ArchaeologicalDataTile extends AliasedTileData {
 }
 
 // 4) Ancestral Remains
+export interface RestrictedAncestralRemainsRemarkTile extends AliasedTileData {
+    aliased_data: {
+        restricted_ancestral_remains_remark?: AliasedNodeData;
+    };
+}
+
 export interface AncestralRemainsTile extends AliasedTileData {
-    aliased_data: AliasedData;
+    aliased_data: {
+        restricted_ancestral_remains_remark?:
+            | RestrictedAncestralRemainsRemarkTile[]
+            | RestrictedAncestralRemainsRemarkTile;
+    };
 }
 
 export interface BcPropertyLegalDescriptionTile extends AliasedTileData {
@@ -212,8 +218,6 @@ export interface GeneralRemarkTile extends AliasedTileData {
 
 export interface RestrictedRemarkTile extends AliasedTileData {
     aliased_data: {
-        restricted_entry_date?: DateValue;
-        restricted_person?: ResourceInstanceValue;
         restricted_remark?: StringValue;
     };
 }

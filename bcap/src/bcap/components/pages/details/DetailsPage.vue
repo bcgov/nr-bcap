@@ -82,6 +82,12 @@ const archSiteTileIds = computed(() => {
             'aliased_data',
             'site_decision',
         ],
+        [
+            'aliased_data',
+            'identification_and_registration',
+            'aliased_data',
+            'site_alert',
+        ],
         ['aliased_data', 'site_boundary'],
         ['aliased_data', 'heritage_site_location', '0', 'tenure_remarks'],
         ['aliased_data', 'heritage_site_location', '0', 'address_remarks'],
@@ -185,7 +191,7 @@ const siteVisitTileMap = computed(() => {
 
         const teamTile =
             visit.aliased_data?.site_visit_details?.aliased_data
-                ?.site_visit_team_n1;
+                ?.site_visit_team;
 
         if (teamTile?.aliased_data?.team_member) {
             teamTile.aliased_data.team_member.forEach(
@@ -304,7 +310,7 @@ const allTileIds = computed(() => {
 
         const teamTile =
             data.aliased_data?.site_visit_details?.aliased_data
-                ?.site_visit_team_n1;
+                ?.site_visit_team;
         if (teamTile?.aliased_data?.team_member) {
             teamTile.aliased_data.team_member.forEach(
                 (member: AliasedTileData) => {

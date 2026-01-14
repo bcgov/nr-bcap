@@ -1,12 +1,13 @@
 import json
-import logging
-
 from traceback import print_exception
 
 from django.conf import settings
-from django.core.exceptions import FieldError
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
+from arches.app.views.api import APIBase, MVT as MVTBase
+import logging
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.parsers import JSONParser
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -15,42 +16,43 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.settings import api_settings
-
-from arches import VERSION as arches_version
 from arches.app.models import models
 from arches.app.models.models import GraphModel, ResourceInstance, ResourceXResource
+from django.core.exceptions import FieldError
+
+from arches import VERSION as arches_version
+
+from arches.app.utils.response import JSONResponse
+from arches.app.utils.betterJSONSerializer import JSONSerializer
+from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
+from bcap.util.business_data_proxy import LegislativeActDataProxy
+from arches.app.models import models
+from bcap.util.mvt_tiler import MVTTiler
 from arches.app.models.system_settings import settings
 from arches.app.search.components.base import SearchFilterFactory
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineInstance
-from arches.app.utils.betterJSONSerializer import JSONSerializer
-from arches.app.utils.response import JSONResponse
-from arches.app.views.api import APIBase, MVT as MVTBase
-from arches_controlled_lists.models import ListItem, ListItemValue
+
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
 from arches_querysets.rest_framework.serializers import ArchesResourceSerializer
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
-
-from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
-from bcap.util.business_data_proxy import LegislativeActDataProxy
-from bcap.util.mvt_tiler import MVTTiler
-
+from arches_controlled_lists.models import ListItem, ListItemValue
+from oauth2_provider.views.generic import ProtectedResourceView
+import re
 
 logger = logging.getLogger(__name__)
-
 
 class ArchesSiteVisitSerializer(ArchesResourceSerializer):
     class Meta(ArchesResourceSerializer.Meta):
         graph_slug = "site_visit"
 
-
-@method_decorator(csrf_exempt, name="dispatch")
-class BordenNumber(APIBase):
+class BordenNumberBase:
     api = BordenNumberApi()
 
-    def get(self, request, resourceinstanceid=None):
+    # Generate a new borden number and return it -- NB - this doesn't reserve it at this point
+    def _get_impl(self, request, resourceinstanceid=None):
         try:
             new_borden_number = self.api.get_next_borden_number(
                 resourceinstanceid=resourceinstanceid
@@ -62,23 +64,52 @@ class BordenNumber(APIBase):
         except MissingGeometryError as e:
             return_data = '{"status": "error", "message": "%s"}' % str(e)
         except Exception as e:
-            logger.error("Unable to generate borden number: %s", e)
+            logger.error(f"Unable to generate borden number: %s", e)
             print_exception(e)
             return_data = '{"status": "error", "message": "An unexpected error occurred. Please contact system support."}'
         return_bytes = return_data.encode("utf-8")
         return HttpResponse(return_bytes, content_type="application/json")
 
-    def post(self, request):
-        geometry = request.POST.site_boundary
-        borden_number = request.POST.borden_number
-        reserve = request.POST.reserve_borden_number
+    # Reserve a borden number for BCRHP. Borden numbers are automatically reserved for BCAP
+    # by way of saving the card with a new borden number.
+    def _post_impl(self, request):
+        geometry_str = request.POST["site_boundary"]
+        geometry = json.loads(geometry_str)
+        # borden_number = request.POST["borden_number"]
+        reserve = (
+            request.POST["reserve_borden_number"].lower()
+            if "reserve_borden_number" in request.POST
+            else "false"
+        )
 
-        if reserve == "true":
-            self.api.reserve_borden_number(geometry)
         new_borden_number = self.api.get_next_borden_number(geometry=geometry)
-        return_data = '{"status": "success", borden_number: "%s" }' % new_borden_number
+        if reserve == "true":
+            new_borden_number = self.api.reserve_borden_number(
+                re.sub("-.*", "", new_borden_number)
+            )
+        return_data = (
+            '{"status": "success", "borden_number": "%s" }' % new_borden_number
+        )
         return_bytes = return_data.encode("utf-8")
         return JSONResponse(return_bytes, content_type="application/json")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class BordenNumber(APIBase, BordenNumberBase):
+    """
+    Existing internal endpoint – unchanged semantics.
+    """
+
+    def get(self, request, resourceinstanceid=None):
+        return self._get_impl(request, resourceinstanceid)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class BordenNumberExternal(ProtectedResourceView, BordenNumberBase):
+
+    def post(self, request, *args, **kwargs):
+        return self._post_impl(request)
+
 
 
 class ControlledListHierarchy(APIBase):
@@ -131,6 +162,11 @@ class MVT(MVTBase):
             raise Http404()
 
         return HttpResponse(tile, content_type="application/x-protobuf")
+
+
+class ArchesSiteVisitSerializer(ArchesResourceSerializer):
+    class Meta(ArchesResourceSerializer.Meta):
+        graph_slug = "site_visit"
 
 
 class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):

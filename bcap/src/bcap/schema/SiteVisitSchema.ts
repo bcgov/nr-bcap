@@ -101,7 +101,7 @@ export interface SiteVisitDetailsTile extends AliasedTileData {
         associated_permit: ResourceInstanceValue;
         affiliation: ResourceInstanceValue;
         nonpermitted_site_visit?: BooleanValue;
-        site_visit_team_n1: SiteVisitTeamTile; // semantic subgroup (child tile)
+        site_visit_team: SiteVisitTeamTile; // semantic subgroup (child tile)
     };
 }
 

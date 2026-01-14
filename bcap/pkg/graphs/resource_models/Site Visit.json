@@ -3267,7 +3267,7 @@
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": ""
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"b8875eef-428e-4032-907f-07a3d32bba74\",\"language_id\":\"en\",\"list_item_id\":\"8c4e2933-a97a-5f47-89e7-78d1d8aaad81\",\"value\":\"Individual\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/8c4e2933-a97a-5f47-89e7-78d1d8aaad81\"}]},\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"in_list_any\",\"val\":[{\"labels\":[{\"id\":\"c045092e-b914-45b7-b207-cbfe2699be65\",\"language_id\":\"en\",\"list_item_id\":\"193f48bc-471a-5794-b480-186a62eb16d1\",\"value\":\"Site+Visit+-+Band+Chief\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/193f48bc-471a-5794-b480-186a62eb16d1\"},{\"labels\":[{\"id\":\"95c1bf93-f8f5-4b2f-9fab-9ccd55c92ba7\",\"language_id\":\"en\",\"list_item_id\":\"56da6cfe-3e39-5749-b70a-92943d01a521\",\"value\":\"Site+Visit+-+Collector\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/56da6cfe-3e39-5749-b70a-92943d01a521\"},{\"labels\":[{\"id\":\"24ec6688-7259-4d9c-b780-1fcb4a82bb78\",\"language_id\":\"en\",\"list_item_id\":\"7cd2098b-04a8-5bad-b2a7-e13b86f88561\",\"value\":\"Site+Visit+-+Compiler\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/7cd2098b-04a8-5bad-b2a7-e13b86f88561\"},{\"labels\":[{\"id\":\"30919238-afda-49e3-8185-a0303c0d21e4\",\"language_id\":\"en\",\"list_item_id\":\"cea290b3-baff-5c43-9a14-a1368a93ffa8\",\"value\":\"Site+Visit+-+Contact\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/cea290b3-baff-5c43-9a14-a1368a93ffa8\"},{\"labels\":[{\"id\":\"7fcab185-8b0a-482f-9f28-bb2833a9da1e\",\"language_id\":\"en\",\"list_item_id\":\"40eb9153-f502-5fd0-9006-2dbfe8581792\",\"value\":\"Site+Visit+-+Coordinator\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/40eb9153-f502-5fd0-9006-2dbfe8581792\"},{\"labels\":[{\"id\":\"306f2198-4db2-4a6b-b142-88d9819d92c4\",\"language_id\":\"en\",\"list_item_id\":\"6fbebcab-0680-50fe-807d-89cb62d80c8e\",\"value\":\"Site+Visit+-+Corer\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/6fbebcab-0680-50fe-807d-89cb62d80c8e\"},{\"labels\":[{\"id\":\"7f1af235-c717-46b8-bac2-85fff4238dbe\",\"language_id\":\"en\",\"list_item_id\":\"fb285baf-8775-542d-84bb-feca04b86873\",\"value\":\"Site+Visit+-+Elder\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/fb285baf-8775-542d-84bb-feca04b86873\"},{\"labels\":[{\"id\":\"0fbd103b-6eb9-4ab1-acd1-c0175d3608b7\",\"language_id\":\"en\",\"list_item_id\":\"c36e0dce-caaf-56f3-96dd-1b2c1339fbc5\",\"value\":\"Site+Visit+-+Excavator\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/c36e0dce-caaf-56f3-96dd-1b2c1339fbc5\"},{\"labels\":[{\"id\":\"ab78737f-01bb-400a-92b6-984344824776\",\"language_id\":\"en\",\"list_item_id\":\"10d3c014-394f-5f6b-9d93-7650d63d7006\",\"value\":\"Site+Visit+-+Field+Director\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/10d3c014-394f-5f6b-9d93-7650d63d7006\"},{\"labels\":[{\"id\":\"84e40748-ef8f-48c2-b097-5f61329477d7\",\"language_id\":\"en\",\"list_item_id\":\"efffa0fc-4a93-5a58-bd29-1ea1c04fcd8a\",\"value\":\"Site+Visit+-+Field+Supervisor\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/efffa0fc-4a93-5a58-bd29-1ea1c04fcd8a\"},{\"labels\":[{\"id\":\"0951b3ba-eef8-44cd-bd8c-d2089c68f922\",\"language_id\":\"en\",\"list_item_id\":\"6dcc4a7d-f587-52dd-9442-80a15c9e788e\",\"value\":\"Site+Visit+-+First+Nations+Rep\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/6dcc4a7d-f587-52dd-9442-80a15c9e788e\"},{\"labels\":[{\"id\":\"58543bcb-2d0b-4d65-886b-5e944b929648\",\"language_id\":\"en\",\"list_item_id\":\"5f3a436c-9bd6-58b6-8283-8ec8f85eb143\",\"value\":\"Site+Visit+-+Government+Official\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/5f3a436c-9bd6-58b6-8283-8ec8f85eb143\"},{\"labels\":[{\"id\":\"ea0c4d2f-f06b-4a1b-ae1d-bccb97b348f6\",\"language_id\":\"en\",\"list_item_id\":\"371eecb8-18a7-5839-9cd1-6fcfd4f4e47e\",\"value\":\"Site+Visit+-+Informant\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/371eecb8-18a7-5839-9cd1-6fcfd4f4e47e\"},{\"labels\":[{\"id\":\"3bbcdd9f-6b5b-4a1a-8f53-7b9268e91c76\",\"language_id\":\"en\",\"list_item_id\":\"a02f5ece-f214-5319-9857-2597af90546b\",\"value\":\"Site+Visit+-+Observer\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/a02f5ece-f214-5319-9857-2597af90546b\"},{\"labels\":[{\"id\":\"79f24eae-b1cb-4d1f-aabf-447c0159d8a1\",\"language_id\":\"en\",\"list_item_id\":\"01aee1d4-928a-51a5-a7f3-efc838e1980f\",\"value\":\"Site+Visit+-+Observer-AIA\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/01aee1d4-928a-51a5-a7f3-efc838e1980f\"},{\"labels\":[{\"id\":\"b5f749da-960e-4d23-8457-219329b96013\",\"language_id\":\"en\",\"list_item_id\":\"70ffbf5b-3257-5519-8a37-1a4df7c6aaa7\",\"value\":\"Site+Visit+-+Observer-Monitor\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/70ffbf5b-3257-5519-8a37-1a4df7c6aaa7\"},{\"labels\":[{\"id\":\"148e1d54-5733-4ab9-a792-67c7331768e2\",\"language_id\":\"en\",\"list_item_id\":\"5b9cb2a4-d941-5260-bfdf-5e6895e5b212\",\"value\":\"Site+Visit+-+Other\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/5b9cb2a4-d941-5260-bfdf-5e6895e5b212\"},{\"labels\":[{\"id\":\"aba1e780-7121-4306-ba3c-6c83b01d893b\",\"language_id\":\"en\",\"list_item_id\":\"82b1d00b-00ef-54ec-a546-816812af90c0\",\"value\":\"Site+Visit+-+Owner\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/82b1d00b-00ef-54ec-a546-816812af90c0\"},{\"labels\":[{\"id\":\"dadba7f4-c10e-47be-add5-f3b04318548e\",\"language_id\":\"en\",\"list_item_id\":\"25e5d878-62a6-563f-b622-c69484c2f842\",\"value\":\"Site+Visit+-+Permit+Holder\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/25e5d878-62a6-563f-b622-c69484c2f842\"},{\"labels\":[{\"id\":\"83f61bcb-1a0c-4d5a-aed0-24a753e8112f\",\"language_id\":\"en\",\"list_item_id\":\"75337b1c-4264-578e-b78a-f953a1a263b1\",\"value\":\"Site+Visit+-+Photographer\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/75337b1c-4264-578e-b78a-f953a1a263b1\"},{\"labels\":[{\"id\":\"a7bf610a-51fc-4d14-b792-141ab53ef5d2\",\"language_id\":\"en\",\"list_item_id\":\"d41d745a-0ddc-5765-bdea-ddeff1b1018c\",\"value\":\"Site+Visit+-+Private+Collector\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/d41d745a-0ddc-5765-bdea-ddeff1b1018c\"},{\"labels\":[{\"id\":\"b2914b98-a388-46a1-8b60-a105635d9a50\",\"language_id\":\"en\",\"list_item_id\":\"80c4440c-03aa-5d06-82a5-edba93387289\",\"value\":\"Site+Visit+-+Recorder\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/80c4440c-03aa-5d06-82a5-edba93387289\"},{\"labels\":[{\"id\":\"65d58419-33cb-4b0a-9c47-434095e2ea5e\",\"language_id\":\"en\",\"list_item_id\":\"0f0f90bd-f85f-506c-8b7c-2e1d5f35e866\",\"value\":\"Site+Visit+-+Reporter\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/0f0f90bd-f85f-506c-8b7c-2e1d5f35e866\"},{\"labels\":[{\"id\":\"49df5adf-1140-41ca-871a-fa7cddd40d03\",\"language_id\":\"en\",\"list_item_id\":\"127f48c3-1cad-5777-8adf-57f99787ba6d\",\"value\":\"Site+Visit+-+Researcher\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/127f48c3-1cad-5777-8adf-57f99787ba6d\"},{\"labels\":[{\"id\":\"a9e6e44f-5b27-420e-b473-e29b96b6eff5\",\"language_id\":\"en\",\"list_item_id\":\"3396856c-8f67-50e7-95d3-4f4aff9e165c\",\"value\":\"Site+Visit+-+Revisitor\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/3396856c-8f67-50e7-95d3-4f4aff9e165c\"},{\"labels\":[{\"id\":\"ef881486-c3d0-495b-a37b-71d8b183edb3\",\"language_id\":\"en\",\"list_item_id\":\"1712b065-f5a1-5642-b075-1c8d17fc9f03\",\"value\":\"Site+Visit+-+Surface+Collector\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/1712b065-f5a1-5642-b075-1c8d17fc9f03\"},{\"labels\":[{\"id\":\"341068cf-d1aa-4eb7-a772-7d7edcb62542\",\"language_id\":\"en\",\"list_item_id\":\"58e41d1c-8529-5d76-905f-21535a2fabd1\",\"value\":\"Site+Visit+-+Tester\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/58e41d1c-8529-5d76-905f-21535a2fabd1\"}]}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -3550,11 +3550,15 @@
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": ""
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"b8875eef-428e-4032-907f-07a3d32bba74\",\"language_id\":\"en\",\"list_item_id\":\"8c4e2933-a97a-5f47-89e7-78d1d8aaad81\",\"value\":\"Individual\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/8c4e2933-a97a-5f47-89e7-78d1d8aaad81\"}]},\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"e04dd772-ece5-49a4-97f0-36a670a26100\",\"language_id\":\"en\",\"list_item_id\":\"b2e77050-5be2-5de5-9647-5b151870960e\",\"value\":\"Site+Form+Author\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/b2e77050-5be2-5de5-9647-5b151870960e\"}]}}]"
                     },
                     "datatype": "resource-instance-list",
                     "description": null,
@@ -3745,7 +3749,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "/bcap/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=0&exportsystemvalues=false&csrfmiddlewaretoken=CjzrO3saCTSVPY3tSAGQjiES0B7xOYbQ&advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22c4eca2de-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22891278e4-5d67-571a-a0c4-414896d36d1c%22%7D%2C%22e2f1c29a-c500-11ed-9089-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22%22%7D%2C%22c4ec9b2c-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22c4eca13a-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22a5b2cd72-c4f4-11ed-a06d-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22b5ed0072-c4f4-11ed-94de-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%2299643f1e-9e4e-11ed-b6d5-5254004d77d3%22%3A%7B%22val%22%3A%22%22%7D%7D%5D"
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"9416afb2-2efb-4fbc-8979-06205a4aee19\",\"language_id\":\"en\",\"list_item_id\":\"fd2053d3-c010-519a-97e5-52f3c7b508e2\",\"value\":\"Organization\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/fd2053d3-c010-519a-97e5-52f3c7b508e2\"}]}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -3846,11 +3850,15 @@
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": ""
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"not_null\",\"val\":\"\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -4914,11 +4922,15 @@
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": ""
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"not_null\",\"val\":\"\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -5442,9 +5454,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Fixed node aliases",
-                "publicationid": "4edc3be1-0924-4999-be80-89b4492beca3",
-                "published_time": "2025-12-10T01:34:09.033"
+                "notes": null,
+                "publicationid": "b5012381-bc31-449a-a193-901ef5d749b6",
+                "published_time": "2026-01-07T17:53:43.375"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -5545,9 +5557,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "a67a23c71b 2025-08-14 16:46:56 -0700",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
         "os": "Linux",
-        "os version": "6.12.54-linuxkit"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
