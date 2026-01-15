@@ -3,73 +3,67 @@
 {% load webpack_static from webpack_loader %}
 
 <style>
-    .cross-model-advanced-search-container {
+    .cross-model-container {
         display: flex;
-        flex-direction: row;
-        gap: 20px;
+        gap: 16px;
         height: 100%;
-        padding: 10px;
+        padding: 12px;
     }
 
-    .cross-model-facets-search-container {
-        flex: 2;
-        overflow-y: auto;
-        padding-right: 10px;
-    }
-
-    .cross-model-facets-container {
+    .cross-model-main {
         flex: 1;
-        max-width: 350px;
-        min-width: 280px;
+        min-width: 0;
         overflow-y: auto;
     }
 
-    .cross-model-facets-container .search-facets {
-        margin-bottom: 0;
-    }
-
-    .cross-model-facets-container .search-facet-item {
-        border-bottom: 1px solid #eee;
-        cursor: pointer;
-        padding: 8px 12px;
-    }
-
-    .cross-model-facets-container .search-facet-item:hover {
-        background-color: #f5f5f5;
-    }
-
-    .cross-model-facets-container .search-facet-item.header {
-        background-color: #f9f9f9;
-        cursor: default;
-    }
-
-    .cross-model-facets-container .search-facet-item.header:hover {
-        background-color: #f9f9f9;
-    }
-
-    .cross-model-facets-container .search-facet-item.disabled {
-        background-color: #fafafa;
-        font-weight: 600;
-    }
-
-    .cross-model-facets-container .search-facet-item-heading {
-        align-items: center;
+    .cross-model-sidebar {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
         display: flex;
-        justify-content: space-between;
-        margin: 0;
+        flex-direction: column;
+        max-height: 100%;
+        max-width: 320px;
+        min-width: 260px;
+        overflow: hidden;
+        width: 280px;
     }
 
-    .cross-model-facets-container .list-filter {
-        margin-top: 8px;
+    .cross-model-sidebar-header {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px;
+    }
+
+    .cross-model-sidebar-title {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .cross-model-sidebar-search {
         position: relative;
     }
 
-    .cross-model-facets-container .list-filter input {
-        padding-right: 30px;
+    .cross-model-sidebar-search input {
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 13px;
+        padding: 8px 32px 8px 10px;
+        width: 100%;
     }
 
-    .cross-model-facets-container .clear-node-search {
-        color: #999;
+    .cross-model-sidebar-search input:focus {
+        border-color: #2B4E6D;
+        box-shadow: 0 0 0 2px rgba(43, 78, 109, 0.1);
+        outline: none;
+    }
+
+    .cross-model-sidebar-search-clear {
+        color: #9ca3af;
         cursor: pointer;
         position: absolute;
         right: 10px;
@@ -77,276 +71,926 @@
         transform: translateY(-50%);
     }
 
-    .cross-model-facets-container .clear-node-search:hover {
-        color: #333;
+    .cross-model-sidebar-search-clear:hover {
+        color: #6b7280;
     }
 
-    .cross-model-options {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        margin-bottom: 15px;
-        padding: 12px 15px;
+    .cross-model-sidebar-content {
+        flex: 1;
+        overflow-y: auto;
     }
 
-    .cross-model-options label {
-        color: #495057;
-        font-weight: 500;
+    .cross-model-graph-section {
+        border-bottom: 1px solid #e5e7eb;
     }
 
-    .cross-model-options input[type="checkbox"] {
+    .cross-model-graph-section:last-child {
+        border-bottom: none;
+    }
+
+    .cross-model-graph-header {
+        align-items: center;
+        background: #f9fafb;
         cursor: pointer;
-        height: 16px;
-        width: 16px;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 12px;
+        transition: background 0.15s;
+        user-select: none;
     }
 
-    .cross-model-faceted-search-card-container {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        margin-bottom: 10px;
-        padding: 15px;
+    .cross-model-graph-header:hover {
+        background: #f3f4f6;
     }
 
-    .cross-model-faceted-search-card-container .facet-name {
-        border-bottom: 1px solid #eee;
+    .cross-model-graph-name {
+        color: #1f2937;
+        font-size: 13px;
         font-weight: 600;
-        margin-bottom: 10px;
-        padding-bottom: 10px;
     }
 
-    .cross-model-faceted-search-card-container .facet-name .label {
+    .cross-model-graph-toggle {
+        color: #6b7280;
+        font-size: 12px;
+        transition: transform 0.2s;
+    }
+
+    .cross-model-graph-toggle.expanded {
+        transform: rotate(90deg);
+    }
+
+    .cross-model-graph-cards {
+        background: #fff;
+    }
+
+    .cross-model-card-option {
+        align-items: center;
+        border-bottom: 1px solid #f3f4f6;
+        color: #374151;
+        cursor: pointer;
+        display: flex;
+        font-size: 13px;
+        justify-content: space-between;
+        padding: 8px 12px 8px 24px;
+        transition: background 0.15s;
+    }
+
+    .cross-model-card-option:last-child {
+        border-bottom: none;
+    }
+
+    .cross-model-card-option:hover {
+        background: #e8eff5;
+    }
+
+    .cross-model-card-option.used {
+        color: #9ca3af;
+        cursor: default;
+    }
+
+    .cross-model-card-option.used:hover {
+        background: transparent;
+    }
+
+    .cross-model-card-option.draggable {
+        cursor: grab;
+    }
+
+    .cross-model-card-option.draggable:active {
+        cursor: grabbing;
+    }
+
+    .cross-model-card-option.dragging {
+        opacity: 0.4;
+    }
+
+    .cross-model-card-option-badge {
+        background: #e5e7eb;
+        border-radius: 4px;
+        color: #6b7280;
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    .cross-model-card-option-drag-hint {
+        color: #9ca3af;
         font-size: 11px;
-        font-weight: 500;
     }
 
-    .cross-model-faceted-search-card-container .facet-body {
-        margin-bottom: 10px;
-    }
-
-    .cross-model-faceted-search-card-container .facet-label {
-        color: #666;
+    .cross-model-add-group-option {
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+        color: #2B4E6D;
+        cursor: pointer;
+        display: flex;
         font-size: 12px;
         font-weight: 500;
-        margin-bottom: 5px;
+        gap: 6px;
+        padding: 8px 12px 8px 24px;
+        transition: background 0.15s;
     }
 
-    .cross-model-faceted-search-card-container .facet-search-criteria {
-        margin: 0;
+    .cross-model-add-group-option:hover {
+        background: #e8eff5;
     }
 
-    .cross-model-faceted-search-card-container .facet-search-button {
-        margin-top: 15px;
-        text-align: right;
-    }
-
-    .cross-model-facet-btn-group {
-        display: flex;
-        justify-content: center;
-        margin: 10px 0;
-    }
-
-    .cross-model-facet-btn-group .facet-btn {
-        min-width: 60px;
-    }
-
-    .cross-model-facet-btn-group .facet-btn.selected {
-        background-color: #e67e22;
-        border-color: #d35400;
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
-    }
-
-    #cross-model-splash {
+    .cross-model-splash {
         align-items: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 40px 20px;
+        padding: 60px 20px;
         text-align: center;
     }
 
-    #cross-model-splash .rr-splash-img-container {
-        background: #f5f5f5;
+    .cross-model-splash-icon {
+        align-items: center;
+        background: #2B4E6D;
         border-radius: 50%;
-        height: 120px;
+        color: #fff;
+        display: flex;
+        font-size: 32px;
+        height: 80px;
+        justify-content: center;
         margin-bottom: 20px;
-        overflow: hidden;
-        width: 120px;
+        width: 80px;
     }
 
-    #cross-model-splash .rr-splash-img {
-        height: 100%;
-        object-fit: cover;
+    .cross-model-splash-title {
+        color: #1f2937;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .cross-model-splash-text {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.5;
+        max-width: 380px;
+    }
+
+    .cross-model-options-bar {
+        align-items: center;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        padding: 12px 16px;
+    }
+
+    .cross-model-option-group {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+    }
+
+    .cross-model-option-label {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .cross-model-option-select {
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        color: #1f2937;
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .cross-model-option-select:focus {
+        border-color: #2B4E6D;
+        box-shadow: 0 0 0 2px rgba(43, 78, 109, 0.1);
+        outline: none;
+    }
+
+    .cross-model-remove-btn {
+        background: transparent;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px 8px;
+        transition: color 0.15s;
+    }
+
+    .cross-model-remove-btn:hover {
+        color: #dc2626;
+    }
+
+    .cross-model-section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        overflow: hidden;
+    }
+
+    .cross-model-section-header {
+        align-items: center;
+        background: #2B4E6D;
+        border-bottom: 1px solid #1f3a52;
+        border-radius: 8px 8px 0 0;
+        cursor: pointer;
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        padding: 12px 16px;
+        transition: background 0.15s;
+        user-select: none;
+    }
+
+    .cross-model-section-header:hover {
+        background: #366089;
+    }
+
+    .cross-model-section-header.collapsed {
+        border-bottom: none;
+        border-radius: 8px;
+    }
+
+    .cross-model-section-header-left {
+        align-items: center;
+        display: flex;
+        gap: 10px;
+    }
+
+    .cross-model-section-toggle {
+        color: #9ca3af;
+        font-size: 12px;
+        transition: transform 0.2s;
+    }
+
+    .cross-model-section-toggle.collapsed {
+        transform: rotate(-90deg);
+    }
+
+    .cross-model-section-icon {
+        color: #fff;
+        font-size: 12px;
+    }
+
+    .cross-model-section-name {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .cross-model-section-body {
+        padding: 16px;
+    }
+
+    .cross-model-group {
+        background: #f9fafb;
+        border: 2px solid #e5e7eb;
+        border-radius: 6px;
+        transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    }
+
+    .cross-model-group:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .cross-model-group.drop-target {
+        background-color: #e8eff5;
+        border-color: #2B4E6D;
+        box-shadow: 0 0 0 3px rgba(43, 78, 109, 0.2);
+    }
+
+    .cross-model-group-header {
+        align-items: center;
+        background: #fff;
+        border-bottom: 1px solid #e5e7eb;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 12px;
+        transition: background 0.15s;
+        user-select: none;
+    }
+
+    .cross-model-group-header:hover {
+        background: #f9fafb;
+    }
+
+    .cross-model-group-header.collapsed {
+        border-bottom: none;
+        border-radius: 4px;
+    }
+
+    .cross-model-group-title {
+        align-items: center;
+        color: #374151;
+        display: flex;
+        font-size: 13px;
+        font-weight: 500;
+        gap: 8px;
+    }
+
+    .cross-model-group-toggle {
+        color: #6b7280;
+        font-size: 10px;
+        transition: transform 0.2s;
+    }
+
+    .cross-model-group-toggle.collapsed {
+        transform: rotate(-90deg);
+    }
+
+    .cross-model-group-controls {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+    }
+
+    .cross-model-group-match {
+        align-items: center;
+        display: flex;
+        gap: 0;
+    }
+
+    .cross-model-group-match-label {
+        color: #6b7280;
+        font-size: 12px;
+        margin-right: 8px;
+    }
+
+    .cross-model-group-match-btn {
+        background: #f9fafb;
+        border: 1px solid #d1d5db;
+        color: #6b7280;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        transition: all 0.15s;
+    }
+
+    .cross-model-group-match-btn:first-of-type {
+        border-radius: 4px 0 0 4px;
+        border-right: none;
+    }
+
+    .cross-model-group-match-btn:last-of-type {
+        border-radius: 0 4px 4px 0;
+    }
+
+    .cross-model-group-match-btn:hover {
+        background: #f3f4f6;
+    }
+
+    .cross-model-group-match-btn.active {
+        background: #2B4E6D;
+        border-color: #2B4E6D;
+        color: #fff;
+    }
+
+    .cross-model-group-body {
+        min-height: 60px;
+        padding: 12px;
+    }
+
+    .cross-model-group-body.collapsed {
+        display: none;
+    }
+
+    .cross-model-group-empty {
+        color: #9ca3af;
+        font-size: 13px;
+        font-style: italic;
+        padding: 16px;
+        text-align: center;
+    }
+
+    .cross-model-card-wrapper {
+        margin-bottom: 12px;
+        position: relative;
+    }
+
+    .cross-model-card-wrapper:last-child {
+        margin-bottom: 0;
+    }
+
+    .cross-model-card-drop-indicator {
+        background: #2B4E6D;
+        border-radius: 2px;
+        height: 3px;
+        left: 0;
+        position: absolute;
+        right: 0;
+        z-index: 10;
+    }
+
+    .cross-model-card-drop-indicator.before {
+        top: -6px;
+    }
+
+    .cross-model-card-drop-indicator.after {
+        bottom: -6px;
+    }
+
+    .cross-model-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        transition: box-shadow 0.15s, opacity 0.2s, transform 0.1s;
+    }
+
+    .cross-model-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .cross-model-card:hover {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .cross-model-card.dragging {
+        opacity: 0.4;
+        transform: scale(0.98);
+    }
+
+    .cross-model-card-header {
+        align-items: center;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 12px;
+        transition: background 0.15s;
+        user-select: none;
+    }
+
+    .cross-model-card-header:hover {
+        background: #f3f4f6;
+    }
+
+    .cross-model-card-header-left {
+        align-items: center;
+        display: flex;
+        flex: 1;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .cross-model-card-drag-handle {
+        align-items: center;
+        color: #9ca3af;
+        cursor: grab;
+        display: flex;
+        font-size: 14px;
+        padding: 4px 6px;
+    }
+
+    .cross-model-card-drag-handle:hover {
+        color: #6b7280;
+    }
+
+    .cross-model-card-drag-handle:active {
+        cursor: grabbing;
+    }
+
+    .cross-model-card-toggle {
+        color: #6b7280;
+        flex-shrink: 0;
+        font-size: 10px;
+        transition: transform 0.2s;
+    }
+
+    .cross-model-card-toggle.collapsed {
+        transform: rotate(-90deg);
+    }
+
+    .cross-model-card-name {
+        color: #1f2937;
+        font-size: 13px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .cross-model-card-header-right {
+        align-items: center;
+        display: flex;
+        flex-shrink: 0;
+        gap: 8px;
+    }
+
+    .cross-model-card-body {
+        cursor: grab;
+        padding: 12px;
+    }
+
+    .cross-model-card-body:active {
+        cursor: grabbing;
+    }
+
+    .cross-model-card-body.collapsed {
+        display: none;
+    }
+
+    .cross-model-filter {
+        padding: 10px;
+    }
+
+    .cross-model-filter:not(:last-child) {
+        margin-bottom: 12px;
+    }
+
+    .cross-model-filter-label {
+        color: #1f2937;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .cross-model-filter-widget {
+        clear: both;
+        display: flex;
+        gap: 8px;
+        overflow: hidden;
+    }
+
+    .cross-model-filter-widget::after {
+        clear: both;
+        content: "";
+        display: table;
+    }
+
+    .cross-model-filter-widget > * {
+        margin-right: 0;
+    }
+
+    .cross-model-filter-unavailable {
+        color: #9ca3af;
+        font-size: 12px;
+        font-style: italic;
+    }
+
+    .cross-model-operator {
+        display: flex;
+        gap: 0;
+        margin: 16px 0;
         width: 100%;
     }
 
-    #cross-model-splash .rr-splash-title {
-        color: #333;
-        font-size: 24px;
+    .cross-model-operator-btn {
+        background: #f9fafb;
+        border: 1px solid #d1d5db;
+        color: #6b7280;
+        cursor: pointer;
+        flex: 1;
+        font-size: 11px;
         font-weight: 600;
-        margin-bottom: 10px;
+        padding: 8px 12px;
+        text-transform: uppercase;
+        transition: all 0.15s;
     }
 
-    #cross-model-splash .rr-splash-description {
-        color: #666;
-        font-size: 14px;
-        line-height: 1.5;
-        max-width: 400px;
+    .cross-model-operator-btn:first-child {
+        border-radius: 4px 0 0 4px;
+        border-right: none;
+    }
+
+    .cross-model-operator-btn:last-child {
+        border-radius: 0 4px 4px 0;
+    }
+
+    .cross-model-operator-btn:hover {
+        background: #f3f4f6;
+    }
+
+    .cross-model-operator-btn.active {
+        background: #2B4E6D;
+        border-color: #2B4E6D;
+        color: #fff;
+    }
+
+    .cross-model-intersect-badge {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        padding: 12px 0;
+    }
+
+    .cross-model-intersect-badge span {
+        align-items: center;
+        background: #e9d5ff;
+        border: 1px solid #c084fc;
+        border-radius: 16px;
+        color: #7c3aed;
+        display: flex;
+        font-size: 11px;
+        font-weight: 600;
+        gap: 6px;
+        padding: 6px 14px;
+        text-transform: uppercase;
+    }
+
+    .cross-model-add-group-btn {
+        background: transparent;
+        border: 2px dashed #d1d5db;
+        border-radius: 6px;
+        color: #6b7280;
+        cursor: pointer;
+        font-size: 13px;
+        margin-top: 12px;
+        padding: 12px;
+        text-align: center;
+        transition: all 0.15s;
+        width: 100%;
+    }
+
+    .cross-model-add-group-btn:hover {
+        background: #f9fafb;
+        border-color: #2B4E6D;
+        color: #2B4E6D;
+    }
+
+    .cross-model-add-group-btn.drop-target {
+        background: #e8eff5;
+        border-color: #2B4E6D;
+        border-style: solid;
+        color: #2B4E6D;
     }
 </style>
 
 <!--ko let: { self: $data }-->
-<div class="flex cross-model-advanced-search-container">
+<div class="cross-model-container">
 
-    <div class="cross-model-facets-search-container">
+    <div class="cross-model-main">
 
         <!-- Splash Screen -->
-        <div data-bind="visible: filter.facets().length === 0">
-            <div id="cross-model-splash">
-                <div class="img-lg img-circle rr-splash-img-container">
-                    <img class="rr-splash-img" src="{% webpack_static 'img/inspection.png' %}" alt="Cross-Model Advanced Search">
-                </div>
-
-                <div class="rr-splash-title">
-                    <span>{% trans "Cross-Model Advanced Search" %}</span>
-                </div>
-
-                <div class="rr-splash-description">
-                    <span>{% trans "Search across multiple resource models simultaneously." %}</span>
-                </div>
+        <!-- ko ifnot: has_filters() -->
+        <div class="cross-model-splash">
+            <div class="cross-model-splash-icon">
+                <i class="fa fa-search-plus"></i>
+            </div>
+            <div class="cross-model-splash-title">{% trans "Cross-Model Advanced Search" %}</div>
+            <div class="cross-model-splash-text">
+                {% trans "Build complex queries across multiple resource models. Select cards from the sidebar to define your search criteria, or drag them directly into groups." %}
             </div>
         </div>
+        <!-- /ko -->
 
-        <!-- Translate to Parent Toggle -->
-        <div class="cross-model-options" data-bind="visible: filter.facets().length > 0">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin: 0;">
-                    <input type="checkbox" data-bind="checked: translate_to_parent">
-                    <span>{% trans "Get parent Archaeological Sites" %}</span>
-                </label>
-                <i class="fa fa-info-circle"
-                    style="color: #888; cursor: help;"
-                    data-toggle="tooltip"
-                    data-placement="right"
-                    title="{% trans 'When enabled, search results from Site Visits and other child resources will be translated to their parent Archaeological Site records.' %}">
-                </i>
+        <!-- Options Bar -->
+        <!-- ko if: has_filters() -->
+        <div class="cross-model-options-bar">
+            <div class="cross-model-option-group">
+                <span class="cross-model-option-label">{% trans "Result Mode:" %}</span>
+                <select class="cross-model-option-select" data-bind="
+                    value: translate_mode,
+                    options: translate_mode_options,
+                    optionsText: 'label',
+                    optionsValue: 'value'
+                "></select>
             </div>
-        </div>
-
-        <!-- Facets Display -->
-        <!-- ko foreach: filter.facets -->
-
-        <!-- Operator between facets -->
-        <!-- ko if: $index() > 0 -->
-        <div class="btn-group btn-group-sm cross-model-facet-btn-group">
-            <button class="btn btn-warning btn-active-dark facet-btn"
-                data-bind="
-                    click: function() { value.op('and'); },
-                    css: {'selected': value.op() === 'and'}
-                ">
-                <span>{% trans "AND" %}</span>
-            </button>
-            <button class="btn btn-warning btn-active-dark facet-btn"
-                data-bind="
-                    click: function() { value.op('or'); },
-                    css: {'selected': value.op() === 'or'}
-                ">
-                <span>{% trans "OR" %}</span>
+            <button class="cross-model-remove-btn" data-bind="click: clear" title="{% trans 'Clear All' %}">
+                <i class="fa fa-times"></i>
             </button>
         </div>
         <!-- /ko -->
 
-        <!-- Facet Card -->
-        <div class="cross-model-faceted-search-card-container" tabindex="-1" data-bind="attr: {'id': 'cross-model-facet-filter-' + $index()}">
-            <div class="facet-name" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>
-                    <span class="label label-info" style="margin-right: 5px;" data-bind="text: graph_name"></span>
-                    <span data-bind="text: card.name"></span>
-                </span>
-            </div>
-            <div class="row facet-search-criteria">
-                <!-- ko foreach: card.nodes -->
-                <!-- ko if: self.datatype_lookup[datatype] && self.datatype_lookup[datatype].configname && ko.components.isRegistered(self.datatype_lookup[datatype].configname) -->
-                <div class="facet-body">
-                    <div class="facet-label" data-bind="text: $data.label"></div>
-                    <div data-bind="component: {
-                        name: self.datatype_lookup[datatype].configname,
-                        params: {
-                            search: true,
-                            filterValue: $parent.value[nodeid],
-                            node: $data,
-                            datatype: self.datatype_lookup[datatype]
-                        }
-                    }"></div>
+        <!-- Resource Model Sections -->
+        <!-- ko foreach: sections -->
+        <!-- ko if: groups().length > 0 -->
+
+        <div class="cross-model-section">
+            <div class="cross-model-section-header" data-bind="click: function() { collapsed(!collapsed()); }, css: { 'collapsed': collapsed() }">
+                <div class="cross-model-section-header-left">
+                    <div class="cross-model-section-icon">
+                        <i class="fa fa-database"></i>
+                    </div>
+                    <span class="cross-model-section-name" data-bind="text: graph_name"></span>
                 </div>
-                <!-- /ko -->
-                <!-- ko ifnot: self.datatype_lookup[datatype] && self.datatype_lookup[datatype].configname && ko.components.isRegistered(self.datatype_lookup[datatype].configname) -->
-                <div class="facet-body" style="color: #999; font-style: italic;">
-                    <div class="facet-label" data-bind="text: $data.label"></div>
-                    <div>{% trans "Search not available for this field type" %}</div>
+                <i class="fa fa-chevron-down cross-model-section-toggle" data-bind="css: { 'collapsed': collapsed() }"></i>
+            </div>
+
+            <!-- ko ifnot: collapsed() -->
+            <div class="cross-model-section-body">
+                <!-- ko foreach: groups -->
+                <div class="cross-model-group" data-bind="
+                    css: { 'drop-target': self.is_drop_target($data) },
+                    event: {
+                        dragover: function(data, event) { return self.handle_drag_over($data, $parent, event); },
+                        dragleave: function(data, event) { return self.handle_drag_leave($data, event); },
+                        drop: function(data, event) { return self.handle_drop($data, $parent, event); }
+                    }
+                ">
+                    <div class="cross-model-group-header" data-bind="click: function() { collapsed(!collapsed()); }, css: { 'collapsed': collapsed() }">
+                        <span class="cross-model-group-title">
+                            <i class="fa fa-chevron-down cross-model-group-toggle" data-bind="css: { 'collapsed': collapsed() }"></i>
+                            {% trans "Group" %} <span data-bind="text: $index() + 1"></span>
+                        </span>
+                        <div class="cross-model-group-controls">
+                            <div class="cross-model-group-match">
+                                <span class="cross-model-group-match-label">{% trans "Match:" %}</span>
+                                <button type="button" class="cross-model-group-match-btn" data-bind="
+                                    click: function(data, event) { event.stopPropagation(); match('all'); },
+                                    css: { 'active': match() === 'all' }
+                                ">{% trans "All" %}</button>
+                                <button type="button" class="cross-model-group-match-btn" data-bind="
+                                    click: function(data, event) { event.stopPropagation(); match('any'); },
+                                    css: { 'active': match() === 'any' }
+                                ">{% trans "Any" %}</button>
+                            </div>
+                            <button class="cross-model-remove-btn" data-bind="click: function(data, event) { event.stopPropagation(); self.remove_group($parent, $data); }" title="{% trans 'Remove Group' %}">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cross-model-group-body" data-bind="css: { 'collapsed': collapsed() }">
+                        <!-- ko if: cards().length === 0 -->
+                        <div class="cross-model-group-empty">
+                            {% trans "No cards added. Select a card from the sidebar or drag a card here." %}
+                        </div>
+                        <!-- /ko -->
+
+                        <!-- ko foreach: cards -->
+                        <div class="cross-model-card-wrapper" data-bind="
+                            event: {
+                                dragover: function(data, event) { return self.handle_card_drag_over($data, $parent, $parents[1], event); }
+                            }
+                        ">
+                            <!-- ko if: self.get_drop_indicator_position($data) === 'before' -->
+                            <div class="cross-model-card-drop-indicator before"></div>
+                            <!-- /ko -->
+
+                            <div class="cross-model-card" data-bind="
+                                css: { 'dragging': self.drag_data() && self.drag_data().card === $data }
+                            ">
+                                <div class="cross-model-card-header" data-bind="click: function() { collapsed(!collapsed()); }">
+                                    <div class="cross-model-card-header-left">
+                                        <span class="cross-model-card-drag-handle" draggable="true" title="{% trans 'Drag to move' %}" data-bind="
+                                            event: {
+                                                dragstart: function(data, event) { event.stopPropagation(); return self.handle_drag_start($data, $parent, $parents[1], event); },
+                                                dragend: function(data, event) { return self.handle_drag_end($data, event); }
+                                            },
+                                            click: function(data, event) { event.stopPropagation(); }
+                                        ">
+                                            <i class="fa fa-bars"></i>
+                                        </span>
+                                        <i class="fa fa-chevron-down cross-model-card-toggle" data-bind="css: { 'collapsed': collapsed() }"></i>
+                                        <span class="cross-model-card-name" data-bind="text: card_name"></span>
+                                    </div>
+                                    <div class="cross-model-card-header-right">
+                                        <button class="cross-model-remove-btn" data-bind="click: function(data, event) { event.stopPropagation(); $parents[2].remove_card_from_group($parent, $data); }" title="{% trans 'Remove Card' %}">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="cross-model-card-body" draggable="true" data-bind="
+                                    css: { 'collapsed': collapsed() },
+                                    event: {
+                                        dragstart: function(data, event) { return self.handle_drag_start($data, $parent, $parents[1], event); },
+                                        dragend: function(data, event) { return self.handle_drag_end($data, event); }
+                                    }
+                                ">
+                                    <!-- ko foreach: nodes -->
+                                    <!-- ko if: self.datatype_lookup[datatype] && self.datatype_lookup[datatype].configname && ko.components.isRegistered(self.datatype_lookup[datatype].configname) -->
+                                    <div class="cross-model-filter">
+                                        <div class="cross-model-filter-label" data-bind="text: label"></div>
+                                        <div class="cross-model-filter-widget" data-bind="component: {
+                                            name: self.datatype_lookup[datatype].configname,
+                                            params: {
+                                                search: true,
+                                                filterValue: $parent.filters[nodeid],
+                                                node: $data,
+                                                datatype: self.datatype_lookup[datatype]
+                                            }
+                                        }"></div>
+                                    </div>
+                                    <!-- /ko -->
+                                    <!-- ko ifnot: self.datatype_lookup[datatype] && self.datatype_lookup[datatype].configname && ko.components.isRegistered(self.datatype_lookup[datatype].configname) -->
+                                    <div class="cross-model-filter">
+                                        <div class="cross-model-filter-label" data-bind="text: label"></div>
+                                        <div class="cross-model-filter-unavailable">{% trans "Search not available for this field type" %}</div>
+                                    </div>
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+                                </div>
+                            </div>
+
+                            <!-- ko if: self.get_drop_indicator_position($data) === 'after' -->
+                            <div class="cross-model-card-drop-indicator after"></div>
+                            <!-- /ko -->
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div>
+
+                <!-- Operator between groups -->
+                <!-- ko if: $index() < $parent.groups().length - 1 -->
+                <div class="cross-model-operator">
+                    <button type="button" class="cross-model-operator-btn" data-bind="
+                        click: function() { operator_after('and'); },
+                        css: { 'active': operator_after() === 'and' }
+                    ">{% trans "AND" %}</button>
+                    <button type="button" class="cross-model-operator-btn" data-bind="
+                        click: function() { operator_after('or'); },
+                        css: { 'active': operator_after() === 'or' }
+                    ">{% trans "OR" %}</button>
                 </div>
                 <!-- /ko -->
                 <!-- /ko -->
 
-                <div class="facet-search-button">
-                    <button class="btn btn-sm btn-primary" data-bind="click: self.remove_facet">
-                        <span>{% trans "Remove" %}</span>
-                    </button>
-                </div>
+                <button class="cross-model-add-group-btn" data-bind="
+                    click: function() { self.add_group($data); },
+                    css: { 'drop-target': self.drag_over_add_group() === $data },
+                    event: {
+                        dragover: function(data, event) { return self.handle_add_group_drag_over($data, event); },
+                        dragleave: function(data, event) { return self.handle_add_group_drag_leave($data, event); },
+                        drop: function(data, event) { return self.handle_add_group_drop($data, event); }
+                    }
+                ">
+                    <i class="fa fa-plus"></i> {% trans "Add Group" %}
+                </button>
             </div>
+            <!-- /ko -->
         </div>
+        <!-- /ko -->
         <!-- /ko -->
     </div>
 
-    <!-- Facet Picker Panel -->
-    <div class="cross-model-facets-container">
-        <div class="list-group search-facets">
-            <div class="search-facet-item header">
-                <div class="search-facet-item-heading">
-                    <span>{% trans "Search Facets" %}</span>
-                </div>
-                <div class="list-filter">
-                    <input
-                        type="text"
-                        class="form-control"
-                        data-bind="
-                            attr: {
-                                placeholder: '{% trans "Find..." %}'
-                            },
-                            value: facet_filter_text,
-                            valueUpdate: 'keyup'
-                        "
-                    >
-                    <span tabindex="0" role="button" class="clear-node-search"
-                        data-bind="click: function() { facet_filter_text(''); }">
-                        <i class="fa fa-times-circle"></i>
-                    </span>
-                </div>
+    <!-- Sidebar -->
+    <div class="cross-model-sidebar">
+        <div class="cross-model-sidebar-header">
+            <div class="cross-model-sidebar-title">{% trans "Resource Models" %}</div>
+            <div class="cross-model-sidebar-search">
+                <input type="text" data-bind="
+                    attr: { placeholder: '{% trans "Search cards..." %}' },
+                    value: facet_filter_text,
+                    valueUpdate: 'keyup'
+                ">
+                <span class="cross-model-sidebar-search-clear" data-bind="
+                    click: function() { facet_filter_text(''); },
+                    visible: facet_filter_text()
+                ">
+                    <i class="fa fa-times-circle"></i>
+                </span>
             </div>
+        </div>
 
+        <div class="cross-model-sidebar-content">
             <!-- ko foreach: searchable_graphs -->
-            <!-- ko if: cards().length > 0 -->
-            <div tabindex="0" role="button" class="search-facet-item disabled"
-                data-bind="click: function() { collapsed(!collapsed()); }">
-                <div class="search-facet-item-heading">
-                    <strong data-bind="text: name"></strong>
-                    <span>
-                        <i class="fa report-expander print-hide"
-                            data-bind="css: {'fa-angle-down': !collapsed(), 'fa-angle-right': collapsed()}">
-                        </i>
-                    </span>
+            <!-- ko if: filtered_cards().length > 0 -->
+            <div class="cross-model-graph-section">
+                <div class="cross-model-graph-header" data-bind="click: function() { collapsed(!collapsed()); }">
+                    <span class="cross-model-graph-name" data-bind="text: name"></span>
+                    <i class="fa fa-chevron-right cross-model-graph-toggle" data-bind="css: { 'expanded': !collapsed() }"></i>
                 </div>
-            </div>
-            <div data-bind="visible: !collapsed()" role="list">
-                <!-- ko foreach: cards -->
-                <div role="listitem" style="display: flex; align-items: center;">
-                    <div class="search-facet-item" style="display: flex;">
-                        <div>
-                            <a href="#" role="button" data-bind="click: add_facet">
-                                <p class="search-facet-item-heading" data-bind="text: name"></p>
-                            </a>
-                        </div>
+
+                <!-- ko ifnot: collapsed() -->
+                <div class="cross-model-graph-cards">
+                    <div class="cross-model-add-group-option" data-bind="click: function() {
+                        var section = self.get_section_for_graph(graphid);
+                        if (section) { self.add_group(section); }
+                    }">
+                        <i class="fa fa-plus"></i>
+                        <span>{% trans "New Group" %}</span>
                     </div>
+
+                    <!-- ko foreach: filtered_cards -->
+                    <!-- ko if: self.is_card_used($data) -->
+                    <div class="cross-model-card-option used">
+                        <span data-bind="text: name"></span>
+                    </div>
+                    <!-- /ko -->
+                    <!-- ko ifnot: self.is_card_used($data) -->
+                    <div class="cross-model-card-option draggable" draggable="true" data-bind="
+                        click: function() {
+                            var section = self.get_section_for_graph($parent.graphid);
+                            if (section && section.groups().length > 0) {
+                                var last_group = section.groups()[section.groups().length - 1];
+                                self.add_card_to_group(section, last_group, $data);
+                            } else if (section) {
+                                self.add_group(section);
+                                var new_group = section.groups()[section.groups().length - 1];
+                                self.add_card_to_group(section, new_group, $data);
+                            }
+                        },
+                        css: { 'dragging': self.drag_data() && self.drag_data().source === 'sidebar' && self.drag_data().card_def === $data },
+                        event: {
+                            dragstart: function(data, event) { return self.handle_sidebar_drag_start($data, $parent, event); },
+                            dragend: function(data, event) { return self.handle_sidebar_drag_end($data, event); }
+                        }
+                    ">
+                        <span data-bind="text: name"></span>
+                        <span class="cross-model-card-option-drag-hint"><i class="fa fa-bars"></i></span>
+                    </div>
+                    <!-- /ko -->
+                    <!-- /ko -->
                 </div>
                 <!-- /ko -->
             </div>

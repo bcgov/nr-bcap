@@ -6,49 +6,69 @@ import ko from "knockout";
 import koMapping from "knockout-mapping";
 import crossModelAdvancedSearchTemplate from "templates/views/components/search/cross-model-advanced-search.htm";
 
-console.log("cross-model-advanced-search.js: FILE LOADED");
-
 let component_name = "cross-model-advanced-search";
-
-console.log("cross-model-advanced-search.js: component_name =", component_name);
 
 let view_model = BaseFilter.extend({
     initialize: function(options) {
-        console.log("cross-model-advanced-search.js: initialize() CALLED");
-        console.log("cross-model-advanced-search.js: options =", options);
-
         let self = this;
 
         options.name = "Cross-Model Advanced Search Filter";
         BaseFilter.prototype.initialize.call(this, options);
 
         this.cards = [];
-        this.card_name_dict = {};
+        this.card_lookup = {};
         this.datatype_lookup = {};
+        this.drag_data = ko.observable(null);
+        this.drag_over_add_group = ko.observable(null);
+        this.drag_over_card = ko.observable(null);
+        this.drag_over_group = ko.observable(null);
+        this.drag_over_position = ko.observable(null);
         this.facet_filter_text = ko.observable("");
-        this.filter = {
-            facets: ko.observableArray()
-        };
         this.graph_lookup = {};
+        this.next_group_id = 1;
         this.searchable_graphs = ko.observableArray();
+        this.sections = ko.observableArray();
         this.tag_id = "Cross-Model Advanced Search";
-        this.translate_to_parent = ko.observable(false);
+        this.translate_mode = ko.observable("none");
         this.urls = arches.urls;
         this.widget_lookup = {};
 
-        this.remove_facet = function(facet) {
-            self.filter.facets.remove(facet);
-        };
+        this.translate_mode_options = [
+            { value: "none", label: "Show Raw Results" },
+            { value: "intersection", label: "Get Parent Archaeological Sites" }
+        ];
 
-        console.log("cross-model-advanced-search.js: about to make AJAX call to", arches.urls.api_search_component_data + component_name);
+        this.has_filters = ko.computed(function() {
+            return _.some(self.sections(), function(section) {
+                return section.groups().length > 0;
+            });
+        });
+
+        this.active_sections = ko.computed(function() {
+            return _.filter(self.sections(), function(section) {
+                return _.some(section.groups(), function(group) {
+                    return group.cards().length > 0;
+                });
+            });
+        });
+
+        this.used_card_ids = ko.computed(function() {
+            let ids = [];
+            _.each(self.sections(), function(section) {
+                _.each(section.groups(), function(group) {
+                    _.each(group.cards(), function(card) {
+                        ids.push(card.nodegroup_id);
+                    });
+                });
+            });
+            return ids;
+        });
 
         $.ajax({
             context: this,
             type: "GET",
             url: arches.urls.api_search_component_data + component_name
         }).done(function(response) {
-            console.log("cross-model-advanced-search.js: AJAX done, response =", response);
-
             this.cards = response.cards || [];
 
             _.each(response.datatypes || [], function(datatype) {
@@ -60,211 +80,609 @@ let view_model = BaseFilter.extend({
             }, this);
 
             _.each(response.cards || [], function(card) {
-                self.card_name_dict[card.nodegroup_id] = card.name;
-
                 card.nodes = _.filter(response.nodes || [], function(node) {
                     return node.nodegroup_id === card.nodegroup_id;
                 });
 
-                card.add_facet = function() {
-                    _.each(card.nodes, function(node) {
-                        if (
-                            self.card_name_dict[node.nodegroup_id] &&
-                            node.nodeid === node.nodegroup_id
-                        ) {
-                            node.label = self.card_name_dict[node.nodegroup_id];
-                        } else if (
-                            node.nodeid !== node.nodegroup_id &&
-                            self.widget_lookup[node.nodeid]
-                        ) {
-                            let widget = self.widget_lookup[node.nodeid];
-                            node.label = widget.label;
-                        } else {
-                            node.label = node.name;
-                        }
-                    });
+                _.each(card.nodes || [], function(node) {
+                    node.label = (self.widget_lookup[node.nodeid] || {}).label || node.name;
+                });
 
-                    self.new_facet(card);
-                };
+                this.card_lookup[card.nodegroup_id] = card;
             }, this);
 
-            let graphs = (response.graphs || []).sort(function(a, b) {
-                let name_a = (ko.unwrap(a.name) || "").toLowerCase();
-                let name_b = (ko.unwrap(b.name) || "").toLowerCase();
-                return name_a > name_b ? 1 : -1;
-            });
-
-            _.each(graphs, function(graph) {
-                if (
-                    graph.isresource &&
-                    graph.is_active &&
-                    graph.source_identifier_id === null
-                ) {
-                    let graph_cards = _.filter(response.cards || [], function(card) {
-                        return card.graph_id === graph.graphid && card.nodes && card.nodes.length > 0;
-                    });
-
-                    graph_cards.sort(function(a, b) {
-                        return (a.name || "").toLowerCase() > (b.name || "").toLowerCase() ? 1 : -1;
-                    });
-
-                    if (graph_cards.length > 0) {
-                        _.each(graph_cards, function(card) {
-                            card.get_graph = function() {
-                                return graph;
-                            };
-                        });
-
-                        graph.collapsed = ko.observable(true);
-                        graph.cards = ko.computed(function() {
-                            let filter_text = (self.facet_filter_text() || "").toLowerCase();
-                            if (filter_text) {
-                                graph.collapsed(false);
-                                return _.filter(graph_cards, function(card) {
-                                    let card_name = (card.name || "").toLowerCase();
-                                    return card_name.indexOf(filter_text) > -1;
-                                });
-                            }
-                            return graph_cards;
-                        });
-
-                        this.searchable_graphs.push(graph);
-                        this.graph_lookup[graph.graphid] = graph;
+            _.each(response.graphs || [], function(graph) {
+                let graph_cards = _.filter(this.cards, function(card) {
+                    if (card.graph_id !== graph.graphid) {
+                        return false;
                     }
+
+                    let searchable_nodes = _.filter(card.nodes || [], function(node) {
+                        let datatype = self.datatype_lookup[node.datatype];
+                        return datatype && datatype.configname && ko.components.isRegistered(datatype.configname);
+                    });
+
+                    return searchable_nodes.length > 0;
+                });
+
+                if (graph_cards.length > 0) {
+                    graph_cards = _.sortBy(graph_cards, function(card) {
+                        return (card.name || "").toLowerCase();
+                    });
+
+                    graph.collapsed = ko.observable(true);
+                    graph.cards = ko.observableArray(graph_cards);
+                    graph.filtered_cards = ko.computed(function() {
+                        let filter_text = (self.facet_filter_text() || "").toLowerCase();
+                        if (filter_text) {
+                            graph.collapsed(false);
+                            return _.filter(graph_cards, function(card) {
+                                let card_name = (card.name || "").toLowerCase();
+                                return card_name.indexOf(filter_text) > -1;
+                            });
+                        }
+                        return graph_cards;
+                    });
+
+                    this.searchable_graphs.push(graph);
+                    this.graph_lookup[graph.graphid] = graph;
+
+                    this.sections.push({
+                        collapsed: ko.observable(false),
+                        graph_id: graph.graphid,
+                        graph_name: ko.unwrap(graph.name) || "Unknown",
+                        groups: ko.observableArray([])
+                    });
                 }
             }, this);
-
-            console.log("cross-model-advanced-search.js: searchable_graphs =", this.searchable_graphs());
 
             this.restore_state();
 
             let filter_updated = ko.computed(function() {
-                return JSON.stringify(ko.toJS(this.filter.facets())) + this.translate_to_parent();
-            }, this);
+                let data = {
+                    sections: ko.toJS(self.sections()),
+                    translate_mode: self.translate_mode()
+                };
+                return JSON.stringify(data);
+            });
 
             filter_updated.subscribe(function() {
-                this.update_query();
-            }, this);
+                self.update_query();
+            });
 
-            console.log("cross-model-advanced-search.js: about to call searchFilterVms");
             this.searchFilterVms[component_name](this);
-            console.log("cross-model-advanced-search.js: searchFilterVms called");
-
             options.loading(false);
-            console.log("cross-model-advanced-search.js: initialize COMPLETE");
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            console.error("cross-model-advanced-search.js: AJAX FAILED");
-            console.error("cross-model-advanced-search.js: textStatus =", textStatus);
-            console.error("cross-model-advanced-search.js: errorThrown =", errorThrown);
-            console.error("cross-model-advanced-search.js: jqXHR =", jqXHR);
         });
+    },
+
+    _clear_drag_state: function() {
+        this.drag_data(null);
+        this.drag_over_add_group(null);
+        this.drag_over_card(null);
+        this.drag_over_group(null);
+        this.drag_over_position(null);
+    },
+
+    _get_event: function(event) {
+        return event.originalEvent || event;
+    },
+
+    _move_section_to_end: function(section) {
+        let dominated_idx = this.sections.indexOf(section);
+        if (dominated_idx > -1) {
+            this.sections.splice(dominated_idx, 1);
+            this.sections.push(section);
+        }
+    },
+
+    add_card_to_group: function(section, group, card) {
+        let self = this;
+
+        let card_filters = {};
+        _.each(card.nodes || [], function(node) {
+            card_filters[node.nodeid] = ko.observable({});
+        });
+
+        let new_card = {
+            card_id: card.cardid,
+            card_name: card.name,
+            collapsed: ko.observable(false),
+            filters: card_filters,
+            nodegroup_id: card.nodegroup_id,
+            nodes: card.nodes
+        };
+
+        group.cards.push(new_card);
+    },
+
+    add_group: function(section) {
+        let self = this;
+        let was_empty = section.groups().length === 0;
+
+        let new_group = {
+            cards: ko.observableArray([]),
+            collapsed: ko.observable(false),
+            id: self.next_group_id++,
+            match: ko.observable("all"),
+            operator_after: ko.observable("and")
+        };
+        section.groups.push(new_group);
+
+        if (was_empty) {
+            self._move_section_to_end(section);
+        }
+
+        return new_group;
     },
 
     clear: function() {
-        console.log("cross-model-advanced-search.js: clear() called");
-        this.filter.facets.removeAll();
-        this.translate_to_parent(false);
+        _.each(this.sections(), function(section) {
+            section.groups.removeAll();
+        });
+        this.translate_mode("none");
     },
 
-    new_facet: function(card) {
-        console.log("cross-model-advanced-search.js: new_facet() called, card =", card);
-        let self = this;
-        let graph = card.get_graph();
+    get_drop_indicator_position: function(card) {
+        let drag_data = this.drag_data();
+        if (!drag_data) {
+            return null;
+        }
 
-        let facet = {
+        if (this.drag_over_card() !== card) {
+            return null;
+        }
+
+        if (drag_data.card === card) {
+            return null;
+        }
+
+        return this.drag_over_position();
+    },
+
+    get_section_for_graph: function(graph_id) {
+        return _.find(this.sections(), function(section) {
+            return section.graph_id === graph_id;
+        });
+    },
+
+    get_section_for_group: function(group) {
+        return _.find(this.sections(), function(section) {
+            return section.groups.indexOf(group) > -1;
+        });
+    },
+
+    handle_card_drag_over: function(card, group, section, event) {
+        let native_event = this._get_event(event);
+        native_event.preventDefault();
+
+        let drag_data = this.drag_data();
+        if (!drag_data) {
+            return true;
+        }
+
+        if (drag_data.graph_id !== section.graph_id) {
+            return true;
+        }
+
+        let target = native_event.currentTarget;
+        let rect = target.getBoundingClientRect();
+        let midpoint = rect.top + rect.height / 2;
+        let position = native_event.clientY < midpoint ? "before" : "after";
+
+        this.drag_over_card(card);
+        this.drag_over_group(group);
+        this.drag_over_position(position);
+
+        return true;
+    },
+
+    handle_drag_end: function(card, event) {
+        this._clear_drag_state();
+        return true;
+    },
+
+    handle_add_group_drag_leave: function(section, event) {
+        let native_event = this._get_event(event);
+        let related_target = native_event.relatedTarget;
+        let current_target = native_event.currentTarget;
+
+        if (related_target && current_target && current_target.contains(related_target)) {
+            return true;
+        }
+
+        if (this.drag_over_add_group() === section) {
+            this.drag_over_add_group(null);
+        }
+
+        return true;
+    },
+
+    handle_add_group_drag_over: function(section, event) {
+        let native_event = this._get_event(event);
+        native_event.preventDefault();
+
+        let drag_data = this.drag_data();
+        if (!drag_data) {
+            return true;
+        }
+
+        if (drag_data.source !== "sidebar") {
+            return true;
+        }
+
+        if (drag_data.graph_id !== section.graph_id) {
+            return true;
+        }
+
+        this.drag_over_add_group(section);
+        return true;
+    },
+
+    handle_add_group_drop: function(section, event) {
+        let native_event = this._get_event(event);
+        native_event.preventDefault();
+
+        let drag_data = this.drag_data();
+        if (!drag_data) {
+            this._clear_drag_state();
+            return true;
+        }
+
+        if (drag_data.source !== "sidebar") {
+            this._clear_drag_state();
+            return true;
+        }
+
+        if (drag_data.graph_id !== section.graph_id) {
+            this._clear_drag_state();
+            return true;
+        }
+
+        let new_group = this.add_group(section);
+        this.add_card_to_group(section, new_group, drag_data.card_def);
+
+        this._clear_drag_state();
+        return true;
+    },
+
+    handle_drag_leave: function(group, event) {
+        let native_event = this._get_event(event);
+        let related_target = native_event.relatedTarget;
+        let current_target = native_event.currentTarget;
+
+        if (related_target && current_target && current_target.contains(related_target)) {
+            return true;
+        }
+
+        if (this.drag_over_group() === group) {
+            this.drag_over_card(null);
+            this.drag_over_group(null);
+            this.drag_over_position(null);
+        }
+
+        return true;
+    },
+
+    handle_drag_over: function(group, section, event) {
+        let native_event = this._get_event(event);
+        native_event.preventDefault();
+
+        let drag_data = this.drag_data();
+        if (!drag_data) {
+            return true;
+        }
+
+        if (drag_data.graph_id !== section.graph_id) {
+            return true;
+        }
+
+        this.drag_over_group(group);
+        return true;
+    },
+
+    handle_drag_start: function(card, group, section, event) {
+        let native_event = this._get_event(event);
+
+        this.drag_data({
             card: card,
-            graph_id: graph.graphid,
-            graph_name: ko.unwrap(graph.name) || "Unknown",
-            value: {
-                graph_id: graph.graphid,
-                op: ko.observable("and")
-            }
-        };
-
-        _.each(card.nodes || [], function(node) {
-            facet.value[node.nodeid] = ko.observable({});
+            graph_id: section.graph_id,
+            group: group,
+            section: section,
+            source: "main"
         });
 
-        this.filter.facets.push(facet);
+        if (native_event.dataTransfer) {
+            native_event.dataTransfer.effectAllowed = "move";
+            native_event.dataTransfer.setData("text/plain", card.card_id || "card");
+        }
+
+        return true;
+    },
+
+    handle_drop: function(target_group, target_section, event) {
+        let native_event = this._get_event(event);
+        native_event.preventDefault();
+
+        let drag_data = this.drag_data();
+        if (!drag_data) {
+            this._clear_drag_state();
+            return true;
+        }
+
+        if (drag_data.graph_id !== target_section.graph_id) {
+            this._clear_drag_state();
+            return true;
+        }
+
+        if (drag_data.source === "sidebar") {
+            let card_def = drag_data.card_def;
+            let target_card = this.drag_over_card();
+            let position = this.drag_over_position();
+
+            if (target_card) {
+                let cards = target_group.cards();
+                let target_index = cards.indexOf(target_card);
+
+                if (position === "after") {
+                    target_index += 1;
+                }
+
+                let card_filters = {};
+                _.each(card_def.nodes || [], function(node) {
+                    card_filters[node.nodeid] = ko.observable({});
+                });
+
+                let new_card = {
+                    card_id: card_def.cardid,
+                    card_name: card_def.name,
+                    collapsed: ko.observable(false),
+                    filters: card_filters,
+                    nodegroup_id: card_def.nodegroup_id,
+                    nodes: card_def.nodes
+                };
+
+                target_group.cards.splice(target_index, 0, new_card);
+            } else {
+                this.add_card_to_group(target_section, target_group, card_def);
+            }
+
+            this._clear_drag_state();
+            return true;
+        }
+
+        let source_group = drag_data.group;
+        let dragged_card = drag_data.card;
+        let target_card = this.drag_over_card();
+        let position = this.drag_over_position();
+
+        if (source_group === target_group && target_card) {
+            let cards = source_group.cards();
+            let source_index = cards.indexOf(dragged_card);
+            let target_index = cards.indexOf(target_card);
+
+            if (source_index === target_index) {
+                this._clear_drag_state();
+                return true;
+            }
+
+            source_group.cards.splice(source_index, 1);
+
+            cards = source_group.cards();
+            target_index = cards.indexOf(target_card);
+
+            if (position === "after") {
+                target_index += 1;
+            }
+
+            source_group.cards.splice(target_index, 0, dragged_card);
+        } else if (source_group !== target_group) {
+            source_group.cards.remove(dragged_card);
+
+            if (target_card) {
+                let cards = target_group.cards();
+                let target_index = cards.indexOf(target_card);
+
+                if (position === "after") {
+                    target_index += 1;
+                }
+
+                target_group.cards.splice(target_index, 0, dragged_card);
+            } else {
+                target_group.cards.push(dragged_card);
+            }
+
+            if (source_group.cards().length === 0) {
+                drag_data.section.groups.remove(source_group);
+            }
+        }
+
+        this._clear_drag_state();
+        return true;
+    },
+
+    handle_sidebar_drag_end: function(card, event) {
+        this._clear_drag_state();
+        return true;
+    },
+
+    handle_sidebar_drag_start: function(card_def, graph, event) {
+        let native_event = this._get_event(event);
+
+        this.drag_data({
+            card: null,
+            card_def: card_def,
+            graph_id: graph.graphid,
+            group: null,
+            section: null,
+            source: "sidebar"
+        });
+
+        if (native_event.dataTransfer) {
+            native_event.dataTransfer.effectAllowed = "copy";
+            native_event.dataTransfer.setData("text/plain", card_def.cardid || "card");
+        }
+
+        return true;
+    },
+
+    is_card_used: function(card) {
+        return this.used_card_ids().indexOf(card.nodegroup_id) > -1;
+    },
+
+    is_drop_target: function(group) {
+        let drag_data = this.drag_data();
+        if (!drag_data) {
+            return false;
+        }
+
+        let target_section = this.get_section_for_group(group);
+
+        if (!target_section || drag_data.graph_id !== target_section.graph_id) {
+            return false;
+        }
+
+        if (drag_data.source === "sidebar") {
+            return this.drag_over_group() === group;
+        }
+
+        return this.drag_over_group() === group && drag_data.group !== group;
+    },
+
+    remove_card_from_group: function(group, card) {
+        let self = this;
+        group.cards.remove(card);
+
+        if (group.cards().length === 0) {
+            let section = _.find(self.sections(), function(s) {
+                return s.groups.indexOf(group) > -1;
+            });
+
+            if (section) {
+                section.groups.remove(group);
+            }
+        }
+    },
+
+    remove_group: function(section, group) {
+        section.groups.remove(group);
     },
 
     restore_state: function() {
-        console.log("cross-model-advanced-search.js: restore_state() called");
         let self = this;
         let query = this.query();
 
         if (component_name in query) {
-            let facets = [];
+            let saved_data;
             try {
-                facets = JSON.parse(query[component_name]);
+                saved_data = JSON.parse(query[component_name]);
             } catch (e) {
-                console.error("cross-model-advanced-search.js: restore_state parse error", e);
                 return;
             }
 
-            if (facets.length > 0) {
+            if (saved_data.translate_mode) {
+                this.translate_mode(saved_data.translate_mode);
+            }
+
+            _.each(saved_data.sections || [], function(saved_section) {
+                let section = self.get_section_for_graph(saved_section.graph_id);
+                if (!section) return;
+
+                _.each(saved_section.groups || [], function(saved_group) {
+                    let new_group = {
+                        cards: ko.observableArray([]),
+                        collapsed: ko.observable(false),
+                        id: self.next_group_id++,
+                        match: ko.observable(saved_group.match || "all"),
+                        operator_after: ko.observable(saved_group.operator_after || "and")
+                    };
+
+                    _.each(saved_group.cards || [], function(saved_card) {
+                        let card_def = self.card_lookup[saved_card.nodegroup_id];
+                        if (!card_def) return;
+
+                        let card_filters = {};
+                        _.each(card_def.nodes || [], function(node) {
+                            let saved_value = saved_card.filters ? saved_card.filters[node.nodeid] : {};
+                            card_filters[node.nodeid] = ko.observable(saved_value || {});
+                        });
+
+                        new_group.cards.push({
+                            card_id: card_def.cardid,
+                            card_name: card_def.name,
+                            collapsed: ko.observable(false),
+                            filters: card_filters,
+                            nodegroup_id: card_def.nodegroup_id,
+                            nodes: card_def.nodes
+                        });
+                    });
+
+                    section.groups.push(new_group);
+                });
+            });
+
+            if (self.has_filters()) {
                 this.getFilterByType("term-filter-type").addTag(
                     this.tag_id,
                     this.name,
                     ko.observable(false)
                 );
-
-                let has_translate = _.some(facets, function(f) {
-                    return f.translate_to_parent === true;
-                });
-                this.translate_to_parent(has_translate);
             }
-
-            _.each(facets, function(facet) {
-                let node_ids = _.filter(Object.keys(facet), function(key) {
-                    return key !== "op" && key !== "graph_id" && key !== "translate_to_parent";
-                });
-
-                let card = _.find(this.cards, function(card) {
-                    let card_node_ids = _.map(card.nodes || [], function(node) {
-                        return node.nodeid;
-                    });
-                    return _.contains(card_node_ids, node_ids[0]);
-                }, this);
-
-                if (card) {
-                    let graph = card.get_graph();
-
-                    (card.nodes || []).forEach(function(node) {
-                        facet[node.nodeid] = ko.observable(facet[node.nodeid] || {});
-                        node.label = (self.widget_lookup[node.nodeid] || {}).label || node.name;
-                    });
-
-                    facet.op = ko.observable(facet.op || "and");
-
-                    this.filter.facets.push({
-                        card: card,
-                        graph_id: graph.graphid,
-                        graph_name: ko.unwrap(graph.name) || "Unknown",
-                        value: facet
-                    });
-                }
-            }, this);
         }
     },
 
     update_query: function() {
-        console.log("cross-model-advanced-search.js: update_query() called");
         let self = this;
         let query_obj = this.query();
-        let filters_applied = this.filter.facets().length > 0;
 
-        if (filters_applied) {
-            let advanced = [];
+        if (this.has_filters()) {
+            let serialized = {
+                sections: [],
+                translate_mode: this.translate_mode()
+            };
 
-            _.each(this.filter.facets(), function(facet) {
-                let value = koMapping.toJS(facet.value);
-                value.graph_id = facet.graph_id;
-                value.translate_to_parent = self.translate_to_parent();
-                advanced.push(value);
+            _.each(this.sections(), function(section) {
+                let section_has_cards = _.some(section.groups(), function(group) {
+                    return group.cards().length > 0;
+                });
+
+                if (section_has_cards) {
+                    let section_data = {
+                        graph_id: section.graph_id,
+                        groups: []
+                    };
+
+                    _.each(section.groups(), function(group) {
+                        if (group.cards().length > 0) {
+                            let group_data = {
+                                cards: [],
+                                id: group.id,
+                                match: group.match(),
+                                operator_after: group.operator_after()
+                            };
+
+                            _.each(group.cards(), function(card) {
+                                let card_data = {
+                                    filters: {},
+                                    nodegroup_id: card.nodegroup_id
+                                };
+
+                                _.each(card.filters, function(filter_obs, node_id) {
+                                    let filter_value = ko.toJS(filter_obs());
+                                    card_data.filters[node_id] = filter_value;
+                                });
+
+                                group_data.cards.push(card_data);
+                            });
+
+                            section_data.groups.push(group_data);
+                        }
+                    });
+
+                    serialized.sections.push(section_data);
+                }
             });
 
-            query_obj[component_name] = JSON.stringify(advanced);
+            query_obj[component_name] = JSON.stringify(serialized);
 
             if (this.getFilterByType("term-filter-type").hasTag(this.tag_id) === false) {
                 this.getFilterByType("term-filter-type").addTag(
@@ -282,11 +700,7 @@ let view_model = BaseFilter.extend({
     }
 });
 
-console.log("cross-model-advanced-search.js: about to register component");
-
 ko.components.register(component_name, {
     template: crossModelAdvancedSearchTemplate,
     viewModel: view_model
 });
-
-console.log("cross-model-advanced-search.js: component registered");
