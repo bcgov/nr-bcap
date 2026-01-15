@@ -1,0 +1,358 @@
+{% load i18n %}
+{% load static %}
+{% load webpack_static from webpack_loader %}
+
+<style>
+    .cross-model-advanced-search-container {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        height: 100%;
+        padding: 10px;
+    }
+
+    .cross-model-facets-search-container {
+        flex: 2;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .cross-model-facets-container {
+        flex: 1;
+        max-width: 350px;
+        min-width: 280px;
+        overflow-y: auto;
+    }
+
+    .cross-model-facets-container .search-facets {
+        margin-bottom: 0;
+    }
+
+    .cross-model-facets-container .search-facet-item {
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        padding: 8px 12px;
+    }
+
+    .cross-model-facets-container .search-facet-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .cross-model-facets-container .search-facet-item.header {
+        background-color: #f9f9f9;
+        cursor: default;
+    }
+
+    .cross-model-facets-container .search-facet-item.header:hover {
+        background-color: #f9f9f9;
+    }
+
+    .cross-model-facets-container .search-facet-item.disabled {
+        background-color: #fafafa;
+        font-weight: 600;
+    }
+
+    .cross-model-facets-container .search-facet-item-heading {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+    }
+
+    .cross-model-facets-container .list-filter {
+        margin-top: 8px;
+        position: relative;
+    }
+
+    .cross-model-facets-container .list-filter input {
+        padding-right: 30px;
+    }
+
+    .cross-model-facets-container .clear-node-search {
+        color: #999;
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .cross-model-facets-container .clear-node-search:hover {
+        color: #333;
+    }
+
+    .cross-model-options {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        padding: 12px 15px;
+    }
+
+    .cross-model-options label {
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .cross-model-options input[type="checkbox"] {
+        cursor: pointer;
+        height: 16px;
+        width: 16px;
+    }
+
+    .cross-model-faceted-search-card-container {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        padding: 15px;
+    }
+
+    .cross-model-faceted-search-card-container .facet-name {
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+
+    .cross-model-faceted-search-card-container .facet-name .label {
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    .cross-model-faceted-search-card-container .facet-body {
+        margin-bottom: 10px;
+    }
+
+    .cross-model-faceted-search-card-container .facet-label {
+        color: #666;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+
+    .cross-model-faceted-search-card-container .facet-search-criteria {
+        margin: 0;
+    }
+
+    .cross-model-faceted-search-card-container .facet-search-button {
+        margin-top: 15px;
+        text-align: right;
+    }
+
+    .cross-model-facet-btn-group {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    .cross-model-facet-btn-group .facet-btn {
+        min-width: 60px;
+    }
+
+    .cross-model-facet-btn-group .facet-btn.selected {
+        background-color: #e67e22;
+        border-color: #d35400;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    #cross-model-splash {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    #cross-model-splash .rr-splash-img-container {
+        background: #f5f5f5;
+        border-radius: 50%;
+        height: 120px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        width: 120px;
+    }
+
+    #cross-model-splash .rr-splash-img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    #cross-model-splash .rr-splash-title {
+        color: #333;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    #cross-model-splash .rr-splash-description {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.5;
+        max-width: 400px;
+    }
+</style>
+
+<!--ko let: { self: $data }-->
+<div class="flex cross-model-advanced-search-container">
+
+    <div class="cross-model-facets-search-container">
+
+        <!-- Splash Screen -->
+        <div data-bind="visible: filter.facets().length === 0">
+            <div id="cross-model-splash">
+                <div class="img-lg img-circle rr-splash-img-container">
+                    <img class="rr-splash-img" src="{% webpack_static 'img/inspection.png' %}" alt="Cross-Model Advanced Search">
+                </div>
+
+                <div class="rr-splash-title">
+                    <span>{% trans "Cross-Model Advanced Search" %}</span>
+                </div>
+
+                <div class="rr-splash-description">
+                    <span>{% trans "Search across multiple resource models simultaneously." %}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Translate to Parent Toggle -->
+        <div class="cross-model-options" data-bind="visible: filter.facets().length > 0">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin: 0;">
+                    <input type="checkbox" data-bind="checked: translate_to_parent">
+                    <span>{% trans "Get parent Archaeological Sites" %}</span>
+                </label>
+                <i class="fa fa-info-circle"
+                    style="color: #888; cursor: help;"
+                    data-toggle="tooltip"
+                    data-placement="right"
+                    title="{% trans 'When enabled, search results from Site Visits and other child resources will be translated to their parent Archaeological Site records.' %}">
+                </i>
+            </div>
+        </div>
+
+        <!-- Facets Display -->
+        <!-- ko foreach: filter.facets -->
+
+        <!-- Operator between facets -->
+        <!-- ko if: $index() > 0 -->
+        <div class="btn-group btn-group-sm cross-model-facet-btn-group">
+            <button class="btn btn-warning btn-active-dark facet-btn"
+                data-bind="
+                    click: function() { value.op('and'); },
+                    css: {'selected': value.op() === 'and'}
+                ">
+                <span>{% trans "AND" %}</span>
+            </button>
+            <button class="btn btn-warning btn-active-dark facet-btn"
+                data-bind="
+                    click: function() { value.op('or'); },
+                    css: {'selected': value.op() === 'or'}
+                ">
+                <span>{% trans "OR" %}</span>
+            </button>
+        </div>
+        <!-- /ko -->
+
+        <!-- Facet Card -->
+        <div class="cross-model-faceted-search-card-container" tabindex="-1" data-bind="attr: {'id': 'cross-model-facet-filter-' + $index()}">
+            <div class="facet-name" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>
+                    <span class="label label-info" style="margin-right: 5px;" data-bind="text: graph_name"></span>
+                    <span data-bind="text: card.name"></span>
+                </span>
+            </div>
+            <div class="row facet-search-criteria">
+                <!-- ko foreach: card.nodes -->
+                <!-- ko if: self.datatype_lookup[datatype] && self.datatype_lookup[datatype].configname && ko.components.isRegistered(self.datatype_lookup[datatype].configname) -->
+                <div class="facet-body">
+                    <div class="facet-label" data-bind="text: $data.label"></div>
+                    <div data-bind="component: {
+                        name: self.datatype_lookup[datatype].configname,
+                        params: {
+                            search: true,
+                            filterValue: $parent.value[nodeid],
+                            node: $data,
+                            datatype: self.datatype_lookup[datatype]
+                        }
+                    }"></div>
+                </div>
+                <!-- /ko -->
+                <!-- ko ifnot: self.datatype_lookup[datatype] && self.datatype_lookup[datatype].configname && ko.components.isRegistered(self.datatype_lookup[datatype].configname) -->
+                <div class="facet-body" style="color: #999; font-style: italic;">
+                    <div class="facet-label" data-bind="text: $data.label"></div>
+                    <div>{% trans "Search not available for this field type" %}</div>
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+
+                <div class="facet-search-button">
+                    <button class="btn btn-sm btn-primary" data-bind="click: self.remove_facet">
+                        <span>{% trans "Remove" %}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+
+    <!-- Facet Picker Panel -->
+    <div class="cross-model-facets-container">
+        <div class="list-group search-facets">
+            <div class="search-facet-item header">
+                <div class="search-facet-item-heading">
+                    <span>{% trans "Search Facets" %}</span>
+                </div>
+                <div class="list-filter">
+                    <input
+                        type="text"
+                        class="form-control"
+                        data-bind="
+                            attr: {
+                                placeholder: '{% trans "Find..." %}'
+                            },
+                            value: facet_filter_text,
+                            valueUpdate: 'keyup'
+                        "
+                    >
+                    <span tabindex="0" role="button" class="clear-node-search"
+                        data-bind="click: function() { facet_filter_text(''); }">
+                        <i class="fa fa-times-circle"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- ko foreach: searchable_graphs -->
+            <!-- ko if: cards().length > 0 -->
+            <div tabindex="0" role="button" class="search-facet-item disabled"
+                data-bind="click: function() { collapsed(!collapsed()); }">
+                <div class="search-facet-item-heading">
+                    <strong data-bind="text: name"></strong>
+                    <span>
+                        <i class="fa report-expander print-hide"
+                            data-bind="css: {'fa-angle-down': !collapsed(), 'fa-angle-right': collapsed()}">
+                        </i>
+                    </span>
+                </div>
+            </div>
+            <div data-bind="visible: !collapsed()" role="list">
+                <!-- ko foreach: cards -->
+                <div role="listitem" style="display: flex; align-items: center;">
+                    <div class="search-facet-item" style="display: flex;">
+                        <div>
+                            <a href="#" role="button" data-bind="click: add_facet">
+                                <p class="search-facet-item-heading" data-bind="text: name"></p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /ko -->
+            </div>
+            <!-- /ko -->
+            <!-- /ko -->
+        </div>
+    </div>
+</div>
+<!--/ko-->
