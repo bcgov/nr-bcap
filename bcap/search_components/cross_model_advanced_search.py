@@ -1,5 +1,3 @@
-import logging
-
 from typing_extensions import Any
 
 from arches.app.datatypes.datatypes import DataTypeFactory
@@ -17,10 +15,8 @@ from arches.app.search.elasticsearch_dsl_builder import Bool, Nested, Terms
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.utils.betterJSONSerializer import JSONDeserializer
+from arches.app.utils.pagination import get_paginator
 from bcap.util.bcap_aliases import GraphSlugs
-
-
-log = logging.getLogger(__name__)
 
 
 details = {
@@ -37,56 +33,64 @@ details = {
 
 
 class CrossModelAdvancedSearch(BaseSearchFilter):
-    def _build_facet_query(
+    _query_data = None
+
+    def _add_permission_properties(self, hits: list) -> None:
+        user = self.request.user
+
+        for hit in hits:
+            resource_id = hit.get("_id") or hit.get("_source", {}).get("resourceinstanceid")
+
+            if not resource_id:
+                hit["can_read"] = False
+                hit["can_edit"] = False
+                hit["is_principal"] = False
+                continue
+
+            hit["can_read"] = user.has_perm("view_resourceinstance", resource_id)
+            hit["can_edit"] = user.has_perm("change_resourceinstance", resource_id)
+            hit["is_principal"] = user.has_perm("view_resourceinstance", resource_id)
+
+    def _build_card_query(
         self,
-        advanced_filter: dict,
+        card_data: dict,
         datatype_factory: DataTypeFactory,
-    ) -> tuple:
-        graph_id = None
-        null_query = Bool()
+    ) -> Bool:
         tile_query = Bool()
+        filters = card_data.get("filters", {})
 
-        log.info(f"[CrossModel] _build_facet_query called with: {advanced_filter}")
-
-        for key, val in advanced_filter.items():
-            if key in ("graph_id", "translate_mode"):
-                if key == "graph_id":
-                    graph_id = val
-
+        for node_id, filter_value in filters.items():
+            if not filter_value:
                 continue
 
-            if not val:
-                log.debug(f"[CrossModel] Skipping empty val for key {key}")
-                continue
+            if isinstance(filter_value, dict):
+                val = filter_value.get("val", "")
+                if not val and val != 0 and val:
+                    continue
 
-            node = Node.objects.filter(pk=key).select_related("nodegroup").first()
+            node = Node.objects.filter(pk=node_id).select_related("nodegroup").first()
 
             if not node:
-                log.debug(f"[CrossModel] No node found for key {key}")
                 continue
 
             datatype = datatype_factory.get_instance(node.datatype)
 
             if hasattr(datatype, "append_search_filters"):
-                datatype.append_search_filters(val, node, tile_query, self.request)
+                datatype.append_search_filters(filter_value, node, tile_query, self.request)
 
-        return graph_id, tile_query, null_query
+        return tile_query
 
-    def _group_facets_by_graph(
+    def _build_group_query(
         self,
-        advanced_filters: list,
+        group_data: dict,
         datatype_factory: DataTypeFactory,
-    ) -> dict:
-        graph_facets = {}
+    ) -> Bool:
+        group_query = Bool()
+        match_type = group_data.get("match", "all")
+        cards = group_data.get("cards", [])
 
-        for advanced_filter in advanced_filters:
-            graph_id, tile_query, null_query = self._build_facet_query(
-                advanced_filter,
-                datatype_factory,
-            )
-
-            if not graph_id:
-                continue
+        for card_data in cards:
+            tile_query = self._build_card_query(card_data, datatype_factory)
 
             has_filters = (
                 tile_query.dsl["bool"]["must"]
@@ -97,46 +101,192 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             if not has_filters:
                 continue
 
-            if graph_id not in graph_facets:
-                graph_facets[graph_id] = []
+            nested_query = Nested(path="tiles", query=tile_query)
 
-            graph_facets[graph_id].append(tile_query)
+            if match_type == "any":
+                group_query.should(nested_query)
+            else:
+                group_query.must(nested_query)
 
-        return graph_facets
+        if group_query.dsl["bool"]["should"]:
+            group_query.dsl["bool"]["minimum_should_match"] = 1
+
+        return group_query
+
+    def _build_section_query(
+        self,
+        section_data: dict,
+        datatype_factory: DataTypeFactory,
+    ) -> Bool:
+        section_query = Bool()
+        groups = section_data.get("groups", [])
+
+        for idx, group_data in enumerate(groups):
+            group_query = self._build_group_query(group_data, datatype_factory)
+
+            has_filters = (
+                group_query.dsl["bool"]["must"]
+                or group_query.dsl["bool"]["should"]
+            )
+
+            if not has_filters:
+                continue
+
+            if idx == 0:
+                section_query.must(group_query)
+            else:
+                prev_operator = groups[idx - 1].get("operator_after", "and")
+                if prev_operator == "or":
+                    section_query.should(group_query)
+                else:
+                    section_query.must(group_query)
+
+        if section_query.dsl["bool"]["should"]:
+            section_query.dsl["bool"]["minimum_should_match"] = 1
+
+        return section_query
+
+    def _get_pagination_params(self) -> tuple:
+        page_param = self.request.GET.get("paging-filter") or self.request.POST.get("paging-filter") or "1"
+        page = 1 if page_param == "" else int(page_param)
+        per_page = settings.SEARCH_ITEMS_PER_PAGE
+        start = per_page * (page - 1)
+
+        return page, per_page, start
+
+    def _get_parent_ids_for_resources(
+        self,
+        resource_ids: set,
+        graph_id: str,
+        parent_graph_id: str,
+        parent_graph_slug: str,
+    ) -> set:
+        if not resource_ids:
+            return set()
+
+        if graph_id == parent_graph_id:
+            return resource_ids
+
+        relationships = ResourceXResource.objects.filter(
+            from_resource__in=resource_ids,
+            to_resource__graph__slug=parent_graph_slug,
+        ).values_list("to_resource", flat=True)
+
+        return {str(rid) for rid in relationships}
+
+    def _get_resource_ids_for_section(
+        self,
+        section_data: dict,
+        datatype_factory: DataTypeFactory,
+        se: any,
+    ) -> set:
+        graph_id = section_data.get("graph_id")
+
+        if not graph_id:
+            return set()
+
+        section_query = self._build_section_query(section_data, datatype_factory)
+
+        has_filters = (
+            section_query.dsl["bool"]["must"]
+            or section_query.dsl["bool"]["should"]
+        )
+
+        if not has_filters:
+            return set()
+
+        full_query = Bool()
+        full_query.filter(Terms(field="graph_id", terms=[graph_id]))
+        full_query.must(section_query)
+
+        results = se.search(
+            index=RESOURCES_INDEX,
+            query=full_query.dsl,
+            size=10000,
+            _source=False,
+        )
+
+        hits = results.get("hits", {}).get("hits", [])
+
+        return {hit["_id"] for hit in hits}
+
+    def _parse_query_data(self, querystring_params: Any) -> dict:
+        if not querystring_params:
+            return {}
+
+        if isinstance(querystring_params, str):
+            return JSONDeserializer().deserialize(querystring_params)
+
+        return querystring_params
+
+    def _update_pagination(self, response_object: dict, total: int, page: int) -> None:
+        paginator, pages = get_paginator(
+            self.request,
+            response_object["results"],
+            total,
+            page,
+            settings.SEARCH_ITEMS_PER_PAGE,
+        )
+
+        page_obj = paginator.page(page)
+
+        pagination_data = {
+            "current_page": page_obj.number,
+            "end_index": page_obj.end_index(),
+            "has_next": page_obj.has_next(),
+            "has_other_pages": page_obj.has_other_pages(),
+            "has_previous": page_obj.has_previous(),
+            "next_page_number": page_obj.next_page_number() if page_obj.has_next() else None,
+            "pages": pages,
+            "previous_page_number": page_obj.previous_page_number() if page_obj.has_previous() else None,
+            "start_index": page_obj.start_index(),
+        }
+
+        if "paging-filter" not in response_object:
+            response_object["paging-filter"] = {}
+
+        response_object["paging-filter"]["paginator"] = pagination_data
 
     def append_dsl(self, search_query_object: dict, **kwargs: Any) -> None:
-        querystring_params = kwargs.get("querystring", "[]")
-        advanced_filters = JSONDeserializer().deserialize(querystring_params)
+        querystring_params = kwargs.get("querystring", "{}")
+        raw_data = self._parse_query_data(querystring_params)
 
-        if not advanced_filters:
+        self._query_data = raw_data
+
+        if not raw_data:
             return
 
-        translate_mode = advanced_filters[0].get("translate_mode", "none") if advanced_filters else "none"
+        translate_mode = raw_data.get("translate_mode", "none")
+        sections = raw_data.get("sections", [])
 
-        if translate_mode in ("union", "intersection"):
+        if not sections:
+            return
+
+        if translate_mode == "intersection":
             return
 
         datatype_factory = DataTypeFactory()
-        graph_facets = self._group_facets_by_graph(advanced_filters, datatype_factory)
-
-        if not graph_facets:
-            return
-
         cross_model_query = Bool()
 
-        for graph_id, facets in graph_facets.items():
-            graph_query = Bool()
+        for section_data in sections:
+            graph_id = section_data.get("graph_id")
 
-            for tile_query in facets:
-                nested_query = Nested(path="tiles", query=tile_query)
-                graph_query.should(nested_query)
+            if not graph_id:
+                continue
 
-            if graph_query.dsl["bool"]["should"]:
-                graph_query.dsl["bool"]["minimum_should_match"] = 1
+            section_query = self._build_section_query(section_data, datatype_factory)
+
+            has_filters = (
+                section_query.dsl["bool"]["must"]
+                or section_query.dsl["bool"]["should"]
+            )
+
+            if not has_filters:
+                continue
 
             graph_with_filter = Bool()
             graph_with_filter.filter(Terms(field="graph_id", terms=[graph_id]))
-            graph_with_filter.must(graph_query)
+            graph_with_filter.must(section_query)
 
             cross_model_query.should(graph_with_filter)
 
@@ -151,133 +301,85 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         if has_query:
             search_query_object["query"].add_query(cross_model_query)
 
-    def _get_parent_ids_for_facet(
-        self,
-        advanced_filter: dict,
-        datatype_factory: DataTypeFactory,
-        parent_graph_id: str,
-        parent_graph_slug: str,
-    ) -> set:
-        graph_id, tile_query, _ = self._build_facet_query(advanced_filter, datatype_factory)
-
-        has_filters = (
-            tile_query.dsl["bool"]["must"]
-            or tile_query.dsl["bool"]["should"]
-            or tile_query.dsl["bool"]["must_not"]
-        )
-
-        if not has_filters:
-            log.info(f"[CrossModel] Facet for graph {graph_id} has no filters, returning empty set")
-            return set()
-
-        se = SearchEngineFactory().create()
-
-        facet_query = Bool()
-        facet_query.filter(Terms(field="graph_id", terms=[graph_id]))
-        facet_query.must(Nested(path="tiles", query=tile_query))
-
-        log.info(f"[CrossModel] Facet query for graph {graph_id}: {facet_query.dsl}")
-
-        facet_results = se.search(
-            index=RESOURCES_INDEX,
-            query=facet_query.dsl,
-            size=10000,
-        )
-
-        facet_hits = facet_results.get("hits", {}).get("hits", [])
-        facet_resource_ids = {hit["_id"] for hit in facet_hits}
-
-        log.info(f"[CrossModel] Found {len(facet_resource_ids)} resources for facet in graph {graph_id}")
-
-        if graph_id == parent_graph_id:
-            log.info(f"[CrossModel] Facet is for parent graph, returning {len(facet_resource_ids)} IDs directly")
-            return facet_resource_ids
-
-        parent_ids = set()
-
-        if facet_resource_ids:
-            relationships = ResourceXResource.objects.filter(
-                resourceinstanceidfrom__in=facet_resource_ids,
-                resourceinstanceidto__graph__slug=parent_graph_slug,
-            ).values_list("resourceinstanceidto", flat=True)
-
-            parent_ids = {str(rid) for rid in relationships}
-
-            log.info(f"[CrossModel] Found {len(parent_ids)} parent IDs via relationships")
-
-        return parent_ids
-
     def post_search_hook(
         self,
         search_query_object: dict,
         response_object: dict,
         **kwargs: Any,
     ) -> None:
-        advanced_filters_raw = self.request.GET.get("cross-model-advanced-search", "[]")
-        advanced_filters = JSONDeserializer().deserialize(advanced_filters_raw)
+        raw_data = self._query_data
 
-        log.info(f"[CrossModel] post_search_hook called with {len(advanced_filters)} filters")
+        if not raw_data:
+            return
 
-        translate_mode = advanced_filters[0].get("translate_mode", "none") if advanced_filters else "none"
+        translate_mode = raw_data.get("translate_mode", "none")
+        sections = raw_data.get("sections", [])
 
-        if translate_mode not in ("union", "intersection"):
-            log.info(f"[CrossModel] translate_mode is '{translate_mode}', skipping post_search_hook")
+        if translate_mode != "intersection":
+            return
+
+        if not sections:
             return
 
         parent_graph_slug = GraphSlugs.ARCHAEOLOGICAL_SITE
         parent_graph = GraphModel.objects.filter(slug=parent_graph_slug).first()
         parent_graph_id = str(parent_graph.graphid) if parent_graph else None
 
-        log.info(f"[CrossModel] Parent graph: {parent_graph_slug} ({parent_graph_id})")
-        log.info(f"[CrossModel] Translate mode: {translate_mode}")
-
         datatype_factory = DataTypeFactory()
+        se = SearchEngineFactory().create()
         combined_parent_ids = None
 
-        for idx, advanced_filter in enumerate(advanced_filters):
-            log.info(f"[CrossModel] Processing facet {idx}: graph_id={advanced_filter.get('graph_id')}")
+        for section_data in sections:
+            graph_id = section_data.get("graph_id")
 
-            facet_parent_ids = self._get_parent_ids_for_facet(
-                advanced_filter,
-                datatype_factory,
+            resource_ids = self._get_resource_ids_for_section(section_data, datatype_factory, se)
+
+            if not resource_ids:
+                combined_parent_ids = set()
+                break
+
+            parent_ids = self._get_parent_ids_for_resources(
+                resource_ids,
+                graph_id,
                 parent_graph_id,
                 parent_graph_slug,
             )
 
             if combined_parent_ids is None:
-                combined_parent_ids = facet_parent_ids
-                log.info(f"[CrossModel] Initial set: {len(combined_parent_ids)} parent IDs")
-            elif translate_mode == "union":
-                before = len(combined_parent_ids)
-                combined_parent_ids = combined_parent_ids.union(facet_parent_ids)
-                log.info(f"[CrossModel] After UNION: {before} -> {len(combined_parent_ids)} parent IDs")
+                combined_parent_ids = parent_ids
             else:
-                before = len(combined_parent_ids)
-                combined_parent_ids = combined_parent_ids.intersection(facet_parent_ids)
-                log.info(f"[CrossModel] After INTERSECTION: {before} -> {len(combined_parent_ids)} parent IDs")
+                combined_parent_ids = combined_parent_ids.intersection(parent_ids)
+
+        page, per_page, start = self._get_pagination_params()
 
         if not combined_parent_ids:
-            log.info("[CrossModel] No combined parent IDs, returning empty results")
             response_object["results"]["hits"]["hits"] = []
             response_object["results"]["hits"]["total"]["value"] = 0
             response_object["total_results"] = 0
+            self._update_pagination(response_object, 0, 1)
             return
 
-        log.info(f"[CrossModel] Final: {len(combined_parent_ids)} parent IDs to fetch")
+        total_results = len(combined_parent_ids)
+        parent_ids_list = sorted(list(combined_parent_ids))
+        paginated_ids = parent_ids_list[start:start + per_page]
 
-        se = SearchEngineFactory().create()
+        if not paginated_ids:
+            response_object["results"]["hits"]["hits"] = []
+            response_object["results"]["hits"]["total"]["value"] = total_results
+            response_object["total_results"] = total_results
+            self._update_pagination(response_object, total_results, page)
+            return
 
         parent_query = Bool()
-        parent_query.filter(Terms(field="resourceinstanceid", terms=list(combined_parent_ids)))
+        parent_query.filter(Terms(field="resourceinstanceid", terms=paginated_ids))
 
         parent_results = se.search(
             index=RESOURCES_INDEX,
             query=parent_query.dsl,
-            size=len(combined_parent_ids),
+            size=per_page,
         )
 
         parent_hits = parent_results.get("hits", {}).get("hits", [])
-        log.info(f"[CrossModel] Parent search returned {len(parent_hits)} hits")
 
         for hit in parent_hits:
             source = hit.get("_source", {})
@@ -291,12 +393,16 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             if isinstance(displaydescription, list) and displaydescription:
                 source["displaydescription"] = displaydescription[0].get("value", "")
 
+        self._add_permission_properties(parent_hits)
+
         response_object["results"]["hits"]["hits"] = parent_hits
         response_object["results"]["hits"]["total"] = {
             "relation": "eq",
-            "value": len(parent_hits),
+            "value": total_results,
         }
-        response_object["total_results"] = len(parent_hits)
+        response_object["total_results"] = total_results
+
+        self._update_pagination(response_object, total_results, page)
 
         parent_filter = Bool()
         parent_filter.filter(Terms(field="resourceinstanceid", terms=list(combined_parent_ids)))

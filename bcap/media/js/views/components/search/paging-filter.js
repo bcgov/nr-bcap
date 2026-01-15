@@ -63,34 +63,38 @@ const viewModel = BaseFilter.extend({
         var cleanQuery = {
             'paging-filter': this.page(),
         };
+        if (queryObj['cross-model-advanced-search']) {
+            cleanQuery['cross-model-advanced-search'] =
+                queryObj['cross-model-advanced-search'];
+        }
         if (queryObj['ids']) {
             cleanQuery['ids'] = queryObj['ids'];
         }
-        if (queryObj['term-filter']) {
-            cleanQuery['term-filter'] = queryObj['term-filter'];
-        }
-        if (queryObj['resource-type-filter']) {
-            cleanQuery['resource-type-filter'] =
-                queryObj['resource-type-filter'];
-        }
-        if (queryObj['map-filter']) {
-            cleanQuery['map-filter'] = queryObj['map-filter'];
-        }
-        if (queryObj['time-filter']) {
-            cleanQuery['time-filter'] = queryObj['time-filter'];
-        }
-        if (queryObj['provisional-filter']) {
-            cleanQuery['provisional-filter'] = queryObj['provisional-filter'];
+        if (queryObj['language']) {
+            cleanQuery['language'] = queryObj['language'];
         }
         if (queryObj['lifecycle-state-filter']) {
             cleanQuery['lifecycle-state-filter'] =
                 queryObj['lifecycle-state-filter'];
         }
+        if (queryObj['map-filter']) {
+            cleanQuery['map-filter'] = queryObj['map-filter'];
+        }
+        if (queryObj['provisional-filter']) {
+            cleanQuery['provisional-filter'] = queryObj['provisional-filter'];
+        }
+        if (queryObj['resource-type-filter']) {
+            cleanQuery['resource-type-filter'] =
+                queryObj['resource-type-filter'];
+        }
         if (queryObj['sort-results']) {
             cleanQuery['sort-results'] = queryObj['sort-results'];
         }
-        if (queryObj['language']) {
-            cleanQuery['language'] = queryObj['language'];
+        if (queryObj['term-filter']) {
+            cleanQuery['term-filter'] = queryObj['term-filter'];
+        }
+        if (queryObj['time-filter']) {
+            cleanQuery['time-filter'] = queryObj['time-filter'];
         }
 
         this.query(cleanQuery);
