@@ -32,9 +32,15 @@ let view_model = BaseFilter.extend({
         this.graph_lookup = {};
         this.searchable_graphs = ko.observableArray();
         this.tag_id = "Cross-Model Advanced Search";
-        this.translate_to_parent = ko.observable(false);
+        this.translate_mode = ko.observable("none");
         this.urls = arches.urls;
         this.widget_lookup = {};
+
+        this.translate_mode_options = [
+            { value: "none", label: "Show Raw Results" },
+            { value: "union", label: "Union (Any Match)" },
+            { value: "intersection", label: "Intersection (All Match)" }
+        ];
 
         this.remove_facet = function(facet) {
             self.filter.facets.remove(facet);
@@ -66,46 +72,34 @@ let view_model = BaseFilter.extend({
                     return node.nodegroup_id === card.nodegroup_id;
                 });
 
-                card.add_facet = function() {
-                    _.each(card.nodes, function(node) {
-                        if (
-                            self.card_name_dict[node.nodegroup_id] &&
-                            node.nodeid === node.nodegroup_id
-                        ) {
-                            node.label = self.card_name_dict[node.nodegroup_id];
-                        } else if (
-                            node.nodeid !== node.nodegroup_id &&
-                            self.widget_lookup[node.nodeid]
-                        ) {
-                            let widget = self.widget_lookup[node.nodeid];
-                            node.label = widget.label;
-                        } else {
-                            node.label = node.name;
-                        }
-                    });
+                _.each(card.nodes || [], function(node) {
+                    node.label = (self.widget_lookup[node.nodeid] || {}).label || node.name;
+                });
 
+                card.add_facet = function() {
                     self.new_facet(card);
                 };
-            }, this);
-
-            let graphs = (response.graphs || []).sort(function(a, b) {
-                let name_a = (ko.unwrap(a.name) || "").toLowerCase();
-                let name_b = (ko.unwrap(b.name) || "").toLowerCase();
-                return name_a > name_b ? 1 : -1;
             });
 
-            _.each(graphs, function(graph) {
-                if (
-                    graph.isresource &&
-                    graph.is_active &&
-                    graph.source_identifier_id === null
-                ) {
-                    let graph_cards = _.filter(response.cards || [], function(card) {
-                        return card.graph_id === graph.graphid && card.nodes && card.nodes.length > 0;
+            _.each(response.graphs || [], function(graph) {
+                let graph_cards = _.filter(this.cards, function(card) {
+                    return card.graph_id === graph.graphid;
+                });
+
+                if (graph_cards.length > 0) {
+                    graph_cards = _.sortBy(graph_cards, function(card) {
+                        let card_name = (card.name || "").toLowerCase();
+                        return card_name === "identification" ? -1 : card_name === "descriptions" ? 0 : 1;
                     });
 
-                    graph_cards.sort(function(a, b) {
-                        return (a.name || "").toLowerCase() > (b.name || "").toLowerCase() ? 1 : -1;
+                    graph_cards = graph_cards.sort(function(a, b) {
+                        let a_name = (a.name || "").toLowerCase();
+                        let b_name = (b.name || "").toLowerCase();
+                        if (a_name === "identification") return -1;
+                        if (b_name === "identification") return 1;
+                        if (a_name === "descriptions") return -1;
+                        if (b_name === "descriptions") return 1;
+                        return a_name < b_name ? -1 : a_name > b_name ? 1 : -1;
                     });
 
                     if (graph_cards.length > 0) {
@@ -139,7 +133,7 @@ let view_model = BaseFilter.extend({
             this.restore_state();
 
             let filter_updated = ko.computed(function() {
-                return JSON.stringify(ko.toJS(this.filter.facets())) + this.translate_to_parent();
+                return JSON.stringify(ko.toJS(this.filter.facets())) + this.translate_mode();
             }, this);
 
             filter_updated.subscribe(function() {
@@ -163,7 +157,7 @@ let view_model = BaseFilter.extend({
     clear: function() {
         console.log("cross-model-advanced-search.js: clear() called");
         this.filter.facets.removeAll();
-        this.translate_to_parent(false);
+        this.translate_mode("none");
     },
 
     new_facet: function(card) {
@@ -176,8 +170,7 @@ let view_model = BaseFilter.extend({
             graph_id: graph.graphid,
             graph_name: ko.unwrap(graph.name) || "Unknown",
             value: {
-                graph_id: graph.graphid,
-                op: ko.observable("and")
+                graph_id: graph.graphid
             }
         };
 
@@ -209,15 +202,14 @@ let view_model = BaseFilter.extend({
                     ko.observable(false)
                 );
 
-                let has_translate = _.some(facets, function(f) {
-                    return f.translate_to_parent === true;
-                });
-                this.translate_to_parent(has_translate);
+                let first_facet = facets[0] || {};
+                let translate_mode = first_facet.translate_mode || "none";
+                this.translate_mode(translate_mode);
             }
 
             _.each(facets, function(facet) {
                 let node_ids = _.filter(Object.keys(facet), function(key) {
-                    return key !== "op" && key !== "graph_id" && key !== "translate_to_parent";
+                    return key !== "graph_id" && key !== "translate_mode";
                 });
 
                 let card = _.find(this.cards, function(card) {
@@ -234,8 +226,6 @@ let view_model = BaseFilter.extend({
                         facet[node.nodeid] = ko.observable(facet[node.nodeid] || {});
                         node.label = (self.widget_lookup[node.nodeid] || {}).label || node.name;
                     });
-
-                    facet.op = ko.observable(facet.op || "and");
 
                     this.filter.facets.push({
                         card: card,
@@ -260,7 +250,7 @@ let view_model = BaseFilter.extend({
             _.each(this.filter.facets(), function(facet) {
                 let value = koMapping.toJS(facet.value);
                 value.graph_id = facet.graph_id;
-                value.translate_to_parent = self.translate_to_parent();
+                value.translate_mode = self.translate_mode();
                 advanced.push(value);
             });
 
