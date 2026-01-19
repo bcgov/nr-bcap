@@ -47,6 +47,17 @@ services:
     stdin_open: true
     tty: true
 
+  bcap-pg_featureserv:
+    container_name: bcap-pg_featureserv7-6
+    hostname: bcap-pg_featureserv7-6
+    image: pramsey/pg_featureserv:latest
+    env_file:
+      - ./docker/pg_featureserv/pg_featureserv.env
+    ports:
+      - "9002:9000"
+    stdin_open: true
+    tty: true
+
 networks:
   default:
     external: true

@@ -485,7 +485,9 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/auth/eoauth_start",
                 "/bcap/auth/eoauth_cb",
                 "/bcap/o/token",
-                "/bcap/api/borden-number"
+                # "/bcap/api/borden-number",
+                "/bcap/auth/user_profile"
+                # "/bcap/geojson"
             ],
         },
     }
@@ -699,7 +701,8 @@ TILESERVER_URL = "https://openmaps.gov.bc.ca/"
 BC_TILESERVER_URLS = {
     "maps": "https://maps.gov.bc.ca/",
     "openmaps": TILESERVER_URL,
-    "local": "http://localhost:7800/",
+    "local": "http://bcap-pg_tileserv7-6:7800/",
+    "local-feature": "http://bcap-pg_featureserv7-6:9000/",
 }
 
 AUTH_BYPASS_HOSTS = get_env_variable("AUTH_BYPASS_HOSTS")
