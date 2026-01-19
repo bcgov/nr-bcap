@@ -1,4 +1,9 @@
+import hashlib
+
 from typing_extensions import Any
+
+from django.core.cache import cache
+from django.db.models import Q
 
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.models.models import (
@@ -31,9 +36,12 @@ details = {
     "type": "cross-model-advanced-search-type",
 }
 
+CACHE_TIMEOUT = 300
+
 
 class CrossModelAdvancedSearch(BaseSearchFilter):
     _query_data = None
+    _site_visit_graph_id = None
 
     def _add_permission_properties(self, hits: list) -> None:
         user = self.request.user
@@ -146,6 +154,15 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
 
         return section_query
 
+    def _get_cache_key(self, raw_data: dict) -> str:
+        cache_data = {
+            "sections": raw_data.get("sections", []),
+            "translate_mode": raw_data.get("translate_mode", "none"),
+            "user_id": self.request.user.id,
+        }
+        data_str = str(cache_data)
+        return f"cross_model_search_{hashlib.md5(data_str.encode()).hexdigest()}"
+
     def _get_pagination_params(self) -> tuple:
         page_param = self.request.GET.get("paging-filter") or self.request.POST.get("paging-filter") or "1"
         page = 1 if page_param == "" else int(page_param)
@@ -159,7 +176,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         resource_ids: set,
         graph_id: str,
         parent_graph_id: str,
-        parent_graph_slug: str,
     ) -> set:
         if not resource_ids:
             return set()
@@ -167,12 +183,55 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         if graph_id == parent_graph_id:
             return resource_ids
 
-        relationships = ResourceXResource.objects.filter(
-            from_resource__in=resource_ids,
-            to_resource__graph__slug=parent_graph_slug,
-        ).values_list("to_resource", flat=True)
+        resource_ids_list = list(resource_ids)
 
-        return {str(rid) for rid in relationships}
+        direct_relationships = ResourceXResource.objects.filter(
+            Q(from_resource_id__in=resource_ids_list, to_resource_graph_id=parent_graph_id) |
+            Q(to_resource_id__in=resource_ids_list, from_resource_graph_id=parent_graph_id)
+        ).values_list("from_resource_id", "to_resource_id", "from_resource_graph_id")
+
+        parent_ids = set()
+
+        for from_id, to_id, from_graph_id in direct_relationships:
+            if str(from_graph_id) == parent_graph_id:
+                parent_ids.add(str(from_id))
+            else:
+                parent_ids.add(str(to_id))
+
+        if self._site_visit_graph_id is None:
+            site_visit_graph = GraphModel.objects.filter(slug=GraphSlugs.SITE_VISIT).only("graphid").first()
+            self._site_visit_graph_id = str(site_visit_graph.graphid) if site_visit_graph else ""
+
+        if self._site_visit_graph_id:
+            site_visit_relationships = ResourceXResource.objects.filter(
+                Q(from_resource_id__in=resource_ids_list, to_resource_graph_id=self._site_visit_graph_id) |
+                Q(to_resource_id__in=resource_ids_list, from_resource_graph_id=self._site_visit_graph_id) |
+                Q(from_resource_id__in=resource_ids_list, from_resource_graph_id=self._site_visit_graph_id) |
+                Q(to_resource_id__in=resource_ids_list, to_resource_graph_id=self._site_visit_graph_id)
+            ).values_list("from_resource_id", "to_resource_id", "from_resource_graph_id", "to_resource_graph_id")
+
+            site_visit_ids = set()
+            for from_id, to_id, from_graph_id, to_graph_id in site_visit_relationships:
+                if str(from_graph_id) == self._site_visit_graph_id:
+                    site_visit_ids.add(from_id)
+                if str(to_graph_id) == self._site_visit_graph_id:
+                    site_visit_ids.add(to_id)
+
+            if site_visit_ids:
+                site_visit_ids_list = list(site_visit_ids)
+
+                parent_relationships = ResourceXResource.objects.filter(
+                    Q(from_resource_id__in=site_visit_ids_list, to_resource_graph_id=parent_graph_id) |
+                    Q(to_resource_id__in=site_visit_ids_list, from_resource_graph_id=parent_graph_id)
+                ).values_list("from_resource_id", "to_resource_id", "from_resource_graph_id")
+
+                for from_id, to_id, from_graph_id in parent_relationships:
+                    if str(from_graph_id) == parent_graph_id:
+                        parent_ids.add(str(from_id))
+                    else:
+                        parent_ids.add(str(to_id))
+
+        return parent_ids
 
     def _get_resource_ids_for_section(
         self,
@@ -199,16 +258,34 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         full_query.filter(Terms(field="graph_id", terms=[graph_id]))
         full_query.must(section_query)
 
+        resource_ids = set()
+
         results = se.search(
             index=RESOURCES_INDEX,
             query=full_query.dsl,
             size=10000,
+            scroll="2m",
             _source=False,
         )
 
+        scroll_id = results.get("_scroll_id")
         hits = results.get("hits", {}).get("hits", [])
 
-        return {hit["_id"] for hit in hits}
+        for hit in hits:
+            resource_ids.add(hit["_id"])
+
+        while len(hits) > 0:
+            results = se.es.scroll(scroll_id=scroll_id, scroll="2m")
+            scroll_id = results.get("_scroll_id")
+            hits = results.get("hits", {}).get("hits", [])
+
+            for hit in hits:
+                resource_ids.add(hit["_id"])
+
+        if scroll_id:
+            se.es.clear_scroll(scroll_id=scroll_id)
+
+        return resource_ids
 
     def _parse_query_data(self, querystring_params: Any) -> dict:
         if not querystring_params:
@@ -321,36 +398,45 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         if not sections:
             return
 
-        parent_graph_slug = GraphSlugs.ARCHAEOLOGICAL_SITE
-        parent_graph = GraphModel.objects.filter(slug=parent_graph_slug).first()
-        parent_graph_id = str(parent_graph.graphid) if parent_graph else None
+        page, per_page, start = self._get_pagination_params()
+        cache_key = self._get_cache_key(raw_data)
+        cached_ids = cache.get(cache_key)
 
-        datatype_factory = DataTypeFactory()
-        se = SearchEngineFactory().create()
-        combined_parent_ids = None
+        if cached_ids is not None:
+            combined_parent_ids = set(cached_ids)
+        else:
+            parent_graph_slug = GraphSlugs.ARCHAEOLOGICAL_SITE
+            parent_graph = GraphModel.objects.filter(slug=parent_graph_slug).only("graphid").first()
+            parent_graph_id = str(parent_graph.graphid) if parent_graph else None
 
-        for section_data in sections:
-            graph_id = section_data.get("graph_id")
+            datatype_factory = DataTypeFactory()
+            se = SearchEngineFactory().create()
+            combined_parent_ids = None
 
-            resource_ids = self._get_resource_ids_for_section(section_data, datatype_factory, se)
+            for section_data in sections:
+                graph_id = section_data.get("graph_id")
 
-            if not resource_ids:
-                combined_parent_ids = set()
-                break
+                resource_ids = self._get_resource_ids_for_section(section_data, datatype_factory, se)
 
-            parent_ids = self._get_parent_ids_for_resources(
-                resource_ids,
-                graph_id,
-                parent_graph_id,
-                parent_graph_slug,
-            )
+                if not resource_ids:
+                    combined_parent_ids = set()
+                    break
+
+                parent_ids = self._get_parent_ids_for_resources(
+                    resource_ids,
+                    graph_id,
+                    parent_graph_id,
+                )
+
+                if combined_parent_ids is None:
+                    combined_parent_ids = parent_ids
+                else:
+                    combined_parent_ids = combined_parent_ids.intersection(parent_ids)
 
             if combined_parent_ids is None:
-                combined_parent_ids = parent_ids
-            else:
-                combined_parent_ids = combined_parent_ids.intersection(parent_ids)
+                combined_parent_ids = set()
 
-        page, per_page, start = self._get_pagination_params()
+            cache.set(cache_key, list(combined_parent_ids), CACHE_TIMEOUT)
 
         if not combined_parent_ids:
             response_object["results"]["hits"]["hits"] = []
@@ -370,6 +456,7 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             self._update_pagination(response_object, total_results, page)
             return
 
+        se = SearchEngineFactory().create()
         parent_query = Bool()
         parent_query.filter(Terms(field="resourceinstanceid", terms=paginated_ids))
 
