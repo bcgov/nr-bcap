@@ -14,7 +14,7 @@ from bcap.views.api import (
     TranslateToResourceTypeView,
 )
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
-from bcgov_arches_common.views.map import BCTileserverProxyView
+from bcgov_arches_common.views.map import BCTileserverProxyView, BCTileserverLocalProxyView
 
 uuid_regex = settings.UUID_REGEX
 
@@ -38,6 +38,16 @@ urlpatterns = [
         f"{PREFIX}bctileserver/<path:path>",
         BCTileserverProxyView.as_view(),
         name="bcap_tile_server",
+    ),
+    path(
+        f"{PREFIX}bclocaltileserver/",
+        BCTileserverLocalProxyView.as_view(),
+        name="bcap_local_tile_server_root",
+    ),
+    path(
+        f"{PREFIX}bclocaltileserver/<path:path>",
+        BCTileserverLocalProxyView.as_view(),
+        name="bcap_local_tile_server",
     ),
     path(
         f"{PREFIX}borden_number/<uuid:resourceinstanceid>",

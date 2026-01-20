@@ -701,8 +701,8 @@ TILESERVER_URL = "https://openmaps.gov.bc.ca/"
 BC_TILESERVER_URLS = {
     "maps": "https://maps.gov.bc.ca/",
     "openmaps": TILESERVER_URL,
-    "local": "http://bcap-pg_tileserv7-6:7800/",
-    "local-feature": "http://bcap-pg_featureserv7-6:9000/",
+    "local": get_env_variable("TILESERVER_LOCAL_URL"),
+    "local-feature": get_env_variable("FEATURESERVER_LOCAL_URL"),
 }
 
 AUTH_BYPASS_HOSTS = get_env_variable("AUTH_BYPASS_HOSTS")
