@@ -1,18 +1,19 @@
-import $ from "jquery";
-import _ from "underscore";
-import arches from "arches";
-import BaseFilter from "views/components/search/base-filter";
-import ko from "knockout";
-import koMapping from "knockout-mapping";
-import crossModelAdvancedSearchTemplate from "templates/views/components/search/cross-model-advanced-search.htm";
+import $ from 'jquery';
+import _ from 'underscore';
 
-let component_name = "cross-model-advanced-search";
+import arches from 'arches';
+import BaseFilter from 'views/components/search/base-filter';
+import ko from 'knockout';
+import koMapping from 'knockout-mapping';
+import crossModelAdvancedSearchTemplate from 'templates/views/components/search/cross-model-advanced-search.htm';
+
+let component_name = 'cross-model-advanced-search';
 
 let view_model = BaseFilter.extend({
-    initialize: function(options) {
+    initialize: function (options) {
         let self = this;
 
-        options.name = "Cross-Model Advanced Search Filter";
+        options.name = 'Cross-Model Advanced Search Filter';
         BaseFilter.prototype.initialize.call(this, options);
 
         this.cards = [];
@@ -23,40 +24,54 @@ let view_model = BaseFilter.extend({
         this.drag_over_card = ko.observable(null);
         this.drag_over_group = ko.observable(null);
         this.drag_over_position = ko.observable(null);
-        this.facet_filter_text = ko.observable("");
+        this.facet_filter_text = ko.observable('');
         this.graph_lookup = {};
+        this.intersection_targets = ko.observableArray([]);
         this.next_group_id = 1;
         this.searchable_graphs = ko.observableArray();
         this.sections = ko.observableArray();
-        this.tag_id = "Cross-Model Advanced Search";
-        this.translate_mode = ko.observable("none");
+        this.strict_mode = ko.observable(false);
+        this.tag_id = 'Cross-Model Advanced Search';
+        this.translate_mode = ko.observable('none');
         this.urls = arches.urls;
         this.widget_lookup = {};
 
-        this.translate_mode_options = [
-            { value: "none", label: "Show Raw Results" },
-            { value: "intersection", label: "Get Parent Archaeological Sites" }
-        ];
+        this.translate_mode_options = ko.computed(function () {
+            let options = [{ value: 'none', label: 'Show Raw Results' }];
 
-        this.has_filters = ko.computed(function() {
-            return _.some(self.sections(), function(section) {
+            _.each(self.intersection_targets(), function (target) {
+                options.push({
+                    value: target.slug,
+                    label: target.label,
+                });
+            });
+
+            return options;
+        });
+
+        this.has_filters = ko.computed(function () {
+            return _.some(self.sections(), function (section) {
                 return section.groups().length > 0;
             });
         });
 
-        this.active_sections = ko.computed(function() {
-            return _.filter(self.sections(), function(section) {
-                return _.some(section.groups(), function(group) {
+        this.active_sections = ko.computed(function () {
+            return _.filter(self.sections(), function (section) {
+                return _.some(section.groups(), function (group) {
                     return group.cards().length > 0;
                 });
             });
         });
 
-        this.used_card_ids = ko.computed(function() {
+        this.show_strict_mode_option = ko.computed(function () {
+            return self.translate_mode() !== 'none' && self.has_filters();
+        });
+
+        this.used_card_ids = ko.computed(function () {
             let ids = [];
-            _.each(self.sections(), function(section) {
-                _.each(section.groups(), function(group) {
-                    _.each(group.cards(), function(card) {
+            _.each(self.sections(), function (section) {
+                _.each(section.groups(), function (group) {
+                    _.each(group.cards(), function (card) {
                         ids.push(card.nodegroup_id);
                     });
                 });
@@ -64,89 +79,138 @@ let view_model = BaseFilter.extend({
             return ids;
         });
 
+        this.translate_mode.subscribe(function () {
+            self.reset_pagination();
+        });
+
         $.ajax({
             context: this,
-            type: "GET",
-            url: arches.urls.api_search_component_data + component_name
-        }).done(function(response) {
+            type: 'GET',
+            url: arches.urls.api_search_component_data + component_name,
+        }).done(function (response) {
             this.cards = response.cards || [];
 
-            _.each(response.datatypes || [], function(datatype) {
-                this.datatype_lookup[datatype.datatype] = datatype;
-            }, this);
+            if (response.intersection_targets) {
+                this.intersection_targets(response.intersection_targets);
+            }
 
-            _.each(response.cardwidgets || [], function(widget) {
-                this.widget_lookup[widget.node_id] = widget;
-            }, this);
+            _.each(
+                response.datatypes || [],
+                function (datatype) {
+                    this.datatype_lookup[datatype.datatype] = datatype;
+                },
+                this,
+            );
 
-            _.each(response.cards || [], function(card) {
-                card.nodes = _.filter(response.nodes || [], function(node) {
-                    return node.nodegroup_id === card.nodegroup_id;
-                });
+            _.each(
+                response.cardwidgets || [],
+                function (widget) {
+                    this.widget_lookup[widget.node_id] = widget;
+                },
+                this,
+            );
 
-                _.each(card.nodes || [], function(node) {
-                    node.label = (self.widget_lookup[node.nodeid] || {}).label || node.name;
-                });
+            _.each(
+                response.cards || [],
+                function (card) {
+                    card.nodes = _.filter(
+                        response.nodes || [],
+                        function (node) {
+                            return node.nodegroup_id === card.nodegroup_id;
+                        },
+                    );
 
-                this.card_lookup[card.nodegroup_id] = card;
-            }, this);
-
-            _.each(response.graphs || [], function(graph) {
-                let graph_cards = _.filter(this.cards, function(card) {
-                    if (card.graph_id !== graph.graphid) {
-                        return false;
-                    }
-
-                    let searchable_nodes = _.filter(card.nodes || [], function(node) {
-                        let datatype = self.datatype_lookup[node.datatype];
-                        return datatype && datatype.configname && ko.components.isRegistered(datatype.configname);
+                    _.each(card.nodes || [], function (node) {
+                        node.label =
+                            (self.widget_lookup[node.nodeid] || {}).label ||
+                            node.name;
                     });
 
-                    return searchable_nodes.length > 0;
-                });
+                    this.card_lookup[card.nodegroup_id] = card;
+                },
+                this,
+            );
 
-                if (graph_cards.length > 0) {
-                    graph_cards = _.sortBy(graph_cards, function(card) {
-                        return (card.name || "").toLowerCase();
-                    });
-
-                    graph.collapsed = ko.observable(true);
-                    graph.cards = ko.observableArray(graph_cards);
-                    graph.filtered_cards = ko.computed(function() {
-                        let filter_text = (self.facet_filter_text() || "").toLowerCase();
-                        if (filter_text) {
-                            graph.collapsed(false);
-                            return _.filter(graph_cards, function(card) {
-                                let card_name = (card.name || "").toLowerCase();
-                                return card_name.indexOf(filter_text) > -1;
-                            });
+            _.each(
+                response.graphs || [],
+                function (graph) {
+                    let graph_cards = _.filter(this.cards, function (card) {
+                        if (card.graph_id !== graph.graphid) {
+                            return false;
                         }
-                        return graph_cards;
+
+                        let searchable_nodes = _.filter(
+                            card.nodes || [],
+                            function (node) {
+                                let datatype =
+                                    self.datatype_lookup[node.datatype];
+                                return (
+                                    datatype &&
+                                    datatype.configname &&
+                                    ko.components.isRegistered(
+                                        datatype.configname,
+                                    )
+                                );
+                            },
+                        );
+
+                        return searchable_nodes.length > 0;
                     });
 
-                    this.searchable_graphs.push(graph);
-                    this.graph_lookup[graph.graphid] = graph;
+                    if (graph_cards.length > 0) {
+                        graph_cards = _.sortBy(graph_cards, function (card) {
+                            return (card.name || '').toLowerCase();
+                        });
 
-                    this.sections.push({
-                        collapsed: ko.observable(false),
-                        graph_id: graph.graphid,
-                        graph_name: ko.unwrap(graph.name) || "Unknown",
-                        groups: ko.observableArray([])
-                    });
-                }
-            }, this);
+                        graph.collapsed = ko.observable(true);
+                        graph.cards = ko.observableArray(graph_cards);
+
+                        graph.filtered_cards = ko.computed(function () {
+                            let filter_text = (
+                                self.facet_filter_text() || ''
+                            ).toLowerCase();
+
+                            if (filter_text) {
+                                graph.collapsed(false);
+
+                                return _.filter(graph_cards, function (card) {
+                                    let card_name = (
+                                        card.name || ''
+                                    ).toLowerCase();
+                                    return card_name.indexOf(filter_text) > -1;
+                                });
+                            }
+
+                            return graph_cards;
+                        });
+
+                        this.searchable_graphs.push(graph);
+                        this.graph_lookup[graph.graphid] = graph;
+
+                        this.sections.push({
+                            collapsed: ko.observable(false),
+                            graph_id: graph.graphid,
+                            graph_name: ko.unwrap(graph.name) || 'Unknown',
+                            groups: ko.observableArray([]),
+                        });
+                    }
+                },
+                this,
+            );
 
             this.restore_state();
 
-            let filter_updated = ko.computed(function() {
+            let filter_updated = ko.computed(function () {
                 let data = {
                     sections: ko.toJS(self.sections()),
-                    translate_mode: self.translate_mode()
+                    strict_mode: self.strict_mode(),
+                    translate_mode: self.translate_mode(),
                 };
+
                 return JSON.stringify(data);
             });
 
-            filter_updated.subscribe(function() {
+            filter_updated.subscribe(function () {
                 self.update_query();
             });
 
@@ -155,7 +219,7 @@ let view_model = BaseFilter.extend({
         });
     },
 
-    _clear_drag_state: function() {
+    _clear_drag_state: function () {
         this.drag_data(null);
         this.drag_over_add_group(null);
         this.drag_over_card(null);
@@ -163,23 +227,25 @@ let view_model = BaseFilter.extend({
         this.drag_over_position(null);
     },
 
-    _get_event: function(event) {
+    _get_event: function (event) {
         return event.originalEvent || event;
     },
 
-    _move_section_to_end: function(section) {
+    _move_section_to_end: function (section) {
         let dominated_idx = this.sections.indexOf(section);
+
         if (dominated_idx > -1) {
             this.sections.splice(dominated_idx, 1);
             this.sections.push(section);
         }
     },
 
-    add_card_to_group: function(section, group, card) {
+    add_card_to_group: function (section, group, card) {
         let self = this;
 
         let card_filters = {};
-        _.each(card.nodes || [], function(node) {
+
+        _.each(card.nodes || [], function (node) {
             card_filters[node.nodeid] = ko.observable({});
         });
 
@@ -189,13 +255,13 @@ let view_model = BaseFilter.extend({
             collapsed: ko.observable(false),
             filters: card_filters,
             nodegroup_id: card.nodegroup_id,
-            nodes: card.nodes
+            nodes: card.nodes,
         };
 
         group.cards.push(new_card);
     },
 
-    add_group: function(section) {
+    add_group: function (section) {
         let self = this;
         let was_empty = section.groups().length === 0;
 
@@ -203,9 +269,10 @@ let view_model = BaseFilter.extend({
             cards: ko.observableArray([]),
             collapsed: ko.observable(false),
             id: self.next_group_id++,
-            match: ko.observable("all"),
-            operator_after: ko.observable("and")
+            match: ko.observable('all'),
+            operator_after: ko.observable('and'),
         };
+
         section.groups.push(new_group);
 
         if (was_empty) {
@@ -215,15 +282,18 @@ let view_model = BaseFilter.extend({
         return new_group;
     },
 
-    clear: function() {
-        _.each(this.sections(), function(section) {
+    clear: function () {
+        _.each(this.sections(), function (section) {
             section.groups.removeAll();
         });
-        this.translate_mode("none");
+
+        this.strict_mode(false);
+        this.translate_mode('none');
     },
 
-    get_drop_indicator_position: function(card) {
+    get_drop_indicator_position: function (card) {
         let drag_data = this.drag_data();
+
         if (!drag_data) {
             return null;
         }
@@ -239,19 +309,19 @@ let view_model = BaseFilter.extend({
         return this.drag_over_position();
     },
 
-    get_section_for_graph: function(graph_id) {
-        return _.find(this.sections(), function(section) {
+    get_section_for_graph: function (graph_id) {
+        return _.find(this.sections(), function (section) {
             return section.graph_id === graph_id;
         });
     },
 
-    get_section_for_group: function(group) {
-        return _.find(this.sections(), function(section) {
+    get_section_for_group: function (group) {
+        return _.find(this.sections(), function (section) {
             return section.groups.indexOf(group) > -1;
         });
     },
 
-    handle_card_drag_over: function(card, group, section, event) {
+    handle_card_drag_over: function (card, group, section, event) {
         let native_event = this._get_event(event);
         native_event.preventDefault();
 
@@ -267,7 +337,7 @@ let view_model = BaseFilter.extend({
         let target = native_event.currentTarget;
         let rect = target.getBoundingClientRect();
         let midpoint = rect.top + rect.height / 2;
-        let position = native_event.clientY < midpoint ? "before" : "after";
+        let position = native_event.clientY < midpoint ? 'before' : 'after';
 
         this.drag_over_card(card);
         this.drag_over_group(group);
@@ -276,17 +346,21 @@ let view_model = BaseFilter.extend({
         return true;
     },
 
-    handle_drag_end: function(card, event) {
+    handle_drag_end: function (card, event) {
         this._clear_drag_state();
         return true;
     },
 
-    handle_add_group_drag_leave: function(section, event) {
+    handle_add_group_drag_leave: function (section, event) {
         let native_event = this._get_event(event);
         let related_target = native_event.relatedTarget;
         let current_target = native_event.currentTarget;
 
-        if (related_target && current_target && current_target.contains(related_target)) {
+        if (
+            related_target &&
+            current_target &&
+            current_target.contains(related_target)
+        ) {
             return true;
         }
 
@@ -297,16 +371,17 @@ let view_model = BaseFilter.extend({
         return true;
     },
 
-    handle_add_group_drag_over: function(section, event) {
+    handle_add_group_drag_over: function (section, event) {
         let native_event = this._get_event(event);
         native_event.preventDefault();
 
         let drag_data = this.drag_data();
+
         if (!drag_data) {
             return true;
         }
 
-        if (drag_data.source !== "sidebar") {
+        if (drag_data.source !== 'sidebar') {
             return true;
         }
 
@@ -318,17 +393,18 @@ let view_model = BaseFilter.extend({
         return true;
     },
 
-    handle_add_group_drop: function(section, event) {
+    handle_add_group_drop: function (section, event) {
         let native_event = this._get_event(event);
         native_event.preventDefault();
 
         let drag_data = this.drag_data();
+
         if (!drag_data) {
             this._clear_drag_state();
             return true;
         }
 
-        if (drag_data.source !== "sidebar") {
+        if (drag_data.source !== 'sidebar') {
             this._clear_drag_state();
             return true;
         }
@@ -345,12 +421,16 @@ let view_model = BaseFilter.extend({
         return true;
     },
 
-    handle_drag_leave: function(group, event) {
+    handle_drag_leave: function (group, event) {
         let native_event = this._get_event(event);
         let related_target = native_event.relatedTarget;
         let current_target = native_event.currentTarget;
 
-        if (related_target && current_target && current_target.contains(related_target)) {
+        if (
+            related_target &&
+            current_target &&
+            current_target.contains(related_target)
+        ) {
             return true;
         }
 
@@ -363,11 +443,12 @@ let view_model = BaseFilter.extend({
         return true;
     },
 
-    handle_drag_over: function(group, section, event) {
+    handle_drag_over: function (group, section, event) {
         let native_event = this._get_event(event);
         native_event.preventDefault();
 
         let drag_data = this.drag_data();
+
         if (!drag_data) {
             return true;
         }
@@ -380,7 +461,7 @@ let view_model = BaseFilter.extend({
         return true;
     },
 
-    handle_drag_start: function(card, group, section, event) {
+    handle_drag_start: function (card, group, section, event) {
         let native_event = this._get_event(event);
 
         this.drag_data({
@@ -388,22 +469,26 @@ let view_model = BaseFilter.extend({
             graph_id: section.graph_id,
             group: group,
             section: section,
-            source: "main"
+            source: 'main',
         });
 
         if (native_event.dataTransfer) {
-            native_event.dataTransfer.effectAllowed = "move";
-            native_event.dataTransfer.setData("text/plain", card.card_id || "card");
+            native_event.dataTransfer.effectAllowed = 'move';
+            native_event.dataTransfer.setData(
+                'text/plain',
+                card.card_id || 'card',
+            );
         }
 
         return true;
     },
 
-    handle_drop: function(target_group, target_section, event) {
+    handle_drop: function (target_group, target_section, event) {
         let native_event = this._get_event(event);
         native_event.preventDefault();
 
         let drag_data = this.drag_data();
+
         if (!drag_data) {
             this._clear_drag_state();
             return true;
@@ -414,7 +499,7 @@ let view_model = BaseFilter.extend({
             return true;
         }
 
-        if (drag_data.source === "sidebar") {
+        if (drag_data.source === 'sidebar') {
             let card_def = drag_data.card_def;
             let target_card = this.drag_over_card();
             let position = this.drag_over_position();
@@ -423,12 +508,13 @@ let view_model = BaseFilter.extend({
                 let cards = target_group.cards();
                 let target_index = cards.indexOf(target_card);
 
-                if (position === "after") {
+                if (position === 'after') {
                     target_index += 1;
                 }
 
                 let card_filters = {};
-                _.each(card_def.nodes || [], function(node) {
+
+                _.each(card_def.nodes || [], function (node) {
                     card_filters[node.nodeid] = ko.observable({});
                 });
 
@@ -438,7 +524,7 @@ let view_model = BaseFilter.extend({
                     collapsed: ko.observable(false),
                     filters: card_filters,
                     nodegroup_id: card_def.nodegroup_id,
-                    nodes: card_def.nodes
+                    nodes: card_def.nodes,
                 };
 
                 target_group.cards.splice(target_index, 0, new_card);
@@ -470,7 +556,7 @@ let view_model = BaseFilter.extend({
             cards = source_group.cards();
             target_index = cards.indexOf(target_card);
 
-            if (position === "after") {
+            if (position === 'after') {
                 target_index += 1;
             }
 
@@ -482,7 +568,7 @@ let view_model = BaseFilter.extend({
                 let cards = target_group.cards();
                 let target_index = cards.indexOf(target_card);
 
-                if (position === "after") {
+                if (position === 'after') {
                     target_index += 1;
                 }
 
@@ -500,12 +586,12 @@ let view_model = BaseFilter.extend({
         return true;
     },
 
-    handle_sidebar_drag_end: function(card, event) {
+    handle_sidebar_drag_end: function (card, event) {
         this._clear_drag_state();
         return true;
     },
 
-    handle_sidebar_drag_start: function(card_def, graph, event) {
+    handle_sidebar_drag_start: function (card_def, graph, event) {
         let native_event = this._get_event(event);
 
         this.drag_data({
@@ -514,23 +600,27 @@ let view_model = BaseFilter.extend({
             graph_id: graph.graphid,
             group: null,
             section: null,
-            source: "sidebar"
+            source: 'sidebar',
         });
 
         if (native_event.dataTransfer) {
-            native_event.dataTransfer.effectAllowed = "copy";
-            native_event.dataTransfer.setData("text/plain", card_def.cardid || "card");
+            native_event.dataTransfer.effectAllowed = 'copy';
+            native_event.dataTransfer.setData(
+                'text/plain',
+                card_def.cardid || 'card',
+            );
         }
 
         return true;
     },
 
-    is_card_used: function(card) {
+    is_card_used: function (card) {
         return this.used_card_ids().indexOf(card.nodegroup_id) > -1;
     },
 
-    is_drop_target: function(group) {
+    is_drop_target: function (group) {
         let drag_data = this.drag_data();
+
         if (!drag_data) {
             return false;
         }
@@ -541,19 +631,19 @@ let view_model = BaseFilter.extend({
             return false;
         }
 
-        if (drag_data.source === "sidebar") {
+        if (drag_data.source === 'sidebar') {
             return this.drag_over_group() === group;
         }
 
         return this.drag_over_group() === group && drag_data.group !== group;
     },
 
-    remove_card_from_group: function(group, card) {
+    remove_card_from_group: function (group, card) {
         let self = this;
         group.cards.remove(card);
 
         if (group.cards().length === 0) {
-            let section = _.find(self.sections(), function(s) {
+            let section = _.find(self.sections(), function (s) {
                 return s.groups.indexOf(group) > -1;
             });
 
@@ -563,47 +653,68 @@ let view_model = BaseFilter.extend({
         }
     },
 
-    remove_group: function(section, group) {
+    remove_group: function (section, group) {
         section.groups.remove(group);
     },
 
-    restore_state: function() {
+    reset_pagination: function () {
+        let query_obj = this.query();
+        query_obj['paging-filter'] = '1';
+        this.query(query_obj);
+    },
+
+    restore_state: function () {
         let self = this;
         let query = this.query();
 
         if (component_name in query) {
             let saved_data;
+
             try {
                 saved_data = JSON.parse(query[component_name]);
             } catch (e) {
                 return;
             }
 
+            if (saved_data.strict_mode !== undefined) {
+                this.strict_mode(saved_data.strict_mode);
+            }
+
             if (saved_data.translate_mode) {
                 this.translate_mode(saved_data.translate_mode);
             }
 
-            _.each(saved_data.sections || [], function(saved_section) {
-                let section = self.get_section_for_graph(saved_section.graph_id);
+            _.each(saved_data.sections || [], function (saved_section) {
+                let section = self.get_section_for_graph(
+                    saved_section.graph_id,
+                );
                 if (!section) return;
 
-                _.each(saved_section.groups || [], function(saved_group) {
+                _.each(saved_section.groups || [], function (saved_group) {
                     let new_group = {
                         cards: ko.observableArray([]),
                         collapsed: ko.observable(false),
                         id: self.next_group_id++,
-                        match: ko.observable(saved_group.match || "all"),
-                        operator_after: ko.observable(saved_group.operator_after || "and")
+                        match: ko.observable(saved_group.match || 'all'),
+                        operator_after: ko.observable(
+                            saved_group.operator_after || 'and',
+                        ),
                     };
 
-                    _.each(saved_group.cards || [], function(saved_card) {
-                        let card_def = self.card_lookup[saved_card.nodegroup_id];
+                    _.each(saved_group.cards || [], function (saved_card) {
+                        let card_def =
+                            self.card_lookup[saved_card.nodegroup_id];
                         if (!card_def) return;
 
                         let card_filters = {};
-                        _.each(card_def.nodes || [], function(node) {
-                            let saved_value = saved_card.filters ? saved_card.filters[node.nodeid] : {};
-                            card_filters[node.nodeid] = ko.observable(saved_value || {});
+
+                        _.each(card_def.nodes || [], function (node) {
+                            let saved_value = saved_card.filters
+                                ? saved_card.filters[node.nodeid]
+                                : {};
+                            card_filters[node.nodeid] = ko.observable(
+                                saved_value || {},
+                            );
                         });
 
                         new_group.cards.push({
@@ -612,7 +723,7 @@ let view_model = BaseFilter.extend({
                             collapsed: ko.observable(false),
                             filters: card_filters,
                             nodegroup_id: card_def.nodegroup_id,
-                            nodes: card_def.nodes
+                            nodes: card_def.nodes,
                         });
                     });
 
@@ -621,55 +732,64 @@ let view_model = BaseFilter.extend({
             });
 
             if (self.has_filters()) {
-                this.getFilterByType("term-filter-type").addTag(
+                this.getFilterByType('term-filter-type').addTag(
                     this.tag_id,
                     this.name,
-                    ko.observable(false)
+                    ko.observable(false),
                 );
             }
         }
     },
 
-    update_query: function() {
+    update_query: function () {
         let self = this;
         let query_obj = this.query();
 
         if (this.has_filters()) {
             let serialized = {
                 sections: [],
-                translate_mode: this.translate_mode()
+                strict_mode: this.strict_mode(),
+                translate_mode: this.translate_mode(),
             };
 
-            _.each(this.sections(), function(section) {
-                let section_has_cards = _.some(section.groups(), function(group) {
-                    return group.cards().length > 0;
-                });
+            _.each(this.sections(), function (section) {
+                let section_has_cards = _.some(
+                    section.groups(),
+                    function (group) {
+                        return group.cards().length > 0;
+                    },
+                );
 
                 if (section_has_cards) {
                     let section_data = {
                         graph_id: section.graph_id,
-                        groups: []
+                        groups: [],
                     };
 
-                    _.each(section.groups(), function(group) {
+                    _.each(section.groups(), function (group) {
                         if (group.cards().length > 0) {
                             let group_data = {
                                 cards: [],
                                 id: group.id,
                                 match: group.match(),
-                                operator_after: group.operator_after()
+                                operator_after: group.operator_after(),
                             };
 
-                            _.each(group.cards(), function(card) {
+                            _.each(group.cards(), function (card) {
                                 let card_data = {
                                     filters: {},
-                                    nodegroup_id: card.nodegroup_id
+                                    nodegroup_id: card.nodegroup_id,
                                 };
 
-                                _.each(card.filters, function(filter_obs, node_id) {
-                                    let filter_value = ko.toJS(filter_obs());
-                                    card_data.filters[node_id] = filter_value;
-                                });
+                                _.each(
+                                    card.filters,
+                                    function (filter_obs, node_id) {
+                                        let filter_value =
+                                            ko.toJS(filter_obs());
+                                        card_data.filters[node_id] =
+                                            filter_value;
+                                    },
+                                );
 
                                 group_data.cards.push(card_data);
                             });
@@ -684,23 +804,26 @@ let view_model = BaseFilter.extend({
 
             query_obj[component_name] = JSON.stringify(serialized);
 
-            if (this.getFilterByType("term-filter-type").hasTag(this.tag_id) === false) {
-                this.getFilterByType("term-filter-type").addTag(
+            if (
+                this.getFilterByType('term-filter-type').hasTag(this.tag_id) ===
+                false
+            ) {
+                this.getFilterByType('term-filter-type').addTag(
                     this.tag_id,
                     this.name,
-                    ko.observable(false)
+                    ko.observable(false),
                 );
             }
         } else {
             delete query_obj[component_name];
-            this.getFilterByType("term-filter-type").removeTag(this.tag_id);
+            this.getFilterByType('term-filter-type').removeTag(this.tag_id);
         }
 
         this.query(query_obj);
-    }
+    },
 });
 
 ko.components.register(component_name, {
     template: crossModelAdvancedSearchTemplate,
-    viewModel: view_model
+    viewModel: view_model,
 });
