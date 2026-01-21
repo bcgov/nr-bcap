@@ -699,10 +699,22 @@ AWS_S3_PROXIES = {"https": get_env_variable("S3_PROXIES")}
 # This is the default if source isn't set as a parameter in the request
 TILESERVER_URL = "https://openmaps.gov.bc.ca/"
 BC_TILESERVER_URLS = {
-    "maps": "https://maps.gov.bc.ca/",
-    "openmaps": TILESERVER_URL,
-    "local": get_env_variable("TILESERVER_LOCAL_URL"),
-    "local-feature": get_env_variable("FEATURESERVER_LOCAL_URL"),
+    "maps": {
+        "url": "https://maps.gov.bc.ca/",
+        "use_outbound_proxy": True  # Use outbound proxy for this source
+    },
+    "openmaps": {
+        "url": TILESERVER_URL,
+        "use_outbound_proxy": True  # Don't use outbound proxy for this source
+    },
+    "local": {
+        "url": get_env_variable("TILESERVER_LOCAL_URL"),
+        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+    },
+    "local-feature": {
+        "url": get_env_variable("FEATURESERVER_LOCAL_URL"),
+        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+    },
 }
 
 AUTH_BYPASS_HOSTS = get_env_variable("AUTH_BYPASS_HOSTS")
