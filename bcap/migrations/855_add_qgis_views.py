@@ -7,28 +7,28 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bcap', '1100_show_etl_plugin_by_default'),
+        ("bcap", "1100_show_etl_plugin_by_default"),
     ]
 
     operations = [
         django_migrate_sql.operations.CreateSQL(
-            name='bc_labelled_site_visit_geometries',
-            sql="create or replace view public.bc_site_visit_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug = 'site_visit') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
-            reverse_sql='drop view bc_labelled_site_visit_geometries;',
+            name="bc_labelled_site_visit_geometries",
+            sql="create or replace view public.bc_labelled_site_visit_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug = 'site_visit') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
+            reverse_sql="drop view bc_labelled_site_visit_geometries;",
         ),
         django_migrate_sql.operations.CreateSQL(
-            name='bc_labelled_geojson_geometries',
+            name="bc_labelled_geojson_geometries",
             sql="create or replace view public.bc_labelled_geojson_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug in ('archaeological_site', 'site_visit', 'sandcastle')) re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
-            reverse_sql='drop view bc_labelled_geojson_geometries;',
+            reverse_sql="drop view bc_labelled_geojson_geometries;",
         ),
         django_migrate_sql.operations.CreateSQL(
-            name='bc_labelled_sandcastle_geometries',
+            name="bc_labelled_sandcastle_geometries",
             sql="create or replace view public.bc_labelled_sandcastle_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug = 'sandcastle') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
-            reverse_sql='drop view bc_labelled_sandcastle_geometries;',
+            reverse_sql="drop view bc_labelled_sandcastle_geometries;",
         ),
         django_migrate_sql.operations.CreateSQL(
-            name='bc_labelled_site_geometries',
+            name="bc_labelled_site_geometries",
             sql="create or replace view public.bc_labelled_site_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug = 'archaeological_site') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
-            reverse_sql='drop view bc_labelled_site_geometries;',
+            reverse_sql="drop view bc_labelled_site_geometries;",
         ),
     ]

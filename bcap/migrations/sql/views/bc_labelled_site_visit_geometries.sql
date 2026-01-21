@@ -1,4 +1,4 @@
-create or replace view public.bc_site_visit_geometries as
+create or replace view public.bc_labelled_site_visit_geometries as
 (
 select re.name ->> 'en' resource_name, g.*
 from geojson_geometries g
