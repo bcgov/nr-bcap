@@ -42,7 +42,7 @@ details = {
 }
 
 # Cache timeout in seconds for search results and relationship graphs
-BASE_CACHE_TIMEOUT = 300
+BASE_CACHE_TIMEOUT = 0
 
 # Number of resource IDs to process in a single database query to avoid memory issues
 BATCH_SIZE = 5000
@@ -1278,14 +1278,11 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
     def _get_intersection_target(self) -> list[dict[str, Any]]:
         """
         Build the list of available intersection targets for the UI.
-        Graphs are sorted by their connection count (most connected first)
-        to prioritize graphs that are likely to be useful targets.
+        Graphs are sorted alphabetically by name.
         """
 
         if not LinkNodeCache._initialized:
             LinkNodeCache._initialize()
-
-        relationship_graph = self._build_relationship_graph()
 
         graph_queryset = (
             GraphModel.objects.filter(
@@ -1299,47 +1296,9 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             .only("graphid", "name", "slug")
         )
 
-        graph_connection_count = {}
-
-        for graph in graph_queryset:
-            graph_id = str(graph.graphid)
-
-            # Count connections from ResourceXResource
-            rxr_connections = len(relationship_graph.get(graph_id, set()))
-
-            # Count connections from resource-instance nodes
-            link_node_connections = set()
-            ri_nodes = LinkNodeCache._graph_ri_nodes.get(graph_id, [])
-
-            for node_info in ri_nodes:
-                link_node_connections.update(node_info["target_graph_ids"])
-
-            unconstrained = LinkNodeCache._unconstrained_nodes.get(graph_id, [])
-
-            if unconstrained:
-                link_node_connections.add("__unconstrained__")
-
-            # Also count graphs that link TO this graph
-            for other_graph_id, other_nodes in LinkNodeCache._graph_ri_nodes.items():
-                if other_graph_id == graph_id:
-                    continue
-
-                for node_info in other_nodes:
-                    if graph_id in node_info["target_graph_ids"]:
-                        link_node_connections.add(other_graph_id)
-
-            total_connections = rxr_connections + len(link_node_connections)
-            graph_connection_count[graph_id] = total_connections
-
-        sorted_graphs = sorted(
-            graph_queryset,
-            key=lambda g: graph_connection_count.get(str(g.graphid), 0),
-            reverse=True,
-        )
-
         target = []
 
-        for graph in sorted_graphs:
+        for graph in graph_queryset:
             graph_id = str(graph.graphid)
             graph_name = graph.name
 
@@ -1350,12 +1309,14 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
 
             target.append(
                 {
-                    "connection_count": graph_connection_count.get(graph_id, 0),
                     "graph_id": graph_id,
                     "label": f"Intersect to {graph_name}",
+                    "name": graph_name,
                     "slug": graph.slug,
                 }
             )
+
+        target.sort(key=lambda x: (x["name"] or "").lower())
 
         return target
 
@@ -1621,13 +1582,19 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                 resource_id, section, target_graph_id
             )
 
-        # Combine results from both relationship types
-        rxr_target_id = self._get_related_via_rxr_bfs(resource_id, target_graph_id)
+        # First, try tile-based resource-instance links (more precise)
         tile_target_id = self._get_target_id_from_direct_tiles(
             resource_id, source_graph_id, target_graph_id
         )
 
-        return rxr_target_id | tile_target_id
+        # If we found results via tiles, return those
+        if tile_target_id:
+            return tile_target_id
+
+        # Fall back to ResourceXResource only if no tile-based links exist
+        rxr_target_id = self._get_related_via_rxr_bfs(resource_id, target_graph_id)
+
+        return rxr_target_id
 
     def _get_target_id_from_direct_tiles(
         self,
@@ -2062,11 +2029,17 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             if self.request.user.has_perm("read_nodegroup", card.nodegroup)
         ]
 
+        # Sort graphs alphabetically by name
+        sorted_graphs = sorted(
+            resource_graph,
+            key=lambda g: (g.name.get("en", "") if isinstance(g.name, dict) else (g.name or "")).lower(),
+        )
+
         return {
             "cardwidgets": CardXNodeXWidget.objects.filter(node__in=searchable_node),
             "cards": searchable_card,
             "datatypes": DDataType.objects.all(),
-            "graphs": resource_graph,
+            "graphs": sorted_graphs,
             "intersection_targets": self._get_intersection_target(),
             "nodes": searchable_node,
         }
