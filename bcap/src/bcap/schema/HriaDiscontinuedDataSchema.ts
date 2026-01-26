@@ -100,7 +100,7 @@ export interface OtherMapsTile extends AliasedTileData {
     aliased_data: {
         other_maps_map_name: StringValue;
         other_maps_map_scale: StringValue;
-        other_maps_modified_by: ResourceInstanceListValue;
+        other_maps_modified_by: StringValue;
         other_maps_modified_on: DateValue;
     };
 }
