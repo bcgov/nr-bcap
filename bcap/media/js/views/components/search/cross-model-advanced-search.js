@@ -27,8 +27,12 @@ let view_model = BaseFilter.extend({
         this.facet_filter_text = ko.observable('');
         this.graph_lookup = {};
         this.intersection_targets = ko.observableArray([]);
+        this.is_searching = ko.observable(false);
         this.next_group_id = 1;
         this.searchable_graphs = ko.observableArray();
+        this.search_elapsed_time = ko.observable(null);
+        this.search_start_time = null;
+        this.search_timer_interval = null;
         this.sections = ko.observableArray();
         this.strict_mode = ko.observable(false);
         this.tag_id = 'Cross-Model Advanced Search';
@@ -55,6 +59,16 @@ let view_model = BaseFilter.extend({
             });
         });
 
+        this.has_active_filters = ko.computed(function () {
+            return _.some(self.sections(), function (section) {
+                return _.some(section.groups(), function (group) {
+                    return _.some(group.cards(), function (card) {
+                        return self._card_has_filter_value(card);
+                    });
+                });
+            });
+        });
+
         this.active_sections = ko.computed(function () {
             return _.filter(self.sections(), function (section) {
                 return _.some(section.groups(), function (group) {
@@ -77,6 +91,20 @@ let view_model = BaseFilter.extend({
                 });
             });
             return ids;
+        });
+
+        this.formatted_elapsed_time = ko.computed(function () {
+            let elapsed = self.search_elapsed_time();
+
+            if (elapsed === null) {
+                return '';
+            }
+
+            if (elapsed < 1000) {
+                return elapsed + 'ms';
+            }
+
+            return (elapsed / 1000).toFixed(1) + 's';
         });
 
         this.translate_mode.subscribe(function () {
@@ -217,6 +245,23 @@ let view_model = BaseFilter.extend({
             this.searchFilterVms[component_name](this);
             options.loading(false);
         });
+
+        this._setup_search_listener();
+    },
+
+    _card_has_filter_value: function (card) {
+        let self = this;
+        let has_value = false;
+
+        _.each(card.filters, function (filter_obs, node_id) {
+            let filter_value = ko.toJS(filter_obs());
+
+            if (self._is_valid_filter_value(filter_value)) {
+                has_value = true;
+            }
+        });
+
+        return has_value;
     },
 
     _clear_drag_state: function () {
@@ -231,12 +276,102 @@ let view_model = BaseFilter.extend({
         return event.originalEvent || event;
     },
 
+    _is_valid_filter_value: function (filter_value) {
+        if (!filter_value) {
+            return false;
+        }
+
+        if (typeof filter_value !== 'object') {
+            return false;
+        }
+
+        let val = filter_value.val;
+
+        if (val === undefined || val === null || val === '') {
+            return false;
+        }
+
+        if (Array.isArray(val) && val.length === 0) {
+            return false;
+        }
+
+        return true;
+    },
+
     _move_section_to_end: function (section) {
         let dominated_idx = this.sections.indexOf(section);
 
         if (dominated_idx > -1) {
             this.sections.splice(dominated_idx, 1);
             this.sections.push(section);
+        }
+    },
+
+    _setup_search_listener: function () {
+        let self = this;
+
+        $(document).ajaxSend(function (event, jqxhr, settings) {
+            if (
+                settings.url &&
+                settings.url.indexOf('/search/resources') > -1
+            ) {
+                if (
+                    self.has_active_filters() &&
+                    self.translate_mode() !== 'none'
+                ) {
+                    self._start_search_timer();
+                }
+            }
+        });
+
+        $(document).ajaxComplete(function (event, jqxhr, settings) {
+            if (
+                settings.url &&
+                settings.url.indexOf('/search/resources') > -1
+            ) {
+                self._stop_search_timer();
+            }
+        });
+
+        $(document).ajaxError(function (event, jqxhr, settings) {
+            if (
+                settings.url &&
+                settings.url.indexOf('/search/resources') > -1
+            ) {
+                self._stop_search_timer();
+            }
+        });
+    },
+
+    _start_search_timer: function () {
+        let self = this;
+
+        this.is_searching(true);
+        this.search_start_time = Date.now();
+        this.search_elapsed_time(0);
+
+        if (this.search_timer_interval) {
+            clearInterval(this.search_timer_interval);
+        }
+
+        this.search_timer_interval = setInterval(function () {
+            if (self.search_start_time) {
+                self.search_elapsed_time(Date.now() - self.search_start_time);
+            }
+        }, 100);
+    },
+
+    _stop_search_timer: function () {
+        this.is_searching(false);
+
+        if (this.search_timer_interval) {
+            clearInterval(this.search_timer_interval);
+            this.search_timer_interval = null;
+        }
+
+        if (this.search_start_time) {
+            this.search_elapsed_time(Date.now() - this.search_start_time);
+            this.search_start_time = null;
         }
     },
 
@@ -289,6 +424,8 @@ let view_model = BaseFilter.extend({
 
         this.strict_mode(false);
         this.translate_mode('none');
+        this.search_elapsed_time(null);
+        this.reset_pagination();
     },
 
     get_drop_indicator_position: function (card) {
@@ -651,10 +788,13 @@ let view_model = BaseFilter.extend({
                 section.groups.remove(group);
             }
         }
+
+        self.reset_pagination();
     },
 
     remove_group: function (section, group) {
         section.groups.remove(group);
+        this.reset_pagination();
     },
 
     reset_pagination: function () {
@@ -731,7 +871,7 @@ let view_model = BaseFilter.extend({
                 });
             });
 
-            if (self.has_filters()) {
+            if (self.has_active_filters()) {
                 this.getFilterByType('term-filter-type').addTag(
                     this.tag_id,
                     this.name,
@@ -745,7 +885,7 @@ let view_model = BaseFilter.extend({
         let self = this;
         let query_obj = this.query();
 
-        if (this.has_filters()) {
+        if (this.has_active_filters()) {
             let serialized = {
                 sections: [],
                 strict_mode: this.strict_mode(),
@@ -753,21 +893,30 @@ let view_model = BaseFilter.extend({
             };
 
             _.each(this.sections(), function (section) {
-                let section_has_cards = _.some(
+                let section_has_active_filters = _.some(
                     section.groups(),
                     function (group) {
-                        return group.cards().length > 0;
+                        return _.some(group.cards(), function (card) {
+                            return self._card_has_filter_value(card);
+                        });
                     },
                 );
 
-                if (section_has_cards) {
+                if (section_has_active_filters) {
                     let section_data = {
                         graph_id: section.graph_id,
                         groups: [],
                     };
 
                     _.each(section.groups(), function (group) {
-                        if (group.cards().length > 0) {
+                        let group_has_active_filters = _.some(
+                            group.cards(),
+                            function (card) {
+                                return self._card_has_filter_value(card);
+                            },
+                        );
+
+                        if (group_has_active_filters) {
                             let group_data = {
                                 cards: [],
                                 id: group.id,
@@ -776,6 +925,10 @@ let view_model = BaseFilter.extend({
                             };
 
                             _.each(group.cards(), function (card) {
+                                if (!self._card_has_filter_value(card)) {
+                                    return;
+                                }
+
                                 let card_data = {
                                     filters: {},
                                     nodegroup_id: card.nodegroup_id,
@@ -786,8 +939,15 @@ let view_model = BaseFilter.extend({
                                     function (filter_obs, node_id) {
                                         let filter_value =
                                             ko.toJS(filter_obs());
-                                        card_data.filters[node_id] =
-                                            filter_value;
+
+                                        if (
+                                            self._is_valid_filter_value(
+                                                filter_value,
+                                            )
+                                        ) {
+                                            card_data.filters[node_id] =
+                                                filter_value;
+                                        }
                                     },
                                 );
 
@@ -814,6 +974,8 @@ let view_model = BaseFilter.extend({
                     ko.observable(false),
                 );
             }
+
+            this.reset_pagination();
         } else {
             delete query_obj[component_name];
             this.getFilterByType('term-filter-type').removeTag(this.tag_id);
