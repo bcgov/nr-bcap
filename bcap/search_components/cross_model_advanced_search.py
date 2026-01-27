@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 import hashlib
+import logging
 import uuid
 
-from collections import defaultdict, deque
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing_extensions import Any
 
 from django.core.cache import cache
+from django.db import close_old_connections
+from django.db.models import Subquery
 
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.models.models import (
@@ -17,6 +21,7 @@ from arches.app.models.models import (
     DDataType,
     GraphModel,
     Node,
+    ResourceInstance,
     ResourceXResource,
     TileModel,
 )
@@ -27,6 +32,9 @@ from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.utils.betterJSONSerializer import JSONDeserializer
 from arches.app.utils.pagination import get_paginator
+
+
+log = logging.getLogger(__name__)
 
 
 details = {
@@ -53,6 +61,9 @@ LINK_NODES_CACHE_TIMEOUT = BASE_CACHE_TIMEOUT
 
 # Elasticsearch has a hard limit of 10,000 results per request without scrolling
 MAX_ES_SIZE = 10000
+
+# Maximum number of worker threads for parallel processing
+MAX_WORKERS = 8
 
 RELATIONSHIP_GRAPH_CACHE_KEY = "cross_model_search_relationship_graph"
 RELATIONSHIP_GRAPH_CACHE_TIMEOUT = BASE_CACHE_TIMEOUT
@@ -154,6 +165,7 @@ class FilterMatcher:
 
         val = filter_value.get("val")
         op = filter_value.get("op", "")
+
         inverted = op in (
             FilterOperator.NOT,
             FilterOperator.NEQ,
@@ -370,7 +382,7 @@ class GroupFilter:
 @dataclass
 class SectionFilter:
     """
-    Represents all filter criteria for a single resource model (graph).
+    Represents all filter criteria for a single resource model.
     Contains multiple groups that can be combined with AND/OR operators.
     """
 
@@ -386,23 +398,66 @@ class SectionFilter:
         request: Any,
     ) -> Bool:
         section_query = Bool()
+        valid_groups = []
 
-        for idx, group in enumerate(self.group_list):
+        for group in self.group_list:
             group_query = group.build_query(datatype_factory, node_cache, request)
 
-            if not bool_has_clause(group_query):
-                continue
+            if bool_has_clause(group_query):
+                valid_groups.append((group, group_query))
 
-            # First group is always AND; subsequent groups use the previous group's operator
-            if idx == 0:
+        if not valid_groups:
+            return section_query
+
+        if len(valid_groups) == 1:
+            _, group_query = valid_groups[0]
+            section_query.must(group_query)
+            return section_query
+
+        operators = [group.operator_after for group, _ in valid_groups[:-1]]
+        all_and = all(op == LogicalOperator.AND for op in operators)
+        all_or = all(op == LogicalOperator.OR for op in operators)
+
+        if all_and:
+            for _, group_query in valid_groups:
                 section_query.must(group_query)
-            elif self.group_list[idx - 1].operator_after == LogicalOperator.OR:
+
+            return section_query
+
+        if all_or:
+            for _, group_query in valid_groups:
                 section_query.should(group_query)
-            else:
-                section_query.must(group_query)
 
-        if section_query.dsl["bool"]["should"]:
             section_query.dsl["bool"]["minimum_should_match"] = 1
+
+            return section_query
+
+        # Mixed operators: group consecutive ANDs together, then OR the AND-groups
+        current_and_group = []
+        or_groups = []
+
+        for idx, (group, group_query) in enumerate(valid_groups):
+            current_and_group.append(group_query)
+
+            if idx < len(valid_groups) - 1 and operators[idx] == LogicalOperator.OR:
+                or_groups.append(current_and_group)
+                current_and_group = []
+
+        if current_and_group:
+            or_groups.append(current_and_group)
+
+        for and_group in or_groups:
+            if len(and_group) == 1:
+                section_query.should(and_group[0])
+            else:
+                and_query = Bool()
+
+                for q in and_group:
+                    and_query.must(q)
+
+                section_query.should(and_query)
+
+        section_query.dsl["bool"]["minimum_should_match"] = 1
 
         return section_query
 
@@ -755,11 +810,14 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         primary_nodegroup_id = [info["nodegroup_id"] for info in link_node_info]
         link_node_id_set = {info["node_id"] for info in link_node_info}
 
-        # Build a mapping of primary resources to their linked resources
-        primary_to_linked_mapping = defaultdict(set)
         primary_id_list = list(primary_resource_id)
+        chunks = list(chunked_iterable(primary_id_list, BATCH_SIZE))
 
-        for chunk in chunked_iterable(primary_id_list, BATCH_SIZE):
+        def process_primary_chunk(chunk: list[str]) -> dict[str, set[str]]:
+            close_old_connections()
+
+            chunk_mapping = defaultdict(set)
+
             tile_queryset = (
                 TileModel.objects.filter(
                     resourceinstance_id__in=chunk,
@@ -781,7 +839,23 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                     linked_ids = node_value.extract_resource_id()
 
                     if linked_ids:
-                        primary_to_linked_mapping[primary_id].update(linked_ids)
+                        chunk_mapping[primary_id].update(linked_ids)
+
+            return dict(chunk_mapping)
+
+        # Build a mapping of primary resources to their linked resources
+        primary_to_linked_mapping = defaultdict(set)
+
+        with ThreadPoolExecutor(max_workers=min(MAX_WORKERS, len(chunks))) as executor:
+            futures = [
+                executor.submit(process_primary_chunk, chunk) for chunk in chunks
+            ]
+
+            for future in as_completed(futures):
+                chunk_result = future.result()
+
+                for primary_id, linked_ids in chunk_result.items():
+                    primary_to_linked_mapping[primary_id].update(linked_ids)
 
         if not primary_to_linked_mapping:
             return set()
@@ -793,10 +867,14 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
 
         # Check which linked resources match the filter criteria
         linked_nodegroup_id = linked_section.extract_nodegroup_id()
-        matching_linked_id = set()
         all_linked_id_list = list(all_linked_id)
+        linked_chunks = list(chunked_iterable(all_linked_id_list, BATCH_SIZE))
 
-        for chunk in chunked_iterable(all_linked_id_list, BATCH_SIZE):
+        def process_linked_chunk(chunk: list[str]) -> set[str]:
+            close_old_connections()
+
+            matching = set()
+
             linked_tile_queryset = (
                 TileModel.objects.filter(
                     resourceinstance_id__in=chunk,
@@ -811,7 +889,21 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                 linked_id = str(tile.get("resourceinstance_id"))
 
                 if self._tile_matches_node_filter(tiledata, linked_node_filter):
-                    matching_linked_id.add(linked_id)
+                    matching.add(linked_id)
+
+            return matching
+
+        matching_linked_id = set()
+
+        with ThreadPoolExecutor(
+            max_workers=min(MAX_WORKERS, len(linked_chunks))
+        ) as executor:
+            futures = [
+                executor.submit(process_linked_chunk, chunk) for chunk in linked_chunks
+            ]
+
+            for future in as_completed(futures):
+                matching_linked_id.update(future.result())
 
         # Return only primary resources that link to matching linked resources
         result = set()
@@ -840,40 +932,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         for node in nodes:
             self._node_cache[str(node.nodeid)] = node
 
-    def _build_relationship_graph(self) -> dict[str, set[str]]:
-        """
-        Build a bidirectional graph of resource model relationships from ResourceXResource.
-        Used to find paths between graphs that don't have direct links.
-        """
-
-        cached_graph = cache.get(RELATIONSHIP_GRAPH_CACHE_KEY)
-
-        if cached_graph is not None:
-            return cached_graph
-
-        relationship = ResourceXResource.objects.values_list(
-            "from_resource_graph_id",
-            "to_resource_graph_id",
-        ).distinct()
-
-        graph = defaultdict(set)
-
-        for from_graph_id, to_graph_id in relationship:
-            if from_graph_id is None or to_graph_id is None:
-                continue
-
-            from_id_str = str(from_graph_id)
-            to_id_str = str(to_graph_id)
-
-            # Bidirectional: both directions are valid for traversal
-            graph[from_id_str].add(to_id_str)
-            graph[to_id_str].add(from_id_str)
-
-        graph = dict(graph)
-        cache.set(RELATIONSHIP_GRAPH_CACHE_KEY, graph, RELATIONSHIP_GRAPH_CACHE_TIMEOUT)
-
-        return graph
-
     def _compute_combined_target_id(
         self,
         section_data_list: list[dict[str, Any]],
@@ -889,7 +947,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         datatype_factory = DataTypeFactory()
         se = SearchEngineFactory().create()
         scroller = ElasticsearchScroller(se=se)
-        combined_target_id = None
 
         section_list = [SectionFilter.from_dict(s) for s in section_data_list]
 
@@ -900,7 +957,12 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             if section.graph_id:
                 section_by_graph[section.graph_id].append((idx, section))
 
-        for graph_id, sections in section_by_graph.items():
+        def process_graph_sections(
+            graph_id: str,
+            sections: list[tuple[int, SectionFilter]],
+        ) -> set[str] | None:
+            close_old_connections()
+
             primary_idx, primary_section = sections[0]
 
             resource_id = self._get_resource_id_for_section(
@@ -908,7 +970,7 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             )
 
             if not resource_id:
-                return set()
+                return None
 
             # Apply linked section filters if any
             for linked_idx, linked_section in sections[1:]:
@@ -927,42 +989,78 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                 strict_mode=strict_mode,
             )
 
-            # Intersection: all sections must contribute matching targets
-            if combined_target_id is None:
-                combined_target_id = target_id
-            else:
-                combined_target_id &= target_id
+            return target_id
+
+        combined_target_id = None
+        graph_items = list(section_by_graph.items())
+
+        with ThreadPoolExecutor(
+            max_workers=min(MAX_WORKERS, len(graph_items))
+        ) as executor:
+            future_to_graph = {
+                executor.submit(process_graph_sections, graph_id, sections): graph_id
+                for graph_id, sections in graph_items
+            }
+
+            for future in as_completed(future_to_graph):
+                target_id = future.result()
+
+                # Intersection: all sections must contribute matching targets
+                if target_id is None:
+                    return set()
+
+                if combined_target_id is None:
+                    combined_target_id = target_id
+                else:
+                    combined_target_id &= target_id
 
         processed_graph_id = set(section_by_graph.keys())
 
-        for section_data in section_data_list:
-            section = SectionFilter.from_dict(section_data)
+        remaining_sections = [
+            SectionFilter.from_dict(s)
+            for s in section_data_list
+            if SectionFilter.from_dict(s).graph_id not in processed_graph_id
+            and SectionFilter.from_dict(s).linked_section_index is None
+        ]
 
-            if section.graph_id in processed_graph_id:
-                continue
+        if remaining_sections:
 
-            if section.linked_section_index is not None:
-                continue
+            def process_remaining_section(section: SectionFilter) -> set[str] | None:
+                close_old_connections()
 
-            resource_id = self._get_resource_id_for_section(
-                section, datatype_factory, scroller
-            )
+                resource_id = self._get_resource_id_for_section(
+                    section, datatype_factory, scroller
+                )
 
-            if not resource_id:
-                return set()
+                if not resource_id:
+                    return None
 
-            target_id = self._get_target_id_for_resource(
-                resource_id,
-                section.graph_id,
-                target_graph_id,
-                section=section,
-                strict_mode=strict_mode,
-            )
+                return self._get_target_id_for_resource(
+                    resource_id,
+                    section.graph_id,
+                    target_graph_id,
+                    section=section,
+                    strict_mode=strict_mode,
+                )
 
-            if combined_target_id is None:
-                combined_target_id = target_id
-            else:
-                combined_target_id &= target_id
+            with ThreadPoolExecutor(
+                max_workers=min(MAX_WORKERS, len(remaining_sections))
+            ) as executor:
+                future_to_section = {
+                    executor.submit(process_remaining_section, section): section
+                    for section in remaining_sections
+                }
+
+                for future in as_completed(future_to_section):
+                    target_id = future.result()
+
+                    if target_id is None:
+                        return set()
+
+                    if combined_target_id is None:
+                        combined_target_id = target_id
+                    else:
+                        combined_target_id &= target_id
 
         return combined_target_id or set()
 
@@ -1131,10 +1229,15 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
 
         node_filter = section.extract_node_filter()
         nodegroup_id = section.extract_nodegroup_id()
-        target_id = set()
 
-        # Forward links: source resource to target resource
-        if forward_link_nodes:
+        def process_forward_strict() -> set[str]:
+            close_old_connections()
+
+            result = set()
+
+            if not forward_link_nodes:
+                return result
+
             resource_instance_node_id = {info["node_id"] for info in forward_link_nodes}
             source_id_list = list(source_resource_id)
 
@@ -1151,7 +1254,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                 for tile in tile_queryset:
                     tiledata = tile.get("data") or {}
 
-                    # Only extract links from tiles that match the filter
                     if not self._tile_matches_node_filter(tiledata, node_filter):
                         continue
 
@@ -1160,10 +1262,18 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                             continue
 
                         node_value = NodeValue(raw=tiledata.get(node_id))
-                        target_id.update(node_value.extract_resource_id())
+                        result.update(node_value.extract_resource_id())
 
-        # Reverse links: target resource to source resource
-        if reverse_link_nodes:
+            return result
+
+        def process_reverse_strict() -> set[str]:
+            close_old_connections()
+
+            result = set()
+
+            if not reverse_link_nodes:
+                return result
+
             reverse_node_id_set = {info["node_id"] for info in reverse_link_nodes}
             reverse_nodegroup_id_set = {
                 info["nodegroup_id"] for info in reverse_link_nodes
@@ -1190,65 +1300,37 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                     referenced_ids = node_value.extract_resource_id()
 
                     if referenced_ids & source_resource_id:
-                        target_id.add(target_resource_id)
+                        result.add(target_resource_id)
                         break
 
+            return result
+
+        target_id = set()
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = [
+                executor.submit(process_forward_strict),
+                executor.submit(process_reverse_strict),
+            ]
+
+            for future in as_completed(futures):
+                target_id.update(future.result())
+
+        if target_id:
+            verified_target_id = set()
+            target_id_list = list(target_id)
+
+            for chunk in chunked_iterable(target_id_list, BATCH_SIZE):
+                verified_ids = ResourceInstance.objects.filter(
+                    graph_id=target_graph_id,
+                    resourceinstanceid__in=chunk,
+                ).values_list("resourceinstanceid", flat=True)
+
+                verified_target_id.update(str(rid) for rid in verified_ids)
+
+            return verified_target_id
+
         return target_id
-
-    def _find_path_between_graph(
-        self,
-        source_graph_id: str,
-        target_graph_id: str,
-        max_depth: int = 3,
-    ) -> list[list[str]]:
-        """
-        Find all paths between two graphs using BFS on the relationship graph.
-        Returns paths as lists of intermediate graph IDs (not including source/target).
-        Used when there's no direct link between graphs.
-        """
-
-        if source_graph_id == target_graph_id:
-            return [[]]
-
-        relationship_graph = self._build_relationship_graph()
-
-        if source_graph_id not in relationship_graph:
-            return []
-
-        all_path = []
-        queue = deque([(source_graph_id, [])])
-        visited_at_depth = {source_graph_id: 0}
-
-        while queue:
-            current_id, path = queue.popleft()
-            current_depth = len(path)
-
-            if current_depth > max_depth:
-                continue
-
-            for neighbor_id in relationship_graph.get(current_id, set()):
-                if neighbor_id == source_graph_id:
-                    continue
-
-                new_depth = current_depth + 1
-
-                # Allow revisiting nodes at the same depth (multiple paths)
-                if (
-                    neighbor_id in visited_at_depth
-                    and visited_at_depth[neighbor_id] < new_depth
-                ):
-                    continue
-
-                visited_at_depth[neighbor_id] = new_depth
-
-                if neighbor_id == target_graph_id:
-                    all_path.append(path)
-                    continue
-
-                if new_depth < max_depth:
-                    queue.append((neighbor_id, path + [neighbor_id]))
-
-        return all_path
 
     def _get_cache_key(self, raw_data: dict[str, Any]) -> str:
         """Generate a unique cache key for the search parameters."""
@@ -1326,7 +1408,12 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             or self.request.POST.get("paging-filter")
             or "1"
         )
-        page = 1 if page_param == "" else int(page_param)
+
+        try:
+            page = int(page_param) if page_param else 1
+        except (TypeError, ValueError):
+            page = 1
+
         per_page = settings.SEARCH_ITEMS_PER_PAGE
 
         if total is not None and total > 0:
@@ -1370,33 +1457,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             start_index=page_obj.start_index(),
         )
 
-    def _get_related_resource_id(
-        self, resource_id: set[str], target_graph_id: str
-    ) -> set[str]:
-        """Get all resources in target_graph that are directly related to the given resources."""
-
-        if not resource_id:
-            return set()
-
-        result = set()
-        resource_id_list = list(resource_id)
-
-        for chunk in chunked_iterable(resource_id_list, BATCH_SIZE):
-            forward = ResourceXResource.objects.filter(
-                from_resource_id__in=chunk,
-                to_resource_graph_id=target_graph_id,
-            ).values_list("to_resource_id", flat=True)
-
-            reverse = ResourceXResource.objects.filter(
-                to_resource_id__in=chunk,
-                from_resource_graph_id=target_graph_id,
-            ).values_list("from_resource_id", flat=True)
-
-            result.update(str(rid) for rid in forward)
-            result.update(str(rid) for rid in reverse)
-
-        return result
-
     def _get_related_via_rxr_bfs(
         self,
         source_resource_id: set[str],
@@ -1405,63 +1465,108 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
     ) -> set[str]:
         """
         Find target resources connected via ResourceXResource using BFS.
-        Allows traversing through intermediate resources up to max_hops away.
-        This handles cases where source and target aren't directly related.
+        Uses Subquery to let PostgreSQL handle intermediate ID sets internally.
+        Uses ThreadPoolExecutor to parallelize queries for better performance.
         """
 
         if not source_resource_id:
             return set()
 
-        all_target_id = set()
-        visited = set(source_resource_id)
-        current_ids = list(source_resource_id)
+        source_list = list(source_resource_id)
+        target_uuid = uuid.UUID(target_graph_id)
+        all_targets = set()
+        current_subqueries = [source_list]
 
-        for _ in range(max_hops):
-            if not current_ids:
+        def query_forward_targets(filter_arg):
+            close_old_connections()
+
+            if isinstance(filter_arg, list):
+                return set(
+                    ResourceXResource.objects.filter(
+                        from_resource_id__in=filter_arg,
+                        to_resource_graph_id=target_uuid,
+                    ).values_list("to_resource_id", flat=True)
+                )
+
+            return set(
+                ResourceXResource.objects.filter(
+                    from_resource_id__in=Subquery(filter_arg),
+                    to_resource_graph_id=target_uuid,
+                ).values_list("to_resource_id", flat=True)
+            )
+
+        def query_reverse_targets(filter_arg):
+            close_old_connections()
+
+            if isinstance(filter_arg, list):
+                return set(
+                    ResourceXResource.objects.filter(
+                        to_resource_id__in=filter_arg,
+                        from_resource_graph_id=target_uuid,
+                    ).values_list("from_resource_id", flat=True)
+                )
+
+            return set(
+                ResourceXResource.objects.filter(
+                    to_resource_id__in=Subquery(filter_arg),
+                    from_resource_graph_id=target_uuid,
+                ).values_list("from_resource_id", flat=True)
+            )
+
+        for hop in range(max_hops):
+            hop_targets = set()
+            next_subqueries = []
+
+            with ThreadPoolExecutor(
+                max_workers=min(MAX_WORKERS, len(current_subqueries) * 2)
+            ) as executor:
+                futures = []
+
+                for subq in current_subqueries:
+                    futures.append(executor.submit(query_forward_targets, subq))
+                    futures.append(executor.submit(query_reverse_targets, subq))
+
+                for future in as_completed(futures):
+                    hop_targets.update(future.result())
+
+            all_targets.update(str(rid) for rid in hop_targets)
+
+            if hop < max_hops - 1:
+                for subq in current_subqueries:
+                    if isinstance(subq, list):
+                        filter_arg = subq
+                    else:
+                        filter_arg = Subquery(subq)
+
+                    forward_intermediate = (
+                        ResourceXResource.objects.filter(
+                            from_resource_id__in=filter_arg,
+                        )
+                        .exclude(
+                            to_resource_graph_id=target_uuid,
+                        )
+                        .values("to_resource_id")
+                    )
+
+                    reverse_intermediate = (
+                        ResourceXResource.objects.filter(
+                            to_resource_id__in=filter_arg,
+                        )
+                        .exclude(
+                            from_resource_graph_id=target_uuid,
+                        )
+                        .values("from_resource_id")
+                    )
+
+                    next_subqueries.append(forward_intermediate)
+                    next_subqueries.append(reverse_intermediate)
+
+            current_subqueries = next_subqueries
+
+            if not current_subqueries:
                 break
 
-            next_ids = set()
-
-            for chunk in chunked_iterable(current_ids, BATCH_SIZE):
-                # Follow forward relationships
-                forward = ResourceXResource.objects.filter(
-                    from_resource_id__in=chunk,
-                ).values_list("to_resource_id", "to_resource_graph_id")
-
-                for to_id, to_graph in forward:
-                    to_id_str = str(to_id)
-
-                    if to_id_str in visited:
-                        continue
-
-                    visited.add(to_id_str)
-
-                    if str(to_graph) == target_graph_id:
-                        all_target_id.add(to_id_str)
-                    else:
-                        next_ids.add(to_id_str)
-
-                # Follow reverse relationships
-                reverse = ResourceXResource.objects.filter(
-                    to_resource_id__in=chunk,
-                ).values_list("from_resource_id", "from_resource_graph_id")
-
-                for from_id, from_graph in reverse:
-                    from_id_str = str(from_id)
-
-                    if from_id_str in visited:
-                        continue
-
-                    visited.add(from_id_str)
-
-                    if str(from_graph) == target_graph_id:
-                        all_target_id.add(from_id_str)
-                    else:
-                        next_ids.add(from_id_str)
-
-            current_ids = list(next_ids)
-
-        return all_target_id
+        return all_targets
 
     def _get_resource_id_for_section(
         self,
@@ -1493,7 +1598,7 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         resource_graph_id: str,
     ) -> dict[str, set[str]]:
         """
-        Find all resources that reference the given resources via resource-instance nodes.
+        Find all resources that reference the given resources via ResourceXResource.
         Returns a dict mapping graph_id -> set of referencing resource IDs.
         """
 
@@ -1501,59 +1606,35 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             return {}
 
         result = defaultdict(set)
+        resource_id_list = list(resource_id)
 
-        # Get all resource-instance nodes from other graphs
-        all_ri_nodes = (
-            Node.objects.filter(
-                datatype__in=[
-                    ResourceInstanceDataType.RESOURCE_INSTANCE,
-                    ResourceInstanceDataType.RESOURCE_INSTANCE_LIST,
-                ],
+        forward_refs = (
+            ResourceXResource.objects.filter(
+                to_resource_id__in=resource_id_list,
             )
             .exclude(
-                graph_id=resource_graph_id,
+                from_resource_graph_id=resource_graph_id,
             )
-            .values("graph_id", "nodegroup_id", "nodeid")
+            .values_list("from_resource_id", "from_resource_graph_id")
         )
 
-        node_by_graph = defaultdict(list)
+        for from_id, from_graph in forward_refs:
+            if from_graph:
+                result[str(from_graph)].add(str(from_id))
 
-        for node in all_ri_nodes:
-            node_by_graph[str(node["graph_id"])].append(
-                {
-                    "node_id": str(node["nodeid"]),
-                    "nodegroup_id": str(node["nodegroup_id"]),
-                }
+        reverse_refs = (
+            ResourceXResource.objects.filter(
+                from_resource_id__in=resource_id_list,
             )
-
-        # Check each graph's tiles for references to our resource IDs
-        for graph_id, nodes in node_by_graph.items():
-            nodegroup_id_set = {n["nodegroup_id"] for n in nodes}
-            node_id_set = {n["node_id"] for n in nodes}
-
-            tile_queryset = (
-                TileModel.objects.filter(
-                    nodegroup_id__in=nodegroup_id_set,
-                    resourceinstance__graph_id=graph_id,
-                )
-                .values("data", "resourceinstance_id")
-                .iterator(chunk_size=2000)
+            .exclude(
+                to_resource_graph_id=resource_graph_id,
             )
+            .values_list("to_resource_id", "to_resource_graph_id")
+        )
 
-            for tile in tile_queryset:
-                tiledata = tile.get("data") or {}
-                referencing_resource_id = str(tile.get("resourceinstance_id"))
-
-                for node_id in node_id_set:
-                    if node_id not in tiledata:
-                        continue
-
-                    node_value = NodeValue(raw=tiledata.get(node_id))
-                    referenced_ids = node_value.extract_resource_id()
-
-                    if referenced_ids & resource_id:
-                        result[graph_id].add(referencing_resource_id)
-                        break
+        for to_id, to_graph in reverse_refs:
+            if to_graph:
+                result[str(to_graph)].add(str(to_id))
 
         return dict(result)
 
@@ -1573,7 +1654,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         if not resource_id:
             return set()
 
-        # Same graph - resources are already the targets
         if source_graph_id == target_graph_id:
             return resource_id
 
@@ -1582,19 +1662,151 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                 resource_id, section, target_graph_id
             )
 
-        # First, try tile-based resource-instance links (more precise)
         tile_target_id = self._get_target_id_from_direct_tiles(
             resource_id, source_graph_id, target_graph_id
         )
 
-        # If we found results via tiles, return those
         if tile_target_id:
             return tile_target_id
 
-        # Fall back to ResourceXResource only if no tile-based links exist
+        tile_target_id = self._get_target_id_via_tile_bfs(
+            resource_id, source_graph_id, target_graph_id
+        )
+
+        if tile_target_id:
+            return tile_target_id
+
         rxr_target_id = self._get_related_via_rxr_bfs(resource_id, target_graph_id)
 
         return rxr_target_id
+
+    def _get_target_id_via_tile_bfs(
+        self,
+        source_resource_id: set[str],
+        source_graph_id: str,
+        target_graph_id: str,
+        max_hops: int = 3,
+    ) -> set[str]:
+        """
+        Find target resources connected via tile-based resource-instance links using BFS.
+        Traverses through intermediate graphs to find paths to the target graph.
+        """
+
+        if not source_resource_id:
+            return set()
+
+        if source_graph_id == target_graph_id:
+            return source_resource_id
+
+        visited_resource_id = set(source_resource_id)
+        current_frontier = source_resource_id
+        target_id = set()
+
+        all_graph_ids = list(
+            GraphModel.objects.filter(
+                is_active=True,
+                isresource=True,
+            )
+            .exclude(
+                pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID,
+            )
+            .values_list("graphid", flat=True)
+        )
+
+        for _ in range(max_hops):
+            if not current_frontier:
+                break
+
+            next_frontier = set()
+            frontier_list = list(current_frontier)
+
+            frontier_graph_ids = set(
+                str(gid)
+                for gid in ResourceInstance.objects.filter(
+                    resourceinstanceid__in=frontier_list,
+                )
+                .values_list("graph_id", flat=True)
+                .distinct()
+            )
+
+            for chunk in chunked_iterable(frontier_list, BATCH_SIZE):
+                tile_queryset = (
+                    TileModel.objects.filter(
+                        resourceinstance_id__in=chunk,
+                    )
+                    .values("data")
+                    .iterator(chunk_size=2000)
+                )
+
+                for tile in tile_queryset:
+                    tiledata = tile.get("data") or {}
+
+                    for value in tiledata.values():
+                        node_value = NodeValue(raw=value)
+                        referenced_ids = node_value.extract_resource_id()
+
+                        for ref_id in referenced_ids:
+                            if ref_id not in visited_resource_id:
+                                next_frontier.add(ref_id)
+
+            for frontier_graph_id in frontier_graph_ids:
+                for other_graph_id in all_graph_ids:
+                    other_graph_str = str(other_graph_id)
+
+                    link_nodes = LinkNodeCache.get_link_nodes(
+                        other_graph_str, frontier_graph_id
+                    )
+
+                    if not link_nodes:
+                        continue
+
+                    nodegroup_id_set = {info["nodegroup_id"] for info in link_nodes}
+                    node_id_set = {info["node_id"] for info in link_nodes}
+
+                    tile_queryset = (
+                        TileModel.objects.filter(
+                            nodegroup_id__in=nodegroup_id_set,
+                            resourceinstance__graph_id=other_graph_id,
+                        )
+                        .values("data", "resourceinstance_id")
+                        .iterator(chunk_size=2000)
+                    )
+
+                    for tile in tile_queryset:
+                        tiledata = tile.get("data") or {}
+                        tile_resource_id = str(tile.get("resourceinstance_id"))
+
+                        if tile_resource_id in visited_resource_id:
+                            continue
+
+                        for node_id in node_id_set:
+                            if node_id not in tiledata:
+                                continue
+
+                            node_value = NodeValue(raw=tiledata.get(node_id))
+                            referenced_ids = node_value.extract_resource_id()
+
+                            if referenced_ids & current_frontier:
+                                next_frontier.add(tile_resource_id)
+                                break
+
+            if not next_frontier:
+                break
+
+            next_frontier_list = list(next_frontier)
+
+            for chunk in chunked_iterable(next_frontier_list, BATCH_SIZE):
+                matching_targets = ResourceInstance.objects.filter(
+                    graph_id=target_graph_id,
+                    resourceinstanceid__in=chunk,
+                ).values_list("resourceinstanceid", flat=True)
+
+                target_id.update(str(rid) for rid in matching_targets)
+
+            visited_resource_id.update(next_frontier)
+            current_frontier = next_frontier - target_id
+
+        return target_id
 
     def _get_target_id_from_direct_tiles(
         self,
@@ -1621,9 +1833,14 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         if not forward_link_nodes and not reverse_link_nodes:
             return set()
 
-        target_id = set()
+        def process_forward_links() -> set[str]:
+            close_old_connections()
 
-        if forward_link_nodes:
+            result = set()
+
+            if not forward_link_nodes:
+                return result
+
             node_id_set = {info["node_id"] for info in forward_link_nodes}
             source_id_list = list(source_resource_id)
 
@@ -1644,9 +1861,18 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                             continue
 
                         node_value = NodeValue(raw=tiledata.get(node_id))
-                        target_id.update(node_value.extract_resource_id())
+                        result.update(node_value.extract_resource_id())
 
-        if reverse_link_nodes:
+            return result
+
+        def process_reverse_links() -> set[str]:
+            close_old_connections()
+
+            result = set()
+
+            if not reverse_link_nodes:
+                return result
+
             reverse_node_id_set = {info["node_id"] for info in reverse_link_nodes}
             reverse_nodegroup_id_set = {
                 info["nodegroup_id"] for info in reverse_link_nodes
@@ -1672,30 +1898,38 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                     node_value = NodeValue(raw=tiledata.get(node_id))
                     referenced_ids = node_value.extract_resource_id()
 
-                    # Target references one of our source resources
                     if referenced_ids & source_resource_id:
-                        target_id.add(target_resource_id)
+                        result.add(target_resource_id)
                         break
 
+            return result
+
+        target_id = set()
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = [
+                executor.submit(process_forward_links),
+                executor.submit(process_reverse_links),
+            ]
+
+            for future in as_completed(futures):
+                target_id.update(future.result())
+
+        if target_id:
+            verified_target_id = set()
+            target_id_list = list(target_id)
+
+            for chunk in chunked_iterable(target_id_list, BATCH_SIZE):
+                verified_ids = ResourceInstance.objects.filter(
+                    graph_id=target_graph_id,
+                    resourceinstanceid__in=chunk,
+                ).values_list("resourceinstanceid", flat=True)
+
+                verified_target_id.update(str(rid) for rid in verified_ids)
+
+            return verified_target_id
+
         return target_id
-
-    def _get_target_id_via_path(
-        self,
-        resource_id: set[str],
-        intermediary_graph_id: list[str],
-        target_graph_id: str,
-    ) -> set[str]:
-        """Traverse a path of intermediate graphs to reach the target graph."""
-
-        current_id = resource_id
-
-        for int_graph_id in intermediary_graph_id:
-            current_id = self._get_related_resource_id(current_id, int_graph_id)
-
-            if not current_id:
-                return set()
-
-        return self._get_related_resource_id(current_id, target_graph_id)
 
     def _get_target_resources_connected_to(
         self,
@@ -1712,76 +1946,292 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         if not target_resource_id or not linked_resource_id:
             return set()
 
-        connected_target_id = set()
-
         if not LinkNodeCache._initialized:
             LinkNodeCache._initialize()
 
-        # Find resources that reference the linked resources
         referencing_resources = self._get_resources_referencing(
             linked_resource_id, linked_graph_id
         )
 
-        # Check if any of those referencing resources also link to our targets
-        for (
-            referencing_graph_id,
-            referencing_resource_id,
-        ) in referencing_resources.items():
+        target_id_list = list(target_resource_id)
+        linked_id_list = list(linked_resource_id)
+
+        def process_referencing_graph(
+            referencing_graph_id: str,
+            referencing_resource_id: set[str],
+        ) -> set[str]:
+            close_old_connections()
+
+            result = set()
+
             link_nodes = LinkNodeCache.get_link_nodes(
                 referencing_graph_id, target_graph_id
             )
 
             if not link_nodes:
-                continue
+                return result
 
-            nodegroup_id = [info["nodegroup_id"] for info in link_nodes]
             node_id_set = {info["node_id"] for info in link_nodes}
-            referencing_id_list = list(referencing_resource_id)
 
-            for chunk in chunked_iterable(referencing_id_list, BATCH_SIZE):
-                tile_queryset = (
-                    TileModel.objects.filter(
-                        resourceinstance_id__in=chunk,
-                        nodegroup_id__in=nodegroup_id,
-                    )
-                    .values("data")
-                    .iterator(chunk_size=2000)
+            if len(referencing_resource_id) > len(target_resource_id) * 10:
+                target_refs_forward = set(
+                    ResourceXResource.objects.filter(
+                        to_resource_id__in=target_id_list,
+                        from_resource_id__in=list(referencing_resource_id),
+                    ).values_list("to_resource_id", flat=True)
                 )
 
-                for tile in tile_queryset:
-                    tiledata = tile.get("data") or {}
+                result.update(str(rid) for rid in target_refs_forward)
 
-                    for node_id in node_id_set:
-                        if node_id not in tiledata:
-                            continue
+                target_refs_reverse = set(
+                    ResourceXResource.objects.filter(
+                        from_resource_id__in=target_id_list,
+                        to_resource_id__in=list(referencing_resource_id),
+                    ).values_list("from_resource_id", flat=True)
+                )
 
-                        node_value = NodeValue(raw=tiledata.get(node_id))
-                        referenced_target_id = node_value.extract_resource_id()
+                result.update(str(rid) for rid in target_refs_reverse)
+            else:
+                nodegroup_id = [info["nodegroup_id"] for info in link_nodes]
+                referencing_id_list = list(referencing_resource_id)
 
-                        for ref_id in referenced_target_id:
-                            if ref_id in target_resource_id:
-                                connected_target_id.add(ref_id)
+                for chunk in chunked_iterable(referencing_id_list, BATCH_SIZE):
+                    tile_queryset = (
+                        TileModel.objects.filter(
+                            resourceinstance_id__in=chunk,
+                            nodegroup_id__in=nodegroup_id,
+                        )
+                        .values("data")
+                        .iterator(chunk_size=2000)
+                    )
 
-        # Also check ResourceXResource for direct connections
-        target_id_list = list(target_resource_id)
-        linked_id_list = list(linked_resource_id)
+                    for tile in tile_queryset:
+                        tiledata = tile.get("data") or {}
 
-        for target_chunk in chunked_iterable(target_id_list, BATCH_SIZE):
-            for linked_chunk in chunked_iterable(linked_id_list, BATCH_SIZE):
-                forward = ResourceXResource.objects.filter(
-                    from_resource_id__in=target_chunk,
-                    to_resource_id__in=linked_chunk,
-                ).values_list("from_resource_id", flat=True)
+                        for node_id in node_id_set:
+                            if node_id not in tiledata:
+                                continue
 
-                reverse = ResourceXResource.objects.filter(
-                    to_resource_id__in=target_chunk,
-                    from_resource_id__in=linked_chunk,
-                ).values_list("to_resource_id", flat=True)
+                            node_value = NodeValue(raw=tiledata.get(node_id))
+                            referenced_target_id = node_value.extract_resource_id()
 
-                connected_target_id.update(str(rid) for rid in forward)
-                connected_target_id.update(str(rid) for rid in reverse)
+                            for ref_id in referenced_target_id:
+                                if ref_id in target_resource_id:
+                                    result.add(ref_id)
+
+            return result
+
+        def process_rxr_forward() -> set[str]:
+            close_old_connections()
+
+            forward = ResourceXResource.objects.filter(
+                from_resource_id__in=target_id_list,
+                to_resource_id__in=linked_id_list,
+            ).values_list("from_resource_id", flat=True)
+
+            return {str(rid) for rid in forward}
+
+        def process_rxr_reverse() -> set[str]:
+            close_old_connections()
+
+            reverse = ResourceXResource.objects.filter(
+                to_resource_id__in=target_id_list,
+                from_resource_id__in=linked_id_list,
+            ).values_list("to_resource_id", flat=True)
+
+            return {str(rid) for rid in reverse}
+
+        connected_target_id = set()
+
+        with ThreadPoolExecutor(
+            max_workers=min(MAX_WORKERS, len(referencing_resources) + 2)
+        ) as executor:
+            futures = []
+
+            for ref_graph_id, ref_resource_id in referencing_resources.items():
+                futures.append(
+                    executor.submit(
+                        process_referencing_graph, ref_graph_id, ref_resource_id
+                    )
+                )
+
+            futures.append(executor.submit(process_rxr_forward))
+            futures.append(executor.submit(process_rxr_reverse))
+
+            for future in as_completed(futures):
+                connected_target_id.update(future.result())
 
         return connected_target_id
+
+    def _handle_intersection_mode_pagination(
+        self,
+        search_query_object: dict[str, Any],
+        response_object: dict[str, Any],
+        section_data_list: list[dict[str, Any]],
+        translate_mode: str,
+        strict_mode: bool,
+    ) -> None:
+        """Handle pagination for intersection mode."""
+
+        target_graph_id = self._get_graph_id(translate_mode)
+
+        if not target_graph_id:
+            return
+
+        if not LinkNodeCache._initialized:
+            LinkNodeCache._initialize()
+
+        cache_key = self._get_cache_key(self._query_data)
+        cached_id = cache.get(cache_key)
+
+        if cached_id is not None:
+            combined_target_id = set(cached_id)
+        else:
+            section_data_list = self._detect_section_linkage(section_data_list)
+
+            has_linked_section = any(
+                SectionFilter.from_dict(s).linked_section_index is not None
+                for s in section_data_list
+            )
+
+            if has_linked_section:
+                combined_target_id = (
+                    self._compute_combined_target_id_with_relational_filter(
+                        section_data_list,
+                        target_graph_id,
+                        strict_mode,
+                    )
+                )
+            else:
+                combined_target_id = self._compute_combined_target_id(
+                    section_data_list,
+                    target_graph_id,
+                    strict_mode,
+                )
+
+            cache.set(cache_key, list(combined_target_id), CACHE_TIMEOUT)
+
+        total_result = len(combined_target_id)
+
+        if total_result == 0:
+            self._update_response(response_object, [], 0, 1)
+            response_object["_cross_model_pagination_handled"] = True
+            return
+
+        page, per_page, start = self._get_pagination_param(total_result)
+        target_id_list = sorted(combined_target_id)
+
+        # Ensure start doesn't exceed the list bounds
+        if start >= total_result:
+            max_page = max(1, (total_result + per_page - 1) // per_page)
+            page = max_page
+            start = per_page * (page - 1)
+
+        paginated_id = target_id_list[start : start + per_page]
+
+        if not paginated_id and total_result > 0:
+            page = 1
+            start = 0
+            paginated_id = target_id_list[0:per_page]
+
+        se = SearchEngineFactory().create()
+        scroller = ElasticsearchScroller(se=se)
+
+        target_query = Bool()
+        target_query.filter(Terms(field="resourceinstanceid", terms=paginated_id))
+
+        target_hit = scroller.scroll_with_source(target_query.dsl)
+
+        self._normalize_hit_display_field(target_hit)
+        self._add_permission_property(target_hit)
+        self._update_response(response_object, target_hit, total_result, page)
+
+        target_filter = Bool()
+
+        target_filter.filter(
+            Terms(field="resourceinstanceid", terms=list(combined_target_id))
+        )
+
+        search_query_object["query"].dsl = {"query": target_filter.dsl}
+
+        response_object["_cross_model_pagination_handled"] = True
+
+    def _handle_raw_mode_pagination(
+        self,
+        search_query_object: dict[str, Any],
+        response_object: dict[str, Any],
+        section_data_list: list[dict[str, Any]],
+    ) -> None:
+        """Handle pagination for raw results mode."""
+
+        datatype_factory = DataTypeFactory()
+        se = SearchEngineFactory().create()
+        scroller = ElasticsearchScroller(se=se)
+
+        cross_model_query = Bool()
+
+        for section_data in section_data_list:
+            section = SectionFilter.from_dict(section_data)
+
+            if not section.graph_id:
+                continue
+
+            section_query = section.build_query(
+                datatype_factory, self._node_cache, self.request
+            )
+
+            if not bool_has_clause(section_query):
+                continue
+
+            graph_with_filter = Bool()
+            graph_with_filter.filter(Terms(field="graph_id", terms=[section.graph_id]))
+            graph_with_filter.must(section_query)
+
+            cross_model_query.should(graph_with_filter)
+
+        if not cross_model_query.dsl["bool"]["should"]:
+            return
+
+        cross_model_query.dsl["bool"]["minimum_should_match"] = 1
+
+        all_resource_id = scroller.scroll_id_only(cross_model_query.dsl)
+        total_result = len(all_resource_id)
+
+        if total_result == 0:
+            self._update_response(response_object, [], 0, 1)
+            response_object["_cross_model_pagination_handled"] = True
+            return
+
+        page, per_page, start = self._get_pagination_param(total_result)
+        resource_id_list = sorted(all_resource_id)
+
+        # Ensure start doesn't exceed the list bounds
+        if start >= total_result:
+            max_page = max(1, (total_result + per_page - 1) // per_page)
+            page = max_page
+            start = per_page * (page - 1)
+
+        paginated_id = resource_id_list[start : start + per_page]
+
+        if not paginated_id and total_result > 0:
+            page = 1
+            start = 0
+            paginated_id = resource_id_list[0:per_page]
+
+        target_query = Bool()
+        target_query.filter(Terms(field="resourceinstanceid", terms=paginated_id))
+
+        target_hit = scroller.scroll_with_source(target_query.dsl)
+
+        self._normalize_hit_display_field(target_hit)
+        self._add_permission_property(target_hit)
+        self._update_response(response_object, target_hit, total_result, page)
+
+        export_filter = Bool()
+        export_filter.must(cross_model_query)
+        search_query_object["query"].dsl = {"query": export_filter.dsl}
+
+        response_object["_cross_model_pagination_handled"] = True
 
     def _normalize_hit_display_field(self, hit_list: list[dict[str, Any]]) -> None:
         """
@@ -1860,8 +2310,16 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         section_data_list = raw_data.get("sections", [])
         translate_mode = raw_data.get("translate_mode", TranslateMode.NONE)
 
-        # Intersection mode is handled in post_search_hook instead
-        if not section_data_list or translate_mode != TranslateMode.NONE:
+        if not section_data_list:
+            return
+
+        # For both intersection mode and raw mode, we handle pagination ourselves
+        # to avoid ES 10k limit. Reset pagination here; post_search_hook will handle it.
+        search_query_object["query"].start = 0
+        search_query_object["query"].limit = 1
+
+        # Intersection mode is handled entirely in post_search_hook
+        if translate_mode != TranslateMode.NONE:
             return
 
         self._build_node_cache(section_data_list)
@@ -1902,8 +2360,7 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         **kwargs: Any,
     ) -> None:
         """
-        Handle intersection mode after the initial ES search.
-        Replaces the ES results with translated results from the target graph.
+        Handle pagination for both intersection mode and raw mode to avoid ES 10k limit.
         """
 
         raw_data = self._query_data
@@ -1915,86 +2372,25 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         strict_mode = raw_data.get("strict_mode", False)
         translate_mode = raw_data.get("translate_mode", TranslateMode.NONE)
 
-        if translate_mode == TranslateMode.NONE or not section_data_list:
-            return
-
-        target_graph_id = self._get_graph_id(translate_mode)
-
-        if not target_graph_id:
+        if not section_data_list:
             return
 
         self._build_node_cache(section_data_list)
 
-        if not LinkNodeCache._initialized:
-            LinkNodeCache._initialize()
-
-        # Check cache first to avoid recomputing expensive traversals
-        cache_key = self._get_cache_key(raw_data)
-        cached_id = cache.get(cache_key)
-
-        if cached_id is not None:
-            combined_target_id = set(cached_id)
-        else:
-            # Auto-detect relationships between sections
-            section_data_list = self._detect_section_linkage(section_data_list)
-
-            has_linked_section = any(
-                SectionFilter.from_dict(s).linked_section_index is not None
-                for s in section_data_list
+        if translate_mode == TranslateMode.NONE:
+            self._handle_raw_mode_pagination(
+                search_query_object,
+                response_object,
+                section_data_list,
             )
-
-            # Use different computation strategies based on section relationships
-            if has_linked_section:
-                combined_target_id = (
-                    self._compute_combined_target_id_with_relational_filter(
-                        section_data_list,
-                        target_graph_id,
-                        strict_mode,
-                    )
-                )
-            else:
-                combined_target_id = self._compute_combined_target_id(
-                    section_data_list,
-                    target_graph_id,
-                    strict_mode,
-                )
-
-            cache.set(cache_key, list(combined_target_id), CACHE_TIMEOUT)
-
-        total_result = len(combined_target_id)
-
-        if not combined_target_id:
-            self._update_response(response_object, [], 0, 1)
-            return
-
-        # Paginate the results
-        page, per_page, start = self._get_pagination_param(total_result)
-        target_id_list = sorted(combined_target_id)
-        paginated_id = target_id_list[start : start + per_page]
-
-        if not paginated_id:
-            self._update_response(response_object, [], total_result, 1)
-            return
-
-        # Fetch full documents for the current page
-        se = SearchEngineFactory().create()
-        scroller = ElasticsearchScroller(se=se)
-
-        target_query = Bool()
-        target_query.filter(Terms(field="resourceinstanceid", terms=paginated_id))
-
-        target_hit = scroller.scroll_with_source(target_query.dsl)
-
-        self._normalize_hit_display_field(target_hit)
-        self._add_permission_property(target_hit)
-        self._update_response(response_object, target_hit, total_result, page)
-
-        # Update the query object for export functionality
-        target_filter = Bool()
-        target_filter.filter(
-            Terms(field="resourceinstanceid", terms=list(combined_target_id))
-        )
-        search_query_object["query"].dsl = {"query": target_filter.dsl}
+        else:
+            self._handle_intersection_mode_pagination(
+                search_query_object,
+                response_object,
+                section_data_list,
+                translate_mode,
+                strict_mode,
+            )
 
     def view_data(self) -> dict[str, Any]:
         """Return data needed by the frontend search component."""
@@ -2032,7 +2428,9 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         # Sort graphs alphabetically by name
         sorted_graphs = sorted(
             resource_graph,
-            key=lambda g: (g.name.get("en", "") if isinstance(g.name, dict) else (g.name or "")).lower(),
+            key=lambda g: (
+                g.name.get("en", "") if isinstance(g.name, dict) else (g.name or "")
+            ).lower(),
         )
 
         return {

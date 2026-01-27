@@ -8,6 +8,7 @@
         gap: 16px;
         height: 100%;
         padding: 12px;
+        position: relative;
     }
 
     .cross-model-main {
@@ -162,14 +163,6 @@
 
     .cross-model-card-option.dragging {
         opacity: 0.4;
-    }
-
-    .cross-model-card-option-badge {
-        background: #e5e7eb;
-        border-radius: 4px;
-        color: #6b7280;
-        font-size: 10px;
-        padding: 2px 6px;
     }
 
     .cross-model-card-option-drag-hint {
@@ -652,7 +645,7 @@
         clear: both;
         display: flex;
         gap: 8px;
-        overflow: hidden;
+        overflow: visible;
     }
 
     .cross-model-filter-widget::after {
@@ -710,27 +703,6 @@
         color: #fff;
     }
 
-    .cross-model-intersect-badge {
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        padding: 12px 0;
-    }
-
-    .cross-model-intersect-badge span {
-        align-items: center;
-        background: #e9d5ff;
-        border: 1px solid #c084fc;
-        border-radius: 16px;
-        color: #7c3aed;
-        display: flex;
-        font-size: 11px;
-        font-weight: 600;
-        gap: 6px;
-        padding: 6px 14px;
-        text-transform: uppercase;
-    }
-
     .cross-model-add-group-btn {
         background: transparent;
         border: 2px dashed #d1d5db;
@@ -757,10 +729,61 @@
         border-style: solid;
         color: #2B4E6D;
     }
+
+    .cross-model-loading-overlay {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.9);
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: 100;
+    }
+
+    .cross-model-loading-spinner {
+        animation: cross-model-spin 1s linear infinite;
+        border: 4px solid #e5e7eb;
+        border-radius: 50%;
+        border-top-color: #2B4E6D;
+        height: 48px;
+        margin-bottom: 16px;
+        width: 48px;
+    }
+
+    @keyframes cross-model-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .cross-model-loading-text {
+        color: #374151;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+
+    .cross-model-loading-time {
+        color: #6b7280;
+        font-size: 13px;
+    }
 </style>
 
 <!--ko let: { self: $data }-->
 <div class="cross-model-container">
+
+    <!-- Loading Overlay -->
+    <!-- ko if: is_searching() -->
+    <div class="cross-model-loading-overlay">
+        <div class="cross-model-loading-spinner"></div>
+        <div class="cross-model-loading-text">{% trans "Searching..." %}</div>
+        <div class="cross-model-loading-time" data-bind="text: formatted_elapsed_time()"></div>
+    </div>
+    <!-- /ko -->
 
     <div class="cross-model-main">
 
