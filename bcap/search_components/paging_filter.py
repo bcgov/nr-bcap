@@ -2,6 +2,7 @@ from arches.app.models.system_settings import settings
 from arches.app.search.components.base import BaseSearchFilter
 from arches.app.utils.pagination import get_paginator
 
+
 details = {
     "searchcomponentid": "7aff5819-651c-4390-9b9a-a61221ba52c6",
     "name": "Paging",
@@ -19,10 +20,13 @@ class PagingFilter(BaseSearchFilter):
 
     def _get_param(self, name: str, default=None):
         value = self.request.GET.get(name)
+
         if value is None:
             value = self.request.POST.get(name)
+
         if value is None:
             return default
+
         return value
 
     def append_dsl(self, search_query_object, **kwargs):
@@ -37,17 +41,23 @@ class PagingFilter(BaseSearchFilter):
             limit = self._get_param("resourcecount")
         else:
             limit = settings.SEARCH_ITEMS_PER_PAGE
+
         limit = int(self._get_param("limit", limit))
         search_query_object["query"].start = limit * int(page - 1)
         search_query_object["query"].limit = limit
 
     def post_search_hook(self, search_query_object, response_object, **kwargs):
+        # Skip if another component has already handled pagination
+        if response_object.get("_cross_model_pagination_handled"):
+            return
+
         total = (
             response_object["results"]["hits"]["total"]["value"]
             if response_object["results"]["hits"]["total"]["value"]
             <= settings.SEARCH_RESULT_LIMIT
             else settings.SEARCH_RESULT_LIMIT
         )
+
         page_param = self._get_param(self.componentname, "1")
         page = 1 if page_param == "" else int(page_param)
 
@@ -58,6 +68,7 @@ class PagingFilter(BaseSearchFilter):
             page,
             settings.SEARCH_ITEMS_PER_PAGE,
         )
+
         page = paginator.page(page)
 
         ret = {}
@@ -75,4 +86,5 @@ class PagingFilter(BaseSearchFilter):
 
         if self.componentname not in response_object:
             response_object[self.componentname] = {}
+
         response_object[self.componentname]["paginator"] = ret
