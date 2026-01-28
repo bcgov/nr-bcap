@@ -97,6 +97,14 @@ ELASTICSEARCH_HOSTS = [
     }
 ]
 
+ELASTICSEARCH_INDEX_SETTINGS = {
+    "settings": {
+        "index": {
+            "max_terms_count": 150000
+        }
+    }
+}
+
 # Modify this line as needed for your project to connect to elasticsearch with a password that you generate
 # ELASTICSEARCH_CONNECTION_OPTIONS = {"request_timeout": 30, "verify_certs": False, "basic_auth": ("elastic", "E1asticSearchforArche5")}
 
