@@ -50,7 +50,7 @@ details = {
 }
 
 # Cache timeout in seconds for search results and relationship graphs
-BASE_CACHE_TIMEOUT = 0
+BASE_CACHE_TIMEOUT = 300
 
 # Number of resource IDs to process in a single database query to avoid memory issues
 BATCH_SIZE = 5000
@@ -1688,8 +1688,9 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         max_hops: int = 3,
     ) -> set[str]:
         """
-        Find target resources connected via tile-based resource-instance links using BFS.
-        Traverses through intermediate graphs to find paths to the target graph.
+        Find target resources connected via multi-hop relationships.
+        Uses RXR where available, falls back to tiles otherwise.
+        Traverses both forward and reverse directions.
         """
 
         if not source_resource_id:
@@ -1699,19 +1700,8 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             return source_resource_id
 
         visited_resource_id = set(source_resource_id)
-        current_frontier = source_resource_id
+        current_frontier = set(source_resource_id)
         target_id = set()
-
-        all_graph_ids = list(
-            GraphModel.objects.filter(
-                is_active=True,
-                isresource=True,
-            )
-            .exclude(
-                pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID,
-            )
-            .values_list("graphid", flat=True)
-        )
 
         for _ in range(max_hops):
             if not current_frontier:
@@ -1720,64 +1710,78 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             next_frontier = set()
             frontier_list = list(current_frontier)
 
+            for chunk in chunked_iterable(frontier_list, BATCH_SIZE):
+                forward_refs = ResourceXResource.objects.filter(
+                    from_resource_id__in=chunk,
+                ).values_list("to_resource_id", "to_resource_graph_id")
+
+                for to_id, to_graph in forward_refs:
+                    to_id_str = str(to_id)
+
+                    if to_id_str in visited_resource_id:
+                        continue
+
+                    if str(to_graph) == target_graph_id:
+                        target_id.add(to_id_str)
+                    else:
+                        next_frontier.add(to_id_str)
+
+                reverse_refs = ResourceXResource.objects.filter(
+                    to_resource_id__in=chunk,
+                ).values_list("from_resource_id", "from_resource_graph_id")
+
+                for from_id, from_graph in reverse_refs:
+                    from_id_str = str(from_id)
+
+                    if from_id_str in visited_resource_id:
+                        continue
+
+                    if str(from_graph) == target_graph_id:
+                        target_id.add(from_id_str)
+                    else:
+                        next_frontier.add(from_id_str)
+
             frontier_graph_ids = set(
                 str(gid)
                 for gid in ResourceInstance.objects.filter(
-                    resourceinstanceid__in=frontier_list,
+                    resourceinstanceid__in=frontier_list[:1000],
                 )
                 .values_list("graph_id", flat=True)
                 .distinct()
             )
 
-            for chunk in chunked_iterable(frontier_list, BATCH_SIZE):
-                tile_queryset = (
-                    TileModel.objects.filter(
-                        resourceinstance_id__in=chunk,
-                    )
-                    .values("data")
-                    .iterator(chunk_size=2000)
-                )
-
-                for tile in tile_queryset:
-                    tiledata = tile.get("data") or {}
-
-                    for value in tiledata.values():
-                        node_value = NodeValue(raw=value)
-                        referenced_ids = node_value.extract_resource_id()
-
-                        for ref_id in referenced_ids:
-                            if ref_id not in visited_resource_id:
-                                next_frontier.add(ref_id)
-
             for frontier_graph_id in frontier_graph_ids:
-                for other_graph_id in all_graph_ids:
-                    other_graph_str = str(other_graph_id)
+                rxr_forward_exists = ResourceXResource.objects.filter(
+                    from_resource_graph_id=frontier_graph_id,
+                ).exists()
 
-                    link_nodes = LinkNodeCache.get_link_nodes(
-                        other_graph_str, frontier_graph_id
-                    )
+                if rxr_forward_exists:
+                    continue
 
-                    if not link_nodes:
-                        continue
+                ri_nodes = LinkNodeCache.get_ri_nodes_for_graph(frontier_graph_id)
 
-                    nodegroup_id_set = {info["nodegroup_id"] for info in link_nodes}
-                    node_id_set = {info["node_id"] for info in link_nodes}
+                if not ri_nodes:
+                    continue
 
+                nodegroup_id_set = {info["nodegroup_id"] for info in ri_nodes}
+                node_id_set = {info["node_id"] for info in ri_nodes}
+
+                frontier_in_graph = [
+                    rid for rid in frontier_list if rid in current_frontier
+                ]
+
+                for chunk in chunked_iterable(frontier_in_graph, BATCH_SIZE):
                     tile_queryset = (
                         TileModel.objects.filter(
                             nodegroup_id__in=nodegroup_id_set,
-                            resourceinstance__graph_id=other_graph_id,
+                            resourceinstance_id__in=chunk,
                         )
-                        .values("data", "resourceinstance_id")
+                        .values("data")
                         .iterator(chunk_size=2000)
                     )
 
                     for tile in tile_queryset:
                         tiledata = tile.get("data") or {}
-                        tile_resource_id = str(tile.get("resourceinstance_id"))
-
-                        if tile_resource_id in visited_resource_id:
-                            continue
 
                         for node_id in node_id_set:
                             if node_id not in tiledata:
@@ -1786,9 +1790,11 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                             node_value = NodeValue(raw=tiledata.get(node_id))
                             referenced_ids = node_value.extract_resource_id()
 
-                            if referenced_ids & current_frontier:
-                                next_frontier.add(tile_resource_id)
-                                break
+                            for ref_id in referenced_ids:
+                                if ref_id in visited_resource_id:
+                                    continue
+
+                                next_frontier.add(ref_id)
 
             if not next_frontier:
                 break
@@ -1815,9 +1821,8 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         target_graph_id: str,
     ) -> set[str]:
         """
-        Find target resources linked via resource-instance nodes in tiles.
-        Checks both forward links (source tiles referencing targets) and
-        reverse links (target tiles referencing sources).
+        Find target resources directly linked via resource-instance nodes.
+        Tries RXR first, falls back to tiles if no RXR relationships exist.
         """
 
         if not source_resource_id:
@@ -1833,87 +1838,94 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         if not forward_link_nodes and not reverse_link_nodes:
             return set()
 
-        def process_forward_links() -> set[str]:
-            close_old_connections()
-
-            result = set()
-
-            if not forward_link_nodes:
-                return result
-
-            node_id_set = {info["node_id"] for info in forward_link_nodes}
-            source_id_list = list(source_resource_id)
-
-            for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
-                tile_queryset = (
-                    TileModel.objects.filter(
-                        resourceinstance_id__in=chunk,
-                    )
-                    .values("data")
-                    .iterator(chunk_size=2000)
-                )
-
-                for tile in tile_queryset:
-                    tiledata = tile.get("data") or {}
-
-                    for node_id in node_id_set:
-                        if node_id not in tiledata:
-                            continue
-
-                        node_value = NodeValue(raw=tiledata.get(node_id))
-                        result.update(node_value.extract_resource_id())
-
-            return result
-
-        def process_reverse_links() -> set[str]:
-            close_old_connections()
-
-            result = set()
-
-            if not reverse_link_nodes:
-                return result
-
-            reverse_node_id_set = {info["node_id"] for info in reverse_link_nodes}
-            reverse_nodegroup_id_set = {
-                info["nodegroup_id"] for info in reverse_link_nodes
-            }
-
-            tile_queryset = (
-                TileModel.objects.filter(
-                    nodegroup_id__in=reverse_nodegroup_id_set,
-                    resourceinstance__graph_id=target_graph_id,
-                )
-                .values("data", "resourceinstance_id")
-                .iterator(chunk_size=2000)
-            )
-
-            for tile in tile_queryset:
-                tiledata = tile.get("data") or {}
-                target_resource_id = str(tile.get("resourceinstance_id"))
-
-                for node_id in reverse_node_id_set:
-                    if node_id not in tiledata:
-                        continue
-
-                    node_value = NodeValue(raw=tiledata.get(node_id))
-                    referenced_ids = node_value.extract_resource_id()
-
-                    if referenced_ids & source_resource_id:
-                        result.add(target_resource_id)
-                        break
-
-            return result
-
         target_id = set()
+        source_id_list = list(source_resource_id)
 
-        with ThreadPoolExecutor(max_workers=2) as executor:
-            futures = [
-                executor.submit(process_forward_links),
-                executor.submit(process_reverse_links),
-            ]
+        rxr_has_forward = False
+        rxr_has_reverse = False
 
-            for future in as_completed(futures):
-                target_id.update(future.result())
+        if forward_link_nodes:
+            rxr_has_forward = ResourceXResource.objects.filter(
+                from_resource_graph_id=source_graph_id,
+                to_resource_graph_id=target_graph_id,
+            ).exists()
+
+        if reverse_link_nodes:
+            rxr_has_reverse = ResourceXResource.objects.filter(
+                to_resource_graph_id=source_graph_id,
+                from_resource_graph_id=target_graph_id,
+            ).exists()
+
+        if forward_link_nodes:
+            if rxr_has_forward:
+                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
+                    forward_targets = ResourceXResource.objects.filter(
+                        from_resource_id__in=chunk,
+                        to_resource_graph_id=target_graph_id,
+                    ).values_list("to_resource_id", flat=True)
+
+                    target_id.update(str(rid) for rid in forward_targets)
+            else:
+                nodegroup_id_set = {info["nodegroup_id"] for info in forward_link_nodes}
+                node_id_set = {info["node_id"] for info in forward_link_nodes}
+
+                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
+                    tile_queryset = (
+                        TileModel.objects.filter(
+                            nodegroup_id__in=nodegroup_id_set,
+                            resourceinstance_id__in=chunk,
+                        )
+                        .values("data")
+                        .iterator(chunk_size=2000)
+                    )
+
+                    for tile in tile_queryset:
+                        tiledata = tile.get("data") or {}
+
+                        for node_id in node_id_set:
+                            if node_id not in tiledata:
+                                continue
+
+                            node_value = NodeValue(raw=tiledata.get(node_id))
+                            target_id.update(node_value.extract_resource_id())
+
+        if reverse_link_nodes:
+            if rxr_has_reverse:
+                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
+                    reverse_targets = ResourceXResource.objects.filter(
+                        to_resource_id__in=chunk,
+                        from_resource_graph_id=target_graph_id,
+                    ).values_list("from_resource_id", flat=True)
+
+                    target_id.update(str(rid) for rid in reverse_targets)
+            else:
+                nodegroup_id_set = {info["nodegroup_id"] for info in reverse_link_nodes}
+                node_id_set = {info["node_id"] for info in reverse_link_nodes}
+
+                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
+                    tile_queryset = (
+                        TileModel.objects.filter(
+                            nodegroup_id__in=nodegroup_id_set,
+                            resourceinstance__graph_id=target_graph_id,
+                        )
+                        .values("data", "resourceinstance_id")
+                        .iterator(chunk_size=2000)
+                    )
+
+                    for tile in tile_queryset:
+                        tiledata = tile.get("data") or {}
+                        tile_resource_id = str(tile.get("resourceinstance_id"))
+
+                        for node_id in node_id_set:
+                            if node_id not in tiledata:
+                                continue
+
+                            node_value = NodeValue(raw=tiledata.get(node_id))
+                            referenced_ids = node_value.extract_resource_id()
+
+                            if referenced_ids & source_resource_id:
+                                target_id.add(tile_resource_id)
+                                break
 
         if target_id:
             verified_target_id = set()
