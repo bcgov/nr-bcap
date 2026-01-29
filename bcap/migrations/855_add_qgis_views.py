@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcap", "1100_show_etl_plugin_by_default"),
+        ("bcap", "1400_add_cross_model_advanced_search"),
     ]
 
     operations = [
