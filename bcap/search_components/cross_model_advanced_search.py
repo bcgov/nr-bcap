@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 import hashlib
-import logging
 import uuid
 
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import as_completed, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing_extensions import Any
 
 from django.core.cache import cache
 from django.db import close_old_connections
-from django.db.models import Subquery
+from django.db.models import Q
 
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.models.models import (
@@ -21,6 +20,7 @@ from arches.app.models.models import (
     DDataType,
     GraphModel,
     Node,
+    NodeGroup,
     ResourceInstance,
     ResourceXResource,
     TileModel,
@@ -31,10 +31,6 @@ from arches.app.search.elasticsearch_dsl_builder import Bool, Nested, Terms
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.utils.betterJSONSerializer import JSONDeserializer
-from arches.app.utils.pagination import get_paginator
-
-
-log = logging.getLogger(__name__)
 
 
 details = {
@@ -49,39 +45,26 @@ details = {
     "type": "cross-model-advanced-search-type",
 }
 
-# Cache timeout in seconds for search results and relationship graphs
-BASE_CACHE_TIMEOUT = 300
-
 # Number of resource IDs to process in a single database query to avoid memory issues
 BATCH_SIZE = 5000
 
-CACHE_TIMEOUT = BASE_CACHE_TIMEOUT
-LINK_NODES_CACHE_KEY = "cross_model_link_nodes_{source}_{target}"
-LINK_NODES_CACHE_TIMEOUT = BASE_CACHE_TIMEOUT
+# Cache timeout in seconds for search results and relationship graphs
+CACHE_TIMEOUT = 300
+
+# Number of tiles to process per database iteration
+CHUNK_SIZE = 5000
 
 # Elasticsearch has a hard limit of 10,000 results per request without scrolling
-MAX_ES_SIZE = 10000
+ES_LIMIT = 10000
 
 # Maximum number of worker threads for parallel processing
 MAX_WORKERS = 8
-
-RELATIONSHIP_GRAPH_CACHE_KEY = "cross_model_search_relationship_graph"
-RELATIONSHIP_GRAPH_CACHE_TIMEOUT = BASE_CACHE_TIMEOUT
-RESOURCE_INSTANCE_NODES_CACHE_KEY = "cross_model_ri_nodes_{graph_id}"
-RESOURCE_INSTANCE_NODES_CACHE_TIMEOUT = BASE_CACHE_TIMEOUT
 
 # How long Elasticsearch keeps the search context alive between scroll requests
 SCROLL_TIMEOUT = "2m"
 
 
-class FilterOperator(StrEnum):
-    NEQ = "neq"
-    NOT = "not"
-    NOT_EQ = "not_eq"
-    NOT_EQUAL = "!="
-
-
-class LogicalOperator(StrEnum):
+class Logic(StrEnum):
     AND = "and"
     OR = "or"
 
@@ -91,126 +74,22 @@ class MatchType(StrEnum):
     ANY = "any"
 
 
-class ResourceInstanceDataType(StrEnum):
-    RESOURCE_INSTANCE = "resource-instance"
-    RESOURCE_INSTANCE_LIST = "resource-instance-list"
-
-
 class TranslateMode(StrEnum):
     NONE = "none"
 
 
-def bool_has_clause(bool_query: Bool) -> bool:
-    dsl = bool_query.dsl["bool"]
+def chunk(items: list, size: int):
+    """Yield successive chunks of the given size from items."""
+
+    for idx in range(0, len(items), size):
+        yield items[idx : idx + size]
+
+
+def has_clause(query: Bool) -> bool:
+    """Check if a Bool query has any clauses (must, should, or must_not)."""
+
+    dsl = query.dsl["bool"]
     return bool(dsl.get("must") or dsl.get("should") or dsl.get("must_not"))
-
-
-def chunked_iterable(iterable: list, size: int):
-    for i in range(0, len(iterable), size):
-        yield iterable[i : i + size]
-
-
-@dataclass
-class FilterMatcher:
-    """
-    Handles matching tile data values against user-specified filter criteria.
-    Supports both positive matching (value equals X) and inverted matching (value not equals X).
-    Works with various data formats including concept URIs, list items, and primitive values.
-    """
-
-    inverted: bool = False
-    value_to_match: set[str] = field(default_factory=set)
-
-    def _check_positive_match(self, tile_value: Any) -> bool:
-        if isinstance(tile_value, list):
-            return any(self._matches_item(item) for item in tile_value)
-
-        if isinstance(tile_value, str):
-            return self._matches_string(tile_value)
-
-        return any(str(v) == str(tile_value) for v in self.value_to_match)
-
-    def _matches_dict_item(self, item: dict[str, Any]) -> bool:
-        # Tile data stores references in various formats depending on datatype
-        item_id = item.get("list_id") or item.get("id") or item.get("resourceId")
-        item_uri = item.get("uri")
-
-        for val in self.value_to_match:
-            if item_id and str(val) in str(item_id):
-                return True
-
-            if item_uri and str(val) in str(item_uri):
-                return True
-
-        for label in item.get("labels", []):
-            if isinstance(label, dict) and (list_item_id := label.get("list_item_id")):
-                if any(str(val) in str(list_item_id) for val in self.value_to_match):
-                    return True
-
-        return False
-
-    def _matches_item(self, item: Any) -> bool:
-        if isinstance(item, dict):
-            return self._matches_dict_item(item)
-
-        return self._matches_string(str(item))
-
-    def _matches_string(self, value: str) -> bool:
-        return any(str(v).lower() in value.lower() for v in self.value_to_match)
-
-    @classmethod
-    def from_filter_value(cls, filter_value: Any) -> "FilterMatcher":
-        if not isinstance(filter_value, dict):
-            return cls()
-
-        val = filter_value.get("val")
-        op = filter_value.get("op", "")
-
-        inverted = op in (
-            FilterOperator.NOT,
-            FilterOperator.NEQ,
-            FilterOperator.NOT_EQUAL,
-            FilterOperator.NOT_EQ,
-        )
-
-        if val is None:
-            return cls(inverted=inverted)
-
-        value_to_match = set()
-
-        # Filter values can come in various formats: direct values, concept URIs,
-        # or controlled list items with nested label structures
-        for item in (val if isinstance(val, list) else [val]):
-            if isinstance(item, dict):
-                if uri := item.get("uri"):
-                    value_to_match.add(uri)
-
-                # Controlled list items store their ID in labels[0].list_item_id
-                for label in item.get("labels", []):
-                    if isinstance(label, dict) and (
-                        list_item_id := label.get("list_item_id")
-                    ):
-                        value_to_match.add(list_item_id)
-                        break
-            else:
-                value_to_match.add(str(item))
-
-        return cls(inverted=inverted, value_to_match=value_to_match)
-
-    def matches(self, tile_value: Any) -> bool:
-        if not self.value_to_match:
-            return False
-
-        # Null tile values match only when using inverted (NOT) operators
-        if tile_value is None:
-            return self.inverted
-
-        positive_match = self._check_positive_match(tile_value)
-
-        if self.inverted:
-            return not positive_match
-
-        return positive_match
 
 
 @dataclass
@@ -219,24 +98,18 @@ class NodeValue:
 
     raw: Any
 
-    def _iter_item(self) -> list[Any]:
-        if self.raw is None:
-            return []
-
-        if isinstance(self.raw, list):
-            return self.raw
-
-        return [self.raw]
-
-    def extract_resource_id(self) -> set[str]:
+    def extract(self) -> set[str]:
         """
         Extract referenced resource instance IDs from resource-instance or
         resource-instance-list datatype values.
         """
 
         result = set()
+        items = (
+            self.raw if isinstance(self.raw, list) else [self.raw] if self.raw else []
+        )
 
-        for item in self._iter_item():
+        for item in items:
             if isinstance(item, dict) and "resourceId" in item:
                 result.add(item["resourceId"])
 
@@ -244,84 +117,100 @@ class NodeValue:
 
 
 @dataclass
-class PaginationResult:
-    current_page: int
-    end_index: int
-    has_next: bool
-    has_other_pages: bool
-    has_previous: bool
-    next_page_number: int | None
-    page_list: list[int]
-    previous_page_number: int | None
-    start_index: int
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "current_page": self.current_page,
-            "end_index": self.end_index,
-            "has_next": self.has_next,
-            "has_other_pages": self.has_other_pages,
-            "has_previous": self.has_previous,
-            "next_page_number": self.next_page_number,
-            "pages": self.page_list,
-            "previous_page_number": self.previous_page_number,
-            "start_index": self.start_index,
-        }
-
-
-@dataclass
 class CardFilter:
     """Represents filter criteria for a single card (nodegroup) in the search."""
 
-    node_filter: dict[str, Any] = field(default_factory=dict)
-    nodegroup_id: str | None = None
+    filters: dict[str, Any] = field(default_factory=dict)
+    nodegroup: str | None = None
 
-    def _is_valid_filter(self, filter_value: Any) -> bool:
-        if not filter_value:
+    def _build_resource_instance_query(
+        self, node_id: str, filter_value: Any
+    ) -> Bool | None:
+        """Build an ES query for resource-instance or resource-instance-list nodes."""
+
+        val = filter_value.get("val")
+
+        if not val:
+            return None
+
+        items = val if isinstance(val, list) else [val]
+        resource_ids = []
+
+        for item in items:
+            if isinstance(item, dict) and "resourceId" in item:
+                resource_ids.append(item["resourceId"])
+
+            if isinstance(item, str):
+                resource_ids.append(item)
+
+        if not resource_ids:
+            return None
+
+        query = Bool()
+
+        for rid in resource_ids:
+            query.should({"term": {f"tiles.data.{node_id}.resourceId.keyword": rid}})
+
+        if resource_ids:
+            query.dsl["bool"]["minimum_should_match"] = 1
+
+        return query
+
+    def _is_valid(self, value: Any) -> bool:
+        """Check if a filter value is valid (non-empty, allowing 0 and False)."""
+
+        if not value:
             return False
 
-        if isinstance(filter_value, dict):
-            val = filter_value.get("val", "")
-            # Allow explicit 0 or False values as valid filters
+        if isinstance(value, dict):
+            val = value.get("val", "")
             return bool(val) or val == 0 or val is False
 
         return True
 
-    def build_query(
-        self,
-        datatype_factory: DataTypeFactory,
-        node_cache: dict[str, Node],
-        request: Any,
+    def build(
+        self, factory: DataTypeFactory, nodes: dict[str, Node], request: Any
     ) -> Bool:
         """
         Build an Elasticsearch Bool query from the card's node filters.
         Delegates to each node's datatype to construct the appropriate query syntax.
         """
 
-        tile_query = Bool()
+        query = Bool()
 
-        for node_id, filter_value in self.node_filter.items():
-            if not self._is_valid_filter(filter_value):
+        for node_id, filter_value in self.filters.items():
+            if not self._is_valid(filter_value):
                 continue
 
-            node = node_cache.get(node_id)
+            node = nodes.get(node_id)
 
             if not node:
                 continue
 
-            datatype = datatype_factory.get_instance(node.datatype)
+            # Resource-instance nodes need special handling for ES queries
+            if node.datatype in ("resource-instance", "resource-instance-list"):
+                resource_query = self._build_resource_instance_query(
+                    node_id, filter_value
+                )
+
+                if resource_query and has_clause(resource_query):
+                    query.must(resource_query)
+
+                continue
 
             # Each datatype knows how to construct its own ES query filters
-            if hasattr(datatype, "append_search_filters"):
-                datatype.append_search_filters(filter_value, node, tile_query, request)
+            datatype = factory.get_instance(node.datatype)
 
-        return tile_query
+            if hasattr(datatype, "append_search_filters"):
+                datatype.append_search_filters(filter_value, node, query, request)
+
+        return query
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "CardFilter":
+    def create(cls, data: dict[str, Any]) -> "CardFilter":
         return cls(
-            node_filter=data.get("filters", {}),
-            nodegroup_id=data.get("nodegroup_id"),
+            filters=data.get("filters", {}),
+            nodegroup=data.get("nodegroup_id"),
         )
 
 
@@ -332,50 +221,45 @@ class GroupFilter:
     or OR (match any) logic.
     """
 
-    card_list: list[CardFilter] = field(default_factory=list)
+    cards: list[CardFilter] = field(default_factory=list)
     match_type: MatchType = MatchType.ALL
-    operator_after: LogicalOperator = LogicalOperator.AND
+    operator: Logic = Logic.AND
 
-    def build_query(
-        self,
-        datatype_factory: DataTypeFactory,
-        node_cache: dict[str, Node],
-        request: Any,
+    def build(
+        self, factory: DataTypeFactory, nodes: dict[str, Node], request: Any
     ) -> Bool:
-        group_query = Bool()
+        """Build an ES Bool query combining all card filters with the group's match logic."""
 
-        for card in self.card_list:
-            tile_query = card.build_query(datatype_factory, node_cache, request)
+        query = Bool()
 
-            if not bool_has_clause(tile_query):
+        for card in self.cards:
+            card_query = card.build(factory, nodes, request)
+
+            if not has_clause(card_query):
                 continue
 
             # Wrap tile queries in Nested because tiles are stored as nested documents
-            nested_query = Nested(path="tiles", query=tile_query)
+            nested = Nested(path="tiles", query=card_query)
 
             if self.match_type == MatchType.ANY:
-                group_query.should(nested_query)
+                query.should(nested)
             else:
-                group_query.must(nested_query)
+                query.must(nested)
 
-        if group_query.dsl["bool"]["should"]:
-            group_query.dsl["bool"]["minimum_should_match"] = 1
+        if query.dsl["bool"]["should"]:
+            query.dsl["bool"]["minimum_should_match"] = 1
 
-        return group_query
+        return query
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "GroupFilter":
-        match_value = data.get("match", MatchType.ALL)
-        operator_value = data.get("operator_after", LogicalOperator.AND)
+    def create(cls, data: dict[str, Any]) -> "GroupFilter":
+        match_val = data.get("match", MatchType.ALL)
+        op_val = data.get("operator_after", Logic.AND)
 
         return cls(
-            card_list=[CardFilter.from_dict(c) for c in data.get("cards", [])],
-            match_type=MatchType(match_value) if match_value else MatchType.ALL,
-            operator_after=(
-                LogicalOperator(operator_value)
-                if operator_value
-                else LogicalOperator.AND
-            ),
+            cards=[CardFilter.create(card) for card in data.get("cards", [])],
+            match_type=MatchType(match_val) if match_val else MatchType.ALL,
+            operator=Logic(op_val) if op_val else Logic.AND,
         )
 
 
@@ -386,200 +270,86 @@ class SectionFilter:
     Contains multiple groups that can be combined with AND/OR operators.
     """
 
-    graph_id: str | None = None
-    group_list: list[GroupFilter] = field(default_factory=list)
-    link_node_id: str | None = None
-    linked_section_index: int | None = None
+    graph: str | None = None
+    groups: list[GroupFilter] = field(default_factory=list)
 
-    def build_query(
-        self,
-        datatype_factory: DataTypeFactory,
-        node_cache: dict[str, Node],
-        request: Any,
+    def build(
+        self, factory: DataTypeFactory, nodes: dict[str, Node], request: Any
     ) -> Bool:
-        section_query = Bool()
-        valid_groups = []
+        """Build an ES Bool query combining all groups with their inter-group operators."""
 
-        for group in self.group_list:
-            group_query = group.build_query(datatype_factory, node_cache, request)
+        query = Bool()
+        valid = []
 
-            if bool_has_clause(group_query):
-                valid_groups.append((group, group_query))
+        for group in self.groups:
+            group_query = group.build(factory, nodes, request)
 
-        if not valid_groups:
-            return section_query
+            if has_clause(group_query):
+                valid.append((group, group_query))
 
-        if len(valid_groups) == 1:
-            _, group_query = valid_groups[0]
-            section_query.must(group_query)
-            return section_query
+        if not valid:
+            return query
 
-        operators = [group.operator_after for group, _ in valid_groups[:-1]]
-        all_and = all(op == LogicalOperator.AND for op in operators)
-        all_or = all(op == LogicalOperator.OR for op in operators)
+        if len(valid) == 1:
+            query.must(valid[0][1])
+            return query
+
+        ops = [grp.operator for grp, _ in valid[:-1]]
+        all_and = all(op == Logic.AND for op in ops)
+        all_or = all(op == Logic.OR for op in ops)
 
         if all_and:
-            for _, group_query in valid_groups:
-                section_query.must(group_query)
+            for _, group_query in valid:
+                query.must(group_query)
 
-            return section_query
+            return query
 
         if all_or:
-            for _, group_query in valid_groups:
-                section_query.should(group_query)
+            for _, group_query in valid:
+                query.should(group_query)
 
-            section_query.dsl["bool"]["minimum_should_match"] = 1
+            query.dsl["bool"]["minimum_should_match"] = 1
 
-            return section_query
+            return query
 
         # Mixed operators: group consecutive ANDs together, then OR the AND-groups
-        current_and_group = []
+        current_and = []
         or_groups = []
 
-        for idx, (group, group_query) in enumerate(valid_groups):
-            current_and_group.append(group_query)
+        for idx, (group, group_query) in enumerate(valid):
+            current_and.append(group_query)
 
-            if idx < len(valid_groups) - 1 and operators[idx] == LogicalOperator.OR:
-                or_groups.append(current_and_group)
-                current_and_group = []
+            if idx < len(valid) - 1 and ops[idx] == Logic.OR:
+                or_groups.append(current_and)
+                current_and = []
 
-        if current_and_group:
-            or_groups.append(current_and_group)
+        if current_and:
+            or_groups.append(current_and)
 
         for and_group in or_groups:
             if len(and_group) == 1:
-                section_query.should(and_group[0])
+                query.should(and_group[0])
             else:
                 and_query = Bool()
 
-                for q in and_group:
-                    and_query.must(q)
+                for grp_query in and_group:
+                    and_query.must(grp_query)
 
-                section_query.should(and_query)
+                query.should(and_query)
 
-        section_query.dsl["bool"]["minimum_should_match"] = 1
+        query.dsl["bool"]["minimum_should_match"] = 1
 
-        return section_query
-
-    def extract_node_filter(self) -> dict[str, Any]:
-        """Flatten all node filters from all cards in this section into a single dict."""
-
-        node_filter = {}
-
-        for group in self.group_list:
-            for card in group.card_list:
-                for node_id, filter_value in card.node_filter.items():
-                    if not filter_value:
-                        continue
-
-                    if isinstance(filter_value, dict):
-                        val = filter_value.get("val")
-
-                        if val or val == 0 or val is False:
-                            node_filter[node_id] = filter_value
-                    else:
-                        node_filter[node_id] = filter_value
-
-        return node_filter
-
-    def extract_nodegroup_id(self) -> list[str]:
-        return [
-            card.nodegroup_id
-            for group in self.group_list
-            for card in group.card_list
-            if card.nodegroup_id
-        ]
+        return query
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "SectionFilter":
+    def create(cls, data: dict[str, Any]) -> "SectionFilter":
         return cls(
-            graph_id=data.get("graph_id"),
-            group_list=[GroupFilter.from_dict(g) for g in data.get("groups", [])],
-            link_node_id=data.get("link_node_id"),
-            linked_section_index=data.get("linked_section_index"),
+            graph=data.get("graph_id"),
+            groups=[GroupFilter.create(grp) for grp in data.get("groups", [])],
         )
 
 
-@dataclass
-class ElasticsearchScroller:
-    """
-    Handles scrolling through large Elasticsearch result sets that exceed the 10k limit.
-    Uses the scroll API to maintain a consistent view of the index during iteration.
-    """
-
-    se: Any
-    scroll_timeout: str = SCROLL_TIMEOUT
-    size: int = MAX_ES_SIZE
-
-    def _clear_scroll(self, scroll_id: str | None) -> None:
-        """Release the scroll context to free resources."""
-
-        if not scroll_id:
-            return
-
-        try:
-            self.se.es.clear_scroll(scroll_id=scroll_id)
-        except Exception:
-            pass
-
-    def scroll_id_only(self, query: dict[str, Any]) -> set[str]:
-        """Scroll through results returning only document IDs."""
-
-        resource_id = set()
-
-        result = self.se.search(
-            index=RESOURCES_INDEX,
-            query=query,
-            scroll=self.scroll_timeout,
-            size=self.size,
-            _source=False,
-        )
-
-        scroll_id = result.get("_scroll_id")
-
-        for hit in result.get("hits", {}).get("hits", []):
-            resource_id.add(hit["_id"])
-
-        while result.get("hits", {}).get("hits", []):
-            result = self.se.es.scroll(scroll_id=scroll_id, scroll=self.scroll_timeout)
-            scroll_id = result.get("_scroll_id")
-
-            for hit in result.get("hits", {}).get("hits", []):
-                resource_id.add(hit["_id"])
-
-        self._clear_scroll(scroll_id)
-
-        return resource_id
-
-    def scroll_with_source(
-        self, query: dict[str, Any], source_field: list[str] | None = None
-    ) -> list[dict[str, Any]]:
-        """Scroll through results returning full documents or specified fields."""
-
-        all_hit = []
-
-        result = self.se.search(
-            _source=source_field if source_field else True,
-            index=RESOURCES_INDEX,
-            query=query,
-            scroll=self.scroll_timeout,
-            size=self.size,
-        )
-
-        scroll_id = result.get("_scroll_id")
-        all_hit.extend(result.get("hits", {}).get("hits", []))
-
-        while result.get("hits", {}).get("hits", []):
-            result = self.se.es.scroll(scroll_id=scroll_id, scroll=self.scroll_timeout)
-            scroll_id = result.get("_scroll_id")
-            all_hit.extend(result.get("hits", {}).get("hits", []))
-
-        self._clear_scroll(scroll_id)
-
-        return all_hit
-
-
-class LinkNodeCache:
+class LinkCache:
     """
     Singleton cache for resource-instance node configurations across all graphs.
 
@@ -593,126 +363,1131 @@ class LinkNodeCache:
     """
 
     _cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
-    _graph_ri_nodes: dict[str, list[dict[str, Any]]] = {}
-    _initialized: bool = False
-    _unconstrained_nodes: dict[str, list[dict[str, Any]]] = {}
+    _child_nodegroups: set[str] = set()
+    _constrained_cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    _graph_nodes: dict[str, list[dict[str, Any]]] = {}
+    _ready: bool = False
+    _unconstrained: dict[str, list[dict[str, Any]]] = {}
 
     @classmethod
-    def _extract_graph_id_from_config(cls, config: dict[str, Any]) -> list[str]:
+    def _extract_target(cls, config: dict[str, Any]) -> list[str]:
         """
         Extract target graph IDs from a resource-instance node's config.
         Handles both legacy format (graphid) and new format (graphs array).
         """
 
-        graph_id = []
+        result = []
 
         if "graphid" in config:
-            graphid_val = config.get("graphid")
+            val = config.get("graphid")
 
-            if graphid_val:
-                if isinstance(graphid_val, list):
-                    graph_id.extend(graphid_val)
+            if val:
+                if isinstance(val, list):
+                    result.extend(val)
                 else:
-                    graph_id.append(graphid_val)
+                    result.append(val)
 
         if "graphs" in config:
-            for g in config.get("graphs", []):
-                if isinstance(g, dict) and g.get("graphid"):
-                    graph_id.append(g["graphid"])
+            for graph in config.get("graphs", []):
+                if isinstance(graph, dict) and graph.get("graphid"):
+                    result.append(graph["graphid"])
 
-        return [str(g) for g in graph_id]
+        return [str(gid) for gid in result]
 
     @classmethod
-    def _initialize(cls) -> None:
+    def _init(cls) -> None:
         """Load all resource-instance nodes from the database and categorize them."""
 
-        node_queryset = Node.objects.filter(
-            datatype__in=[
-                ResourceInstanceDataType.RESOURCE_INSTANCE,
-                ResourceInstanceDataType.RESOURCE_INSTANCE_LIST,
-            ],
+        nodes = Node.objects.filter(
+            datatype__in=["resource-instance", "resource-instance-list"],
         ).values("config", "graph_id", "nodegroup_id", "nodeid")
 
-        for node in node_queryset:
+        for node in nodes:
             graph_id = str(node["graph_id"])
-            target_graph_ids = cls._extract_graph_id_from_config(node["config"] or {})
+            targets = cls._extract_target(node["config"] or {})
 
-            node_info = {
-                "node_id": str(node["nodeid"]),
-                "nodegroup_id": str(node["nodegroup_id"]),
-                "target_graph_ids": set(target_graph_ids),
+            info = {
+                "node": str(node["nodeid"]),
+                "nodegroup": str(node["nodegroup_id"]),
+                "targets": set(targets),
             }
 
-            if graph_id not in cls._graph_ri_nodes:
-                cls._graph_ri_nodes[graph_id] = []
+            if graph_id not in cls._graph_nodes:
+                cls._graph_nodes[graph_id] = []
 
-            if target_graph_ids:
-                cls._graph_ri_nodes[graph_id].append(node_info)
+            if targets:
+                cls._graph_nodes[graph_id].append(info)
             else:
                 # Nodes without target constraints can reference any graph
-                if graph_id not in cls._unconstrained_nodes:
-                    cls._unconstrained_nodes[graph_id] = []
+                if graph_id not in cls._unconstrained:
+                    cls._unconstrained[graph_id] = []
 
-                cls._unconstrained_nodes[graph_id].append(node_info)
+                cls._unconstrained[graph_id].append(info)
 
-        cls._initialized = True
+        # Track child nodegroups for correlated filtering
+        cls._child_nodegroups = set(
+            str(ng.nodegroupid)
+            for ng in NodeGroup.objects.filter(parentnodegroup__isnull=False).only(
+                "nodegroupid"
+            )
+        )
+
+        cls._ready = True
 
     @classmethod
     def clear(cls) -> None:
+        """Clear all cached data."""
+
         cls._cache.clear()
-        cls._graph_ri_nodes.clear()
-        cls._initialized = False
-        cls._unconstrained_nodes.clear()
+        cls._child_nodegroups.clear()
+        cls._constrained_cache.clear()
+        cls._graph_nodes.clear()
+        cls._ready = False
+        cls._unconstrained.clear()
 
     @classmethod
-    def get_link_nodes(
-        cls, source_graph_id: str, target_graph_id: str
-    ) -> list[dict[str, Any]]:
+    def get(cls, source: str, target: str) -> list[dict[str, Any]]:
         """
         Get all nodes in source_graph that can reference resources in target_graph.
         Returns both explicitly constrained nodes and unconstrained nodes.
         """
 
-        if not cls._initialized:
-            cls._initialize()
+        if not cls._ready:
+            cls._init()
 
-        cache_key = (source_graph_id, target_graph_id)
+        key = (source, target)
 
-        if cache_key in cls._cache:
-            return cls._cache[cache_key]
+        if key in cls._cache:
+            return cls._cache[key]
 
         result = []
-        source_nodes = cls._graph_ri_nodes.get(source_graph_id, [])
 
-        for node_info in source_nodes:
-            if target_graph_id in node_info["target_graph_ids"]:
-                result.append(
-                    {
-                        "node_id": node_info["node_id"],
-                        "nodegroup_id": node_info["nodegroup_id"],
-                    }
-                )
+        for info in cls._graph_nodes.get(source, []):
+            if target in info["targets"]:
+                result.append({"node": info["node"], "nodegroup": info["nodegroup"]})
 
         # Unconstrained nodes can link to any graph
-        unconstrained = cls._unconstrained_nodes.get(source_graph_id, [])
+        for info in cls._unconstrained.get(source, []):
+            result.append({"node": info["node"], "nodegroup": info["nodegroup"]})
 
-        for node_info in unconstrained:
-            result.append(
-                {
-                    "node_id": node_info["node_id"],
-                    "nodegroup_id": node_info["nodegroup_id"],
-                }
-            )
-
-        cls._cache[cache_key] = result
+        cls._cache[key] = result
         return result
 
     @classmethod
-    def get_ri_nodes_for_graph(cls, graph_id: str) -> list[dict[str, Any]]:
-        if not cls._initialized:
-            cls._initialize()
+    def get_constrained(cls, source: str, target: str) -> list[dict[str, Any]]:
+        """Get only explicitly constrained nodes (excludes unconstrained nodes)."""
 
-        return cls._graph_ri_nodes.get(graph_id, [])
+        if not cls._ready:
+            cls._init()
+
+        key = (source, target)
+
+        if key in cls._constrained_cache:
+            return cls._constrained_cache[key]
+
+        result = []
+
+        for info in cls._graph_nodes.get(source, []):
+            if target in info["targets"]:
+                result.append({"node": info["node"], "nodegroup": info["nodegroup"]})
+
+        cls._constrained_cache[key] = result
+        return result
+
+    @classmethod
+    def is_child_nodegroup(cls, nodegroup_id: str) -> bool:
+        """Check if a nodegroup is a child (nested) nodegroup."""
+
+        if not cls._ready:
+            cls._init()
+
+        return nodegroup_id in cls._child_nodegroups
+
+
+class Scroller:
+    """
+    Handles scrolling through large Elasticsearch result sets that exceed the 10k limit.
+    Uses composite aggregations for efficient ID-only queries.
+    """
+
+    def __init__(self, engine: Any) -> None:
+        self.engine = engine
+
+    def _clear(self, scroll_id: str | None) -> None:
+        """Release the scroll context to free resources."""
+
+        if not scroll_id:
+            return
+
+        try:
+            self.engine.es.clear_scroll(scroll_id=scroll_id)
+        except Exception:
+            pass
+
+    def hits(
+        self, query: dict[str, Any], source: list[str] | None = None
+    ) -> list[dict[str, Any]]:
+        """Scroll through results returning full documents or specified fields."""
+
+        result = []
+
+        response = self.engine.search(
+            _source=source if source else True,
+            index=RESOURCES_INDEX,
+            query=query,
+            scroll=SCROLL_TIMEOUT,
+            size=ES_LIMIT,
+        )
+
+        scroll_id = response.get("_scroll_id")
+        result.extend(response.get("hits", {}).get("hits", []))
+
+        while response.get("hits", {}).get("hits", []):
+            response = self.engine.es.scroll(scroll_id=scroll_id, scroll=SCROLL_TIMEOUT)
+            scroll_id = response.get("_scroll_id")
+            result.extend(response.get("hits", {}).get("hits", []))
+
+        self._clear(scroll_id)
+
+        return result
+
+    def ids(self, query: dict[str, Any]) -> set[str]:
+        """Scroll through results returning only document IDs using composite aggregations."""
+
+        result = set()
+
+        # First get the count to determine strategy
+        count_response = self.engine.search(
+            index=RESOURCES_INDEX,
+            query=query,
+            size=0,
+            track_total_hits=True,
+        )
+        total = count_response.get("hits", {}).get("total", {}).get("value", 0)
+
+        if total == 0:
+            return result
+
+        # For small result sets, use a simple query
+        if total <= 10000:
+            response = self.engine.search(
+                index=RESOURCES_INDEX,
+                query=query,
+                size=total,
+                _source=False,
+            )
+
+            for hit in response.get("hits", {}).get("hits", []):
+                result.add(hit["_id"])
+
+            return result
+
+        # For large result sets, use composite aggregations (more efficient than scroll)
+        after_key = None
+
+        while True:
+            aggs = {
+                "ids": {
+                    "composite": {
+                        "size": 10000,
+                        "sources": [
+                            {"rid": {"terms": {"field": "resourceinstanceid"}}}
+                        ],
+                    }
+                }
+            }
+
+            if after_key:
+                aggs["ids"]["composite"]["after"] = after_key
+
+            response = self.engine.search(
+                index=RESOURCES_INDEX,
+                query=query,
+                size=0,
+                aggs=aggs,
+            )
+
+            buckets = response.get("aggregations", {}).get("ids", {}).get("buckets", [])
+
+            if not buckets:
+                break
+
+            for bucket in buckets:
+                result.add(bucket["key"]["rid"])
+
+            after_key = response.get("aggregations", {}).get("ids", {}).get("after_key")
+
+            if not after_key:
+                break
+
+        return result
+
+
+class Linker:
+    """
+    Handles finding connections between resources across different graphs.
+    Uses both ResourceXResource relationships and tile-based resource-instance links.
+    """
+
+    def _find_forward_via_tiles(
+        self,
+        sources: list[str],
+        source_graph: str,
+        target_graph: str,
+    ) -> set[str]:
+        """Find target resources by scanning tiles for resource-instance references."""
+
+        forward_links = LinkCache.get(source_graph, target_graph)
+
+        if not forward_links:
+            return set()
+
+        nodegroups = {info["nodegroup"] for info in forward_links}
+        nodes = {info["node"] for info in forward_links}
+        result = set()
+
+        for batch in chunk(sources, BATCH_SIZE):
+            tiles = (
+                TileModel.objects.filter(
+                    nodegroup_id__in=nodegroups,
+                    resourceinstance_id__in=batch,
+                )
+                .values("data")
+                .iterator(chunk_size=CHUNK_SIZE)
+            )
+
+            for tile in tiles:
+                data = tile.get("data") or {}
+
+                for node_id in nodes:
+                    if node_id not in data:
+                        continue
+
+                    result.update(NodeValue(raw=data.get(node_id)).extract())
+
+        return result
+
+    def _find_reverse_via_tiles(
+        self,
+        sources: list[str],
+        nodes: set[str],
+        nodegroups: set[str],
+        graph: str,
+    ) -> set[str]:
+        """Find resources in target graph that reference the source resources."""
+
+        if not sources or not nodes or not nodegroups:
+            return set()
+
+        # For small source sets, use Django Q objects for efficient querying
+        if len(sources) <= 100:
+            result = set()
+            query = Q()
+
+            for source_id in sources:
+                for node_id in nodes:
+                    query |= Q(
+                        **{f"data__{node_id}__contains": [{"resourceId": source_id}]}
+                    )
+
+            if query:
+                tiles = (
+                    TileModel.objects.filter(
+                        query,
+                        nodegroup_id__in=nodegroups,
+                        resourceinstance__graph_id=graph,
+                    )
+                    .values_list("resourceinstance_id", flat=True)
+                    .distinct()
+                )
+
+                result.update(str(rid) for rid in tiles)
+
+            return result
+
+        # For larger sets, scan all tiles and filter in Python
+        source_set = set(sources)
+        result = set()
+
+        tiles = (
+            TileModel.objects.filter(
+                nodegroup_id__in=nodegroups,
+                resourceinstance__graph_id=graph,
+            )
+            .values("data", "resourceinstance_id")
+            .iterator(chunk_size=CHUNK_SIZE)
+        )
+
+        for tile in tiles:
+            data = tile.get("data") or {}
+            resource_id = str(tile.get("resourceinstance_id"))
+
+            for node_id in nodes:
+                if node_id not in data:
+                    continue
+
+                refs = NodeValue(raw=data.get(node_id)).extract()
+
+                if refs & source_set:
+                    result.add(resource_id)
+                    break
+
+        return result
+
+    def _tile_matches_filters(
+        self, data: dict[str, Any], tile_filters: dict[str, Any]
+    ) -> bool:
+        """Check if tile data matches all specified filter criteria."""
+
+        for node_id, filter_value in tile_filters.items():
+            if node_id not in data:
+                return False
+
+            tile_value = data.get(node_id)
+            op = filter_value.get("op", "eq")
+            val = filter_value.get("val")
+
+            if not self._value_matches(tile_value, val, op):
+                return False
+
+        return True
+
+    def _value_matches(self, tile_value: Any, filter_val: Any, op: str) -> bool:
+        """Check if a tile value matches a filter value with the given operator."""
+
+        if tile_value is None:
+            return False
+
+        # Handle concept/controlled list comparisons via URI
+        if isinstance(filter_val, list):
+            filter_uris = set()
+
+            for item in filter_val:
+                if isinstance(item, dict) and "uri" in item:
+                    filter_uris.add(item["uri"])
+
+            tile_uris = set()
+
+            if isinstance(tile_value, list):
+                for item in tile_value:
+                    if isinstance(item, dict) and "uri" in item:
+                        tile_uris.add(item["uri"])
+            elif isinstance(tile_value, dict) and "uri" in tile_value:
+                tile_uris.add(tile_value["uri"])
+
+            if op == "eq":
+                return bool(filter_uris & tile_uris)
+
+            if op in ("neq", "!eq"):
+                return not bool(filter_uris & tile_uris)
+
+        # Simple value comparisons
+        if op == "eq":
+            return tile_value == filter_val
+
+        if op in ("neq", "!eq"):
+            return tile_value != filter_val
+
+        if op == "gt":
+            return tile_value > filter_val
+
+        if op == "gte":
+            return tile_value >= filter_val
+
+        if op == "lt":
+            return tile_value < filter_val
+
+        if op == "lte":
+            return tile_value <= filter_val
+
+        return False
+
+    def get_connected(self, sources: set[str]) -> set[str]:
+        """Get all resources connected to source resources via ResourceXResource."""
+
+        if not sources:
+            return set()
+
+        result = set()
+        source_list = list(sources)
+
+        for batch in chunk(source_list, BATCH_SIZE):
+            forward = ResourceXResource.objects.filter(
+                from_resource_id__in=batch,
+            ).values_list("to_resource_id", flat=True)
+
+            result.update(str(rid) for rid in forward)
+
+            reverse = ResourceXResource.objects.filter(
+                to_resource_id__in=batch,
+            ).values_list("from_resource_id", flat=True)
+
+            result.update(str(rid) for rid in reverse)
+
+        return result
+
+    def get_intermediate(
+        self, sources: set[str], source_graph: str, target_graph: str
+    ) -> set[str]:
+        """
+        Find target graph resources connected to source resources.
+        Tries RXR first, falls back to tiles if no RXR relationships exist.
+        """
+
+        if not sources:
+            return set()
+
+        if source_graph == target_graph:
+            return sources
+
+        result = set()
+        source_list = list(sources)
+
+        # Try ResourceXResource first (forward direction)
+        for batch in chunk(source_list, BATCH_SIZE):
+            rxr = ResourceXResource.objects.filter(
+                from_resource_id__in=batch,
+                to_resource_graph_id=target_graph,
+            ).values_list("to_resource_id", flat=True)
+
+            result.update(str(rid) for rid in rxr)
+
+        # Try ResourceXResource (reverse direction)
+        for batch in chunk(source_list, BATCH_SIZE):
+            rxr = ResourceXResource.objects.filter(
+                to_resource_id__in=batch,
+                from_resource_graph_id=target_graph,
+            ).values_list("from_resource_id", flat=True)
+
+            result.update(str(rid) for rid in rxr)
+
+        # Fall back to tile-based links if RXR didn't find anything
+        if not result:
+            forward_links = LinkCache.get(source_graph, target_graph)
+
+            if forward_links:
+                result.update(
+                    self._find_forward_via_tiles(
+                        source_list, source_graph, target_graph
+                    )
+                )
+
+            reverse_links = LinkCache.get(target_graph, source_graph)
+
+            if reverse_links:
+                nodegroups = {info["nodegroup"] for info in reverse_links}
+                nodes = {info["node"] for info in reverse_links}
+                result.update(
+                    self._find_reverse_via_tiles(
+                        source_list, nodes, nodegroups, target_graph
+                    )
+                )
+
+        # Verify results actually exist in target graph
+        if result:
+            verified = set()
+
+            for batch in chunk(list(result), BATCH_SIZE):
+                ids = ResourceInstance.objects.filter(
+                    graph_id=target_graph,
+                    resourceinstanceid__in=batch,
+                ).values_list("resourceinstanceid", flat=True)
+
+                verified.update(str(rid) for rid in ids)
+
+            return verified
+
+        return result
+
+    def get_linked_from_tiles(
+        self,
+        source_ids: set[str],
+        source_graph: str,
+        target_graph: str,
+        nodegroup_ids: set[str],
+        tile_filters: dict[str, Any] | None = None,
+    ) -> dict[str, set[str]]:
+        """
+        Get a mapping of source resources to their linked target resources.
+        Optionally filters tiles that must match additional criteria.
+        Used for correlated filtering where the link and filter are on the same tile.
+        """
+
+        result = defaultdict(set)
+
+        forward_links = LinkCache.get(source_graph, target_graph)
+
+        if not forward_links:
+            return result
+
+        link_nodes = {info["node"] for info in forward_links}
+        nodegroups = {info["nodegroup"] for info in forward_links} & nodegroup_ids
+
+        if not nodegroups:
+            return result
+
+        source_list = list(source_ids)
+
+        for batch in chunk(source_list, BATCH_SIZE):
+            tiles = (
+                TileModel.objects.filter(
+                    nodegroup_id__in=nodegroups,
+                    resourceinstance_id__in=batch,
+                )
+                .values("data", "resourceinstance_id")
+                .iterator(chunk_size=CHUNK_SIZE)
+            )
+
+            for tile in tiles:
+                data = tile.get("data") or {}
+                source_id = str(tile.get("resourceinstance_id"))
+
+                # Apply additional tile filters if specified
+                if tile_filters and not self._tile_matches_filters(data, tile_filters):
+                    continue
+
+                for node_id in link_nodes:
+                    if node_id not in data:
+                        continue
+
+                    linked = NodeValue(raw=data.get(node_id)).extract()
+                    result[source_id].update(linked)
+
+        return result
+
+
+class Translator:
+    """
+    Handles translating results from source graphs to a target graph.
+    Supports multi-hop traversal through intermediate graphs.
+    """
+
+    def __init__(self, linker: Linker) -> None:
+        self.linker = linker
+
+    def translate(
+        self,
+        sources: set[str],
+        source_graph: str,
+        target_graph: str,
+        adjacency: dict[str, list[str]],
+        es_matches: dict[str, set[str]],
+    ) -> set[str]:
+        """
+        Translate source resources to target graph resources.
+        Tries direct links first, then multi-hop traversal through intermediate graphs.
+        """
+
+        if source_graph == target_graph:
+            return sources
+
+        # Try direct translation first
+        result = self.linker.get_intermediate(sources, source_graph, target_graph)
+
+        if result:
+            return result
+
+        # Try multi-hop through intermediate graphs
+        for intermediate_graph in adjacency.keys():
+            if intermediate_graph in (source_graph, target_graph):
+                continue
+
+            # Check if we can reach intermediate from source and target from intermediate
+            can_reach_intermediate = intermediate_graph in adjacency.get(
+                source_graph, []
+            ) or source_graph in adjacency.get(intermediate_graph, [])
+            can_reach_target = target_graph in adjacency.get(
+                intermediate_graph, []
+            ) or intermediate_graph in adjacency.get(target_graph, [])
+
+            if not (can_reach_intermediate and can_reach_target):
+                continue
+
+            intermediate_resources = self.linker.get_intermediate(
+                sources, source_graph, intermediate_graph
+            )
+
+            if not intermediate_resources:
+                continue
+
+            # Apply ES filters to intermediate if available
+            if intermediate_graph in es_matches:
+                intermediate_resources &= es_matches[intermediate_graph]
+
+                if not intermediate_resources:
+                    continue
+
+            target_resources = self.linker.get_intermediate(
+                intermediate_resources, intermediate_graph, target_graph
+            )
+
+            result.update(target_resources)
+
+        if result:
+            return result
+
+        # Last resort: find any connected resources and filter by ES matches
+        connected = self.linker.get_connected(sources)
+
+        if not connected:
+            return result
+
+        for graph_id, matches in es_matches.items():
+            if graph_id in (source_graph, target_graph):
+                continue
+
+            filtered = connected & matches
+
+            if filtered:
+                target_resources = self.linker.get_intermediate(
+                    filtered, graph_id, target_graph
+                )
+                result.update(target_resources)
+
+        return result
+
+
+class Intersector:
+    """
+    Computes the intersection of target resources from multiple filter sections.
+    Handles correlated filtering where filters on different graphs must match
+    through the same linking tile.
+    """
+
+    def __init__(
+        self,
+        factory: DataTypeFactory,
+        linker: Linker,
+        nodes: dict[str, Node],
+        request: Any,
+        scroller: Scroller,
+    ) -> None:
+        self._factory = factory
+        self._linker = linker
+        self._nodes = nodes
+        self._request = request
+        self._scroller = scroller
+        self._translator = Translator(linker)
+
+    def _apply_correlated_filtering(
+        self,
+        es_matches: dict[str, set[str]],
+        section_lookup: dict[str, SectionFilter],
+        operation: str,
+    ) -> dict[str, set[str]] | None:
+        """
+        Apply correlated filtering between sections.
+        Ensures that linked resources match through the same tile that passes filters.
+        """
+
+        correlated_pairs = []
+
+        for source_graph, source_section in section_lookup.items():
+            for other_graph in es_matches.keys():
+                if source_graph == other_graph:
+                    continue
+
+                linking_nodegroups = self._find_correlated_nodegroups(
+                    source_graph, other_graph, source_section
+                )
+
+                if linking_nodegroups:
+                    correlated_pairs.append(
+                        (source_graph, other_graph, linking_nodegroups)
+                    )
+
+        for source_graph, linked_graph, linking_nodegroups in correlated_pairs:
+            source_matches = es_matches[source_graph]
+            linked_matches = es_matches[linked_graph]
+            source_section = section_lookup.get(source_graph)
+
+            all_linked = set()
+            linked_map_combined = defaultdict(set)
+
+            for nodegroup_id in linking_nodegroups:
+                nodegroup_filters = self._get_filters_for_nodegroups(
+                    source_section, {nodegroup_id}
+                )
+
+                linked_map = self._linker.get_linked_from_tiles(
+                    source_matches,
+                    source_graph,
+                    linked_graph,
+                    {nodegroup_id},
+                    nodegroup_filters if nodegroup_filters else None,
+                )
+
+                for source_id, linked_ids in linked_map.items():
+                    linked_map_combined[source_id].update(linked_ids)
+                    all_linked.update(linked_ids)
+
+            correlated_linked = all_linked & linked_matches
+
+            if not correlated_linked:
+                if operation == "intersect":
+                    return None
+
+                continue
+
+            # Keep only source resources that link to matching linked resources
+            filtered_sources = {
+                source_id
+                for source_id, linked_ids in linked_map_combined.items()
+                if linked_ids & correlated_linked
+            }
+
+            es_matches[source_graph] = filtered_sources
+            es_matches[linked_graph] = correlated_linked
+
+        return es_matches
+
+    def _build_adjacency(
+        self, sections: list[SectionFilter], target_graph: str
+    ) -> dict[str, list[str]]:
+        """
+        Build an adjacency map of graph connections for translation.
+        Includes intermediate graphs that connect multiple filtered graphs.
+        """
+
+        filtered_graphs = {section.graph for section in sections if section.graph}
+        filtered_graphs.add(target_graph)
+
+        all_graphs = set(
+            str(g.graphid)
+            for g in GraphModel.objects.filter(isresource=True, is_active=True)
+            .exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
+            .only("graphid")
+        )
+
+        # Find intermediate graphs that connect multiple filtered graphs
+        intermediate_graphs = set()
+
+        for candidate in all_graphs:
+            if candidate in filtered_graphs:
+                continue
+
+            connections_to_filtered = 0
+
+            for filtered_graph in filtered_graphs:
+                if LinkCache.get(candidate, filtered_graph) or LinkCache.get(
+                    filtered_graph, candidate
+                ):
+                    connections_to_filtered += 1
+
+            for filtered_graph in filtered_graphs:
+                has_rxr = (
+                    ResourceXResource.objects.filter(
+                        from_resource_graph_id=candidate,
+                        to_resource_graph_id=filtered_graph,
+                    ).exists()
+                    or ResourceXResource.objects.filter(
+                        from_resource_graph_id=filtered_graph,
+                        to_resource_graph_id=candidate,
+                    ).exists()
+                )
+
+                if has_rxr:
+                    connections_to_filtered += 1
+
+            # Include if connects to 2+ filtered graphs
+            if connections_to_filtered >= 2:
+                intermediate_graphs.add(candidate)
+
+        graphs = filtered_graphs | intermediate_graphs
+        adjacency = {graph: [] for graph in graphs}
+
+        # Build adjacency from link cache
+        for source in graphs:
+            for dest in graphs:
+                if source != dest and LinkCache.get(source, dest):
+                    adjacency[source].append(dest)
+
+        # Add RXR-based adjacency
+        graph_list = list(graphs)
+
+        rxr_links = (
+            ResourceXResource.objects.filter(
+                from_resource_graph_id__in=graph_list,
+                to_resource_graph_id__in=graph_list,
+            )
+            .values("from_resource_graph_id", "to_resource_graph_id")
+            .distinct()
+        )
+
+        for link in rxr_links:
+            source = str(link["from_resource_graph_id"])
+            dest = str(link["to_resource_graph_id"])
+
+            if source in adjacency and dest not in adjacency[source]:
+                adjacency[source].append(dest)
+
+        return adjacency
+
+    def _execute_section(self, section: SectionFilter) -> set[str]:
+        """Run the ES query for a section and return all matching resource IDs."""
+
+        if not section.graph:
+            return set()
+
+        query = section.build(self._factory, self._nodes, self._request)
+
+        if not has_clause(query):
+            return set()
+
+        full_query = Bool()
+        full_query.filter(Terms(field="graph_id", terms=[section.graph]))
+        full_query.must(query)
+
+        return self._scroller.ids(full_query.dsl)
+
+    def _find_correlated_nodegroups(
+        self,
+        source_graph: str,
+        target_graph: str,
+        source_section: SectionFilter,
+    ) -> set[str]:
+        """
+        Find nodegroups that have both a link to target graph AND contextual filters.
+        These require correlated filtering to ensure filters apply to the linking tile.
+        """
+
+        links = LinkCache.get_constrained(source_graph, target_graph)
+
+        if not links:
+            return set()
+
+        # Only consider child nodegroups (nested tiles)
+        link_nodegroups = {
+            info["nodegroup"]
+            for info in links
+            if LinkCache.is_child_nodegroup(info["nodegroup"])
+        }
+
+        if not link_nodegroups:
+            return set()
+
+        valid_nodegroups = set()
+
+        for group in source_section.groups:
+            for card in group.cards:
+                if not card.nodegroup or card.nodegroup not in link_nodegroups:
+                    continue
+
+                has_contextual_filter = False
+
+                for node_id, filter_value in card.filters.items():
+                    if not filter_value or not filter_value.get("val"):
+                        continue
+
+                    node = self._nodes.get(node_id)
+
+                    # Non-resource-instance filters are contextual
+                    if not node or node.datatype not in (
+                        "resource-instance",
+                        "resource-instance-list",
+                    ):
+                        has_contextual_filter = True
+                        break
+
+                if has_contextual_filter:
+                    valid_nodegroups.add(card.nodegroup)
+
+        return valid_nodegroups
+
+    def _get_filters_for_nodegroups(
+        self,
+        section: SectionFilter,
+        nodegroups: set[str],
+    ) -> dict[str, Any]:
+        """Extract all filter values for the specified nodegroups."""
+
+        filters = {}
+
+        for group in section.groups:
+            for card in group.cards:
+                if card.nodegroup not in nodegroups:
+                    continue
+
+                for node_id, filter_value in card.filters.items():
+                    if filter_value and filter_value.get("val"):
+                        filters[node_id] = filter_value
+
+        return filters
+
+    def _has_correlated_pairs(
+        self,
+        graphs_with_filters: set[str],
+        section_lookup: dict[str, SectionFilter],
+    ) -> bool:
+        """Check if any pair of graphs requires correlated filtering."""
+
+        for source_graph in graphs_with_filters:
+            source_section = section_lookup.get(source_graph)
+
+            if not source_section:
+                continue
+
+            for other_graph in graphs_with_filters:
+                if source_graph != other_graph:
+                    if self._find_correlated_nodegroups(
+                        source_graph, other_graph, source_section
+                    ):
+                        return True
+
+        return False
+
+    def _run_es_queries(
+        self, by_graph: dict[str, list[SectionFilter]]
+    ) -> dict[str, set[str]]:
+        """Run ES queries for all graphs in parallel."""
+
+        es_matches = {}
+
+        with ThreadPoolExecutor(max_workers=min(len(by_graph), MAX_WORKERS)) as pool:
+            futures = {}
+
+            for graph, graph_sections in by_graph.items():
+                futures[pool.submit(self._run_graph_queries, graph_sections)] = graph
+
+            for future in as_completed(futures):
+                graph = futures[future]
+                es_matches[graph] = future.result()
+
+        return es_matches
+
+    def _run_graph_queries(self, sections: list[SectionFilter]) -> set[str]:
+        """Run ES queries for all sections of a single graph and intersect results."""
+
+        combined = None
+
+        for section in sections:
+            matches = self._execute_section(section)
+
+            if not matches:
+                return set()
+
+            combined = matches if combined is None else combined & matches
+
+        return combined or set()
+
+    def _translate_graph(
+        self,
+        source_graph: str,
+        matches: set[str],
+        target_graph: str,
+        adjacency: dict[str, list[str]],
+        es_matches: dict[str, set[str]],
+    ) -> set[str]:
+        """Translate a single graph's matches to the target graph (thread-safe)."""
+
+        close_old_connections()
+
+        return self._translator.translate(
+            matches, source_graph, target_graph, adjacency, es_matches
+        )
+
+    def _translate_to_target(
+        self,
+        es_matches: dict[str, set[str]],
+        target_graph: str,
+        adjacency: dict[str, list[str]],
+        operation: str,
+    ) -> set[str]:
+        """Translate all ES matches to the target graph and combine with operation."""
+
+        if target_graph in es_matches:
+            result = es_matches[target_graph]
+        else:
+            result = None if operation == "intersect" else set()
+
+        graphs_to_translate = [
+            (source_graph, matches)
+            for source_graph, matches in es_matches.items()
+            if source_graph != target_graph
+        ]
+
+        if not graphs_to_translate:
+            return result or set()
+
+        with ThreadPoolExecutor(
+            max_workers=min(len(graphs_to_translate), MAX_WORKERS)
+        ) as pool:
+            futures = {
+                pool.submit(
+                    self._translate_graph,
+                    source_graph,
+                    matches,
+                    target_graph,
+                    adjacency,
+                    es_matches,
+                ): source_graph
+                for source_graph, matches in graphs_to_translate
+            }
+
+            for future in as_completed(futures):
+                translated = future.result()
+
+                if operation == "intersect":
+                    if not translated:
+                        return set()
+
+                    result = translated if result is None else result & translated
+                else:
+                    result.update(translated)
+
+        return result or set()
+
+    def compute(
+        self,
+        section_data: list[dict[str, Any]],
+        target_graph: str,
+        operation: str = "intersect",
+    ) -> set[str]:
+        """
+        Compute the intersection/union of target resources from all sections.
+        Each section produces a set of target resources; the final result
+        is combined based on the operation.
+        """
+
+        sections = [SectionFilter.create(data) for data in section_data]
+
+        if not sections:
+            return set()
+
+        # Group sections by graph
+        by_graph = defaultdict(list)
+        section_lookup = {}
+
+        for section in sections:
+            if section.graph:
+                by_graph[section.graph].append(section)
+                section_lookup[section.graph] = section
+
+        # Run ES queries for all graphs in parallel
+        es_matches = self._run_es_queries(by_graph)
+
+        # Early exit if any graph has no matches (for intersect)
+        if any(not matches for matches in es_matches.values()):
+            return set()
+
+        # Apply correlated filtering if needed
+        if len(es_matches) > 1 and self._has_correlated_pairs(
+            set(es_matches.keys()), section_lookup
+        ):
+            es_matches = self._apply_correlated_filtering(
+                es_matches, section_lookup, operation
+            )
+
+            if es_matches is None or any(
+                not matches for matches in es_matches.values()
+            ):
+                return set()
+
+        # Build graph adjacency for translation
+        adjacency = self._build_adjacency(sections, target_graph)
+
+        # Translate all results to target graph
+        return self._translate_to_target(es_matches, target_graph, adjacency, operation)
 
 
 class CrossModelAdvancedSearch(BaseSearchFilter):
@@ -730,619 +1505,71 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
     1. Running ES queries to find matching resources in each source model
     2. Traversing ResourceXResource relationships and tile-based resource-instance
        links to find connected resources in the target model
-    3. Computing the intersection of target resources across all source filters
+    3. Computing the intersection/union of target resources across all source filters
     """
 
-    _node_cache: dict[str, Node] = {}
-    _query_data = None
+    _data = None
+    _nodes: dict[str, Node] = {}
+    _target_ids: set[str] | None = None
 
-    def _add_permission_property(self, hit_list: list[dict[str, Any]]) -> None:
-        """Add permission flags to each hit based on the current user's access rights."""
-
-        user = self.request.user
-
-        resource_ids = [
-            hit.get("_id") or hit.get("_source", {}).get("resourceinstanceid")
-            for hit in hit_list
-        ]
-
-        resource_ids = [rid for rid in resource_ids if rid]
-
-        perm_cache = {}
-
-        for rid in resource_ids:
-            perm_cache[rid] = {
-                "can_edit": user.has_perm("change_resourceinstance", rid),
-                "can_read": user.has_perm("view_resourceinstance", rid),
-            }
-
-        for hit in hit_list:
-            resource_id = hit.get("_id") or hit.get("_source", {}).get(
-                "resourceinstanceid"
-            )
-
-            if not resource_id or resource_id not in perm_cache:
-                hit["can_edit"] = False
-                hit["can_read"] = False
-                hit["is_principal"] = False
-
-                continue
-
-            perms = perm_cache[resource_id]
-            hit["can_edit"] = perms["can_edit"]
-            hit["can_read"] = perms["can_read"]
-            hit["is_principal"] = perms["can_read"]
-
-    def _apply_linked_section_filter(
-        self,
-        primary_section: SectionFilter,
-        linked_section: SectionFilter,
-        primary_resource_id: set[str],
-    ) -> set[str]:
-        """
-        Filter primary resources by checking if their linked resources match
-        the linked section's criteria.
-
-        This handles cases where sections from different models are related via
-        resource-instance nodes (e.g., Site Visit -> Archaeological Site).
-        """
-
-        if not primary_resource_id:
-            return set()
-
-        linked_graph_id = linked_section.graph_id
-
-        if not linked_graph_id:
-            return primary_resource_id
-
-        link_node_info = LinkNodeCache.get_link_nodes(
-            primary_section.graph_id, linked_graph_id
-        )
-
-        if not link_node_info:
-            return primary_resource_id
-
-        linked_node_filter = linked_section.extract_node_filter()
-
-        if not linked_node_filter:
-            return primary_resource_id
-
-        primary_nodegroup_id = [info["nodegroup_id"] for info in link_node_info]
-        link_node_id_set = {info["node_id"] for info in link_node_info}
-
-        primary_id_list = list(primary_resource_id)
-        chunks = list(chunked_iterable(primary_id_list, BATCH_SIZE))
-
-        def process_primary_chunk(chunk: list[str]) -> dict[str, set[str]]:
-            close_old_connections()
-
-            chunk_mapping = defaultdict(set)
-
-            tile_queryset = (
-                TileModel.objects.filter(
-                    resourceinstance_id__in=chunk,
-                    nodegroup_id__in=primary_nodegroup_id,
-                )
-                .values("data", "resourceinstance_id")
-                .iterator(chunk_size=2000)
-            )
-
-            for tile in tile_queryset:
-                tiledata = tile.get("data") or {}
-                primary_id = str(tile.get("resourceinstance_id"))
-
-                for node_id in link_node_id_set:
-                    if node_id not in tiledata:
-                        continue
-
-                    node_value = NodeValue(raw=tiledata.get(node_id))
-                    linked_ids = node_value.extract_resource_id()
-
-                    if linked_ids:
-                        chunk_mapping[primary_id].update(linked_ids)
-
-            return dict(chunk_mapping)
-
-        # Build a mapping of primary resources to their linked resources
-        primary_to_linked_mapping = defaultdict(set)
-
-        with ThreadPoolExecutor(max_workers=min(MAX_WORKERS, len(chunks))) as executor:
-            futures = [
-                executor.submit(process_primary_chunk, chunk) for chunk in chunks
-            ]
-
-            for future in as_completed(futures):
-                chunk_result = future.result()
-
-                for primary_id, linked_ids in chunk_result.items():
-                    primary_to_linked_mapping[primary_id].update(linked_ids)
-
-        if not primary_to_linked_mapping:
-            return set()
-
-        all_linked_id = set()
-
-        for linked_ids in primary_to_linked_mapping.values():
-            all_linked_id.update(linked_ids)
-
-        # Check which linked resources match the filter criteria
-        linked_nodegroup_id = linked_section.extract_nodegroup_id()
-        all_linked_id_list = list(all_linked_id)
-        linked_chunks = list(chunked_iterable(all_linked_id_list, BATCH_SIZE))
-
-        def process_linked_chunk(chunk: list[str]) -> set[str]:
-            close_old_connections()
-
-            matching = set()
-
-            linked_tile_queryset = (
-                TileModel.objects.filter(
-                    resourceinstance_id__in=chunk,
-                    nodegroup_id__in=linked_nodegroup_id,
-                )
-                .values("data", "resourceinstance_id")
-                .iterator(chunk_size=2000)
-            )
-
-            for tile in linked_tile_queryset:
-                tiledata = tile.get("data") or {}
-                linked_id = str(tile.get("resourceinstance_id"))
-
-                if self._tile_matches_node_filter(tiledata, linked_node_filter):
-                    matching.add(linked_id)
-
-            return matching
-
-        matching_linked_id = set()
-
-        with ThreadPoolExecutor(
-            max_workers=min(MAX_WORKERS, len(linked_chunks))
-        ) as executor:
-            futures = [
-                executor.submit(process_linked_chunk, chunk) for chunk in linked_chunks
-            ]
-
-            for future in as_completed(futures):
-                matching_linked_id.update(future.result())
-
-        # Return only primary resources that link to matching linked resources
-        result = set()
-
-        for primary_id, linked_ids in primary_to_linked_mapping.items():
-            if linked_ids & matching_linked_id:
-                result.add(primary_id)
-
-        return result
-
-    def _build_node_cache(self, section_data_list: list[dict[str, Any]]) -> None:
+    def _build_cache(self, sections: list[dict[str, Any]]) -> None:
         """Preload all nodes referenced in filters to avoid repeated database queries."""
 
         node_ids = set()
 
-        for section_data in section_data_list:
-            for group_data in section_data.get("groups", []):
-                for card_data in group_data.get("cards", []):
-                    node_ids.update(card_data.get("filters", {}).keys())
+        for section in sections:
+            for group in section.get("groups", []):
+                for card in group.get("cards", []):
+                    node_ids.update(card.get("filters", {}).keys())
 
         if not node_ids:
             return
 
-        nodes = Node.objects.filter(pk__in=node_ids).select_related("nodegroup")
-
-        for node in nodes:
-            self._node_cache[str(node.nodeid)] = node
-
-    def _compute_combined_target_id(
-        self,
-        section_data_list: list[dict[str, Any]],
-        target_graph_id: str,
-        strict_mode: bool,
-    ) -> set[str]:
-        """
-        Compute the intersection of target resources from all sections.
-        Each section produces a set of target resources; the final result
-        is the intersection of all these sets.
-        """
-
-        datatype_factory = DataTypeFactory()
-        se = SearchEngineFactory().create()
-        scroller = ElasticsearchScroller(se=se)
-
-        section_list = [SectionFilter.from_dict(s) for s in section_data_list]
-
-        # Group sections by graph to handle multiple sections from the same model
-        section_by_graph = defaultdict(list)
-
-        for idx, section in enumerate(section_list):
-            if section.graph_id:
-                section_by_graph[section.graph_id].append((idx, section))
-
-        def process_graph_sections(
-            graph_id: str,
-            sections: list[tuple[int, SectionFilter]],
-        ) -> set[str] | None:
-            close_old_connections()
-
-            primary_idx, primary_section = sections[0]
-
-            resource_id = self._get_resource_id_for_section(
-                primary_section, datatype_factory, scroller
-            )
-
-            if not resource_id:
-                return None
-
-            # Apply linked section filters if any
-            for linked_idx, linked_section in sections[1:]:
-                if linked_section.linked_section_index == primary_idx:
-                    resource_id = self._apply_linked_section_filter(
-                        primary_section,
-                        linked_section,
-                        resource_id,
-                    )
-
-            target_id = self._get_target_id_for_resource(
-                resource_id,
-                graph_id,
-                target_graph_id,
-                section=primary_section,
-                strict_mode=strict_mode,
-            )
-
-            return target_id
-
-        combined_target_id = None
-        graph_items = list(section_by_graph.items())
-
-        with ThreadPoolExecutor(
-            max_workers=min(MAX_WORKERS, len(graph_items))
-        ) as executor:
-            future_to_graph = {
-                executor.submit(process_graph_sections, graph_id, sections): graph_id
-                for graph_id, sections in graph_items
-            }
-
-            for future in as_completed(future_to_graph):
-                target_id = future.result()
-
-                # Intersection: all sections must contribute matching targets
-                if target_id is None:
-                    return set()
-
-                if combined_target_id is None:
-                    combined_target_id = target_id
-                else:
-                    combined_target_id &= target_id
-
-        processed_graph_id = set(section_by_graph.keys())
-
-        remaining_sections = [
-            SectionFilter.from_dict(s)
-            for s in section_data_list
-            if SectionFilter.from_dict(s).graph_id not in processed_graph_id
-            and SectionFilter.from_dict(s).linked_section_index is None
-        ]
-
-        if remaining_sections:
-
-            def process_remaining_section(section: SectionFilter) -> set[str] | None:
-                close_old_connections()
-
-                resource_id = self._get_resource_id_for_section(
-                    section, datatype_factory, scroller
-                )
-
-                if not resource_id:
-                    return None
-
-                return self._get_target_id_for_resource(
-                    resource_id,
-                    section.graph_id,
-                    target_graph_id,
-                    section=section,
-                    strict_mode=strict_mode,
-                )
-
-            with ThreadPoolExecutor(
-                max_workers=min(MAX_WORKERS, len(remaining_sections))
-            ) as executor:
-                future_to_section = {
-                    executor.submit(process_remaining_section, section): section
-                    for section in remaining_sections
-                }
-
-                for future in as_completed(future_to_section):
-                    target_id = future.result()
-
-                    if target_id is None:
-                        return set()
-
-                    if combined_target_id is None:
-                        combined_target_id = target_id
-                    else:
-                        combined_target_id &= target_id
-
-        return combined_target_id or set()
-
-    def _compute_combined_target_id_with_relational_filter(
-        self,
-        section_data_list: list[dict[str, Any]],
-        target_graph_id: str,
-        strict_mode: bool,
-    ) -> set[str]:
-        """
-        Compute target IDs while respecting relational constraints between sections.
-        Handles sections that are linked via resource-instance nodes.
-        """
-
-        datatype_factory = DataTypeFactory()
-        se = SearchEngineFactory().create()
-        scroller = ElasticsearchScroller(se=se)
-
-        section_list = [SectionFilter.from_dict(s) for s in section_data_list]
-
-        # Separate primary sections from those linked to other sections
-        primary_section_list = []
-        linked_section_map = defaultdict(list)
-
-        for idx, section in enumerate(section_list):
-            if section.linked_section_index is not None:
-                linked_section_map[section.linked_section_index].append(section)
-            else:
-                primary_section_list.append((idx, section))
-
-        combined_target_id = None
-
-        for idx, primary_section in primary_section_list:
-            resource_id = self._get_resource_id_for_section(
-                primary_section, datatype_factory, scroller
-            )
-
-            if not resource_id:
-                return set()
-
-            # Apply all filters from sections linked to this primary section
-            if idx in linked_section_map:
-                for linked_section in linked_section_map[idx]:
-                    resource_id = self._apply_linked_section_filter(
-                        primary_section,
-                        linked_section,
-                        resource_id,
-                    )
-
-                    if not resource_id:
-                        return set()
-
-            target_id = self._get_target_id_for_resource(
-                resource_id,
-                primary_section.graph_id,
-                target_graph_id,
-                section=primary_section,
-                strict_mode=strict_mode,
-            )
-
-            if combined_target_id is None:
-                combined_target_id = target_id
-            else:
-                combined_target_id &= target_id
-
-        # Handle linked sections that filter the target graph directly
-        for idx, section in enumerate(section_list):
-            if section.linked_section_index is None:
-                continue
-
-            if section.graph_id == target_graph_id:
-                # Direct filter on target graph - just intersect with ES results
-                direct_match_id = self._get_resource_id_for_section(
-                    section, datatype_factory, scroller
-                )
-
-                if not direct_match_id:
-                    return set()
-
-                if combined_target_id is None:
-                    combined_target_id = direct_match_id
-                else:
-                    combined_target_id &= direct_match_id
-
-            else:
-                # Linked section on different graph - find targets connected to matching linked resources
-                linked_match_id = self._get_resource_id_for_section(
-                    section, datatype_factory, scroller
-                )
-
-                if not linked_match_id:
-                    return set()
-
-                connected_target_id = self._get_target_resources_connected_to(
-                    combined_target_id,
-                    target_graph_id,
-                    linked_match_id,
-                    section.graph_id,
-                )
-
-                if not connected_target_id:
-                    return set()
-
-                combined_target_id &= connected_target_id
-
-        return combined_target_id or set()
-
-    def _detect_section_linkage(
-        self, section_data_list: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
-        """
-        Automatically detect relationships between sections based on resource-instance
-        node configurations. If section A can link to section B's graph via a
-        resource-instance node, mark B as linked to A.
-        """
-
-        section_list = [SectionFilter.from_dict(s) for s in section_data_list]
-
-        for idx, section in enumerate(section_list):
-            if section.linked_section_index is not None:
-                continue
-
-            for other_idx, other_section in enumerate(section_list):
-                if idx == other_idx:
-                    continue
-
-                if other_section.linked_section_index is not None:
-                    continue
-
-                link_nodes = LinkNodeCache.get_link_nodes(
-                    section.graph_id, other_section.graph_id
-                )
-
-                if link_nodes:
-                    section_data_list[other_idx]["linked_section_index"] = idx
-                    section_data_list[other_idx]["link_node_id"] = link_nodes[0][
-                        "node_id"
-                    ]
-
-        return section_data_list
-
-    def _extract_target_id_from_tile_strict(
-        self,
-        source_resource_id: set[str],
-        section: SectionFilter,
-        target_graph_id: str,
-    ) -> set[str]:
-        """
-        In strict mode, only return target resources that are directly linked
-        from tiles that also match the filter criteria. This ensures the filter
-        applies to the same tile containing the link.
-        """
-
-        if not source_resource_id:
-            return set()
-
-        forward_link_nodes = LinkNodeCache.get_link_nodes(
-            section.graph_id, target_graph_id
-        )
-        reverse_link_nodes = LinkNodeCache.get_link_nodes(
-            target_graph_id, section.graph_id
-        )
-
-        if not forward_link_nodes and not reverse_link_nodes:
-            return set()
-
-        node_filter = section.extract_node_filter()
-        nodegroup_id = section.extract_nodegroup_id()
-
-        def process_forward_strict() -> set[str]:
-            close_old_connections()
-
-            result = set()
-
-            if not forward_link_nodes:
-                return result
-
-            resource_instance_node_id = {info["node_id"] for info in forward_link_nodes}
-            source_id_list = list(source_resource_id)
-
-            for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
-                tile_queryset = (
-                    TileModel.objects.filter(
-                        nodegroup_id__in=nodegroup_id,
-                        resourceinstance_id__in=chunk,
-                    )
-                    .values("data")
-                    .iterator(chunk_size=2000)
-                )
-
-                for tile in tile_queryset:
-                    tiledata = tile.get("data") or {}
-
-                    if not self._tile_matches_node_filter(tiledata, node_filter):
-                        continue
-
-                    for node_id in resource_instance_node_id:
-                        if node_id not in tiledata:
-                            continue
-
-                        node_value = NodeValue(raw=tiledata.get(node_id))
-                        result.update(node_value.extract_resource_id())
-
-            return result
-
-        def process_reverse_strict() -> set[str]:
-            close_old_connections()
-
-            result = set()
-
-            if not reverse_link_nodes:
-                return result
-
-            reverse_node_id_set = {info["node_id"] for info in reverse_link_nodes}
-            reverse_nodegroup_id_set = {
-                info["nodegroup_id"] for info in reverse_link_nodes
-            }
-
-            tile_queryset = (
-                TileModel.objects.filter(
-                    nodegroup_id__in=reverse_nodegroup_id_set,
-                    resourceinstance__graph_id=target_graph_id,
-                )
-                .values("data", "resourceinstance_id")
-                .iterator(chunk_size=2000)
-            )
-
-            for tile in tile_queryset:
-                tiledata = tile.get("data") or {}
-                target_resource_id = str(tile.get("resourceinstance_id"))
-
-                for node_id in reverse_node_id_set:
-                    if node_id not in tiledata:
-                        continue
-
-                    node_value = NodeValue(raw=tiledata.get(node_id))
-                    referenced_ids = node_value.extract_resource_id()
-
-                    if referenced_ids & source_resource_id:
-                        result.add(target_resource_id)
-                        break
-
-            return result
-
-        target_id = set()
-
-        with ThreadPoolExecutor(max_workers=2) as executor:
-            futures = [
-                executor.submit(process_forward_strict),
-                executor.submit(process_reverse_strict),
-            ]
-
-            for future in as_completed(futures):
-                target_id.update(future.result())
-
-        if target_id:
-            verified_target_id = set()
-            target_id_list = list(target_id)
-
-            for chunk in chunked_iterable(target_id_list, BATCH_SIZE):
-                verified_ids = ResourceInstance.objects.filter(
-                    graph_id=target_graph_id,
-                    resourceinstanceid__in=chunk,
-                ).values_list("resourceinstanceid", flat=True)
-
-                verified_target_id.update(str(rid) for rid in verified_ids)
-
-            return verified_target_id
-
-        return target_id
-
-    def _get_cache_key(self, raw_data: dict[str, Any]) -> str:
+        for node in Node.objects.filter(pk__in=node_ids).select_related(
+            "graph", "nodegroup"
+        ):
+            self._nodes[str(node.nodeid)] = node
+
+    def _cache_key(self, data: dict[str, Any]) -> str:
         """Generate a unique cache key for the search parameters."""
 
-        cache_data = {
-            "sections": raw_data.get("sections", []),
-            "strict_mode": raw_data.get("strict_mode", False),
-            "translate_mode": raw_data.get("translate_mode", TranslateMode.NONE),
+        raw = {
+            "result_operation": data.get("result_operation", "intersect"),
+            "sections": data.get("sections", []),
+            "translate_mode": data.get("translate_mode", TranslateMode.NONE),
             "user_id": self.request.user.id,
         }
 
-        return f"cross_model_search_{hashlib.md5(str(cache_data).encode()).hexdigest()}"
+        return f"cross_model_search_{hashlib.md5(str(raw).encode()).hexdigest()}"
+
+    def _compute_target_ids(
+        self,
+        sections: list[dict[str, Any]],
+        target_graph: str,
+        operation: str,
+    ) -> set[str]:
+        """Compute target IDs using cache or fresh computation."""
+
+        key = self._cache_key(self._data)
+        cached = cache.get(key)
+
+        if cached is not None:
+            return set(cached)
+
+        if not LinkCache._ready:
+            LinkCache._init()
+
+        engine = SearchEngineFactory().create()
+        scroller = Scroller(engine)
+        factory = DataTypeFactory()
+        linker = Linker()
+
+        intersector = Intersector(factory, linker, self._nodes, self.request, scroller)
+        target_ids = intersector.compute(sections, target_graph, operation)
+
+        cache.set(key, list(target_ids), CACHE_TIMEOUT)
+
+        return target_ids
 
     def _get_graph_id(self, slug_or_id: str) -> str | None:
         """Resolve a graph slug or UUID string to a graph ID."""
@@ -1357,1099 +1584,199 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
 
         return str(graph.graphid) if graph else None
 
-    def _get_intersection_target(self) -> list[dict[str, Any]]:
+    def _get_target(self) -> list[dict[str, Any]]:
         """
         Build the list of available intersection targets for the UI.
         Graphs are sorted alphabetically by name.
         """
 
-        if not LinkNodeCache._initialized:
-            LinkNodeCache._initialize()
+        if not LinkCache._ready:
+            LinkCache._init()
 
-        graph_queryset = (
-            GraphModel.objects.filter(
-                is_active=True,
-                isresource=True,
-            )
+        graphs = (
+            GraphModel.objects.filter(is_active=True, isresource=True)
             .exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
-            .exclude(
-                source_identifier__isnull=False,
-            )
+            .exclude(source_identifier__isnull=False)
             .only("graphid", "name", "slug")
         )
 
-        target = []
+        result = []
 
-        for graph in graph_queryset:
+        for graph in graphs:
             graph_id = str(graph.graphid)
-            graph_name = graph.name
+            name = graph.name
 
-            if isinstance(graph_name, dict):
-                graph_name = graph_name.get(
-                    "en", list(graph_name.values())[0] if graph_name else graph.slug
-                )
+            if isinstance(name, dict):
+                name = name.get("en", list(name.values())[0] if name else graph.slug)
 
-            target.append(
+            result.append(
                 {
                     "graph_id": graph_id,
-                    "label": f"Intersect to {graph_name}",
-                    "name": graph_name,
+                    "label": f"Intersect to {name}",
+                    "name": name,
                     "slug": graph.slug,
                 }
             )
 
-        target.sort(key=lambda x: (x["name"] or "").lower())
+        result.sort(key=lambda x: (x["name"] or "").lower())
 
-        return target
+        return result
 
-    def _get_pagination_param(self, total: int | None = None) -> tuple[int, int, int]:
-        page_param = (
-            self.request.GET.get("paging-filter")
-            or self.request.POST.get("paging-filter")
-            or "1"
-        )
+    def _is_valid(self, value: Any) -> bool:
+        """Check if a filter value is valid (non-empty, allowing 0 and False)."""
 
-        try:
-            page = int(page_param) if page_param else 1
-        except (TypeError, ValueError):
-            page = 1
+        if not value:
+            return False
 
-        per_page = settings.SEARCH_ITEMS_PER_PAGE
+        if isinstance(value, dict):
+            val = value.get("val", "")
+            return bool(val) or val == 0 or val is False
 
-        if total is not None and total > 0:
-            max_page = (total + per_page - 1) // per_page
-            page = min(page, max_page)
+        return True
 
-        if total == 0:
-            page = 1
-
-        page = max(1, page)
-        start = per_page * (page - 1)
-
-        return page, per_page, start
-
-    def _get_pagination_result(
-        self, response_object: dict[str, Any], total: int, page: int
-    ) -> PaginationResult:
-        paginator, page_list = get_paginator(
-            self.request,
-            response_object["results"],
-            total,
-            page,
-            settings.SEARCH_ITEMS_PER_PAGE,
-        )
-
-        page_obj = paginator.page(page)
-
-        return PaginationResult(
-            current_page=page_obj.number,
-            end_index=page_obj.end_index(),
-            has_next=page_obj.has_next(),
-            has_other_pages=page_obj.has_other_pages(),
-            has_previous=page_obj.has_previous(),
-            next_page_number=(
-                page_obj.next_page_number() if page_obj.has_next() else None
-            ),
-            page_list=page_list,
-            previous_page_number=(
-                page_obj.previous_page_number() if page_obj.has_previous() else None
-            ),
-            start_index=page_obj.start_index(),
-        )
-
-    def _get_related_via_rxr_bfs(
-        self,
-        source_resource_id: set[str],
-        target_graph_id: str,
-        max_hops: int = 3,
-    ) -> set[str]:
+    def append_dsl(self, query_obj: dict[str, Any], **kwargs: Any) -> None:
         """
-        Find target resources connected via ResourceXResource using BFS.
-        Uses Subquery to let PostgreSQL handle intermediate ID sets internally.
-        Uses ThreadPoolExecutor to parallelize queries for better performance.
-        """
-
-        if not source_resource_id:
-            return set()
-
-        source_list = list(source_resource_id)
-        target_uuid = uuid.UUID(target_graph_id)
-        all_targets = set()
-        current_subqueries = [source_list]
-
-        def query_forward_targets(filter_arg):
-            close_old_connections()
-
-            if isinstance(filter_arg, list):
-                return set(
-                    ResourceXResource.objects.filter(
-                        from_resource_id__in=filter_arg,
-                        to_resource_graph_id=target_uuid,
-                    ).values_list("to_resource_id", flat=True)
-                )
-
-            return set(
-                ResourceXResource.objects.filter(
-                    from_resource_id__in=Subquery(filter_arg),
-                    to_resource_graph_id=target_uuid,
-                ).values_list("to_resource_id", flat=True)
-            )
-
-        def query_reverse_targets(filter_arg):
-            close_old_connections()
-
-            if isinstance(filter_arg, list):
-                return set(
-                    ResourceXResource.objects.filter(
-                        to_resource_id__in=filter_arg,
-                        from_resource_graph_id=target_uuid,
-                    ).values_list("from_resource_id", flat=True)
-                )
-
-            return set(
-                ResourceXResource.objects.filter(
-                    to_resource_id__in=Subquery(filter_arg),
-                    from_resource_graph_id=target_uuid,
-                ).values_list("from_resource_id", flat=True)
-            )
-
-        for hop in range(max_hops):
-            hop_targets = set()
-            next_subqueries = []
-
-            with ThreadPoolExecutor(
-                max_workers=min(MAX_WORKERS, len(current_subqueries) * 2)
-            ) as executor:
-                futures = []
-
-                for subq in current_subqueries:
-                    futures.append(executor.submit(query_forward_targets, subq))
-                    futures.append(executor.submit(query_reverse_targets, subq))
-
-                for future in as_completed(futures):
-                    hop_targets.update(future.result())
-
-            all_targets.update(str(rid) for rid in hop_targets)
-
-            if hop < max_hops - 1:
-                for subq in current_subqueries:
-                    if isinstance(subq, list):
-                        filter_arg = subq
-                    else:
-                        filter_arg = Subquery(subq)
-
-                    forward_intermediate = (
-                        ResourceXResource.objects.filter(
-                            from_resource_id__in=filter_arg,
-                        )
-                        .exclude(
-                            to_resource_graph_id=target_uuid,
-                        )
-                        .values("to_resource_id")
-                    )
-
-                    reverse_intermediate = (
-                        ResourceXResource.objects.filter(
-                            to_resource_id__in=filter_arg,
-                        )
-                        .exclude(
-                            from_resource_graph_id=target_uuid,
-                        )
-                        .values("from_resource_id")
-                    )
-
-                    next_subqueries.append(forward_intermediate)
-                    next_subqueries.append(reverse_intermediate)
-
-            current_subqueries = next_subqueries
-
-            if not current_subqueries:
-                break
-
-        return all_targets
-
-    def _get_resource_id_for_section(
-        self,
-        section: SectionFilter,
-        datatype_factory: DataTypeFactory,
-        scroller: ElasticsearchScroller,
-    ) -> set[str]:
-        """Run the ES query for a section and return all matching resource IDs."""
-
-        if not section.graph_id:
-            return set()
-
-        section_query = section.build_query(
-            datatype_factory, self._node_cache, self.request
-        )
-
-        if not bool_has_clause(section_query):
-            return set()
-
-        full_query = Bool()
-        full_query.filter(Terms(field="graph_id", terms=[section.graph_id]))
-        full_query.must(section_query)
-
-        return scroller.scroll_id_only(full_query.dsl)
-
-    def _get_resources_referencing(
-        self,
-        resource_id: set[str],
-        resource_graph_id: str,
-    ) -> dict[str, set[str]]:
-        """
-        Find all resources that reference the given resources via ResourceXResource.
-        Returns a dict mapping graph_id -> set of referencing resource IDs.
-        """
-
-        if not resource_id:
-            return {}
-
-        result = defaultdict(set)
-        resource_id_list = list(resource_id)
-
-        forward_refs = (
-            ResourceXResource.objects.filter(
-                to_resource_id__in=resource_id_list,
-            )
-            .exclude(
-                from_resource_graph_id=resource_graph_id,
-            )
-            .values_list("from_resource_id", "from_resource_graph_id")
-        )
-
-        for from_id, from_graph in forward_refs:
-            if from_graph:
-                result[str(from_graph)].add(str(from_id))
-
-        reverse_refs = (
-            ResourceXResource.objects.filter(
-                from_resource_id__in=resource_id_list,
-            )
-            .exclude(
-                to_resource_graph_id=resource_graph_id,
-            )
-            .values_list("to_resource_id", "to_resource_graph_id")
-        )
-
-        for to_id, to_graph in reverse_refs:
-            if to_graph:
-                result[str(to_graph)].add(str(to_id))
-
-        return dict(result)
-
-    def _get_target_id_for_resource(
-        self,
-        resource_id: set[str],
-        source_graph_id: str,
-        target_graph_id: str,
-        section: SectionFilter | None = None,
-        strict_mode: bool = False,
-    ) -> set[str]:
-        """
-        Find all target graph resources connected to the given source resources.
-        Uses both ResourceXResource and tile-based resource-instance links.
-        """
-
-        if not resource_id:
-            return set()
-
-        if source_graph_id == target_graph_id:
-            return resource_id
-
-        if strict_mode and section:
-            return self._extract_target_id_from_tile_strict(
-                resource_id, section, target_graph_id
-            )
-
-        tile_target_id = self._get_target_id_from_direct_tiles(
-            resource_id, source_graph_id, target_graph_id
-        )
-
-        if tile_target_id:
-            return tile_target_id
-
-        tile_target_id = self._get_target_id_via_tile_bfs(
-            resource_id, source_graph_id, target_graph_id
-        )
-
-        if tile_target_id:
-            return tile_target_id
-
-        rxr_target_id = self._get_related_via_rxr_bfs(resource_id, target_graph_id)
-
-        return rxr_target_id
-
-    def _get_target_id_via_tile_bfs(
-        self,
-        source_resource_id: set[str],
-        source_graph_id: str,
-        target_graph_id: str,
-        max_hops: int = 3,
-    ) -> set[str]:
-        """
-        Find target resources connected via multi-hop relationships.
-        Uses RXR where available, falls back to tiles otherwise.
-        Traverses both forward and reverse directions.
-        """
-
-        if not source_resource_id:
-            return set()
-
-        if source_graph_id == target_graph_id:
-            return source_resource_id
-
-        visited_resource_id = set(source_resource_id)
-        current_frontier = set(source_resource_id)
-        target_id = set()
-
-        for _ in range(max_hops):
-            if not current_frontier:
-                break
-
-            next_frontier = set()
-            frontier_list = list(current_frontier)
-
-            for chunk in chunked_iterable(frontier_list, BATCH_SIZE):
-                forward_refs = ResourceXResource.objects.filter(
-                    from_resource_id__in=chunk,
-                ).values_list("to_resource_id", "to_resource_graph_id")
-
-                for to_id, to_graph in forward_refs:
-                    to_id_str = str(to_id)
-
-                    if to_id_str in visited_resource_id:
-                        continue
-
-                    if str(to_graph) == target_graph_id:
-                        target_id.add(to_id_str)
-                    else:
-                        next_frontier.add(to_id_str)
-
-                reverse_refs = ResourceXResource.objects.filter(
-                    to_resource_id__in=chunk,
-                ).values_list("from_resource_id", "from_resource_graph_id")
-
-                for from_id, from_graph in reverse_refs:
-                    from_id_str = str(from_id)
-
-                    if from_id_str in visited_resource_id:
-                        continue
-
-                    if str(from_graph) == target_graph_id:
-                        target_id.add(from_id_str)
-                    else:
-                        next_frontier.add(from_id_str)
-
-            frontier_graph_ids = set(
-                str(gid)
-                for gid in ResourceInstance.objects.filter(
-                    resourceinstanceid__in=frontier_list[:1000],
-                )
-                .values_list("graph_id", flat=True)
-                .distinct()
-            )
-
-            for frontier_graph_id in frontier_graph_ids:
-                rxr_forward_exists = ResourceXResource.objects.filter(
-                    from_resource_graph_id=frontier_graph_id,
-                ).exists()
-
-                if rxr_forward_exists:
-                    continue
-
-                ri_nodes = LinkNodeCache.get_ri_nodes_for_graph(frontier_graph_id)
-
-                if not ri_nodes:
-                    continue
-
-                nodegroup_id_set = {info["nodegroup_id"] for info in ri_nodes}
-                node_id_set = {info["node_id"] for info in ri_nodes}
-
-                frontier_in_graph = [
-                    rid for rid in frontier_list if rid in current_frontier
-                ]
-
-                for chunk in chunked_iterable(frontier_in_graph, BATCH_SIZE):
-                    tile_queryset = (
-                        TileModel.objects.filter(
-                            nodegroup_id__in=nodegroup_id_set,
-                            resourceinstance_id__in=chunk,
-                        )
-                        .values("data")
-                        .iterator(chunk_size=2000)
-                    )
-
-                    for tile in tile_queryset:
-                        tiledata = tile.get("data") or {}
-
-                        for node_id in node_id_set:
-                            if node_id not in tiledata:
-                                continue
-
-                            node_value = NodeValue(raw=tiledata.get(node_id))
-                            referenced_ids = node_value.extract_resource_id()
-
-                            for ref_id in referenced_ids:
-                                if ref_id in visited_resource_id:
-                                    continue
-
-                                next_frontier.add(ref_id)
-
-            if not next_frontier:
-                break
-
-            next_frontier_list = list(next_frontier)
-
-            for chunk in chunked_iterable(next_frontier_list, BATCH_SIZE):
-                matching_targets = ResourceInstance.objects.filter(
-                    graph_id=target_graph_id,
-                    resourceinstanceid__in=chunk,
-                ).values_list("resourceinstanceid", flat=True)
-
-                target_id.update(str(rid) for rid in matching_targets)
-
-            visited_resource_id.update(next_frontier)
-            current_frontier = next_frontier - target_id
-
-        return target_id
-
-    def _get_target_id_from_direct_tiles(
-        self,
-        source_resource_id: set[str],
-        source_graph_id: str,
-        target_graph_id: str,
-    ) -> set[str]:
-        """
-        Find target resources directly linked via resource-instance nodes.
-        Tries RXR first, falls back to tiles if no RXR relationships exist.
-        """
-
-        if not source_resource_id:
-            return set()
-
-        forward_link_nodes = LinkNodeCache.get_link_nodes(
-            source_graph_id, target_graph_id
-        )
-        reverse_link_nodes = LinkNodeCache.get_link_nodes(
-            target_graph_id, source_graph_id
-        )
-
-        if not forward_link_nodes and not reverse_link_nodes:
-            return set()
-
-        target_id = set()
-        source_id_list = list(source_resource_id)
-
-        rxr_has_forward = False
-        rxr_has_reverse = False
-
-        if forward_link_nodes:
-            rxr_has_forward = ResourceXResource.objects.filter(
-                from_resource_graph_id=source_graph_id,
-                to_resource_graph_id=target_graph_id,
-            ).exists()
-
-        if reverse_link_nodes:
-            rxr_has_reverse = ResourceXResource.objects.filter(
-                to_resource_graph_id=source_graph_id,
-                from_resource_graph_id=target_graph_id,
-            ).exists()
-
-        if forward_link_nodes:
-            if rxr_has_forward:
-                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
-                    forward_targets = ResourceXResource.objects.filter(
-                        from_resource_id__in=chunk,
-                        to_resource_graph_id=target_graph_id,
-                    ).values_list("to_resource_id", flat=True)
-
-                    target_id.update(str(rid) for rid in forward_targets)
-            else:
-                nodegroup_id_set = {info["nodegroup_id"] for info in forward_link_nodes}
-                node_id_set = {info["node_id"] for info in forward_link_nodes}
-
-                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
-                    tile_queryset = (
-                        TileModel.objects.filter(
-                            nodegroup_id__in=nodegroup_id_set,
-                            resourceinstance_id__in=chunk,
-                        )
-                        .values("data")
-                        .iterator(chunk_size=2000)
-                    )
-
-                    for tile in tile_queryset:
-                        tiledata = tile.get("data") or {}
-
-                        for node_id in node_id_set:
-                            if node_id not in tiledata:
-                                continue
-
-                            node_value = NodeValue(raw=tiledata.get(node_id))
-                            target_id.update(node_value.extract_resource_id())
-
-        if reverse_link_nodes:
-            if rxr_has_reverse:
-                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
-                    reverse_targets = ResourceXResource.objects.filter(
-                        to_resource_id__in=chunk,
-                        from_resource_graph_id=target_graph_id,
-                    ).values_list("from_resource_id", flat=True)
-
-                    target_id.update(str(rid) for rid in reverse_targets)
-            else:
-                nodegroup_id_set = {info["nodegroup_id"] for info in reverse_link_nodes}
-                node_id_set = {info["node_id"] for info in reverse_link_nodes}
-
-                for chunk in chunked_iterable(source_id_list, BATCH_SIZE):
-                    tile_queryset = (
-                        TileModel.objects.filter(
-                            nodegroup_id__in=nodegroup_id_set,
-                            resourceinstance__graph_id=target_graph_id,
-                        )
-                        .values("data", "resourceinstance_id")
-                        .iterator(chunk_size=2000)
-                    )
-
-                    for tile in tile_queryset:
-                        tiledata = tile.get("data") or {}
-                        tile_resource_id = str(tile.get("resourceinstance_id"))
-
-                        for node_id in node_id_set:
-                            if node_id not in tiledata:
-                                continue
-
-                            node_value = NodeValue(raw=tiledata.get(node_id))
-                            referenced_ids = node_value.extract_resource_id()
-
-                            if referenced_ids & source_resource_id:
-                                target_id.add(tile_resource_id)
-                                break
-
-        if target_id:
-            verified_target_id = set()
-            target_id_list = list(target_id)
-
-            for chunk in chunked_iterable(target_id_list, BATCH_SIZE):
-                verified_ids = ResourceInstance.objects.filter(
-                    graph_id=target_graph_id,
-                    resourceinstanceid__in=chunk,
-                ).values_list("resourceinstanceid", flat=True)
-
-                verified_target_id.update(str(rid) for rid in verified_ids)
-
-            return verified_target_id
-
-        return target_id
-
-    def _get_target_resources_connected_to(
-        self,
-        target_resource_id: set[str],
-        target_graph_id: str,
-        linked_resource_id: set[str],
-        linked_graph_id: str,
-    ) -> set[str]:
-        """
-        Find target resources that are connected to both the current target set
-        AND the linked resources. Used for multi-hop relational filtering.
-        """
-
-        if not target_resource_id or not linked_resource_id:
-            return set()
-
-        if not LinkNodeCache._initialized:
-            LinkNodeCache._initialize()
-
-        referencing_resources = self._get_resources_referencing(
-            linked_resource_id, linked_graph_id
-        )
-
-        target_id_list = list(target_resource_id)
-        linked_id_list = list(linked_resource_id)
-
-        def process_referencing_graph(
-            referencing_graph_id: str,
-            referencing_resource_id: set[str],
-        ) -> set[str]:
-            close_old_connections()
-
-            result = set()
-
-            link_nodes = LinkNodeCache.get_link_nodes(
-                referencing_graph_id, target_graph_id
-            )
-
-            if not link_nodes:
-                return result
-
-            node_id_set = {info["node_id"] for info in link_nodes}
-
-            if len(referencing_resource_id) > len(target_resource_id) * 10:
-                target_refs_forward = set(
-                    ResourceXResource.objects.filter(
-                        to_resource_id__in=target_id_list,
-                        from_resource_id__in=list(referencing_resource_id),
-                    ).values_list("to_resource_id", flat=True)
-                )
-
-                result.update(str(rid) for rid in target_refs_forward)
-
-                target_refs_reverse = set(
-                    ResourceXResource.objects.filter(
-                        from_resource_id__in=target_id_list,
-                        to_resource_id__in=list(referencing_resource_id),
-                    ).values_list("from_resource_id", flat=True)
-                )
-
-                result.update(str(rid) for rid in target_refs_reverse)
-            else:
-                nodegroup_id = [info["nodegroup_id"] for info in link_nodes]
-                referencing_id_list = list(referencing_resource_id)
-
-                for chunk in chunked_iterable(referencing_id_list, BATCH_SIZE):
-                    tile_queryset = (
-                        TileModel.objects.filter(
-                            resourceinstance_id__in=chunk,
-                            nodegroup_id__in=nodegroup_id,
-                        )
-                        .values("data")
-                        .iterator(chunk_size=2000)
-                    )
-
-                    for tile in tile_queryset:
-                        tiledata = tile.get("data") or {}
-
-                        for node_id in node_id_set:
-                            if node_id not in tiledata:
-                                continue
-
-                            node_value = NodeValue(raw=tiledata.get(node_id))
-                            referenced_target_id = node_value.extract_resource_id()
-
-                            for ref_id in referenced_target_id:
-                                if ref_id in target_resource_id:
-                                    result.add(ref_id)
-
-            return result
-
-        def process_rxr_forward() -> set[str]:
-            close_old_connections()
-
-            forward = ResourceXResource.objects.filter(
-                from_resource_id__in=target_id_list,
-                to_resource_id__in=linked_id_list,
-            ).values_list("from_resource_id", flat=True)
-
-            return {str(rid) for rid in forward}
-
-        def process_rxr_reverse() -> set[str]:
-            close_old_connections()
-
-            reverse = ResourceXResource.objects.filter(
-                to_resource_id__in=target_id_list,
-                from_resource_id__in=linked_id_list,
-            ).values_list("to_resource_id", flat=True)
-
-            return {str(rid) for rid in reverse}
-
-        connected_target_id = set()
-
-        with ThreadPoolExecutor(
-            max_workers=min(MAX_WORKERS, len(referencing_resources) + 2)
-        ) as executor:
-            futures = []
-
-            for ref_graph_id, ref_resource_id in referencing_resources.items():
-                futures.append(
-                    executor.submit(
-                        process_referencing_graph, ref_graph_id, ref_resource_id
-                    )
-                )
-
-            futures.append(executor.submit(process_rxr_forward))
-            futures.append(executor.submit(process_rxr_reverse))
-
-            for future in as_completed(futures):
-                connected_target_id.update(future.result())
-
-        return connected_target_id
-
-    def _handle_intersection_mode_pagination(
-        self,
-        search_query_object: dict[str, Any],
-        response_object: dict[str, Any],
-        section_data_list: list[dict[str, Any]],
-        translate_mode: str,
-        strict_mode: bool,
-    ) -> None:
-        """Handle pagination for intersection mode."""
-
-        target_graph_id = self._get_graph_id(translate_mode)
-
-        if not target_graph_id:
-            return
-
-        if not LinkNodeCache._initialized:
-            LinkNodeCache._initialize()
-
-        cache_key = self._get_cache_key(self._query_data)
-        cached_id = cache.get(cache_key)
-
-        if cached_id is not None:
-            combined_target_id = set(cached_id)
-        else:
-            section_data_list = self._detect_section_linkage(section_data_list)
-
-            has_linked_section = any(
-                SectionFilter.from_dict(s).linked_section_index is not None
-                for s in section_data_list
-            )
-
-            if has_linked_section:
-                combined_target_id = (
-                    self._compute_combined_target_id_with_relational_filter(
-                        section_data_list,
-                        target_graph_id,
-                        strict_mode,
-                    )
-                )
-            else:
-                combined_target_id = self._compute_combined_target_id(
-                    section_data_list,
-                    target_graph_id,
-                    strict_mode,
-                )
-
-            cache.set(cache_key, list(combined_target_id), CACHE_TIMEOUT)
-
-        total_result = len(combined_target_id)
-
-        if total_result == 0:
-            self._update_response(response_object, [], 0, 1)
-            response_object["_cross_model_pagination_handled"] = True
-            return
-
-        page, per_page, start = self._get_pagination_param(total_result)
-        target_id_list = sorted(combined_target_id)
-
-        # Ensure start doesn't exceed the list bounds
-        if start >= total_result:
-            max_page = max(1, (total_result + per_page - 1) // per_page)
-            page = max_page
-            start = per_page * (page - 1)
-
-        paginated_id = target_id_list[start : start + per_page]
-
-        if not paginated_id and total_result > 0:
-            page = 1
-            start = 0
-            paginated_id = target_id_list[0:per_page]
-
-        se = SearchEngineFactory().create()
-        scroller = ElasticsearchScroller(se=se)
-
-        target_query = Bool()
-        target_query.filter(Terms(field="resourceinstanceid", terms=paginated_id))
-
-        target_hit = scroller.scroll_with_source(target_query.dsl)
-
-        self._normalize_hit_display_field(target_hit)
-        self._add_permission_property(target_hit)
-        self._update_response(response_object, target_hit, total_result, page)
-
-        target_filter = Bool()
-
-        target_filter.filter(
-            Terms(field="resourceinstanceid", terms=list(combined_target_id))
-        )
-
-        search_query_object["query"].dsl = {"query": target_filter.dsl}
-
-        response_object["_cross_model_pagination_handled"] = True
-
-    def _handle_raw_mode_pagination(
-        self,
-        search_query_object: dict[str, Any],
-        response_object: dict[str, Any],
-        section_data_list: list[dict[str, Any]],
-    ) -> None:
-        """Handle pagination for raw results mode."""
-
-        datatype_factory = DataTypeFactory()
-        se = SearchEngineFactory().create()
-        scroller = ElasticsearchScroller(se=se)
-
-        cross_model_query = Bool()
-
-        for section_data in section_data_list:
-            section = SectionFilter.from_dict(section_data)
-
-            if not section.graph_id:
-                continue
-
-            section_query = section.build_query(
-                datatype_factory, self._node_cache, self.request
-            )
-
-            if not bool_has_clause(section_query):
-                continue
-
-            graph_with_filter = Bool()
-            graph_with_filter.filter(Terms(field="graph_id", terms=[section.graph_id]))
-            graph_with_filter.must(section_query)
-
-            cross_model_query.should(graph_with_filter)
-
-        if not cross_model_query.dsl["bool"]["should"]:
-            return
-
-        cross_model_query.dsl["bool"]["minimum_should_match"] = 1
-
-        all_resource_id = scroller.scroll_id_only(cross_model_query.dsl)
-        total_result = len(all_resource_id)
-
-        if total_result == 0:
-            self._update_response(response_object, [], 0, 1)
-            response_object["_cross_model_pagination_handled"] = True
-            return
-
-        page, per_page, start = self._get_pagination_param(total_result)
-        resource_id_list = sorted(all_resource_id)
-
-        # Ensure start doesn't exceed the list bounds
-        if start >= total_result:
-            max_page = max(1, (total_result + per_page - 1) // per_page)
-            page = max_page
-            start = per_page * (page - 1)
-
-        paginated_id = resource_id_list[start : start + per_page]
-
-        if not paginated_id and total_result > 0:
-            page = 1
-            start = 0
-            paginated_id = resource_id_list[0:per_page]
-
-        target_query = Bool()
-        target_query.filter(Terms(field="resourceinstanceid", terms=paginated_id))
-
-        target_hit = scroller.scroll_with_source(target_query.dsl)
-
-        self._normalize_hit_display_field(target_hit)
-        self._add_permission_property(target_hit)
-        self._update_response(response_object, target_hit, total_result, page)
-
-        export_filter = Bool()
-        export_filter.must(cross_model_query)
-        search_query_object["query"].dsl = {"query": export_filter.dsl}
-
-        response_object["_cross_model_pagination_handled"] = True
-
-    def _normalize_hit_display_field(self, hit_list: list[dict[str, Any]]) -> None:
-        """
-        Convert display fields from array format to simple strings.
-        ES stores these as arrays with language/value objects.
-        """
-
-        for hit in hit_list:
-            source = hit.get("_source", {})
-
-            for field_name in ("displaydescription", "displayname"):
-                field_value = source.get(field_name)
-
-                if isinstance(field_value, list) and field_value:
-                    source[field_name] = field_value[0].get("value", "")
-
-    def _parse_query_data(self, querystring_param: Any) -> dict[str, Any]:
-        if not querystring_param:
-            return {}
-
-        if isinstance(querystring_param, str):
-            return JSONDeserializer().deserialize(querystring_param)
-
-        return querystring_param
-
-    def _tile_matches_node_filter(
-        self, tiledata: dict[str, Any], node_filter: dict[str, Any]
-    ) -> bool:
-        """Check if any node filter matches the tile data (OR logic across nodes)."""
-
-        if not node_filter:
-            return True
-
-        for node_id, filter_value in node_filter.items():
-            tile_value = tiledata.get(node_id)
-            matcher = FilterMatcher.from_filter_value(filter_value)
-
-            if matcher.matches(tile_value):
-                return True
-
-        return False
-
-    def _update_response(
-        self,
-        response_object: dict[str, Any],
-        hit_list: list[dict[str, Any]],
-        total: int,
-        page: int,
-    ) -> None:
-        """Update the response object with translated results and pagination info."""
-
-        response_object["results"]["hits"]["hits"] = hit_list
-        response_object["results"]["hits"]["total"] = {"relation": "eq", "value": total}
-        response_object["total_results"] = total
-
-        if "paging-filter" not in response_object:
-            response_object["paging-filter"] = {}
-
-        pagination_result = self._get_pagination_result(response_object, total, page)
-        response_object["paging-filter"]["paginator"] = pagination_result.to_dict()
-
-    def append_dsl(self, search_query_object: dict[str, Any], **kwargs: Any) -> None:
-        """
-        Build and append ES query for raw mode (translate_mode="none").
+        Build and append ES query for the search.
         In raw mode, returns resources from any matching model combined with OR.
+        In intersection mode, filters to pre-computed target IDs.
         """
 
-        querystring_param = kwargs.get("querystring", "{}")
-        raw_data = self._parse_query_data(querystring_param)
+        param = kwargs.get("querystring", "{}")
+        data = (
+            JSONDeserializer().deserialize(param)
+            if isinstance(param, str)
+            else param or {}
+        )
 
-        self._query_data = raw_data
+        self._data = data
+        self._target_ids = None
 
-        if not raw_data:
+        if not data:
             return
 
-        section_data_list = raw_data.get("sections", [])
-        translate_mode = raw_data.get("translate_mode", TranslateMode.NONE)
+        sections = data.get("sections", [])
+        mode = data.get("translate_mode", TranslateMode.NONE)
+        operation = data.get("result_operation", "intersect")
 
-        if not section_data_list:
+        if not sections:
             return
 
-        # For both intersection mode and raw mode, we handle pagination ourselves
-        # to avoid ES 10k limit. Reset pagination here; post_search_hook will handle it.
-        search_query_object["query"].start = 0
-        search_query_object["query"].limit = 1
+        self._build_cache(sections)
 
-        # Intersection mode is handled entirely in post_search_hook
-        if translate_mode != TranslateMode.NONE:
+        # Intersection mode: compute target IDs and filter to them
+        if mode != TranslateMode.NONE:
+            target_graph = self._get_graph_id(mode)
+
+            if not target_graph:
+                return
+
+            target_ids = self._compute_target_ids(sections, target_graph, operation)
+            self._target_ids = target_ids
+
+            if target_ids:
+                id_filter = Bool()
+                id_filter.filter(
+                    Terms(field="resourceinstanceid", terms=list(target_ids))
+                )
+                query_obj["query"].add_query(id_filter)
+            else:
+                # No matches - use impossible filter to return empty results
+                id_filter = Bool()
+                id_filter.filter(
+                    Terms(field="resourceinstanceid", terms=["__no_match__"])
+                )
+                query_obj["query"].add_query(id_filter)
+
             return
 
-        self._build_node_cache(section_data_list)
+        # Raw mode: combine all section queries with OR
+        factory = DataTypeFactory()
+        cross_query = Bool()
 
-        datatype_factory = DataTypeFactory()
-        cross_model_query = Bool()
+        for section_data in sections:
+            section = SectionFilter.create(section_data)
 
-        for section_data in section_data_list:
-            section = SectionFilter.from_dict(section_data)
-
-            if not section.graph_id:
+            if not section.graph:
                 continue
 
-            section_query = section.build_query(
-                datatype_factory, self._node_cache, self.request
-            )
+            section_query = section.build(factory, self._nodes, self.request)
 
-            if not bool_has_clause(section_query):
+            if not has_clause(section_query):
                 continue
 
-            # Each section is a separate OR branch (i.e., match resources from any model)
-            graph_with_filter = Bool()
-            graph_with_filter.filter(Terms(field="graph_id", terms=[section.graph_id]))
-            graph_with_filter.must(section_query)
+            # Each section is a separate OR branch
+            graph_filter = Bool()
+            graph_filter.filter(Terms(field="graph_id", terms=[section.graph]))
+            graph_filter.must(section_query)
 
-            cross_model_query.should(graph_with_filter)
+            cross_query.should(graph_filter)
 
-        if cross_model_query.dsl["bool"]["should"]:
-            cross_model_query.dsl["bool"]["minimum_should_match"] = 1
+        if cross_query.dsl["bool"]["should"]:
+            cross_query.dsl["bool"]["minimum_should_match"] = 1
 
-        if bool_has_clause(cross_model_query):
-            search_query_object["query"].add_query(cross_model_query)
+        if has_clause(cross_query):
+            query_obj["query"].add_query(cross_query)
 
     def post_search_hook(
         self,
-        search_query_object: dict[str, Any],
-        response_object: dict[str, Any],
+        query_obj: dict[str, Any],
+        response: dict[str, Any],
         **kwargs: Any,
     ) -> None:
-        """
-        Handle pagination for both intersection mode and raw mode to avoid ES 10k limit.
-        """
+        """Post-search processing hook (not currently used)."""
 
-        raw_data = self._query_data
-
-        if not raw_data:
-            return
-
-        section_data_list = raw_data.get("sections", [])
-        strict_mode = raw_data.get("strict_mode", False)
-        translate_mode = raw_data.get("translate_mode", TranslateMode.NONE)
-
-        if not section_data_list:
-            return
-
-        self._build_node_cache(section_data_list)
-
-        if translate_mode == TranslateMode.NONE:
-            self._handle_raw_mode_pagination(
-                search_query_object,
-                response_object,
-                section_data_list,
-            )
-        else:
-            self._handle_intersection_mode_pagination(
-                search_query_object,
-                response_object,
-                section_data_list,
-                translate_mode,
-                strict_mode,
-            )
+        pass
 
     def view_data(self) -> dict[str, Any]:
         """Return data needed by the frontend search component."""
 
-        resource_graph = (
+        resource_graphs = (
             GraphModel.objects.exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
             .exclude(isresource=False)
             .exclude(is_active=False)
             .exclude(source_identifier__isnull=False)
         )
 
-        searchable_datatype = [
-            d.pk for d in DDataType.objects.filter(issearchable=True)
+        searchable_datatypes = [
+            dt.pk for dt in DDataType.objects.filter(issearchable=True)
         ]
 
-        searchable_node = Node.objects.filter(
-            datatype__in=searchable_datatype,
+        searchable_nodes = Node.objects.filter(
+            datatype__in=searchable_datatypes,
             graph__is_active=True,
             graph__isresource=True,
             issearchable=True,
-        )
+        ).select_related("graph", "nodegroup")
 
-        resource_card = CardModel.objects.filter(
+        resource_cards = CardModel.objects.filter(
             graph__is_active=True,
             graph__isresource=True,
-        ).select_related("nodegroup")
+        ).select_related("graph", "nodegroup")
 
         # Only include cards the user has permission to read
-        searchable_card = [
+        searchable_cards = [
             card
-            for card in resource_card
+            for card in resource_cards
             if self.request.user.has_perm("read_nodegroup", card.nodegroup)
         ]
 
         # Sort graphs alphabetically by name
         sorted_graphs = sorted(
-            resource_graph,
-            key=lambda g: (
-                g.name.get("en", "") if isinstance(g.name, dict) else (g.name or "")
+            resource_graphs,
+            key=lambda graph: (
+                graph.name.get("en", "")
+                if isinstance(graph.name, dict)
+                else (graph.name or "")
             ).lower(),
         )
 
         return {
-            "cardwidgets": CardXNodeXWidget.objects.filter(node__in=searchable_node),
-            "cards": searchable_card,
+            "cardwidgets": CardXNodeXWidget.objects.filter(
+                node__in=searchable_nodes,
+            ).select_related("card", "node", "widget"),
+            "cards": searchable_cards,
             "datatypes": DDataType.objects.all(),
             "graphs": sorted_graphs,
-            "intersection_targets": self._get_intersection_target(),
-            "nodes": searchable_node,
+            "intersection_targets": self._get_target(),
+            "nodes": searchable_nodes,
         }

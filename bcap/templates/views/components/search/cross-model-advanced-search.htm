@@ -270,33 +270,6 @@
         outline: none;
     }
 
-    .cross-model-strict-mode {
-        align-items: center;
-        display: flex;
-        gap: 6px;
-    }
-
-    .cross-model-strict-mode input[type="checkbox"] {
-        accent-color: #2B4E6D;
-        cursor: pointer;
-        height: 16px;
-        width: 16px;
-    }
-
-    .cross-model-strict-mode label {
-        color: #374151;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 500;
-        user-select: none;
-    }
-
-    .cross-model-strict-mode-help {
-        color: #9ca3af;
-        cursor: help;
-        font-size: 14px;
-    }
-
     .cross-model-remove-btn {
         background: transparent;
         border: none;
@@ -805,7 +778,7 @@
         <div class="cross-model-options-bar">
             <div class="cross-model-options-left">
                 <div class="cross-model-option-group">
-                    <span class="cross-model-option-label">{% trans "Result Mode:" %}</span>
+                    <span class="cross-model-option-label">{% trans "Translate to:" %}</span>
                     <select class="cross-model-option-select" data-bind="
                         value: translate_mode,
                         options: translate_mode_options,
@@ -814,12 +787,15 @@
                     "></select>
                 </div>
 
-                <!-- Strict Mode Checkbox -->
-                <!-- ko if: show_strict_mode_option() -->
-                <div class="cross-model-strict-mode">
-                    <input type="checkbox" id="cross-model-strict-mode-checkbox" data-bind="checked: strict_mode">
-                    <label for="cross-model-strict-mode-checkbox">{% trans "Strict matching" %}</label>
-                    <i class="fa fa-question-circle cross-model-strict-mode-help" title="{% trans "When enabled, only returns results that directly match the filter criteria. When disabled, returns all related results from matching resources." %}"></i>
+                <!-- ko if: translate_mode() !== 'none' -->
+                <div class="cross-model-option-group">
+                    <span class="cross-model-option-label">{% trans "Operation:" %}</span>
+                    <select class="cross-model-option-select" data-bind="
+                        value: result_operation,
+                        options: result_operation_options,
+                        optionsText: 'label',
+                        optionsValue: 'value'
+                    "></select>
                 </div>
                 <!-- /ko -->
             </div>

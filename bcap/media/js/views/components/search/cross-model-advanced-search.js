@@ -29,16 +29,21 @@ let view_model = BaseFilter.extend({
         this.intersection_targets = ko.observableArray([]);
         this.is_searching = ko.observable(false);
         this.next_group_id = 1;
+        this.result_operation = ko.observable('intersect');
         this.searchable_graphs = ko.observableArray();
         this.search_elapsed_time = ko.observable(null);
         this.search_start_time = null;
         this.search_timer_interval = null;
         this.sections = ko.observableArray();
-        this.strict_mode = ko.observable(false);
         this.tag_id = 'Cross-Model Advanced Search';
         this.translate_mode = ko.observable('none');
         this.urls = arches.urls;
         this.widget_lookup = {};
+
+        this.result_operation_options = [
+            { value: 'intersect', label: 'Intersect' },
+            { value: 'union', label: 'Union' },
+        ];
 
         this.translate_mode_options = ko.computed(function () {
             let options = [{ value: 'none', label: 'Show Raw Results' }];
@@ -46,7 +51,7 @@ let view_model = BaseFilter.extend({
             _.each(self.intersection_targets(), function (target) {
                 options.push({
                     value: target.slug,
-                    label: target.label,
+                    label: target.name,
                 });
             });
 
@@ -77,10 +82,6 @@ let view_model = BaseFilter.extend({
             });
         });
 
-        this.show_strict_mode_option = ko.computed(function () {
-            return self.translate_mode() !== 'none' && self.has_filters();
-        });
-
         this.used_card_ids = ko.computed(function () {
             let ids = [];
             _.each(self.sections(), function (section) {
@@ -108,6 +109,10 @@ let view_model = BaseFilter.extend({
         });
 
         this.translate_mode.subscribe(function () {
+            self.reset_pagination();
+        });
+
+        this.result_operation.subscribe(function () {
             self.reset_pagination();
         });
 
@@ -230,8 +235,8 @@ let view_model = BaseFilter.extend({
 
             let filter_updated = ko.computed(function () {
                 let data = {
+                    result_operation: self.result_operation(),
                     sections: ko.toJS(self.sections()),
-                    strict_mode: self.strict_mode(),
                     translate_mode: self.translate_mode(),
                 };
 
@@ -422,7 +427,7 @@ let view_model = BaseFilter.extend({
             section.groups.removeAll();
         });
 
-        this.strict_mode(false);
+        this.result_operation('intersect');
         this.translate_mode('none');
         this.search_elapsed_time(null);
         this.reset_pagination();
@@ -816,8 +821,8 @@ let view_model = BaseFilter.extend({
                 return;
             }
 
-            if (saved_data.strict_mode !== undefined) {
-                this.strict_mode(saved_data.strict_mode);
+            if (saved_data.result_operation) {
+                this.result_operation(saved_data.result_operation);
             }
 
             if (saved_data.translate_mode) {
@@ -887,8 +892,8 @@ let view_model = BaseFilter.extend({
 
         if (this.has_active_filters()) {
             let serialized = {
+                result_operation: this.result_operation(),
                 sections: [],
-                strict_mode: this.strict_mode(),
                 translate_mode: this.translate_mode(),
             };
 
