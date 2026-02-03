@@ -333,12 +333,7 @@ FORCE_SCRIPT_NAME = get_env_variable("FORCE_SCRIPT_NAME")
 
 # URL that handles the media served from MEDIA_ROOT, used for managing stored files.
 # It must end in a slash if set to a non-empty value.
-if BCGOV_PROXY_PREFIX:
-    MEDIA_URL = "/" + BCGOV_PROXY_PREFIX + "localfiles/"
-elif FORCE_SCRIPT_NAME:
-    MEDIA_URL = FORCE_SCRIPT_NAME + "localfiles/"
-else:
-    MEDIA_URL = "/localfiles/"
+MEDIA_URL = "/files/"
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"

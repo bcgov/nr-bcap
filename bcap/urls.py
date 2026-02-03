@@ -23,9 +23,9 @@ PREFIX = (
 
 urlpatterns = [
     path(
-        f"{PREFIX}localfiles/<uuid:fileid>",
+        f"{PREFIX}files/<uuid:fileid>",
         FileView.as_view(),
-        name="localfiles",
+        name="files",
     ),
     path(
         f"{PREFIX}bctileserver/<path:path>",

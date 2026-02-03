@@ -58,11 +58,11 @@ class UrlPatternTests(SimpleTestCase):
         assert resolver.view_name == "legislative_act"
         assert str(resolver.kwargs["act_id"]) == test_uuid
 
-    def test_localfiles_url_resolves(self):
+    def test_files_url_resolves(self):
         test_uuid = "12345678-1234-1234-1234-123456789abc"
-        url = reverse("localfiles", kwargs={"fileid": test_uuid})
+        url = reverse("files", kwargs={"fileid": test_uuid})
         resolver = resolve(url)
-        assert resolver.view_name == "localfiles"
+        assert resolver.view_name == "files"
         assert str(resolver.kwargs["fileid"]) == test_uuid
 
     def test_mvt_url_resolves(self):
@@ -164,10 +164,10 @@ class UrlReverseTests(SimpleTestCase):
         url = reverse("legislative_act", kwargs={"act_id": test_uuid})
         assert url == f"/bcap/legislative_act/{test_uuid}"
 
-    def test_localfiles_reverse(self):
+    def test_files_reverse(self):
         test_uuid = "12345678-1234-1234-1234-123456789abc"
-        url = reverse("localfiles", kwargs={"fileid": test_uuid})
-        assert url == f"/bcap/localfiles/{test_uuid}"
+        url = reverse("files", kwargs={"fileid": test_uuid})
+        assert url == f"/bcap/files/{test_uuid}"
 
     def test_mvt_reverse(self):
         test_nodeid = "12345678-1234-1234-1234-123456789abc"
