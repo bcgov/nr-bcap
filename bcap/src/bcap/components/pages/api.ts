@@ -8,7 +8,9 @@ import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedD
 export const getResourceData = async (
     graph_slug: string,
     resource_id: string,
-): Promise<ArchaeologySiteSchema | SiteVisitSchema> => {
+): Promise<
+    ArchaeologySiteSchema | SiteVisitSchema | HriaDiscontinuedDataSchema
+> => {
     const response = await fetch(
         `/bcap/api/resource/${graph_slug}/${resource_id}`,
     ).then();
