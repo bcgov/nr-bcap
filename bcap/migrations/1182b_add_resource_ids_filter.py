@@ -3,7 +3,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcap", "1200_add_translate_to_resource_type"),
+        ("bcap", "1182a_add_translate_to_resource_type"),
     ]
 
     operations = [
