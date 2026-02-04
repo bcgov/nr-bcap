@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { formatDateTime, getDisplayValue, isEmpty } from '@/bcap/util.ts';
+import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type {
     BiogeographyTile,
@@ -159,7 +159,13 @@ const hasArchaeologicalSite = computed(() => {
 
 const hasOtherMaps = computed(() => {
     const maps = currentData.value?.other_maps;
-    return maps && maps.length > 0;
+    if (!maps) {
+        return false;
+    }
+    if (Array.isArray(maps)) {
+        return maps.length > 0;
+    }
+    return true;
 });
 
 const hasSiteBoundaryAnnotations = computed(() => {
@@ -173,7 +179,16 @@ const jurisdictionTenureTableData = computed(
     () => currentData.value?.hria_jursidiction_and_tenure ?? [],
 );
 
-const otherMapsTableData = computed(() => currentData.value?.other_maps ?? []);
+const otherMapsTableData = computed(() => {
+    const maps = currentData.value?.other_maps;
+    if (!maps) {
+        return [];
+    }
+    if (Array.isArray(maps)) {
+        return maps;
+    }
+    return [maps];
+});
 
 const siteBoundaryAnnotationsTableData = computed(
     () => currentData.value?.site_boundary_annotations ?? [],
@@ -226,10 +241,9 @@ const biogeographyTableData = computed(() => {
                             "
                         >
                             {{
-                                getDisplayValue(
-                                    currentData?.unreviewed_adif_record
-                                        ?.aliased_data?.unreviewed_adif_record,
-                                ) === 'true'
+                                currentData?.unreviewed_adif_record
+                                    ?.aliased_data?.unreviewed_adif_record
+                                    ?.node_value
                                     ? 'Yes'
                                     : 'No'
                             }}
@@ -280,12 +294,10 @@ const biogeographyTableData = computed(() => {
                             "
                         >
                             {{
-                                formatDateTime(
-                                    getDisplayValue(
-                                        currentData?.unreviewed_adif_record
-                                            ?.aliased_data?.site_entry_date,
-                                    ),
-                                )
+                                getDisplayValue(
+                                    currentData?.unreviewed_adif_record
+                                        ?.aliased_data?.site_entry_date,
+                                )?.split('T')[0]
                             }}
                         </dd>
                     </dl>
