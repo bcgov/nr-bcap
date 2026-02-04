@@ -1,8 +1,11 @@
 import logging
+import re
+
+from datetime import datetime
 
 from arches.app.datatypes.datatypes import NonLocalizedStringDataType
 from arches.app.models import models
-import re
+
 from bcap.models.borden_number import BordenNumberCounter
 
 
@@ -26,6 +29,15 @@ logger = logging.getLogger(__name__)
 
 
 class BordenNumberDataType(NonLocalizedStringDataType):
+    def _get_issuance_date_nodeid(self, tile) -> str | None:
+        node = models.Node.objects.filter(
+            alias="borden_number_issuance_date",
+            nodegroup_id=tile.nodegroup_id
+        ).first()
+        if node:
+            return str(node.nodeid)
+        return None
+
     def pre_tile_save(self, tile, nodeid):
         logger.debug("Tile: %s" % tile.data)
         value = tile.data[nodeid]
@@ -45,3 +57,6 @@ class BordenNumberDataType(NonLocalizedStringDataType):
                 % (allocated_value, value)
             )
             tile.data[nodeid] = allocated_value
+            issuance_date_nodeid = self._get_issuance_date_nodeid(tile)
+            if issuance_date_nodeid:
+                tile.data[issuance_date_nodeid] = datetime.now().isoformat()
