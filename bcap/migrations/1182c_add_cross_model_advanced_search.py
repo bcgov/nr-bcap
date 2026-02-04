@@ -6,7 +6,7 @@ class Migration(migrations.Migration):
     atomic = False
 
     dependencies = [
-        ("bcap", "1300_add_resource_ids_filter"),
+        ("bcap", "1182b_add_resource_ids_filter"),
     ]
 
     operations = [
