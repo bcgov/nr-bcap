@@ -1,19 +1,19 @@
-from arches.app.models import models
-from arches.app.datatypes.datatypes import DataTypeFactory
-from django.contrib.gis.geos import Point
-from arches.app.utils import geo_utils
 import json
-from bcap.util.bcap_aliases import (
-    GraphSlugs as slugs,
-)
+import urllib3
+
+from django.conf import settings
+from django.contrib.gis.geos import Point
+
+from arches.app.datatypes.datatypes import DataTypeFactory
+from arches.app.models import models
+from arches.app.utils import geo_utils
+
+from bcap.models.borden_number import BordenNumberCounter
 from bcap.util.aliases.archaeological_site import (
     ArchaeologicalSiteAliases as site_aliases,
 )
-
-from django.conf import settings
-from bcap.models.borden_number import BordenNumberCounter
-
-import urllib3
+from bcap.util.bcap_aliases import GraphSlugs as slugs
+from bcap.util.graph import get_current_graph
 
 
 class MissingGeometryError(Exception):
@@ -33,9 +33,7 @@ class BordenNumberApi:
     def _initialize_models(self):
         if not self.geom_node:
             self._datatype_factory = DataTypeFactory()
-            graph = models.GraphModel.objects.filter(
-                slug=slugs.ARCHAEOLOGICAL_SITE
-            ).first()
+            graph = get_current_graph(slugs.ARCHAEOLOGICAL_SITE)
             self.geom_node = models.Node.objects.filter(
                 alias=site_aliases.SITE_BOUNDARY, graph=graph
             ).first()

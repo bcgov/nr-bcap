@@ -8,7 +8,6 @@ from arches.app.models import models
 
 from bcap.models.borden_number import BordenNumberCounter
 
-
 borden_number_widget = models.Widget.objects.get(name="borden-number-widget")
 
 details = {
@@ -31,8 +30,7 @@ logger = logging.getLogger(__name__)
 class BordenNumberDataType(NonLocalizedStringDataType):
     def _get_issuance_date_nodeid(self, tile) -> str | None:
         node = models.Node.objects.filter(
-            alias="borden_number_issuance_date",
-            nodegroup_id=tile.nodegroup_id
+            alias="borden_number_issuance_date", nodegroup_id=tile.nodegroup_id
         ).first()
         if node:
             return str(node.nodeid)
@@ -43,6 +41,9 @@ class BordenNumberDataType(NonLocalizedStringDataType):
         value = tile.data[nodeid]
         # We've already set the borden number so don't do it again.
         if value is not None and value != "":
+            issuance_date_nodeid = self._get_issuance_date_nodeid(tile)
+            if issuance_date_nodeid and not tile.data.get(issuance_date_nodeid):
+                tile.data[issuance_date_nodeid] = datetime.now().strftime("%Y-%m-%d")
             return
         borden_grid = re.sub("-.*", "", value)
         # print("Saving %s:%s" % (tile.resourceinstance_id, value))
@@ -59,4 +60,4 @@ class BordenNumberDataType(NonLocalizedStringDataType):
             tile.data[nodeid] = allocated_value
             issuance_date_nodeid = self._get_issuance_date_nodeid(tile)
             if issuance_date_nodeid:
-                tile.data[issuance_date_nodeid] = datetime.now().isoformat()
+                tile.data[issuance_date_nodeid] = datetime.now().strftime("%Y-%m-%d")
