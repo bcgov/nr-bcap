@@ -44,9 +44,11 @@ import re
 
 logger = logging.getLogger(__name__)
 
+
 class ArchesSiteVisitSerializer(ArchesResourceSerializer):
     class Meta(ArchesResourceSerializer.Meta):
         graph_slug = "site_visit"
+
 
 class BordenNumberBase:
     api = BordenNumberApi()
@@ -109,7 +111,6 @@ class BordenNumberExternal(ProtectedResourceView, BordenNumberBase):
 
     def post(self, request, *args, **kwargs):
         return self._post_impl(request)
-
 
 
 class ControlledListHierarchy(APIBase):
