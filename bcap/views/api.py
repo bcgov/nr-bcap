@@ -1,12 +1,13 @@
 import json
-import logging
-
 from traceback import print_exception
 
 from django.conf import settings
-from django.core.exceptions import FieldError
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
+from arches.app.views.api import APIBase, MVT as MVTBase
+import logging
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.parsers import JSONParser
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -15,18 +16,23 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.settings import api_settings
-
-from arches import VERSION as arches_version
 from arches.app.models import models
 from arches.app.models.models import GraphModel, ResourceInstance, ResourceXResource
+from django.core.exceptions import FieldError
+
+from arches import VERSION as arches_version
+
+from arches.app.utils.response import JSONResponse
+from arches.app.utils.betterJSONSerializer import JSONSerializer
+from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
+from bcap.util.business_data_proxy import LegislativeActDataProxy
+from arches.app.models import models
+from bcap.util.mvt_tiler import MVTTiler
 from arches.app.models.system_settings import settings
 from arches.app.search.components.base import SearchFilterFactory
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineInstance
-from arches.app.utils.betterJSONSerializer import JSONSerializer
-from arches.app.utils.response import JSONResponse
-from arches.app.views.api import APIBase, MVT as MVTBase
-from arches_controlled_lists.models import ListItem, ListItemValue
+
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
@@ -35,8 +41,6 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
-from arches.app.models.models import GraphModel, ResourceXResource
-
 
 logger = logging.getLogger(__name__)
 
@@ -104,30 +108,40 @@ class BordenNumberExternal(ProtectedResourceView, BordenNumberBase):
         return self._post_impl(request)
 
 
+class ControlledListHierarchy(APIBase):
+    def get(self, request, list_item_id):
+        try:
+            item = ListItem.objects.get(id=list_item_id)
+            labels = []
+
+            while item:
+                label = (
+                    ListItemValue.objects.filter(
+                        list_item=item,
+                        valuetype_id="prefLabel",
+                    )
+                    .values_list("value", flat=True)
+                    .first()
+                )
+
+                if label:
+                    labels.append(label)
+
+                item = item.parent
+
+            labels.reverse()
+
+            return JSONResponse({"labels": labels})
+        except ListItem.DoesNotExist:
+            return JSONResponse({"labels": []})
+
+
 class LegislativeAct(APIBase):
     def get(self, request, act_id):
         legislative_act_proxy = LegislativeActDataProxy()
         act = legislative_act_proxy.get_authorities(act_id)
         # print("Scientific Names: %s" % names)
         return JSONResponse(JSONSerializer().serializeToPython(act))
-
-
-class UserProfile(APIBase):
-    def get(self, request):
-        user_profile = models.User.objects.get(id=request.user.pk)
-        group_names = [
-            group.name for group in models.Group.objects.filter(user=user_profile).all()
-        ]
-        return JSONResponse(
-            JSONSerializer().serializeToPython(
-                {
-                    "username": user_profile.username,
-                    "first_name": user_profile.first_name,
-                    "last_name": user_profile.last_name,
-                    "groups": group_names,
-                }
-            )
-        )
 
 
 class MVT(MVTBase):
@@ -190,33 +204,6 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
             msg = _("No nodes found for graph slug: %s") % self.graph_slug
             raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: msg})
 
-
-class ControlledListHierarchy(APIBase):
-    def get(self, request, list_item_id):
-        try:
-            item = ListItem.objects.get(id=list_item_id)
-            labels = []
-
-            while item:
-                label = (
-                    ListItemValue.objects.filter(
-                        list_item=item,
-                        valuetype_id="prefLabel",
-                    )
-                    .values_list("value", flat=True)
-                    .first()
-                )
-
-                if label:
-                    labels.append(label)
-
-                item = item.parent
-
-            labels.reverse()
-
-            return JSONResponse({"labels": labels})
-        except ListItem.DoesNotExist:
-            return JSONResponse({"labels": []})
 
 class ResourceGraphs(APIBase):
     def get(self, request):
