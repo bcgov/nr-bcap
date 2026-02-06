@@ -38,13 +38,15 @@ class BordenNumberDataType(NonLocalizedStringDataType):
 
     def pre_tile_save(self, tile, nodeid):
         logger.debug("Tile: %s" % tile.data)
-        value = tile.data[nodeid]
+        # The tileid is already set before save so we can't use that to check
+        # if we're adding a tile.
+        exists = models.Tile.objects.filter(pk=tile.pk).exists()
         # We've already set the borden number so don't do it again.
-        if value is not None and value != "":
-            issuance_date_nodeid = self._get_issuance_date_nodeid(tile)
-            if issuance_date_nodeid and not tile.data.get(issuance_date_nodeid):
-                tile.data[issuance_date_nodeid] = datetime.now().strftime("%Y-%m-%d")
+        value = tile.data[nodeid]
+        if exists and value is not None and not value == "":
+            logger.debug("Borden number already set. Skipping.")
             return
+
         borden_grid = re.sub("-.*", "", value)
         # print("Saving %s:%s" % (tile.resourceinstance_id, value))
         logger.debug(
@@ -58,6 +60,7 @@ class BordenNumberDataType(NonLocalizedStringDataType):
                 % (allocated_value, value)
             )
             tile.data[nodeid] = allocated_value
-            issuance_date_nodeid = self._get_issuance_date_nodeid(tile)
-            if issuance_date_nodeid:
-                tile.data[issuance_date_nodeid] = datetime.now().strftime("%Y-%m-%d")
+        issuance_date_nodeid = self._get_issuance_date_nodeid()
+        if issuance_date_nodeid and not tile.data[issuance_date_nodeid]:
+            logger.debug("Setting issuance date")
+            tile.data[issuance_date_nodeid] = datetime.now().strftime("%Y-%m-%d")
