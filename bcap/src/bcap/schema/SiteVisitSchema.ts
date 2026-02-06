@@ -7,6 +7,7 @@ import type { StringValue } from '@/arches_component_lab/datatypes/string/types.
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
 import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
+import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
 
 import type {
     NumberValue,
@@ -235,6 +236,47 @@ export interface ReferencesAndDocumentsTile extends AliasedTileData {
     };
 }
 
+export interface SiteVisitPublicationReferenceTile extends AliasedTileData {
+    aliased_data: {
+        reference_authors?: AliasedNodeData;
+        reference_file?: AliasedNodeData;
+        reference_remarks?: AliasedNodeData;
+        reference_title?: AliasedNodeData;
+        reference_type?: AliasedNodeData;
+        reference_year?: AliasedNodeData;
+    };
+}
+
+export interface SiteVisitRelatedSiteDocumentsTile extends AliasedTileData {
+    aliased_data: {
+        related_document_description?: AliasedNodeData;
+        related_document_type?: AliasedNodeData;
+        related_site_documents?: AliasedNodeData;
+    };
+}
+
+export interface SiteVisitSiteImagesTile extends AliasedTileData {
+    aliased_data: {
+        copyright?: AliasedNodeData;
+        image_date?: AliasedNodeData;
+        image_description?: AliasedNodeData;
+        image_features?: AliasedNodeData;
+        image_type?: AliasedNodeData;
+        image_view?: AliasedNodeData;
+        photographer?: AliasedNodeData;
+        primary_image?: AliasedNodeData;
+        site_images?: FileListValue;
+    };
+}
+
+export interface SiteVisitRelatedDocumentsTile extends AliasedTileData {
+    publication_reference?: SiteVisitPublicationReferenceTile[];
+    related_site_documents?:
+        | SiteVisitRelatedSiteDocumentsTile[]
+        | SiteVisitRelatedSiteDocumentsTile;
+    site_images?: SiteVisitSiteImagesTile[];
+}
+
 // ====================================================================
 // Root objects
 // ====================================================================
@@ -246,6 +288,7 @@ export interface SiteVisitAliasedDataRoot {
     archaeological_data: ArchaeologicalDataTile;
     remarks_and_recommendations: RemarksAndRecommendationsTile;
     references_and_documents: ReferencesAndDocumentsTile;
+    related_documents?: SiteVisitRelatedDocumentsTile;
 }
 
 export interface SiteVisitSchema {
