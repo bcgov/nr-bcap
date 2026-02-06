@@ -1,0 +1,49 @@
+{% load i18n %}
+
+<div class="resource-selector-button">
+    <div class="btn-group btn-group-xs">
+        <button
+            class="btn btn-primary btn-active-primary dropdown-toggle search-btn"
+            data-toggle="dropdown"
+            type="button"
+            aria-expanded="false"
+            aria-controls="translate-to-resource-type-filter-contents"
+            data-bind="disable: is_loading_types() || is_translating()"
+        >
+            <span>{% trans "Translate" %}</span>
+            <!-- ko if: is_translating() -->
+            <i
+                class="fa fa-spinner fa-spin"
+                aria-hidden="true"
+            ></i>
+            <!-- /ko -->
+            <!-- ko ifnot: is_translating() -->
+            <i
+                class="dropdown-caret fa fa-caret-down"
+                aria-hidden="true"
+            ></i>
+            <!-- /ko -->
+        </button>
+        <ul
+            id="translate-to-resource-type-filter-contents"
+            class="dropdown-menu dropdown-menu-left"
+        >
+            <!-- ko if: is_loading_types() -->
+            <li><a href="#">{% trans "Loading..." %}</a></li>
+            <!-- /ko -->
+            <!-- ko ifnot: is_loading_types() -->
+            <!-- ko foreach: available_resource_types -->
+            <li>
+                <a
+                    href="#"
+                    data-bind="text: name.length > 55 ? name.substring(0, 55) + '...' : name, onEnterkeyClick, click: function() { $parent.translate_to_resource_type_by_id(graphid); }"
+                ></a>
+            </li>
+            <!-- /ko -->
+            <!-- ko if: available_resource_types().length === 0 -->
+            <li><a href="#">{% trans "No resource types available" %}</a></li>
+            <!-- /ko -->
+            <!-- /ko -->
+        </ul>
+    </div>
+</div>
