@@ -60,7 +60,7 @@ class BordenNumberDataType(NonLocalizedStringDataType):
                 % (allocated_value, value)
             )
             tile.data[nodeid] = allocated_value
-        issuance_date_nodeid = self._get_issuance_date_nodeid()
+        issuance_date_nodeid = self._get_issuance_date_nodeid(tile)
         if issuance_date_nodeid and not tile.data[issuance_date_nodeid]:
             logger.debug("Setting issuance date")
             tile.data[issuance_date_nodeid] = datetime.now().strftime("%Y-%m-%d")
