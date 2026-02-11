@@ -2035,7 +2035,7 @@
                         "en": "Restricted Document"
                     },
                     "node_id": "250ed6fe-61a8-11f0-ad02-3a7a4e6803c5",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000019"
