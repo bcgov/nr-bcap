@@ -68,11 +68,10 @@ const childSiteBordenNumbers = computed(() => {
 
 const id_fields = [
     'borden_number',
-    'registration_date',
+    'borden_number_issuance_date',
     'registration_status',
     'parcel_owner_type',
     'register_type',
-    'site_creation_date',
 ] as const;
 
 const siteDecisionColumns = [

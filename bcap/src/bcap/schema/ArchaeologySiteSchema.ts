@@ -74,10 +74,9 @@ export interface SiteNamesTile extends AliasedTileData {
 
 export interface IdentificationAndRegistrationTile extends AliasedTileData {
     borden_number?: AliasedNodeData;
-    registration_date?: AliasedNodeData;
     registration_status?: AliasedNodeData;
     parcel_owner_type?: AliasedNodeData;
-    site_creation_date?: AliasedNodeData;
+    borden_number_issuance_date?: AliasedNodeData;
     register_type?: AliasedNodeData;
     parent_site?: AliasedNodeData;
     child_sites?: AliasedNodeData[];
