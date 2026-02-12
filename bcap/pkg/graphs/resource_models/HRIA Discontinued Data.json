@@ -196,33 +196,6 @@
                 },
                 {
                     "active": true,
-                    "cardid": "c2dac7fa-e131-4d6f-b92a-fcee29fa4277",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Unprotected Areas"
-                    },
-                    "nodegroup_id": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
                     "cardid": "c3195a8a-c6c4-4d5b-916e-28df0be9e2dd",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -311,54 +284,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
-                },
-                {
-                    "card_id": "c2dac7fa-e131-4d6f-b92a-fcee29fa4277",
-                    "config": {
-                        "basemap": "British Columbia Roads",
-                        "bearing": 0,
-                        "centerX": -125.2111215300115,
-                        "centerY": 54.5952920093056,
-                        "defaultValue": "",
-                        "defaultValueType": "",
-                        "featureColor": "#FF0000",
-                        "featureLineWidth": 1,
-                        "featurePointSize": 3,
-                        "geocodePlaceholder": "Search",
-                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
-                        "geocoderVisible": true,
-                        "geometryTypes": [
-                            {
-                                "id": "Point",
-                                "text": "Point"
-                            },
-                            {
-                                "id": "Line",
-                                "text": "Line"
-                            },
-                            {
-                                "id": "Polygon",
-                                "text": "Polygon"
-                            }
-                        ],
-                        "label": "Unprotected Areas",
-                        "maxZoom": 20,
-                        "minZoom": 0,
-                        "overlayConfigs": [],
-                        "overlayOpacity": 0,
-                        "pitch": 0,
-                        "rerender": true,
-                        "zoom": 10
-                    },
-                    "id": "1c0f466f-2eb9-4149-a97a-27451998500f",
-                    "label": {
-                        "en": "Unprotected Areas"
-                    },
-                    "node_id": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000007"
                 },
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
@@ -1799,16 +1724,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "143fc2f7-da1b-4373-bc8c-debfa5369a8c",
-                    "edgeid": "6d24df31-8bc8-4751-8d58-1e3073249654",
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "rangenode_id": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "edgeid": "6fba7781-68c4-4ae4-9182-073a6a723193",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
@@ -2245,13 +2160,6 @@
                     "legacygroupid": null,
                     "nodegroupid": "7e48be06-52b2-11f0-9251-2a3f36199137",
                     "parentnodegroup_id": null
-                },
-                {
-                    "cardinality": "1",
-                    "grouping_node_id": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
-                    "legacygroupid": null,
-                    "nodegroupid": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
-                    "parentnodegroup_id": "143fc2f7-da1b-4373-bc8c-debfa5369a8c"
                 },
                 {
                     "cardinality": "1",
@@ -3233,52 +3141,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "unprotected_areas",
-                    "config": {
-                        "addToMap": false,
-                        "advancedStyle": "",
-                        "advancedStyling": false,
-                        "clusterDistance": 20,
-                        "clusterMaxZoom": 5,
-                        "clusterMinPoints": 3,
-                        "fillColor": "rgba(130, 130, 130, 0.5)",
-                        "haloRadius": 4,
-                        "haloWeight": 4,
-                        "layerActivated": true,
-                        "layerIcon": "",
-                        "layerLegend": "",
-                        "layerName": "",
-                        "lineColor": "rgba(130, 130, 130, 0.7)",
-                        "lineHaloColor": "rgba(200, 200, 200, 0.5)",
-                        "outlineColor": "rgba(200, 200, 200, 0.7)",
-                        "outlineWeight": 2,
-                        "pointColor": "rgba(130, 130, 130, 0.7)",
-                        "pointHaloColor": "rgba(200, 200, 200, 0.5)",
-                        "radius": 2,
-                        "simplification": 0.3,
-                        "weight": 2
-                    },
-                    "datatype": "geojson-feature-collection",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Unprotected Areas",
-                    "nodegroup_id": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
-                    "nodeid": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D35_Area",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 4,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "data_entry",
                     "config": {
                         "en": ""
@@ -3827,9 +3689,9 @@
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                 "most_recent_edit_id": null,
-                "notes": "SME config updates",
-                "publicationid": "bd402277-b64c-4e8b-8488-986e1fa9d701",
-                "published_time": "2026-02-12T10:47:39.920"
+                "notes": "Removed unprotected areas node.",
+                "publicationid": "05e9e973-1012-42f2-b050-3ada9e33ce2a",
+                "published_time": "2026-02-12T12:57:39.390"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
