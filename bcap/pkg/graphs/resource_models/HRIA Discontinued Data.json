@@ -50,7 +50,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Site Boundary Annotations"
+                        "en": "Historical Spatial Accuracy"
                     },
                     "nodegroup_id": "143fc2f7-da1b-4373-bc8c-debfa5369a8c",
                     "sortorder": 1,
@@ -104,7 +104,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Jursidiction / Tenure Information"
+                        "en": "Tenure/Reserves"
                     },
                     "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
                     "sortorder": 2,
@@ -260,7 +260,7 @@
                             "prefix",
                             "suffix"
                         ],
-                        "label": "Length",
+                        "label": "Length (m)",
                         "max": "",
                         "min": "",
                         "placeholder": {
@@ -279,7 +279,7 @@
                     },
                     "id": "0e65c2b3-2bf5-42ac-a0f7-1bac323b7766",
                     "label": {
-                        "en": "Length"
+                        "en": "Length (m)"
                     },
                     "node_id": "0cc195a8-60ec-11f0-a806-0242ac170007",
                     "sortorder": 0,
@@ -313,6 +313,54 @@
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
+                    "card_id": "c2dac7fa-e131-4d6f-b92a-fcee29fa4277",
+                    "config": {
+                        "basemap": "British Columbia Roads",
+                        "bearing": 0,
+                        "centerX": -125.2111215300115,
+                        "centerY": 54.5952920093056,
+                        "defaultValue": "",
+                        "defaultValueType": "",
+                        "featureColor": "#FF0000",
+                        "featureLineWidth": 1,
+                        "featurePointSize": 3,
+                        "geocodePlaceholder": "Search",
+                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
+                        "geocoderVisible": true,
+                        "geometryTypes": [
+                            {
+                                "id": "Point",
+                                "text": "Point"
+                            },
+                            {
+                                "id": "Line",
+                                "text": "Line"
+                            },
+                            {
+                                "id": "Polygon",
+                                "text": "Polygon"
+                            }
+                        ],
+                        "label": "Unprotected Areas",
+                        "maxZoom": 20,
+                        "minZoom": 0,
+                        "overlayConfigs": [],
+                        "overlayOpacity": 0,
+                        "pitch": 0,
+                        "rerender": true,
+                        "zoom": 10
+                    },
+                    "id": "1c0f466f-2eb9-4149-a97a-27451998500f",
+                    "label": {
+                        "en": "Unprotected Areas"
+                    },
+                    "node_id": "81f0b383-496e-4dfc-b826-e7c4de7a5cb6",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000007"
+                },
+                {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
@@ -332,7 +380,7 @@
                         "en": "RCD Lab Code"
                     },
                     "node_id": "b91b62d2-52b6-11f0-99ae-2a3f36199137",
-                    "sortorder": 1,
+                    "sortorder": 13,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -344,7 +392,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "RCD Adjusted Var",
+                        "label": "RCD Adjusted Var (+/-)",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -354,10 +402,10 @@
                     },
                     "id": "3b0a7586-2786-4f8f-9aa2-b27182182ef4",
                     "label": {
-                        "en": "RCD Adjusted Var"
+                        "en": "RCD Adjusted Var (+/-)"
                     },
                     "node_id": "e5a2ae94-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 5,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -407,7 +455,7 @@
                         "en": "RCD Unadjusted"
                     },
                     "node_id": "c29d6d8a-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 2,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -441,6 +489,28 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "98c7b0d7-72af-4ec2-a784-365059cdb05d",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Borden Number",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "5609522a-a926-4178-a179-42d78e8b5ad7",
+                    "label": {
+                        "en": "Borden Number"
+                    },
+                    "node_id": "642624fa-54f1-11f0-842f-0242ac170006",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "4611f674-8235-445d-92ae-f664bf926fbf",
@@ -535,7 +605,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Tenure Identifier",
+                        "label": "Tenure Description",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -545,7 +615,7 @@
                     },
                     "id": "6d3a14f7-1650-4770-9590-17da32e36077",
                     "label": {
-                        "en": "Tenure Identifier"
+                        "en": "Tenure Description"
                     },
                     "node_id": "5d597406-197d-11f0-b2a5-0242ac170008",
                     "sortorder": 2,
@@ -574,7 +644,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "End Year",
+                        "label": "To Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -582,10 +652,10 @@
                     },
                     "id": "7e48c8ba-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "End Year"
+                        "en": "To Date"
                     },
                     "node_id": "7e48c63a-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 14,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -596,17 +666,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Start Year Calendar",
+                        "label": "From Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48c932-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Start Year Calendar"
+                        "en": "From Date Calendar"
                     },
                     "node_id": "7e48c798-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 12,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -617,17 +687,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Start Year Qualifier",
+                        "label": "From Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48c996-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Start Year Qualifier"
+                        "en": "From Date Qualifier"
                     },
                     "node_id": "7e48c842-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 13,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -638,17 +708,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "End Year Qualifier",
+                        "label": "To Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48c9fa-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "End Year Qualifier"
+                        "en": "To Date Qualifier"
                     },
                     "node_id": "7e48c1a8-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 15,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -659,17 +729,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "End Year Calendar",
+                        "label": "To Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48ca54-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "End Year Calendar"
+                        "en": "To Date Calendar"
                     },
                     "node_id": "7e48c2ac-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 16,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -686,20 +756,20 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Source of Dates",
+                        "label": "Source",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": "E.g. City of Surrey"
+                            "en": ""
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "7e48cab8-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Source of Dates"
+                        "en": "Source"
                     },
                     "node_id": "7e48c586-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 9,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -732,7 +802,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "Start Year",
+                        "label": "From Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -740,10 +810,10 @@
                     },
                     "id": "7e48cb8a-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Start Year"
+                        "en": "From Date"
                     },
                     "node_id": "7e48c4d2-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 11,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -763,7 +833,7 @@
                         "label": "Chronology Remarks",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": "Provide explanation of significant date types."
+                            "en": ""
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -773,7 +843,7 @@
                         "en": "Chronology Remarks"
                     },
                     "node_id": "7e48c36a-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 10,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -784,14 +854,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Determination Method",
+                        "label": "Method",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "7e48cc52-52b2-11f0-9251-2a3f36199137",
                     "label": {
-                        "en": "Determination Method"
+                        "en": "Method"
                     },
                     "node_id": "7e48c41e-52b2-11f0-9251-2a3f36199137",
                     "sortorder": 0,
@@ -868,7 +938,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Modified By",
+                        "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -878,7 +948,7 @@
                     },
                     "id": "9944d443-3bae-409a-93fe-bd0f3597e697",
                     "label": {
-                        "en": "Modified By"
+                        "en": "Entered By"
                     },
                     "node_id": "0d97953e-60ee-11f0-b2ad-0242ac170007",
                     "sortorder": 6,
@@ -893,7 +963,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Modified By",
+                        "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -903,7 +973,7 @@
                     },
                     "id": "9b65051e-2b77-42ee-afa2-b8aca9a223e8",
                     "label": {
-                        "en": "Modified By"
+                        "en": "Entered By"
                     },
                     "node_id": "7e0e099c-d475-4dc8-ac14-ce455b89f6a7",
                     "sortorder": 3,
@@ -962,7 +1032,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Modified On",
+                        "label": "Entered On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -970,7 +1040,7 @@
                     },
                     "id": "a2479f79-a04f-4192-9968-7320ec8f6ce6",
                     "label": {
-                        "en": "Modified On"
+                        "en": "Entered On"
                     },
                     "node_id": "6d534692-406b-41ed-abb7-9e4004ddffa7",
                     "sortorder": 2,
@@ -985,7 +1055,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Modified By",
+                        "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -995,10 +1065,10 @@
                     },
                     "id": "a2c0825f-c01e-4500-9c92-b380db9a6efa",
                     "label": {
-                        "en": "Modified By"
+                        "en": "Entered By"
                     },
                     "node_id": "04caad14-52b7-11f0-9897-2a3f36199137",
-                    "sortorder": 7,
+                    "sortorder": 16,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -1045,7 +1115,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Jurisdiction Entered By",
+                        "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -1055,7 +1125,7 @@
                     },
                     "id": "ac135e0f-0e66-4412-9594-5133298bff6a",
                     "label": {
-                        "en": "Jurisdiction Entered By"
+                        "en": "Entered By"
                     },
                     "node_id": "a4acc51a-197d-11f0-b2a5-0242ac170008",
                     "sortorder": 4,
@@ -1138,7 +1208,7 @@
                         "en": "RCD Lab Number"
                     },
                     "node_id": "c236d708-52b5-11f0-84ae-2a3f36199137",
-                    "sortorder": 6,
+                    "sortorder": 14,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -1163,7 +1233,7 @@
                         "en": "RCD Adjusted"
                     },
                     "node_id": "db704864-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 4,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -1173,7 +1243,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Modified On",
+                        "label": "Entered On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1181,10 +1251,10 @@
                     },
                     "id": "bdc3be88-2213-4720-8194-a5225c062c7f",
                     "label": {
-                        "en": "Modified On"
+                        "en": "Entered On"
                     },
                     "node_id": "1fe5cf0c-52b7-11f0-9897-2a3f36199137",
-                    "sortorder": 8,
+                    "sortorder": 15,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1196,7 +1266,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "RCD Unadjusted Var",
+                        "label": "RCD Unadjusted Var (+/-)",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -1206,10 +1276,10 @@
                     },
                     "id": "c14aacbb-88fa-4474-b0aa-b997c8ccb455",
                     "label": {
-                        "en": "RCD Unadjusted Var"
+                        "en": "RCD Unadjusted Var (+/-)"
                     },
                     "node_id": "cdd4b32a-52c7-11f0-8f82-3e35adbf154c",
-                    "sortorder": 3,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -1244,7 +1314,7 @@
                             "prefix",
                             "suffix"
                         ],
-                        "label": "Width",
+                        "label": "Width (m)",
                         "max": "",
                         "min": "",
                         "placeholder": {
@@ -1263,7 +1333,7 @@
                     },
                     "id": "c9ea0452-74de-48aa-988d-d91522a3ecb0",
                     "label": {
-                        "en": "Width"
+                        "en": "Width (m)"
                     },
                     "node_id": "b98d4138-60ec-11f0-a204-0242ac170007",
                     "sortorder": 2,
@@ -1361,7 +1431,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Jurisdiction Entered Date",
+                        "label": "Entered Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1369,7 +1439,7 @@
                     },
                     "id": "e85bd926-1b80-47d9-b559-6d134c874544",
                     "label": {
-                        "en": "Jurisdiction Entered Date"
+                        "en": "Entered Date"
                     },
                     "node_id": "b7fbd656-197d-11f0-b2a5-0242ac170008",
                     "sortorder": 5,
@@ -1412,7 +1482,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Modified On",
+                        "label": "Entered On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1420,7 +1490,7 @@
                     },
                     "id": "f986095c-a624-4de9-9ba2-f2d43328e22b",
                     "label": {
-                        "en": "Modified On"
+                        "en": "Entered On"
                     },
                     "node_id": "2d000e88-60ee-11f0-b2ad-0242ac170007",
                     "sortorder": 7,
@@ -2125,7 +2195,7 @@
             "graphid": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
             "group_permissions": {},
             "has_unpublished_changes": true,
-            "iconclass": "",
+            "iconclass": "fa fa-suitcase",
             "is_active": true,
             "is_copy_immutable": false,
             "isresource": true,
@@ -2256,8 +2326,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_ENTBY",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2281,8 +2351,8 @@
                     },
                     "datatype": "number",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DM_D_LNGTH",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2306,8 +2376,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DM_D_ENTBY",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2388,8 +2458,8 @@
                     },
                     "datatype": "boolean",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ADIF_D_REC",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -2413,8 +2483,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ADIF_D_EON",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2438,8 +2508,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_ENTON",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2488,8 +2558,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DM_D_ENTON",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2513,8 +2583,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TE_D_JURIS",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2536,8 +2606,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SA_HI_REM",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2586,8 +2656,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TE_D_TYPE",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2609,8 +2679,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "OM_D_NAME",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2634,8 +2704,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DM_D_LDIR",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2659,8 +2729,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TE_D_DESCR",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2695,8 +2765,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": "Archaeological Site this discontinued data was associated with in HRIA.",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DD_BORDEN",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -2745,8 +2815,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "OM_D_ENTON",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2768,8 +2838,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "OM_D_SCALE",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2793,8 +2863,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TE_D_REM",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2843,8 +2913,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ADIF_D_EBY",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2866,8 +2936,8 @@
                     "config": {},
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "OM_D_ENTBY",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2915,8 +2985,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_TQUAL",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2941,8 +3011,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_TCAL",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2966,8 +3036,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": "datenotes",
+                    "exportable": true,
+                    "fieldname": "CH_D_REMAR",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -2992,8 +3062,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_METHO",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3018,7 +3088,7 @@
                     "datatype": "date",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "EVNT_ST_YR",
+                    "fieldname": "CD_D_FDATE",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3042,8 +3112,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": "datesource",
+                    "exportable": true,
+                    "fieldname": "CD_D_SOURC",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3068,7 +3138,7 @@
                     "datatype": "date",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "EVNT_ND_YR",
+                    "fieldname": "CD_D_TDATE",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3118,8 +3188,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_FCAL",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3144,8 +3214,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_FQUAL",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3238,8 +3308,8 @@
                     "config": {},
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SA_HI_EDBY",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3313,8 +3383,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TE_D_ENTBY",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3336,8 +3406,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SA_HI_NOTE",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3361,8 +3431,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TE_D_ENTON",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3386,8 +3456,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_CODE",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3411,8 +3481,8 @@
                     },
                     "datatype": "number",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DM_D_WIDTH",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3436,8 +3506,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SA_HI_EDON",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3484,8 +3554,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_NUM",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3509,8 +3579,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_RCDU",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3534,8 +3604,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DM_D_WDIR",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3584,8 +3654,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_RCDUV",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3634,8 +3704,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_RCDA",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3659,8 +3729,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CD_D_RCDAV",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3709,8 +3779,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DM_D_BTYPE",
                     "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -3757,9 +3827,9 @@
             "publication": {
                 "graph_id": "19806d98-8200-45b4-9f5d-9f07d9a9aaa1",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "a94818dc-4394-4e41-a1fd-ee6bf666bbfe",
-                "published_time": "2026-01-26T16:47:27.353"
+                "notes": "SME config updates",
+                "publicationid": "bd402277-b64c-4e8b-8488-986e1fa9d701",
+                "published_time": "2026-02-12T10:47:39.920"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -3860,9 +3930,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
+        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
+        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "5.14.0-611.20.1.el9_7.x86_64"
     }
 }
