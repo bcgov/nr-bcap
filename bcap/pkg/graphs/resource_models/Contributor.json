@@ -72,7 +72,7 @@
                             "placeholder"
                         ],
                         "label": "Contact Email",
-                        "maxLength": null,
+                        "maxLength": "125",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -92,13 +92,7 @@
                 {
                     "card_id": "781da83d-3229-4af3-89fd-9c66f54a223b",
                     "config": {
-                        "dateFormat": "YYYY-MM-DD",
-                        "defaultValue": "",
-                        "label": "End Date",
-                        "maxDate": false,
-                        "minDate": false,
-                        "placeholder": "Enter date",
-                        "viewMode": "days"
+                        "label": "End Date"
                     },
                     "id": "511c063d-518b-43e8-9ab4-aeb914634aa4",
                     "label": {
@@ -116,7 +110,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Role",
+                        "label": "Contributor Role",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -124,7 +118,7 @@
                     },
                     "id": "56a839af-4f62-4511-8091-98d655e78ee7",
                     "label": {
-                        "en": "Role"
+                        "en": "Contributor Role"
                     },
                     "node_id": "e2f1c29a-c500-11ed-9089-5254004d77d3",
                     "sortorder": 1,
@@ -135,13 +129,9 @@
                 {
                     "card_id": "781da83d-3229-4af3-89fd-9c66f54a223b",
                     "config": {
-                        "dateFormat": "YYYY-MM-DD",
-                        "defaultValue": "",
                         "label": "Start Date",
-                        "maxDate": false,
-                        "minDate": false,
-                        "placeholder": "Enter date",
-                        "viewMode": "days"
+                        "maxDate": null,
+                        "minDate": null
                     },
                     "id": "acbd99f9-48dd-45cd-b0ad-69afff11933b",
                     "label": {
@@ -166,7 +156,7 @@
                             "placeholder"
                         ],
                         "label": "Contact Phone Number",
-                        "maxLength": null,
+                        "maxLength": "25",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -194,7 +184,7 @@
                         "en": "Inactive"
                     },
                     "node_id": "99643f1e-9e4e-11ed-b6d5-5254004d77d3",
-                    "sortorder": 7,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "0346bc9c-d235-4313-adc8-d0e210b2ef25"
@@ -205,14 +195,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Organization or Individual",
+                        "label": "Contributor Type",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "c4eca7c0-9dea-11ed-9a7b-5254004d77d3",
                     "label": {
-                        "en": "Organization or Individual"
+                        "en": "Contributor Type"
                     },
                     "node_id": "c4eca2de-9dea-11ed-9a7b-5254004d77d3",
                     "sortorder": 0,
@@ -233,7 +223,7 @@
                             "placeholder"
                         ],
                         "label": "Organization Name or Last Name",
-                        "maxLength": null,
+                        "maxLength": "250",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -262,8 +252,8 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "First Name",
-                        "maxLength": null,
+                        "label": "Contributor First Name",
+                        "maxLength": "125",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -272,7 +262,7 @@
                     },
                     "id": "c4ecaaa4-9dea-11ed-9a7b-5254004d77d3",
                     "label": {
-                        "en": "First Name"
+                        "en": "Contributor First Name"
                     },
                     "node_id": "c4eca13a-9dea-11ed-9a7b-5254004d77d3",
                     "sortorder": 3,
@@ -608,8 +598,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CONTR_AORG",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -692,8 +682,8 @@
                     },
                     "datatype": "boolean",
                     "description": "This consultant is no longer active and therefore cannot be associated with future projects",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CONTR_INAC",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -717,13 +707,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CONTR_MAIL",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Contact Email",
@@ -767,13 +757,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CONTR_PHON",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Contact Phone Number",
@@ -818,7 +808,7 @@
                     "datatype": "string",
                     "description": "Name of the contributor - Last name if an individual, Organization name for an organization",
                     "exportable": true,
-                    "fieldname": null,
+                    "fieldname": "CONTR_LNAM",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -867,8 +857,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CONTR_FNAM",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -900,8 +890,8 @@
                     },
                     "datatype": "reference",
                     "description": "Either Person or Company",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CONTR_O_I",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -977,12 +967,12 @@
                     "datatype": "reference",
                     "description": null,
                     "exportable": true,
-                    "fieldname": null,
+                    "fieldname": "CONTR_ROLE",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Contributor Role",
@@ -999,9 +989,9 @@
             "publication": {
                 "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                 "most_recent_edit_id": null,
-                "notes": "Fix organization picklist",
-                "publicationid": "df2f072c-83d7-485d-9e41-87efbebd1858",
-                "published_time": "2025-12-11T00:04:04.081"
+                "notes": "SME configuration updates",
+                "publicationid": "4d29653d-504e-4928-850f-fdc222c7d8a3",
+                "published_time": "2026-02-11T12:45:12.555"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1102,9 +1092,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "a67a23c71b 2025-08-14 16:46:56 -0700",
+        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
+        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
         "os": "Linux",
-        "os version": "6.12.54-linuxkit"
+        "os version": "5.14.0-611.20.1.el9_7.x86_64"
     }
 }
