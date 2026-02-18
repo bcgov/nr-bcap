@@ -97,6 +97,14 @@ ELASTICSEARCH_HOSTS = [
     }
 ]
 
+ELASTICSEARCH_INDEX_SETTINGS = {
+    "settings": {
+        "index": {
+            "max_terms_count": 150000
+        }
+    }
+}
+
 # Modify this line as needed for your project to connect to elasticsearch with a password that you generate
 # ELASTICSEARCH_CONNECTION_OPTIONS = {"request_timeout": 30, "verify_certs": False, "basic_auth": ("elastic", "E1asticSearchforArche5")}
 
@@ -162,7 +170,7 @@ TERM_SEARCH_TYPES = [
 
 ES_MAPPING_MODIFIER_CLASSES = [
     "arches_controlled_lists.search.references_es_mapping_modifier.ReferencesEsMappingModifier",
-    "bcap.search.arch_site_es_values.CustomSearchValue"
+    # "bcap.search.arch_site_es_values.CustomSearchValue"
 ]
 
 KIBANA_URL = "http://localhost:5601/"
@@ -749,3 +757,6 @@ TIMEWHEEL_DATE_TIERS = {
         # }
     },
 }
+
+# "Translating" one resource type to another (i.e., finding related instances)
+TRANSLATE_RESOURCE_TYPE_MAX_SOURCES = 10000
