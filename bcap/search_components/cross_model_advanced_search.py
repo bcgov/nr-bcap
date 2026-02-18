@@ -1,3 +1,45 @@
+"""
+Cross-Model Advanced Search
+
+Enables search queries that span multiple Arches resource models and returns
+results translated to a single target model via relationship traversal.
+
+Overall Strategy
+
+1. Filter construction - The UI sends a JSON payload containing one or more
+   sections (one per resource model). Each section holds groups of card
+   filters that map directly to Arches nodegroups and their searchable nodes.
+   The dataclass hierarchy SectionFilter > GroupFilter > CardFilter mirrors
+   this structure and knows how to compile itself into Elasticsearch Bool
+   queries.
+
+2. Elasticsearch execution - Each section's query is run against the
+   resources index to produce a set of matching resource-instance IDs per
+   graph. Queries for different graphs execute in parallel via a thread pool.
+
+3. Relationship traversal (translation) - When a translate mode is active
+   (i.e. a target graph is selected), the Intersector hands each per-graph
+   result set to the Translator which walks resource-to-resource links to
+   find equivalent IDs in the target graph. Links are discovered through
+   two mechanisms:
+
+   - ResourceXResource table.
+   - Tile-based resource-instance / resource-instance-list node values.
+
+   Multi-hop traversal through intermediate graphs is supported when no
+   direct link exists between a source and target graph.
+
+4. Set operations - The translated ID sets from every section are combined
+   with either intersect (default) or union logic to produce the final
+   result set. A special correlated filtering step ensures that when a
+   linking tile also carries contextual filters, both constraints are
+   evaluated against the same tile row.
+
+5. Result injection - The final set of target-graph resource IDs is injected
+   back into the Elasticsearch query as a terms filter so the standard Arches
+   search pipeline handles pagination, sorting, and display.
+"""
+
 from __future__ import annotations
 
 import hashlib
@@ -86,7 +128,13 @@ def chunk(items: list, size: int):
 
 
 def has_clause(query: Bool) -> bool:
-    """Check if a Bool query has any clauses (must, should, or must_not)."""
+    """
+    Check if a Bool query has any clauses (must, should, or must_not).
+
+    An empty Bool query is structurally valid in Elasticsearch but will match
+    all documents. Callers use this guard to avoid appending no-op queries that
+    would widen results unexpectedly.
+    """
 
     dsl = query.dsl["bool"]
     return bool(dsl.get("must") or dsl.get("should") or dsl.get("must_not"))
@@ -94,7 +142,14 @@ def has_clause(query: Bool) -> bool:
 
 @dataclass
 class NodeValue:
-    """Wrapper for extracting resource instance IDs from tile data node values."""
+    """
+    Wraps a raw tile data value from a resource-instance or resource-instance-list
+    node and extracts the referenced resource instance IDs from it.
+
+    Tile data for these node types is stored as a list of dicts with a
+    "resourceId" key. This class normalises both the single-value and list
+    forms so callers do not need to handle either shape directly.
+    """
 
     raw: Any
 
@@ -118,7 +173,14 @@ class NodeValue:
 
 @dataclass
 class CardFilter:
-    """Represents filter criteria for a single card (nodegroup) in the search."""
+    """
+    Represents filter criteria for a single card (nodegroup) in the search.
+
+    Each node in the card contributes one clause to the resulting Bool query.
+    Resource-instance nodes are handled separately because their tile data
+    structure (a list of dicts with a "resourceId" key) requires custom query
+    construction that bypasses the standard datatype append_search_filters path.
+    """
 
     filters: dict[str, Any] = field(default_factory=dict)
     nodegroup: str | None = None
@@ -219,6 +281,10 @@ class GroupFilter:
     """
     Represents a group of card filters that can be combined with AND (match all)
     or OR (match any) logic.
+
+    Each card query is wrapped in a Nested clause because tiles are stored as
+    nested documents in Elasticsearch. The group's match_type controls whether
+    all nested clauses must match (must) or at least one must match (should).
     """
 
     cards: list[CardFilter] = field(default_factory=list)
@@ -267,7 +333,12 @@ class GroupFilter:
 class SectionFilter:
     """
     Represents all filter criteria for a single resource model.
-    Contains multiple groups that can be combined with AND/OR operators.
+
+    Contains multiple groups that are combined using the operator declared on
+    each group. When all inter-group operators are the same (all AND or all OR)
+    the query is built directly. Mixed operators are resolved by collecting
+    consecutive AND groups into sub-queries that are then OR'd together,
+    matching standard boolean precedence.
     """
 
     graph: str | None = None
@@ -353,13 +424,21 @@ class LinkCache:
     """
     Singleton cache for resource-instance node configurations across all graphs.
 
-    This cache tracks which graphs can link to which other graphs via resource-instance
-    or resource-instance-list nodes. This information is used to determine how to
-    traverse from one resource model to another during cross-model searches.
+    Tracks which graphs can link to which other graphs via resource-instance or
+    resource-instance-list nodes. This information drives relationship traversal
+    during cross-model searches without requiring repeated database queries.
 
-    Two types of nodes are tracked:
-    - Constrained nodes: Have specific target graph IDs in their config
-    - Unconstrained nodes: Can reference any graph (no graphid restriction in config)
+    Nodes are divided into two categories:
+
+    - Constrained nodes: their config declares one or more explicit target graph
+      IDs, so they can only reference resources in those specific graphs.
+    - Unconstrained nodes: their config contains no graphid restriction, meaning
+      they can reference resources in any graph.
+
+    Both categories are returned by get(), but only constrained nodes are
+    returned by get_constrained(). Correlated filtering relies exclusively on
+    constrained nodes because unconstrained nodes cannot guarantee the link
+    points at the intended target graph.
     """
 
     _cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
@@ -396,7 +475,18 @@ class LinkCache:
 
     @classmethod
     def _init(cls) -> None:
-        """Load all resource-instance nodes from the database and categorize them."""
+        """
+        Load all resource-instance nodes from the database and categorize them
+        as constrained or unconstrained.
+
+        Constrained nodes are indexed under _graph_nodes by their source graph ID.
+        Unconstrained nodes are stored separately under _unconstrained so that
+        get() can include them while get_constrained() can exclude them.
+
+        Child nodegroups are also collected here so that correlated filtering
+        can identify nested tiles that carry both a relationship link and
+        contextual filter values on the same tile row.
+        """
 
         nodes = Node.objects.filter(
             datatype__in=["resource-instance", "resource-instance-list"],
@@ -475,7 +565,13 @@ class LinkCache:
 
     @classmethod
     def get_constrained(cls, source: str, target: str) -> list[dict[str, Any]]:
-        """Get only explicitly constrained nodes (excludes unconstrained nodes)."""
+        """
+        Get only explicitly constrained nodes (excludes unconstrained nodes).
+
+        Used by correlated filtering, which requires certainty that a node's
+        tile value points at the intended target graph before evaluating
+        additional filter conditions on the same tile row.
+        """
 
         if not cls._ready:
             cls._init()
@@ -506,8 +602,12 @@ class LinkCache:
 
 class Scroller:
     """
-    Handles scrolling through large Elasticsearch result sets that exceed the 10k limit.
-    Uses composite aggregations for efficient ID-only queries.
+    Handles scrolling through large Elasticsearch result sets that exceed the
+    10,000-hit default limit.
+
+    For ID-only queries, composite aggregations are preferred over the scroll
+    API because they are more memory-efficient on the Elasticsearch side and
+    do not require keeping a scroll context open between requests.
     """
 
     def __init__(self, engine: Any) -> None:
@@ -552,7 +652,14 @@ class Scroller:
         return result
 
     def ids(self, query: dict[str, Any]) -> set[str]:
-        """Scroll through results returning only document IDs using composite aggregations."""
+        """
+        Return only the resource instance IDs matching the query.
+
+        For result sets up to 10,000 hits a simple size-limited query is used.
+        Beyond that, composite aggregations page through the full result set
+        without holding a scroll context open, which is more efficient than
+        the scroll API for large cardinality ID retrieval.
+        """
 
         result = set()
 
@@ -625,8 +732,17 @@ class Scroller:
 
 class Linker:
     """
-    Handles finding connections between resources across different graphs.
-    Uses both ResourceXResource relationships and tile-based resource-instance links.
+    Resolves connections between resources across different graphs.
+
+    Uses two discovery mechanisms in order of preference:
+
+    1. ResourceXResource table — explicit, graph-aware relationships that are
+       fast to query and carry no ambiguity about which graph the linked
+       resource belongs to.
+    2. Tile data — resource-instance node values stored inside tile JSON. Used
+       as a fallback when no ResourceXResource rows exist for the given pair of
+       graphs, and also for correlated filtering where the link and any
+       additional filters must be evaluated against the same tile row.
     """
 
     def _find_forward_via_tiles(
@@ -674,7 +790,15 @@ class Linker:
         nodegroups: set[str],
         graph: str,
     ) -> set[str]:
-        """Find resources in target graph that reference the source resources."""
+        """
+        Find resources in the target graph whose tiles reference one of the
+        source resources.
+
+        For small source sets (up to 100 IDs), Django Q objects are used to
+        push the filtering into the database. For larger sets, all matching
+        tiles are streamed and filtered in Python to avoid generating an
+        oversized IN clause.
+        """
 
         if not sources or not nodes or not nodegroups:
             return set()
@@ -830,8 +954,15 @@ class Linker:
         self, sources: set[str], source_graph: str, target_graph: str
     ) -> set[str]:
         """
-        Find target graph resources connected to source resources.
-        Tries RXR first, falls back to tiles if no RXR relationships exist.
+        Find target graph resources connected to the source resources.
+
+        Queries ResourceXResource in both forward and reverse directions first.
+        Falls back to tile-based link discovery only if no RXR rows are found,
+        checking both forward (source tiles reference target) and reverse
+        (target tiles reference source) tile directions.
+
+        Results are verified against the database to confirm they belong to the
+        expected target graph, guarding against stale or cross-graph ID collisions.
         """
 
         if not sources:
@@ -908,9 +1039,14 @@ class Linker:
         tile_filters: dict[str, Any] | None = None,
     ) -> dict[str, set[str]]:
         """
-        Get a mapping of source resources to their linked target resources.
-        Optionally filters tiles that must match additional criteria.
-        Used for correlated filtering where the link and filter are on the same tile.
+        Build a mapping of source resource IDs to the target resource IDs they
+        reference via tile data, constrained to the given nodegroups.
+
+        When tile_filters is provided, only tiles whose data satisfies every
+        filter condition are included. This is the mechanism behind correlated
+        filtering: a tile that carries both a resource-instance link and a
+        contextual filter value (e.g. a relationship type) must satisfy both
+        constraints on the same row before the link is counted.
         """
 
         result = defaultdict(set)
@@ -958,8 +1094,18 @@ class Linker:
 
 class Translator:
     """
-    Handles translating results from source graphs to a target graph.
-    Supports multi-hop traversal through intermediate graphs.
+    Translates a set of source graph resource IDs to equivalent IDs in a target
+    graph by following resource relationships.
+
+    Translation is attempted in three stages of increasing breadth:
+
+    1. Direct link — a single get_intermediate call between source and target.
+    2. Multi-hop — routes through an intermediate graph that connects both the
+       source and the target. ES filter sets for the intermediate graph are
+       applied to narrow the hop.
+    3. Broad connected set — collects all resources reachable from the sources
+       via ResourceXResource and intersects them with available ES match sets
+       before attempting a final hop to the target.
     """
 
     def __init__(self, linker: Linker) -> None:
@@ -1049,9 +1195,22 @@ class Translator:
 
 class Intersector:
     """
-    Computes the intersection of target resources from multiple filter sections.
-    Handles correlated filtering where filters on different graphs must match
-    through the same linking tile.
+    Top-level coordinator that turns per-section filter data into a final set
+    of target graph resource IDs.
+
+    Pipeline:
+
+    1. Parse each section into a SectionFilter and group them by graph.
+    2. Execute ES queries for all graphs in parallel, producing a per-graph
+       match set.
+    3. Optionally apply correlated filtering to pairs of graphs whose linking
+       tiles also carry contextual filter values, ensuring both the link and
+       the filter are evaluated on the same tile row.
+    4. Build a graph adjacency map that includes intermediate graphs capable
+       of bridging the filtered graphs to the target.
+    5. Translate each per-graph match set to the target graph in parallel,
+       then combine the translated sets using the chosen set operation
+       (intersect or union).
     """
 
     def __init__(
@@ -1146,7 +1305,12 @@ class Intersector:
     ) -> dict[str, list[str]]:
         """
         Build an adjacency map of graph connections for translation.
-        Includes intermediate graphs that connect multiple filtered graphs.
+
+        Starts from the set of graphs that carry active filters plus the target
+        graph. Candidate intermediate graphs (those not in the filtered set) are
+        included when they have connections to two or more filtered graphs, as
+        they may provide a bridge for multi-hop translation. Edges are populated
+        from both the LinkCache and existing ResourceXResource rows.
         """
 
         filtered_graphs = {section.graph for section in sections if section.graph}
@@ -1247,8 +1411,13 @@ class Intersector:
         source_section: SectionFilter,
     ) -> set[str]:
         """
-        Find nodegroups that have both a link to target graph AND contextual filters.
-        These require correlated filtering to ensure filters apply to the linking tile.
+        Identify child nodegroups that carry both a constrained link to the
+        target graph and at least one non-resource-instance filter value.
+
+        Only child (nested) nodegroups are considered because a correlated
+        filter requires the link and the contextual filter to exist on the same
+        tile row. Top-level nodegroups cannot share a row with another tile's
+        link value, so they are excluded.
         """
 
         links = LinkCache.get_constrained(source_graph, target_graph)
@@ -1444,9 +1613,17 @@ class Intersector:
         operation: str = "intersect",
     ) -> set[str]:
         """
-        Compute the intersection/union of target resources from all sections.
-        Each section produces a set of target resources; the final result
-        is combined based on the operation.
+        Compute the final set of target graph resource IDs from all section filters.
+
+        Steps:
+        1. Parse section_data into SectionFilter objects, grouped by graph.
+        2. Run ES queries for each graph in parallel.
+        3. Return early if any graph yields no matches (intersect only).
+        4. Apply correlated filtering if any two graphs share a linking child
+           nodegroup that also carries contextual filter values.
+        5. Build a graph adjacency map, including intermediate graphs.
+        6. Translate each per-graph match set to the target graph in parallel.
+        7. Combine translated sets using the specified operation.
         """
 
         sections = [SectionFilter.create(data) for data in section_data]
@@ -1494,18 +1671,20 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
     """
     Search filter that enables queries spanning multiple resource models.
 
-    This filter supports two modes:
-    1. Raw mode (translate_mode="none"): Returns resources matching filters from any
-       of the specified models, combined with OR logic.
-    2. Intersection mode (translate_mode=<graph_slug>): Finds resources matching
-       filters in source models, then translates results to a target model by
-       following resource-to-resource relationships.
+    Supports two modes selected via the translate_mode parameter:
 
-    The intersection logic works by:
-    1. Running ES queries to find matching resources in each source model
-    2. Traversing ResourceXResource relationships and tile-based resource-instance
-       links to find connected resources in the target model
-    3. Computing the intersection/union of target resources across all source filters
+    - Raw mode (translate_mode="none"): Returns resources from any of the
+      filtered models combined with OR logic. No relationship traversal occurs.
+    - Intersection mode (translate_mode=<graph_slug_or_id>): Runs ES queries
+      against each filtered model, traverses ResourceXResource relationships
+      and tile-based resource-instance links to find connected resources in the
+      target model, then combines the per-model result sets using the chosen
+      operation (intersect or union) before injecting a terms filter into the
+      main ES query.
+
+    Results in intersection mode are cached by a hash of the search parameters
+    and the requesting user's ID to avoid redundant traversal on repeated or
+    paginated requests.
     """
 
     _data = None
@@ -1587,6 +1766,9 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
     def _get_target(self) -> list[dict[str, Any]]:
         """
         Build the list of available intersection targets for the UI.
+
+        Only active resource graphs are included. System settings graphs and
+        graphs derived from a source identifier (i.e. branches) are excluded.
         Graphs are sorted alphabetically by name.
         """
 
@@ -1636,9 +1818,15 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
 
     def append_dsl(self, query_obj: dict[str, Any], **kwargs: Any) -> None:
         """
-        Build and append ES query for the search.
-        In raw mode, returns resources from any matching model combined with OR.
-        In intersection mode, filters to pre-computed target IDs.
+        Append the cross-model filter to the main Elasticsearch query object.
+
+        In raw mode, each section's query is wrapped in a graph_id filter and
+        combined with OR so results from any matching model are returned.
+
+        In intersection mode, Intersector.compute() resolves the target IDs and
+        they are injected as a terms filter. If no IDs are found, an impossible
+        filter (a terms clause with a sentinel value) is added to guarantee an
+        empty result set rather than an unfiltered one.
         """
 
         param = kwargs.get("querystring", "{}")
@@ -1728,7 +1916,15 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         pass
 
     def view_data(self) -> dict[str, Any]:
-        """Return data needed by the frontend search component."""
+        """
+        Return the data required to populate the frontend search component.
+
+        Cards are filtered to those the requesting user has read permission on,
+        so the sidebar only shows nodegroups the user can actually query.
+        System settings graphs, inactive graphs, and branch graphs are excluded
+        from the graph list. Graphs are sorted alphabetically by their English
+        name to provide a consistent ordering in the UI.
+        """
 
         resource_graphs = (
             GraphModel.objects.exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
