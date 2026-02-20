@@ -47,6 +47,7 @@ export interface SiteDecisionTile extends AliasedTileData {
         site_decision?: AliasedNodeData;
         decision_criteria?: AliasedNodeData;
         decision_description?: AliasedNodeData;
+        decision_registration_status?: AliasedNodeData;
         recommendation_date?: AliasedNodeData;
         recommended_by?: AliasedNodeData;
     };
@@ -74,7 +75,6 @@ export interface SiteNamesTile extends AliasedTileData {
 
 export interface IdentificationAndRegistrationTile extends AliasedTileData {
     borden_number?: AliasedNodeData;
-    registration_status?: AliasedNodeData;
     parcel_owner_type?: AliasedNodeData;
     borden_number_issuance_date?: AliasedNodeData;
     register_type?: AliasedNodeData;
