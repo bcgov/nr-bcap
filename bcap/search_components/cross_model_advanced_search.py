@@ -304,13 +304,16 @@ class GroupFilter:
             if not has_clause(card_query):
                 continue
 
-            # Wrap tile queries in Nested because tiles are stored as nested documents
-            nested = Nested(path="tiles", query=card_query)
+            if card_query.dsl["bool"].get("filter"):
+                clause = card_query
+            else:
+                # Wrap tile queries in Nested because tiles are stored as nested documents
+                clause = Nested(path="tiles", query=card_query)
 
             if self.match_type == MatchType.ANY:
-                query.should(nested)
+                query.should(clause)
             else:
-                query.must(nested)
+                query.must(clause)
 
         if query.dsl["bool"]["should"]:
             query.dsl["bool"]["minimum_should_match"] = 1
@@ -1644,7 +1647,7 @@ class Intersector:
         es_matches = self._run_es_queries(by_graph)
 
         # Early exit if any graph has no matches (for intersect)
-        if any(not matches for matches in es_matches.values()):
+        if operation == "intersect" and any(not matches for matches in es_matches.values()):
             return set()
 
         # Apply correlated filtering if needed
@@ -1655,8 +1658,9 @@ class Intersector:
                 es_matches, section_lookup, operation
             )
 
-            if es_matches is None or any(
-                not matches for matches in es_matches.values()
+            if es_matches is None or (
+                operation == "intersect"
+                and any(not matches for matches in es_matches.values())
             ):
                 return set()
 
