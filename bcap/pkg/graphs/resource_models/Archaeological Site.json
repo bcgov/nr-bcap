@@ -982,7 +982,8 @@
                         "label": "Act/Section",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "034d33c0-13f2-11f0-9ff8-0242ac170007",
                     "label": {
@@ -1004,7 +1005,8 @@
                         "label": "Government",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "034d3442-13f2-11f0-9ff8-0242ac170007",
                     "label": {
@@ -1116,7 +1118,8 @@
                         "label": "Made By",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "1417a1ac-64ad-11f0-a4ef-6e5bb479055b",
                     "label": {
@@ -1137,6 +1140,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "1417a21a-64ad-11f0-a4ef-6e5bb479055b",
@@ -1158,6 +1162,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "18bc45c3-18e2-402e-9cd1-7726ac83cf8a",
@@ -1329,6 +1334,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "1fd4bd70-ce9c-4851-8546-27390616f27f",
@@ -1340,27 +1346,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
-                },
-                {
-                    "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
-                    "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Registration Status",
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "2165160d-a46d-4612-a4b5-6855839c287a",
-                    "label": {
-                        "en": "Registration Status"
-                    },
-                    "node_id": "034d2fe2-13f2-11f0-9ff8-0242ac170007",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
@@ -1401,6 +1386,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "251c72f6-9aad-4c39-911c-9d412d3ed47c",
@@ -1423,7 +1409,8 @@
                         "label": "Person",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "2a5f4c35-fd9c-42cf-853e-7f04595486f7",
                     "label": {
@@ -1472,7 +1459,8 @@
                         "defaultValue": [],
                         "label": "Document",
                         "maxFilesize": "1024",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "2ad1678e-50ad-11f0-a6c8-0242ac170006",
                     "label": {
@@ -1493,7 +1481,8 @@
                         "label": "Document Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "2ad16806-50ad-11f0-a6c8-0242ac170006",
                     "label": {
@@ -1536,6 +1525,28 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
+                    "config": {
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Registration Status",
+                        "placeholder": {
+                            "en": "Select an option"
+                        },
+                        "uneditable": false
+                    },
+                    "id": "2fd7925a-c130-4b51-adf1-d07f4b8847f4",
+                    "label": {
+                        "en": "Registration Status"
+                    },
+                    "node_id": "4abdfeea-8d15-4ea6-94bd-d2385d47a5ac",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
                     "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultValue": {
@@ -1572,7 +1583,8 @@
                         "label": "Restricted",
                         "subtitle": {
                             "en": "Click to switch"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "35c84ebb-5110-4416-8245-fc2e6ebfd9ba",
                     "label": {
@@ -1593,7 +1605,8 @@
                         "label": "BCAP Submission Status",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "3852722e-b754-46a7-92f4-5abe9b551161",
                     "label": {
@@ -1612,7 +1625,8 @@
                         "defaultValue": [],
                         "label": "Contraventions Documents",
                         "maxFilesize": "1024",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "3f28f2c3-6782-4738-873a-8bf852071aa4",
                     "label": {
@@ -1700,6 +1714,7 @@
                         ],
                         "label": "External URL",
                         "link_color": "#0055a0",
+                        "uneditable": false,
                         "url_label_placeholder": {
                             "en": "Enter URL Label... "
                         },
@@ -1726,7 +1741,8 @@
                         "label": "External URL Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "50ac9d6f-5d46-45e3-9c00-f809d9df0139",
                     "label": {
@@ -1745,7 +1761,8 @@
                         "defaultValue": [],
                         "label": "Reference File",
                         "maxFilesize": "1024",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "5399a358-5ad2-4559-b5a5-c821480908c2",
                     "label": {
@@ -1796,7 +1813,8 @@
                         "label": "Protection Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "59800c40-ee28-4873-b5bc-d9037fcfaba9",
                     "label": {
@@ -1844,6 +1862,7 @@
                         "overlayOpacity": 0,
                         "pitch": 0,
                         "rerender": true,
+                        "uneditable": false,
                         "zoom": "4"
                     },
                     "id": "5f6c7ebb-66c0-42c5-b112-4d70c5ac45c4",
@@ -1979,6 +1998,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "7b339f4c-7f2e-47e3-a25f-e26738765cc1",
@@ -2028,7 +2048,8 @@
                         "defaultValue": [],
                         "label": "Restricted Document",
                         "maxFilesize": "1024",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "80ece2f8-3a6a-4877-9df7-74aa346bec81",
                     "label": {
@@ -2050,7 +2071,8 @@
                         "label": "Entered By",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "83257c9a-74eb-4d2c-b8b0-2bfb0be03881",
                     "label": {
@@ -2071,6 +2093,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "83b7cb85-b783-4068-bcc5-923922eb0cbf",
@@ -2092,7 +2115,8 @@
                         "label": "Register Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "8565bfff-a6ac-4004-868b-613ce081720b",
                     "label": {
@@ -2113,6 +2137,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "86aa4b00-f92f-487b-81ea-74694f6db441",
@@ -2224,6 +2249,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "9299c846-c584-46de-af7a-e693434f99c1",
@@ -2245,7 +2271,8 @@
                         "label": "Source",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "99f72528-de95-47cc-bf9f-3244cbdb1ee7",
                     "label": {
@@ -2387,6 +2414,7 @@
                         "overlayOpacity": 0,
                         "pitch": 0,
                         "rerender": true,
+                        "uneditable": false,
                         "zoom": "4"
                     },
                     "id": "b1822a3e-13ef-11f0-8695-0242ac170007",
@@ -2468,7 +2496,8 @@
                         "label": "Reference Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "bb1584f2-01d8-11f0-850c-0242ac170007",
                     "label": {
@@ -2489,6 +2518,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "bb158574-01d8-11f0-850c-0242ac170007",
@@ -2511,7 +2541,8 @@
                         "label": "Authors",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "bb1585ec-01d8-11f0-850c-0242ac170007",
                     "label": {
@@ -2652,7 +2683,8 @@
                         "label": "Image Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c816325a-01d8-11f0-850c-0242ac170007",
                     "label": {
@@ -2673,6 +2705,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "years"
                     },
                     "id": "c81632d2-01d8-11f0-850c-0242ac170007",
@@ -2689,7 +2722,8 @@
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
                         "defaultValue": null,
-                        "label": "Primary Image"
+                        "label": "Primary Image",
+                        "uneditable": false
                     },
                     "id": "c8163340-01d8-11f0-850c-0242ac170007",
                     "label": {
@@ -2740,7 +2774,8 @@
                         "label": "Image View",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c8163426-01d8-11f0-850c-0242ac170007",
                     "label": {
@@ -2819,7 +2854,8 @@
                         "defaultValue": [],
                         "label": "Site Image",
                         "maxFilesize": "20",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "c8163570-01d8-11f0-850c-0242ac170007",
                     "label": {
@@ -2925,7 +2961,8 @@
                         "label": "Name Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "d60b279e-35f4-11f0-afbc-0242ac170008",
                     "label": {
@@ -2947,7 +2984,8 @@
                         "label": "Assigned or Reported By",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "d60b2816-35f4-11f0-afbc-0242ac170008",
                     "label": {
@@ -2968,6 +3006,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "d60b288e-35f4-11f0-afbc-0242ac170008",
@@ -2990,7 +3029,8 @@
                         "label": "Parent Site",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "d68c3541-54c5-40b8-b341-8909b558ca7c",
                     "label": {
@@ -3011,7 +3051,8 @@
                         "label": "Typology Class",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "d847a431-b08e-40b6-891b-135d84b46f58",
                     "label": {
@@ -3032,7 +3073,8 @@
                         "label": "Latest Edit Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "dca3f4e0-9bd5-4b0a-8e16-f7294beb3f80",
                     "label": {
@@ -3133,7 +3175,8 @@
                         "label": "Legal Instrument",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "e4b21a13-dc73-4e86-b2a7-03a870d857c3",
                     "label": {
@@ -3155,7 +3198,8 @@
                         "label": "Alert Branch Contact",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "e54d0ac1-815c-44cb-9bda-cd291bfe9d0c",
                     "label": {
@@ -3243,6 +3287,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "f80f12d6-1977-11f0-8713-0242ac170008",
@@ -3250,7 +3295,7 @@
                         "en": "Decision Date"
                     },
                     "node_id": "f80f0c00-1977-11f0-8713-0242ac170008",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -3265,14 +3310,15 @@
                         "label": "Decision Made By",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "f80f1362-1977-11f0-8713-0242ac170008",
                     "label": {
                         "en": "Decision Made By"
                     },
                     "node_id": "f80f0d4a-1977-11f0-8713-0242ac170008",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -3286,14 +3332,15 @@
                         "label": "Site Decision",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "f80f13e4-1977-11f0-8713-0242ac170008",
                     "label": {
                         "en": "Site Decision"
                     },
                     "node_id": "f80f08ae-1977-11f0-8713-0242ac170008",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -3308,7 +3355,8 @@
                         "label": "Recommended By",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "f80f1510-1977-11f0-8713-0242ac170008",
                     "label": {
@@ -3329,6 +3377,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "f80f1588-1977-11f0-8713-0242ac170008",
@@ -3430,16 +3479,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "rangenode_id": "034d2ef2-13f2-11f0-9ff8-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "034d1c32-13f2-11f0-9ff8-0242ac170007",
-                    "edgeid": "034da8d2-13f2-11f0-9ff8-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "rangenode_id": "034d2fe2-13f2-11f0-9ff8-0242ac170007",
                     "source_identifier_id": null
                 },
                 {
@@ -4030,6 +4069,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P4i_is_time-span_of",
                     "rangenode_id": "85dcf57e-1978-11f0-8713-0242ac170008",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f80f08ae-1977-11f0-8713-0242ac170008",
+                    "edgeid": "9c8ee84c-a07b-40e9-9384-d1cd61bf854c",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "4abdfeea-8d15-4ea6-94bd-d2385d47a5ac",
                     "source_identifier_id": null
                 },
                 {
@@ -5070,32 +5119,6 @@
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "sortorder": 6,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "registration_status",
-                    "config": {
-                        "controlledList": "c80f6dc1-4247-500b-8b1c-16ef3761761b",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Registration Status",
-                    "nodegroup_id": "034d1c32-13f2-11f0-9ff8-0242ac170007",
-                    "nodeid": "034d2fe2-13f2-11f0-9ff8-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E30_Right",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6216,6 +6239,32 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "decision_registration_status",
+                    "config": {
+                        "controlledList": "c80f6dc1-4247-500b-8b1c-16ef3761761b",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Decision Registration Status",
+                    "nodegroup_id": "f80f08ae-1977-11f0-8713-0242ac170008",
+                    "nodeid": "4abdfeea-8d15-4ea6-94bd-d2385d47a5ac",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E30_Right",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -8138,8 +8187,8 @@
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
                 "notes": null,
-                "publicationid": "220349f4-db16-42f0-8934-625e90f798bd",
-                "published_time": "2026-02-04T22:43:40.191"
+                "publicationid": "4178ef4b-f1ee-4364-904f-ddd61b6155dc",
+                "published_time": "2026-02-19T19:43:48.034"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],

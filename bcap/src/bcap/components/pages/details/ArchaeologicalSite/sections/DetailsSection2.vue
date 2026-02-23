@@ -69,7 +69,6 @@ const childSiteBordenNumbers = computed(() => {
 const id_fields = [
     'borden_number',
     'borden_number_issuance_date',
-    'registration_status',
     'parcel_owner_type',
     'register_type',
 ] as const;
@@ -80,6 +79,7 @@ const siteDecisionColumns = [
     { field: 'site_decision', label: 'Decision' },
     { field: 'decision_criteria', label: 'Criteria' },
     { field: 'decision_description', label: 'Description' },
+    { field: 'decision_registration_status', label: 'Registration Status' },
     { field: 'recommendation_date', label: 'Recommended On' },
     { field: 'recommended_by', label: 'Recommended By' },
 ];
@@ -156,6 +156,7 @@ const {
         'decision_date',
         'decision_made_by',
         'decision_description',
+        'decision_registration_status',
         'recommendation_date',
         'recommended_by',
     ],
