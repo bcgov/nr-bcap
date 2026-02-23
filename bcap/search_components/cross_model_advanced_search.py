@@ -1647,7 +1647,9 @@ class Intersector:
         es_matches = self._run_es_queries(by_graph)
 
         # Early exit if any graph has no matches (for intersect)
-        if operation == "intersect" and any(not matches for matches in es_matches.values()):
+        if operation == "intersect" and any(
+            not matches for matches in es_matches.values()
+        ):
             return set()
 
         # Apply correlated filtering if needed
