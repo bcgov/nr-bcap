@@ -1972,7 +1972,7 @@
                             "placeholder"
                         ],
                         "label": "Alert Subject",
-                        "maxLength": null,
+                        "maxLength": "125",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -2070,7 +2070,7 @@
                         ],
                         "label": "Entered By",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
@@ -2112,18 +2112,18 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Register Type",
+                        "label": "Register Type(s)",
                         "placeholder": {
-                            "en": "Select an option"
+                            "en": ""
                         },
                         "uneditable": false
                     },
                     "id": "8565bfff-a6ac-4004-868b-613ce081720b",
                     "label": {
-                        "en": "Register Type"
+                        "en": "Register Type(s)"
                     },
                     "node_id": "2255168c-1c55-11f0-9b6d-0242ac170007",
-                    "sortorder": 4,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -2162,7 +2162,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Parcel Owner Type",
+                        "label": "Parcel Owner Type(s)",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2172,10 +2172,10 @@
                     },
                     "id": "8d834a08-6422-4e27-b8de-07616d449bb6",
                     "label": {
-                        "en": "Parcel Owner Type"
+                        "en": "Parcel Owner Type(s)"
                     },
                     "node_id": "b442cce2-62c8-11f0-a80e-76ff5c50888d",
-                    "sortorder": 3,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2245,7 +2245,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Entry Date",
+                        "label": "Entered On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -2254,7 +2254,7 @@
                     },
                     "id": "9299c846-c584-46de-af7a-e693434f99c1",
                     "label": {
-                        "en": "Entry Date"
+                        "en": "Entered On"
                     },
                     "node_id": "387adf52-1979-11f0-8713-0242ac170008",
                     "sortorder": 0,
@@ -2372,7 +2372,7 @@
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
@@ -2875,7 +2875,7 @@
                             "placeholder"
                         ],
                         "label": "Reference #",
-                        "maxLength": null,
+                        "maxLength": "125",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -2904,7 +2904,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Name Remarks",
+                        "label": "Site Name Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2914,13 +2914,13 @@
                     },
                     "id": "d60b2686-35f4-11f0-afbc-0242ac170008",
                     "label": {
-                        "en": "Name Remarks"
+                        "en": "Site Name Remarks"
                     },
                     "node_id": "d60b2514-35f4-11f0-afbc-0242ac170008",
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
@@ -2934,17 +2934,17 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Name",
+                        "label": "Site Name",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": ""
+                            "en": "Enter text"
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "d60b2726-35f4-11f0-afbc-0242ac170008",
                     "label": {
-                        "en": "Name"
+                        "en": "Site Name"
                     },
                     "node_id": "d60b1fa6-35f4-11f0-afbc-0242ac170008",
                     "sortorder": 0,
@@ -2958,7 +2958,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Name Type",
+                        "label": "Site Name Type",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -2966,7 +2966,7 @@
                     },
                     "id": "d60b279e-35f4-11f0-afbc-0242ac170008",
                     "label": {
-                        "en": "Name Type"
+                        "en": "Site Name Type"
                     },
                     "node_id": "d60b242e-35f4-11f0-afbc-0242ac170008",
                     "sortorder": 1,
@@ -2983,7 +2983,7 @@
                         ],
                         "label": "Assigned or Reported By",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
@@ -2992,7 +2992,7 @@
                         "en": "Assigned or Reported By"
                     },
                     "node_id": "d60b2244-35f4-11f0-afbc-0242ac170008",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -3002,7 +3002,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Assigned or Reported Date",
+                        "label": "Date Assigned or Reported",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -3011,10 +3011,10 @@
                     },
                     "id": "d60b288e-35f4-11f0-afbc-0242ac170008",
                     "label": {
-                        "en": "Assigned or Reported Date"
+                        "en": "Date Assigned or Reported"
                     },
                     "node_id": "d60b25fa-35f4-11f0-afbc-0242ac170008",
-                    "sortorder": 4,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -3028,7 +3028,7 @@
                         ],
                         "label": "Parent Site",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select parent site (if applicable)"
                         },
                         "uneditable": false
                     },
@@ -3037,7 +3037,7 @@
                         "en": "Parent Site"
                     },
                     "node_id": "7158cc42-1c55-11f0-9b6d-0242ac170007",
-                    "sortorder": 5,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -3070,7 +3070,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Latest Edit Type",
+                        "label": "Edit Type",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -3078,7 +3078,7 @@
                     },
                     "id": "dca3f4e0-9bd5-4b0a-8e16-f7294beb3f80",
                     "label": {
-                        "en": "Latest Edit Type"
+                        "en": "Edit Type"
                     },
                     "node_id": "6292f704-13f0-11f0-9284-0242ac170007",
                     "sortorder": 3,
@@ -3151,8 +3151,8 @@
                     "config": {
                         "defaultValue": "",
                         "label": "Borden Number",
-                        "maxLength": 9,
-                        "placeholder": "XxYy-9999",
+                        "maxLength": "13",
+                        "placeholder": "",
                         "uneditable": false,
                         "width": "10%"
                     },
@@ -3197,7 +3197,7 @@
                         ],
                         "label": "Alert Branch Contact",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
@@ -3307,15 +3307,15 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Decision Made By",
+                        "label": "Decision Maker",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
                     "id": "f80f1362-1977-11f0-8713-0242ac170008",
                     "label": {
-                        "en": "Decision Made By"
+                        "en": "Decision Maker"
                     },
                     "node_id": "f80f0d4a-1977-11f0-8713-0242ac170008",
                     "sortorder": 2,
@@ -3354,7 +3354,7 @@
                         ],
                         "label": "Recommended By",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
@@ -3363,7 +3363,7 @@
                         "en": "Recommended By"
                     },
                     "node_id": "f80f0f34-1977-11f0-8713-0242ac170008",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -3373,7 +3373,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Recommendation Date",
+                        "label": "Recommended On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -3382,10 +3382,10 @@
                     },
                     "id": "f80f1588-1977-11f0-8713-0242ac170008",
                     "label": {
-                        "en": "Recommendation Date"
+                        "en": "Recommended On"
                     },
                     "node_id": "f80f106a-1977-11f0-8713-0242ac170008",
-                    "sortorder": 6,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -5035,7 +5035,11 @@
                         "graphs": [
                             {
                                 "graphid": "aacf8bb6-3f6e-46d9-a551-b0749d7efffc",
-                                "name": "Government"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Government",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -5043,13 +5047,13 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_GOVERN",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Responsible Government",
@@ -5079,8 +5083,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_ACT_SEC",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5104,8 +5108,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_DESCRIP",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5129,8 +5133,8 @@
                     },
                     "datatype": "non-localized-string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_REF_NUM",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5718,8 +5722,8 @@
                     },
                     "datatype": "reference",
                     "description": "If this is 100% auto-populated should it just be a display value for the site?",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ID_REGTYPE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5951,13 +5955,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_LEG_INS",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Authority Legal Instrument",
@@ -5976,8 +5980,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AL_ENTON",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6001,8 +6005,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AL_SUBJECT",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6375,13 +6379,13 @@
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SA_CU_TYPE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Latest Edit Type",
@@ -6423,8 +6427,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SBD_DESCRI",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6473,7 +6477,11 @@
                         "graphs": [
                             {
                                 "graphid": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                                "name": "Archaeological Site"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Archaeological Site",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -6481,8 +6489,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "PARENT",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6506,8 +6514,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AL_DETAILS",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6623,8 +6631,8 @@
                     "config": {},
                     "datatype": "borden-number-datatype",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ID_BORDEN",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6659,13 +6667,13 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AL_CONTACT",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Alert Branch Contact",
@@ -6685,13 +6693,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_PRO_TYP",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Authority Protection Type",
@@ -6710,8 +6718,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_ST_DATE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6940,7 +6948,7 @@
                     },
                     "datatype": "geojson-feature-collection",
                     "description": "{\"en\": \"\"}",
-                    "exportable": true,
+                    "exportable": false,
                     "fieldname": "boundary",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
@@ -6965,13 +6973,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": "accuracyrm",
+                    "exportable": true,
+                    "fieldname": "SA_CU_REM",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Accuracy Remarks",
@@ -7014,12 +7022,12 @@
                     "datatype": "string",
                     "description": "Name of the place holding tenure on the site. See \"Site Tenure Type\" for source values.",
                     "exportable": false,
-                    "fieldname": null,
+                    "fieldname": "",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Site Tenure Identifier",
@@ -7038,8 +7046,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AU_EX_DATE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7063,8 +7071,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ID_PAR_OWN",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7294,8 +7302,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ID_BN_DATE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7684,7 +7692,7 @@
                     "datatype": "string",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "SITE_NAME",
+                    "fieldname": "SN_SIT_NAM",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7707,7 +7715,11 @@
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -7715,8 +7727,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SN_ASS_BY",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7767,12 +7779,12 @@
                     "datatype": "reference",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "ST_NM_TYP",
+                    "fieldname": "SN_NAM_TYP",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Name Type",
@@ -7791,8 +7803,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SN_NAM_REM",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7823,8 +7835,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SN_DATE_AS",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7941,8 +7953,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AL_ENTBY",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7991,8 +8003,8 @@
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DH_DECISIO",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -8016,8 +8028,8 @@
                     },
                     "datatype": "date",
                     "description": "Date the decision was made",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DH_DE_DATE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8052,8 +8064,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DH_MAKER",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8088,8 +8100,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": "Person that made the recommendation that influenced the decision.\nNeed contributor type to filter this list.",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DH_RECBY",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8113,8 +8125,8 @@
                     },
                     "datatype": "date",
                     "description": "Date the recommendation was made",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DH_RECDATE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8138,8 +8150,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DH_DESCRIP",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8186,9 +8198,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "4178ef4b-f1ee-4364-904f-ddd61b6155dc",
-                "published_time": "2026-02-19T19:43:48.034"
+                "notes": "Checkpoint at the end of 23 Feb",
+                "publicationid": "daa622bb-79a8-41d6-897d-529add3baec7",
+                "published_time": "2026-02-24T00:06:01.673"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -8287,9 +8299,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
+        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
+        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "5.14.0-611.30.1.el9_7.x86_64"
     }
 }
