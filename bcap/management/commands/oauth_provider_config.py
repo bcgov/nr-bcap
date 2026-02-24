@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os
+from django.core.management import CommandError
 from django.core.management.base import BaseCommand
 from oauth2_provider.models import Application
 
@@ -90,6 +91,9 @@ class Command(BaseCommand):
         client_secret = os.environ.get("CLIENT_SECRET")
         if not client_secret:
             print(
+                "CLIENT_SECRET environment variable must be set to create new OAuth2 provider configuration."
+            )
+            raise CommandError(
                 "CLIENT_SECRET environment variable must be set to create new OAuth2 provider configuration."
             )
         apps = Application.objects.filter(name=options["config_name"]).all()
