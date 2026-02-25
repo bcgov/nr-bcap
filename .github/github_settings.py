@@ -415,7 +415,7 @@ AUTHLIB_OAUTH_CLIENTS = {
     }
 }
 
-APP_TITLE = "BC Government | Historic Place Inventory"
+APP_TITLE = "BC Government | BCAP"
 COPYRIGHT_TEXT = "All Rights Reserved."
 COPYRIGHT_YEAR = "2019"
 
