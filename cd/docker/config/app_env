@@ -6,4 +6,4 @@ GITHUB_APP_REPO=bcgov/nr-bcap
 FORCE_CORE_PIP_INSTALL=True
 CORE_REPO_TAG=stable/8.0.8_bcgov_12377
 COMMON_REPO_TAG=brf/feat/add_oauth2_provider_support
-CONFIG_BRANCH=brf/feat/855_updates_for_qgis_integration
+CONFIG_BRANCH=brf/feat/sme_config_20260223_855

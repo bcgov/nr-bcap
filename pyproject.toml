@@ -27,7 +27,7 @@ dependencies = [
     "arches-component-lab",
     "bcgov_arches_common @ git+https://github.com/bcgov/bcgov-arches-common@brf/feat/add_oauth2_provider_support",
     "arches-querysets",
-    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@dev/1.1.x",
+    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@brf/feat/138_filter_reference_list",
     "boto3==1.26",
     "django-migrate-sql-deux==1.1.1",
     "django-pgtrigger==4.15.2",
