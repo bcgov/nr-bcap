@@ -86,6 +86,33 @@
                 },
                 {
                     "active": true,
+                    "cardid": "45aa71cc-8aab-4157-bbe7-732e478e8e31",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": "Add any new Typologies that are not currently associated with the Site "
+                    },
+                    "name": {
+                        "en": "Additional Site Typology"
+                    },
+                    "nodegroup_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "4a6c00ff-3f6c-4e7f-aea4-69c9fceed211",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -659,7 +686,8 @@
                     "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
                     "config": {
                         "defaultValue": null,
-                        "label": "Was On Site"
+                        "label": "Was On Site",
+                        "uneditable": false
                     },
                     "id": "0484d748-1410-11f0-8419-0242ac170007",
                     "label": {
@@ -680,7 +708,8 @@
                         "label": "Member Role(s)",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "0484d7de-1410-11f0-8419-0242ac170007",
                     "label": {
@@ -702,7 +731,8 @@
                         "label": "Team Member",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "0484d86a-1410-11f0-8419-0242ac170007",
                     "label": {
@@ -723,7 +753,8 @@
                         "label": "Image View",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "04c95588-952f-42a9-bc9c-8ff967a4f557",
                     "label": {
@@ -781,7 +812,8 @@
                         "label": "Feature Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "07038d4c-b1ea-4e00-bbc9-e9403f034d44",
                     "label": {
@@ -802,7 +834,8 @@
                         "label": "Site Visit Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "0fa7d855-3844-4bdf-9f85-f5e12ea1c259",
                     "label": {
@@ -943,7 +976,8 @@
                         "label": "Source",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "19626842-cb22-4a52-bdf7-8ad59e3c4e86",
                     "label": {
@@ -994,6 +1028,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "20e1391b-cdaf-49ed-a395-ce63ffc4b20a",
@@ -1045,7 +1080,8 @@
                         "label": "Archaeological Culture",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "33a596ca-104b-42bb-8ebd-390ec04e6b56",
                     "label": {
@@ -1065,6 +1101,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "358d1523-3e23-4815-9ab9-4bb7e7148203",
@@ -1087,7 +1124,8 @@
                         "label": "Affiliation",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "3687a10d-a267-42dc-81c8-42182cb29507",
                     "label": {
@@ -1229,7 +1267,8 @@
                         "label": "Site Form Authors",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "4a0a8da1-146c-4cff-b069-1631d2af1d88",
                     "label": {
@@ -1250,7 +1289,8 @@
                         "label": "Biogeography Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "4d0d8b6c-0e91-417e-9ef5-6ae30c3eed24",
                     "label": {
@@ -1269,7 +1309,8 @@
                         "defaultValue": [],
                         "label": "Document",
                         "maxFilesize": "1024",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "4d836054-1074-4901-af2e-62a2e2036b07",
                     "label": {
@@ -1288,7 +1329,8 @@
                         "defaultValue": [],
                         "label": "Site Images",
                         "maxFilesize": "20",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "5183e98a-c541-4170-a326-06c8c3b1c9ef",
                     "label": {
@@ -1308,6 +1350,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "years"
                     },
                     "id": "57e0c6e6-c940-4982-a13b-497903b8842c",
@@ -1330,7 +1373,8 @@
                         "label": "HCA Permit",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "5851718a-12dd-48af-8b98-f57f695aa259",
                     "label": {
@@ -1382,7 +1426,8 @@
                         "label": "Authors",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "6617399d-6738-4dcb-ae57-45c4d0a04178",
                     "label": {
@@ -1463,7 +1508,8 @@
                         "label": "Name Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "6d906962-140d-11f0-b9bb-0242ac170007",
                     "label": {
@@ -1485,7 +1531,8 @@
                         "label": "Assigned or Reported By",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "6d9069e4-140d-11f0-b9bb-0242ac170007",
                     "label": {
@@ -1506,6 +1553,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "6d906a5c-140d-11f0-b9bb-0242ac170007",
@@ -1527,7 +1575,8 @@
                         "label": "Status",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "6f970036-5049-11f0-91cd-0242ac170006",
                     "label": {
@@ -1548,7 +1597,8 @@
                         "label": "Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "6f9700ae-5049-11f0-91cd-0242ac170006",
                     "label": {
@@ -1594,7 +1644,8 @@
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
                     "config": {
                         "defaultValue": null,
-                        "label": "Multiple Burials"
+                        "label": "Multiple Burials",
+                        "uneditable": false
                     },
                     "id": "6f970180-5049-11f0-91cd-0242ac170006",
                     "label": {
@@ -1652,7 +1703,8 @@
                         "label": "Document Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "77e4bc05-f5a0-4ba0-8ebf-53fe420ae0c5",
                     "label": {
@@ -1704,7 +1756,8 @@
                         "label": "Archaeological Site",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "7a2e41fc-4ad9-4be3-8459-51a3523e9c69",
                     "label": {
@@ -1725,6 +1778,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "7eeee5c0-9bd8-4fca-97ee-5d6b2cc3f810",
@@ -1836,7 +1890,8 @@
                         "label": "Cultural Material Status",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "8f4a9bfb-e1d9-433d-858a-f768e07ac6fd",
                     "label": {
@@ -1852,7 +1907,8 @@
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultValue": null,
-                        "label": "Nonpermitted Site Visit"
+                        "label": "Nonpermitted Site Visit",
+                        "uneditable": false
                     },
                     "id": "96337e45-796c-4f55-b58d-c88ac7890d33",
                     "label": {
@@ -1902,10 +1958,33 @@
                     "widget_id": "10000000-0000-0000-0000-000000000008"
                 },
                 {
+                    "card_id": "45aa71cc-8aab-4157-bbe7-732e478e8e31",
+                    "config": {
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Typology Class",
+                        "placeholder": {
+                            "en": "Select an option"
+                        },
+                        "uneditable": false
+                    },
+                    "id": "ad30cdfa-c0a1-4d95-9e2a-8bd96b722af9",
+                    "label": {
+                        "en": "Typology Class"
+                    },
+                    "node_id": "d6765cc8-8dec-431b-bbb5-950567e6ed1c",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
                     "card_id": "15f3be27-7841-4672-9c7f-72eff82cd4de",
                     "config": {
                         "defaultValue": null,
-                        "label": "Primary Image"
+                        "label": "Primary Image",
+                        "uneditable": false
                     },
                     "id": "b1d6f486-3699-4f54-a324-83199503d1b2",
                     "label": {
@@ -1926,7 +2005,8 @@
                         "label": "Image Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "b2c7d723-0ce1-43af-bb0a-b0bcf6445ca9",
                     "label": {
@@ -1977,6 +2057,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "c0765e6d-8e02-4e83-a55a-31d5aad9335d",
@@ -1998,7 +2079,8 @@
                         "label": "From Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c1f57760-140b-11f0-898b-0242ac170007",
                     "label": {
@@ -2019,7 +2101,8 @@
                         "label": "From Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c1f577e2-140b-11f0-898b-0242ac170007",
                     "label": {
@@ -2040,7 +2123,8 @@
                         "label": "To Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c1f57864-140b-11f0-898b-0242ac170007",
                     "label": {
@@ -2061,7 +2145,8 @@
                         "label": "To Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c1f578dc-140b-11f0-898b-0242ac170007",
                     "label": {
@@ -2112,6 +2197,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "years"
                     },
                     "id": "c1f579cc-140b-11f0-898b-0242ac170007",
@@ -2135,7 +2221,8 @@
                         "options": [],
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c1f57a3a-140b-11f0-898b-0242ac170007",
                     "label": {
@@ -2156,6 +2243,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "years"
                     },
                     "id": "c1f57ab2-140b-11f0-898b-0242ac170007",
@@ -2207,7 +2295,8 @@
                         "label": "Method",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "c1f57ba2-140b-11f0-898b-0242ac170007",
                     "label": {
@@ -2255,6 +2344,7 @@
                         "overlayOpacity": 0,
                         "pitch": 0,
                         "rerender": true,
+                        "uneditable": false,
                         "zoom": "4"
                     },
                     "id": "c79fd21e-7e7f-4739-95af-5d222c13bee7",
@@ -2277,7 +2367,8 @@
                         "label": "Assigned By",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "ccbad9c7-5362-4b3f-9ab7-51cea47c279a",
                     "label": {
@@ -2298,7 +2389,8 @@
                         "label": "Latest Edit Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "cf40f59a-13f0-11f0-9404-0242ac170007",
                     "label": {
@@ -2410,6 +2502,7 @@
                         "overlayOpacity": 0,
                         "pitch": 0,
                         "rerender": true,
+                        "uneditable": false,
                         "zoom": "4"
                     },
                     "id": "cf40f6e4-13f0-11f0-9404-0242ac170007",
@@ -2431,7 +2524,8 @@
                         "label": "Cultural Material Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "cf5bc18f-6ada-4676-a940-561a427cdd17",
                     "label": {
@@ -2452,6 +2546,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "d0806620-3dfa-46a9-ba25-d01317af3ea1",
@@ -2495,6 +2590,36 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "45aa71cc-8aab-4157-bbe7-732e478e8e31",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Remarks",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "d419760b-a6bf-4b95-9b7b-ca56ef952db8",
+                    "label": {
+                        "en": "Remarks"
+                    },
+                    "node_id": "c98387af-e430-4317-b222-9f2191194817",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
                     "card_id": "9eb5c3db-3087-4582-96d8-3584b060e908",
                     "config": {
                         "defaultValue": {
@@ -2533,7 +2658,8 @@
                         "label": "Reference Type",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "e3057c3e-5d94-4e6d-a720-b0bf8324b5d6",
                     "label": {
@@ -2582,7 +2708,8 @@
                         "defaultValue": [],
                         "label": "Reference File",
                         "maxFilesize": "1024",
-                        "rerender": true
+                        "rerender": true,
+                        "uneditable": false
                     },
                     "id": "f3ab9912-db0d-4d5e-a110-4059c7aa3ef0",
                     "label": {
@@ -2604,7 +2731,8 @@
                         "label": "Repository",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "f93f8467-13f8-4f65-be58-4f3a7dc5cb8d",
                     "label": {
@@ -2625,7 +2753,8 @@
                         "label": "Disturbance Cause",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "fb55973c-140c-11f0-b9bb-0242ac170007",
                     "label": {
@@ -2646,7 +2775,8 @@
                         "label": "Disturbance Period",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "fb5597c8-140c-11f0-b9bb-0242ac170007",
                     "label": {
@@ -2698,7 +2828,8 @@
                         "label": "Repository",
                         "placeholder": {
                             "en": ""
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "fc5eb56a-c5d9-4f69-b13a-701ea00b6f30",
                     "label": {
@@ -2960,6 +3091,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "rangenode_id": "844ae10f-b38b-4706-8fac-8804d04ab05e",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "edgeid": "39bf9054-29cd-4a0e-8c89-86d117a3b478",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "rangenode_id": "c98387af-e430-4317-b222-9f2191194817",
                     "source_identifier_id": null
                 },
                 {
@@ -3334,6 +3475,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "3648fb88-1401-11f0-acd5-0242ac170007",
+                    "edgeid": "9aa3f009-0370-42ba-bcb7-7c8cfb033a64",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P117i_includes",
+                    "rangenode_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "22508fc8-1402-11f0-acd5-0242ac170007",
                     "edgeid": "9bb96c4d-54d9-40aa-bb84-ae6162f7985b",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3430,6 +3581,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
                     "rangenode_id": "4fb2db52-1410-11f0-8419-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "edgeid": "b8bd42ef-2669-4912-9f27-bcf795bff87d",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "d6765cc8-8dec-431b-bbb5-950567e6ed1c",
                     "source_identifier_id": null
                 },
                 {
@@ -3934,6 +4095,13 @@
                     "grouping_node_id": "c1f56b08-140b-11f0-898b-0242ac170007",
                     "legacygroupid": null,
                     "nodegroupid": "c1f56b08-140b-11f0-898b-0242ac170007",
+                    "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
+                },
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "legacygroupid": null,
+                    "nodegroupid": "c3738e14-a521-47c1-8b52-668847a8a51e",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
                 },
                 {
@@ -6170,6 +6338,31 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "additional_site_typology",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Additional Site Typology",
+                    "nodegroup_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "nodeid": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E14_Condition_Assessment",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P117i_includes",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "temporary_number_assigned_by",
                     "config": {
                         "graphs": [
@@ -6202,6 +6395,31 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "typology_remark",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Typology Remark",
+                    "nodegroup_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "nodeid": "c98387af-e430-4317-b222-9f2191194817",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6410,6 +6628,32 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "typology_class",
+                    "config": {
+                        "controlledList": "d31def91-e057-545a-ada6-3c18b6aa9ae9",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Typology Class",
+                    "nodegroup_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
+                    "nodeid": "d6765cc8-8dec-431b-bbb5-950567e6ed1c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6730,9 +6974,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "db7d915e-17cd-4237-8d8d-8fdd9631373b",
-                "published_time": "2026-01-22T20:20:52.756"
+                "notes": "Adds the missing Site Typology fields that come in through a Site Visit form.",
+                "publicationid": "1af99107-4a03-4940-9dac-0761bef220a0",
+                "published_time": "2026-02-24T18:13:06.901"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -6833,9 +7077,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "8c0bae2e0b 2026-02-22 20:41:45 -0800",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.12.54-linuxkit"
     }
 }
