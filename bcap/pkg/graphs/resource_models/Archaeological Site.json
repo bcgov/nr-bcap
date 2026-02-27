@@ -241,7 +241,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "BC Property Legal Description"
+                        "en": "Legal Description"
                     },
                     "nodegroup_id": "1b622ab6-0d0f-11ed-98c2-5254008afee6",
                     "sortorder": 0,
@@ -279,7 +279,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "BC Property Address"
+                        "en": "Address and Legal Description"
                     },
                     "nodegroup_id": "1b622e58-0d0f-11ed-98c2-5254008afee6",
                     "sortorder": 1,
@@ -336,7 +336,7 @@
                         "en": "HCA Contravention Documents"
                     },
                     "nodegroup_id": "1bebc404-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 7,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -390,7 +390,7 @@
                         "en": "Restricted Documents"
                     },
                     "nodegroup_id": "250ed6fe-61a8-11f0-ad02-3a7a4e6803c5",
-                    "sortorder": 4,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -471,7 +471,7 @@
                         "en": "HCA Contraventions"
                     },
                     "nodegroup_id": "41fb5948-61a5-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 5,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -603,7 +603,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Elevation Comments"
+                        "en": "Elevation Remarks"
                     },
                     "nodegroup_id": "bc131e78-01bf-11f0-97f7-0242ac170007",
                     "sortorder": 1,
@@ -660,7 +660,7 @@
                         "en": "Restricted Information"
                     },
                     "nodegroup_id": "b0ed31c4-61a4-11f0-9674-3a7a4e6803c5",
-                    "sortorder": 3,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -970,7 +970,7 @@
                     "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
@@ -981,7 +981,7 @@
                         ],
                         "label": "Act/Section",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option"
                         },
                         "uneditable": false
                     },
@@ -1004,7 +1004,7 @@
                         ],
                         "label": "Government",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option"
                         },
                         "uneditable": false
                     },
@@ -1467,7 +1467,7 @@
                         "label": "Document Description",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": ""
+                            "en": "Enter text"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -1997,7 +1997,7 @@
                         "label": "PID",
                         "maxLength": "9",
                         "placeholder": {
-                            "en": "Enter text"
+                            "en": "E.g., 123456789"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -2067,7 +2067,7 @@
                         "en": "Alert Subject"
                     },
                     "node_id": "3c5afaa2-197a-11f0-8f07-0242ac170008",
-                    "sortorder": 2,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2192,7 +2192,7 @@
                         "en": "Entered By"
                     },
                     "node_id": "ec331cd0-1979-11f0-93f5-0242ac170008",
-                    "sortorder": 1,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -2348,7 +2348,7 @@
                         "en": "Alert Details"
                     },
                     "node_id": "7219d578-197a-11f0-8f07-0242ac170008",
-                    "sortorder": 3,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -2370,7 +2370,7 @@
                         "en": "Entered On"
                     },
                     "node_id": "387adf52-1979-11f0-8713-0242ac170008",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -2612,8 +2612,8 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Remarks",
-                        "maxLength": null,
+                        "label": "Reference Remarks",
+                        "maxLength": "500",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -2622,13 +2622,13 @@
                     },
                     "id": "bb15843e-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Remarks"
+                        "en": "Reference Remarks"
                     },
                     "node_id": "bb15818c-01d8-11f0-850c-0242ac170007",
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
@@ -2657,7 +2657,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "Year",
+                        "label": "Reference Year",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -2666,7 +2666,7 @@
                     },
                     "id": "bb158574-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Year"
+                        "en": "Reference Year"
                     },
                     "node_id": "bb15809c-01d8-11f0-850c-0242ac170007",
                     "sortorder": 2,
@@ -2681,15 +2681,15 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Authors",
+                        "label": "Reference Author(s)",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
                     "id": "bb1585ec-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Authors"
+                        "en": "Reference Author(s)"
                     },
                     "node_id": "bb15829a-01d8-11f0-850c-0242ac170007",
                     "sortorder": 3,
@@ -2709,8 +2709,8 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Title",
-                        "maxLength": null,
+                        "label": "Reference Title",
+                        "maxLength": "500",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -2719,7 +2719,7 @@
                     },
                     "id": "bb158664-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Title"
+                        "en": "Reference Title"
                     },
                     "node_id": "bb157e3a-01d8-11f0-850c-0242ac170007",
                     "sortorder": 1,
@@ -2812,7 +2812,7 @@
                         "en": "Copyright"
                     },
                     "node_id": "c8162ecc-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 9,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2834,7 +2834,7 @@
                         "en": "Image Type"
                     },
                     "node_id": "c8162ad0-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 3,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -2856,7 +2856,7 @@
                         "en": "Image Date"
                     },
                     "node_id": "c8162fa8-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 6,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -2890,20 +2890,20 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Image Description",
+                        "label": "Image Caption",
                         "maxLength": null,
                         "placeholder": {
-                            "en": ""
+                            "en": "E.g., Site area, view west."
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "c81633b8-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Image Description"
+                        "en": "Image Caption"
                     },
                     "node_id": "c8162df0-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 7,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -2925,7 +2925,7 @@
                         "en": "Image View"
                     },
                     "node_id": "c8162d0a-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 4,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -2942,7 +2942,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Photographer",
+                        "label": "Image Photographer",
                         "maxLength": "80",
                         "placeholder": {
                             "en": ""
@@ -2952,10 +2952,10 @@
                     },
                     "id": "c8163494-01d8-11f0-850c-0242ac170007",
                     "label": {
-                        "en": "Photographer"
+                        "en": "Image Photographer"
                     },
                     "node_id": "c8162c2e-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 8,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2985,7 +2985,7 @@
                         "en": "Image Feature(s)"
                     },
                     "node_id": "c816308e-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 5,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -3020,7 +3020,7 @@
                         "label": "PIN",
                         "maxLength": "10",
                         "placeholder": {
-                            "en": "Enter text"
+                            "en": "E.g., 0123456789"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -3170,7 +3170,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Date Assigned or Reported",
+                        "label": "Assigned or Reported On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -3179,7 +3179,7 @@
                     },
                     "id": "d60b288e-35f4-11f0-afbc-0242ac170008",
                     "label": {
-                        "en": "Date Assigned or Reported"
+                        "en": "Assigned or Reported On"
                     },
                     "node_id": "d60b25fa-35f4-11f0-afbc-0242ac170008",
                     "sortorder": 3,
@@ -3216,7 +3216,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Typology Class",
+                        "label": "Typology",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -3224,7 +3224,7 @@
                     },
                     "id": "d847a431-b08e-40b6-891b-135d84b46f58",
                     "label": {
-                        "en": "Typology Class"
+                        "en": "Typology"
                     },
                     "node_id": "4d3bb20c-01c0-11f0-97f7-0242ac170007",
                     "sortorder": 0,
@@ -3374,7 +3374,7 @@
                         "en": "Alert Branch Contact"
                     },
                     "node_id": "8511d07c-197a-11f0-8f07-0242ac170008",
-                    "sortorder": 4,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -3391,7 +3391,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Elevation Comments",
+                        "label": "Elevation Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -3401,7 +3401,7 @@
                     },
                     "id": "e6af1b12-0b75-480d-98d7-e4d7fd3d67e0",
                     "label": {
-                        "en": "Elevation Comments"
+                        "en": "Elevation Remarks"
                     },
                     "node_id": "bc131e78-01bf-11f0-97f7-0242ac170007",
                     "sortorder": 0,
@@ -3497,7 +3497,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Site Decision",
+                        "label": "Decision/Criteria",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -3505,7 +3505,7 @@
                     },
                     "id": "f80f13e4-1977-11f0-8713-0242ac170008",
                     "label": {
-                        "en": "Site Decision"
+                        "en": "Decision/Criteria"
                     },
                     "node_id": "f80f08ae-1977-11f0-8713-0242ac170008",
                     "sortorder": 3,
@@ -3570,7 +3570,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Decision Description",
+                        "label": "Decision Rationale",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -3580,7 +3580,7 @@
                     },
                     "id": "f80f1600-1977-11f0-8713-0242ac170008",
                     "label": {
-                        "en": "Decision Description"
+                        "en": "Decision Rationale"
                     },
                     "node_id": "f80f115a-1977-11f0-8713-0242ac170008",
                     "sortorder": 4,
@@ -6422,13 +6422,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "RS_REGSTAT",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Decision Registration Status",
@@ -7289,13 +7289,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_TITLE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Reference Title",
@@ -7315,13 +7315,13 @@
                     },
                     "datatype": "reference",
                     "description": "Need to fix Concept name and values",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_TYPE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Reference Type",
@@ -7340,8 +7340,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_YEAR",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7365,8 +7365,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_REMARK",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -7392,8 +7392,8 @@
                     },
                     "datatype": "resource-instance-list",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_AUTHOR",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8172,7 +8172,7 @@
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
                     "exportable": true,
-                    "fieldname": "DH_DECISIO",
+                    "fieldname": "RS_DE_CRIT",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -8197,7 +8197,7 @@
                     "datatype": "date",
                     "description": "Date the decision was made",
                     "exportable": true,
-                    "fieldname": "DH_DE_DATE",
+                    "fieldname": "RS_DE_DATE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8233,7 +8233,7 @@
                     "datatype": "resource-instance",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "DH_MAKER",
+                    "fieldname": "RS_MAKER",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8269,7 +8269,7 @@
                     "datatype": "resource-instance",
                     "description": "Person that made the recommendation that influenced the decision.\nNeed contributor type to filter this list.",
                     "exportable": true,
-                    "fieldname": "DH_RECBY",
+                    "fieldname": "RS_RECBY",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8294,7 +8294,7 @@
                     "datatype": "date",
                     "description": "Date the recommendation was made",
                     "exportable": true,
-                    "fieldname": "DH_RECDATE",
+                    "fieldname": "RS_RECDATE",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8319,7 +8319,7 @@
                     "datatype": "string",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "DH_DESCRIP",
+                    "fieldname": "RS_RATIONA",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -8366,9 +8366,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "Backup of SME configuration EOB 2026-02-24",
-                "publicationid": "3d7203ff-d4b2-4cce-845f-fa5667838c11",
-                "published_time": "2026-02-24T18:12:49.930"
+                "notes": "Config updates by Arch Branch",
+                "publicationid": "179f7cfd-65a6-4e8f-830f-7f4eda6696f9",
+                "published_time": "2026-02-27T15:49:51.903"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
