@@ -2222,10 +2222,12 @@
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
+                        "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Register Type(s)",
+                        "multiValue": true,
                         "placeholder": {
                             "en": ""
                         },
@@ -2239,7 +2241,7 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                    "widget_id": "10000000-0000-0000-0000-000000000102"
                 },
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
@@ -8366,9 +8368,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "Backup of SME configuration EOB 2026-02-24",
-                "publicationid": "3d7203ff-d4b2-4cce-845f-fa5667838c11",
-                "published_time": "2026-02-24T18:12:49.930"
+                "notes": null,
+                "publicationid": "2216223a-cb8f-44b3-a82d-39310962b9db",
+                "published_time": "2026-02-27T22:51:06.229"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -8467,9 +8469,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
-        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
         "os": "Linux",
-        "os version": "5.14.0-611.30.1.el9_7.x86_64"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
