@@ -31,7 +31,8 @@ additional_pip_modules:
   - "oracledb"
   - "Authlib"
 
-configure_tileserv: False
+configure_tileserv: True
+configure_featureserv: True
 
 django_key: "{{ lookup('ansible.builtin.env', 'DJANGO_KEY') }}"
 db_password: "{{ lookup('ansible.builtin.env', 'DB_PASSWORD') }}"
@@ -46,3 +47,16 @@ s3_secret_access_key: "{{ lookup('ansible.builtin.env', 'S3_SECRET_ACCESS_KEY') 
 planet_api_key: "{{ lookup('ansible.builtin.env', 'PLANET_API_KEY') }}"
 mapbox_key: "{{ lookup('ansible.builtin.env', 'MAPBOX_KEY') }}"
 oauth_client_secret: "{{ lookup('ansible.builtin.env', 'OAUTH_CLIENT_SECRET') }}"
+
+oauth2_provider_configs:
+  - config_name: "BCRHP API"
+    client_id: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_ID') }}"
+    client_secret: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_SECRET') }}"
+    client_type: confidential
+    grant_type: client-credentials
+  - config_name: "QGIS Plugin"
+    client_id: "{{ lookup('ansible.builtin.env', 'QGIS_PLUGIN_CLIENT_ID') }}"
+    client_secret: "{{ lookup('ansible.builtin.env', 'QGIS_PLUGIN_CLIENT_SECRET') }}"
+    client_type: public
+    grant_type: authorization-code
+    redirect_uris: "http://127.0.0.1:7070/"
