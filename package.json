@@ -50,7 +50,7 @@
         "ajv": "^8.17.1",
         "arches": "bcgov/arches#dev/8.1.x_bcgov",
         "arches-component-lab": "archesproject/arches-component-lab#main",
-        "arches-controlled-lists": "archesproject/arches-controlled-lists#dev/1.1.x",
+        "arches-controlled-lists": "archesproject/arches-controlled-lists#brf/feat/176_support_freeform_search",
         "bcgov_arches_common": "bcgov/bcgov-arches-common#dev/2.0.x",
         "datatables.net": "^1.13.11",
         "eslint-config-prettier": "^10.1.5",
