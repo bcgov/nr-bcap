@@ -171,6 +171,7 @@ TERM_SEARCH_TYPES = [
 ES_MAPPING_MODIFIER_CLASSES = [
     "arches_controlled_lists.search.references_es_mapping_modifier.ReferencesEsMappingModifier",
     # "bcap.search.arch_site_es_values.CustomSearchValue"
+    "bcgov_arches_common.search.displayname_es_values.DisplayDescriptorSearchValue",
 ]
 
 KIBANA_URL = "http://localhost:5601/"
