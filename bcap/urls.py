@@ -30,6 +30,11 @@ urlpatterns = [
         name="files",
     ),
     path(
+        f"{PREFIX}bctileserver/",
+        BCTileserverProxyView.as_view(),
+        name="bcap_tile_server_root",
+    ),
+    path(
         f"{PREFIX}bctileserver/<path:path>",
         BCTileserverProxyView.as_view(),
         name="bcap_tile_server",
