@@ -1,0 +1,11 @@
+{
+    "widgetid": "10000000-0000-0000-0000-000000000102",
+    "component": "views/components/widgets/register-type-widget",
+    "datatype": "reference",
+    "defaultconfig": {
+        "multiValue": true,
+        "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e"
+    },
+    "helptext": null,
+    "name": "register-type-widget"
+}
