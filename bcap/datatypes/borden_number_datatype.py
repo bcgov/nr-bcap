@@ -18,7 +18,7 @@ details = {
     "defaultwidget": borden_number_widget,
     "defaultconfig": None,
     "configcomponent": "views/components/datatypes/non-localized-string",
-    "configname": "borden-number-datatype-config",
+    "configname": "non-localized-string-datatype-config",
     "name": "Borden Number",
     "isgeometric": False,
     "issearchable": True,
