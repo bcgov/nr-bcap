@@ -100,7 +100,10 @@ const typedHriaData = computed(
             "
             :hria-data="typedHriaData"
             :child-site-data="typedChildSiteData"
-            :loading="siteDataLoading || childSiteDataLoading"
+            :site-visit-data="typedSiteVisitData"
+            :loading="
+                siteDataLoading || childSiteDataLoading || siteVisitDataLoading
+            "
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"

@@ -18,6 +18,8 @@ import type {
     IdentificationAndRegistrationTile,
 } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { TemporaryNumberTile } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 
 const props = withDefaults(
@@ -25,6 +27,7 @@ const props = withDefaults(
         data: IdentificationAndRegistrationTile | undefined;
         hriaData: HriaDiscontinuedDataSchema | undefined;
         childSiteData: ArchaeologySiteSchema[] | undefined;
+        siteVisitData?: SiteVisitSchema[];
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -36,6 +39,7 @@ const props = withDefaults(
         forceCollapsed: undefined,
         editLogData: () => ({}),
         showAuditFields: false,
+        siteVisitData: () => [],
     },
 );
 
@@ -123,6 +127,25 @@ const siteNamesColumns = computed(() => [
     },
 ]);
 
+const temporaryNumbersColumns = computed<ColumnDefinition[]>(() => [
+    { field: 'temporary_number', label: 'Temporary Number' },
+    {
+        field: 'temporary_number_assigned_date',
+        label: 'Date Assigned or Reported',
+    },
+    { field: 'temporary_number_assigned_by', label: 'Assigned or Reported By' },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
+
 const alertColumns = computed<ColumnDefinition[]>(() => [
     { field: 'alert_subject', label: 'Subject' },
     { field: 'alert_details', label: 'Details', isHtml: true },
@@ -164,6 +187,18 @@ const {
 
 const authorityData = computed(() => currentData.value?.authority || []);
 const siteNamesData = computed(() => currentData.value?.site_names || []);
+const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
+    return (props.siteVisitData ?? [])
+        .map(
+            (visit) =>
+                visit.aliased_data?.identification?.aliased_data
+                    ?.temporary_number,
+        )
+        .filter(
+            (tile): tile is TemporaryNumberTile =>
+                !!tile?.aliased_data?.temporary_number?.node_value,
+        );
+});
 
 const siteAlertDataRaw = computed(() => {
     const alert = currentData.value?.site_alert;
@@ -179,6 +214,11 @@ const { processedData: authorityTableData } = useTileEditLog(
 
 const { processedData: siteNamesTableData } = useTileEditLog(
     siteNamesData,
+    toRef(props, 'editLogData'),
+);
+
+const { processedData: temporaryNumbersTableData } = useTileEditLog(
+    temporaryNumbersData,
     toRef(props, 'editLogData'),
 );
 
@@ -211,6 +251,13 @@ const hasDecisionHistory = computed(() => {
 
 const hasSiteNames = computed(() => {
     return siteNamesTableData.value && siteNamesTableData.value.length > 0;
+});
+
+const hasTemporaryNumbers = computed(() => {
+    return (
+        temporaryNumbersTableData.value &&
+        temporaryNumbersTableData.value.length > 0
+    );
 });
 
 const hasCurrentAlerts = computed(() => {
@@ -435,6 +482,26 @@ const parentSite = computed(() => {
                             <EmptyState
                                 v-else
                                 message="No site names available."
+                            />
+                        </template>
+                    </DetailsSection>
+
+                    <DetailsSection
+                        section-title="Temporary Numbers"
+                        variant="subsection"
+                        :visible="true"
+                        :class="{ 'empty-section': !hasTemporaryNumbers }"
+                    >
+                        <template #sectionContent>
+                            <StandardDataTable
+                                v-if="hasTemporaryNumbers"
+                                :table-data="temporaryNumbersTableData"
+                                :column-definitions="temporaryNumbersColumns"
+                                :initial-sort-field-index="1"
+                            />
+                            <EmptyState
+                                v-else
+                                message="No temporary numbers available."
                             />
                         </template>
                     </DetailsSection>
