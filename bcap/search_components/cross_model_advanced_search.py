@@ -273,9 +273,7 @@ class CardFilter:
                         filter_value, node, null_query, request
                     )
                 else:
-                    datatype.append_search_filters(
-                        filter_value, node, query, request
-                    )
+                    datatype.append_search_filters(filter_value, node, query, request)
 
         return query, null_query
 
