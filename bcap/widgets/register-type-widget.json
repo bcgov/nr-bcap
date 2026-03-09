@@ -1,5 +1,5 @@
 {
-    "widgetid": "10000000-0000-0000-0000-000000000102",
+    "widgetid": "10000000-0000-0000-0000-000000000104",
     "component": "views/components/widgets/register-type-widget",
     "datatype": "reference",
     "defaultconfig": {
