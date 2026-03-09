@@ -77,7 +77,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Temporary Numbers"
+                        "en": "Temporary Number"
                     },
                     "nodegroup_id": "ab674670-140d-11f0-b9bb-0242ac170007",
                     "sortorder": 0,
@@ -101,10 +101,10 @@
                         "en": ""
                     },
                     "instructions": {
-                        "en": "Add any new Typologies that are not currently associated with the Site "
+                        "en": ""
                     },
                     "name": {
-                        "en": "Additional Site Typology"
+                        "en": "Site Typology"
                     },
                     "nodegroup_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
                     "sortorder": 0,
@@ -487,7 +487,7 @@
                         "en": "Chronology"
                     },
                     "nodegroup_id": "c1f56b08-140b-11f0-898b-0242ac170007",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -649,7 +649,7 @@
                         "en": "Archaeological Culture"
                     },
                     "nodegroup_id": "fab4ba5a-1408-11f0-9e93-0242ac170007",
-                    "sortorder": 0,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -676,74 +676,12 @@
                         "en": "Site Disturbance"
                     },
                     "nodegroup_id": "fb559106-140c-11f0-b9bb-0242ac170007",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
-                {
-                    "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
-                    "config": {
-                        "defaultValue": null,
-                        "label": "Was On Site",
-                        "uneditable": false
-                    },
-                    "id": "0484d748-1410-11f0-8419-0242ac170007",
-                    "label": {
-                        "en": "Was On Site"
-                    },
-                    "node_id": "0484d428-1410-11f0-8419-0242ac170007",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000006"
-                },
-                {
-                    "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
-                    "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Member Role(s)",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "0484d7de-1410-11f0-8419-0242ac170007",
-                    "label": {
-                        "en": "Member Role(s)"
-                    },
-                    "node_id": "0484d69e-1410-11f0-8419-0242ac170007",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
-                    "card_id": "0484d2de-1410-11f0-8419-0242ac170007",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Team Member",
-                        "placeholder": {
-                            "en": ""
-                        },
-                        "uneditable": false
-                    },
-                    "id": "0484d86a-1410-11f0-8419-0242ac170007",
-                    "label": {
-                        "en": "Team Member"
-                    },
-                    "node_id": "0484d572-1410-11f0-8419-0242ac170007",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
-                },
                 {
                     "card_id": "15f3be27-7841-4672-9c7f-72eff82cd4de",
                     "config": {
@@ -776,11 +714,11 @@
                             "prefix",
                             "suffix"
                         ],
-                        "label": "# of Features",
+                        "label": "Number of Features",
                         "max": "",
                         "min": "",
                         "placeholder": {
-                            "en": "Enter number"
+                            "en": "Enter number of features"
                         },
                         "precision": "",
                         "prefix": {
@@ -795,7 +733,7 @@
                     },
                     "id": "06560885-b4c5-4afa-8261-7183c5b9d91b",
                     "label": {
-                        "en": "# of Features"
+                        "en": "Number of Features"
                     },
                     "node_id": "a0c7d01a-1401-11f0-acd5-0242ac170007",
                     "sortorder": 1,
@@ -826,6 +764,27 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
+                    "card_id": "a6995f93-272c-4548-83c5-5ba11fbdc364",
+                    "config": {
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Member Role(s)",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "0ee1c1f4-9996-4139-93d7-87f401dd91a3",
+                    "label": {
+                        "en": "Member Role(s)"
+                    },
+                    "node_id": "0484d69e-1410-11f0-8419-0242ac170007",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "i18n_properties": [
@@ -842,7 +801,7 @@
                         "en": "Site Visit Type"
                     },
                     "node_id": "e39372c4-df58-11ef-8fa3-0242ac170009",
-                    "sortorder": 0,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -949,7 +908,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Project Description",
+                        "label": "Site Visit Description",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -959,10 +918,10 @@
                     },
                     "id": "193e966e-7f73-49d7-9ddf-8754f0bed13a",
                     "label": {
-                        "en": "Project Description"
+                        "en": "Site Visit Description"
                     },
                     "node_id": "fbfbb0a6-df58-11ef-8fa3-0242ac170009",
-                    "sortorder": 3,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -1024,7 +983,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Last Date of Site Visit",
+                        "label": "Last Date On Site",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1033,10 +992,10 @@
                     },
                     "id": "20e1391b-cdaf-49ed-a395-ce63ffc4b20a",
                     "label": {
-                        "en": "Last Date of Site Visit"
+                        "en": "Last Date On Site"
                     },
                     "node_id": "1de04042-df59-11ef-8fa3-0242ac170009",
-                    "sortorder": 2,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1053,7 +1012,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Culture Remarks",
+                        "label": "Archaeological Culture Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -1063,13 +1022,13 @@
                     },
                     "id": "21bb0b20-39cb-44e7-bef2-14fb599f4c9a",
                     "label": {
-                        "en": "Culture Remarks"
+                        "en": "Archaeological Culture Remarks"
                     },
                     "node_id": "fab4bde8-1408-11f0-9e93-0242ac170007",
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "fab4bca8-1408-11f0-9e93-0242ac170007",
@@ -1077,7 +1036,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Archaeological Culture",
+                        "label": "Archaeological Culture Name",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -1085,13 +1044,35 @@
                     },
                     "id": "33a596ca-104b-42bb-8ebd-390ec04e6b56",
                     "label": {
-                        "en": "Archaeological Culture"
+                        "en": "Archaeological Culture Name"
                     },
                     "node_id": "fab4ba5a-1408-11f0-9e93-0242ac170007",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "a6995f93-272c-4548-83c5-5ba11fbdc364",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Team Member",
+                        "placeholder": {
+                            "en": "Select a person"
+                        }
+                    },
+                    "id": "35233a0e-feb1-47be-a7f1-0638c4e717f7",
+                    "label": {
+                        "en": "Team Member"
+                    },
+                    "node_id": "0484d572-1410-11f0-8419-0242ac170007",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "9eb5c3db-3087-4582-96d8-3584b060e908",
@@ -1121,18 +1102,18 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Affiliation",
+                        "label": "Non-Permit Affiliation",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option"
                         },
                         "uneditable": false
                     },
                     "id": "3687a10d-a267-42dc-81c8-42182cb29507",
                     "label": {
-                        "en": "Affiliation"
+                        "en": "Non-Permit Affiliation"
                     },
                     "node_id": "69273f50-4c9c-11f0-9f73-0242ac170007",
-                    "sortorder": 7,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1252,10 +1233,10 @@
                         "en": "Biogeography Description"
                     },
                     "node_id": "95e5f9b6-71cd-4769-b365-9155442954ec",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
@@ -1264,21 +1245,37 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Site Form Authors",
+                        "label": "Site Form Author(s)",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
                     "id": "4a0a8da1-146c-4cff-b069-1631d2af1d88",
                     "label": {
-                        "en": "Site Form Authors"
+                        "en": "Site Form Author(s)"
                     },
                     "node_id": "4fb2db52-1410-11f0-8419-0242ac170007",
-                    "sortorder": 8,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
+                    "card_id": "a6995f93-272c-4548-83c5-5ba11fbdc364",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "On Site?"
+                    },
+                    "id": "4c0fd439-06bb-4c7d-ad98-5844277221a1",
+                    "label": {
+                        "en": "On Site?"
+                    },
+                    "node_id": "0484d428-1410-11f0-8419-0242ac170007",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
                     "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
@@ -1372,7 +1369,7 @@
                         ],
                         "label": "HCA Permit",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select permit"
                         },
                         "uneditable": false
                     },
@@ -1381,7 +1378,7 @@
                         "en": "HCA Permit"
                     },
                     "node_id": "b03790fe-df58-11ef-8fa3-0242ac170009",
-                    "sortorder": 5,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -1414,7 +1411,7 @@
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "9eb5c3db-3087-4582-96d8-3584b060e908",
@@ -1451,7 +1448,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Name Remarks",
+                        "label": "Site Name Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -1461,13 +1458,13 @@
                     },
                     "id": "6d906854-140d-11f0-b9bb-0242ac170007",
                     "label": {
-                        "en": "Name Remarks"
+                        "en": "Site Name Remarks"
                     },
                     "node_id": "6d9066ce-140d-11f0-b9bb-0242ac170007",
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "6d906048-140d-11f0-b9bb-0242ac170007",
@@ -1475,13 +1472,13 @@
                         "defaultValue": {
                             "en": {
                                 "direction": "ltr",
-                                "value": ""
+                                "value": "Enter text"
                             }
                         },
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Name",
+                        "label": "Site Name",
                         "maxLength": "250",
                         "placeholder": {
                             "en": ""
@@ -1491,7 +1488,7 @@
                     },
                     "id": "6d9068e0-140d-11f0-b9bb-0242ac170007",
                     "label": {
-                        "en": "Name"
+                        "en": "Site Name"
                     },
                     "node_id": "6d90619c-140d-11f0-b9bb-0242ac170007",
                     "sortorder": 0,
@@ -1505,7 +1502,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Name Type",
+                        "label": "Site Name Type",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -1513,7 +1510,7 @@
                     },
                     "id": "6d906962-140d-11f0-b9bb-0242ac170007",
                     "label": {
-                        "en": "Name Type"
+                        "en": "Site Name Type"
                     },
                     "node_id": "6d9065d4-140d-11f0-b9bb-0242ac170007",
                     "sortorder": 1,
@@ -1530,7 +1527,7 @@
                         ],
                         "label": "Assigned or Reported By",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
@@ -1539,7 +1536,7 @@
                         "en": "Assigned or Reported By"
                     },
                     "node_id": "6d9063d6-140d-11f0-b9bb-0242ac170007",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1549,7 +1546,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Assigned or Reported Date",
+                        "label": "Assigned or Reported On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1558,10 +1555,10 @@
                     },
                     "id": "6d906a5c-140d-11f0-b9bb-0242ac170007",
                     "label": {
-                        "en": "Assigned or Reported Date"
+                        "en": "Assigned or Reported On"
                     },
                     "node_id": "6d9067be-140d-11f0-b9bb-0242ac170007",
-                    "sortorder": 4,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1753,18 +1750,18 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Archaeological Site",
+                        "label": "Borden Number",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a site"
                         },
                         "uneditable": false
                     },
                     "id": "7a2e41fc-4ad9-4be3-8459-51a3523e9c69",
                     "label": {
-                        "en": "Archaeological Site"
+                        "en": "Borden Number"
                     },
                     "node_id": "cd722a58-df58-11ef-8fa3-0242ac170009",
-                    "sortorder": 6,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1907,18 +1904,21 @@
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultValue": null,
-                        "label": "Nonpermitted Site Visit",
+                        "label": "Permitted?",
+                        "subtitle": {
+                            "en": "Click to switch"
+                        },
                         "uneditable": false
                     },
                     "id": "96337e45-796c-4f55-b58d-c88ac7890d33",
                     "label": {
-                        "en": "Nonpermitted Site Visit"
+                        "en": "Permitted?"
                     },
                     "node_id": "fb01d6a1-cac8-4b16-8f2c-5472213aeec6",
-                    "sortorder": 4,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "0346bc9c-d235-4313-adc8-d0e210b2ef25"
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
@@ -1934,7 +1934,7 @@
                         "max": "",
                         "min": "",
                         "placeholder": {
-                            "en": "Enter number"
+                            "en": "Enter number of artifacts (if applicable)"
                         },
                         "precision": "",
                         "prefix": {
@@ -1963,7 +1963,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Typology Class",
+                        "label": "Typology",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -1971,7 +1971,7 @@
                     },
                     "id": "ad30cdfa-c0a1-4d95-9e2a-8bd96b722af9",
                     "label": {
-                        "en": "Typology Class"
+                        "en": "Typology"
                     },
                     "node_id": "d6765cc8-8dec-431b-bbb5-950567e6ed1c",
                     "sortorder": 0,
@@ -2043,7 +2043,7 @@
                         "en": "Biogeography Name"
                     },
                     "node_id": "5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2065,7 +2065,7 @@
                         "en": "First Date of Site Visit"
                     },
                     "node_id": "745b0462-140f-11f0-8419-0242ac170007",
-                    "sortorder": 1,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -2170,23 +2170,23 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Source",
+                        "label": "Chronology Source",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": "E.g. City of Surrey"
+                            "en": "Enter Text"
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "c1f57954-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "Source"
+                        "en": "Chronology Source"
                     },
                     "node_id": "c1f57332-140b-11f0-898b-0242ac170007",
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
@@ -2271,7 +2271,7 @@
                         "label": "Chronology Remarks",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": "Provide explanation of significant date types."
+                            "en": "Enter Text"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -2284,7 +2284,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "c1f56d2e-140b-11f0-898b-0242ac170007",
@@ -2292,7 +2292,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Method",
+                        "label": "Dating Method",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -2300,7 +2300,7 @@
                     },
                     "id": "c1f57ba2-140b-11f0-898b-0242ac170007",
                     "label": {
-                        "en": "Method"
+                        "en": "Dating Method"
                     },
                     "node_id": "c1f57166-140b-11f0-898b-0242ac170007",
                     "sortorder": 0,
@@ -2364,18 +2364,18 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Assigned By",
+                        "label": "Assigned or Reported By",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
                     "id": "ccbad9c7-5362-4b3f-9ab7-51cea47c279a",
                     "label": {
-                        "en": "Assigned By"
+                        "en": "Assigned or Reported By"
                     },
                     "node_id": "c85b4e24-140e-11f0-8419-0242ac170007",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -2386,7 +2386,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Latest Edit Type",
+                        "label": "Edit Type",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -2394,7 +2394,7 @@
                     },
                     "id": "cf40f59a-13f0-11f0-9404-0242ac170007",
                     "label": {
-                        "en": "Latest Edit Type"
+                        "en": "Edit Type"
                     },
                     "node_id": "cf40f158-13f0-11f0-9404-0242ac170007",
                     "sortorder": 2,
@@ -2430,7 +2430,7 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
@@ -2542,19 +2542,18 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Date Assigned",
+                        "label": "Assigned or Reported On",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
-                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "d0806620-3dfa-46a9-ba25-d01317af3ea1",
                     "label": {
-                        "en": "Date Assigned"
+                        "en": "Assigned or Reported On"
                     },
                     "node_id": "e3dd076e-140e-11f0-8419-0242ac170007",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -2572,7 +2571,7 @@
                             "placeholder"
                         ],
                         "label": "Temporary Number",
-                        "maxLength": null,
+                        "maxLength": "125",
                         "placeholder": {
                             "en": "Enter text"
                         },
@@ -2601,7 +2600,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Remarks",
+                        "label": "Typology Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -2611,10 +2610,10 @@
                     },
                     "id": "d419760b-a6bf-4b95-9b7b-ca56ef952db8",
                     "label": {
-                        "en": "Remarks"
+                        "en": "Typology Remarks"
                     },
                     "node_id": "c98387af-e430-4317-b222-9f2191194817",
-                    "sortorder": 4,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -2772,7 +2771,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Disturbance Period",
+                        "label": "When",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -2780,7 +2779,7 @@
                     },
                     "id": "fb5597c8-140c-11f0-b9bb-0242ac170007",
                     "label": {
-                        "en": "Disturbance Period"
+                        "en": "When"
                     },
                     "node_id": "fb559480-140c-11f0-b9bb-0242ac170007",
                     "sortorder": 0,
@@ -2827,7 +2826,7 @@
                         ],
                         "label": "Repository",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option (if applicable)"
                         },
                         "uneditable": false
                     },
@@ -4168,13 +4167,13 @@
                     },
                     "datatype": "boolean",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SVT_ONSITE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Was On Site",
@@ -4204,13 +4203,13 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SVT_MEMBER",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": true,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Team Member",
@@ -4230,13 +4229,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SVT_ROLE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Member Roles",
@@ -4278,13 +4277,13 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SV_LA_DATE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Last Date of Site Visit",
@@ -4374,8 +4373,8 @@
                     },
                     "datatype": "number",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CM_NUM_ART",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -4438,7 +4437,7 @@
                     "nodeid": "3648fb88-1401-11f0-acd5-0242ac170007",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
-                    "sortorder": 4,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4448,7 +4447,11 @@
                         "graphs": [
                             {
                                 "graphid": "3e6a2880-14d4-11ec-9df0-5254008afee6",
-                                "name": "Repository"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Repository",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -4456,8 +4459,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CM_REPOSIT",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -4495,7 +4498,7 @@
                     "nodeid": "37bdda22-140d-11f0-b9bb-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4530,13 +4533,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CM_TYPE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Cultural Material Type",
@@ -4566,8 +4569,8 @@
                     },
                     "datatype": "resource-instance-list",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SF_AUTHOR",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -4592,8 +4595,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "BG_TYPE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -4696,8 +4699,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "BG_NAME",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -4722,13 +4725,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CM_STATUS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Cultural Material Status",
@@ -4838,8 +4841,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SV_Non_AFF",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -4969,7 +4972,7 @@
                     "datatype": "string",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "SITE_NAME",
+                    "fieldname": "SN_SIT_NAM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5004,8 +5007,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SN_ASS_BY",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5056,12 +5059,12 @@
                     "datatype": "reference",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "ST_NM_TYP",
+                    "fieldname": "SN_NAM_TYP",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Name Type",
@@ -5080,8 +5083,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SN_NAM_REM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5112,8 +5115,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SN_DATE_AS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5151,7 +5154,7 @@
                     "nodeid": "6f96f910-5049-11f0-91cd-0242ac170006",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E19_Physical_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2i_is_type_of",
-                    "sortorder": 1,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -5324,13 +5327,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "STR_REMARK",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": true,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Stratigraphy",
@@ -5380,7 +5383,7 @@
                         "dateFormat": "YYYY-MM-DD"
                     },
                     "datatype": "date",
-                    "description": null,
+                    "description": "LT (2026-03-05): Not configured. This field should be removed.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -5420,7 +5423,7 @@
                     "nodeid": "77789d46-61ab-11f0-be7c-3a7a4e6803c5",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 5,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -5516,7 +5519,7 @@
                     "nodeid": "887edb3a-df58-11ef-8fa3-0242ac170009",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 3,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -5575,8 +5578,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "BG_DESCRIP",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5751,13 +5754,13 @@
                     },
                     "datatype": "reference",
                     "description": "{\"en\": \"\"}",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AF_TYPE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": true,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Archaeological Feature",
@@ -5776,8 +5779,8 @@
                     },
                     "datatype": "number",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AF_NUMFEAT",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5801,13 +5804,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AF_REMARKS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Feature Remarks",
@@ -5886,13 +5889,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TN_TEMPNUM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": true,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Temporary Number",
@@ -5937,13 +5940,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CM_DETAILS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Cultural Material Details",
@@ -5961,7 +5964,11 @@
                         "graphs": [
                             {
                                 "graphid": "f4b391f1-79d1-4886-ab2d-d72a197a9f21",
-                                "name": "Archaeological Permit"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "HCA Permit",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -5969,8 +5976,8 @@
                     },
                     "datatype": "resource-instance-list",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SV_PER_NUM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6090,8 +6097,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CHR_T_QUAL",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6116,8 +6123,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CHR_T_CAL",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6167,13 +6174,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CHR_METHOD",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Determination Method",
@@ -6193,7 +6200,7 @@
                     "datatype": "date",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "EVNT_ST_YR",
+                    "fieldname": "CHR_F_DATE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6217,8 +6224,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": "datesource",
+                    "exportable": true,
+                    "fieldname": "CHR_SOURCE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6243,7 +6250,7 @@
                     "datatype": "date",
                     "description": null,
                     "exportable": true,
-                    "fieldname": "EVNT_ND_YR",
+                    "fieldname": "CHR_T_DATE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6293,8 +6300,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CHR_F_CAL",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6319,8 +6326,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "CHR_F_QUAL",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6380,8 +6387,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TN_ASS_BY",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6405,8 +6412,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TY_REMARKS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6430,8 +6437,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "LO_LOC_ACC",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6466,13 +6473,13 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SV_BORDEN",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Archaeological Site",
@@ -6520,7 +6527,7 @@
                     "hascustomalias": false,
                     "is_collector": true,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Site Visit Location",
@@ -6540,13 +6547,13 @@
                     },
                     "datatype": "reference",
                     "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SA_CU_TYPE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Latest Edit Type",
@@ -6565,13 +6572,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": "accuracyrm",
+                    "exportable": true,
+                    "fieldname": "SA_CU_REM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Accuracy Remarks",
@@ -6591,7 +6598,7 @@
                     "datatype": "string",
                     "description": null,
                     "exportable": false,
-                    "fieldname": "srcnts",
+                    "fieldname": "",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6639,8 +6646,8 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TYPOLOGY",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6665,13 +6672,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SV_VISTYPE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Site Visit Type",
@@ -6690,8 +6697,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "TN_DATE_AS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6741,8 +6748,8 @@
                     },
                     "datatype": "reference",
                     "description": "",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AC_NAME",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -6766,8 +6773,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AC_REMARKS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6811,25 +6818,25 @@
                     "alias": "nonpermitted_site_visit",
                     "config": {
                         "falseLabel": {
-                            "en": "Permitted"
+                            "en": "Non-permit"
                         },
                         "i18n_properties": [
                             "trueLabel",
                             "falseLabel"
                         ],
                         "trueLabel": {
-                            "en": "Non-permitted"
+                            "en": "Permit"
                         }
                     },
                     "datatype": "boolean",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SV_ISPERM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Nonpermitted Site Visit",
@@ -6875,13 +6882,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DIS_WHEN",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Disturbance Period",
@@ -6901,13 +6908,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DIS_CAUSE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Disturbance Cause",
@@ -6926,13 +6933,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "DIS_REMARK",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Disturbance Remarks",
@@ -6951,13 +6958,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SV_DESCRIP",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Project Description",
@@ -6974,9 +6981,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Adds the missing Site Typology fields that come in through a Site Visit form.",
-                "publicationid": "1af99107-4a03-4940-9dac-0761bef220a0",
-                "published_time": "2026-02-24T18:13:06.901"
+                "notes": "Business area configurations made up to the end of 2026-03-05",
+                "publicationid": "60eace80-a3d0-4a2d-83a7-3b4f8e002418",
+                "published_time": "2026-03-06T10:17:38.754"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -7077,9 +7084,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "8c0bae2e0b 2026-02-22 20:41:45 -0800",
+        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
+        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
         "os": "Linux",
-        "os version": "6.12.54-linuxkit"
+        "os version": "5.14.0-611.30.1.el9_7.x86_64"
     }
 }
