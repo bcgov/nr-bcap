@@ -50,6 +50,31 @@ const RegisterTypeWidget = function (params) {
         return ko.unwrap(self.disabled) || ko.unwrap(self.form?.loading);
     }, self);
 
+    self._extract_uris = function (reference_value) {
+        if (!reference_value || !Array.isArray(reference_value)) {
+            return [];
+        }
+        return reference_value
+            .map(function (entry) {
+                return typeof entry === 'object' ? entry.uri : entry;
+            })
+            .sort();
+    };
+
+    self._values_equal = function (current, incoming) {
+        let current_uris = self._extract_uris(ko.toJS(current));
+        let incoming_uris = self._extract_uris(ko.toJS(incoming));
+        if (current_uris.length !== incoming_uris.length) {
+            return false;
+        }
+        for (let i = 0; i < current_uris.length; i++) {
+            if (current_uris[i] !== incoming_uris[i]) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     self.calculate_register_type = function () {
         let url = `${self.urls.root}register_type/${self.tile.resourceinstance_id}`;
         self.form.loading(true);
@@ -58,7 +83,11 @@ const RegisterTypeWidget = function (params) {
         })
             .done(function (data) {
                 if (data.status === 'success') {
-                    self.value(data.reference_value);
+                    if (
+                        !self._values_equal(self.value(), data.reference_value)
+                    ) {
+                        self.value(data.reference_value);
+                    }
                     if (data.missing_labels && data.missing_labels.length > 0) {
                         self.form.alert(
                             new AlertViewModel(
