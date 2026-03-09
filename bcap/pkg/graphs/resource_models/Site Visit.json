@@ -1174,7 +1174,7 @@
                         "en": "Stratigraphy Remarks"
                     },
                     "node_id": "720dd6dc-1408-11f0-9e93-0242ac170007",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"

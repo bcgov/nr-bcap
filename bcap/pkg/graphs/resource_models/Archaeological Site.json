@@ -1549,7 +1549,7 @@
                         "en": "Tenure Remarks"
                     },
                     "node_id": "4598a202-197c-11f0-b2a5-0242ac170008",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
