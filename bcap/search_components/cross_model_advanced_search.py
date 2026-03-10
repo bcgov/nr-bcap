@@ -239,6 +239,7 @@ class CardFilter:
         """
 
         query = Bool()
+        null_query = Bool()
 
         for node_id, filter_value in self.filters.items():
             if not self._is_valid(filter_value):
@@ -264,9 +265,17 @@ class CardFilter:
             datatype = factory.get_instance(node.datatype)
 
             if hasattr(datatype, "append_search_filters"):
-                datatype.append_search_filters(filter_value, node, query, request)
+                op = filter_value.get("op", "")
+                val = filter_value.get("val", "")
 
-        return query
+                if op in ("null", "not_null") or val in ("null", "not_null"):
+                    datatype.append_search_filters(
+                        filter_value, node, null_query, request
+                    )
+                else:
+                    datatype.append_search_filters(filter_value, node, query, request)
+
+        return query, null_query
 
     @classmethod
     def create(cls, data: dict[str, Any]) -> "CardFilter":
@@ -299,21 +308,21 @@ class GroupFilter:
         query = Bool()
 
         for card in self.cards:
-            card_query = card.build(factory, nodes, request)
+            card_query, null_query = card.build(factory, nodes, request)
 
-            if not has_clause(card_query):
-                continue
-
-            if card_query.dsl["bool"].get("filter"):
-                clause = card_query
-            else:
-                # Wrap tile queries in Nested because tiles are stored as nested documents
+            if has_clause(card_query):
                 clause = Nested(path="tiles", query=card_query)
 
-            if self.match_type == MatchType.ANY:
-                query.should(clause)
-            else:
-                query.must(clause)
+                if self.match_type == MatchType.ANY:
+                    query.should(clause)
+                else:
+                    query.must(clause)
+
+            if has_clause(null_query):
+                if self.match_type == MatchType.ANY:
+                    query.should(null_query)
+                else:
+                    query.must(null_query)
 
         if query.dsl["bool"]["should"]:
             query.dsl["bool"]["minimum_should_match"] = 1

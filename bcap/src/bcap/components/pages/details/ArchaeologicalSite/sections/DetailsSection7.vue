@@ -7,6 +7,7 @@ import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
+import type { AliasedTileData } from '@/arches_component_lab/types.ts';
 import 'primeicons/primeicons.css';
 import type {
     AncestralRemainsTile,
@@ -33,6 +34,33 @@ const props = withDefaults(
         showAuditFields: false,
     },
 );
+
+const siteVisitAncestralRemainsData = computed(() => {
+    const remains: AliasedTileData[] = [];
+    props.siteVisitData.forEach((sv) => {
+        const remainsRows = sv.aliased_data?.ancestral_remains ?? [];
+        remainsRows.forEach((tile) => {
+            remains.push(tile);
+        });
+    });
+    return remains;
+});
+
+const hasSiteVisitAncestralRemainsData = computed(
+    () => siteVisitAncestralRemainsData.value.length > 0,
+);
+
+const siteVisitAncestralRemainsColumns = computed<ColumnDefinition[]>(() => [
+    { field: 'ancestral_remains_type', label: 'Type' },
+    { field: 'ancestral_remains_status', label: 'Status' },
+    { field: 'ancestral_remains_remarks', label: 'Remarks', isHtml: true },
+    { field: 'multiple_burials', label: 'Multiple Burials' },
+    {
+        field: 'minimum_number_of_individuals',
+        label: 'Minimum # of Individuals',
+    },
+    { field: 'ancestral_remains_repository', label: 'Repository' },
+]);
 
 const restrictedRemainsDataRaw = computed(
     (): RestrictedAncestralRemainsRemarkTile[] => {
@@ -85,6 +113,16 @@ const restrictedRemainsColumns = computed<ColumnDefinition[]>(() => {
         :force-collapsed="props.forceCollapsed"
     >
         <template #sectionContent>
+            <StandardDataTable
+                v-if="hasSiteVisitAncestralRemainsData"
+                :table-data="siteVisitAncestralRemainsData"
+                :column-definitions="siteVisitAncestralRemainsColumns"
+            />
+            <EmptyState
+                v-else
+                message="No ancestral remains data available."
+            />
+
             <DetailsSection
                 section-title="Restricted Ancestral Remains Information"
                 variant="subsection"
