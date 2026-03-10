@@ -699,7 +699,7 @@
                         "en": "Image View"
                     },
                     "node_id": "c0dbd7b1-9c2b-4c27-96f3-17cb5aad7d25",
-                    "sortorder": 3,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -848,20 +848,20 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Image Description",
+                        "label": "Image Caption",
                         "maxLength": "80",
                         "placeholder": {
-                            "en": "E.g. City of Nelson"
+                            "en": "E.g., Site area, view west."
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "15fe2c4c-7f73-46ff-acb9-a64306d468ad",
                     "label": {
-                        "en": "Image Description"
+                        "en": "Image Caption"
                     },
                     "node_id": "10d83dfd-49d8-4bf3-9977-4acbc809b7b8",
-                    "sortorder": 6,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -932,7 +932,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Source",
+                        "label": "General Remark Source",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -940,10 +940,10 @@
                     },
                     "id": "19626842-cb22-4a52-bdf7-8ad59e3c4e86",
                     "label": {
-                        "en": "Source"
+                        "en": "General Remark Source"
                     },
                     "node_id": "962504dc-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -973,7 +973,7 @@
                         "en": "Image Feature(s)"
                     },
                     "node_id": "9bd92cab-7995-4940-9547-073e2eb505ac",
-                    "sortorder": 4,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1077,8 +1077,9 @@
                 {
                     "card_id": "9eb5c3db-3087-4582-96d8-3584b060e908",
                     "config": {
+                        "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "Year",
+                        "label": "Reference Year",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1087,7 +1088,7 @@
                     },
                     "id": "358d1523-3e23-4815-9ab9-4bb7e7148203",
                     "label": {
-                        "en": "Year"
+                        "en": "Reference Year"
                     },
                     "node_id": "583ad2f9-2320-403d-9311-186df231145e",
                     "sortorder": 2,
@@ -1203,10 +1204,10 @@
                         "en": "General Remarks"
                     },
                     "node_id": "9625068a-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
@@ -1342,6 +1343,7 @@
                 {
                     "card_id": "15f3be27-7841-4672-9c7f-72eff82cd4de",
                     "config": {
+                        "dateFormat": "YYYY",
                         "defaultValue": "",
                         "label": "Image Date",
                         "maxDate": false,
@@ -1355,7 +1357,7 @@
                         "en": "Image Date"
                     },
                     "node_id": "2454579e-6884-4d1d-82f3-724f62ce4d4f",
-                    "sortorder": 5,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1420,15 +1422,15 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Authors",
+                        "label": "Author(s)",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select a person"
                         },
                         "uneditable": false
                     },
                     "id": "6617399d-6738-4dcb-ae57-45c4d0a04178",
                     "label": {
-                        "en": "Authors"
+                        "en": "Author(s)"
                     },
                     "node_id": "727502b4-cac9-4c58-8882-56d2bdff4bbb",
                     "sortorder": 3,
@@ -1569,7 +1571,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Status",
+                        "label": "Ancestral Remains Status",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -1577,7 +1579,7 @@
                     },
                     "id": "6f970036-5049-11f0-91cd-0242ac170006",
                     "label": {
-                        "en": "Status"
+                        "en": "Ancestral Remains Status"
                     },
                     "node_id": "6f96fd5c-5049-11f0-91cd-0242ac170006",
                     "sortorder": 1,
@@ -1591,7 +1593,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Type",
+                        "label": "Ancestral Remains Type",
                         "placeholder": {
                             "en": "Select an option"
                         },
@@ -1599,7 +1601,7 @@
                     },
                     "id": "6f9700ae-5049-11f0-91cd-0242ac170006",
                     "label": {
-                        "en": "Type"
+                        "en": "Ancestral Remains Type"
                     },
                     "node_id": "6f96fb9a-5049-11f0-91cd-0242ac170006",
                     "sortorder": 0,
@@ -1619,7 +1621,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Remarks",
+                        "label": "Ancestral Remains Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -1629,7 +1631,7 @@
                     },
                     "id": "6f970112-5049-11f0-91cd-0242ac170006",
                     "label": {
-                        "en": "Remarks"
+                        "en": "Ancestral Remains Remarks"
                     },
                     "node_id": "6f96fe2e-5049-11f0-91cd-0242ac170006",
                     "sortorder": 2,
@@ -1771,7 +1773,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "label": "Date",
+                        "label": "General Remark Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -1780,10 +1782,10 @@
                     },
                     "id": "7eeee5c0-9bd8-4fca-97ee-5d6b2cc3f810",
                     "label": {
-                        "en": "Date"
+                        "en": "General Remark Date"
                     },
                     "node_id": "962505cc-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1800,7 +1802,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Remarks",
+                        "label": "Reference Remarks",
                         "maxLength": "",
                         "placeholder": {
                             "en": "Enter text"
@@ -1810,13 +1812,13 @@
                     },
                     "id": "83120985-82b0-49b7-a0f2-2e920ab26de4",
                     "label": {
-                        "en": "Remarks"
+                        "en": "Reference Remarks"
                     },
                     "node_id": "b47c96e1-921e-4358-81fa-b159cd5f05c8",
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "15f3be27-7841-4672-9c7f-72eff82cd4de",
@@ -1830,20 +1832,20 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Photographer",
+                        "label": "Image Photographer",
                         "maxLength": "80",
                         "placeholder": {
-                            "en": "E.g. City of Nelson"
+                            "en": "Select a person"
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "89d2c858-6626-4c55-a46c-41aea8f47df6",
                     "label": {
-                        "en": "Photographer"
+                        "en": "Image Photographer"
                     },
                     "node_id": "d20d1438-701d-47e9-8f93-7a460f3bba75",
-                    "sortorder": 7,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1984,6 +1986,9 @@
                     "config": {
                         "defaultValue": null,
                         "label": "Primary Image",
+                        "subtitle": {
+                            "en": "Click to switch"
+                        },
                         "uneditable": false
                     },
                     "id": "b1d6f486-3699-4f54-a324-83199503d1b2",
@@ -2630,7 +2635,7 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Title",
+                        "label": "Reference Title",
                         "maxLength": "",
                         "placeholder": {
                             "en": "Enter text"
@@ -2640,7 +2645,7 @@
                     },
                     "id": "d9ab2738-eb78-4542-97fe-f2e78b169fdf",
                     "label": {
-                        "en": "Title"
+                        "en": "Reference Title"
                     },
                     "node_id": "b0cb724b-aa73-4dd5-88c1-a2baab71615c",
                     "sortorder": 1,
@@ -2729,7 +2734,7 @@
                         ],
                         "label": "Repository",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option"
                         },
                         "uneditable": false
                     },
@@ -4676,8 +4681,8 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_YEAR",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5166,13 +5171,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AR_TYPE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Ancestral Remains Type",
@@ -5200,8 +5205,8 @@
                     },
                     "datatype": "boolean",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AR_MULTIPL",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5226,13 +5231,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AR_STATUS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Ancestral Remains Status",
@@ -5251,13 +5256,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AR_REMARK",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Ancestral Remains Remarks",
@@ -5276,8 +5281,8 @@
                     },
                     "datatype": "number",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AR_MNI",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5302,13 +5307,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_TYPE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Reference Type",
@@ -5351,7 +5356,11 @@
                         "graphs": [
                             {
                                 "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -5359,8 +5368,8 @@
                     },
                     "datatype": "resource-instance-list",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_AUTHOR",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5555,8 +5564,8 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REC_RECOM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5629,13 +5638,13 @@
                     },
                     "datatype": "reference",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "GR_SOURCE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Remark Source",
@@ -5654,13 +5663,13 @@
                     },
                     "datatype": "date",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "GR_DATE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Remark Date",
@@ -5679,13 +5688,13 @@
                     },
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "GR_REMARKS",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Remark",
@@ -5856,7 +5865,11 @@
                         "graphs": [
                             {
                                 "graphid": "3e6a2880-14d4-11ec-9df0-5254008afee6",
-                                "name": "Repository"
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Repository",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
                             }
                         ],
                         "searchDsl": "",
@@ -5864,8 +5877,8 @@
                     },
                     "datatype": "resource-instance",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "AR_REPOSIT",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -5999,13 +6012,13 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_TITLE",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": false,
+                    "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Reference Title",
@@ -6022,8 +6035,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "REF_REMARK",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6796,8 +6809,8 @@
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "ABR_RECOM",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -6981,9 +6994,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Business area configurations made up to the end of 2026-03-05",
-                "publicationid": "60eace80-a3d0-4a2d-83a7-3b4f8e002418",
-                "published_time": "2026-03-06T10:17:38.754"
+                "notes": "Business config updates up to 2026-03-09",
+                "publicationid": "3e06dd04-e049-4bbc-ae41-84e5fad5c6c2",
+                "published_time": "2026-03-09T13:23:30.306"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
