@@ -772,7 +772,8 @@
                         "label": "Member Role(s)",
                         "placeholder": {
                             "en": "Select an option"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "0ee1c1f4-9996-4139-93d7-87f401dd91a3",
                     "label": {
@@ -1062,7 +1063,8 @@
                         "label": "Team Member",
                         "placeholder": {
                             "en": "Select a person"
-                        }
+                        },
+                        "uneditable": false
                     },
                     "id": "35233a0e-feb1-47be-a7f1-0638c4e717f7",
                     "label": {
@@ -1265,7 +1267,8 @@
                     "card_id": "a6995f93-272c-4548-83c5-5ba11fbdc364",
                     "config": {
                         "defaultValue": null,
-                        "label": "On Site?"
+                        "label": "On Site?",
+                        "uneditable": false
                     },
                     "id": "4c0fd439-06bb-4c7d-ad98-5844277221a1",
                     "label": {
@@ -2546,6 +2549,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
+                        "uneditable": false,
                         "viewMode": "days"
                     },
                     "id": "d0806620-3dfa-46a9-ba25-d01317af3ea1",
@@ -5161,7 +5165,7 @@
                 {
                     "alias": "ancestral_remains_type",
                     "config": {
-                        "controlledList": "ed893196-5678-5acd-9afa-985278112b7b",
+                        "controlledList": "c022f098-754c-5854-8473-737d1d3cc273",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -6981,9 +6985,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Business area configurations made up to the end of 2026-03-05",
-                "publicationid": "60eace80-a3d0-4a2d-83a7-3b4f8e002418",
-                "published_time": "2026-03-06T10:17:38.754"
+                "notes": null,
+                "publicationid": "919fd84f-2fb0-4b94-ae31-d6d370867a41",
+                "published_time": "2026-03-10T06:04:46.387"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -7084,9 +7088,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
-        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
         "os": "Linux",
-        "os version": "5.14.0-611.30.1.el9_7.x86_64"
+        "os version": "6.6.87.2-microsoft-standard-WSL2"
     }
 }
