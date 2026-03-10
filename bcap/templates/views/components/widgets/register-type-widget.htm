@@ -1,0 +1,43 @@
+{% load template_tags %}
+{% load i18n %}
+
+<!-- ko if: form -->
+<div class="row widget-wrapper" data-bind="let: {uid: Math.random().toString()}, class: nodeCssClasses">
+    <div class="form-group">
+        <label class="control-label widget-input-label" for="" data-bind="text: label"></label>
+        <!-- ko if: node -->
+        <i data-bind="
+            css: {'ion-asterisk widget-label-required': node.isrequired},
+            attr: {'aria-label': $root.translations.required}
+        "></i>
+        <!-- /ko -->
+        <div style="max-width: 600px; position: relative;">
+        <div class="col-xs-12" style="display: flex; flex-wrap: wrap; flex-direction: column;">
+            <div class="form-control input-lg widget-input"
+                 style="flex: 1; background-color: #eee; height: auto; min-height: 46px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 6px 12px; cursor: default;">
+                <!-- ko if: display_items().length === 0 -->
+                <span style="color: #999;">Not calculated</span>
+                <!-- /ko -->
+                <!-- ko foreach: display_items -->
+                <span style="display: inline-block; background-color: #25476a; color: #fff; padding: 3px 10px; border-radius: 3px; font-size: 13px; white-space: nowrap;"
+                      data-bind="text: $data"></span>
+                <!-- /ko -->
+            </div>
+            <div style="margin-top: 5px;">
+                <button class="btn btn-shim btn-labeled btn-lg fa fa-refresh btn-primary"
+                        style="min-width: 35px"
+                        data-bind="attr: {disabled: disable},
+                                   click: function(){ calculate_register_type() }">
+                    <span>Calculate Register Type</span>
+                </button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- /ko -->
+
+<!-- ko ifnot: form -->
+<dt data-bind="text: label"></dt>
+<dd data-bind="text: display_values"></dd>
+<!-- /ko -->

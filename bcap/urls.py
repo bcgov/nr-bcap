@@ -7,6 +7,7 @@ from bcap.views.api import (
     BordenNumberExternal,
     MVT,
     LegislativeAct,
+    RegisterType,
     UserProfile,
     RelatedSiteVisits,
     ControlledListHierarchy,
@@ -49,6 +50,11 @@ urlpatterns = [
         f"{PREFIX}api/borden-number/",
         BordenNumberExternal.as_view(),
         name="borden-number-external",
+    ),
+    path(
+        f"{PREFIX}register_type/<uuid:resourceinstanceid>",
+        RegisterType.as_view(),
+        name="register_type",
     ),
     path(
         f"{PREFIX}legislative_act/<uuid:act_id>",

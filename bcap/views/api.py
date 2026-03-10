@@ -13,8 +13,6 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import ListCreateAPIView
-from rest_framework.parsers import JSONParser
 from rest_framework.settings import api_settings
 from arches.app.models import models
 from arches.app.models.models import GraphModel, ResourceInstance, ResourceXResource
@@ -25,8 +23,8 @@ from arches import VERSION as arches_version
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONSerializer
 from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
+from bcap.util.register_type_api import RegisterTypeApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
-from arches.app.models import models
 from bcap.util.mvt_tiler import MVTTiler
 from arches.app.models.system_settings import settings
 from arches.app.search.components.base import SearchFilterFactory
@@ -520,3 +518,21 @@ class UserProfile(APIBase):
                 }
             )
         )
+
+
+class RegisterType(APIBase):
+    api = RegisterTypeApi()
+
+    def get(self, request, resourceinstanceid=None):
+        try:
+            result = self.api.calculate(str(resourceinstanceid))
+            data = json.dumps(result)
+        except Exception:
+            logger.exception("Unable to calculate register type")
+            data = json.dumps(
+                {
+                    "status": "error",
+                    "message": "An unexpected error occurred. Please contact system support.",
+                }
+            )
+        return HttpResponse(data.encode("utf-8"), content_type="application/json")
