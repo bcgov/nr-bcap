@@ -17,6 +17,7 @@ import MapComponentViewModel from "views/components/map";
 import selectFeatureLayersFactory from "views/components/cards/select-feature-layers";
 import geojsonDatatype from "views/components/datatypes/geojson-feature-collection";
 import externalUtils from "utils/map-filter-utils";
+import projectionTools from "utils/map-projection-tools";
 
 var MapEditorViewModel = function (params) {
     var self = this;
@@ -689,17 +690,62 @@ var MapEditorViewModel = function (params) {
     self.handleFiles = function (files, nodeId) {
         var errors = [];
         var promises = [];
+        // Collect the .prj contents (if provided) so we can pass it to shpjs
+        // for reprojection or use it in our fallback reprojection logic.
+        var prjString = null;
+
+        // First pass: read the .prj file if one was included alongside the .shp
         for (var i = 0; i < files.length; i++) {
-            var extension = files[i].name.split(".").pop();
-            if (!["kml", "json", "geojson", "shp", "zip"].includes(extension)) {
+            var extension = files[i].name.split(".").pop().toLowerCase();
+            if (extension === "prj") {
+                (function (file) {
+                    promises.push(
+                        new Promise(function (resolve) {
+                            var reader = new window.FileReader();
+                            reader.onload = function (e) {
+                                prjString = e.target.result;
+                                resolve(null);
+                            };
+                            reader.readAsText(file);
+                        }),
+                    );
+                })(files[i]);
+            }
+        }
+
+        // Second pass: read the actual geo files. Some companion shapefile
+        // extensions (.dbf, .shx, .cpg, .qpj, .prj) are silently ignored
+        // so they don't produce "unsupported file" errors when users drag
+        // in the full shapefile bundle.
+        for (var i = 0; i < files.length; i++) {
+            var extension = files[i].name.split(".").pop().toLowerCase();
+            if (
+                ![
+                    "kml",
+                    "json",
+                    "geojson",
+                    "shp",
+                    "zip",
+                    "prj",
+                    "dbf",
+                    "shx",
+                    "cpg",
+                    "qpj",
+                ].includes(extension)
+            ) {
                 errors.push({
                     message: 'File unsupported: "' + files[i].name + '"',
                 });
-            } else {
+            } else if (
+                ["kml", "json", "geojson", "shp", "zip"].includes(extension)
+            ) {
                 promises.push(
                     new Promise(function (resolve) {
                         var file = files[i];
-                        var extension = file.name.split(".").pop();
+                        var extension = file.name
+                            .split(".")
+                            .pop()
+                            .toLowerCase();
                         var reader = new window.FileReader();
                         reader.onload = function (e) {
                             var geoJSON;
@@ -712,12 +758,15 @@ var MapEditorViewModel = function (params) {
                                         "text/xml",
                                     ),
                                 );
+                            // Pass the .prj string to shpjs when available so
+                            // it can handle reprojection automatically.
                             else if (extension === "shp")
-                                shp({ shp: e.target.result }).then(
-                                    (parsedShp) => {
-                                        resolve(parsedShp);
-                                    },
-                                );
+                                shp({
+                                    shp: e.target.result,
+                                    prj: prjString,
+                                }).then((parsedShp) => {
+                                    resolve(parsedShp);
+                                });
                             else if (extension === "zip")
                                 shp(e.target.result).then(function (parsedZip) {
                                     resolve(parsedZip);
@@ -736,10 +785,27 @@ var MapEditorViewModel = function (params) {
             var geoJSON = {
                 type: "FeatureCollection",
                 features: results.reduce(function (features, geoJSON) {
-                    features = features.concat(geoJSON.features);
+                    if (geoJSON && geoJSON.features) {
+                        features = features.concat(geoJSON.features);
+                    }
                     return features;
                 }, []),
             };
+
+            // Fallback reprojection: if coordinates are still outside valid
+            // WGS84 bounds (e.g., bare .shp with no .prj or shpjs could not
+            // parse the .prj), attempt to reproject using coordinate-range
+            // heuristics for common BC/Western Canada projections.
+            if (projectionTools.needsReprojection(geoJSON)) {
+                var sourceCRS = projectionTools.guessProjectionFromCoords(geoJSON);
+                console.warn(
+                    "Shapefile coordinates are not in WGS84. " +
+                        "Attempting reprojection from: " +
+                        sourceCRS,
+                );
+                projectionTools.reprojectGeoJSON(geoJSON, sourceCRS);
+            }
+
             errors = errors.concat(
                 addFromGeoJSON(JSON.stringify(geoJSON), nodeId),
             );
