@@ -134,7 +134,7 @@ def calculate_register_types(
     if "S. 9" in act_sections or "S. 11.1" in act_sections:
         register_types.add("Provincial Heritage Site or Object")
 
-    # 8. Non-Designated Historic Site
+    # 8. Unprotected Historic Site
     if "Postcontact" in all_classes:
         excluded_classes = {"Precontact", "Traditional Use"}
         excluded_types = {"Ancestral Remains", "Human Remains"}
@@ -145,7 +145,7 @@ def calculate_register_types(
             and not all_types & excluded_types
             and not all_descriptors & excluded_descriptors
         ):
-            register_types.add("Non-Designated Historic Site")
+            register_types.add("Unprotected Historic Site")
 
     return sorted(register_types)
 
