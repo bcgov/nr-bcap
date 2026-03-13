@@ -1,5 +1,6 @@
 import json
 from traceback import print_exception
+from packaging.version import Version
 
 from django.conf import settings
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
@@ -18,7 +19,7 @@ from arches.app.models import models
 from arches.app.models.models import GraphModel, ResourceInstance, ResourceXResource
 from django.core.exceptions import FieldError
 
-from arches import VERSION as arches_version
+from arches import __version__ as arches_version
 
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONSerializer
@@ -191,7 +192,7 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
                     else qs.filter(archaeological_site__id__in=resource_ids_string)
                 )
 
-                if arches_version >= (8, 0):
+                if Version(arches_version) >= Version("8.0"):
                     qs = qs.select_related("resource_instance_lifecycle_state")
             else:  # pragma: no cover
                 raise NotImplementedError
