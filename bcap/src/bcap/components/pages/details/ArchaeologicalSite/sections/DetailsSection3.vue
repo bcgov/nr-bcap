@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
-import EmptyState from '@/bcap/components/EmptyState.vue';
-import type { EditLogData } from '@/bcgov_arches_common/types.ts';
-import 'primeicons/primeicons.css';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import SiteVisitDetailsSection3 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue';
+import { computed } from "vue";
+import DetailsSection from "@/bcap/components/DetailsSection/DetailsSection.vue";
+import EmptyState from "@/bcap/components/EmptyState.vue";
+import type { EditLogData } from "@/bcgov_arches_common/types.ts";
+import "primeicons/primeicons.css";
+import type { SiteVisitSchema } from "@/bcap/schema/SiteVisitSchema.ts";
+import SiteVisitDetailsSection3 from "@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue";
 
 const props = withDefaults(
     defineProps<{
@@ -17,7 +17,7 @@ const props = withDefaults(
         showAuditFields?: boolean;
     }>(),
     {
-        languageCode: 'en',
+        languageCode: "en",
         loading: false,
         forceCollapsed: undefined,
         editLogData: () => ({}),
@@ -27,7 +27,15 @@ const props = withDefaults(
 
 const currentData = computed<SiteVisitSchema[] | undefined>(
     (): SiteVisitSchema[] | undefined => {
-        return props.data as SiteVisitSchema[] | undefined;
+        return props.data?.toSorted((a, b) =>
+            (
+                a.aliased_data?.site_visit_details?.aliased_data
+                    ?.last_date_of_site_visit?.display_value ?? ""
+            ).localeCompare(
+                b.aliased_data?.site_visit_details?.aliased_data
+                    ?.last_date_of_site_visit?.display_value ?? "",
+            ),
+        ) as SiteVisitSchema[] | undefined;
     },
 );
 
