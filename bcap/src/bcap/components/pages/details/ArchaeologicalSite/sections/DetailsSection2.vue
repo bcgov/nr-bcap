@@ -187,8 +187,9 @@ const {
 
 const authorityData = computed(() => currentData.value?.authority || []);
 const siteNamesData = computed(() => currentData.value?.site_names || []);
+
 const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
-    return (props.siteVisitData ?? [])
+    const all = (props.siteVisitData ?? [])
         .map(
             (visit) =>
                 visit.aliased_data?.identification?.aliased_data
@@ -198,6 +199,21 @@ const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
             (tile): tile is TemporaryNumberTile =>
                 !!tile?.aliased_data?.temporary_number?.node_value,
         );
+
+    const seen = new Set<string>();
+
+    return all.filter((tile) => {
+        const val = String(
+            tile.aliased_data?.temporary_number?.node_value ?? '',
+        );
+
+        if (seen.has(val)) {
+            return false;
+        }
+
+        seen.add(val);
+        return true;
+    });
 });
 
 const siteAlertDataRaw = computed(() => {

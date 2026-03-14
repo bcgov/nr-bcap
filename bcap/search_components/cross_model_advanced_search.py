@@ -74,7 +74,6 @@ from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.utils.betterJSONSerializer import JSONDeserializer
 
-
 details = {
     "classname": "CrossModelAdvancedSearch",
     "componentname": "cross-model-advanced-search",
@@ -225,7 +224,16 @@ class CardFilter:
             return False
 
         if isinstance(value, dict):
+            op = value.get("op", "")
+
+            if op in ("null", "not_null"):
+                return True
+
             val = value.get("val", "")
+
+            if val in ("null", "not_null"):
+                return True
+
             return bool(val) or val == 0 or val is False
 
         return True

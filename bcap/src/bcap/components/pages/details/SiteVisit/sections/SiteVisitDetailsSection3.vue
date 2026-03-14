@@ -74,13 +74,12 @@ const permittedValue = computed(() => {
 
     if (nonPermittedField && 'node_value' in nonPermittedField) {
         const nonPermitted = nonPermittedField.node_value;
-        if (nonPermitted === undefined || nonPermitted === null)
-            return 'Unknown';
+        if (nonPermitted === undefined || nonPermitted === null) return '';
 
-        return nonPermitted ? 'No' : 'Yes';
+        return nonPermitted ? 'Yes' : 'No';
     }
 
-    return 'Unknown';
+    return '';
 });
 
 const siteVisitDetailsTableData = computed(() => {
