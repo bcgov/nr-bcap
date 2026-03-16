@@ -27,7 +27,15 @@ const props = withDefaults(
 
 const currentData = computed<SiteVisitSchema[] | undefined>(
     (): SiteVisitSchema[] | undefined => {
-        return props.data as SiteVisitSchema[] | undefined;
+        return props.data?.toSorted((a, b) =>
+            (
+                a.aliased_data?.site_visit_details?.aliased_data
+                    ?.last_date_of_site_visit?.display_value ?? ''
+            ).localeCompare(
+                b.aliased_data?.site_visit_details?.aliased_data
+                    ?.last_date_of_site_visit?.display_value ?? '',
+            ),
+        ) as SiteVisitSchema[] | undefined;
     },
 );
 
