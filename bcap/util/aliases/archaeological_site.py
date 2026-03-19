@@ -71,7 +71,7 @@ class ArchaeologicalSiteAliases(AbstractAliases):
     REFERENCE_TYPE = "reference_type"
     REFERENCE_YEAR = "reference_year"
     REGISTER_TYPE = "register_type"
-    REGISTRATION_STATUS = "registration_status"
+    REGISTRATION_STATUS = "decision_registration_status"
     RELATED_DOCUMENT_DESCRIPTION = "related_document_description"
     RELATED_DOCUMENT_TYPE = "related_document_type"
     RELATED_SITE_DOCUMENTS = "related_site_documents"

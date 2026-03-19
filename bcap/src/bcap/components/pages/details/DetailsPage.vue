@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, type Ref } from 'vue';
+import { ref, computed, watchEffect, type Ref } from 'vue';
 import type { DetailsData } from '@/bcap/types.ts';
 import { formatDateTime } from '@/bcap/util.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
@@ -55,6 +55,11 @@ const { data: relatedSiteVisits } = useRelatedResourceData<SiteVisitSchema>(
     'site_visit',
     siteVisitResourceIdComputed,
 );
+
+watchEffect(() => {
+    const name = props.data.displayname || '';
+    document.title = name ? `BCAP - ${name} - Details` : 'BCAP';
+});
 
 const archSiteTileIds = computed(() => {
     const tileIds: string[] = [];
