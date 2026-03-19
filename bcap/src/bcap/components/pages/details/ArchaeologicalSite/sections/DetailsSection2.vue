@@ -457,7 +457,7 @@ const parentSite = computed(() => {
             </DetailsSection>
 
             <DetailsSection
-                section-title="Decision History"
+                section-title="Registration Status History"
                 variant="subsection"
                 :visible="true"
                 :class="{ 'empty-section': !hasDecisionHistory }"
