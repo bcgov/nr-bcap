@@ -290,7 +290,17 @@ let view_model = BaseFilter.extend({
             return false;
         }
 
+        let op = filter_value.op;
+
+        if (op === 'null' || op === 'not_null') {
+            return true;
+        }
+
         let val = filter_value.val;
+
+        if (val === 'null' || val === 'not_null') {
+            return true;
+        }
 
         if (val === undefined || val === null || val === '') {
             return false;

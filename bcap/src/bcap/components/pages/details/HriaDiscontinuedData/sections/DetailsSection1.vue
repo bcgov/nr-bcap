@@ -27,12 +27,12 @@ const props = withDefaults(
 const currentData = computed(() => props.data?.aliased_data);
 
 const jurisdictionTenureColumns = [
-    { field: 'site_jurisdiction', label: 'Site Jurisdiction' },
-    { field: 'tenure_type', label: 'Tenure Type' },
-    { field: 'tenure_identifier', label: 'Tenure Identifier' },
+    { field: 'site_jurisdiction', label: 'Jurisdiction' },
+    { field: 'tenure_type', label: 'Tenure/Reserves Type' },
+    { field: 'tenure_identifier', label: 'Description' },
     { field: 'tenure_remarks', label: 'Tenure Remarks', isHtml: true },
-    { field: 'jurisdiction_entered_by', label: 'Entered By' },
-    { field: 'jurisdiction_entered_date', label: 'Entered Date' },
+    { field: 'jurisdiction_entered_by', label: 'Modified By' },
+    { field: 'jurisdiction_entered_date', label: 'Modified On' },
 ];
 
 const hriaChronologyColumns = [
