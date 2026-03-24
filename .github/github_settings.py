@@ -31,6 +31,7 @@ APP_NAME = "bcap"
 APP_VERSION = semantic_version.Version(major=0, minor=0, patch=1)
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 APP_SUFFIX = get_env_variable("APP_SUFFIX", default="_dev")
+DEPLOYMENT_TIMESTAMP = get_env_variable("DEPLOYMENT_TIMESTAMP")
 
 # PROXY prefix used - NB - cannot have leading "/", and must have trailing "/"
 BCGOV_PROXY_PREFIX = get_env_variable("BCGOV_PROXY_PREFIX", default="bcap/")
@@ -263,6 +264,10 @@ TEMPLATES = build_templates_config(
     debug=DEBUG,
     app_root=APP_ROOT,
 )
+
+TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "bcap.util.context_processors.deployment_settings",
+]
 
 ALLOWED_HOSTS = get_env_variable("ALLOWED_HOSTS", default="localhost").split()
 
