@@ -17,6 +17,6 @@ jobs:
   increment_version_and_pr:
     uses: bcgov/bcgov-arches-common/.github/workflows/release_prep_common.yml@main
     with:
-      github-repo: bcgov/bcfms
+      github-repo: bcgov/bcap
     secrets:
       token: ${{ secrets.PROJECT_PAT }}
