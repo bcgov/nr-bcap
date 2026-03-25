@@ -1,0 +1,71 @@
+set windows-shell := ["cmd.exe", "/c"]
+
+clr := if os() == "windows" { "cls" } else { "clear" }
+container := env("BCAP_CONTAINER", "bcap7-6")
+run_sh := "tests/search_components/cross_model_advanced_search/integration/run_integration.sh"
+test_path := "tests/search_components/cross_model_advanced_search"
+
+# Launch Chrome + proxy + run integration tests in your browser
+[windows]
+integration filter="" clear="1":
+    {{ clr }}
+    start chrome --remote-debugging-port=9222
+    timeout /t 3 /nobreak >nul
+    start cmd /k python integration/proxy.py
+    timeout /t 1 /nobreak >nul
+    docker exec -it -e PYTHONUNBUFFERED=1 -e INTEGRATION_FILTER={{ filter }} -e INTEGRATION_CLEAR_CACHE={{ clear }} -e BCAP_CDP=http://host.docker.internal:9223 -e BCAP_BASE_URL=http://localhost:82/bcap {{ container }} bash {{ run_sh }}
+
+[unix]
+integration filter="" clear="1":
+    {{ clr }}
+    just chrome
+    sleep 3
+    just proxy &
+    sleep 1
+    docker exec -it -e PYTHONUNBUFFERED=1 -e INTEGRATION_FILTER={{ filter }} -e INTEGRATION_CLEAR_CACHE={{ clear }} -e BCAP_CDP=http://host.docker.internal:9223 -e BCAP_BASE_URL=http://localhost:82/bcap {{ container }} bash {{ run_sh }}
+
+# Run integration tests headless inside Docker
+integration-headless filter="" clear="1":
+    {{ clr }}
+    docker exec -it -e PYTHONUNBUFFERED=1 -e INTEGRATION_FILTER={{ filter }} -e INTEGRATION_CLEAR_CACHE={{ clear }} {{ container }} bash {{ run_sh }}
+
+# Run the unfiltered baseline test
+integration-baseline:
+    {{ clr }}
+    docker exec -it -e INTEGRATION_FILTER=test_unfiltered_totals_match -e INTEGRATION_CLEAR_CACHE=0 -e BCAP_CDP=http://host.docker.internal:9223 -e BCAP_BASE_URL=http://localhost:82/bcap {{ container }} bash {{ run_sh }}
+
+# Clear all cached data
+integration-clear-cache:
+    docker exec {{ container }} rm -rf tests/search_components/cross_model_advanced_search/integration/.cache
+
+# Run unit tests
+unit:
+    {{ clr }}
+    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3.11 -m pytest {{ test_path }}/unit/ -v
+
+# Run mock tests
+mock:
+    {{ clr }}
+    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3.11 -m pytest {{ test_path }}/mock/ -v
+
+# Launch Chromium with remote debugging enabled
+[windows]
+chrome:
+    start chrome --remote-debugging-port=9222
+
+[macos]
+chrome:
+    open -a "Google Chrome" --args --remote-debugging-port=9222
+
+[linux]
+chrome:
+    google-chrome --remote-debugging-port=9222 &
+
+# Start the CDP proxy (run in a separate terminal)
+[windows]
+proxy:
+    python integration/proxy.py
+
+[unix]
+proxy:
+    python3 integration/proxy.py

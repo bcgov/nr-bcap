@@ -154,9 +154,13 @@ let view_model = BaseFilter.extend({
                     );
 
                     _.each(card.nodes || [], function (node) {
-                        node.label =
-                            (self.widget_lookup[node.nodeid] || {}).label ||
-                            node.name;
+                        let widget = self.widget_lookup[node.nodeid] || {};
+                        node.label = widget.label || node.name;
+                        node.sortorder = widget.sortorder;
+                    });
+
+                    card.nodes.sort(function (a, b) {
+                        return (a.sortorder || 0) - (b.sortorder || 0);
                     });
 
                     this.card_lookup[card.nodegroup_id] = card;
