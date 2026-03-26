@@ -38,6 +38,16 @@ integration-baseline:
 integration-clear-cache:
     docker exec {{ container }} rm -rf tests/search_components/cross_model_advanced_search/integration/.cache
 
+# Run snapshot tests
+snapshot:
+    {{ clr }}
+    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} bash {{ test_path }}/snapshot/run_snapshot.sh
+
+# Update snapshot baselines
+snapshot-update:
+    {{ clr }}
+    docker exec -it -e PYTHONUNBUFFERED=1 -e SNAPSHOT_FILTER=test_update {{ container }} bash {{ test_path }}/snapshot/run_snapshot.sh
+
 # Run unit tests
 unit:
     {{ clr }}
@@ -47,6 +57,11 @@ unit:
 mock:
     {{ clr }}
     docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3.11 -m pytest {{ test_path }}/mock/ -v
+
+# Run scenario tests
+scenario:
+    {{ clr }}
+    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3.11 -m pytest {{ test_path }}/scenario/ -v
 
 # Launch Chromium with remote debugging enabled
 [windows]

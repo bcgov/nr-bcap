@@ -109,6 +109,18 @@ ES_MAX_TERMS = 60000
 # Maximum number of worker threads for parallel processing
 MAX_WORKERS = 8
 
+# Maps negation operators to their positive equivalents so that
+# append_search_filters builds a positive match query. The caller wraps
+# the result in Nested and adds it to must_not at the outer level,
+# avoiding the ES bug where must_not inside a nested query matches
+# every tile that lacks the field.
+NEGATION_OPS = {
+    "!eq": "eq",
+    "!~": "~",
+    "in_list_not": "in_list_any",
+    "neq": "eq",
+}
+
 # How long Elasticsearch keeps the search context alive between scroll requests
 SCROLL_TIMEOUT = "2m"
 
@@ -249,14 +261,23 @@ class CardFilter:
 
     def build(
         self, factory: DataTypeFactory, nodes: dict[str, Node], request: Any
-    ) -> Bool:
+    ) -> tuple[Bool, Bool, Bool]:
         """
         Build an Elasticsearch Bool query from the card's node filters.
         Delegates to each node's datatype to construct the appropriate query syntax.
+
+        Returns (query, negation_query, null_query):
+        - query: standard positive clauses, wrapped in Nested by the caller.
+        - negation_query: positive-match clauses for negation operators. The
+          caller wraps this in Nested and adds it to must_not at the outer
+          level, avoiding the nested-negation semantics bug where must_not
+          inside a nested query matches every tile that lacks the field.
+        - null_query: null/not_null clauses that bypass Nested entirely.
         """
 
-        query = Bool()
+        negation_query = Bool()
         null_query = Bool()
+        query = Bool()
 
         for node_id, filter_value in self.filters.items():
             if not self._is_valid(filter_value):
@@ -291,10 +312,17 @@ class CardFilter:
                     datatype.append_search_filters(
                         filter_value, node, null_query, request
                     )
+                elif op in NEGATION_OPS:
+                    positive_value = {**filter_value, "op": NEGATION_OPS[op]}
+                    datatype.append_search_filters(
+                        positive_value, node, negation_query, request
+                    )
                 else:
-                    datatype.append_search_filters(filter_value, node, query, request)
+                    datatype.append_search_filters(
+                        filter_value, node, query, request
+                    )
 
-        return query, null_query
+        return query, negation_query, null_query
 
     @classmethod
     def create(cls, data: dict[str, Any]) -> CardFilter:
@@ -327,7 +355,7 @@ class GroupFilter:
         query = Bool()
 
         for card in self.cards:
-            card_query, null_query = card.build(factory, nodes, request)
+            card_query, negation_query, null_query = card.build(factory, nodes, request)
 
             if has_clause(card_query):
                 clause = Nested(path="tiles", query=card_query)
@@ -336,6 +364,16 @@ class GroupFilter:
                     query.should(clause)
                 else:
                     query.must(clause)
+
+            if has_clause(negation_query):
+                clause = Nested(path="tiles", query=negation_query)
+
+                if self.match_type == MatchType.ANY:
+                    negation_wrapper = Bool()
+                    negation_wrapper.must_not(clause)
+                    query.should(negation_wrapper)
+                else:
+                    query.must_not(clause)
 
             if has_clause(null_query):
                 if self.match_type == MatchType.ANY:

@@ -66,7 +66,8 @@ class TestCardFilterBuild:
     def test_null_op_routes_to_null_query(self, mock_bool_cls: MagicMock) -> None:
         mock_query = _make_bool()
         mock_null_query = _make_bool()
-        mock_bool_cls.side_effect = [mock_query, mock_null_query]
+        mock_negation_query = _make_bool()
+        mock_bool_cls.side_effect = [mock_negation_query, mock_null_query, mock_query]
         node_id = _uuid()
         node = _make_node(datatype="string", node_id=node_id)
         cf = CardFilter(filters={node_id: {"op": "null", "val": "null"}})
@@ -75,7 +76,7 @@ class TestCardFilterBuild:
         factory.get_instance.return_value = mock_dt
         nodes: dict[str, Any] = {node_id: node}
         request = MagicMock()
-        _query, null_query = cf.build(factory, nodes, request)
+        _query, _negation_query, null_query = cf.build(factory, nodes, request)
         mock_dt.append_search_filters.assert_called_once()
         call_args = mock_dt.append_search_filters.call_args
         assert call_args[0][2] is null_query
@@ -110,4 +111,4 @@ class TestCardFilterBuild:
         factory.get_instance.return_value = mock_dt
         nodes: dict[str, Any] = {node_id: node}
         request = MagicMock()
-        _query, _null_query = cf.build(factory, nodes, request)
+        _query, _negation_query, _null_query = cf.build(factory, nodes, request)

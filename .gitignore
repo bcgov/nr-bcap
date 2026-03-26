@@ -8,6 +8,8 @@ bcap/media/build/
 bcap/uploadedfiles/*
 bcap/settings_local.py
 bcap/staticfiles
+tests/search_components/cross_model_advanced_search/snapshot/test_cases.json
+tests/search_components/cross_model_advanced_search/snapshot/cross_model_search_baselines.json
 webpack/webpack-stats.json
 
 *.egg-info

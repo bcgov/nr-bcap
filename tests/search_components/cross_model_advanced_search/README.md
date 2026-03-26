@@ -53,6 +53,38 @@ python3.11 -m pytest tests/search_components/cross_model_advanced_search/unit/ -
 python3.11 -m pytest tests/search_components/cross_model_advanced_search/mock/ -v
 ```
 
+### Scenario Tests
+
+Scenario tests verify the full `Intersector` and `Translator` pipeline against
+synthetic, deterministic data topologies. Each scenario seeds a known set of
+graphs, resources, and relationships, then asserts the exact set of resource IDs
+the pipeline must produce. No database, Elasticsearch, or browser required.
+
+```bash
+# With Just (from the host)
+just scenario
+
+# Or inside the container
+python3.11 -m pytest tests/search_components/cross_model_advanced_search/scenario/ -v
+```
+
+To add a new scenario, append a `Scenario(...)` to `_build_scenarios()` in
+`scenario/test_scenario.py`. Define the graph topology, ES matches,
+relationships, target graph, operation, and expected output.
+
+### Snapshot Tests
+
+Snapshot tests run real cross-model queries against the database and compare
+result counts to stored baselines:
+
+```bash
+# With Just (from the host)
+just snapshot
+
+# Update baselines after intentional changes
+just snapshot-update
+```
+
 ### Integration Tests (headless)
 
 From inside the container, with the environment variables above exported:
@@ -111,13 +143,16 @@ Alternatively, pass `clear=1` (the default) when running via Just, or export
 
 ## Just Recipes
 
-| Recipe                   | Description                                      |
-| ------------------------ | ------------------------------------------------ |
-| `just unit`              | Run unit tests                                   |
-| `just mock`              | Run mock tests                                   |
-| `just integration`           | Launch Chrome + proxy + run integration tests    |
-| `just integration-headless`  | Run integration tests headless inside Docker     |
-| `just integration-baseline` | Run the unfiltered totals comparison test      |
+| Recipe                      | Description                                   |
+| --------------------------- | --------------------------------------------- |
+| `just unit`                 | Run unit tests                                |
+| `just mock`                 | Run mock tests                                |
+| `just scenario`             | Run scenario tests                            |
+| `just snapshot`             | Run snapshot tests                            |
+| `just snapshot-update`      | Update snapshot baselines                     |
+| `just integration`          | Launch Chrome + proxy + run integration tests |
+| `just integration-headless` | Run integration tests headless inside Docker  |
+| `just integration-baseline` | Run the unfiltered totals comparison test     |
 | `just integration-clear-cache` | Clear all cached data                      |
-| `just chrome`            | Launch Chrome with remote debugging              |
-| `just proxy`             | Start the CDP proxy                              |
+| `just chrome`               | Launch Chrome with remote debugging           |
+| `just proxy`                | Start the CDP proxy                           |

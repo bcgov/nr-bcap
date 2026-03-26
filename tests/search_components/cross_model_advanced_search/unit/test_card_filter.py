@@ -176,7 +176,7 @@ class TestCardFilterBuild:
         factory = MagicMock()
         nodes: dict[str, Any] = {}
         request = MagicMock()
-        query, _null_query = cf.build(factory, nodes, request)
+        query, _negation_query, _null_query = cf.build(factory, nodes, request)
         assert query.dsl["bool"]["must"] == []
 
     def test_skips_invalid_filter(self) -> None:
@@ -188,7 +188,7 @@ class TestCardFilterBuild:
         factory = MagicMock()
         nodes: dict[str, Any] = {node_id: node}
         request = MagicMock()
-        query, _null_query = cf.build(factory, nodes, request)
+        query, _negation_query, _null_query = cf.build(factory, nodes, request)
         assert query.dsl["bool"]["must"] == []
 
     def test_skips_unknown_node(self) -> None:
@@ -197,7 +197,7 @@ class TestCardFilterBuild:
         factory = MagicMock()
         nodes: dict[str, Any] = {}
         request = MagicMock()
-        query, _null_query = cf.build(factory, nodes, request)
+        query, _negation_query, _null_query = cf.build(factory, nodes, request)
         assert query.dsl["bool"]["must"] == []
 
     def test_all_filters_invalid_produces_empty_query(self) -> None:
@@ -210,7 +210,7 @@ class TestCardFilterBuild:
         factory = MagicMock()
         nodes: dict[str, Any] = {}
         request = MagicMock()
-        query, _null_query = cf.build(factory, nodes, request)
+        query, _negation_query, _null_query = cf.build(factory, nodes, request)
         assert query.dsl["bool"]["must"] == []
 
     def test_mix_of_valid_and_unknown_nodes(self) -> None:
@@ -226,7 +226,7 @@ class TestCardFilterBuild:
         factory = MagicMock()
         nodes: dict[str, Any] = {known_id: node}
         request = MagicMock()
-        _query, _null_query = cf.build(factory, nodes, request)
+        _query, _negation_query, _null_query = cf.build(factory, nodes, request)
 
 
 class TestCardFilterCreate:

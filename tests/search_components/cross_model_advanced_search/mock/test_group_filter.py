@@ -22,7 +22,7 @@ class TestGroupFilterBuild:
         factory = MagicMock()
         nodes: dict[str, Any] = {}
         request = MagicMock()
-        result = gf.build(factory, nodes, request)
+        _ = gf.build(factory, nodes, request)
         mock_nested_cls.assert_not_called()
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
@@ -34,7 +34,8 @@ class TestGroupFilterBuild:
         card = MagicMock()
         card_query = _make_bool(must=[{"term": {"x": "y"}}])
         null_query = _make_bool()
-        card.build.return_value = (card_query, null_query)
+        negation_query = _make_bool()
+        card.build.return_value = (card_query, negation_query, null_query)
 
         gf = GroupFilter(cards=[card], match_type=MatchType.ALL, operator=Logic.AND)
         factory = MagicMock()
@@ -52,7 +53,8 @@ class TestGroupFilterBuild:
         card = MagicMock()
         card_query = _make_bool(must=[{"term": {"x": "y"}}])
         null_query = _make_bool()
-        card.build.return_value = (card_query, null_query)
+        negation_query = _make_bool()
+        card.build.return_value = (card_query, negation_query, null_query)
 
         gf = GroupFilter(cards=[card], match_type=MatchType.ANY, operator=Logic.AND)
         factory = MagicMock()
@@ -70,7 +72,8 @@ class TestGroupFilterBuild:
         card = MagicMock()
         card_query = _make_bool(must=[{"term": {"x": "y"}}])
         null_query = _make_bool()
-        card.build.return_value = (card_query, null_query)
+        negation_query = _make_bool()
+        card.build.return_value = (card_query, negation_query, null_query)
 
         gf = GroupFilter(cards=[card], match_type=MatchType.ANY, operator=Logic.AND)
         factory = MagicMock()
@@ -86,7 +89,7 @@ class TestGroupFilterBuild:
         mock_bool_cls.return_value = mock_query
 
         card = MagicMock()
-        card.build.return_value = (_make_bool(), _make_bool())
+        card.build.return_value = (_make_bool(), _make_bool(), _make_bool())
 
         gf = GroupFilter(cards=[card], match_type=MatchType.ALL, operator=Logic.AND)
         factory = MagicMock()
@@ -104,7 +107,8 @@ class TestGroupFilterBuild:
         card = MagicMock()
         card_query = _make_bool()
         null_query = _make_bool(must=[{"exists": {"field": "tiles.data.node-1"}}])
-        card.build.return_value = (card_query, null_query)
+        negation_query = _make_bool()
+        card.build.return_value = (card_query, negation_query, null_query)
 
         gf = GroupFilter(cards=[card], match_type=MatchType.ALL, operator=Logic.AND)
         factory = MagicMock()
@@ -121,7 +125,8 @@ class TestGroupFilterBuild:
         card = MagicMock()
         card_query = _make_bool()
         null_query = _make_bool(must=[{"exists": {"field": "tiles.data.node-1"}}])
-        card.build.return_value = (card_query, null_query)
+        negation_query = _make_bool()
+        card.build.return_value = (card_query, negation_query, null_query)
 
         gf = GroupFilter(cards=[card], match_type=MatchType.ANY, operator=Logic.AND)
         factory = MagicMock()
@@ -141,7 +146,8 @@ class TestGroupFilterBuild:
             card = MagicMock()
             card_query = _make_bool(must=[{"term": {"x": "y"}}])
             null_query = _make_bool()
-            card.build.return_value = (card_query, null_query)
+            negation_query = _make_bool()
+            card.build.return_value = (card_query, negation_query, null_query)
             cards.append(card)
 
         gf = GroupFilter(cards=cards, match_type=MatchType.ALL, operator=Logic.AND)
