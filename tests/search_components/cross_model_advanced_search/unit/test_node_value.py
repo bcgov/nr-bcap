@@ -9,10 +9,12 @@ class TestNodeValue:
         assert nv.extract() == {"abc-123"}
 
     def test_extract_list_of_dicts(self) -> None:
-        nv = NodeValue(raw=[
-            {"resourceId": "abc-123"},
-            {"resourceId": "def-456"},
-        ])
+        nv = NodeValue(
+            raw=[
+                {"resourceId": "abc-123"},
+                {"resourceId": "def-456"},
+            ]
+        )
         assert nv.extract() == {"abc-123", "def-456"}
 
     def test_extract_empty_list(self) -> None:
@@ -32,11 +34,13 @@ class TestNodeValue:
         assert nv.extract() == {"def-456"}
 
     def test_extract_mixed_valid_and_invalid(self) -> None:
-        nv = NodeValue(raw=[
-            {"resourceId": "abc-123"},
-            {"somethingElse": "xyz"},
-            None,
-        ])
+        nv = NodeValue(
+            raw=[
+                {"resourceId": "abc-123"},
+                {"somethingElse": "xyz"},
+                None,
+            ]
+        )
         assert nv.extract() == {"abc-123"}
 
     def test_extract_string_raw(self) -> None:
@@ -60,10 +64,12 @@ class TestNodeValue:
         assert nv.extract() == {"abc-123"}
 
     def test_extract_duplicate_resource_ids(self) -> None:
-        nv = NodeValue(raw=[
-            {"resourceId": "abc-123"},
-            {"resourceId": "abc-123"},
-        ])
+        nv = NodeValue(
+            raw=[
+                {"resourceId": "abc-123"},
+                {"resourceId": "abc-123"},
+            ]
+        )
         assert nv.extract() == {"abc-123"}
 
     def test_extract_list_of_empty_dicts(self) -> None:

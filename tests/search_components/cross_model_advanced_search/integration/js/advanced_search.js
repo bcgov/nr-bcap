@@ -1,23 +1,29 @@
 window.__adv = {
     _facet() {
-        return document.getElementById("facet-filter-0");
+        return document.getElementById('facet-filter-0');
     },
 
     _selects() {
         let facet = this._facet();
-        return facet ? facet.querySelectorAll("select.resources") : [];
+        return facet ? facet.querySelectorAll('select.resources') : [];
     },
 
     _input_near(select_el) {
-        let widget = select_el.closest(".widget-wrapper") || select_el.closest("div").parentElement;
+        let widget =
+            select_el.closest('.widget-wrapper') ||
+            select_el.closest('div').parentElement;
         let input = widget
             ? widget.querySelector('input[type="text"], input[type="number"]')
             : null;
 
         if (!input) {
-            let parent = select_el.closest(".row") || select_el.parentElement.parentElement;
+            let parent =
+                select_el.closest('.row') ||
+                select_el.parentElement.parentElement;
             input = parent
-                ? parent.querySelector('input[type="text"], input[type="number"]')
+                ? parent.querySelector(
+                      'input[type="text"], input[type="number"]',
+                  )
                 : null;
         }
 
@@ -25,7 +31,9 @@ window.__adv = {
     },
 
     _adv_vm() {
-        let container = document.querySelector(".faceted-search-card-container");
+        let container = document.querySelector(
+            '.faceted-search-card-container',
+        );
 
         if (!container || !window.ko) {
             return null;
@@ -52,7 +60,7 @@ window.__adv = {
 
         for (let p of chain) {
             if (p && p.nodeid) {
-                nodeid = typeof p.nodeid === "function" ? p.nodeid() : p.nodeid;
+                nodeid = typeof p.nodeid === 'function' ? p.nodeid() : p.nodeid;
                 break;
             }
         }
@@ -62,7 +70,12 @@ window.__adv = {
         }
 
         for (let p of chain) {
-            if (p && p.value && typeof p.value === "object" && p.value[nodeid]) {
+            if (
+                p &&
+                p.value &&
+                typeof p.value === 'object' &&
+                p.value[nodeid]
+            ) {
                 return { facet_value: p.value, nodeid: nodeid };
             }
         }
@@ -87,22 +100,26 @@ window.__adv = {
 
             let current = ko.toJS(target.facet_value[target.nodeid]()) || {};
 
-            if ("op" in current) {
+            if ('op' in current) {
                 current.op = qualifier;
-                current.val = text || "";
+                current.val = text || '';
             } else {
                 current.val = qualifier;
             }
 
             target.facet_value[target.nodeid](current);
 
-            if (window.ko && ko.tasks && typeof ko.tasks.runEarly === "function") {
+            if (
+                window.ko &&
+                ko.tasks &&
+                typeof ko.tasks.runEarly === 'function'
+            ) {
                 ko.tasks.runEarly();
             }
 
             let vm = this._adv_vm();
 
-            if (vm && typeof vm.updateQuery === "function") {
+            if (vm && typeof vm.updateQuery === 'function') {
                 vm.updateQuery();
             }
 
@@ -115,22 +132,22 @@ window.__adv = {
     _set_native_value(el, value) {
         let setter = Object.getOwnPropertyDescriptor(
             window.HTMLInputElement.prototype,
-            "value",
+            'value',
         ).set;
         setter.call(el, value);
-        el.dispatchEvent(new Event("input", { bubbles: true }));
-        el.dispatchEvent(new Event("change", { bubbles: true }));
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
 
         if (window.jQuery) {
-            jQuery(el).trigger("change");
+            jQuery(el).trigger('change');
         }
     },
 
     _trigger_change(el) {
-        el.dispatchEvent(new Event("change", { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
 
         if (window.jQuery) {
-            jQuery(el).trigger("change");
+            jQuery(el).trigger('change');
         }
     },
 
@@ -152,18 +169,18 @@ window.__adv = {
                 continue;
             }
 
-            let label = "";
-            let prev = sel.closest("div")?.previousElementSibling;
+            let label = '';
+            let prev = sel.closest('div')?.previousElementSibling;
 
-            if (prev && prev.tagName === "DIV" && prev.childNodes.length <= 3) {
+            if (prev && prev.tagName === 'DIV' && prev.childNodes.length <= 3) {
                 label = prev.textContent.trim();
             }
 
             if (!label) {
-                let acc = sel.getAttribute("aria-label") || "";
+                let acc = sel.getAttribute('aria-label') || '';
 
                 if (acc) {
-                    label = acc.split(",")[0].trim();
+                    label = acc.split(',')[0].trim();
                 }
             }
 
@@ -203,9 +220,9 @@ window.__adv = {
             return;
         }
 
-        let default_op = sel.options.length > 0 ? sel.options[0].value : "";
+        let default_op = sel.options.length > 0 ? sel.options[0].value : '';
 
-        if (this._ko_set(sel, default_op, "")) {
+        if (this._ko_set(sel, default_op, '')) {
             return;
         }
 
@@ -215,7 +232,7 @@ window.__adv = {
         let input = this._input_near(sel);
 
         if (input) {
-            this._set_native_value(input, "");
+            this._set_native_value(input, '');
         }
     },
 };

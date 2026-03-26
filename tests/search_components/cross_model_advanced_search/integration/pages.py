@@ -291,5 +291,7 @@ class CrossModelSearchPage(SearchPage):
     ) -> None:
         self._inject()
         self._run_and_wait_for_search(
-            lambda: self.swap_filter(prev_node_id, next_node_id, next_qualifier, next_text),
+            lambda: self.swap_filter(
+                prev_node_id, next_node_id, next_qualifier, next_text
+            ),
         )

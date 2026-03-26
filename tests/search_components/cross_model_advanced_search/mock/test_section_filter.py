@@ -113,7 +113,9 @@ class TestSectionFilterBuild:
         mock_query.must.assert_called_once()
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
-    def test_all_groups_empty_produces_empty_query(self, mock_bool_cls: MagicMock) -> None:
+    def test_all_groups_empty_produces_empty_query(
+        self, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool()
         mock_bool_cls.return_value = mock_query
 

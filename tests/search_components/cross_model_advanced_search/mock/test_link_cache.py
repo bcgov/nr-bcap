@@ -24,12 +24,14 @@ class TestLinkCacheExtractTarget:
     @patch("bcap.search_components.cross_model_advanced_search.Node")
     @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
     def test_graphs_array(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({
-            "graphs": [
-                {"graphid": "abc"},
-                {"graphid": "def"},
-            ],
-        })
+        result: list[str] = LinkCache._extract_target(
+            {
+                "graphs": [
+                    {"graphid": "abc"},
+                    {"graphid": "def"},
+                ],
+            }
+        )
         assert result == ["abc", "def"]
 
     @patch("bcap.search_components.cross_model_advanced_search.Node")
@@ -47,10 +49,12 @@ class TestLinkCacheExtractTarget:
     @patch("bcap.search_components.cross_model_advanced_search.Node")
     @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
     def test_both_formats(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({
-            "graphid": "abc",
-            "graphs": [{"graphid": "def"}],
-        })
+        result: list[str] = LinkCache._extract_target(
+            {
+                "graphid": "abc",
+                "graphs": [{"graphid": "def"}],
+            }
+        )
         assert result == ["abc", "def"]
 
     @patch("bcap.search_components.cross_model_advanced_search.Node")
@@ -61,33 +65,45 @@ class TestLinkCacheExtractTarget:
 
     @patch("bcap.search_components.cross_model_advanced_search.Node")
     @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphs_missing_graphid(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({
-            "graphs": [{"other_key": "val"}],
-        })
+    def test_graphs_missing_graphid(
+        self, mock_ng: MagicMock, mock_node: MagicMock
+    ) -> None:
+        result: list[str] = LinkCache._extract_target(
+            {
+                "graphs": [{"other_key": "val"}],
+            }
+        )
         assert result == []
 
     @patch("bcap.search_components.cross_model_advanced_search.Node")
     @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphid_empty_string(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
+    def test_graphid_empty_string(
+        self, mock_ng: MagicMock, mock_node: MagicMock
+    ) -> None:
         result: list[str] = LinkCache._extract_target({"graphid": ""})
         assert result == []
 
     @patch("bcap.search_components.cross_model_advanced_search.Node")
     @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphid_list_with_empty_strings(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
+    def test_graphid_list_with_empty_strings(
+        self, mock_ng: MagicMock, mock_node: MagicMock
+    ) -> None:
         result: list[str] = LinkCache._extract_target({"graphid": ["", "abc", ""]})
         assert "abc" in result
 
     @patch("bcap.search_components.cross_model_advanced_search.Node")
     @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphs_array_with_none_graphid(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({
-            "graphs": [
-                {"graphid": None},
-                {"graphid": "abc"},
-            ],
-        })
+    def test_graphs_array_with_none_graphid(
+        self, mock_ng: MagicMock, mock_node: MagicMock
+    ) -> None:
+        result: list[str] = LinkCache._extract_target(
+            {
+                "graphs": [
+                    {"graphid": None},
+                    {"graphid": "abc"},
+                ],
+            }
+        )
         assert "abc" in result
 
 
@@ -199,7 +215,9 @@ class TestLinkCacheGetAndCache:
         LinkCache._cache = {}
         LinkCache._unconstrained = {}
         LinkCache._graph_nodes = {
-            source: [{"node": _uuid(), "nodegroup": _uuid(), "targets": {wrong_target}}],
+            source: [
+                {"node": _uuid(), "nodegroup": _uuid(), "targets": {wrong_target}}
+            ],
         }
 
         result: list[dict[str, Any]] = LinkCache.get(source, target)
@@ -209,6 +227,7 @@ class TestLinkCacheGetAndCache:
         LinkCache._ready = False
 
         with patch.object(LinkCache, "_init") as mock_init:
+
             def mark_ready() -> None:
                 LinkCache._ready = True
                 LinkCache._cache = {}
@@ -223,6 +242,7 @@ class TestLinkCacheGetAndCache:
         LinkCache._ready = False
 
         with patch.object(LinkCache, "_init") as mock_init:
+
             def mark_ready() -> None:
                 LinkCache._ready = True
                 LinkCache._constrained_cache = {}
@@ -243,7 +263,9 @@ class TestLinkCacheGetAndCache:
         LinkCache._ready = True
         LinkCache._cache = {}
         LinkCache._graph_nodes = {
-            source: [{"node": constrained_node, "nodegroup": ng_a, "targets": {target}}],
+            source: [
+                {"node": constrained_node, "nodegroup": ng_a, "targets": {target}}
+            ],
         }
         LinkCache._unconstrained = {
             source: [{"node": unconstrained_node, "nodegroup": ng_b, "targets": set()}],
@@ -350,6 +372,7 @@ class TestLinkCacheIsChildNodegroup:
         LinkCache._ready = False
 
         with patch.object(LinkCache, "_init") as mock_init:
+
             def mark_ready() -> None:
                 LinkCache._ready = True
                 LinkCache._child_nodegroups = set()
@@ -398,6 +421,7 @@ class TestLinkCacheClear:
         LinkCache.clear()
 
         with patch.object(LinkCache, "_init") as mock_init:
+
             def mark_ready() -> None:
                 LinkCache._ready = True
                 LinkCache._cache = {}

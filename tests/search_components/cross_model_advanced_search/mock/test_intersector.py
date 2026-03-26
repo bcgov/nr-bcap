@@ -494,7 +494,9 @@ class TestIntersectorApplyCorrelatedFiltering:
         }
 
         with patch.object(inter, "_find_correlated_nodegroups", return_value=set()):
-            result = inter._apply_correlated_filtering(es_matches, section_lookup, "intersect")
+            result = inter._apply_correlated_filtering(
+                es_matches, section_lookup, "intersect"
+            )
 
         assert result == es_matches
 
@@ -523,7 +525,9 @@ class TestIntersectorApplyCorrelatedFiltering:
 
         with patch.object(inter, "_find_correlated_nodegroups", side_effect=mock_find):
             with patch.object(inter, "_get_filters_for_nodegroups", return_value={}):
-                result = inter._apply_correlated_filtering(es_matches, section_lookup, "intersect")
+                result = inter._apply_correlated_filtering(
+                    es_matches, section_lookup, "intersect"
+                )
 
         assert result is None
 
@@ -666,7 +670,9 @@ class TestIntersectorFindCorrelatedNodegroups:
         assert result == set()
 
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
-    def test_child_nodegroup_with_contextual_filter(self, mock_cache: MagicMock) -> None:
+    def test_child_nodegroup_with_contextual_filter(
+        self, mock_cache: MagicMock
+    ) -> None:
         ng = _uuid()
         node_id = _uuid()
         context_node = _uuid()
@@ -749,7 +755,9 @@ class TestIntersectorFindCorrelatedNodegroups:
         assert result == set()
 
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
-    def test_multiple_constrained_links_different_nodegroups(self, mock_cache: MagicMock) -> None:
+    def test_multiple_constrained_links_different_nodegroups(
+        self, mock_cache: MagicMock
+    ) -> None:
         ng_a = _uuid()
         ng_b = _uuid()
         context_node_a = _uuid()
@@ -766,10 +774,12 @@ class TestIntersectorFindCorrelatedNodegroups:
         node_b_obj = MagicMock()
         node_b_obj.datatype = "number"
 
-        inter = self._make_intersector(nodes={
-            context_node_a: node_a_obj,
-            context_node_b: node_b_obj,
-        })
+        inter = self._make_intersector(
+            nodes={
+                context_node_a: node_a_obj,
+                context_node_b: node_b_obj,
+            }
+        )
 
         card_a = CardFilter(
             filters={context_node_a: {"op": "eq", "val": "test"}},
@@ -787,7 +797,9 @@ class TestIntersectorFindCorrelatedNodegroups:
         assert ng_b in result
 
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
-    def test_resource_instance_list_also_not_contextual(self, mock_cache: MagicMock) -> None:
+    def test_resource_instance_list_also_not_contextual(
+        self, mock_cache: MagicMock
+    ) -> None:
         ng = _uuid()
         ri_node = _uuid()
 

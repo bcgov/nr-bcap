@@ -200,6 +200,7 @@ let view_model = BaseFilter.extend({
                         });
 
                         graph.collapsed = ko.observable(true);
+                        graph.collapsed_before_filter = null;
                         graph.cards = ko.observableArray(graph_cards);
 
                         graph.filtered_cards = ko.computed(function () {
@@ -208,6 +209,11 @@ let view_model = BaseFilter.extend({
                             ).toLowerCase();
 
                             if (filter_text) {
+                                if (graph.collapsed_before_filter === null) {
+                                    graph.collapsed_before_filter =
+                                        graph.collapsed();
+                                }
+
                                 graph.collapsed(false);
 
                                 return _.filter(graph_cards, function (card) {
@@ -216,6 +222,11 @@ let view_model = BaseFilter.extend({
                                     ).toLowerCase();
                                     return card_name.indexOf(filter_text) > -1;
                                 });
+                            }
+
+                            if (graph.collapsed_before_filter !== null) {
+                                graph.collapsed(graph.collapsed_before_filter);
+                                graph.collapsed_before_filter = null;
                             }
 
                             return graph_cards;

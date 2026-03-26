@@ -22,7 +22,9 @@ class TestCardFilterBuild:
         factory.get_instance.assert_not_called()
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
-    def test_resource_instance_list_node_delegates(self, mock_bool_cls: MagicMock) -> None:
+    def test_resource_instance_list_node_delegates(
+        self, mock_bool_cls: MagicMock
+    ) -> None:
         mock_bool_cls.return_value = _make_bool()
         node_id = _uuid()
         node = _make_node(datatype="resource-instance-list", node_id=node_id)
@@ -34,7 +36,9 @@ class TestCardFilterBuild:
         factory.get_instance.assert_not_called()
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
-    def test_resource_instance_null_op_uses_standard_path(self, mock_bool_cls: MagicMock) -> None:
+    def test_resource_instance_null_op_uses_standard_path(
+        self, mock_bool_cls: MagicMock
+    ) -> None:
         mock_bool_cls.return_value = _make_bool()
         node_id = _uuid()
         node = _make_node(datatype="resource-instance", node_id=node_id)
@@ -48,7 +52,9 @@ class TestCardFilterBuild:
         factory.get_instance.assert_called_once_with("resource-instance")
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
-    def test_standard_datatype_delegates_to_factory(self, mock_bool_cls: MagicMock) -> None:
+    def test_standard_datatype_delegates_to_factory(
+        self, mock_bool_cls: MagicMock
+    ) -> None:
         mock_bool_cls.return_value = _make_bool()
         node_id = _uuid()
         node = _make_node(datatype="string", node_id=node_id)
@@ -88,10 +94,12 @@ class TestCardFilterBuild:
         node_b = _uuid()
         na = _make_node(datatype="string", node_id=node_a)
         nb = _make_node(datatype="number", node_id=node_b)
-        cf = CardFilter(filters={
-            node_a: {"op": "eq", "val": "test"},
-            node_b: {"op": "gt", "val": 5},
-        })
+        cf = CardFilter(
+            filters={
+                node_a: {"op": "eq", "val": "test"},
+                node_b: {"op": "gt", "val": 5},
+            }
+        )
         factory = MagicMock()
         mock_dt = MagicMock()
         factory.get_instance.return_value = mock_dt
@@ -101,7 +109,9 @@ class TestCardFilterBuild:
         assert mock_dt.append_search_filters.call_count == 2
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
-    def test_datatype_without_append_search_filters(self, mock_bool_cls: MagicMock) -> None:
+    def test_datatype_without_append_search_filters(
+        self, mock_bool_cls: MagicMock
+    ) -> None:
         mock_bool_cls.return_value = _make_bool()
         node_id = _uuid()
         node = _make_node(datatype="string", node_id=node_id)

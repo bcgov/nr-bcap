@@ -3,7 +3,7 @@ from __future__ import annotations
 from bcap.search_components.cross_model_advanced_search import (
     Logic,
     MatchType,
-    TranslateMode
+    TranslateMode,
 )
 
 

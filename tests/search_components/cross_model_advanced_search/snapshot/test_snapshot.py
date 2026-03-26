@@ -9,17 +9,18 @@ from runner import (
     load_test_cases,
 )
 
-
 TEST_CASES = load_test_cases()
 
 
 def _build_params() -> list[pytest.param]:
     if not TEST_CASES:
-        return [pytest.param(
-            None,
-            None,
-            marks=pytest.mark.skip(reason="No test_cases.json found"),
-        )]
+        return [
+            pytest.param(
+                None,
+                None,
+                marks=pytest.mark.skip(reason="No test_cases.json found"),
+            )
+        ]
 
     params = []
 
@@ -60,11 +61,8 @@ class TestUpdateBaselines:
         results = runner.run_tests(TEST_CASES, update_baselines=True)
         failed = [r for r in results if not r.passed]
 
-        assert not failed, (
-            "Failures during baseline update:\n"
-            + "\n".join(
-                f"  - {r.test_name} -> {r.intersection_target}: "
-                f"expected {r.baseline_count}, got {r.current_count}"
-                for r in failed
-            )
+        assert not failed, "Failures during baseline update:\n" + "\n".join(
+            f"  - {r.test_name} -> {r.intersection_target}: "
+            f"expected {r.baseline_count}, got {r.current_count}"
+            for r in failed
         )

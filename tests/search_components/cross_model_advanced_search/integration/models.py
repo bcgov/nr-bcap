@@ -65,7 +65,11 @@ class Datatype(StrEnum):
 
 VAL_QUALIFIERS = {*BooleanQualifier, *GeometryQualifier}
 
-STRING_DATATYPES = {Datatype.BORDEN_NUMBER, Datatype.NON_LOCALIZED_STRING, Datatype.STRING}
+STRING_DATATYPES = {
+    Datatype.BORDEN_NUMBER,
+    Datatype.NON_LOCALIZED_STRING,
+    Datatype.STRING,
+}
 NUMBER_DATATYPES = {Datatype.NUMBER}
 DATE_DATATYPES = {Datatype.DATE}
 BOOLEAN_DATATYPES = {Datatype.BOOLEAN}
@@ -176,7 +180,9 @@ class QualifierTestItem:
         return f"{self.label} [{self.cache_key}]"
 
     @classmethod
-    def from_cache_key(cls, label: str, node_id: str, cache_key: str) -> QualifierTestItem:
+    def from_cache_key(
+        cls, label: str, node_id: str, cache_key: str
+    ) -> QualifierTestItem:
         if ":" in cache_key:
             qualifier, text = cache_key.split(":", 1)
         else:

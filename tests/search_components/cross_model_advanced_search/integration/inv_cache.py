@@ -6,7 +6,6 @@ from pathlib import Path
 
 from typing import Any
 
-
 CACHE_DIR = Path(__file__).resolve().parent / ".cache"
 INV_CACHE_FILE = CACHE_DIR / "inventory.json"
 

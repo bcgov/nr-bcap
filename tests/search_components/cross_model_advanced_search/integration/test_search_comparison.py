@@ -5,7 +5,13 @@ import pytest
 from adv_cache import AdvancedSearchCache
 from db import get_inventory, get_sample_value
 from inv_cache import InventoryCache
-from models import CardInfo, Mismatch, QualifierTestItem, get_qualifiers_for, qualifier_needs_value
+from models import (
+    CardInfo,
+    Mismatch,
+    QualifierTestItem,
+    get_qualifiers_for,
+    qualifier_needs_value,
+)
 from pages import AdvancedSearchPage, CrossModelSearchPage
 from typing import TYPE_CHECKING
 
@@ -99,10 +105,14 @@ def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
     if not _INVENTORY:
         metafunc.parametrize(
             "card_info",
-            [pytest.param(
-                None,
-                marks=pytest.mark.skip(reason="No inventory (Django not available)"),
-            )],
+            [
+                pytest.param(
+                    None,
+                    marks=pytest.mark.skip(
+                        reason="No inventory (Django not available)"
+                    ),
+                )
+            ],
             ids=["no_inventory"],
         )
         return
@@ -136,7 +146,9 @@ class TestCardComparison:
             adv_counts = _fetch_adv_counts(adv, graph, card, card_info)
             _adv_cache.put(graph, card, adv_counts)
             total_q = sum(len(v) for v in adv_counts.values())
-            print(f"  Cached {total_q} qualifier counts across {len(adv_counts)} fields")
+            print(
+                f"  Cached {total_q} qualifier counts across {len(adv_counts)} fields"
+            )
         else:
             print(f"\n  Using cached Advanced Search counts for {graph} / {card}")
 
@@ -183,18 +195,22 @@ class TestCardComparison:
             )
 
             if not match:
-                mismatches.append(Mismatch(
-                    adv_count=adv_count,
-                    cm_count=cm_count,
-                    display=item.display,
-                ))
+                mismatches.append(
+                    Mismatch(
+                        adv_count=adv_count,
+                        cm_count=cm_count,
+                        display=item.display,
+                    )
+                )
 
             # Transition to next item
             if idx < len(test_items) - 1:
                 next_item = test_items[idx + 1]
 
                 if next_item.node_id == item.node_id:
-                    cm.set_filter_and_wait(item.node_id, next_item.qualifier, next_item.text)
+                    cm.set_filter_and_wait(
+                        item.node_id, next_item.qualifier, next_item.text
+                    )
                 else:
                     cm.swap_filter_and_wait(
                         item.node_id,
@@ -203,9 +219,10 @@ class TestCardComparison:
                         next_item.text,
                     )
 
-        assert not mismatches, (
-            f"[{graph} / {card}] qualifier mismatches:\n"
-            + "\n".join(f"  - {m}" for m in mismatches)
+        assert (
+            not mismatches
+        ), f"[{graph} / {card}] qualifier mismatches:\n" + "\n".join(
+            f"  - {m}" for m in mismatches
         )
 
 
@@ -228,6 +245,6 @@ class TestBaselineComparison:
         search.wait_for_search_idle()
         cm_count = search.get_result_count()
 
-        assert adv_count == cm_count, (
-            f"Unfiltered mismatch: Advanced={adv_count}, Cross-Model={cm_count}"
-        )
+        assert (
+            adv_count == cm_count
+        ), f"Unfiltered mismatch: Advanced={adv_count}, Cross-Model={cm_count}"

@@ -152,11 +152,13 @@ class TestCardFilterBuildResourceInstanceQuery:
         cf = CardFilter()
         result = cf._build_resource_instance_query(
             "node-1",
-            {"val": [
-                {"resourceId": "abc-123"},
-                {"resourceId": "def-456"},
-                {"resourceId": "ghi-789"},
-            ]},
+            {
+                "val": [
+                    {"resourceId": "abc-123"},
+                    {"resourceId": "def-456"},
+                    {"resourceId": "ghi-789"},
+                ]
+            },
         )
         assert result is not None
         assert len(result.dsl["bool"]["should"]) == 3
@@ -203,10 +205,12 @@ class TestCardFilterBuild:
     def test_all_filters_invalid_produces_empty_query(self) -> None:
         node_a = _uuid()
         node_b = _uuid()
-        cf = CardFilter(filters={
-            node_a: {"op": "eq", "val": ""},
-            node_b: {"op": "eq", "val": None},
-        })
+        cf = CardFilter(
+            filters={
+                node_a: {"op": "eq", "val": ""},
+                node_b: {"op": "eq", "val": None},
+            }
+        )
         factory = MagicMock()
         nodes: dict[str, Any] = {}
         request = MagicMock()
@@ -219,10 +223,12 @@ class TestCardFilterBuild:
         node = MagicMock()
         node.datatype = "string"
         node.nodeid = known_id
-        cf = CardFilter(filters={
-            known_id: {"op": "null"},
-            unknown_id: {"op": "eq", "val": "test"},
-        })
+        cf = CardFilter(
+            filters={
+                known_id: {"op": "null"},
+                unknown_id: {"op": "eq", "val": "test"},
+            }
+        )
         factory = MagicMock()
         nodes: dict[str, Any] = {known_id: node}
         request = MagicMock()
@@ -238,10 +244,12 @@ class TestCardFilterCreate:
     def test_with_data(self) -> None:
         ng = _uuid()
         node_id = _uuid()
-        cf = CardFilter.create({
-            "filters": {node_id: {"op": "eq", "val": "test"}},
-            "nodegroup_id": ng,
-        })
+        cf = CardFilter.create(
+            {
+                "filters": {node_id: {"op": "eq", "val": "test"}},
+                "nodegroup_id": ng,
+            }
+        )
         assert cf.nodegroup == ng
         assert node_id in cf.filters
 
@@ -265,16 +273,20 @@ class TestCardFilterCreate:
 
     def test_filters_with_many_nodes(self) -> None:
         node_ids = [_uuid() for _ in range(20)]
-        filters = {nid: {"op": "eq", "val": f"val-{i}"} for i, nid in enumerate(node_ids)}
+        filters = {
+            nid: {"op": "eq", "val": f"val-{i}"} for i, nid in enumerate(node_ids)
+        }
         cf = CardFilter.create({"filters": filters})
         assert len(cf.filters) == 20
 
     def test_extra_keys_ignored(self) -> None:
-        cf = CardFilter.create({
-            "filters": {},
-            "nodegroup_id": "ng-1",
-            "unknown_key": "should-be-ignored",
-            "another": 42,
-        })
+        cf = CardFilter.create(
+            {
+                "filters": {},
+                "nodegroup_id": "ng-1",
+                "unknown_key": "should-be-ignored",
+                "another": 42,
+            }
+        )
         assert cf.nodegroup == "ng-1"
         assert cf.filters == {}

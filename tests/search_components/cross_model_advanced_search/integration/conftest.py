@@ -215,7 +215,9 @@ def browser(playwright: Playwright, _launch_args: dict) -> Browser:
 
         if not endpoint.startswith("ws://"):
             try:
-                with urllib.request.urlopen(f"{endpoint}/json/version") as resp:  # noqa: S310
+                with urllib.request.urlopen(
+                    f"{endpoint}/json/version"
+                ) as resp:  # noqa: S310
                     data = json.loads(resp.read())
                     endpoint = data["webSocketDebuggerUrl"]
             except Exception:

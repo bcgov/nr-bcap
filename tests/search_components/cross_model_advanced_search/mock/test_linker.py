@@ -36,7 +36,9 @@ class TestLinkerGetConnected:
 
     @patch("bcap.search_components.cross_model_advanced_search.chunk")
     @patch("bcap.search_components.cross_model_advanced_search.ResourceXResource")
-    def test_batches_large_source_set(self, mock_rxr: MagicMock, mock_chunk: MagicMock) -> None:
+    def test_batches_large_source_set(
+        self, mock_rxr: MagicMock, mock_chunk: MagicMock
+    ) -> None:
         sources = {_uuid() for _ in range(10)}
         batch1 = list(sources)[:5]
         batch2 = list(sources)[5:]
@@ -50,8 +52,10 @@ class TestLinkerGetConnected:
 
         mock_rxr.objects.filter.return_value = forward_qs
         mock_rxr.objects.filter.side_effect = [
-            forward_qs, reverse_qs,
-            forward_qs, reverse_qs,
+            forward_qs,
+            reverse_qs,
+            forward_qs,
+            reverse_qs,
         ]
 
         linker = Linker()
@@ -75,7 +79,9 @@ class TestLinkerGetConnected:
         assert result == {str(target)}
 
     @patch("bcap.search_components.cross_model_advanced_search.ResourceXResource")
-    def test_forward_and_reverse_overlap_deduplicated(self, mock_rxr: MagicMock) -> None:
+    def test_forward_and_reverse_overlap_deduplicated(
+        self, mock_rxr: MagicMock
+    ) -> None:
         shared = _uuid()
 
         forward_qs = MagicMock()
@@ -124,31 +130,43 @@ class TestLinkerGetIntermediate:
 class TestLinkerGetLinkedFromTiles:
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_no_forward_links(self, mock_tile: MagicMock, mock_cache: MagicMock) -> None:
+    def test_no_forward_links(
+        self, mock_tile: MagicMock, mock_cache: MagicMock
+    ) -> None:
         mock_cache.get.return_value = []
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {_uuid()}, _uuid(), _uuid(), {_uuid()},
+            {_uuid()},
+            _uuid(),
+            _uuid(),
+            {_uuid()},
         )
         assert result == defaultdict(set)
 
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_no_matching_nodegroups(self, mock_tile: MagicMock, mock_cache: MagicMock) -> None:
+    def test_no_matching_nodegroups(
+        self, mock_tile: MagicMock, mock_cache: MagicMock
+    ) -> None:
         ng = _uuid()
         mock_cache.get.return_value = [{"node": _uuid(), "nodegroup": ng}]
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {_uuid()}, _uuid(), _uuid(), {_uuid()},
+            {_uuid()},
+            _uuid(),
+            _uuid(),
+            {_uuid()},
         )
         assert result == defaultdict(set)
 
     @patch("bcap.search_components.cross_model_advanced_search.chunk")
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_extracts_linked_ids(self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock) -> None:
+    def test_extracts_linked_ids(
+        self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock
+    ) -> None:
         ng = _uuid()
         node = _uuid()
         source_id = _uuid()
@@ -168,14 +186,19 @@ class TestLinkerGetLinkedFromTiles:
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {source_id}, _uuid(), _uuid(), {ng},
+            {source_id},
+            _uuid(),
+            _uuid(),
+            {ng},
         )
         assert result[source_id] == {linked_id}
 
     @patch("bcap.search_components.cross_model_advanced_search.chunk")
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_applies_tile_filters(self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock) -> None:
+    def test_applies_tile_filters(
+        self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock
+    ) -> None:
         ng = _uuid()
         node = _uuid()
         filter_node = _uuid()
@@ -195,12 +218,18 @@ class TestLinkerGetLinkedFromTiles:
         }
 
         mock_qs = MagicMock()
-        mock_qs.values.return_value.iterator.return_value = [matching_tile, non_matching_tile]
+        mock_qs.values.return_value.iterator.return_value = [
+            matching_tile,
+            non_matching_tile,
+        ]
         mock_tile_model.objects.filter.return_value = mock_qs
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {source_id}, _uuid(), _uuid(), {ng},
+            {source_id},
+            _uuid(),
+            _uuid(),
+            {ng},
             tile_filters={filter_node: {"op": "eq", "val": "expected"}},
         )
         assert linked_id in result[source_id]
@@ -208,7 +237,9 @@ class TestLinkerGetLinkedFromTiles:
     @patch("bcap.search_components.cross_model_advanced_search.chunk")
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_tile_missing_data_key(self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock) -> None:
+    def test_tile_missing_data_key(
+        self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock
+    ) -> None:
         ng = _uuid()
         node = _uuid()
         source_id = _uuid()
@@ -227,14 +258,19 @@ class TestLinkerGetLinkedFromTiles:
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {source_id}, _uuid(), _uuid(), {ng},
+            {source_id},
+            _uuid(),
+            _uuid(),
+            {ng},
         )
         assert source_id not in result or result[source_id] == set()
 
     @patch("bcap.search_components.cross_model_advanced_search.chunk")
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_tile_data_node_not_in_link_nodes(self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock) -> None:
+    def test_tile_data_node_not_in_link_nodes(
+        self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock
+    ) -> None:
         ng = _uuid()
         node = _uuid()
         other_node = _uuid()
@@ -254,14 +290,19 @@ class TestLinkerGetLinkedFromTiles:
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {source_id}, _uuid(), _uuid(), {ng},
+            {source_id},
+            _uuid(),
+            _uuid(),
+            {ng},
         )
         assert source_id not in result or result[source_id] == set()
 
     @patch("bcap.search_components.cross_model_advanced_search.chunk")
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_multiple_sources_multiple_links(self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock) -> None:
+    def test_multiple_sources_multiple_links(
+        self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock
+    ) -> None:
         ng = _uuid()
         node = _uuid()
         source_a = _uuid()
@@ -288,7 +329,10 @@ class TestLinkerGetLinkedFromTiles:
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {source_a, source_b}, _uuid(), _uuid(), {ng},
+            {source_a, source_b},
+            _uuid(),
+            _uuid(),
+            {ng},
         )
         assert result[source_a] == {linked_a}
         assert result[source_b] == {linked_b1, linked_b2}
@@ -296,7 +340,9 @@ class TestLinkerGetLinkedFromTiles:
     @patch("bcap.search_components.cross_model_advanced_search.chunk")
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_tile_filter_rejects_all_tiles(self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock) -> None:
+    def test_tile_filter_rejects_all_tiles(
+        self, mock_tile_model: MagicMock, mock_cache: MagicMock, mock_chunk: MagicMock
+    ) -> None:
         ng = _uuid()
         node = _uuid()
         filter_node = _uuid()
@@ -316,19 +362,27 @@ class TestLinkerGetLinkedFromTiles:
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            {source_id}, _uuid(), _uuid(), {ng},
+            {source_id},
+            _uuid(),
+            _uuid(),
+            {ng},
             tile_filters={filter_node: {"op": "eq", "val": "expected"}},
         )
         assert source_id not in result or result[source_id] == set()
 
     @patch("bcap.search_components.cross_model_advanced_search.LinkCache")
     @patch("bcap.search_components.cross_model_advanced_search.TileModel")
-    def test_empty_source_ids(self, mock_tile: MagicMock, mock_cache: MagicMock) -> None:
+    def test_empty_source_ids(
+        self, mock_tile: MagicMock, mock_cache: MagicMock
+    ) -> None:
         ng = _uuid()
         mock_cache.get.return_value = [{"node": _uuid(), "nodegroup": ng}]
 
         linker = Linker()
         result: dict[str, set[str]] = linker.get_linked_from_tiles(
-            set(), _uuid(), _uuid(), {ng},
+            set(),
+            _uuid(),
+            _uuid(),
+            {ng},
         )
         assert result == defaultdict(set)

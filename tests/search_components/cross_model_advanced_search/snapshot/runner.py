@@ -24,7 +24,6 @@ from arches_controlled_lists.models import List, ListItemValue
 
 from bcap.search_components.cross_model_advanced_search import CrossModelAdvancedSearch
 
-
 log = logging.getLogger(__name__)
 
 
@@ -178,7 +177,9 @@ class SnapshotCase:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> SnapshotCase:
         return cls(
-            filters=tuple(FilterDefinition.from_dict(f) for f in data.get("filters", [])),
+            filters=tuple(
+                FilterDefinition.from_dict(f) for f in data.get("filters", [])
+            ),
             intersection_targets=tuple(data.get("intersection_targets", [])),
             name=data["name"],
         )
@@ -242,7 +243,9 @@ class FilterValueBuilder:
     CONCEPT_TYPES = frozenset({DataType.CONCEPT, DataType.CONCEPT_LIST})
     CONTROLLED_LIST_TYPES = frozenset({DataType.CONTROLLED_LIST, DataType.REFERENCE})
     NUMERIC_TYPES = frozenset({DataType.NUMBER, DataType.EDTF})
-    RESOURCE_TYPES = frozenset({DataType.RESOURCE_INSTANCE, DataType.RESOURCE_INSTANCE_LIST})
+    RESOURCE_TYPES = frozenset(
+        {DataType.RESOURCE_INSTANCE, DataType.RESOURCE_INSTANCE_LIST}
+    )
     STRING_TYPES = frozenset({DataType.STRING, DataType.NON_LOCALIZED_STRING})
 
     def _build_boolean_value(self, value: str, operator: Operator) -> FilterValue:
@@ -273,7 +276,9 @@ class FilterValueBuilder:
         )[:1]
 
         if not matches:
-            log.warning(f"No concept match for '{value}' on node {extract_name(node.name)}")
+            log.warning(
+                f"No concept match for '{value}' on node {extract_name(node.name)}"
+            )
             return None
 
         return FilterValue(op=operator, val=str(matches[0]))
@@ -297,10 +302,14 @@ class FilterValueBuilder:
             log.warning(f"Controlled list not found: {controlled_list_id}")
             return None
 
-        list_item_value = ListItemValue.objects.filter(
-            Q(value__iexact=value) | Q(value__icontains=value),
-            list_item__list_id=controlled_list_id,
-        ).select_related("list_item").first()
+        list_item_value = (
+            ListItemValue.objects.filter(
+                Q(value__iexact=value) | Q(value__icontains=value),
+                list_item__list_id=controlled_list_id,
+            )
+            .select_related("list_item")
+            .first()
+        )
 
         if not list_item_value:
             log.warning(
@@ -341,7 +350,9 @@ class FilterValueBuilder:
     ) -> FilterValue | None:
         matches = ResourceInstance.objects.filter(
             name__icontains=value,
-        ).values_list("resourceinstanceid", flat=True)[:5]
+        ).values_list(
+            "resourceinstanceid", flat=True
+        )[:5]
 
         if not matches:
             log.warning(f"No resource instance match for '{value}'")
@@ -376,7 +387,9 @@ class FilterValueBuilder:
         if datatype in self.STRING_TYPES:
             return FilterValue(op=Operator.CONTAINS, val=value, lang=Language.EN)
 
-        log.warning(f"Unhandled datatype '{datatype}' for node {extract_name(node.name)}")
+        log.warning(
+            f"Unhandled datatype '{datatype}' for node {extract_name(node.name)}"
+        )
 
         return FilterValue(op=operator, val=value)
 
@@ -480,7 +493,9 @@ class QueryBuilder:
         card = self.model_cache.get_card(filter_def.graph_name, filter_def.card_name)
 
         if not card:
-            log.warning(f"Card not found: {filter_def.card_name} in {filter_def.graph_name}")
+            log.warning(
+                f"Card not found: {filter_def.card_name} in {filter_def.graph_name}"
+            )
             return None
 
         node = self.model_cache.get_node(
@@ -490,10 +505,14 @@ class QueryBuilder:
         )
 
         if not node:
-            log.warning(f"Node not found: {filter_def.node_name} in {filter_def.card_name}")
+            log.warning(
+                f"Node not found: {filter_def.node_name} in {filter_def.card_name}"
+            )
             return None
 
-        filter_value = self.filter_value_builder.build(node, filter_def.value, filter_def.operator)
+        filter_value = self.filter_value_builder.build(
+            node, filter_def.value, filter_def.operator
+        )
 
         if filter_value is None:
             log.warning(
@@ -501,7 +520,12 @@ class QueryBuilder:
             )
             return None
 
-        return str(graph.graphid), str(card.nodegroup_id), str(node.nodeid), filter_value
+        return (
+            str(graph.graphid),
+            str(card.nodegroup_id),
+            str(node.nodeid),
+            filter_value,
+        )
 
     def build(self, test_case: SnapshotCase, intersection_target: str) -> QueryData:
         filters_by_card: dict[tuple[str, str], dict[str, FilterValue]] = {}
@@ -622,7 +646,9 @@ class TestKeyGenerator:
             "target": intersection_target,
         }
 
-        return hashlib.md5(json.dumps(key_data, sort_keys=True).encode(), usedforsecurity=False).hexdigest()
+        return hashlib.md5(
+            json.dumps(key_data, sort_keys=True).encode(), usedforsecurity=False
+        ).hexdigest()
 
 
 class CrossModelSearchTestRunner:

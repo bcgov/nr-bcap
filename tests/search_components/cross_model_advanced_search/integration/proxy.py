@@ -10,7 +10,7 @@ def relay(
     dst: socket.socket,
     label: str,
     rewrite_request: bool = False,
-    rewrite_response: bool = False
+    rewrite_response: bool = False,
 ) -> None:
     try:
         first = True
@@ -31,7 +31,9 @@ def relay(
 
                 if rewrite_response:
                     text = data.decode("utf-8", errors="surrogateescape")
-                    text = text.replace("ws://localhost:9222", "ws://host.docker.internal:9223")
+                    text = text.replace(
+                        "ws://localhost:9222", "ws://host.docker.internal:9223"
+                    )
                     text = text.replace("localhost:9222", "host.docker.internal:9223")
                     length_match = re.search(r"Content-Length:\s*(\d+)", text)
 
@@ -39,9 +41,13 @@ def relay(
                         body_start = text.find("\r\n\r\n")
 
                         if body_start >= 0:
-                            body = text[body_start + 4:]
+                            body = text[body_start + 4 :]
                             text = text[:body_start] + "\r\n\r\n" + body
-                            text = re.sub(r"Content-Length:\s*\d+", f"Content-Length:{len(body.encode('utf-8'))}", text)
+                            text = re.sub(
+                                r"Content-Length:\s*\d+",
+                                f"Content-Length:{len(body.encode('utf-8'))}",
+                                text,
+                            )
 
                     data = text.encode("utf-8", errors="surrogateescape")
 
@@ -64,8 +70,12 @@ def main() -> None:
         client, _ = server.accept()
         remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         remote.connect(("127.0.0.1", 9222))
-        threading.Thread(target=relay, args=(client, remote, "req", True, False), daemon=True).start()
-        threading.Thread(target=relay, args=(remote, client, "res", False, True), daemon=True).start()
+        threading.Thread(
+            target=relay, args=(client, remote, "req", True, False), daemon=True
+        ).start()
+        threading.Thread(
+            target=relay, args=(remote, client, "res", False, True), daemon=True
+        ).start()
 
 
 main()

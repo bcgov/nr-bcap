@@ -1,6 +1,6 @@
 window.__cm = {
     _container() {
-        return document.querySelector(".cross-model-container");
+        return document.querySelector('.cross-model-container');
     },
 
     _vm() {
@@ -12,7 +12,7 @@ window.__cm = {
         let vm = this._vm();
         if (!vm) return null;
 
-        let section = vm.sections().find(s => s.groups().length > 0);
+        let section = vm.sections().find((s) => s.groups().length > 0);
         if (!section) return null;
 
         let group = section.groups()[0];
@@ -23,22 +23,22 @@ window.__cm = {
 
     _filter_elements() {
         return document.querySelectorAll(
-            "#cross-model-advanced-search-type-tabpanel .cross-model-filter"
+            '#cross-model-advanced-search-type-tabpanel .cross-model-filter',
         );
     },
 
     _find_default_op(node_id) {
         let card = this._active_card();
-        if (!card) return "~";
+        if (!card) return '~';
 
-        let node = card.nodes.find(n => n.nodeid === node_id);
-        if (!node) return "~";
+        let node = card.nodes.find((n) => n.nodeid === node_id);
+        if (!node) return '~';
 
         for (let f of this._filter_elements()) {
-            let lbl = f.querySelector(".cross-model-filter-label");
+            let lbl = f.querySelector('.cross-model-filter-label');
 
             if (lbl && lbl.textContent.trim() === node.label) {
-                let sel = f.querySelector("select");
+                let sel = f.querySelector('select');
 
                 if (sel && sel.options.length > 0) {
                     return sel.options[0].value;
@@ -48,11 +48,13 @@ window.__cm = {
             }
         }
 
-        return "~";
+        return '~';
     },
 
     click_card(name) {
-        let cards = document.querySelectorAll(".cross-model-card-option:not(.used)");
+        let cards = document.querySelectorAll(
+            '.cross-model-card-option:not(.used)',
+        );
 
         for (let c of cards) {
             let span = c.querySelector('span[data-bind="text: name"]');
@@ -67,11 +69,11 @@ window.__cm = {
     },
 
     click_graph(name) {
-        let headers = document.querySelectorAll(".cross-model-graph-name");
+        let headers = document.querySelectorAll('.cross-model-graph-name');
 
         for (let h of headers) {
             if (h.textContent.trim() === name) {
-                h.closest(".cross-model-graph-header").click();
+                h.closest('.cross-model-graph-header').click();
                 return true;
             }
         }
@@ -85,11 +87,11 @@ window.__cm = {
 
         let prev = ko.toJS(card.filters[node_id]()) || {};
 
-        if ("op" in prev) {
+        if ('op' in prev) {
             prev.op = this._find_default_op(node_id);
         }
 
-        prev.val = "";
+        prev.val = '';
         card.filters[node_id](prev);
     },
 
@@ -112,8 +114,8 @@ window.__cm = {
         let results = [];
 
         for (let f of this._filter_elements()) {
-            let label_el = f.querySelector(".cross-model-filter-label");
-            let sel = f.querySelector("select");
+            let label_el = f.querySelector('.cross-model-filter-label');
+            let sel = f.querySelector('select');
             if (!label_el || !sel) continue;
 
             let available = [];
@@ -127,7 +129,7 @@ window.__cm = {
             if (available.length === 0) continue;
 
             let label = label_el.textContent.trim();
-            let node = card.nodes.find(n => n.label === label);
+            let node = card.nodes.find((n) => n.label === label);
 
             if (node && card.filters[node.nodeid]) {
                 results.push({
@@ -145,7 +147,7 @@ window.__cm = {
         let vm = this._vm();
         if (!vm) return;
 
-        if (typeof vm.update_query === "function") {
+        if (typeof vm.update_query === 'function') {
             vm.update_query();
         }
     },
@@ -156,12 +158,12 @@ window.__cm = {
 
         let current = ko.toJS(card.filters[node_id]()) || {};
 
-        if ("op" in current) {
+        if ('op' in current) {
             if (is_val_qualifier) {
                 current.val = qualifier;
             } else {
                 current.op = qualifier;
-                current.val = text || "";
+                current.val = text || '';
             }
         } else {
             current.val = qualifier;
@@ -171,14 +173,14 @@ window.__cm = {
     },
 
     set_translate_target(slug) {
-        let sel = document.querySelector(".cross-model-option-select");
+        let sel = document.querySelector('.cross-model-option-select');
         if (!sel) return;
 
         sel.value = slug;
-        sel.dispatchEvent(new Event("change", { bubbles: true }));
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
 
         if (window.jQuery) {
-            jQuery(sel).trigger("change");
+            jQuery(sel).trigger('change');
         }
     },
 };

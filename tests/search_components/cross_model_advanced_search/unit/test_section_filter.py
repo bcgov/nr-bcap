@@ -15,13 +15,15 @@ class TestSectionFilterCreate:
 
     def test_with_graph_and_groups(self) -> None:
         graph_id = _uuid()
-        sf = SectionFilter.create({
-            "graph_id": graph_id,
-            "groups": [
-                {"cards": [], "match": "all", "operator_after": "and"},
-                {"cards": [], "match": "any", "operator_after": "or"},
-            ],
-        })
+        sf = SectionFilter.create(
+            {
+                "graph_id": graph_id,
+                "groups": [
+                    {"cards": [], "match": "all", "operator_after": "and"},
+                    {"cards": [], "match": "any", "operator_after": "or"},
+                ],
+            }
+        )
         assert sf.graph == graph_id
         assert len(sf.groups) == 2
         assert sf.groups[0].match_type == MatchType.ALL

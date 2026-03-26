@@ -81,7 +81,11 @@ class TestTranslator:
 
         translator = Translator(linker)
         result: set[str] = translator.translate(
-            sources, source, target, adjacency, {intermediate: es_matches_for_intermediate},
+            sources,
+            source,
+            target,
+            adjacency,
+            {intermediate: es_matches_for_intermediate},
         )
         assert result == target_ids
 
@@ -111,7 +115,11 @@ class TestTranslator:
 
         translator = Translator(linker)
         result: set[str] = translator.translate(
-            sources, source, target, adjacency, {intermediate: es_matches_for_intermediate},
+            sources,
+            source,
+            target,
+            adjacency,
+            {intermediate: es_matches_for_intermediate},
         )
         assert result == set()
 
@@ -244,7 +252,9 @@ class TestTranslator:
         linker.get_connected.return_value = set()
 
         translator = Translator(linker)
-        result: set[str] = translator.translate(sources, source, target, {}, {_uuid(): {_uuid()}})
+        result: set[str] = translator.translate(
+            sources, source, target, {}, {_uuid(): {_uuid()}}
+        )
         assert result == set()
 
     def test_multihop_multiple_intermediates_first_empty_second_finds(self) -> None:
@@ -326,7 +336,11 @@ class TestTranslator:
 
         translator = Translator(linker)
         result: set[str] = translator.translate(
-            sources, source, target, {}, {third: {connected}},
+            sources,
+            source,
+            target,
+            {},
+            {third: {connected}},
         )
         assert final in result
 

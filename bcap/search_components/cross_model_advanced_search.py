@@ -294,7 +294,10 @@ class CardFilter:
 
             # Resource-instance nodes need special handling for value-based
             # queries, but null/not_null operations use the standard path
-            if node.datatype in ("resource-instance", "resource-instance-list") and not is_null_op:
+            if (
+                node.datatype in ("resource-instance", "resource-instance-list")
+                and not is_null_op
+            ):
                 resource_query = self._build_resource_instance_query(
                     node_id, filter_value
                 )
@@ -318,9 +321,7 @@ class CardFilter:
                         positive_value, node, negation_query, request
                     )
                 else:
-                    datatype.append_search_filters(
-                        filter_value, node, query, request
-                    )
+                    datatype.append_search_filters(filter_value, node, query, request)
 
         return query, negation_query, null_query
 
@@ -827,7 +828,9 @@ class Linker:
         cls._verified_ids = {}
 
     @classmethod
-    def _get_rxr_forward(cls, source_graph: str, target_graph: str) -> dict[str, set[str]]:
+    def _get_rxr_forward(
+        cls, source_graph: str, target_graph: str
+    ) -> dict[str, set[str]]:
         key = (source_graph, target_graph)
 
         if key not in cls._rxr_forward:
@@ -850,7 +853,9 @@ class Linker:
         return cls._rxr_forward[key]
 
     @classmethod
-    def _get_rxr_reverse(cls, source_graph: str, target_graph: str) -> dict[str, set[str]]:
+    def _get_rxr_reverse(
+        cls, source_graph: str, target_graph: str
+    ) -> dict[str, set[str]]:
         key = (source_graph, target_graph)
 
         if key not in cls._rxr_reverse:
@@ -1446,7 +1451,9 @@ class Intersector:
         filtered_graphs = {section.graph for section in sections if section.graph}
         filtered_graphs.add(target_graph)
 
-        digest = hashlib.md5(str(sorted(filtered_graphs)).encode(), usedforsecurity=False).hexdigest()
+        digest = hashlib.md5(
+            str(sorted(filtered_graphs)).encode(), usedforsecurity=False
+        ).hexdigest()
         cache_key = f"cm_adjacency_{digest}"
         cached = cache.get(cache_key)
 
@@ -1616,11 +1623,13 @@ class Intersector:
                 if card.nodegroup not in nodegroups:
                     continue
 
-                filters.update({
-                    node_id: filter_value
-                    for node_id, filter_value in card.filters.items()
-                    if filter_value and filter_value.get("val")
-                })
+                filters.update(
+                    {
+                        node_id: filter_value
+                        for node_id, filter_value in card.filters.items()
+                        if filter_value and filter_value.get("val")
+                    }
+                )
 
         return filters
 
@@ -1704,7 +1713,9 @@ class Intersector:
     ) -> set[str]:
         """Translate all ES matches to the target graph and combine with operation."""
 
-        result = es_matches.get(target_graph, None if operation == "intersect" else set())
+        result = es_matches.get(
+            target_graph, None if operation == "intersect" else set()
+        )
 
         graphs_to_translate = [
             (source_graph, matches)
@@ -2008,14 +2019,10 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
                 id_filter = Bool()
 
                 if len(id_list) <= ES_MAX_TERMS:
-                    id_filter.filter(
-                        Terms(field="resourceinstanceid", terms=id_list)
-                    )
+                    id_filter.filter(Terms(field="resourceinstanceid", terms=id_list))
                 else:
                     for batch in chunk(id_list, ES_MAX_TERMS):
-                        id_filter.should(
-                            Terms(field="resourceinstanceid", terms=batch)
-                        )
+                        id_filter.should(Terms(field="resourceinstanceid", terms=batch))
 
                     id_filter.dsl["bool"]["minimum_should_match"] = 1
 

@@ -4,7 +4,6 @@ import json
 
 from pathlib import Path
 
-
 CACHE_DIR = Path(__file__).resolve().parent / ".cache"
 ADV_CACHE_FILE = CACHE_DIR / "advanced_search_counts.json"
 

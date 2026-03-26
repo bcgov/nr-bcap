@@ -45,9 +45,7 @@ class SyntheticLinker:
 
         return result
 
-    def _connected_in_graph(
-        self, sources: set[str], target_graph: str
-    ) -> set[str]:
+    def _connected_in_graph(self, sources: set[str], target_graph: str) -> set[str]:
         target_resources = self._graphs.get(target_graph, set())
 
         return {
@@ -58,11 +56,7 @@ class SyntheticLinker:
         }
 
     def get_connected(self, sources: set[str]) -> set[str]:
-        return {
-            peer
-            for source_id in sources
-            for peer in self._peers(source_id)
-        }
+        return {peer for source_id in sources for peer in self._peers(source_id)}
 
     def get_intermediate(
         self, sources: set[str], source_graph: str, target_graph: str
@@ -101,14 +95,22 @@ def run(scenario: Scenario) -> set[str]:
     def _mock_execute_section(section: Any) -> set[str]:
         return set(scenario.es_matches.get(section.graph, set()))
 
-    def _mock_build_adjacency(_sections: Any, _target_graph: str) -> dict[str, list[str]]:
+    def _mock_build_adjacency(
+        _sections: Any, _target_graph: str
+    ) -> dict[str, list[str]]:
         return scenario.adjacency
 
     section_data = [{"graph_id": g, "groups": []} for g in scenario.es_matches]
 
     with (
-        patch.object(intersector, "_build_adjacency", side_effect=_mock_build_adjacency),
-        patch.object(intersector, "_execute_section", side_effect=_mock_execute_section),
+        patch.object(
+            intersector, "_build_adjacency", side_effect=_mock_build_adjacency
+        ),
+        patch.object(
+            intersector, "_execute_section", side_effect=_mock_execute_section
+        ),
         patch.object(intersector, "_has_correlated_pairs", return_value=False),
     ):
-        return intersector.compute(section_data, scenario.target_graph, scenario.operation)
+        return intersector.compute(
+            section_data, scenario.target_graph, scenario.operation
+        )

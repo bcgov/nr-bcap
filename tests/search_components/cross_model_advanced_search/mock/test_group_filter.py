@@ -15,7 +15,9 @@ from helper import _make_bool
 class TestGroupFilterBuild:
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
     @patch("bcap.search_components.cross_model_advanced_search.Nested")
-    def test_empty_cards(self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock) -> None:
+    def test_empty_cards(
+        self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool()
         mock_bool_cls.return_value = mock_query
         gf = GroupFilter(cards=[], match_type=MatchType.ALL, operator=Logic.AND)
@@ -27,7 +29,9 @@ class TestGroupFilterBuild:
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
     @patch("bcap.search_components.cross_model_advanced_search.Nested")
-    def test_match_all_uses_must(self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock) -> None:
+    def test_match_all_uses_must(
+        self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool()
         mock_bool_cls.return_value = mock_query
 
@@ -46,7 +50,9 @@ class TestGroupFilterBuild:
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
     @patch("bcap.search_components.cross_model_advanced_search.Nested")
-    def test_match_any_uses_should(self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock) -> None:
+    def test_match_any_uses_should(
+        self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool()
         mock_bool_cls.return_value = mock_query
 
@@ -65,7 +71,9 @@ class TestGroupFilterBuild:
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
     @patch("bcap.search_components.cross_model_advanced_search.Nested")
-    def test_match_any_sets_minimum_should_match(self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock) -> None:
+    def test_match_any_sets_minimum_should_match(
+        self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool(should=[{"nested": {}}])
         mock_bool_cls.return_value = mock_query
 
@@ -84,7 +92,9 @@ class TestGroupFilterBuild:
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
     @patch("bcap.search_components.cross_model_advanced_search.Nested")
-    def test_skips_card_with_no_clauses(self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock) -> None:
+    def test_skips_card_with_no_clauses(
+        self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool()
         mock_bool_cls.return_value = mock_query
 
@@ -100,7 +110,9 @@ class TestGroupFilterBuild:
         mock_query.should.assert_not_called()
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
-    def test_null_query_with_clauses_added_as_must(self, mock_bool_cls: MagicMock) -> None:
+    def test_null_query_with_clauses_added_as_must(
+        self, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool()
         mock_bool_cls.return_value = mock_query
 
@@ -137,7 +149,9 @@ class TestGroupFilterBuild:
 
     @patch("bcap.search_components.cross_model_advanced_search.Bool")
     @patch("bcap.search_components.cross_model_advanced_search.Nested")
-    def test_multiple_cards(self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock) -> None:
+    def test_multiple_cards(
+        self, mock_nested_cls: MagicMock, mock_bool_cls: MagicMock
+    ) -> None:
         mock_query = _make_bool()
         mock_bool_cls.return_value = mock_query
 

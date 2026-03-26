@@ -15,6 +15,7 @@ _DJANGO_AVAILABLE = False
 
 with suppress(Exception):
     import django
+
     django.setup()
     _DJANGO_AVAILABLE = True
 
@@ -23,7 +24,7 @@ from models import (
     DATE_DATATYPES,
     GEO_DATATYPES,
     NUMBER_DATATYPES,
-    STRING_DATATYPES
+    STRING_DATATYPES,
 )
 
 if _DJANGO_AVAILABLE:
@@ -42,9 +43,7 @@ def get_inventory() -> list[dict[str, Any]]:
     if not _DJANGO_AVAILABLE:
         return []
 
-    searchable_datatypes = {
-        dt.pk for dt in DDataType.objects.filter(issearchable=True)
-    }
+    searchable_datatypes = {dt.pk for dt in DDataType.objects.filter(issearchable=True)}
 
     searchable_nodes = (
         Node.objects.filter(
@@ -73,11 +72,13 @@ def get_inventory() -> list[dict[str, Any]]:
 
         label = str(widgets.get(str(node.nodeid), node.name))
 
-        nodes_by_nodegroup[ng].append({
-            "datatype": str(node.datatype),
-            "label": label,
-            "node_id": str(node.nodeid),
-        })
+        nodes_by_nodegroup[ng].append(
+            {
+                "datatype": str(node.datatype),
+                "label": label,
+                "node_id": str(node.nodeid),
+            }
+        )
 
     cards = (
         CardModel.objects.filter(
@@ -92,7 +93,9 @@ def get_inventory() -> list[dict[str, Any]]:
 
     graphs = {
         str(g.graphid): {
-            "name": str(g.name.get("en", g.name) if isinstance(g.name, dict) else (g.name or "")),
+            "name": str(
+                g.name.get("en", g.name) if isinstance(g.name, dict) else (g.name or "")
+            ),
             "slug": str(g.slug) if g.slug else None,
         }
         for g in GraphModel.objects.filter(
@@ -118,14 +121,16 @@ def get_inventory() -> list[dict[str, Any]]:
         if not card_nodes:
             continue
 
-        inventory.append({
-            "card_name": str(card.name),
-            "graph_id": graph_id,
-            "graph_name": str(graph_info["name"]),
-            "nodegroup_id": ng,
-            "nodes": sorted(card_nodes, key=lambda n: n["label"].lower()),
-            "slug": str(graph_info["slug"]),
-        })
+        inventory.append(
+            {
+                "card_name": str(card.name),
+                "graph_id": graph_id,
+                "graph_name": str(graph_info["name"]),
+                "nodegroup_id": ng,
+                "nodes": sorted(card_nodes, key=lambda n: n["label"].lower()),
+                "slug": str(graph_info["slug"]),
+            }
+        )
 
     inventory.sort(key=lambda c: (c["graph_name"].lower(), c["card_name"].lower()))
 

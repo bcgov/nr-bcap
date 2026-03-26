@@ -66,16 +66,28 @@ class TestAppendDslBasic(TestCrossModelAdvancedSearch):
         f = self._make_filter()
         query_obj: dict[str, Any] = {"query": MagicMock()}
 
-        data = {"sections": [{"graph_id": _uuid(), "groups": []}], "translate_mode": "none"}
+        data = {
+            "sections": [{"graph_id": _uuid(), "groups": []}],
+            "translate_mode": "none",
+        }
 
-        with patch("bcap.search_components.cross_model_advanced_search.DataTypeFactory"):
-            with patch("bcap.search_components.cross_model_advanced_search.SectionFilter") as mock_sf:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.DataTypeFactory"
+        ):
+            with patch(
+                "bcap.search_components.cross_model_advanced_search.SectionFilter"
+            ) as mock_sf:
                 mock_section = MagicMock()
                 mock_section.graph = None
                 mock_sf.create.return_value = mock_section
-                with patch("bcap.search_components.cross_model_advanced_search.Bool") as mock_bool:
+                with patch(
+                    "bcap.search_components.cross_model_advanced_search.Bool"
+                ) as mock_bool:
                     mock_bool.return_value = _make_bool()
-                    with patch("bcap.search_components.cross_model_advanced_search.has_clause", return_value=False):
+                    with patch(
+                        "bcap.search_components.cross_model_advanced_search.has_clause",
+                        return_value=False,
+                    ):
                         f.append_dsl(query_obj, querystring=data)
 
         assert f._data == data
@@ -115,10 +127,12 @@ class TestAppendDslRawMode(TestCrossModelAdvancedSearch):
 
         mock_has_clause.side_effect = [True, True]
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "none",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "none",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         query_obj["query"].add_query.assert_called_once()
@@ -145,10 +159,12 @@ class TestAppendDslRawMode(TestCrossModelAdvancedSearch):
         mock_bool_cls.return_value = mock_cross_query
         mock_has_clause.return_value = False
 
-        data = json.dumps({
-            "sections": [{"groups": []}],
-            "translate_mode": "none",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"groups": []}],
+                "translate_mode": "none",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         query_obj["query"].add_query.assert_not_called()
@@ -176,10 +192,12 @@ class TestAppendDslRawMode(TestCrossModelAdvancedSearch):
         mock_bool_cls.return_value = mock_cross_query
         mock_has_clause.return_value = False
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "none",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "none",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         query_obj["query"].add_query.assert_not_called()
@@ -215,13 +233,15 @@ class TestAppendDslRawMode(TestCrossModelAdvancedSearch):
 
         mock_has_clause.return_value = True
 
-        data = json.dumps({
-            "sections": [
-                {"graph_id": _uuid(), "groups": []},
-                {"graph_id": _uuid(), "groups": []},
-            ],
-            "translate_mode": "none",
-        })
+        data = json.dumps(
+            {
+                "sections": [
+                    {"graph_id": _uuid(), "groups": []},
+                    {"graph_id": _uuid(), "groups": []},
+                ],
+                "translate_mode": "none",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         assert mock_cross_query.dsl["bool"]["minimum_should_match"] == 1
@@ -255,13 +275,15 @@ class TestAppendDslRawMode(TestCrossModelAdvancedSearch):
 
         mock_has_clause.side_effect = [True, True]
 
-        data = json.dumps({
-            "sections": [
-                {"graph_id": _uuid(), "groups": []},
-                {"groups": []},
-            ],
-            "translate_mode": "none",
-        })
+        data = json.dumps(
+            {
+                "sections": [
+                    {"graph_id": _uuid(), "groups": []},
+                    {"groups": []},
+                ],
+                "translate_mode": "none",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         query_obj["query"].add_query.assert_called_once()
@@ -291,10 +313,12 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
         mock_id_filter = _make_bool()
         mock_bool_cls.return_value = mock_id_filter
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "some-slug",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "some-slug",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         query_obj["query"].add_query.assert_called_once()
@@ -321,10 +345,12 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
         mock_id_filter = _make_bool()
         mock_bool_cls.return_value = mock_id_filter
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "some-slug",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "some-slug",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         query_obj["query"].add_query.assert_called_once()
@@ -344,10 +370,12 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
 
         mock_get_graph.return_value = None
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "nonexistent-slug",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "nonexistent-slug",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         query_obj["query"].add_query.assert_not_called()
@@ -379,10 +407,12 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
         mock_bool_cls.return_value = mock_id_filter
         mock_chunk.return_value = [list(target_ids)[:2], list(target_ids)[2:]]
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "some-slug",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "some-slug",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         assert mock_id_filter.should.call_count == 2
@@ -409,10 +439,12 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
         mock_compute.return_value = expected
         mock_bool_cls.return_value = _make_bool()
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "some-slug",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "some-slug",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         assert f._target_ids == expected
@@ -437,11 +469,13 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
         mock_compute.return_value = set()
         mock_bool_cls.return_value = _make_bool()
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "some-slug",
-            "result_operation": "union",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "some-slug",
+                "result_operation": "union",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         call_args = mock_compute.call_args
@@ -467,10 +501,12 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
         mock_compute.return_value = set()
         mock_bool_cls.return_value = _make_bool()
 
-        data = json.dumps({
-            "sections": [{"graph_id": _uuid(), "groups": []}],
-            "translate_mode": "some-slug",
-        })
+        data = json.dumps(
+            {
+                "sections": [{"graph_id": _uuid(), "groups": []}],
+                "translate_mode": "some-slug",
+            }
+        )
 
         f.append_dsl(query_obj, querystring=data)
         call_args = mock_compute.call_args
@@ -480,7 +516,11 @@ class TestAppendDslIntersectionMode(TestCrossModelAdvancedSearch):
 class TestCacheKey(TestCrossModelAdvancedSearch):
     def test_deterministic(self) -> None:
         f = self._make_filter()
-        f._data = {"sections": [], "translate_mode": "none", "result_operation": "intersect"}
+        f._data = {
+            "sections": [],
+            "translate_mode": "none",
+            "result_operation": "intersect",
+        }
 
         key1: str = f._cache_key(f._data)
         key2: str = f._cache_key(f._data)
@@ -500,8 +540,12 @@ class TestCacheKey(TestCrossModelAdvancedSearch):
     def test_varies_by_sections(self) -> None:
         f = self._make_filter()
 
-        key1: str = f._cache_key({"sections": [{"graph_id": "a"}], "translate_mode": "none"})
-        key2: str = f._cache_key({"sections": [{"graph_id": "b"}], "translate_mode": "none"})
+        key1: str = f._cache_key(
+            {"sections": [{"graph_id": "a"}], "translate_mode": "none"}
+        )
+        key2: str = f._cache_key(
+            {"sections": [{"graph_id": "b"}], "translate_mode": "none"}
+        )
         assert key1 != key2
 
     def test_varies_by_translate_mode(self) -> None:
@@ -514,8 +558,12 @@ class TestCacheKey(TestCrossModelAdvancedSearch):
     def test_varies_by_operation(self) -> None:
         f = self._make_filter()
 
-        key1: str = f._cache_key({"sections": [], "translate_mode": "none", "result_operation": "intersect"})
-        key2: str = f._cache_key({"sections": [], "translate_mode": "none", "result_operation": "union"})
+        key1: str = f._cache_key(
+            {"sections": [], "translate_mode": "none", "result_operation": "intersect"}
+        )
+        key2: str = f._cache_key(
+            {"sections": [], "translate_mode": "none", "result_operation": "union"}
+        )
         assert key1 != key2
 
     def test_prefix(self) -> None:
@@ -541,15 +589,19 @@ class TestCacheKey(TestCrossModelAdvancedSearch):
 
     def test_missing_result_operation_uses_default(self) -> None:
         f = self._make_filter()
-        key_with: str = f._cache_key({
-            "sections": [],
-            "translate_mode": "none",
-            "result_operation": "intersect",
-        })
-        key_without: str = f._cache_key({
-            "sections": [],
-            "translate_mode": "none",
-        })
+        key_with: str = f._cache_key(
+            {
+                "sections": [],
+                "translate_mode": "none",
+                "result_operation": "intersect",
+            }
+        )
+        key_without: str = f._cache_key(
+            {
+                "sections": [],
+                "translate_mode": "none",
+            }
+        )
         assert key_with == key_without
 
 
@@ -560,9 +612,13 @@ class TestBuildCache(TestCrossModelAdvancedSearch):
         mock_node = _make_node(node_id=node_id)
         mock_node.pk = node_id
 
-        sections: list[dict[str, Any]] = [{"groups": [{"cards": [{"filters": {node_id: {}}}]}]}]
+        sections: list[dict[str, Any]] = [
+            {"groups": [{"cards": [{"filters": {node_id: {}}}]}]}
+        ]
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             mock_qs = MagicMock()
             mock_qs.select_related.return_value = [mock_node]
             mock_node_cls.objects.filter.return_value = mock_qs
@@ -574,14 +630,18 @@ class TestBuildCache(TestCrossModelAdvancedSearch):
     def test_empty_sections(self) -> None:
         f = self._make_filter()
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             f._build_cache([])
             mock_node_cls.objects.filter.assert_not_called()
 
     def test_no_node_ids(self) -> None:
         f = self._make_filter()
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             f._build_cache([{"groups": [{"cards": [{"filters": {}}]}]}])
             mock_node_cls.objects.filter.assert_not_called()
 
@@ -595,7 +655,9 @@ class TestBuildCache(TestCrossModelAdvancedSearch):
             {"groups": [{"cards": [{"filters": {node_b: {}}}]}]},
         ]
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             mock_qs = MagicMock()
             mock_qs.select_related.return_value = []
             mock_node_cls.objects.filter.return_value = mock_qs
@@ -612,19 +674,27 @@ class TestBuildCache(TestCrossModelAdvancedSearch):
         node_b = _uuid()
         node_c = _uuid()
 
-        sections: list[dict[str, Any]] = [{
-            "groups": [
-                {"cards": [
-                    {"filters": {node_a: {}}},
-                    {"filters": {node_b: {}}},
-                ]},
-                {"cards": [
-                    {"filters": {node_c: {}}},
-                ]},
-            ],
-        }]
+        sections: list[dict[str, Any]] = [
+            {
+                "groups": [
+                    {
+                        "cards": [
+                            {"filters": {node_a: {}}},
+                            {"filters": {node_b: {}}},
+                        ]
+                    },
+                    {
+                        "cards": [
+                            {"filters": {node_c: {}}},
+                        ]
+                    },
+                ],
+            }
+        ]
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             mock_qs = MagicMock()
             mock_qs.select_related.return_value = []
             mock_node_cls.objects.filter.return_value = mock_qs
@@ -646,7 +716,9 @@ class TestBuildCache(TestCrossModelAdvancedSearch):
             {"groups": [{"cards": [{"filters": {shared_node: {}}}]}]},
         ]
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             mock_qs = MagicMock()
             mock_qs.select_related.return_value = []
             mock_node_cls.objects.filter.return_value = mock_qs
@@ -660,14 +732,18 @@ class TestBuildCache(TestCrossModelAdvancedSearch):
     def test_section_missing_groups_key(self) -> None:
         f = self._make_filter()
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             f._build_cache([{"not_groups": []}])
             mock_node_cls.objects.filter.assert_not_called()
 
     def test_card_missing_filters_key(self) -> None:
         f = self._make_filter()
 
-        with patch("bcap.search_components.cross_model_advanced_search.Node") as mock_node_cls:
+        with patch(
+            "bcap.search_components.cross_model_advanced_search.Node"
+        ) as mock_node_cls:
             f._build_cache([{"groups": [{"cards": [{"not_filters": {}}]}]}])
             mock_node_cls.objects.filter.assert_not_called()
 
@@ -757,7 +833,9 @@ class TestGetGraphId(TestCrossModelAdvancedSearch):
 
         mock_instance = MagicMock()
         mock_instance.graphid = graph_id
-        mock_graph.objects.filter.return_value.only.return_value.first.return_value = mock_instance
+        mock_graph.objects.filter.return_value.only.return_value.first.return_value = (
+            mock_instance
+        )
 
         result: str | None = f._get_graph_id(graph_id)
         assert result == graph_id
@@ -769,7 +847,9 @@ class TestGetGraphId(TestCrossModelAdvancedSearch):
 
         mock_instance = MagicMock()
         mock_instance.graphid = graph_id
-        mock_graph.objects.filter.return_value.only.return_value.first.return_value = mock_instance
+        mock_graph.objects.filter.return_value.only.return_value.first.return_value = (
+            mock_instance
+        )
 
         result: str | None = f._get_graph_id("my-graph-slug")
         assert result == graph_id
@@ -777,7 +857,9 @@ class TestGetGraphId(TestCrossModelAdvancedSearch):
     @patch("bcap.search_components.cross_model_advanced_search.GraphModel")
     def test_not_found_returns_none(self, mock_graph: MagicMock) -> None:
         f = self._make_filter()
-        mock_graph.objects.filter.return_value.only.return_value.first.return_value = None
+        mock_graph.objects.filter.return_value.only.return_value.first.return_value = (
+            None
+        )
 
         result: str | None = f._get_graph_id(_uuid())
         assert result is None
@@ -785,7 +867,9 @@ class TestGetGraphId(TestCrossModelAdvancedSearch):
     @patch("bcap.search_components.cross_model_advanced_search.GraphModel")
     def test_slug_not_found_returns_none(self, mock_graph: MagicMock) -> None:
         f = self._make_filter()
-        mock_graph.objects.filter.return_value.only.return_value.first.return_value = None
+        mock_graph.objects.filter.return_value.only.return_value.first.return_value = (
+            None
+        )
 
         result: str | None = f._get_graph_id("nonexistent-slug")
         assert result is None
@@ -793,7 +877,9 @@ class TestGetGraphId(TestCrossModelAdvancedSearch):
     @patch("bcap.search_components.cross_model_advanced_search.GraphModel")
     def test_uuid_like_string_that_is_not_uuid(self, mock_graph: MagicMock) -> None:
         f = self._make_filter()
-        mock_graph.objects.filter.return_value.only.return_value.first.return_value = None
+        mock_graph.objects.filter.return_value.only.return_value.first.return_value = (
+            None
+        )
 
         result: str | None = f._get_graph_id("not-a-uuid-at-all")
         assert result is None
@@ -801,7 +887,9 @@ class TestGetGraphId(TestCrossModelAdvancedSearch):
     @patch("bcap.search_components.cross_model_advanced_search.GraphModel")
     def test_empty_string_treated_as_slug(self, mock_graph: MagicMock) -> None:
         f = self._make_filter()
-        mock_graph.objects.filter.return_value.only.return_value.first.return_value = None
+        mock_graph.objects.filter.return_value.only.return_value.first.return_value = (
+            None
+        )
 
         result: str | None = f._get_graph_id("")
         assert result is None
