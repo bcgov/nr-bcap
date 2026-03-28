@@ -13,25 +13,25 @@ export const getResourceData = async (
 > => {
     const response = await fetch(
         `/bcap/api/resource/${graph_slug}/${resource_id}`,
-    ).then();
-    const parsed = await response.json();
-    if (!response.ok) throw new Error(parsed.message || response.statusText);
-    return parsed;
+    );
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || response.statusText);
+    }
+    return await response.json();
 };
 
-type ErrorResponse = Record<string, string>;
 export const getRelatedResourceData = async (
     graph_slug: string,
     resource_id: string,
 ): Promise<SiteVisitSchema[] | HriaDiscontinuedDataSchema[]> => {
     const response = await fetch(
         `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
-    ).then();
-    const parsed: SiteVisitResponse | ErrorResponse = await response.json();
-    if (!response.ok)
-        throw new Error(
-            Object.values(parsed as ErrorResponse).join(',') ||
-                response.statusText,
-        );
-    return (parsed as SiteVisitResponse).results;
+    );
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || response.statusText);
+    }
+    const parsed: SiteVisitResponse = await response.json();
+    return parsed.results;
 };

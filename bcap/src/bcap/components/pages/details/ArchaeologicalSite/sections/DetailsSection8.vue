@@ -8,6 +8,7 @@ import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import type {
     RemarksAndRestrictedInformationTile,
     ContraventionDocumentTile,
@@ -174,7 +175,10 @@ const restrictedInfoDataRaw = computed(
 const keywordsData = computed(() => {
     const keywords = currentData.value?.remark_keyword;
     if (!keywords) return [];
-    return Array.isArray(keywords) ? keywords : [keywords];
+    const keywordsArray = Array.isArray(keywords) ? keywords : [keywords];
+    return keywordsArray
+        .map((tile) => tile.aliased_data?.remark_keyword)
+        .filter((keyword): keyword is AliasedNodeData => !!keyword);
 });
 
 const contraventionDocumentsExpanded = computed(() => {
