@@ -233,9 +233,15 @@ export interface RestrictedDocumentTile extends AliasedTileData {
     };
 }
 
+export interface RemarkKeywordTile extends AliasedTileData {
+    aliased_data: {
+        remark_keyword?: AliasedNodeData;
+    };
+}
+
 export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
     general_remark_information: GeneralRemarkTile[];
-    remark_keyword?: AliasedNodeData;
+    remark_keyword?: RemarkKeywordTile[] | RemarkKeywordTile;
     contravention_document?: ContraventionDocumentTile[];
     restricted_document?: RestrictedDocumentTile[];
     hca_contravention: AliasedTileData[];
