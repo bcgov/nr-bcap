@@ -46,6 +46,7 @@ import hashlib
 import uuid
 
 from collections import defaultdict
+from contextlib import suppress
 from concurrent.futures import as_completed, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from enum import StrEnum
@@ -73,6 +74,10 @@ from arches.app.search.elasticsearch_dsl_builder import Bool, Nested, Terms
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineFactory
 from arches.app.utils.betterJSONSerializer import JSONDeserializer
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 details = {
     "classname": "CrossModelAdvancedSearch",
@@ -98,8 +103,23 @@ CHUNK_SIZE = 5000
 # Elasticsearch has a hard limit of 10,000 results per request without scrolling
 ES_LIMIT = 10000
 
+# Elasticsearch default maximum number of terms in a Terms query
+ES_MAX_TERMS = 60000
+
 # Maximum number of worker threads for parallel processing
 MAX_WORKERS = 8
+
+# Maps negation operators to their positive equivalents so that
+# append_search_filters builds a positive match query. The caller wraps
+# the result in Nested and adds it to must_not at the outer level,
+# avoiding the ES bug where must_not inside a nested query matches
+# every tile that lacks the field.
+NEGATION_OPS = {
+    "!eq": "eq",
+    "!~": "~",
+    "in_list_not": "in_list_any",
+    "neq": "eq",
+}
 
 # How long Elasticsearch keeps the search context alive between scroll requests
 SCROLL_TIMEOUT = "2m"
@@ -119,7 +139,7 @@ class TranslateMode(StrEnum):
     NONE = "none"
 
 
-def chunk(items: list, size: int):
+def chunk(items: list, size: int) -> Generator[list, None, None]:
     """Yield successive chunks of the given size from items."""
 
     for idx in range(0, len(items), size):
@@ -159,6 +179,7 @@ class NodeValue:
         """
 
         result = set()
+
         items = (
             self.raw if isinstance(self.raw, list) else [self.raw] if self.raw else []
         )
@@ -240,14 +261,23 @@ class CardFilter:
 
     def build(
         self, factory: DataTypeFactory, nodes: dict[str, Node], request: Any
-    ) -> Bool:
+    ) -> tuple[Bool, Bool, Bool]:
         """
         Build an Elasticsearch Bool query from the card's node filters.
         Delegates to each node's datatype to construct the appropriate query syntax.
+
+        Returns (query, negation_query, null_query):
+        - query: standard positive clauses, wrapped in Nested by the caller.
+        - negation_query: positive-match clauses for negation operators. The
+          caller wraps this in Nested and adds it to must_not at the outer
+          level, avoiding the nested-negation semantics bug where must_not
+          inside a nested query matches every tile that lacks the field.
+        - null_query: null/not_null clauses that bypass Nested entirely.
         """
 
-        query = Bool()
+        negation_query = Bool()
         null_query = Bool()
+        query = Bool()
 
         for node_id, filter_value in self.filters.items():
             if not self._is_valid(filter_value):
@@ -258,8 +288,16 @@ class CardFilter:
             if not node:
                 continue
 
-            # Resource-instance nodes need special handling for ES queries
-            if node.datatype in ("resource-instance", "resource-instance-list"):
+            op = filter_value.get("op", "")
+            val = filter_value.get("val", "")
+            is_null_op = op in ("null", "not_null") or val in ("null", "not_null")
+
+            # Resource-instance nodes need special handling for value-based
+            # queries, but null/not_null operations use the standard path
+            if (
+                node.datatype in ("resource-instance", "resource-instance-list")
+                and not is_null_op
+            ):
                 resource_query = self._build_resource_instance_query(
                     node_id, filter_value
                 )
@@ -273,20 +311,22 @@ class CardFilter:
             datatype = factory.get_instance(node.datatype)
 
             if hasattr(datatype, "append_search_filters"):
-                op = filter_value.get("op", "")
-                val = filter_value.get("val", "")
-
-                if op in ("null", "not_null") or val in ("null", "not_null"):
+                if is_null_op:
                     datatype.append_search_filters(
                         filter_value, node, null_query, request
+                    )
+                elif op in NEGATION_OPS:
+                    positive_value = {**filter_value, "op": NEGATION_OPS[op]}
+                    datatype.append_search_filters(
+                        positive_value, node, negation_query, request
                     )
                 else:
                     datatype.append_search_filters(filter_value, node, query, request)
 
-        return query, null_query
+        return query, negation_query, null_query
 
     @classmethod
-    def create(cls, data: dict[str, Any]) -> "CardFilter":
+    def create(cls, data: dict[str, Any]) -> CardFilter:
         return cls(
             filters=data.get("filters", {}),
             nodegroup=data.get("nodegroup_id"),
@@ -316,7 +356,7 @@ class GroupFilter:
         query = Bool()
 
         for card in self.cards:
-            card_query, null_query = card.build(factory, nodes, request)
+            card_query, negation_query, null_query = card.build(factory, nodes, request)
 
             if has_clause(card_query):
                 clause = Nested(path="tiles", query=card_query)
@@ -325,6 +365,16 @@ class GroupFilter:
                     query.should(clause)
                 else:
                     query.must(clause)
+
+            if has_clause(negation_query):
+                clause = Nested(path="tiles", query=negation_query)
+
+                if self.match_type == MatchType.ANY:
+                    negation_wrapper = Bool()
+                    negation_wrapper.must_not(clause)
+                    query.should(negation_wrapper)
+                else:
+                    query.must_not(clause)
 
             if has_clause(null_query):
                 if self.match_type == MatchType.ANY:
@@ -338,7 +388,7 @@ class GroupFilter:
         return query
 
     @classmethod
-    def create(cls, data: dict[str, Any]) -> "GroupFilter":
+    def create(cls, data: dict[str, Any]) -> GroupFilter:
         match_val = data.get("match", MatchType.ALL)
         op_val = data.get("operator_after", Logic.AND)
 
@@ -407,7 +457,7 @@ class SectionFilter:
         current_and = []
         or_groups = []
 
-        for idx, (group, group_query) in enumerate(valid):
+        for idx, (_, group_query) in enumerate(valid):
             current_and.append(group_query)
 
             if idx < len(valid) - 1 and ops[idx] == Logic.OR:
@@ -433,7 +483,7 @@ class SectionFilter:
         return query
 
     @classmethod
-    def create(cls, data: dict[str, Any]) -> "SectionFilter":
+    def create(cls, data: dict[str, Any]) -> SectionFilter:
         return cls(
             graph=data.get("graph_id"),
             groups=[GroupFilter.create(grp) for grp in data.get("groups", [])],
@@ -487,9 +537,11 @@ class LinkCache:
                     result.append(val)
 
         if "graphs" in config:
-            for graph in config.get("graphs", []):
-                if isinstance(graph, dict) and graph.get("graphid"):
-                    result.append(graph["graphid"])
+            result.extend(
+                graph["graphid"]
+                for graph in config.get("graphs", [])
+                if isinstance(graph, dict) and graph.get("graphid")
+            )
 
         return [str(gid) for gid in result]
 
@@ -535,12 +587,12 @@ class LinkCache:
                 cls._unconstrained[graph_id].append(info)
 
         # Track child nodegroups for correlated filtering
-        cls._child_nodegroups = set(
+        cls._child_nodegroups = {
             str(ng.nodegroupid)
             for ng in NodeGroup.objects.filter(parentnodegroup__isnull=False).only(
                 "nodegroupid"
             )
-        )
+        }
 
         cls._ready = True
 
@@ -570,15 +622,17 @@ class LinkCache:
         if key in cls._cache:
             return cls._cache[key]
 
-        result = []
-
-        for info in cls._graph_nodes.get(source, []):
-            if target in info["targets"]:
-                result.append({"node": info["node"], "nodegroup": info["nodegroup"]})
+        result = [
+            {"node": info["node"], "nodegroup": info["nodegroup"]}
+            for info in cls._graph_nodes.get(source, [])
+            if target in info["targets"]
+        ]
 
         # Unconstrained nodes can link to any graph
-        for info in cls._unconstrained.get(source, []):
-            result.append({"node": info["node"], "nodegroup": info["nodegroup"]})
+        result.extend(
+            {"node": info["node"], "nodegroup": info["nodegroup"]}
+            for info in cls._unconstrained.get(source, [])
+        )
 
         cls._cache[key] = result
         return result
@@ -601,11 +655,11 @@ class LinkCache:
         if key in cls._constrained_cache:
             return cls._constrained_cache[key]
 
-        result = []
-
-        for info in cls._graph_nodes.get(source, []):
-            if target in info["targets"]:
-                result.append({"node": info["node"], "nodegroup": info["nodegroup"]})
+        result = [
+            {"node": info["node"], "nodegroup": info["nodegroup"]}
+            for info in cls._graph_nodes.get(source, [])
+            if target in info["targets"]
+        ]
 
         cls._constrained_cache[key] = result
         return result
@@ -639,10 +693,8 @@ class Scroller:
         if not scroll_id:
             return
 
-        try:
+        with suppress(Exception):
             self.engine.es.clear_scroll(scroll_id=scroll_id)
-        except Exception:
-            pass
 
     def hits(
         self, query: dict[str, Any], source: list[str] | None = None
@@ -652,7 +704,7 @@ class Scroller:
         result = []
 
         response = self.engine.search(
-            _source=source if source else True,
+            _source=source or True,
             index=RESOURCES_INDEX,
             query=query,
             scroll=SCROLL_TIMEOUT,
@@ -764,6 +816,78 @@ class Linker:
        graphs, and also for correlated filtering where the link and any
        additional filters must be evaluated against the same tile row.
     """
+
+    _rxr_forward: dict[tuple[str, str], dict[str, set[str]]] = {}
+    _rxr_reverse: dict[tuple[str, str], dict[str, set[str]]] = {}
+    _verified_ids: dict[str, set[str]] = {}
+
+    @classmethod
+    def clear_caches(cls) -> None:
+        cls._rxr_forward = {}
+        cls._rxr_reverse = {}
+        cls._verified_ids = {}
+
+    @classmethod
+    def _get_rxr_forward(
+        cls, source_graph: str, target_graph: str
+    ) -> dict[str, set[str]]:
+        key = (source_graph, target_graph)
+
+        if key not in cls._rxr_forward:
+            link_map: dict[str, set[str]] = defaultdict(set)
+
+            rows = (
+                ResourceXResource.objects.filter(
+                    from_resource_graph_id=source_graph,
+                    to_resource_graph_id=target_graph,
+                )
+                .values_list("from_resource_id", "to_resource_id")
+                .iterator(chunk_size=CHUNK_SIZE)
+            )
+
+            for from_id, to_id in rows:
+                link_map[str(from_id)].add(str(to_id))
+
+            cls._rxr_forward[key] = dict(link_map)
+
+        return cls._rxr_forward[key]
+
+    @classmethod
+    def _get_rxr_reverse(
+        cls, source_graph: str, target_graph: str
+    ) -> dict[str, set[str]]:
+        key = (source_graph, target_graph)
+
+        if key not in cls._rxr_reverse:
+            link_map: dict[str, set[str]] = defaultdict(set)
+
+            rows = (
+                ResourceXResource.objects.filter(
+                    from_resource_graph_id=target_graph,
+                    to_resource_graph_id=source_graph,
+                )
+                .values_list("to_resource_id", "from_resource_id")
+                .iterator(chunk_size=CHUNK_SIZE)
+            )
+
+            for to_id, from_id in rows:
+                link_map[str(to_id)].add(str(from_id))
+
+            cls._rxr_reverse[key] = dict(link_map)
+
+        return cls._rxr_reverse[key]
+
+    @classmethod
+    def _get_verified_ids(cls, graph_id: str) -> set[str]:
+        if graph_id not in cls._verified_ids:
+            cls._verified_ids[graph_id] = {
+                str(rid)
+                for rid in ResourceInstance.objects.filter(graph_id=graph_id)
+                .values_list("resourceinstanceid", flat=True)
+                .iterator(chunk_size=CHUNK_SIZE)
+            }
+
+        return cls._verified_ids[graph_id]
 
     def _find_forward_via_tiles(
         self,
@@ -992,28 +1116,28 @@ class Linker:
             return sources
 
         result = set()
-        source_list = list(sources)
 
-        # Try ResourceXResource first (forward direction)
-        for batch in chunk(source_list, BATCH_SIZE):
-            rxr = ResourceXResource.objects.filter(
-                from_resource_id__in=batch,
-                to_resource_graph_id=target_graph,
-            ).values_list("to_resource_id", flat=True)
+        # Preloaded forward RXR lookup (source -> target)
+        forward_map = Linker._get_rxr_forward(source_graph, target_graph)
 
-            result.update(str(rid) for rid in rxr)
+        for source_id in sources:
+            targets = forward_map.get(source_id)
 
-        # Try ResourceXResource (reverse direction)
-        for batch in chunk(source_list, BATCH_SIZE):
-            rxr = ResourceXResource.objects.filter(
-                to_resource_id__in=batch,
-                from_resource_graph_id=target_graph,
-            ).values_list("from_resource_id", flat=True)
+            if targets:
+                result.update(targets)
 
-            result.update(str(rid) for rid in rxr)
+        # Preloaded reverse RXR lookup (target -> source, flipped)
+        reverse_map = Linker._get_rxr_reverse(source_graph, target_graph)
+
+        for source_id in sources:
+            targets = reverse_map.get(source_id)
+
+            if targets:
+                result.update(targets)
 
         # Fall back to tile-based links if RXR didn't find anything
         if not result:
+            source_list = list(sources)
             forward_links = LinkCache.get(source_graph, target_graph)
 
             if forward_links:
@@ -1036,17 +1160,8 @@ class Linker:
 
         # Verify results actually exist in target graph
         if result:
-            verified = set()
-
-            for batch in chunk(list(result), BATCH_SIZE):
-                ids = ResourceInstance.objects.filter(
-                    graph_id=target_graph,
-                    resourceinstanceid__in=batch,
-                ).values_list("resourceinstanceid", flat=True)
-
-                verified.update(str(rid) for rid in ids)
-
-            return verified
+            verified = Linker._get_verified_ids(target_graph)
+            return result & verified
 
         return result
 
@@ -1154,7 +1269,7 @@ class Translator:
             return result
 
         # Try multi-hop through intermediate graphs
-        for intermediate_graph in adjacency.keys():
+        for intermediate_graph in adjacency:
             if intermediate_graph in (source_graph, target_graph):
                 continue
 
@@ -1262,7 +1377,7 @@ class Intersector:
         correlated_pairs = []
 
         for source_graph, source_section in section_lookup.items():
-            for other_graph in es_matches.keys():
+            for other_graph in es_matches:
                 if source_graph == other_graph:
                     continue
 
@@ -1293,7 +1408,7 @@ class Intersector:
                     source_graph,
                     linked_graph,
                     {nodegroup_id},
-                    nodegroup_filters if nodegroup_filters else None,
+                    nodegroup_filters or None,
                 )
 
                 for source_id, linked_ids in linked_map.items():
@@ -1336,12 +1451,21 @@ class Intersector:
         filtered_graphs = {section.graph for section in sections if section.graph}
         filtered_graphs.add(target_graph)
 
-        all_graphs = set(
+        digest = hashlib.md5(
+            str(sorted(filtered_graphs)).encode(), usedforsecurity=False
+        ).hexdigest()
+        cache_key = f"cm_adjacency_{digest}"
+        cached = cache.get(cache_key)
+
+        if cached is not None:
+            return cached
+
+        all_graphs = {
             str(g.graphid)
             for g in GraphModel.objects.filter(isresource=True, is_active=True)
             .exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
             .only("graphid")
-        )
+        }
 
         # Find intermediate graphs that connect multiple filtered graphs
         intermediate_graphs = set()
@@ -1404,6 +1528,8 @@ class Intersector:
 
             if source in adjacency and dest not in adjacency[source]:
                 adjacency[source].append(dest)
+
+        cache.set(cache_key, adjacency, CACHE_TIMEOUT)
 
         return adjacency
 
@@ -1497,9 +1623,13 @@ class Intersector:
                 if card.nodegroup not in nodegroups:
                     continue
 
-                for node_id, filter_value in card.filters.items():
-                    if filter_value and filter_value.get("val"):
-                        filters[node_id] = filter_value
+                filters.update(
+                    {
+                        node_id: filter_value
+                        for node_id, filter_value in card.filters.items()
+                        if filter_value and filter_value.get("val")
+                    }
+                )
 
         return filters
 
@@ -1517,11 +1647,10 @@ class Intersector:
                 continue
 
             for other_graph in graphs_with_filters:
-                if source_graph != other_graph:
-                    if self._find_correlated_nodegroups(
-                        source_graph, other_graph, source_section
-                    ):
-                        return True
+                if source_graph != other_graph and self._find_correlated_nodegroups(
+                    source_graph, other_graph, source_section
+                ):
+                    return True
 
         return False
 
@@ -1584,10 +1713,9 @@ class Intersector:
     ) -> set[str]:
         """Translate all ES matches to the target graph and combine with operation."""
 
-        if target_graph in es_matches:
-            result = es_matches[target_graph]
-        else:
-            result = None if operation == "intersect" else set()
+        result = es_matches.get(
+            target_graph, None if operation == "intersect" else set()
+        )
 
         graphs_to_translate = [
             (source_graph, matches)
@@ -1742,7 +1870,8 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             "user_id": self.request.user.id,
         }
 
-        return f"cross_model_search_{hashlib.md5(str(raw).encode()).hexdigest()}"
+        digest = hashlib.md5(str(raw).encode(), usedforsecurity=False).hexdigest()
+        return f"cross_model_search_{digest}"
 
     def _compute_target_ids(
         self,
@@ -1812,7 +1941,7 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             name = graph.name
 
             if isinstance(name, dict):
-                name = name.get("en", list(name.values())[0] if name else graph.slug)
+                name = name.get("en", next(iter(name.values())) if name else graph.slug)
 
             result.append(
                 {
@@ -1853,6 +1982,7 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         """
 
         param = kwargs.get("querystring", "{}")
+
         data = (
             JSONDeserializer().deserialize(param)
             if isinstance(param, str)
@@ -1885,10 +2015,17 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             self._target_ids = target_ids
 
             if target_ids:
+                id_list = list(target_ids)
                 id_filter = Bool()
-                id_filter.filter(
-                    Terms(field="resourceinstanceid", terms=list(target_ids))
-                )
+
+                if len(id_list) <= ES_MAX_TERMS:
+                    id_filter.filter(Terms(field="resourceinstanceid", terms=id_list))
+                else:
+                    for batch in chunk(id_list, ES_MAX_TERMS):
+                        id_filter.should(Terms(field="resourceinstanceid", terms=batch))
+
+                    id_filter.dsl["bool"]["minimum_should_match"] = 1
+
                 query_obj["query"].add_query(id_filter)
             else:
                 # No matches - use impossible filter to return empty results
@@ -1935,8 +2072,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
         **kwargs: Any,
     ) -> None:
         """Post-search processing hook (not currently used)."""
-
-        pass
 
     def view_data(self) -> dict[str, Any]:
         """
