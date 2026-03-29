@@ -22,10 +22,10 @@ _CONFTEST_PATHS = [
 
 
 class _ExcludeIntegrationLoader(unittest.TestLoader):
-    def discover(self, start_dir, pattern="test*.py", top_level_dir=None):
-        if os.path.basename(os.path.normpath(str(start_dir))) == "integration":
-            return self.suiteClass()
-        return super().discover(start_dir, pattern=pattern, top_level_dir=top_level_dir)
+    def _find_test_path(self, full_path, pattern, *args, **kwargs):
+        if os.path.isdir(full_path) and os.path.basename(full_path) == "integration":
+            return None, False
+        return super()._find_test_path(full_path, pattern, *args, **kwargs)
 
 
 class BcapTestRunner(ArchesTestRunner):
