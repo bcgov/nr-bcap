@@ -78,4 +78,5 @@ def main() -> None:
         ).start()
 
 
-main()
+if __name__ == "__main__":
+    main()
