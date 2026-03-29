@@ -6,9 +6,7 @@ from pathlib import Path
 from arches.test.runner import ArchesTestRunner
 
 _CROSS_MODEL_ROOT = (
-    Path(__file__).parent
-    / "search_components"
-    / "cross_model_advanced_search"
+    Path(__file__).parent / "search_components" / "cross_model_advanced_search"
 )
 
 # Directories that conftest.py files add to sys.path for pytest.
