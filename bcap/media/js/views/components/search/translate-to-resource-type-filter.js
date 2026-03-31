@@ -1,5 +1,6 @@
 import arches from 'arches';
 import ko from 'knockout';
+import Cookies from 'js-cookie';
 import BaseFilter from 'views/components/search/base-filter';
 import translateToResourceTypeFilterTemplate from 'templates/views/components/search/translate-to-resource-type-filter.htm';
 
@@ -69,21 +70,6 @@ var viewModel = BaseFilter.extend({
         this.searchFilterVms[componentName](this);
     },
 
-    get_csrf_token: function () {
-        var cookie_value = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === 'csrftoken=') {
-                    cookie_value = decodeURIComponent(cookie.substring(10));
-                    break;
-                }
-            }
-        }
-        return cookie_value;
-    },
-
     capture_filters_from_query: function (query) {
         var excluded_keys = [
             'paging-filter',
@@ -139,7 +125,7 @@ var viewModel = BaseFilter.extend({
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': self.get_csrf_token(),
+                'X-CSRFToken': Cookies.get('csrftoken'),
             },
             body: search_params.toString(),
         })
