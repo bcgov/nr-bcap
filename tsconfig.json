@@ -21,6 +21,7 @@
 
     "baseUrl": ".",
     "paths": {
+      "geojson": ["node_modules/@types/geojson/index.d.ts"],
       "@/bcap/*": ["bcap/src/bcap/*"],
       "@/bcgov_arches_common/*": ["node_modules/bcgov_arches_common/bcgov_arches_common/src/bcgov_arches_common/*"],
       "@/arches_component_lab/*": ["node_modules/arches-component-lab/arches_component_lab/src/arches_component_lab/*"],
