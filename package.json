@@ -33,6 +33,7 @@
         "@maplibre/maplibre-gl-style-spec": "^24.1.1",
         "@primevue/auto-import-resolver": "^4.3.7",
         "@types/geojson": "^7946.0.16",
+        "@types/js-cookie": "^3.0.6",
         "@types/underscore": "^1.13.0",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
         "eslint-config-prettier": "^10.1.5",

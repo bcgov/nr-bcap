@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import vue from "@vitejs/plugin-vue";
+import vue from '@vitejs/plugin-vue';
 
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
@@ -23,21 +23,45 @@ function generateConfig(): Promise<UserConfig> {
             '**/staticfiles/**',
         ];
 
-        const rawData = fs.readFileSync(path.join(__dirname, 'frontend_configuration', 'webpack-metadata.json'), 'utf-8');
+        const rawData = fs.readFileSync(
+            path.join(
+                __dirname,
+                'frontend_configuration',
+                'webpack-metadata.json',
+            ),
+            'utf-8',
+        );
         const parsedData = JSON.parse(rawData);
 
         const alias: { [key: string]: string } = {
-            '@/arches': path.join(parsedData['ROOT_DIR'], 'app', 'src', 'arches'),
-            'arches': path.join(parsedData['ROOT_DIR'], 'app', 'media', 'js', 'arches.js'),
+            '@/arches': path.join(
+                parsedData['ROOT_DIR'],
+                'app',
+                'src',
+                'arches',
+            ),
+            arches: path.join(
+                parsedData['ROOT_DIR'],
+                'app',
+                'media',
+                'js',
+                'arches.js',
+            ),
         };
 
-        for (
-            const [archesApplicationName, archesApplicationPath] 
-            of Object.entries(
-                parsedData['ARCHES_APPLICATIONS_PATHS'] as { [key: string]: string }
-            )
-        ) {
-            alias[`@/${archesApplicationName}`] = path.join(archesApplicationPath, 'src', archesApplicationName);
+        for (const [
+            archesApplicationName,
+            archesApplicationPath,
+        ] of Object.entries(
+            parsedData['ARCHES_APPLICATIONS_PATHS'] as {
+                [key: string]: string;
+            },
+        )) {
+            alias[`@/${archesApplicationName}`] = path.join(
+                archesApplicationPath,
+                'src',
+                archesApplicationName,
+            );
         }
 
         resolve({
@@ -45,24 +69,30 @@ function generateConfig(): Promise<UserConfig> {
             test: {
                 alias: alias,
                 coverage: {
-                    include: [path.join(parsedData['APP_RELATIVE_PATH'], 'src', path.sep)],
-                    exclude: exclude,
-                    reporter: [
-                        ['clover', { 'file': 'coverage.xml' }],
-                        'text',
+                    include: [
+                        path.join(
+                            parsedData['APP_RELATIVE_PATH'],
+                            'src',
+                            path.sep,
+                        ),
                     ],
-                    reportsDirectory: path.join(filePath, 'coverage', 'frontend'),
+                    exclude: exclude,
+                    reporter: [['clover', { file: 'coverage.xml' }], 'text'],
+                    reportsDirectory: path.join(
+                        filePath,
+                        'coverage',
+                        'frontend',
+                    ),
                 },
-                environment: "jsdom",
+                environment: 'jsdom',
                 globals: true,
                 exclude: exclude,
                 passWithNoTests: true,
                 setupFiles: ['vitest.setup.mts'],
             },
         });
-
     });
-};
+}
 
 export default (async () => {
     const config = await generateConfig();
