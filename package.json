@@ -27,9 +27,6 @@
         "nomnom": "npm:@gerhobbelt/nomnom",
         "rimraf": "^5.0.7",
         "underscore": "^1.13.6",
-        "@turf/helpers": "7.2.0",
-        "@turf/centroid": "7.2.0",
-        "@turf/bbox": "7.2.0",
         "geojson": "0.5.0"
     },
     "devDependencies": {
@@ -51,7 +48,7 @@
         "arches": "bcgov/arches#dev/8.1.x_bcgov",
         "arches-component-lab": "archesproject/arches-component-lab#v0.0.1a9",
         "arches-controlled-lists": "archesproject/arches-controlled-lists#brf/feat/176_support_freeform_search",
-        "bcgov_arches_common": "bcgov/bcgov-arches-common#dev/2.0.x",
+        "bcgov_arches_common": "bcgov/bcgov-arches-common#release/2.1.x",
         "datatables.net": "^1.13.11",
         "eslint-config-prettier": "^10.1.5",
         "js-cookie": "^3.0.5",
