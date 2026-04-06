@@ -12,14 +12,15 @@ defineExpose({ isValid });
             <p>
                 Confirm the site does not already exist on the BC Register of
                 Historic Places by conducting the searches outlined below on the
-                <a href="https://apps.nrs.gov.bc.ca/bcrhp/index.htm"
-                    >Search Page.</a
-                >
+                <a href="https://apps.nrs.gov.bc.ca/bcrhp/index.htm">
+                    Search Page.
+                </a>
                 Consult the
                 <a
                     href="https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/our-history/historic-places/documents/20240719_how_to_search_bcrhp_final.pdf"
-                    >How to Search PDF Guide</a
                 >
+                    How to Search PDF Guide
+                </a>
                 as needed.
             </p>
         </div>
@@ -95,11 +96,12 @@ defineExpose({ isValid });
             </li>
         </ul>
         <div class="mt-4">
-            <span class="red">*</span>The system does not have a save for later
-            or draft function, so it is important to have all information ready
-            before starting. It is highly recommended to complete the remaining
-            steps if information is available to improve the historic site’s
-            search ability on the register.
+            <span class="red">*</span>
+            The system does not have a save for later or draft function, so it
+            is important to have all information ready before starting. It is
+            highly recommended to complete the remaining steps if information is
+            available to improve the historic site’s search ability on the
+            register.
         </div>
     </FieldSet>
 </template>
