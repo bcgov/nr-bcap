@@ -134,4 +134,11 @@ main {
 .p-inputtext {
     //font-size: 0.8rem !important;
 }
+.widget-label {
+    margin-top: 1rem;
+}
+.pi.pi-asterisk {
+    color: red;
+    padding-left: 0.25rem;
+}
 </style>

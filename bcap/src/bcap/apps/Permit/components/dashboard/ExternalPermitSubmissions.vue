@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import { useGettext } from 'vue3-gettext';
-import Card from '@/bcgov_arches_common/components/card/card.vue';
+import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
@@ -11,8 +11,9 @@ const { $gettext } = useGettext();
 const workflowItems = ref([
     {
         label: $gettext('Submit Permit Application'),
-        description: $gettext('Submit a new HCA Permit Application'),
-        icon: 'fa fa-file',
+        description: $gettext('New HCA Permit Application'),
+        subtitle: $gettext('Start a new HCA Permit Application process'),
+        icon: 'fa fa-square-plus',
         class: 'dashboard-card ipa',
         routeName: routeNames.newPermit,
     },
@@ -30,7 +31,7 @@ const workflowItems = ref([
                     :key="item.routeName"
                     :label="$gettext(item.label)"
                     :description="$gettext(item.description)"
-                    :subtitle="$gettext(item.description)"
+                    :subtitle="$gettext(item.subtitle)"
                     :icon="item.icon"
                     :class="item.class"
                     :route="{ name: item.routeName }"
