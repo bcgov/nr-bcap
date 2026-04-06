@@ -17,17 +17,11 @@ import type { StepperState } from 'primevue/stepper';
 import Step1_About from '@/bcap/apps/Permit/SubmitApplication/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/SubmitApplication/steps/Step2_Prelim.vue';
 import Step3_Details1 from '@/bcap/apps/Permit/SubmitApplication/steps/Step3_Details1.vue';
+import Step4_Personnel from '@/bcap/apps/Permit/SubmitApplication/steps/Step4_Personnel.vue';
+import Step5_Methods from '@/bcap/apps/Permit/SubmitApplication/steps/Step5_Methods.vue';
+import Step6_Recordings from '@/bcap/apps/Permit/SubmitApplication/steps/Step6_Recordings.vue';
+import Step7_MaterialCollection from '@/bcap/apps/Permit/SubmitApplication/steps/Step7_MaterialCollection.vue';
 
-// import SiteAddress from '@/bcrhp/pages/NewSite/steps/Step2_SiteAddress.vue';
-// import SpatialLocation from '@/bcrhp/pages/NewSite/steps/Step3_SpatialLocation.vue';
-// import SiteNames from '@/bcrhp/pages/NewSite/steps/Step4_SiteNames.vue';
-// import RecognitionDetails from '@/bcrhp/pages/NewSite/steps/Step5_RecognitionDetails.vue';
-// import SOS from '@/bcrhp/pages/NewSite/steps/Step6_SOS.vue';
-// import SiteImages from '@/bcrhp/pages/NewSite/steps/Step7_SiteImages.vue';
-// import SiteClassification from '@/bcrhp/pages/NewSite/steps/Step8_SiteClassification.vue';
-// import SiteDetails from '@/bcrhp/pages/NewSite/steps/Step9_SiteDetails.vue';
-// import SupportingDocuments from '@/bcrhp/pages/NewSite/steps/Step10_SupportingDocuments.vue';
-// import ReviewSubmission from '@/bcrhp/pages/NewSite/steps/Step11_ReviewSubmission.vue';
 // import {
 //     type HeritageSiteType,
 //     getHeritageSite,
@@ -37,8 +31,8 @@ import Step3_Details1 from '@/bcap/apps/Permit/SubmitApplication/steps/Step3_Det
 //     getBlankHeritageSite,
 //     getHeritageSiteById,
 // } from '@/bcrhp/api.ts';
-import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import Step99_Review from '@/bcap/apps/Permit/SubmitApplication/steps/Step99_Review.vue';
+import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 // import { getSiteName } from '@/bcrhp/schemas/heritage_site/site_names.ts';
 // import { getStatementOfSignificance } from '@/bcrhp/schemas/heritage_site/bc_statement_of_significance.ts';
 
@@ -169,10 +163,10 @@ const myStepper = ref();
 const step1 = ref();
 const step2 = ref();
 const step3 = ref();
-// const step4 = ref();
-// const step5 = ref();
-// const step6 = ref();
-// const step7 = ref();
+const step4 = ref();
+const step5 = ref();
+const step6 = ref();
+const step7 = ref();
 // const step8 = ref();
 // const step9 = ref();
 // const step10 = ref();
@@ -193,10 +187,10 @@ onMounted(() => {
         step1,
         step2,
         step3,
-        // step4,
-        // step5,
-        // step6,
-        // step7,
+        step4,
+        step5,
+        step6,
+        step7,
         // step8,
         // step9,
         // step10,
@@ -273,10 +267,10 @@ const showDebug = ref(false);
                         <Step :value="1">Submission Information</Step>
                         <Step :value="2">Preamble</Step>
                         <Step :value="3">Details 1</Step>
-                        <!--                        <Step :value="4">Site Names</Step>-->
-                        <!--                        <Step :value="5">Official Recognition Details</Step>-->
-                        <!--                        <Step :value="6">Statement of Significance</Step>-->
-                        <!--                        <Step :value="7">Images</Step>-->
+                        <Step :value="4">Personnel</Step>
+                        <Step :value="5">Methods</Step>
+                        <Step :value="6">Recordings and Site Evaluation</Step>
+                        <Step :value="7">Collection of Materials</Step>
                         <!--                        <Step :value="8">Site Classification</Step>-->
                         <!--                        <Step :value="9">Site Details</Step>-->
                         <!--                        <Step :value="10">Supporting Documents</Step>-->
@@ -317,138 +311,69 @@ const showDebug = ref(false);
                                 "
                             ></Step3_Details1>
                         </StepPanel>
+
                         <StepPanel :value="4">
+                            <h3 class="heading-margin-bottom">Personnel</h3>
+                            <Step4_Personnel
+                                ref="step4"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 4)
+                                "
+                            ></Step4_Personnel>
+                        </StepPanel>
+
+                        <StepPanel :value="5">
+                            <h3 class="heading-margin-bottom">Methods</h3>
+                            <Step5_Methods
+                                ref="step5"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 5)
+                                "
+                            ></Step5_Methods>
+                        </StepPanel>
+                        <StepPanel :value="6">
+                            <h3 class="heading-margin-bottom">
+                                Recordings and Site Evaluation
+                            </h3>
+                            <Step6_Recordings
+                                ref="step6"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 6)
+                                "
+                            ></Step6_Recordings>
+                        </StepPanel>
+                        <StepPanel :value="7">
+                            <h3 class="heading-margin-bottom">
+                                Collection of Materials
+                            </h3>
+                            <Step7_MaterialCollection
+                                ref="step7"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 7)
+                                "
+                            ></Step7_MaterialCollection>
+                        </StepPanel>
+
+                        <StepPanel :value="8">
                             <h3 class="heading-margin-bottom">
                                 Review Submission
                             </h3>
                             <Step99_Review
                                 ref="step11"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 4)
+                                    setCurrentStepValid($event, 8)
                                 "
                             ></Step99_Review>
                         </StepPanel>
-                        <StepPanel :value="5">
+                        <StepPanel :value="9">
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
                                 ref="step99"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 5)
+                                    setCurrentStepValid($event, 9)
                                 "
                             ></Step99_Review>
                         </StepPanel>
-                        <!--                        <StepPanel :value="3">-->
-                        <!--                            <h3 class="heading-margin-bottom">-->
-                        <!--                                <span class="red">*</span>Spatial Location-->
-                        <!--                            </h3>-->
-                        <!--                            <SpatialLocation-->
-                        <!--                                ref="step3"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 3)-->
-                        <!--                                "-->
-                        <!--                            ></SpatialLocation>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="4">-->
-                        <!--                            <h3>-->
-                        <!--                                <span class="red">*</span>Heritage Site Name(s)-->
-                        <!--                            </h3>-->
-                        <!--                            <SiteNames-->
-                        <!--                                ref="step4"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 4)-->
-                        <!--                                "-->
-                        <!--                            ></SiteNames>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="5">-->
-                        <!--                            <h3>-->
-                        <!--                                <span class="red">*</span>Official Recognition-->
-                        <!--                                Details-->
-                        <!--                            </h3>-->
-                        <!--                            <RecognitionDetails-->
-                        <!--                                ref="step5"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 5)-->
-                        <!--                                "-->
-                        <!--                            ></RecognitionDetails>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="6">-->
-                        <!--                            <h3>Statement of Significance</h3>-->
-                        <!--                            <SOS-->
-                        <!--                                ref="step6"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 6)-->
-                        <!--                                "-->
-                        <!--                            ></SOS>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="7">-->
-                        <!--                            <h3>Images</h3>-->
-                        <!--                            <p>-->
-                        <!--                                Upload 1-10 images for the historic site. Drag-->
-                        <!--                                and drop 1 image at a time, filling the form out-->
-                        <!--                                for each photo. Hit save after each completed-->
-                        <!--                                entry. File types must be jpg/jpeg with a max-->
-                        <!--                                file size of 2MB. Do not include illustrations,-->
-                        <!--                                plans, etc. in this step, save them for Step 10:-->
-                        <!--                                Supporting Documents section.-->
-                        <!--                            </p>-->
-                        <!--                            <SiteImages-->
-                        <!--                                ref="step7"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 7)-->
-                        <!--                                "-->
-                        <!--                            ></SiteImages>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="8">-->
-                        <!--                            <h3>Site Classification</h3>-->
-                        <!--                            <SiteClassification-->
-                        <!--                                ref="step8"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 8)-->
-                        <!--                                "-->
-                        <!--                            ></SiteClassification>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="9">-->
-                        <!--                            <h3>Site Details</h3>-->
-                        <!--                            <SiteDetails-->
-                        <!--                                ref="step9"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 9)-->
-                        <!--                                "-->
-                        <!--                            ></SiteDetails>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="10">-->
-                        <!--                            <h3>-->
-                        <!--                                <span class="red">*</span>Supporting Documents-->
-                        <!--                            </h3>-->
-                        <!--                            <SupportingDocuments-->
-                        <!--                                ref="step10"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 10)-->
-                        <!--                                "-->
-                        <!--                            ></SupportingDocuments>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="11">-->
-                        <!--                            <h3>Review Submission</h3>-->
-                        <!--                            <ReviewSubmission-->
-                        <!--                                ref="step11"-->
-                        <!--                                :submission-errors="submissionErrors"-->
-                        <!--                                :submissionComplete="false"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 11)-->
-                        <!--                                "-->
-                        <!--                            ></ReviewSubmission>-->
-                        <!--                        </StepPanel>-->
-                        <!--                        <StepPanel :value="12">-->
-                        <!--                            <h3>Submission Complete</h3>-->
-                        <!--                            <ReviewSubmission-->
-                        <!--                                ref="step12"-->
-                        <!--                                :submission-errors="submissionErrors"-->
-                        <!--                                :submissionComplete="true"-->
-                        <!--                                @update:step-is-valid="-->
-                        <!--                                    setCurrentStepValid($event, 12)-->
-                        <!--                                "-->
-                        <!--                            ></ReviewSubmission>-->
-                        <!--                        </StepPanel>-->
                         <StepperNavigation
                             :step-number="currentStep"
                             :is-valid="currentStepIsValid"
