@@ -53,7 +53,7 @@
                         "en": "Related Permit"
                     },
                     "nodegroup_id": "c9b090b8-fe7a-4aaa-abaf-fa2c79c88a32",
-                    "sortorder": 3,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -82,7 +82,7 @@
                         "en": "Archaeological Assessment Plan"
                     },
                     "nodegroup_id": "3b80de29-9fbe-4c1f-9283-64b73fde1ad6",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -109,7 +109,7 @@
                         "en": "Proposed Project"
                     },
                     "nodegroup_id": "42e822bc-dea7-465b-a1f3-27d1732e9393",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -136,7 +136,7 @@
                         "en": "Legal and Consent"
                     },
                     "nodegroup_id": "750da3e3-bc8a-4cd6-8879-02294fd894a0",
-                    "sortorder": 1,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -163,7 +163,7 @@
                         "en": "First Nation Activities and Information"
                     },
                     "nodegroup_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
-                    "sortorder": null,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -245,6 +245,142 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Mitigation Measures",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Briefly describe what mitigation measures to be taken"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "268b7bbd-5d6b-48e3-839a-2de2c92e0963",
+                    "label": {
+                        "en": "Mitigation Measures"
+                    },
+                    "node_id": "77efeaf4-af4f-4e96-9a62-3c940795dabb",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "HIP Study Details",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Provide details of the HIP study"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "27df6c48-f9e3-48fc-986a-b0eb6f75a0b2",
+                    "label": {
+                        "en": "HIP Study Details"
+                    },
+                    "node_id": "58cf1012-42f5-498f-a5f0-03197c411ecd",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Scope of Work",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Describe the scope of work to be competed as part of the proposed project"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "28f152d9-c2c8-4da5-ac83-dc5f5f122d84",
+                    "label": {
+                        "en": "Scope of Work"
+                    },
+                    "node_id": "b05bacfe-e0ae-4a4a-b2d7-827b5a6009bd",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "HIP Objectives",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Briefly describe the the HIP stduy objectives"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "2e2838d8-e1bc-40a8-8f09-c290574b87d9",
+                    "label": {
+                        "en": "HIP Objectives"
+                    },
+                    "node_id": "2c8b96d4-37b8-4d44-970d-ea4d24a0479d",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "d419e5c5-c9ef-430d-9877-99127b6b8708",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has FN Endorsements"
+                    },
+                    "id": "33d6e1ad-1252-43c1-875f-7e5a021e5789",
+                    "label": {
+                        "en": "Has FN Endorsements"
+                    },
+                    "node_id": "59760eeb-c42a-4b8a-b6d0-a5e6e78d7322",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
                     "card_id": "4f3dd197-69e7-4c37-92b3-8d647a3b71eb",
                     "config": {
                         "defaultResourceInstance": [],
@@ -266,6 +402,141 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Project Name",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter project name"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "5a7cc2e3-eba1-4c5c-93cf-fc750beb031d",
+                    "label": {
+                        "en": "Project Name"
+                    },
+                    "node_id": "47064904-4bf4-49c6-a9ea-61915a5d512b",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Is Replacement"
+                    },
+                    "id": "62d8f3a4-320c-48ea-85cf-607ea6e990cf",
+                    "label": {
+                        "en": "Is Replacement"
+                    },
+                    "node_id": "aabddd33-2476-4572-b8b6-50766004772d",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "MAP or HIP",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "668752bd-38cb-438b-9ed1-446ec0f52367",
+                    "label": {
+                        "en": "MAP or HIP"
+                    },
+                    "node_id": "9f846e12-abac-48d5-b6c6-b325b9616c8c",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Related Assessments",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "List any assessments that are related to this project"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "6d816974-8824-4e27-8df1-b78e223508c6",
+                    "label": {
+                        "en": "Related Assessments"
+                    },
+                    "node_id": "eff5d692-01ad-4c72-9c94-c9b99572f4d5",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "acceptedFiles": "",
+                        "defaultValue": [],
+                        "label": "Supplemental Information",
+                        "maxFilesize": "200",
+                        "rerender": true
+                    },
+                    "id": "747b06be-b5ab-4ab6-866d-0d3a0f74ef2d",
+                    "label": {
+                        "en": "Supplemental Information"
+                    },
+                    "node_id": "3794179e-c749-4c12-9060-4a974a710e83",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000019"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "acceptedFiles": "",
+                        "defaultValue": [],
+                        "label": "Arch Workplans and Schedule A",
+                        "maxFilesize": "200",
+                        "rerender": true
+                    },
+                    "id": "77e78140-dc1c-4153-bd35-bc1e33495e09",
+                    "label": {
+                        "en": "Arch Workplans and Schedule A"
+                    },
+                    "node_id": "d6fad5a4-b8d1-4840-8b8b-8daba44a21e8",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000019"
+                },
+                {
                     "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
                     "config": {
                         "defaultValue": {
@@ -280,7 +551,7 @@
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
-                            "en": "Enter text"
+                            "en": "Enter project description"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -291,6 +562,52 @@
                     },
                     "node_id": "3e4f5ea8-d41b-4c7e-977e-56b1f339590d",
                     "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Are Chance Finds Expected"
+                    },
+                    "id": "834c872b-ac2e-4158-a5f2-1d7f6f9ac5e6",
+                    "label": {
+                        "en": "Are Chance Finds Expected"
+                    },
+                    "node_id": "ae511705-7545-4a65-ad3c-b73c8f05ee1d",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Assessment Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Briefly describe the approach to be taken to assess the project"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "8ffe268c-dae1-48ea-9fe6-6bb618e1acae",
+                    "label": {
+                        "en": "Assessment Approach"
+                    },
+                    "node_id": "8d96fcc0-4d87-49cb-9255-c1cfce1b768c",
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -317,6 +634,174 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Application ID",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter application ID"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "99d76e1a-75ad-4e84-a7b5-889cce23fee4",
+                    "label": {
+                        "en": "Application ID"
+                    },
+                    "node_id": "6256c464-bc9a-4b37-8b07-993fc213baf3",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Are Ancestral Remains Anticipated"
+                    },
+                    "id": "b4d34471-7d66-4ef6-be17-2c819960724d",
+                    "label": {
+                        "en": "Are Ancestral Remains Anticipated"
+                    },
+                    "node_id": "dd42dc8b-bcf6-419a-9e2f-430389ac848a",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Affected Sites",
+                        "placeholder": {
+                            "en": "Select one or more sites that may be affected by this project"
+                        }
+                    },
+                    "id": "c252d007-1f36-40ad-856f-3c1945686752",
+                    "label": {
+                        "en": "Affected Sites"
+                    },
+                    "node_id": "a7006151-89da-47de-809e-b2a1c4b6b9f4",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
+                    "card_id": "d419e5c5-c9ef-430d-9877-99127b6b8708",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "FN File Numbers",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "d7feff4e-e265-4af4-aad9-4bb707e971c8",
+                    "label": {
+                        "en": "FN File Numbers"
+                    },
+                    "node_id": "ba4f3c1b-bb6f-44fd-9909-1780ddac6198",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
+                    "config": {
+                        "basemap": "British Columbia Roads",
+                        "bearing": 0,
+                        "centerX": -125.2111215300115,
+                        "centerY": 54.5952920093056,
+                        "defaultValue": "",
+                        "defaultValueType": "",
+                        "featureColor": "#FF0000",
+                        "featureLineWidth": 1,
+                        "featurePointSize": 3,
+                        "geocodePlaceholder": "Search",
+                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
+                        "geocoderVisible": true,
+                        "geometryTypes": [
+                            {
+                                "id": "Point",
+                                "text": "Point"
+                            },
+                            {
+                                "id": "Line",
+                                "text": "Line"
+                            },
+                            {
+                                "id": "Polygon",
+                                "text": "Polygon"
+                            }
+                        ],
+                        "label": "Project Boundary",
+                        "maxZoom": 20,
+                        "minZoom": 0,
+                        "overlayConfigs": [],
+                        "overlayOpacity": 0,
+                        "pitch": 0,
+                        "rerender": true,
+                        "zoom": 10
+                    },
+                    "id": "dcc1e320-ae55-4749-84fd-659645c60db4",
+                    "label": {
+                        "en": "Project Boundary"
+                    },
+                    "node_id": "375e9e4f-eb70-42e1-a2f6-8d8a9ef7689a",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000007"
+                },
+                {
+                    "card_id": "db75a7c4-64c0-44fd-81eb-7e07adc7603d",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Relevant Arch Studies",
+                        "placeholder": {
+                            "en": "List one or more studies that have been completed within the proposed boundary"
+                        }
+                    },
+                    "id": "e01e9872-64a6-4aab-bda5-07a0c93c7abb",
+                    "label": {
+                        "en": "Relevant Arch Studies"
+                    },
+                    "node_id": "8af24a8f-cbf8-4160-9d16-f84abcdd0ab2",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 }
             ],
             "color": "#043bae",
@@ -1088,7 +1573,7 @@
                     "nodeid": "3b80de29-9fbe-4c1f-9283-64b73fde1ad6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1134,7 +1619,7 @@
                     "nodeid": "42e822bc-dea7-465b-a1f3-27d1732e9393",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
-                    "sortorder": 3,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1260,7 +1745,7 @@
                     "nodeid": "750da3e3-bc8a-4cd6-8879-02294fd894a0",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E30_Right",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1704,7 +2189,7 @@
                     "nodeid": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1864,9 +2349,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Added fields for 1292",
-                "publicationid": "6aa2f84d-b1bf-42c9-919f-1f4e6ec76338",
-                "published_time": "2026-04-06T19:17:09.145"
+                "notes": "Fixing order",
+                "publicationid": "2e1bf07b-992c-4dbf-9420-3ad79252d6d7",
+                "published_time": "2026-04-06T22:35:50.530"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1953,7 +2438,7 @@
                 "source_identifier_id": null,
                 "sourcebranchpublication_id": null
             },
-            "slug": "new_resource_model",
+            "slug": "permit_application",
             "source_identifier_id": null,
             "spatial_views": [],
             "subtitle": {

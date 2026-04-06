@@ -16,6 +16,7 @@ import type { StepperState } from 'primevue/stepper';
 
 import Step1_About from '@/bcap/apps/Permit/SubmitApplication/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/SubmitApplication/steps/Step2_Prelim.vue';
+import Step3_Details1 from '@/bcap/apps/Permit/SubmitApplication/steps/Step3_Details1.vue';
 
 // import SiteAddress from '@/bcrhp/pages/NewSite/steps/Step2_SiteAddress.vue';
 // import SpatialLocation from '@/bcrhp/pages/NewSite/steps/Step3_SpatialLocation.vue';
@@ -167,7 +168,7 @@ const stepperState: Ref<StepperState | null> = ref(null);
 const myStepper = ref();
 const step1 = ref();
 const step2 = ref();
-// const step3 = ref();
+const step3 = ref();
 // const step4 = ref();
 // const step5 = ref();
 // const step6 = ref();
@@ -191,7 +192,7 @@ onMounted(() => {
     steps.push(
         step1,
         step2,
-        // step3,
+        step3,
         // step4,
         // step5,
         // step6,
@@ -271,7 +272,7 @@ const showDebug = ref(false);
                     <StepList>
                         <Step :value="1">Submission Information</Step>
                         <Step :value="2">Preamble</Step>
-                        <!--                        <Step :value="3">Spatial Location</Step>-->
+                        <Step :value="3">Details 1</Step>
                         <!--                        <Step :value="4">Site Names</Step>-->
                         <!--                        <Step :value="5">Official Recognition Details</Step>-->
                         <!--                        <Step :value="6">Statement of Significance</Step>-->
@@ -280,8 +281,8 @@ const showDebug = ref(false);
                         <!--                        <Step :value="9">Site Details</Step>-->
                         <!--                        <Step :value="10">Supporting Documents</Step>-->
                         <!--                        <Step :value="11">Review Submission</Step>-->
-                        <Step :value="3">Review Submission</Step>
-                        <Step :value="4">Submission Complete</Step>
+                        <Step :value="4">Review Submission</Step>
+                        <Step :value="5">Submission Complete</Step>
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
@@ -308,22 +309,31 @@ const showDebug = ref(false);
                             ></Step2_Prelim>
                         </StepPanel>
                         <StepPanel :value="3">
+                            <h3 class="heading-margin-bottom">Details 1</h3>
+                            <Step3_Details1
+                                ref="step3"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 3)
+                                "
+                            ></Step3_Details1>
+                        </StepPanel>
+                        <StepPanel :value="4">
                             <h3 class="heading-margin-bottom">
                                 Review Submission
                             </h3>
                             <Step99_Review
-                                ref="step99"
+                                ref="step11"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 3)
+                                    setCurrentStepValid($event, 4)
                                 "
                             ></Step99_Review>
                         </StepPanel>
-                        <StepPanel :value="4">
+                        <StepPanel :value="5">
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
                                 ref="step99"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 3)
+                                    setCurrentStepValid($event, 5)
                                 "
                             ></Step99_Review>
                         </StepPanel>
