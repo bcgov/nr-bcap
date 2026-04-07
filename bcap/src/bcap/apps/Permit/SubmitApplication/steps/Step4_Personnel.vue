@@ -19,8 +19,29 @@ defineExpose({ isValid });
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="project_description"
-            @update:value="updateValue($event, 'project_description')"
+            node-alias="permit_deliverables"
+            @update:value="updateValue($event, 'permit_deliverables')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="field_directors"
+            @update:value="updateValue($event, 'field_directors')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="overseeing_archaeologist"
+            @update:value="updateValue($event, 'overseeing_archaeologist')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="is_hca_compliant"
+            @update:value="updateValue($event, 'is_hca_compliant')"
         />
     </FieldSet>
 </template>

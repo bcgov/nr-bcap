@@ -275,8 +275,8 @@ const showDebug = ref(false);
                         <!--                        <Step :value="9">Site Details</Step>-->
                         <!--                        <Step :value="10">Supporting Documents</Step>-->
                         <!--                        <Step :value="11">Review Submission</Step>-->
-                        <Step :value="4">Review Submission</Step>
-                        <Step :value="5">Submission Complete</Step>
+                        <Step :value="8">Review Submission</Step>
+                        <Step :value="9">Submission Complete</Step>
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
