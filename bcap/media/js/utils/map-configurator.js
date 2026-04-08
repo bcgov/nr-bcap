@@ -215,7 +215,7 @@ function applyStatusStyling(map) {
                     ],
                 },
             },
-            fillLayer.id,
+            lineLayer ? lineLayer.id : undefined,
         );
     }
 
