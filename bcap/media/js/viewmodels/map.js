@@ -12,79 +12,6 @@ import MapboxGeocoder from 'mapbox-gl-geocoder';
 import MapPopup from '@/bcap/components/MapPopup/MapPopup.vue';
 import { createApp } from 'vue';
 
-const QUEUED_METHODS = ['setStyle'];
-
-const DROPPED_METHODS = [
-    'setZoom',
-    'setCenter',
-    'fitBounds',
-    'flyTo',
-    'jumpTo',
-    'easeTo',
-];
-
-function guardMapInteractions(map) {
-    var userInteracting = false;
-    var pending = {};
-
-    QUEUED_METHODS.forEach(function (name) {
-        pending[name] = null;
-    });
-
-    map.on('mousedown', function (e) {
-        if (e.originalEvent) userInteracting = true;
-    });
-
-    map.on('touchstart', function (e) {
-        if (e.originalEvent) userInteracting = true;
-    });
-
-    map.on('wheel', function (e) {
-        if (e.originalEvent) userInteracting = true;
-    });
-
-    var release = function () {
-        if (!userInteracting) return;
-        userInteracting = false;
-
-        QUEUED_METHODS.forEach(function (name) {
-            if (pending[name]) {
-                var call = pending[name];
-                pending[name] = null;
-                call.fn.apply(map, call.args);
-            }
-        });
-    };
-
-    map.on('mouseup', release);
-    map.on('touchend', release);
-    map.on('moveend', function () {
-        setTimeout(release, 0);
-    });
-
-    QUEUED_METHODS.forEach(function (name) {
-        var original = map[name].bind(map);
-
-        map[name] = function () {
-            if (userInteracting) {
-                pending[name] = { fn: original, args: arguments };
-            } else {
-                pending[name] = null;
-                original.apply(null, arguments);
-            }
-        };
-    });
-
-    DROPPED_METHODS.forEach(function (name) {
-        var original = map[name].bind(map);
-
-        map[name] = function () {
-            if (userInteracting) return;
-            original.apply(null, arguments);
-        };
-    });
-}
-
 const viewModel = function (params) {
     var self = this;
 
@@ -449,16 +376,13 @@ const viewModel = function (params) {
     };
 
     this.updateLayers = function (layers) {
-        var map = self.map();
-        if (!map) return;
-
-        var style = map.getStyle();
+        var style = self.map().getStyle();
 
         if (style) {
             style.layers = self.draw
                 ? layers.concat(self.draw.options.styles)
                 : layers;
-            map.setStyle(style);
+            self.map().setStyle(style);
         }
     };
 
@@ -720,8 +644,6 @@ const viewModel = function (params) {
 
     this.setupMap = function (map) {
         map.on('load', function () {
-            guardMapInteractions(map);
-
             mapConfigurator.preConfig(map);
             map.addControl(new MapboxGl.NavigationControl(), 'top-left');
             map.addControl(
@@ -747,35 +669,29 @@ const viewModel = function (params) {
             var hoverFeature;
 
             map.on('mousemove', function (e) {
-                try {
-                    var style = map.getStyle();
-                    if (hoverFeature && hoverFeature.id && style)
-                        map.setFeatureState(hoverFeature, { hover: false });
-                    hoverFeature = _.find(
-                        map.queryRenderedFeatures(e.point),
-                        (feature) =>
-                            mapPopupProvider.isFeatureClickable(feature, self),
-                    );
-                    if (hoverFeature && hoverFeature.id && style)
-                        map.setFeatureState(hoverFeature, { hover: true });
+                var style = map.getStyle();
+                if (hoverFeature && hoverFeature.id && style)
+                    map.setFeatureState(hoverFeature, { hover: false });
+                hoverFeature = _.find(
+                    map.queryRenderedFeatures(e.point),
+                    (feature) =>
+                        mapPopupProvider.isFeatureClickable(feature, self),
+                );
+                if (hoverFeature && hoverFeature.id && style)
+                    map.setFeatureState(hoverFeature, { hover: true });
 
-                    map.getCanvas().style.cursor = hoverFeature
-                        ? 'pointer'
+                map.getCanvas().style.cursor = hoverFeature ? 'pointer' : '';
+                if (self.map().draw_mode) {
+                    var crosshairModes = [
+                        'draw_point',
+                        'draw_line_string',
+                        'draw_polygon',
+                    ];
+                    map.getCanvas().style.cursor = crosshairModes.includes(
+                        self.map().draw_mode,
+                    )
+                        ? 'crosshair'
                         : '';
-                    if (self.map().draw_mode) {
-                        var crosshairModes = [
-                            'draw_point',
-                            'draw_line_string',
-                            'draw_polygon',
-                        ];
-                        map.getCanvas().style.cursor = crosshairModes.includes(
-                            self.map().draw_mode,
-                        )
-                            ? 'crosshair'
-                            : '';
-                    }
-                } catch (e) {
-                    hoverFeature = null;
                 }
             });
 
