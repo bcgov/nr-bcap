@@ -686,12 +686,10 @@
                 {
                     "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Project Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -704,7 +702,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
@@ -1619,9 +1617,10 @@
                 {
                     "alias": "project_type",
                     "config": {
-                        "rdmCollection": "c022f098-754c-5854-8473-737d1d3cc273"
+                        "controlledList": "c022f098-754c-5854-8473-737d1d3cc273",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -2161,8 +2160,7 @@
                     "alias": "map_or_hip",
                     "config": {
                         "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
-                        "multiValue": false,
-                        "rdmCollection": null
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2292,8 +2290,7 @@
                     "alias": "industrial_sector",
                     "config": {
                         "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
-                        "multiValue": false,
-                        "rdmCollection": null
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
