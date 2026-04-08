@@ -2,7 +2,6 @@ from bcgov_arches_common.util.mvt_tiler_common import MVTTiler as MVTTiler_Base
 
 
 class MVTTiler(MVTTiler_Base):
-
     def __init__(self):
         pass
 
@@ -11,8 +10,9 @@ class MVTTiler(MVTTiler_Base):
     @staticmethod
     def get_query_config():
         return {
-            "1b6235b0-0d0f-11ed-98c2-5254008afee6": [
+            "b18223c2-13ef-11f0-8695-0242ac170007": [
                 "authorities",
                 "borden_number",
+                "registration_status",
             ],  # Archaeological Site
         }
