@@ -21,6 +21,7 @@ import Step4_Personnel from '@/bcap/apps/Permit/SubmitApplication/steps/Step4_Pe
 import Step5_Methods from '@/bcap/apps/Permit/SubmitApplication/steps/Step5_Methods.vue';
 import Step6_Recordings from '@/bcap/apps/Permit/SubmitApplication/steps/Step6_Recordings.vue';
 import Step7_MaterialCollection from '@/bcap/apps/Permit/SubmitApplication/steps/Step7_MaterialCollection.vue';
+import Step8_Remains from '@/bcap/apps/Permit/SubmitApplication/steps/Step8_Remains.vue';
 
 // import {
 //     type HeritageSiteType,
@@ -167,7 +168,7 @@ const step4 = ref();
 const step5 = ref();
 const step6 = ref();
 const step7 = ref();
-// const step8 = ref();
+const step8 = ref();
 // const step9 = ref();
 // const step10 = ref();
 const step11 = ref();
@@ -191,7 +192,7 @@ onMounted(() => {
         step5,
         step6,
         step7,
-        // step8,
+        step8,
         // step9,
         // step10,
         step11,
@@ -271,12 +272,12 @@ const showDebug = ref(false);
                         <Step :value="5">Methods</Step>
                         <Step :value="6">Recordings and Site Evaluation</Step>
                         <Step :value="7">Collection of Materials</Step>
-                        <!--                        <Step :value="8">Site Classification</Step>-->
+                        <Step :value="8">Ancestral Remains</Step>
                         <!--                        <Step :value="9">Site Details</Step>-->
                         <!--                        <Step :value="10">Supporting Documents</Step>-->
                         <!--                        <Step :value="11">Review Submission</Step>-->
-                        <Step :value="8">Review Submission</Step>
-                        <Step :value="9">Submission Complete</Step>
+                        <Step :value="9">Review Submission</Step>
+                        <Step :value="10">Submission Complete</Step>
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
@@ -353,8 +354,19 @@ const showDebug = ref(false);
                                 "
                             ></Step7_MaterialCollection>
                         </StepPanel>
-
                         <StepPanel :value="8">
+                            <h3 class="heading-margin-bottom">
+                                Ancestral Remains
+                            </h3>
+                            <Step8_Remains
+                                ref="step8"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 8)
+                                "
+                            ></Step8_Remains>
+                        </StepPanel>
+
+                        <StepPanel :value="9">
                             <h3 class="heading-margin-bottom">
                                 Review Submission
                             </h3>
