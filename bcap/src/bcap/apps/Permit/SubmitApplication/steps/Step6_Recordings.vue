@@ -18,30 +18,36 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="if the excavation approach is compliant with standard guidance"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="is_excavation_approach_compliant"
+            @update:value="
+                updateValue($event, 'is_excavation_approach_compliant')
+            "
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="other approaches"
-            node-alias=""
-            @update:value="updateValue($event, 'other approaches')"
+            graph-slug="permit_application"
+            node-alias="alternate_excavation_approach"
+            @update:value="updateValue($event, 'alternate_excavation_approach')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="will rock art recording will be compliant with standard guidance"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="is_rock_art_recording_compliant"
+            @update:value="
+                updateValue($event, 'is_rock_art_recording_compliant')
+            "
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="alternate way to record rock art"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="alternate_rock_art_recording_approach"
+            @update:value="
+                updateValue($event, 'alternate_rock_art_recording_approach')
+            "
         />
     </FieldSet>
 </template>
