@@ -14,13 +14,34 @@ const updateValue = (newValue: AliasedNodeData, attribute_name: string) => {
 defineExpose({ isValid });
 </script>
 <template>
-    <FieldSet legend="Initial Information">
+    <FieldSet legend="Recordings">
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="permit_application"
-            node-alias="project_description"
-            @update:value="updateValue($event, 'project_description')"
+            graph-slug="if the excavation approach is compliant with standard guidance"
+            node-alias=""
+            @update:value="updateValue($event, '')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="other approaches"
+            node-alias=""
+            @update:value="updateValue($event, 'other approaches')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="will rock art recording will be compliant with standard guidance"
+            node-alias=""
+            @update:value="updateValue($event, '')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="alternate way to record rock art"
+            node-alias=""
+            @update:value="updateValue($event, '')"
         />
     </FieldSet>
 </template>
