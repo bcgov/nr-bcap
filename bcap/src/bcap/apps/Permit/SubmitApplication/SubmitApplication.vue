@@ -23,6 +23,10 @@ import Step6_Recordings from '@/bcap/apps/Permit/SubmitApplication/steps/Step6_R
 import Step7_MaterialCollection from '@/bcap/apps/Permit/SubmitApplication/steps/Step7_MaterialCollection.vue';
 import Step8_Remains from '@/bcap/apps/Permit/SubmitApplication/steps/Step8_Remains.vue';
 import Step9_Repository from '@/bcap/apps/Permit/SubmitApplication/steps/Step9_Repository.vue';
+import Step10_Permit_Deliverables from './steps/Step10_Permit_Deliverables.vue';
+import Step11_Reports_Expectations from './steps/Step11_Reports_Expectations.vue';
+import Step12_Schedule_of_Deliverables from './steps/Step12_Schedule_of_Deliverables.vue';
+import Step13_References from './steps/Step13_References.vue';
 
 // import {
 //     type HeritageSiteType,
@@ -171,8 +175,11 @@ const step6 = ref();
 const step7 = ref();
 const step8 = ref();
 const step9 = ref();
-// const step10 = ref();
+const step10 = ref();
 const step11 = ref();
+const step12 = ref();
+const step13 = ref();
+const step14 = ref();
 const step99 = ref();
 const steps: Ref[] = [];
 let lastStep = 1;
@@ -195,8 +202,11 @@ onMounted(() => {
         step7,
         step8,
         step9,
-        // step10,
+        step10,
         step11,
+        step12,
+        step13,
+        step14,
         step99,
     );
 
@@ -275,10 +285,12 @@ const showDebug = ref(false);
                         <Step :value="7">Collection of Materials</Step>
                         <Step :value="8">Ancestral Remains</Step>
                         <Step :value="9">Repositories and Curation</Step>
-                        <!-- <Step :value="10">Supporting Documents</Step> -->
-                        <!--                        <Step :value="11">Review Submission</Step>-->
-                        <Step :value="11">Review Submission</Step>
-                        <Step :value="12">Submission Complete</Step>
+                        <Step :value="10">Permit Deliverables</Step>
+                        <Step :value="11">Reports Expectations</Step>
+                        <Step :value="12">Schedule of Deliverables</Step>
+                        <Step :value="13">References</Step>
+                        <Step :value="14">Review Submission</Step>
+                        <Step :value="15">Submission Complete</Step>
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
@@ -377,24 +389,66 @@ const showDebug = ref(false);
                                 "
                             ></Step9_Repository>
                         </StepPanel>
-
                         <StepPanel :value="10">
+                            <h3 class="heading-margin-bottom">
+                                Permit Deliverables
+                            </h3>
+                            <Step10_Permit_Deliverables
+                                ref="step10"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 10)
+                                "
+                            ></Step10_Permit_Deliverables>
+                        </StepPanel>
+                        <StepPanel :value="11">
+                            <h3 class="heading-margin-bottom">
+                                Reports and Expectations
+                            </h3>
+                            <Step11_Reports_Expectations
+                                ref="step11"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 11)
+                                "
+                            ></Step11_Reports_Expectations>
+                        </StepPanel>
+                        <StepPanel :value="12">
+                            <h3 class="heading-margin-bottom">
+                                Schedule of Deliverables
+                            </h3>
+                            <Step12_Schedule_of_Deliverables
+                                ref="step12"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 12)
+                                "
+                            ></Step12_Schedule_of_Deliverables>
+                        </StepPanel>
+                        <StepPanel :value="13">
+                            <h3 class="heading-margin-bottom">References</h3>
+                            <Step13_References
+                                ref="step13"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 13)
+                                "
+                            ></Step13_References>
+                        </StepPanel>
+
+                        <StepPanel :value="14">
                             <h3 class="heading-margin-bottom">
                                 Review Submission
                             </h3>
                             <Step99_Review
-                                ref="step11"
+                                ref="step14"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 10)
+                                    setCurrentStepValid($event, 14)
                                 "
                             ></Step99_Review>
                         </StepPanel>
-                        <StepPanel :value="11">
+                        <StepPanel :value="15">
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
                                 ref="step99"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 11)
+                                    setCurrentStepValid($event, 15)
                                 "
                             ></Step99_Review>
                         </StepPanel>
