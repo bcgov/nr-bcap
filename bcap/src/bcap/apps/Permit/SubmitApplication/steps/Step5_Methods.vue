@@ -18,37 +18,39 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="Methods"
-            node-alias=""
-            @update:value="updateValue($event, 'Methods')"
+            graph-slug="permit_application"
+            node-alias="data_analysis_methods"
+            @update:value="updateValue($event, 'data_analysis_methods')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="pre-field research"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="pre_field_research"
+            @update:value="updateValue($event, 'pre_field_research')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="archaeological potential"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="has_arch_potential"
+            @update:value="updateValue($event, 'has_arch_potential')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="subsurface testing"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="has_subsurface_testing"
+            @update:value="updateValue($event, 'has_subsurface_testing')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="transport and lab methods"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="field_transport_and_lab_methods"
+            @update:value="
+                updateValue($event, 'field_transport_and_lab_methods')
+            "
         />
     </FieldSet>
 </template>
