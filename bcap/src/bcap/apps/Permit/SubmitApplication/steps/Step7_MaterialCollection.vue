@@ -18,37 +18,41 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="Methods"
-            node-alias=""
-            @update:value="updateValue($event, 'Methods')"
+            graph-slug="permit_application"
+            node-alias="collection_approach"
+            @update:value="updateValue($event, 'collection_approach')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="pre-field research"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="collection_approach_details"
+            @update:value="updateValue($event, 'collection_approach_details')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="archaeological potential"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="collection_approach_additional_comments"
+            @update:value="
+                updateValue($event, 'collection_approach_additional_comments')
+            "
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="subsurface testing"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="details_of_collected_materials"
+            @update:value="
+                updateValue($event, 'details_of_collected_materials')
+            "
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
-            graph-slug="transport and lab methods"
-            node-alias=""
-            @update:value="updateValue($event, '')"
+            graph-slug="permit_application"
+            node-alias="details_of_collected_samples"
+            @update:value="updateValue($event, 'details_of_collected_samples')"
         />
     </FieldSet>
 </template>
