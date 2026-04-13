@@ -27,6 +27,7 @@ import Step10_Permit_Deliverables from './steps/Step10_Permit_Deliverables.vue';
 import Step11_Reports_Expectations from './steps/Step11_Reports_Expectations.vue';
 import Step12_Schedule_of_Deliverables from './steps/Step12_Schedule_of_Deliverables.vue';
 import Step13_References from './steps/Step13_References.vue';
+import Step14_SignOff from './steps/Step14_SignOff.vue';
 
 // import {
 //     type HeritageSiteType,
@@ -180,6 +181,7 @@ const step11 = ref();
 const step12 = ref();
 const step13 = ref();
 const step14 = ref();
+const step15 = ref();
 const step99 = ref();
 const steps: Ref[] = [];
 let lastStep = 1;
@@ -207,6 +209,7 @@ onMounted(() => {
         step12,
         step13,
         step14,
+        step15,
         step99,
     );
 
@@ -289,8 +292,9 @@ const showDebug = ref(false);
                         <Step :value="11">Reports Expectations</Step>
                         <Step :value="12">Schedule of Deliverables</Step>
                         <Step :value="13">References</Step>
-                        <Step :value="14">Review Submission</Step>
-                        <Step :value="15">Submission Complete</Step>
+                        <Step :value="14">Sign Off</Step>
+                        <Step :value="15">Review Submission</Step>
+                        <Step :value="16">Submission Complete</Step>
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
@@ -431,24 +435,33 @@ const showDebug = ref(false);
                                 "
                             ></Step13_References>
                         </StepPanel>
-
                         <StepPanel :value="14">
-                            <h3 class="heading-margin-bottom">
-                                Review Submission
-                            </h3>
-                            <Step99_Review
+                            <h3 class="heading-margin-bottom">Sign Off</h3>
+                            <Step14_SignOff
                                 ref="step14"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 14)
                                 "
+                            ></Step14_SignOff>
+                        </StepPanel>
+
+                        <StepPanel :value="15">
+                            <h3 class="heading-margin-bottom">
+                                Review Submission
+                            </h3>
+                            <Step99_Review
+                                ref="step15"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 15)
+                                "
                             ></Step99_Review>
                         </StepPanel>
-                        <StepPanel :value="15">
+                        <StepPanel :value="16">
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
                                 ref="step99"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 15)
+                                    setCurrentStepValid($event, 16)
                                 "
                             ></Step99_Review>
                         </StepPanel>
