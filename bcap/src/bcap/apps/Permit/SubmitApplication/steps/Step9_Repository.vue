@@ -40,15 +40,11 @@ defineExpose({ isValid });
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="additional_repository_and_curation_comments"
-            @update:value="
-                updateValue(
-                    $event,
-                    'additional_repository_and_curation_comments',
-                )
-            "
+            node-alias="destination_repository"
+            @update:value="updateValue($event, 'destination_repository')"
         />
     </FieldSet>
+    <br />
 </template>
 
 <style></style>
