@@ -26,7 +26,7 @@ defineExpose({ isValid });
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="pre_field_research"
+            node-alias="has_pre_field_research"
             @update:value="updateValue($event, 'pre_field_research')"
         />
         <GenericWidget
