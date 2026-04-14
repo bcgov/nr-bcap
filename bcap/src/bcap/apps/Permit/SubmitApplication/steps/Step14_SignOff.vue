@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import { EDIT, VIEW } from '@/arches_component_lab/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import { currentDateValue } from '@/bcap/util.ts';
 
 const isValid = () => {
     return true;
@@ -10,6 +12,20 @@ const isValid = () => {
 
 const updateValue = (newValue: AliasedNodeData, attribute_name: string) => {
     console.log(newValue, attribute_name);
+};
+
+const isConsented = ref(false);
+const timeOfConsentData = ref<AliasedNodeData | null>(null);
+
+const handleConsent = () => {
+    if (isConsented.value) {
+        const now = currentDateValue() as unknown as AliasedNodeData;
+        timeOfConsentData.value = now;
+        updateValue(now, 'time_of_consent');
+    } else {
+        timeOfConsentData.value = null;
+        updateValue(null as unknown as AliasedNodeData, 'time_of_consent');
+    }
 };
 
 defineExpose({ isValid });
@@ -159,53 +175,57 @@ defineExpose({ isValid });
                 agreed to alternate arrangements.
             </li>
         </ul>
+        <div class="checkboxContainer">
+            <input
+                type="checkbox"
+                v-model="isConsented"
+                @change="handleConsent"
+                style="width: 18px; height: 18px; margin-top: -5px"
+            />
+            <label style="font-weight: bold">
+                I certify that I have read and agree to the terms and conditions
+                above.
+            </label>
+        </div>
+        <div v-if="timeOfConsentData">
+            <GenericWidget
+                :mode="VIEW"
+                :aliased-node-data="timeOfConsentData"
+                graph-slug="permit_application"
+                node-alias="time_of_consent"
+                @update:value="updateValue($event, 'time_of_consent')"
+            />
+        </div>
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="alternate_ancestral_remains_approach"
-            @update:value="
-                updateValue($event, 'alternate_ancestral_remains_approach')
-            "
+            node-alias="copyright_authorization"
+            @update:value="updateValue($event, 'copyright_authorization')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="alternate_ancestral_remains_approach"
-            @update:value="
-                updateValue($event, 'alternate_ancestral_remains_approach')
-            "
+            node-alias="grant_of_license_to_ministry"
+            @update:value="updateValue($event, 'grant_of_license_to_ministry')"
         />
+
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="alternate_ancestral_remains_approach"
-            @update:value="
-                updateValue($event, 'alternate_ancestral_remains_approach')
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="null"
-            graph-slug="permit_application"
-            node-alias="alternate_ancestral_remains_approach"
-            @update:value="
-                updateValue($event, 'alternate_ancestral_remains_approach')
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="null"
-            graph-slug="permit_application"
-            node-alias="alternate_ancestral_remains_approach"
-            @update:value="
-                updateValue($event, 'alternate_ancestral_remains_approach')
-            "
+            node-alias="applicant_name"
+            @update:value="updateValue($event, 'applicant_name')"
         />
     </FieldSet>
     <br />
 </template>
 
-<style></style>
+<style>
+.checkboxContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+</style>
