@@ -101,7 +101,7 @@ export interface SiteVisitDetailsTile extends AliasedTileData {
         archaeological_site: ResourceInstanceValue;
         associated_permit: ResourceInstanceValue;
         affiliation: ResourceInstanceValue;
-        nonpermitted_site_visit?: BooleanValue;
+        is_site_visit_permitted?: BooleanValue;
         site_visit_team: SiteVisitTeamTile; // semantic subgroup (child tile)
     };
 }
