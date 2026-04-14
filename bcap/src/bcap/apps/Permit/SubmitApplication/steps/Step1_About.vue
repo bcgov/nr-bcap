@@ -70,4 +70,14 @@ li {
     padding-left: 2rem;
     margin-top: 0.25rem;
 }
+
+.emailLink {
+    color: #0000ee;
+    text-decoration: underline;
+}
+
+.pdfLink {
+    color: #0000ee;
+    text-decoration: underline;
+}
 </style>

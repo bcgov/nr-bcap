@@ -14,40 +14,34 @@ const updateValue = (newValue: AliasedNodeData, attribute_name: string) => {
 defineExpose({ isValid });
 </script>
 <template>
-    <FieldSet legend="Recordings">
+    <FieldSet legend="Repositories and Curation">
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="is_excavation_approach_compliant"
-            @update:value="
-                updateValue($event, 'is_excavation_approach_compliant')
-            "
+            node-alias="is_repository_required"
+            @update:value="updateValue($event, 'is_repository_required')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="alternate_excavation_approach"
-            @update:value="updateValue($event, 'alternate_excavation_approach')"
+            node-alias="has_repository_been_contacted"
+            @update:value="updateValue($event, 'has_repository_been_contacted')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="is_rock_art_recording_compliant"
-            @update:value="
-                updateValue($event, 'is_rock_art_recording_compliant')
-            "
+            node-alias="has_repository_agreement"
+            @update:value="updateValue($event, 'has_repository_agreement')"
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="alternate_rock_art_recording_approach"
-            @update:value="
-                updateValue($event, 'alternate_rock_art_recording_approach')
-            "
+            node-alias="destination_repository"
+            @update:value="updateValue($event, 'destination_repository')"
         />
     </FieldSet>
     <br />
