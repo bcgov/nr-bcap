@@ -102,30 +102,6 @@ defineExpose({ isValid });
     <br />
 </template>
 
-<style>
-li {
-    color: unset;
-    font-size: unset;
-}
-
-.bullet-list {
-    list-style-type: disc;
-    padding-left: 1.5rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.bullet-list-nested {
-    list-style-type: circle;
-    padding-left: 2rem;
-    margin-top: 0.25rem;
-}
-
-.emailLink {
-    color: #0000ee;
-    text-decoration: underline;
-}
-</style>
 <style scoped>
 ul,
 ol {

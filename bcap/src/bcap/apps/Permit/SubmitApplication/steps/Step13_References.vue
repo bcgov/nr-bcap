@@ -34,9 +34,4 @@ defineExpose({ isValid });
     <br />
 </template>
 
-<style>
-.pdfLink {
-    color: #0000ee;
-    text-decoration: underline;
-}
-</style>
+<style></style>

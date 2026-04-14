@@ -55,6 +55,7 @@ defineExpose({ isValid });
             @update:value="updateValue($event, 'details_of_collected_samples')"
         />
     </FieldSet>
+    <br />
 </template>
 
 <style></style>

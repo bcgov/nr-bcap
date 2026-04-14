@@ -436,7 +436,9 @@ const showDebug = ref(false);
                             ></Step13_References>
                         </StepPanel>
                         <StepPanel :value="14">
-                            <h3 class="heading-margin-bottom">Sign Off</h3>
+                            <h3 class="heading-margin-bottom">
+                                Sign-off and Certification
+                            </h3>
                             <Step14_SignOff
                                 ref="step14"
                                 @update:step-is-valid="
