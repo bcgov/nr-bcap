@@ -38,7 +38,7 @@ load_dotenv(
 APP_NAME = "bcap"
 APP_VERSION = semantic_version.Version(major=0, minor=0, patch=1)
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-DEPLOYMENT_TIMESTAMP=get_env_variable("DEPLOYMENT_TIMESTAMP")
+DEPLOYMENT_TIMESTAMP = get_env_variable("DEPLOYMENT_TIMESTAMP")
 
 # PROXY prefix used - NB - cannot have leading "/", and must have trailing "/"
 BCGOV_PROXY_PREFIX = get_env_variable("BCGOV_PROXY_PREFIX")
@@ -98,13 +98,7 @@ ELASTICSEARCH_HOSTS = [
     }
 ]
 
-ELASTICSEARCH_INDEX_SETTINGS = {
-    "settings": {
-        "index": {
-            "max_terms_count": 150000
-        }
-    }
-}
+ELASTICSEARCH_INDEX_SETTINGS = {"settings": {"index": {"max_terms_count": 150000}}}
 
 # Modify this line as needed for your project to connect to elasticsearch with a password that you generate
 # ELASTICSEARCH_CONNECTION_OPTIONS = {"request_timeout": 30, "verify_certs": False, "basic_auth": ("elastic", "E1asticSearchforArche5")}
@@ -325,7 +319,7 @@ TEMPLATES = build_templates_config(
 
 # make vite context processor available in templates
 TEMPLATES[0]["OPTIONS"]["context_processors"] += [
-    'bcap.util.context_processors.deployment_settings',
+    "bcap.util.context_processors.deployment_settings",
     "bcap.context_processors.vite",
 ]
 
@@ -488,8 +482,8 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/auth/eoauth_start",
                 "/bcap/auth/eoauth_cb",
                 "/bcap/o/token",
-                # "/bcap/api/borden-number",
-                "/bcap/auth/user_profile"
+                #"/bcap/api/borden-number",
+                "/bcap/auth/user_profile",
                 # "/bcap/geojson"
             ],
         },
@@ -704,19 +698,19 @@ TILESERVER_URL = "https://openmaps.gov.bc.ca/"
 BC_TILESERVER_URLS = {
     "maps": {
         "url": "https://maps.gov.bc.ca/",
-        "use_outbound_proxy": True  # Use outbound proxy for this source
+        "use_outbound_proxy": True,  # Use outbound proxy for this source
     },
     "openmaps": {
         "url": TILESERVER_URL,
-        "use_outbound_proxy": True  # Don't use outbound proxy for this source
+        "use_outbound_proxy": True,  # Don't use outbound proxy for this source
     },
     "local": {
         "url": get_env_variable("TILESERVER_LOCAL_URL"),
-        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+        "use_outbound_proxy": False,  # Local doesn't need outbound proxy
     },
     "local-feature": {
         "url": get_env_variable("FEATURESERVER_LOCAL_URL"),
-        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+        "use_outbound_proxy": False,  # Local doesn't need outbound proxy
     },
 }
 
