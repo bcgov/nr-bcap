@@ -14,15 +14,48 @@ const updateValue = (newValue: AliasedNodeData, attribute_name: string) => {
 defineExpose({ isValid });
 </script>
 <template>
-    <FieldSet legend="Initial Information">
+    <FieldSet legend="Collection of Materials">
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="project_description"
-            @update:value="updateValue($event, 'project_description')"
+            node-alias="collection_approach"
+            @update:value="updateValue($event, 'collection_approach')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="collection_approach_details"
+            @update:value="updateValue($event, 'collection_approach_details')"
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="collection_approach_additional_comments"
+            @update:value="
+                updateValue($event, 'collection_approach_additional_comments')
+            "
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="details_of_collected_materials"
+            @update:value="
+                updateValue($event, 'details_of_collected_materials')
+            "
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="details_of_collected_samples"
+            @update:value="updateValue($event, 'details_of_collected_samples')"
         />
     </FieldSet>
+    <br />
 </template>
 
 <style></style>

@@ -61,3 +61,12 @@ export function isAliasedNodeData(value: unknown): value is AliasedNodeData {
         'display_value' in maybe && 'node_value' in maybe && 'details' in maybe
     );
 }
+
+export const currentDateValue = function () {
+    const now = new Date().toISOString().split('T')[0];
+    return {
+        display_value: now,
+        node_value: now,
+        details: [] as never[],
+    };
+};

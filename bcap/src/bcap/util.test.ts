@@ -5,6 +5,7 @@ import {
     getNodeDisplayValue,
     isEmpty,
     isAliasedNodeData,
+    currentDateValue,
 } from './util';
 
 // Helper to build rows like the app does
@@ -251,5 +252,21 @@ describe('isAliasedNodeData (type guard)', () => {
                 details: [],
             }),
         ).toBe(true);
+    });
+});
+
+describe('currentDateValue', () => {
+    it('returns date object', () => {
+        expect(currentDateValue()).not.toBeNull();
+    });
+
+    it('returns formatted date in display value', () => {
+        const now = new Date().toISOString().split('T')[0];
+        expect(currentDateValue().display_value).toBe(now);
+    });
+
+    it('returns formatted date in the node value', () => {
+        const now = new Date().toISOString().split('T')[0];
+        expect(currentDateValue().node_value).toBe(now);
     });
 });

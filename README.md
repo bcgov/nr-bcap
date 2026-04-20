@@ -152,7 +152,7 @@ python3.11 manage.py setup_db
 ```
 
 #### Authentication
-1. Open `bcap/nr-bcap/bcap/settings.py` and `bcap/nr-bcap/bcap/urls.py`
+1. Open `bcap/nr-bcap/bcap/settings.py`
 2. Find `AUTHENTICATION_BACKENDS` in the `settings.py` file
 
 #### Django Auth
@@ -170,47 +170,18 @@ python3.11 manage.py setup_db
 - Uncomment the following:
 ```
 "oauth2_provider.backends.OAuth2Backend",
-"bcap.util.external_oauth_backend.ExternalOauthAuthenticationBackend",
+"django.contrib.auth.backends.ModelBackend",
+"guardian.backends.ObjectPermissionBackend",
+"arches.app.utils.permission_backend.PermissionBackend",
 ```
 - Comment out the following:
 ```
-"django.contrib.auth.backends.ModelBackend"
+"arches.app.utils.email_auth_backend.EmailAuthenticationBackend",
+"django.contrib.auth.backends.RemoteUserBackend",
 ```
 
 - You must also add the secret to the `OAUTH_CLIENT_SECRET` variable in the .env file
 
-3. Go to the `urls.py` file
-
-4. If you are using...
-- Django Auth, then comment out the following:
-- OAuth2, then uncomment the following:
-```
-    re_path(
-        bc_path_prefix(r"^admin/login/$"),
-        ExternalOauth.start,
-        name="external_oauth_start",
-    ),
-    re_path(
-        bc_path_prefix(r"^auth/$"),
-        ExternalOauth.start,
-        name="external_oauth_start"
-    ),
-    re_path(
-        bc_path_prefix(r"^auth/eoauth_cb$"),
-        ExternalOauth.callback,
-        name="external_oauth_callback",
-    ),
-    re_path(
-        bc_path_prefix(r"^auth/eoauth_start$"),
-        ExternalOauth.start,
-        name="external_oauth_start",
-    ),
-    re_path(
-        bc_path_prefix(r"^unauthorized/"),
-        UnauthorizedView.as_view(),
-        name="unauthorized",
-    ),
-```
 #### Run
 1. You should now be able to access BCAP at http://localhost:82/bcap
 2. If it doesn't work, then open or navigate to the `bcap` directory in the terminal
@@ -220,6 +191,24 @@ cd nr-bcap && docker compose up -d
 ```
 4. After logging into BCAP, the map will initially be blank.
     - You must navigate to the "System Settings" from the menu on the left-hand side, and enter your `Mapbox` token there.
+
+### Loading in a Database
+If you have been given a database dump like bcap.sql follow these steps to load it into the system.
+1. Copy db file into your docker container from any terminal.
+```
+docker cp bcap.sql bcap7-6:/tmp/bcap.sql
+```
+2. Create and index the database from the Exec tab inside your container (indexing may take up to an hour).
+```
+createdb -U postgres -h postgres16-3_arches7-5-2 bcap
+psql -U postgres -h postgres16-3_arches7-5-2 -d bcap -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+psql -U postgres -h postgres16-3_arches7-5-2 -d bcap -f /tmp/bcap.sql
+python3.11 manage.py es index_database
+```
+3. If you are having trouble with logins you might need to refresh your test user list
+```
+python3.11 manage.py bc_test_users --refresh
+```
 
 ## Developing the UI using Vite
 See [README.vite.md](./README.vite.md) for details about developing using the Vite dev server.

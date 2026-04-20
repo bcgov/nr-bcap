@@ -14,39 +14,44 @@ const updateValue = (newValue: AliasedNodeData, attribute_name: string) => {
 defineExpose({ isValid });
 </script>
 <template>
-    <FieldSet legend="Recordings">
+    <FieldSet legend="Ancestral Remains">
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="is_excavation_approach_compliant"
+            node-alias="ancestral_remains_approach_compliant"
             @update:value="
-                updateValue($event, 'is_excavation_approach_compliant')
+                updateValue($event, 'ancestral_remains_approach_compliant')
             "
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="alternate_excavation_approach"
-            @update:value="updateValue($event, 'alternate_excavation_approach')"
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="null"
-            graph-slug="permit_application"
-            node-alias="is_rock_art_recording_compliant"
+            node-alias="alternate_ancestral_remains_approach"
             @update:value="
-                updateValue($event, 'is_rock_art_recording_compliant')
+                updateValue($event, 'alternate_ancestral_remains_approach')
             "
         />
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="null"
             graph-slug="permit_application"
-            node-alias="alternate_rock_art_recording_approach"
+            node-alias="ancestral_remains_approach_methods"
             @update:value="
-                updateValue($event, 'alternate_rock_art_recording_approach')
+                updateValue($event, 'ancestral_remains_approach_methods')
+            "
+        />
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="null"
+            graph-slug="permit_application"
+            node-alias="ancestral_remains_approach_additional_comments"
+            @update:value="
+                updateValue(
+                    $event,
+                    'ancestral_remains_approach_additional_comments',
+                )
             "
         />
     </FieldSet>
