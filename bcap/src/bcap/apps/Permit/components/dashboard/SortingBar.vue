@@ -48,10 +48,10 @@ const handleSearchInput = () => {
         <div class="segmented-control">
             <button
                 class="segment-btn"
-                :class="{ active: props.activeTab === 'all' }"
-                @click="selectTab('all')"
+                :class="{ active: props.activeTab === 'my_projects' }"
+                @click="selectTab('my_projects')"
             >
-                All
+                My projects
             </button>
             <button
                 class="segment-btn"
@@ -62,10 +62,10 @@ const handleSearchInput = () => {
             </button>
             <button
                 class="segment-btn"
-                :class="{ active: props.activeTab === 'my_projects' }"
-                @click="selectTab('my_projects')"
+                :class="{ active: props.activeTab === 'all' }"
+                @click="selectTab('all')"
             >
-                My projects
+                All
             </button>
         </div>
 

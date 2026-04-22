@@ -39,7 +39,7 @@ const fetchProjects = async () => {
 
 const rawProjects = ref<ProjectData[]>([]);
 const isLoading = ref(true);
-const currentFilter = ref('all');
+const currentFilter = ref('my_projects');
 const currentSearch = ref('');
 const lastUpdateDate = ref(new Date());
 const userName = 'John Doe';
@@ -143,6 +143,22 @@ const displayedProjects = computed(() => {
                 @update:search="handleSearch"
                 @refresh="loadData"
             />
+
+            <div v-if="!isLoading">
+                Showing
+                <strong>{{ displayedProjects.length }}</strong>
+                of
+                <strong>{{ rawProjects.length }}</strong>
+                projects
+                <span v-if="currentSearch">
+                    (filtered by "{{ currentSearch }}")
+                </span>
+            </div>
+
+            <div
+                v-if="!isLoading"
+                class="dash-row"
+            ></div>
 
             <div
                 v-if="isLoading"
