@@ -29,6 +29,20 @@ runs:
       with:
         elasticsearch-version: 8
 
+    - name: Configure Elasticsearch field limit
+      run: |
+        curl -X PUT "localhost:9200/_index_template/arches_field_limit" \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "index_patterns": ["*"],
+            "template": {
+              "settings": {
+                "index.mapping.total_fields.limit": 5000
+              }
+            }
+          }'
+      shell: bash
+
     - name: Install Python packages
       run: |
         python -m pip install --upgrade pip
