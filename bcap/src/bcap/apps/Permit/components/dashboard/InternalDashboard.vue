@@ -85,20 +85,27 @@ const displayedProjects = computed(() => {
     }
 
     if (currentSearch.value) {
-        const query = currentSearch.value.toLowerCase();
-        filtered = filtered.filter(
-            (item) =>
-                item.capLabel.toLowerCase().includes(query) ||
-                item.projectName.toLowerCase().includes(query) ||
-                item.projectId.toLowerCase().includes(query) ||
+        const query = currentSearch.value.toLowerCase().trim();
+
+        filtered = filtered.filter((item) => {
+            // Special keyword If they search "priority", show all starred cards
+            if (query === 'priority' && item.capPriority) {
+                return true;
+            }
+
+            return (
+                item.capLabel?.toLowerCase().includes(query) ||
+                item.projectName?.toLowerCase().includes(query) ||
+                item.projectId?.toLowerCase().includes(query) ||
                 item.sector?.toLowerCase().includes(query) ||
                 item.body1?.toLowerCase().includes(query) ||
                 item.body2?.toLowerCase().includes(query) ||
                 item.body3?.toLowerCase().includes(query) ||
                 item.body4?.toLowerCase().includes(query) ||
                 item.body5?.toLowerCase().includes(query) ||
-                item.footerName?.toLowerCase().includes(query),
-        );
+                item.footerName?.toLowerCase().includes(query)
+            );
+        });
     }
 
     return filtered.slice().sort((a, b) => {
@@ -157,6 +164,7 @@ const displayedProjects = computed(() => {
                     :key="item.id"
                     v-bind="item"
                     :route="{ name: item.route }"
+                    :search-query="currentSearch"
                 />
             </div>
 
