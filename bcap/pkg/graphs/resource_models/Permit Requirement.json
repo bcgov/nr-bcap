@@ -151,9 +151,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -176,9 +174,7 @@
                     "card_id": "03f2c98d-a385-4031-8886-dbc6ddb1ed27",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirment Submission",
                         "placeholder": {
                             "en": ""
@@ -203,9 +199,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Simple Sub Requirement name",
                         "maxLength": null,
                         "placeholder": {
@@ -233,9 +227,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement Name",
                         "maxLength": null,
                         "placeholder": {
@@ -274,9 +266,7 @@
                     "card_id": "c57a5fd8-5fa1-4172-af92-d8782b3cdeda",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Sub requirement reference",
                         "placeholder": {
                             "en": ""
@@ -301,9 +291,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement Identification",
                         "maxLength": null,
                         "placeholder": {
@@ -331,9 +319,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Sub Requirement Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -361,9 +347,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Simple Sub Requirement Description",
                         "maxLength": null,
                         "placeholder": {
@@ -661,7 +645,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "13eea810-6f00-4a63-b8da-8785ad9c54e8"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "has_submission_requirement",
@@ -669,10 +653,7 @@
                         "falseLabel": {
                             "en": "No Submission Required"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Submission Required"
                         }
@@ -726,10 +707,7 @@
                         "falseLabel": {
                             "en": "Working Document"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Template"
                         }
@@ -760,10 +738,7 @@
                         "falseLabel": {
                             "en": "Unsatisfied"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Satisfied"
                         }
@@ -786,7 +761,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "13eea810-6f00-4a63-b8da-8785ad9c54e8"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "sub_requirement_reference",
@@ -855,10 +830,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -881,7 +853,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "e19cf3cb-551f-4e63-a197-8a371df0b0ba"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "simple_sub_requirement_name",
@@ -927,7 +899,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "e19cf3cb-551f-4e63-a197-8a371df0b0ba"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "requirment_submission",
@@ -1005,7 +977,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "e19cf3cb-551f-4e63-a197-8a371df0b0ba"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "assessment_notes",
@@ -1028,7 +1000,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "13eea810-6f00-4a63-b8da-8785ad9c54e8"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "simple_sub_requirement_description",

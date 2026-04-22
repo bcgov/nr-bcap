@@ -124,9 +124,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Arch Branch Internal Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -169,9 +167,7 @@
                     "card_id": "8d61f624-be2d-4a81-9f5b-d03aa3dec18d",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Submission Number",
                         "maxLength": null,
                         "placeholder": {
@@ -196,9 +192,7 @@
                     "card_id": "49931610-b2d8-4f7c-be57-1f409b445ad7",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Lead Archaeologist Consultant",
                         "placeholder": {
                             "en": ""
@@ -223,9 +217,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Photograph Description",
                         "maxLength": null,
                         "placeholder": {
@@ -274,9 +266,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Photograph View",
                         "maxLength": null,
                         "placeholder": {
@@ -304,9 +294,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Consultant Report Number",
                         "maxLength": "40",
                         "placeholder": {
@@ -334,9 +322,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Arch Branch Response",
                         "maxLength": null,
                         "placeholder": {
@@ -359,9 +345,7 @@
                     "card_id": "8d61f624-be2d-4a81-9f5b-d03aa3dec18d",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Submission Type",
                         "options": [],
                         "placeholder": {
@@ -406,9 +390,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Recommendations",
                         "maxLength": null,
                         "placeholder": {
@@ -431,9 +413,7 @@
                     "card_id": "56e1c901-6eb5-4ec0-b6f6-bb7819055cd8",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Determined Level of Risk",
                         "options": [],
                         "placeholder": {
@@ -475,9 +455,7 @@
                                 "value": "Enter title of the PSR"
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Document Title",
                         "maxLength": "80",
                         "placeholder": {
@@ -500,9 +478,7 @@
                     "card_id": "49931610-b2d8-4f7c-be57-1f409b445ad7",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Archaeology Company",
                         "placeholder": {
                             "en": ""
@@ -546,9 +522,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Photographer",
                         "maxLength": null,
                         "placeholder": {
@@ -853,7 +827,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P17_was_motivated_by",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "submission_photographs",
@@ -881,7 +855,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P17_was_motivated_by",
                     "sortorder": 3,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "photograph_view",
@@ -906,7 +880,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "photograph_date",
@@ -931,7 +905,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "submission_type",
@@ -956,7 +930,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P41i_was_classified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "arch_branch_internal_notes",
@@ -981,7 +955,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P15_was_influenced_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "report_title",
@@ -1006,7 +980,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P102_has_title",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "requirement_submission_process",
@@ -1031,7 +1005,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P17i_motivated",
                     "sortorder": 3,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "photographer",
@@ -1056,7 +1030,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "arch_branch_determined_level_of_risk",
@@ -1081,7 +1055,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "archaeological_consultant",
@@ -1278,7 +1252,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "submission_number",
@@ -1303,7 +1277,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "new_resource_model",
@@ -1351,7 +1325,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P117i_includes",
                     "sortorder": 4,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "consultant_report_number",
@@ -1376,7 +1350,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "archaological_company",
@@ -1511,7 +1485,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "arch_branch_response",
@@ -1536,7 +1510,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "photograph_description",
@@ -1561,7 +1535,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "arch_branch_approval_status",
@@ -1569,10 +1543,7 @@
                         "falseLabel": {
                             "en": "Requires Changes"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Accepted"
                         }
@@ -1595,7 +1566,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P115i_is_finished_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "report_recommendations",
@@ -1620,7 +1591,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "report_file",
@@ -1648,7 +1619,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "arch_branch_approval_date",
@@ -1673,7 +1644,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "829b9f9a-fd8e-460c-853d-85d0ffe790ce"
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",

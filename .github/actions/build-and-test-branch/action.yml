@@ -35,6 +35,7 @@ runs:
           -H 'Content-Type: application/json' \
           -d '{
             "index_patterns": ["*"],
+            "priority": 1,
             "template": {
               "settings": {
                 "index.mapping.total_fields.limit": 5000
