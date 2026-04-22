@@ -28,6 +28,32 @@ interface ProjectData {
     urgency: number;
 }
 
+// Sorting options array
+const sortOptions = [
+    {
+        label: 'Default (Urgency)',
+        value: 'default',
+    },
+    { label: 'Due Date', value: 'capDate' },
+    {
+        label: 'Created Date',
+        value: 'footerDate',
+    },
+    {
+        label: 'Application Number',
+        value: 'projectId',
+    },
+    { label: 'Permit Number', value: 'body1' },
+    { label: 'Sector', value: 'sector' },
+    { label: 'Process', value: 'capLabel' },
+    { label: 'Priority', value: 'capPriority' },
+    { label: 'Permit Holder', value: 'body2' },
+    {
+        label: 'Project Officer',
+        value: 'body3',
+    },
+];
+
 // "API" call
 const fetchProjects = async () => {
     return new Promise((resolve) => {
@@ -43,18 +69,10 @@ const currentFilter = ref('my_projects');
 const currentSearch = ref('');
 const lastUpdateDate = ref(new Date());
 const userName = 'John Doe';
+const currentSort = ref('default');
 
-onMounted(async () => {
-    isLoading.value = true;
-    try {
-        const data = await fetchProjects();
-        rawProjects.value = data as ProjectData[];
-    } catch (error) {
-        console.error('Error fetching projects:', error);
-    } finally {
-        isLoading.value = false;
-        loadData();
-    }
+onMounted(() => {
+    loadData();
 });
 
 const loadData = async () => {
@@ -108,19 +126,64 @@ const displayedProjects = computed(() => {
         });
     }
 
+    // Apply Dynamic Sorting
     return filtered.slice().sort((a, b) => {
-        // Primary sort urgency level
-        if (b.urgency !== a.urgency) {
-            return b.urgency - a.urgency;
-        }
-        // Secondary sort cap date
-        const dateA = new Date(a.capDate).getTime();
-        const dateB = new Date(b.capDate).getTime();
-        if (isNaN(dateA) || isNaN(dateB)) return 0;
+        const field = currentSort.value;
 
-        return dateA - dateB;
+        // The complex default sort (Priority -> Urgency -> Date)
+        if (field === 'default') {
+            if (a.capPriority !== b.capPriority) return a.capPriority ? -1 : 1;
+
+            // Primary sort urgency level
+            if (b.urgency !== a.urgency) return b.urgency - a.urgency;
+
+            // Secondary sort cap date
+            const dateA = new Date(a.capDate).getTime();
+            const dateB = new Date(b.capDate).getTime();
+            return (isNaN(dateA) ? 0 : dateA) - (isNaN(dateB) ? 0 : dateB);
+        }
+
+        // Date sorting (Due Date & Created Date)
+        if (field === 'capDate' || field === 'footerDate') {
+            const valA = a[field as 'capDate' | 'footerDate'];
+            const valB = b[field as 'capDate' | 'footerDate'];
+
+            const dateA = new Date(valA || '').getTime();
+            const dateB = new Date(valB || '').getTime();
+
+            if (isNaN(dateA) && isNaN(dateB)) return 0;
+            if (isNaN(dateA)) return 1;
+            if (isNaN(dateB)) return -1;
+            return dateA - dateB; // Ascending (oldest first)
+        }
+
+        // Boolean sorting (Priority)
+        if (field === 'capPriority') {
+            return a.capPriority === b.capPriority ? 0 : a.capPriority ? -1 : 1;
+        }
+
+        // String sorting for everything else (Alphabetical Ascending)
+        const valA = (a[field as keyof typeof a] || '')
+            .toString()
+            .toLowerCase();
+        const valB = (b[field as keyof typeof b] || '')
+            .toString()
+            .toLowerCase();
+
+        return valA.localeCompare(valB);
     });
 });
+
+// Formats the raw API data into HTML before passing it to the card
+const formatBodyLine = (text?: string) => {
+    if (!text) return '';
+    const parts = text.split(':');
+    if (parts.length > 1) {
+        const label = parts.shift();
+        return `<strong>${label}:</strong>${parts.join(':')}`;
+    }
+    return text;
+};
 </script>
 
 <template>
@@ -139,26 +202,30 @@ const displayedProjects = computed(() => {
             <SortingBar
                 :active-tab="currentFilter"
                 :last-updated="lastUpdateDate"
+                :sort-options="sortOptions"
+                :current-sort="currentSort"
                 @update:active-tab="currentFilter = $event"
                 @update:search="handleSearch"
+                @update:current-sort="currentSort = $event"
                 @refresh="loadData"
             />
 
-            <div v-if="!isLoading">
+            <div
+                v-if="!isLoading"
+                class="results-summary"
+            >
                 Showing
                 <strong>{{ displayedProjects.length }}</strong>
                 of
                 <strong>{{ rawProjects.length }}</strong>
                 projects
-                <span v-if="currentSearch">
+                <span
+                    v-if="currentSearch"
+                    class="active-search-label"
+                >
                     (filtered by "{{ currentSearch }}")
                 </span>
             </div>
-
-            <div
-                v-if="!isLoading"
-                class="dash-row"
-            ></div>
 
             <div
                 v-if="isLoading"
@@ -179,6 +246,11 @@ const displayedProjects = computed(() => {
                     v-for="item in displayedProjects"
                     :key="item.id"
                     v-bind="item"
+                    :body1="formatBodyLine(item.body1)"
+                    :body2="formatBodyLine(item.body2)"
+                    :body3="formatBodyLine(item.body3)"
+                    :body4="formatBodyLine(item.body4)"
+                    :body5="formatBodyLine(item.body5)"
                     :route="{ name: item.route }"
                     :search-query="currentSearch"
                 />
@@ -215,5 +287,24 @@ const displayedProjects = computed(() => {
     justify-content: center;
     padding: 3rem;
     color: #555;
+}
+
+/* Results Counter Styling */
+.results-summary {
+    font-size: 1.1rem;
+    color: #555555;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+}
+
+.results-summary strong {
+    color: #003366;
+    font-weight: 700;
+}
+
+.active-search-label {
+    color: #777777;
+    font-style: italic;
+    margin-left: 0.5rem;
 }
 </style>

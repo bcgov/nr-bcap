@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import type { PropType } from 'vue';
+import Menu from 'primevue/menu';
 
 const props = defineProps({
     activeTab: {
@@ -10,14 +12,24 @@ const props = defineProps({
         type: Date,
         default: () => new Date(),
     },
+    // Added props to receive sort options from the Dashboard
+    sortOptions: {
+        type: Array as PropType<Array<{ label: string; value: string }>>,
+        default: () => [],
+    },
+    currentSort: {
+        type: String,
+        default: 'default',
+    },
 });
 
 const emit = defineEmits([
     'update:activeTab',
     'update:search',
-    'menu-click',
+    'update:currentSort',
     'refresh',
 ]);
+
 const searchQuery = ref('');
 
 const formattedTime = computed(() => {
@@ -41,10 +53,41 @@ const selectTab = (tabId: string) => {
 const handleSearchInput = () => {
     emit('update:search', searchQuery.value);
 };
+
+// Sort Menu Logic
+const sortMenu = ref();
+
+const toggleSortMenu = (event: Event) => {
+    sortMenu.value.toggle(event);
+};
+
+// Generates the PrimeVue menu items from the passed props
+const sortMenuModel = computed(() => {
+    return props.sortOptions.map((opt) => ({
+        label: opt.label,
+        class: `custom-hover-item ${props.currentSort === opt.value ? 'active-sort-item' : ''}`,
+        command: () => {
+            emit('update:currentSort', opt.value);
+        },
+    }));
+});
+
+// Displays what is currently being sorted
+const activeSortLabel = computed(() => {
+    const found = props.sortOptions.find((o) => o.value === props.currentSort);
+    return found ? found.label : 'Default';
+});
 </script>
 
 <template>
     <div class="sorting-bar-container">
+        <Menu
+            ref="sortMenu"
+            :model="sortMenuModel"
+            :popup="true"
+            class="custom-sort-menu"
+        />
+
         <div class="segmented-control">
             <button
                 class="segment-btn"
@@ -69,28 +112,46 @@ const handleSearchInput = () => {
             </button>
         </div>
 
-        <div class="search-bar-wrapper">
-            <button
-                class="icon-btn"
-                @click="$emit('menu-click')"
-                aria-label="Menu"
-            >
-                <i class="fa-solid fa-bars"></i>
-            </button>
+        <div class="search-section">
+            <div class="search-bar-wrapper">
+                <button
+                    class="icon-btn"
+                    @click="toggleSortMenu"
+                    aria-label="Sort Options"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
 
-            <input
-                type="text"
-                v-model="searchQuery"
-                @input="handleSearchInput"
-                class="search-input"
-            />
+                <input
+                    type="text"
+                    v-model="searchQuery"
+                    @input="handleSearchInput"
+                    class="search-input"
+                    placeholder="Search projects..."
+                />
 
-            <button
-                class="icon-btn search-submit-btn"
-                aria-label="Search"
+                <button
+                    class="icon-btn search-submit-btn"
+                    aria-label="Search"
+                >
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <div
+                v-if="props.currentSort !== 'default'"
+                class="sort-indicator"
             >
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
+                <span>
+                    Sorted by:
+                    <strong>{{ activeSortLabel }}</strong>
+                </span>
+                <i
+                    class="fa-solid fa-circle-xmark clear-sort"
+                    @click="emit('update:currentSort', 'default')"
+                    title="Clear sort"
+                ></i>
+            </div>
         </div>
 
         <div class="flex-spacer"></div>
@@ -111,8 +172,8 @@ const handleSearchInput = () => {
 .sorting-bar-container {
     display: flex;
     align-items: center;
-    gap: 2.25rem; /* Scaled from 1.5rem */
-    padding: 1.5rem 0; /* Scaled from 1rem */
+    gap: 2.25rem;
+    padding: 1.5rem 0;
     width: 100%;
     font-family: 'BC Sans', 'Noto Sans', sans-serif;
 }
@@ -121,11 +182,10 @@ const handleSearchInput = () => {
     flex-grow: 1;
 }
 
-/* 1. Segmented Control */
 .segmented-control {
     display: flex;
     background-color: #ffffff;
-    border-radius: 6px; /* Scaled from 4px */
+    border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.05);
 }
@@ -133,8 +193,8 @@ const handleSearchInput = () => {
 .segment-btn {
     background: transparent;
     border: none;
-    padding: 0.9rem 1.875rem; /* Scaled from 0.6rem 1.25rem */
-    font-size: 1.425rem; /* Scaled from 0.95rem */
+    padding: 0.9rem 1.875rem;
+    font-size: 1.425rem;
     color: #333333;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -155,13 +215,19 @@ const handleSearchInput = () => {
 }
 
 /* 2. Search Bar */
+.search-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
 .search-bar-wrapper {
     display: flex;
     align-items: center;
     background-color: #ffffff;
-    border-radius: 75px; /* Scaled from 50px */
-    padding: 0.45rem 1.5rem; /* Scaled from 0.3rem 1rem */
-    width: 350px; /* Scaled from 350px */
+    border-radius: 75px;
+    padding: 0.45rem 1.5rem;
+    width: 350px;
     box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -169,8 +235,8 @@ const handleSearchInput = () => {
     flex-grow: 1;
     border: none;
     background: transparent;
-    padding: 0.6rem 0.75rem; /* Scaled from 0.4rem 0.5rem */
-    font-size: 1.425rem; /* Scaled from 0.95rem */
+    padding: 0.6rem 0.75rem;
+    font-size: 1.425rem;
     color: #333;
     outline: none;
 }
@@ -180,8 +246,8 @@ const handleSearchInput = () => {
     border: none;
     color: #555555;
     cursor: pointer;
-    font-size: 1.5rem; /* Scaled from 1rem */
-    padding: 0.3rem; /* Scaled from 0.2rem */
+    font-size: 1.5rem;
+    padding: 0.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -195,12 +261,12 @@ const handleSearchInput = () => {
 .status-pill {
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* Scaled from 0.5rem */
-    padding: 0.6rem 1.5rem; /* Scaled from 0.4rem 1rem */
-    border-radius: 75px; /* Scaled from 50px */
-    border: 1.5px solid #d1d5db; /* Scaled from 1px */
+    gap: 0.75rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 75px;
+    border: 1.5px solid #d1d5db;
     color: #555555;
-    font-size: 1.35rem; /* Scaled from 0.9rem */
+    font-size: 1.35rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -210,6 +276,63 @@ const handleSearchInput = () => {
 }
 
 .refresh-icon {
-    font-size: 1.275rem; /* Scaled from 0.85rem */
+    font-size: 1.275rem;
+}
+
+/* 4. Sort Additions */
+.sort-indicator {
+    position: absolute;
+    top: 100%;
+    left: 1.5rem;
+    margin-top: 0.5rem;
+    font-size: 1.15rem;
+    color: #555555;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.clear-sort {
+    cursor: pointer;
+    color: #999999;
+    font-size: 1.2rem;
+    transition: color 0.2s ease;
+}
+
+.clear-sort:hover {
+    color: #d90000;
+}
+</style>
+
+<style>
+/* Custom Sort Menu Styles, I hate primevue */
+.custom-sort-menu {
+    --surface-hover: #003366 !important;
+    --p-menu-item-focus-background: #003366 !important;
+    --p-menu-item-focus-color: #ffffff !important;
+}
+
+.custom-hover-item:hover,
+.custom-hover-item:hover > .p-menuitem-content,
+.custom-hover-item:hover > .p-menuitem-link {
+    background-color: #003366 !important;
+    color: #ffffff !important;
+}
+
+.custom-hover-item:hover .p-menuitem-text,
+.custom-hover-item:hover .p-menuitem-icon {
+    color: #ffffff !important;
+}
+
+.custom-sort-menu,
+.custom-sort-menu * {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+
+    --p-focus-ring: none !important;
+    --p-focus-ring-width: 0px !important;
+    --p-focus-ring-color: transparent !important;
+    --p-focus-ring-offset: 0px !important;
 }
 </style>
