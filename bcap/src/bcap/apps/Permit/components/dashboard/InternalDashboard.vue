@@ -30,28 +30,17 @@ interface ProjectData {
 
 // Sorting options array
 const sortOptions = [
-    {
-        label: 'Default (Urgency)',
-        value: 'default',
-    },
+    { label: 'Default (Urgency)', value: 'default' },
+    { label: 'Application Number', value: 'projectId' },
+    { label: 'Assigned To', value: 'footerName' },
+    { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
-    {
-        label: 'Created Date',
-        value: 'footerDate',
-    },
-    {
-        label: 'Application Number',
-        value: 'projectId',
-    },
-    { label: 'Permit Number', value: 'body1' },
-    { label: 'Sector', value: 'sector' },
-    { label: 'Process', value: 'capLabel' },
-    { label: 'Priority', value: 'capPriority' },
     { label: 'Permit Holder', value: 'body2' },
-    {
-        label: 'Project Officer',
-        value: 'body3',
-    },
+    { label: 'Permit Number', value: 'body1' },
+    { label: 'Priority', value: 'capPriority' },
+    { label: 'Process', value: 'capLabel' },
+    { label: 'Project Officer', value: 'body3' },
+    { label: 'Sector', value: 'sector' },
 ];
 
 // "API" call
@@ -80,7 +69,6 @@ const loadData = async () => {
     try {
         const data = await fetchProjects();
         rawProjects.value = data as ProjectData[];
-        // Just record the raw time of success
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
