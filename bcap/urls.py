@@ -13,6 +13,8 @@ from bcap.views.api import (
     ControlledListHierarchy,
     TranslatableResourceTypesView,
     TranslateToResourceTypeView,
+    PermitRequirement,
+    RequirementSubmission,
 )
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcgov_arches_common.views.map import BCTileserverProxyView
@@ -103,6 +105,16 @@ urlpatterns = [
         f"{PREFIX}api/translate-to-resource-type",
         TranslateToResourceTypeView.as_view(),
         name="translate_to_resource_type",
+    ),
+    path(
+        f"{PREFIX}api/permit_requirements/<uuid:resource_id>",
+        PermitRequirement.as_view(),
+        name="permit_requirement",
+    ),
+    path(
+        f"{PREFIX}api/requirement_submissions/<uuid:resource_id>",
+        RequirementSubmission.as_view(),
+        name="requirement_submission",
     ),
     path(
         f"{PREFIX}api/translatable-resource-types",

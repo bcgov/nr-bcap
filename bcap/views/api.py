@@ -40,6 +40,7 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
+from arches.app.models.resource import Resource
 
 logger = logging.getLogger(__name__)
 
@@ -537,3 +538,29 @@ class RegisterType(APIBase):
                 }
             )
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
+
+class PermitRequirement(APIBase):
+    def get(self, request, resource_id):
+        try:
+            resource = Resource.objects.get(resourceinstanceid=resource_id)
+            serialized_data = resource.serialize() 
+            return JSONResponse(serialized_data)
+
+        except Resource.DoesNotExist:
+            return JSONResponse({"error": "Permit Requirement not found"}, status=404)
+        except Exception as e:
+            logger.exception(f"Unable to fetch Permit Requirement {resource_id}")
+            return JSONResponse({"error": str(e)}, status=500)
+        
+class RequirementSubmission(APIBase):
+    def get(self, request, resource_id):
+        try:
+            resource = Resource.objects.get(resourceinstanceid=resource_id)
+            serialized_data = resource.serialize() 
+            return JSONResponse(serialized_data)
+
+        except Resource.DoesNotExist:
+            return JSONResponse({"error": "Requirement Submission not found"}, status=404)
+        except Exception as e:
+            logger.exception(f"Unable to fetch Requirement Submission {resource_id}")
+            return JSONResponse({"error": str(e)}, status=500)
