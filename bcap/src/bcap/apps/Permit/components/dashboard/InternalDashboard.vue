@@ -13,9 +13,9 @@ interface ProjectData {
     capLabel: string;
     capDate: string;
     icon: string;
-    projectName: string;
-    projectId: string;
-    sector?: string;
+    bodyTitle: string;
+    bodySubtitle1: string;
+    bodySubtitle2: string;
     body1?: string;
     body2?: string;
     body3?: string;
@@ -28,10 +28,39 @@ interface ProjectData {
     urgency: number;
 }
 
+// Maps raw data to the generic ProjectData interface
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mapToDashboardCard = (rawItem: any): ProjectData => {
+    return {
+        id: rawItem.id,
+        capPriority: rawItem.capPriority || false,
+        capLabel: rawItem.capLabel || 'Unknown Process',
+        capDate: rawItem.capDate || '',
+
+        icon: rawItem.icon || 'fa-solid fa-file',
+        bodyTitle: rawItem.projectName || rawItem.name || 'Untitled',
+        bodySubtitle1:
+            rawItem.projectId || rawItem.submissionNumber || 'Pending',
+        bodySubtitle2: rawItem.class || '', // Example mapping
+
+        // Passthrough the rest
+        body1: rawItem.body1 || '',
+        body2: rawItem.body2 || '',
+        body3: rawItem.body3 || '',
+        body4: rawItem.body4 || '',
+        body5: rawItem.body5 || '',
+
+        footerDate: rawItem.footerDate || new Date().toISOString(),
+        footerName: rawItem.footerName || '',
+        route: rawItem.route || 'default-route',
+        urgency: rawItem.urgency || 1,
+    };
+};
+
 // Sorting options array
 const sortOptions = [
     { label: 'Default (Urgency)', value: 'default' },
-    { label: 'Application Number', value: 'projectId' },
+    { label: 'Application Number', value: 'bodySubtitle1' },
     { label: 'Assigned To', value: 'footerName' },
     { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
@@ -40,7 +69,7 @@ const sortOptions = [
     { label: 'Priority', value: 'capPriority' },
     { label: 'Process', value: 'capLabel' },
     { label: 'Project Officer', value: 'body3' },
-    { label: 'Sector', value: 'sector' },
+    { label: 'Sector', value: 'bodySubtitle2' },
 ];
 
 // "API" call
@@ -67,8 +96,9 @@ onMounted(() => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const data = await fetchProjects();
-        rawProjects.value = data as ProjectData[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data = (await fetchProjects()) as any[];
+        rawProjects.value = data.map(mapToDashboardCard);
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -101,9 +131,9 @@ const displayedProjects = computed(() => {
 
             return (
                 item.capLabel?.toLowerCase().includes(query) ||
-                item.projectName?.toLowerCase().includes(query) ||
-                item.projectId?.toLowerCase().includes(query) ||
-                item.sector?.toLowerCase().includes(query) ||
+                item.bodyTitle?.toLowerCase().includes(query) ||
+                item.bodySubtitle1?.toLowerCase().includes(query) ||
+                item.bodySubtitle2?.toLowerCase().includes(query) ||
                 item.body1?.toLowerCase().includes(query) ||
                 item.body2?.toLowerCase().includes(query) ||
                 item.body3?.toLowerCase().includes(query) ||
