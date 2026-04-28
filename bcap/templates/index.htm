@@ -380,18 +380,38 @@ along with this program. if not, see <http://www.gnu.org/licenses/>.
                             <div class="app-info-block-intro">
                                 <!--                                <h2 class="app-info-block-header">{% trans "What are Historic Places?" %}</h2>-->
                                 <h3 class="app-info-block-title">{% trans "What are Archaeology Sites?" %}</h3>
-                                <p class="app-info-block-text">
-                                    {% blocktrans %}
-                                        Archaeological sites are the physical evidence of where and how people lived in
-                                        the past. Sites in B.C. date from recent times to 14,000+ years ago, and are an
-                                        irreplaceable part of B.C. history. They are investigated and protected for
-                                        their historical, cultural, scientific and educational value to the general
-                                        public, local communities and First Nations, and examples of archaeological
-                                        sites include: -Remains of ancient villages and cemeteries -Hunting and food
-                                        processing sites, such a fishing weirs -Stone tool manufacturing areas
-                                        -Culturally-modified trees -Ancient rock art -Shell middens
-                                    {% endblocktrans %}
-                                </p>
+                                <div
+                                    class="app-info-block-text"
+                                    style="color: black;"
+                                >
+                                    <p style="font-size: .77rem; color: #555;">
+                                        {% blocktrans %}
+                                            Archaeological sites are the physical evidence of where and how people lived
+                                            in the past. Sites in B.C. date from recent times to 14,000+ years ago, and
+                                            are an irreplaceable part of B.C. history. They are investigated and
+                                            protected for their historical, cultural, scientific and educational value
+                                            to the general public, local communities and First Nations, and examples of
+                                            archaeological sites include:
+                                        {% endblocktrans %}
+                                    </p>
+
+                                    <ul style="list-style-position: inside; text-align: left;">
+                                        <li style="color: #555; font-size: .77rem;">
+                                            {% trans "Remains of ancient villages and cemeteries" %}
+                                        </li>
+                                        <li style="color: #555; font-size: .77rem;">
+                                            {% trans "Hunting and food processing sites, such as fishing weirs" %}
+                                        </li>
+                                        <li style="color: #555; font-size: .77rem;">
+                                            {% trans "Stone tool manufacturing areas" %}
+                                        </li>
+                                        <li style="color: #555; font-size: .77rem;">
+                                            {% trans "Culturally-modified trees" %}
+                                        </li>
+                                        <li style="color: #555; font-size: .77rem;">{% trans "Ancient rock art" %}</li>
+                                        <li style="color: #555; font-size: .77rem;">{% trans "Shell middens" %}</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
