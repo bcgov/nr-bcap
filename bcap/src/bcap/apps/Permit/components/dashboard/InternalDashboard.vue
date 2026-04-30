@@ -41,7 +41,7 @@ const mapToDashboardCard = (rawItem: any): ProjectData => {
         bodyTitle: rawItem.projectName || rawItem.name || 'Untitled',
         bodySubtitle1:
             rawItem.projectId || rawItem.submissionNumber || 'Pending',
-        bodySubtitle2: rawItem.class || '', // Example mapping
+        bodySubtitle2: rawItem.bodySubtitle2 || rawItem.sector || '',
 
         // Passthrough the rest
         body1: rawItem.body1 || '',
@@ -53,7 +53,7 @@ const mapToDashboardCard = (rawItem: any): ProjectData => {
         footerDate: rawItem.footerDate || new Date().toISOString(),
         footerName: rawItem.footerName || '',
         route: rawItem.route || 'default-route',
-        urgency: rawItem.urgency || 1,
+        urgency: rawItem.urgency || '',
     };
 };
 
@@ -205,18 +205,8 @@ const formatBodyLine = (text?: string) => {
 </script>
 
 <template>
-    <Panel
-        header="Workflows"
-        class="full-height"
-    >
+    <Panel class="full-height">
         <Fluid>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-
             <SortingBar
                 :active-tab="currentFilter"
                 :last-updated="lastUpdateDate"

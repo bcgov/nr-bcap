@@ -5,12 +5,17 @@ const routes = [
         path: arches.urls.plugin('external-permit-workflows'),
         name: 'root',
         component: () =>
-            //import('@/bcap/apps/Permit/components/dashboard/ExternalPermitSubmissions.vue'),
-            import('@/bcap/apps/Permit/components/dashboard/InternalDashboard.vue'),
+            import('@/bcap/apps/Permit/components/dashboard/ExternalPermitSubmissions.vue'),
         meta: {
             shouldShowNavigation: true,
             requiresAuthentication: true,
         },
+    },
+    {
+        path: arches.urls.plugin('internal-permit-dashboard'),
+        name: 'internal-root',
+        component: () =>
+            import('@/bcap/apps/Permit/components/dashboard/InternalDashboard.vue'),
     },
     {
         path: arches.urls.plugin('external-permit-workflows/submit'),
