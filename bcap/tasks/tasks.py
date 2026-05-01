@@ -12,6 +12,8 @@ from arches.app.utils.message_contexts import return_message_context
 from tempfile import NamedTemporaryFile
 
 
+# Copy of arches.app.tasks.export_search_results, with BCAPSearchResultsExporter
+# substituted for SearchResultsExporter to add a UTF-8 BOM to CSV exports.
 @shared_task(bind=True)
 def export_search_results(self, userid, request_values, format, report_link):
     from bcap.search.search_export import (
