@@ -5,6 +5,7 @@ from arches.app.views.file import FileView
 from bcap.views.api import (
     BordenNumber,
     BordenNumberExternal,
+    DashboardView,
     MVT,
     LegislativeAct,
     RegisterType,
@@ -120,6 +121,11 @@ urlpatterns = [
         f"{PREFIX}api/translatable-resource-types",
         TranslatableResourceTypesView.as_view(),
         name="translatable_resource_types",
+    ),
+    path(
+        f"{PREFIX}api/dashboard",
+        DashboardView.as_view(),
+        name="dashboard",
     ),
     path(f"{PREFIX}", include("bcgov_arches_common.urls")),
     path(f"{PREFIX}", include("arches_controlled_lists.urls")),
