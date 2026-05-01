@@ -5,7 +5,7 @@ import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
-import mockProjectsData from './mockData.json';
+//import mockProjectsData from './mockData.json';
 
 interface ProjectData {
     id: string;
@@ -72,13 +72,21 @@ const sortOptions = [
     { label: 'Sector', value: 'bodySubtitle2' },
 ];
 
-// "API" call
+// backend "API" call
 const fetchProjects = async () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(mockProjectsData);
-        }, 800);
-    });
+    try {
+        const apiUrl = '/bcap/api/dashboard';
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching projects from backend:', error);
+        return [];
+    }
 };
 
 const rawProjects = ref<ProjectData[]>([]);
