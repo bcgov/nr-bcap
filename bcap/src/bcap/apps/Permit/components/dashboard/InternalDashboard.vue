@@ -88,6 +88,7 @@ const currentSearch = ref('');
 const lastUpdateDate = ref(new Date());
 const userName = 'John Doe';
 const currentSort = ref('default');
+const sortOrder = ref<'asc' | 'desc'>('asc');
 
 onMounted(() => {
     loadData();
@@ -145,7 +146,7 @@ const displayedProjects = computed(() => {
     }
 
     // Apply Dynamic Sorting
-    return filtered.slice().sort((a, b) => {
+    const sorted = filtered.slice().sort((a, b) => {
         const field = currentSort.value;
 
         // The complex default sort (Priority -> Urgency -> Date)
@@ -190,6 +191,8 @@ const displayedProjects = computed(() => {
 
         return valA.localeCompare(valB);
     });
+
+    return sortOrder.value === 'desc' ? sorted.reverse() : sorted;
 });
 
 // Formats the raw API data into HTML before passing it to the card
@@ -212,6 +215,8 @@ const formatBodyLine = (text?: string) => {
                 :last-updated="lastUpdateDate"
                 :sort-options="sortOptions"
                 :current-sort="currentSort"
+                :sort-order="sortOrder"
+                @update:sort-order="sortOrder = $event"
                 @update:active-tab="currentFilter = $event"
                 @update:search="handleSearch"
                 @update:current-sort="currentSort = $event"

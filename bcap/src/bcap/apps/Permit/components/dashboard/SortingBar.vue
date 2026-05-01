@@ -12,7 +12,6 @@ const props = defineProps({
         type: Date,
         default: () => new Date(),
     },
-    // Added props to receive sort options from the Dashboard
     sortOptions: {
         type: Array as PropType<Array<{ label: string; value: string }>>,
         default: () => [],
@@ -21,12 +20,17 @@ const props = defineProps({
         type: String,
         default: 'default',
     },
+    sortOrder: {
+        type: String as PropType<'asc' | 'desc'>,
+        default: 'asc',
+    },
 });
 
 const emit = defineEmits([
     'update:activeTab',
     'update:search',
     'update:currentSort',
+    'update:sortOrder',
     'refresh',
 ]);
 
@@ -63,13 +67,40 @@ const toggleSortMenu = (event: Event) => {
 
 // Generates the PrimeVue menu items from the passed props
 const sortMenuModel = computed(() => {
-    return props.sortOptions.map((opt) => ({
-        label: opt.label,
-        class: `custom-hover-item ${props.currentSort === opt.value ? 'active-sort-item' : ''}`,
-        command: () => {
-            emit('update:currentSort', opt.value);
-        },
-    }));
+    return props.sortOptions.map((opt) => {
+        const isActive = props.currentSort === opt.value;
+
+        return {
+            label: opt.label,
+            icon: isActive
+                ? props.sortOrder === 'asc' // Use props.sortOrder
+                    ? 'fa-solid fa-caret-up'
+                    : 'fa-solid fa-caret-down'
+                : 'fa-solid fa-caret-up',
+
+            class: `custom-hover-item ${isActive ? 'active-sort-item' : ''}`,
+
+            command: () => {
+                if (isActive) {
+                    emit(
+                        'update:sortOrder',
+                        props.sortOrder === 'asc' ? 'desc' : 'asc',
+                    );
+                } else {
+                    emit('update:currentSort', opt.value);
+
+                    const wantsDescDefault = [
+                        'default',
+                        'capDate',
+                        'footerDate',
+                    ].includes(opt.value);
+
+                    emit('update:sortOrder', wantsDescDefault ? 'desc' : 'asc');
+                }
+                emit('refresh');
+            },
+        };
+    });
 });
 
 // Displays what is currently being sorted
@@ -118,8 +149,18 @@ const activeSortLabel = computed(() => {
                     class="icon-btn"
                     @click="toggleSortMenu"
                     aria-label="Sort Options"
+                    style="display: flex; gap: 5px"
                 >
                     <i class="fa-solid fa-bars"></i>
+                    <i
+                        :class="[
+                            'fa-solid',
+                            props.sortOrder === 'asc'
+                                ? 'fa-caret-up'
+                                : 'fa-caret-down',
+                        ]"
+                        style="font-size: 0.8rem; margin-top: 2px"
+                    ></i>
                 </button>
 
                 <input
@@ -146,6 +187,15 @@ const activeSortLabel = computed(() => {
                     Sorted by:
                     <strong>{{ activeSortLabel }}</strong>
                 </span>
+                <i
+                    :class="[
+                        'fa-solid',
+                        props.sortOrder === 'asc'
+                            ? 'fa-arrow-up-wide-short'
+                            : 'fa-arrow-down-wide-short',
+                    ]"
+                ></i>
+
                 <i
                     class="fa-solid fa-circle-xmark clear-sort"
                     @click="emit('update:currentSort', 'default')"
@@ -334,5 +384,15 @@ const activeSortLabel = computed(() => {
     --p-focus-ring-width: 0px !important;
     --p-focus-ring-color: transparent !important;
     --p-focus-ring-offset: 0px !important;
+}
+
+.custom-sort-menu .p-menuitem:not(.active-sort-item) .p-menuitem-icon {
+    opacity: 0.3;
+}
+
+.active-sort-item .p-menuitem-icon {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    transform: scale(1.2);
 }
 </style>
