@@ -539,11 +539,12 @@ class RegisterType(APIBase):
             )
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
 
+
 class PermitRequirement(APIBase):
     def get(self, request, resource_id):
         try:
             resource = Resource.objects.get(resourceinstanceid=resource_id)
-            serialized_data = resource.serialize() 
+            serialized_data = resource.serialize()
             return JSONResponse(serialized_data)
 
         except Resource.DoesNotExist:
@@ -551,19 +552,23 @@ class PermitRequirement(APIBase):
         except Exception as e:
             logger.exception(f"Unable to fetch Permit Requirement {resource_id}")
             return JSONResponse({"error": str(e)}, status=500)
-        
+
+
 class RequirementSubmission(APIBase):
     def get(self, request, resource_id):
         try:
             resource = Resource.objects.get(resourceinstanceid=resource_id)
-            serialized_data = resource.serialize() 
+            serialized_data = resource.serialize()
             return JSONResponse(serialized_data)
 
         except Resource.DoesNotExist:
-            return JSONResponse({"error": "Requirement Submission not found"}, status=404)
+            return JSONResponse(
+                {"error": "Requirement Submission not found"}, status=404
+            )
         except Exception as e:
             logger.exception(f"Unable to fetch Requirement Submission {resource_id}")
             return JSONResponse({"error": str(e)}, status=500)
+
 
 class DashboardView(APIBase):
     """

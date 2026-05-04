@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from tests.views.helpers import AuthTestHelper
 
+
 class AuthTestHelper:
     """Sets up self.user, self.application, self.access_token for auth tests."""
 
