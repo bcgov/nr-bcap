@@ -80,5 +80,5 @@ def generate_filename(instance, filename):
         *paths,
         f"{root}-{instance.tile.tileid}{ext}",
     )
-    logger.debug("Generated filename: %s", path)
+    logger.debug("Generated filepath: %s", path)
     return path
