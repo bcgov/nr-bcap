@@ -1,6 +1,9 @@
+import logging
 import os
 from arches.app.models import models
 from arches.app import datatypes
+
+logger = logging.getLogger(__name__)
 
 borden_number_node = None
 datatype_factory = None
@@ -8,18 +11,31 @@ borden_number_datatype = None
 
 
 def generate_filename(instance, filename):
-    # print("Instance: %s (%s)" % (instance, type(instance)))
-    # print("File ID: %s (%s)" % (instance.fileid, type(instance.fileid)))
-    # print("Tile: %s (%s)" % (instance.tile, type(instance.tile)))
-    # print("ResourceInstance: %s (%s)" % (instance.tile.resourceinstance, type(instance.tile.resourceinstance)))
-    # print("GraphID: %s (%s)" % (instance.tile.resourceinstance.graph.graphid, type(instance.tile.resourceinstance.graph.graphid)))
-    # print("Graph Slug: %s (%s)" % (instance.tile.resourceinstance.graph.slug, type(instance.tile.resourceinstance.graph.graphid)))
-    # return os.sep.join(["images",str(instance.tile.resourceinstance.resourceinstanceid), f"%s__%s" % (instance.fileid, filename)])
+    logger.debug("Instance: %s (%s)", instance, type(instance))
+    logger.debug("File ID: %s (%s)", instance.fileid, type(instance.fileid))
+    logger.debug("Tile: %s (%s)", instance.tile, type(instance.tile))
+    logger.debug(
+        "ResourceInstance: %s (%s)",
+        instance.tile.resourceinstance,
+        type(instance.tile.resourceinstance),
+    )
+    logger.debug(
+        "GraphID: %s (%s)",
+        instance.tile.resourceinstance.graph.graphid,
+        type(instance.tile.resourceinstance.graph.graphid),
+    )
+    logger.debug(
+        "Graph Slug: %s (%s)",
+        instance.tile.resourceinstance.graph.slug,
+        type(instance.tile.resourceinstance.graph.graphid),
+    )
     if not hasattr(generate_filename, "borden_number_node"):
         generate_filename.borden_number_node = models.Node.objects.filter(
             alias="borden_number"
         ).first()
-        # print("Got borden number node: %s" % str(generate_filename.borden_number_node))
+        logger.debug(
+            "Got borden number node: %s", str(generate_filename.borden_number_node)
+        )
 
     if not hasattr(generate_filename, "borden_number_datatype"):
         generate_filename.borden_number_datatype = (
@@ -27,13 +43,16 @@ def generate_filename(instance, filename):
                 generate_filename.borden_number_node.datatype
             )
         )
-        # print("Got borden number datatype: %s" % str(generate_filename.borden_number_datatype))
+        logger.debug(
+            "Got borden number datatype: %s",
+            str(generate_filename.borden_number_datatype),
+        )
 
     borden_number_tile = models.TileModel.objects.filter(
         resourceinstance=instance.tile.resourceinstance,
         nodegroup=generate_filename.borden_number_node.nodegroup,
     ).first()
-    # print("Got borden number tile: %s" % str(borden_number_tile))
+    logger.debug("Got borden number tile: %s", str(borden_number_tile))
     borden_number = None
 
     paths = []
@@ -54,5 +73,12 @@ def generate_filename(instance, filename):
         if instance.tile.resourceinstance.graph.slug
         else "system_settings"
     )
-    # print("Paths: %s" % str(paths))
-    return os.path.join(graph_slug, *paths, filename)
+    logger.debug("Paths: %s", str(paths))
+    root, ext = os.path.splitext(filename)
+    path = os.path.join(
+        graph_slug,
+        *paths,
+        f"{root}__{instance.tile.nodegroup.grouping_node.alias}{ext}",
+    )
+    logger.debug("Generated filename: %s", path)
+    return path
