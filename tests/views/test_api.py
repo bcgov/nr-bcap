@@ -51,7 +51,6 @@ class DashboardViewGetTests(AuthTestHelper, TestCase):
 class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()
-        super().setUp()
         self.url = reverse("borden-number-external")
         self.post_data = {
             "site_boundary": json.dumps(
