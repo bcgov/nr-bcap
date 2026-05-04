@@ -49,7 +49,7 @@ class SiteVisitAliases(AbstractAliases):
     NAME = "name"
     NAME_REMARKS = "name_remarks"
     NAME_TYPE = "name_type"
-    NONPERMITTED_SITE_VISIT = "nonpermitted_site_visit"
+    IS_SITE_VISIT_PERMITTED = "is_site_visit_permitted"
     NUMBER_OF_ARTIFACTS = "number_of_artifacts"
     PHOTOGRAPHER = "photographer"
     PRIMARY_IMAGE = "primary_image"

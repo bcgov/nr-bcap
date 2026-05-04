@@ -69,14 +69,14 @@ const { processedData: siteVisitDetailsData } = useSingleTileEditLog(
 );
 
 const permittedValue = computed(() => {
-    const nonPermittedField =
-        siteVisitDetailsData.value?.aliased_data?.nonpermitted_site_visit;
+    const permittedField =
+        siteVisitDetailsData.value?.aliased_data?.is_site_visit_permitted;
 
-    if (nonPermittedField && 'node_value' in nonPermittedField) {
-        const nonPermitted = nonPermittedField.node_value;
-        if (nonPermitted === undefined || nonPermitted === null) return '';
+    if (permittedField && 'node_value' in permittedField) {
+        const permitted = permittedField.node_value;
+        if (permitted === undefined || permitted === null) return '';
 
-        return nonPermitted ? 'Yes' : 'No';
+        return permitted ? 'Yes' : 'No';
     }
 
     return '';

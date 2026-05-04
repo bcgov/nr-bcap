@@ -154,9 +154,13 @@ let view_model = BaseFilter.extend({
                     );
 
                     _.each(card.nodes || [], function (node) {
-                        node.label =
-                            (self.widget_lookup[node.nodeid] || {}).label ||
-                            node.name;
+                        let widget = self.widget_lookup[node.nodeid] || {};
+                        node.label = widget.label || node.name;
+                        node.sortorder = widget.sortorder;
+                    });
+
+                    card.nodes.sort(function (a, b) {
+                        return (a.sortorder || 0) - (b.sortorder || 0);
                     });
 
                     this.card_lookup[card.nodegroup_id] = card;
@@ -196,6 +200,7 @@ let view_model = BaseFilter.extend({
                         });
 
                         graph.collapsed = ko.observable(true);
+                        graph.collapsed_before_filter = null;
                         graph.cards = ko.observableArray(graph_cards);
 
                         graph.filtered_cards = ko.computed(function () {
@@ -204,6 +209,11 @@ let view_model = BaseFilter.extend({
                             ).toLowerCase();
 
                             if (filter_text) {
+                                if (graph.collapsed_before_filter === null) {
+                                    graph.collapsed_before_filter =
+                                        graph.collapsed();
+                                }
+
                                 graph.collapsed(false);
 
                                 return _.filter(graph_cards, function (card) {
@@ -212,6 +222,11 @@ let view_model = BaseFilter.extend({
                                     ).toLowerCase();
                                     return card_name.indexOf(filter_text) > -1;
                                 });
+                            }
+
+                            if (graph.collapsed_before_filter !== null) {
+                                graph.collapsed(graph.collapsed_before_filter);
+                                graph.collapsed_before_filter = null;
                             }
 
                             return graph_cards;
