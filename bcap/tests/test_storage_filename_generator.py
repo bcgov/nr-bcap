@@ -48,14 +48,14 @@ class TestGenerateFilename(TestCase):
 
         self.assertEqual(
             result,
-            os.path.join("my-graph", "EeRm", "123", "photo__site_photograph.jpg"),
+            os.path.join("my-graph", "EeRm", "123", "site_photograph", "photo.jpg"),
         )
 
     def test_no_borden_tile_uses_resource_id(self):
         result = generate_filename(self._instance(), "report.pdf")
 
         self.assertEqual(
-            result, os.path.join("my-graph", "rid", "report__site_photograph.pdf")
+            result, os.path.join("my-graph", "rid", "site_photograph", "report.pdf")
         )
 
     def test_no_graph_slug_uses_system_settings(self):
