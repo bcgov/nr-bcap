@@ -1,22 +1,10 @@
 import os
-import sys
-import types
-from unittest import TestCase
 from unittest.mock import MagicMock
 
-# Stub arches before importing so Django's app registry is never touched.
-for _name in [
-    "arches",
-    "arches.app",
-    "arches.app.models",
-    "arches.app.models.models",
-    "arches.app.datatypes",
-    "arches.app.datatypes.datatypes",
-]:
-    sys.modules.setdefault(_name, types.ModuleType(_name))
+from django.test import TestCase
 
-from bcap.util import storage_filename_generator  # noqa: E402
-from bcap.util.storage_filename_generator import generate_filename  # noqa: E402
+from bcap.util import storage_filename_generator
+from bcap.util.storage_filename_generator import generate_filename
 
 
 class TestGenerateFilename(TestCase):
