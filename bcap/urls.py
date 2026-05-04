@@ -5,6 +5,7 @@ from arches.app.views.file import FileView
 from bcap.views.api import (
     BordenNumber,
     BordenNumberExternal,
+    DashboardView,
     MVT,
     LegislativeAct,
     RegisterType,
@@ -13,6 +14,8 @@ from bcap.views.api import (
     ControlledListHierarchy,
     TranslatableResourceTypesView,
     TranslateToResourceTypeView,
+    PermitRequirement,
+    RequirementSubmission,
 )
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
@@ -106,9 +109,24 @@ urlpatterns = [
         name="translate_to_resource_type",
     ),
     path(
+        f"{PREFIX}api/permit_requirements/<uuid:resource_id>",
+        PermitRequirement.as_view(),
+        name="permit_requirement",
+    ),
+    path(
+        f"{PREFIX}api/requirement_submissions/<uuid:resource_id>",
+        RequirementSubmission.as_view(),
+        name="requirement_submission",
+    ),
+    path(
         f"{PREFIX}api/translatable-resource-types",
         TranslatableResourceTypesView.as_view(),
         name="translatable_resource_types",
+    ),
+    path(
+        f"{PREFIX}api/dashboard",
+        DashboardView.as_view(),
+        name="dashboard",
     ),
     path(f"{PREFIX}search/export_results", export_results, name="export_results"),
     path(f"{PREFIX}", include("bcgov_arches_common.urls")),

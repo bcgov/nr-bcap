@@ -12,6 +12,12 @@ const routes = [
         },
     },
     {
+        path: arches.urls.plugin('internal-permit-dashboard'),
+        name: 'internal-root',
+        component: () =>
+            import('@/bcap/apps/Permit/components/dashboard/InternalDashboard.vue'),
+    },
+    {
         path: arches.urls.plugin('external-permit-workflows/submit'),
         name: 'newPermit',
         component: () =>

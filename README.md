@@ -213,6 +213,15 @@ python3.11 manage.py bc_test_users --refresh
 ## Developing the UI using Vite
 See [README.vite.md](./README.vite.md) for details about developing using the Vite dev server.
 
+## Running Backend Unit Tests
+
+```
+python3.11 manage.py test tests --pattern="*.py" --settings="tests.test_settings" --keepdb
+```
+
+- `--keepdb` reuses the existing test database between runs to save time
+- To run a specific test module or class, replace `tests` with the dotted path (e.g. `tests.views.test_api`)
+
 ## Notes
 - RabbitMQ is not being used
 - We do not use the Django template engine, therefore changes to the Django code need to be rebuilt with the webpack

@@ -9,6 +9,45 @@ from tests.views.helpers import AuthTestHelper
 
 
 @override_settings(ROOT_URLCONF="bcap.tests.test_urls")
+class DashboardViewGetTests(AuthTestHelper, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("dashboard")
+
+    def test_get_unauthenticated(self):
+        # No session or token
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 302)
+        # Fake token
+        resp = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION="Bearer ABC123",
+        )
+        self.assertEqual(resp.status_code, 302)
+
+    def test_get_returns_json_cards(self):
+        resp = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION=f"Bearer {self.access_token.token}",
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.headers.get("Content-Type"), "application/json")
+        data = json.loads(resp.content)
+        self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 0)
+        # Extend these tests for various user types when the data model is figured out.
+
+    def test_get_with_session_auth_returns_json_cards(self):
+        self.idir_login_simulate()
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.headers.get("Content-Type"), "application/json")
+        data = json.loads(resp.content)
+        self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 0)
+
+
+@override_settings(ROOT_URLCONF="bcap.tests.test_urls")
 class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()
@@ -23,8 +62,9 @@ class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
     def test_post_requires_bearer_token(self):
         resp = self.client.post(self.url, data=self.post_data)
 
-        # django-oauth-toolkit ProtectedResourceView returns 401 for
-        # missing/invalid token
+        # django-oauth-toolkit ProtectedResourceView returns 403 for missing/invalid token
+        # django-oauth-toolkit only runs if the auth_exempt_pages is enabled for this route in settings.py
+        # Otherwise this is a 302 to homepage.
         self.assertIn(resp.status_code, [302, 403])
 
     @patch("bcap.views.api.BordenNumberBase._post_impl")
