@@ -18,6 +18,7 @@ from bcap.views.api import (
     RequirementSubmission,
 )
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
+from bcap.views.search import export_results
 from bcgov_arches_common.views.map import BCTileserverProxyView
 
 uuid_regex = settings.UUID_REGEX
@@ -127,6 +128,7 @@ urlpatterns = [
         DashboardView.as_view(),
         name="dashboard",
     ),
+    path(f"{PREFIX}search/export_results", export_results, name="export_results"),
     path(f"{PREFIX}", include("bcgov_arches_common.urls")),
     path(f"{PREFIX}", include("arches_controlled_lists.urls")),
     path(f"{PREFIX}", include("arches_component_lab.urls")),
