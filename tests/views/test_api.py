@@ -48,7 +48,7 @@ class DashboardViewGetTests(AuthTestHelper, TestCase):
 
 
 @override_settings(ROOT_URLCONF="bcap.tests.test_urls")
-class BordenNumberExternalViewTests(TestCase):
+class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()
         super().setUp()
