@@ -78,8 +78,7 @@ def generate_filename(instance, filename):
     path = os.path.join(
         graph_slug,
         *paths,
-        instance.tile.nodegroup.grouping_node.alias,
-        f"{root}{ext}",
+        f"{root}-{instance.tile.tileid}{ext}",
     )
     logger.debug("Generated filename: %s", path)
     return path

@@ -29,13 +29,11 @@ class TestGenerateFilename(TestCase):
         storage_filename_generator.models = self.mock_models
         storage_filename_generator.datatypes = self.mock_datatypes
 
-    def _instance(
-        self, slug="my-graph", resource_id="rid", node_alias="site_photograph"
-    ):
+    def _instance(self, slug="my-graph", resource_id="rid", tile_id="tile-uuid"):
         inst = MagicMock()
         inst.tile.resourceinstance.graph.slug = slug
         inst.tile.resourceinstance.resourceinstanceid = resource_id
-        inst.tile.nodegroup.grouping_node.alias = node_alias
+        inst.tile.tileid = tile_id
         return inst
 
     def test_borden_number_splits_into_path_segments(self):
@@ -48,14 +46,14 @@ class TestGenerateFilename(TestCase):
 
         self.assertEqual(
             result,
-            os.path.join("my-graph", "EeRm", "123", "site_photograph", "photo.jpg"),
+            os.path.join("my-graph", "EeRm", "123", "photo-tile-uuid.jpg"),
         )
 
     def test_no_borden_tile_uses_resource_id(self):
         result = generate_filename(self._instance(), "report.pdf")
 
         self.assertEqual(
-            result, os.path.join("my-graph", "rid", "site_photograph", "report.pdf")
+            result, os.path.join("my-graph", "rid", "report-tile-uuid.pdf")
         )
 
     def test_no_graph_slug_uses_system_settings(self):
