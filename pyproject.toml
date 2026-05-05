@@ -54,9 +54,20 @@ dev = [
     "coverage",
     "django-silk==5.1.0",
     "pre-commit==3.8.0",
-    "black==24.4.2",
+    "black>=26.3.1",
     "requests-mock==1.12.1",
     "django-vite",
     "playwright",
     "pytest-playwright",
+]
+jupyter = [
+    { include-group = "dev" },
+    "ipykernel",
+    "jupyterlab",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "tabulate",
+    "openpyxl",
+    "nbstripout",
 ]

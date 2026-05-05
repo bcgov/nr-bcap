@@ -59,6 +59,10 @@ RUN pip install -e .[dev] && \
     pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis && \
     pip install --upgrade cryptography PyJWT Authlib
 
+ARG INSTALL_PYCHARM_DEBUG=false
+RUN if [ "$INSTALL_PYCHARM_DEBUG" = "true" ]; then pip install pydevd-pycharm~=253.31033.139; fi
+
+
 COPY ./bcgov-arches-common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}
 RUN pip install -e .
@@ -91,3 +95,20 @@ ENTRYPOINT ["../entrypoint.sh"]
 CMD ["run_arches"]
 # Expose port 8000
 EXPOSE 8000
+
+# ---- Jupyter stage ----
+FROM base AS jupyter
+COPY ./nr-bcap/pyproject.toml ${APP_ROOT}/pyproject.toml
+RUN pip install --no-cache-dir --group jupyter
+
+#RUN mkdir -p ${APP_ROOT}/notebooks
+WORKDIR ${APP_ROOT}
+
+CMD ["jupyter", "server", \
+     "--ip=0.0.0.0", \
+     "--port=8888", \
+     "--no-browser", \
+     "--allow-root", \
+     "--ServerApp.notebook_dir=/web_root/bcap/notebooks"]
+
+EXPOSE 8888

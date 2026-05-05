@@ -2,7 +2,6 @@ from arches.app.models.system_settings import settings
 from arches.app.search.components.base import BaseSearchFilter
 from arches.app.utils.pagination import get_paginator
 
-
 details = {
     "searchcomponentid": "7aff5819-651c-4390-9b9a-a61221ba52c6",
     "name": "Paging",

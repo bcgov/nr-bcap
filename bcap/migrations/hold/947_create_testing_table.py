@@ -10,6 +10,7 @@ terms 'chicken or egg' problem.
 The database must be pre-seeded with all the data population beforehand.
 
 """
+
 from django.db import migrations
 from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivilegedSQL
 

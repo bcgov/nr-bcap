@@ -254,7 +254,7 @@ if USE_VITE:
     DJANGO_VITE = {
         "default": {
             "dev_mode": USE_VITE,
-            "static_url_prefix": "/bcrhp/static",
+            "static_url_prefix": "/bcap/static",
             # "static_url_prefix": "/",
         }
     }
@@ -456,6 +456,7 @@ if MODE == "DEV":
     USE_X_FORWARDED_HOST = True
     CSRF_TRUSTED_ORIGINS = ["http://localhost:82"]
     PUBLIC_ORIGIN = "http://localhost:82"
+
 
 AUTHLIB_OAUTH_CLIENTS = {
     "default": {

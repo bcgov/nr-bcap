@@ -57,12 +57,10 @@ class CustomSearchValue(EsMappingModifier):
             ):
                 custom_values |= {"adif"}
                 custom_values |= {
-                    (
-                        f"""adif_{hdda.SITE_ENTERED_BY}:{CustomSearchValue.hria_discontinued_proxy.get_value_from_node(
+                    f"""adif_{hdda.SITE_ENTERED_BY}:{CustomSearchValue.hria_discontinued_proxy.get_value_from_node(
                         hdda.SITE_ENTERED_BY,
                         hria_discontinued[0].resourceinstanceid,
                     )}"""
-                    )
                 }
 
             site_visits = CustomSearchValue.arch_site_proxy.get_related_resources(

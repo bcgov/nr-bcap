@@ -11,7 +11,6 @@ from guardian.shortcuts import (
     get_groups_with_perms,
 )
 
-
 logger = logging.getLogger(__name__)
 
 
