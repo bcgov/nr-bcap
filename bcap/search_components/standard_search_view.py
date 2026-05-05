@@ -20,7 +20,6 @@ from arches.app.views.search import (
 )
 from django.utils.translation import gettext as _
 
-
 details = {
     "classname": "StandardSearchView",
     "componentname": "standard-search-view",

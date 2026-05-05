@@ -2,7 +2,6 @@ from django.db import migrations
 from django_migrate_sql.config import SQLItem
 from bcap.migrations.util.migration_util import format_sql
 
-
 sql_items = [
     SQLItem(
         "bc_labelled_geojson_geometries",

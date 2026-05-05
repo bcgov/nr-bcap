@@ -5,7 +5,6 @@ from arches.app.models.graph import Graph
 from arches.app.models.models import Node
 from guardian.shortcuts import assign_perm, remove_perm
 
-
 backup_images_table_sql = """
     create table heritage_site.backup_1034_site_images as
         select * from heritage_site.site_images
