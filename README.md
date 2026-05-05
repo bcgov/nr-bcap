@@ -37,14 +37,15 @@ git clone https://github.com/bcgov/nr-bcap
 1. Open or navigate to the `bcap` directory in the terminal
 2. Run the following command:
 ```
-cd arches && git checkout stable/8.0.3_bcgov_12377
+cd arches && git checkout dev/8.1.x_bcgov
 ```
 
 # Docker configuration
 There are 3 application specific docker containers and 4 common depdendency containers:
 1. bcap: Application container (Django dev server, BCAP codebase)
 2. bcap-proxy: Nginx proxy container
-3. bcap-pg_tileserv: Postgres Tileserve container - tile server for generating local map tiles
+3. bcap-pg_tileserv: Postgres Tileserve container - tile server for hosting local map tiles
+3. bcap-pg_featureserv: Postgres Featureserv container - tile server for hosting local wfs (Used for QGIS plugin)
 4. bcap-nginx: Nginx container - reverse proxy for the Arches application
 5. bcap-jupyter: Jupyter container - for development
 6. Depdendency containers - These containers can be shared across applications
@@ -66,10 +67,11 @@ This is done w/ modifications to the manage.py file that connects from the docke
 need to be configured in the docker-compose.yml file.
 
 To activate this debugging mode:
-1. Add the following lines in the .env file:
+1. Add/edit the following lines in the ./docker/docker.dev.env file:
    ```
    INSTALL_PYCHARM_DEBUG=true
    PYCHARM_DEBUG=true
+   DOCKER_HOST_PLATFORM=linux/arm64 # One of linux/arm64, linux/amd64
    ```
 2. Create a Python Debug Server configuration in PyCharm and set the following:
    - host: localhost

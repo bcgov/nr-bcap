@@ -2,7 +2,7 @@ name: bcap
 services:
   bcap:
     container_name:  bcap
-    platform: linux/arm64
+    platform: ${DOCKER_HOST_PLATFORM:-linux}
     image: bcgov/bcap
     build:
       context: ..
@@ -23,7 +23,7 @@ services:
       - ../arches-querysets/:/web_root/arches-querysets
     env_file:
       - ./.env
-      - ./docker/env_file.env
+      - ./docker/docker.dev.env
     ports:
       - 5690:5678
       # - 82:80            # moved to bcap-proxy
