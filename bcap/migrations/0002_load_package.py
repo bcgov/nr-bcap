@@ -4,6 +4,7 @@ from bcgov_arches_common.migrations.operations.privileged_sql import RunPrivileg
 from django.conf import settings
 import os
 from .util.migration_util import format_sql
+from arches_controlled_lists.utils.skos import SKOSReader
 
 
 class Migration(migrations.Migration):
@@ -46,8 +47,21 @@ class Migration(migrations.Migration):
     def create_cache(app, somethingelse):
         call_command("createcachetable")
 
+    @staticmethod
+    def load_controlled_lists(app, somethingelse):
+        skos_dir = os.path.join(settings.APP_ROOT, "pkg", "reference_data", "skos")
+        files = os.listdir(skos_dir)
+        print(f"Files: {list(files)}")
+        skos = SKOSReader()
+        for file in files:
+            if file.endswith(".xml"):
+                print(f"Loading {os.path.join(skos_dir, file)}")
+                rdf = skos.read_file(os.path.join(skos_dir, file))
+                concepts = skos.save_controlled_lists_from_skos(rdf)
+
     operations = [
         migrations.RunPython(create_cache, migrations.RunPython.noop),
+        migrations.RunPython(load_controlled_lists, migrations.RunPython.noop),
         migrations.RunPython(load_package, migrations.RunPython.noop),
         migrations.RunSQL(
             create_resource_proxy_views_sql,

@@ -2671,6 +2671,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "b2efb04e-02f7-4daf-b4fc-83512e63fb54",
+                    "edgeid": "3a66fa9f-17a2-4530-afd0-ca33de788427",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "rangenode_id": "33bccbae-4cb2-4a5c-b54d-55c4b1e6e671",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "32d22a38-3ebb-4874-8df5-7f706cc01198",
                     "edgeid": "3c10250a-74ef-4762-80f0-3c35bf4896c6",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
@@ -4180,6 +4190,35 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "application_priority_level",
+                    "config": {
+                        "controlledList": "bb7c9c73-5f7c-4fb6-911a-18b49f23c717",
+                        "graphs": [],
+                        "multiValue": false,
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Application Priority Level",
+                    "nodegroup_id": "b2efb04e-02f7-4daf-b4fc-83512e63fb54",
+                    "nodeid": "33bccbae-4cb2-4a5c-b54d-55c4b1e6e671",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E14_Condition_Assessment",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "project_boundary",
                     "config": {
                         "addToMap": false,
@@ -4228,6 +4267,7 @@
                 {
                     "alias": "supplemental_information",
                     "config": {
+                        "activateMax": false,
                         "imagesOnly": false,
                         "maxFileSize": null,
                         "maxFiles": 5
@@ -5964,6 +6004,7 @@
                 {
                     "alias": "arch_workplans_and_schedule_a",
                     "config": {
+                        "activateMax": false,
                         "imagesOnly": false,
                         "maxFileSize": null,
                         "maxFiles": 5
@@ -6509,9 +6550,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Move requirement dates to Permit Requirement resource model",
-                "publicationid": "468b02f6-2fe1-4acd-9e30-792baf5da987",
-                "published_time": "2026-04-22T19:38:19.578"
+                "notes": "Add priority level",
+                "publicationid": "45deb330-c2c9-4801-9ef3-0dbe49616217",
+                "published_time": "2026-05-05T22:33:38.304"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -6611,7 +6652,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "d5a4f8fb2c 2026-04-22 06:33:18 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }
