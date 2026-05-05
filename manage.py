@@ -25,6 +25,24 @@ import sys
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bcap.settings")
 
+    print(f"PYCHARM_DEBUG: {os.environ.get('PYCHARM_DEBUG', '').lower()}")
+    print(f"RUN_MAIN: {os.environ.get('RUN_MAIN', '').lower()}")
+    if os.environ.get("PYCHARM_DEBUG", "").lower() in ("1", "true"):
+        if os.environ.get("RUN_MAIN") == "true":
+            import pydevd_pycharm
+
+            print(
+                f"Waiting to attach to debug on port {os.environ.get('PYCHARM_DEBUG_PORT', 5680)}..."
+            )
+
+            pydevd_pycharm.settrace(
+                os.environ.get("PYCHARM_DEBUG_HOST", "host.docker.internal"),
+                port=int(os.environ.get("PYCHARM_DEBUG_PORT", 5680)),
+                stdout_to_server=True,
+                stderr_to_server=True,
+                suspend=False,
+            )
+
     from django.core.management import execute_from_command_line
 
     execute_from_command_line(sys.argv)

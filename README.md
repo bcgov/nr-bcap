@@ -42,10 +42,12 @@ cd arches && git checkout stable/8.0.3_bcgov_12377
 
 # Docker configuration
 There are 3 application specific docker containers and 4 common depdendency containers:
-1. bcap7-6: Application container (Django dev server, BCAP codebase)
-2. bcap-proxy7-6: Nginx proxy container
-3. bcap-pg_tileserv7-6: Postgres Tileserve container - tile server for generating local map tiles
-4. Depdendency containers - These containers can be shared across applications
+1. bcap: Application container (Django dev server, BCAP codebase)
+2. bcap-proxy: Nginx proxy container
+3. bcap-pg_tileserv: Postgres Tileserve container - tile server for generating local map tiles
+4. bcap-nginx: Nginx container - reverse proxy for the Arches application
+5. bcap-jupyter: Jupyter container - for development
+6. Depdendency containers - These containers can be shared across applications
    1. postgres16-3_arches7-5-2: Postgres/PostGIS container
    2. elasticsearch8-3_arches7-5-2: Elasticsearch container
    3. redis_arches7-5-2: Redis container
@@ -58,6 +60,23 @@ There are 3 application specific docker containers and 4 common depdendency cont
 ```
 cd arches-dependency-containers/arches-7-5-2 && docker compose up -d
 ```
+
+## Debugging w/ PyCharm
+This is done w/ modifications to the manage.py file that connects from the docker container back to the host so no ports
+need to be configured in the docker-compose.yml file.
+
+To activate this debugging mode:
+1. Add the following lines in the .env file:
+   ```
+   INSTALL_PYCHARM_DEBUG=true
+   PYCHARM_DEBUG=true
+   ```
+2. Create a Python Debug Server configuration in PyCharm and set the following:
+   - host: localhost
+   - port: 5680
+   - path mappings:
+      - `<dir to nr-bcap parent on host> -> /web_root`
+      - `<dir to nr-bcap on host> -> /web_root/bcap`
 
 ## nr-bcap
 

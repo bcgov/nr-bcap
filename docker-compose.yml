@@ -1,11 +1,18 @@
-name: bcap7-6
+name: bcap
 services:
   bcap:
-    container_name:  bcap7-6
-    image: bcgov/bcap7-6
+    container_name:  bcap
+    platform: linux/arm64
+    image: bcgov/bcap
     build:
       context: ..
       dockerfile: nr-bcap/Dockerfile
+      args:
+        # Set this to true in the .env if debugging with PyCharm
+        INSTALL_PYCHARM_DEBUG: ${INSTALL_PYCHARM_DEBUG:-false}
+    environment:
+      # Set this to true in the .env if debugging with PyCharm
+      PYCHARM_DEBUG: ${PYCHARM_DEBUG:-false}
     command: run_arches
     volumes:
       - ../arches/:/web_root/arches
@@ -26,7 +33,7 @@ services:
     tty: true
 
   bcap-proxy:
-    container_name: bcap-proxy7-6
+    container_name: bcap-proxy
     image: nginx:1.25-alpine
     depends_on:
       - bcap
@@ -37,8 +44,8 @@ services:
     restart: unless-stopped
 
   bcap-pg_tileserv:
-    container_name: bcap-pg_tileserv7-6
-    hostname: bcap-pg_tileserv7-6
+    container_name: bcap-pg_tileserv
+    hostname: bcap-pg_tileserv
     image: pramsey/pg_tileserv:latest
     env_file:
       - ./docker/pg_tileserv/pg_tileserv.env
@@ -48,13 +55,35 @@ services:
     tty: true
 
   bcap-pg_featureserv:
-    container_name: bcap-pg_featureserv7-6
-    hostname: bcap-pg_featureserv7-6
+    container_name: bcap-pg_featureserv
+    hostname: bcap-pg_featureserv
     image: pramsey/pg_featureserv:latest
     env_file:
       - ./docker/pg_featureserv/pg_featureserv.env
     ports:
       - "9002:9000"
+    stdin_open: true
+    tty: true
+
+  bcap-jupyter:
+    container_name: bcap-jupyter
+    image: bcgov/bcap-jupyter          # reuse the same image
+    build:
+      context: ..
+      dockerfile: nr-bcap/Dockerfile
+      target: jupyter
+    volumes:
+      - ../arches/:/web_root/arches
+      - ./:/web_root/bcap
+      - ../bcgov-arches-common/:/web_root/bcgov-arches-common
+      - ../arches-component-lab/:/web_root/arches-component-lab
+      - ../arches-querysets/:/web_root/arches-querysets
+    env_file:
+      - ./docker/env_file.env
+    ports:
+      - "8890:8888"
+    depends_on:
+      - bcap
     stdin_open: true
     tty: true
 
@@ -64,5 +93,5 @@ networks:
     name: arches7-5-2-dev
 
 volumes:
-  arches-log-bcap7-6:
-  arches-static-bcap7-6:
+  arches-log-bcap:
+  arches-static-bcap:
