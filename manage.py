@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
             pydevd_pycharm.settrace(
                 os.environ.get("PYCHARM_DEBUG_HOST", "host.docker.internal"),
-                port=int(os.environ.get("PYCHARM_DEBUG_PORT", 5680)),
+                port=int(os.environ.get("PYCHARM_DEBUG_PORT", 5678)),
                 stdout_to_server=True,
                 stderr_to_server=True,
                 suspend=False,

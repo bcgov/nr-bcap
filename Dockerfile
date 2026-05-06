@@ -101,14 +101,14 @@ FROM base AS jupyter
 COPY ./nr-bcap/pyproject.toml ${APP_ROOT}/pyproject.toml
 RUN pip install --no-cache-dir --group jupyter
 
-#RUN mkdir -p ${APP_ROOT}/notebooks
 WORKDIR ${APP_ROOT}
 
-CMD ["jupyter", "server", \
-     "--ip=0.0.0.0", \
-     "--port=8888", \
-     "--no-browser", \
-     "--allow-root", \
-     "--ServerApp.notebook_dir=/web_root/bcap/notebooks"]
+CMD jupyter server \
+     --ip=0.0.0.0 \
+     --port=8888 \
+     --no-browser \
+     --allow-root \
+     ${JUPYTER_TOKEN:+--IdentityProvider.token=${JUPYTER_TOKEN}} \
+     --ServerApp.notebook_dir=/web_root/bcap/notebooks
 
 EXPOSE 8888
