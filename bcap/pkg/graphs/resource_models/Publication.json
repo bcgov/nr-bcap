@@ -331,12 +331,10 @@
                 {
                     "card_id": "66575824-fa2d-4657-8c09-62e13a1ed6e5",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Publication Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -349,7 +347,7 @@
                     "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "66575824-fa2d-4657-8c09-62e13a1ed6e5",
@@ -539,12 +537,10 @@
                 {
                     "card_id": "a5f5ca84-c40c-11ed-82cd-5254004d77d3",
                     "config": {
-                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Copyright Type",
-                        "options": [],
                         "placeholder": {
                             "en": "Select an option"
                         }
@@ -557,7 +553,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000012"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "14566eac-86b2-4263-8a0b-613537f02478",
@@ -1302,9 +1298,7 @@
                 },
                 {
                     "alias": "publication_identifier_type",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
@@ -1328,9 +1322,10 @@
                 {
                     "alias": "publication_type",
                     "config": {
-                        "rdmCollection": "74e02e4f-8587-5cfa-93b4-d81539f023dd"
+                        "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
+                        "multiValue": false
                     },
-                    "datatype": "concept",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -1381,9 +1376,10 @@
                 {
                     "alias": "copyright_type",
                     "config": {
-                        "rdmCollection": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76"
+                        "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
+                        "multiValue": true
                     },
-                    "datatype": "concept-list",
+                    "datatype": "reference",
                     "description": "",
                     "exportable": false,
                     "fieldname": "",
@@ -1518,9 +1514,10 @@
                 {
                     "alias": "keyword",
                     "config": {
-                        "rdmCollection": "407889ff-d24a-473e-92c8-5cd5bfe52f80"
+                        "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
+                        "multiValue": true
                     },
-                    "datatype": "concept-list",
+                    "datatype": "reference",
                     "description": "",
                     "exportable": false,
                     "fieldname": "",
