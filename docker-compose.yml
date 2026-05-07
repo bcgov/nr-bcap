@@ -2,17 +2,16 @@ name: bcap
 services:
   bcap:
     container_name:  bcap
+    # Set this to the appropriate platform in the .env if required
+    # eg linux/arm64, linux/amd64
     platform: ${DOCKER_HOST_PLATFORM:-linux}
     image: bcgov/bcap
     build:
       context: ..
       dockerfile: nr-bcap/Dockerfile
       args:
-        # Set this to true in the .env if debugging with PyCharm
+        # Set this to true in the .env or in the host env if debugging with PyCharm
         INSTALL_PYCHARM_DEBUG: ${INSTALL_PYCHARM_DEBUG:-false}
-    environment:
-      # Set this to true in the .env if debugging with PyCharm
-      PYCHARM_DEBUG: ${PYCHARM_DEBUG:-false}
     command: run_arches
     volumes:
       - ../arches/:/web_root/arches
@@ -79,7 +78,8 @@ services:
       - ../arches-component-lab/:/web_root/arches-component-lab
       - ../arches-querysets/:/web_root/arches-querysets
     env_file:
-      - ./docker/env_file.env
+      - ./.env
+      - ./docker/docker.dev.env
     ports:
       - "8890:8888"
     depends_on:
