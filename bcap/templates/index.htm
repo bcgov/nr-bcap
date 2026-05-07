@@ -269,18 +269,6 @@ along with this program. if not, see <http://www.gnu.org/licenses/>.
                             <li>
                                 <a
                                     class="vertical-nav-list-link"
-                                    href="#info-block-4"
-                                    data-number="5"
-                                    aria-label="go to the federal government section"
-                                >
-                                    <span class="vertical-nav-list-ref">
-                                        {% trans "federal government historic places" %}
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    class="vertical-nav-list-link"
                                     href="#info-block-5"
                                     data-number="6"
                                     aria-label="go to the contact heritage branch section"
@@ -307,15 +295,15 @@ along with this program. if not, see <http://www.gnu.org/licenses/>.
                                     class="slide-caption bc-splash-caption"
                                     style="background: rgba(0, 0, 0, 0.4);"
                                 >
-                                    <h2>{% blocktrans %}BCAP{% endblocktrans %}</h2>
+                                    <h2>{% blocktrans %}BC Archaeology Portal{% endblocktrans %}</h2>
                                     <h3>
-                                        {% trans "Official Register of Archaeological Sites for British Columbia" %}
+                                        {% trans "BC's hub for collaborative archaeology permit & site record management" %}
                                     </h3>
                                     <!-- this is a workaround for a layout issue causing the section to not be limited -->
                                     <h4 class="area-description">
                                         <span>
                                             <!-- prettier-ignore -->
-                                            {% blocktrans %} BC Archaeology Portal BC's hub for collaborative archaeology permit & site record management {% endblocktrans %}
+                                            {% blocktrans %}  {% endblocktrans %}
                                         </span>
                                     </h4>
                                 </div>
@@ -332,18 +320,15 @@ along with this program. if not, see <http://www.gnu.org/licenses/>.
                                     class="slide-caption bc-splash-caption"
                                     style="background: rgba(0, 0, 0, 0.4);"
                                 >
-                                    <h2>{% blocktrans %}BCAP{% endblocktrans %}</h2>
+                                    <h2>{% blocktrans %}BC Archaeology Portal{% endblocktrans %}</h2>
                                     <h3>
-                                        {% trans "Official Register of Archaeological Sites for British Columbia" %}
+                                        {% trans "BC's hub for collaborative archaeology permit & site record management" %}
                                     </h3>
                                     <!-- this is a workaround for a layout issue causing the section to not be limited -->
                                     <h4 class="area-description">
                                         <span>
                                             <!-- prettier-ignore -->
-                                            {% blocktrans %}
-                                            BC Archaeology Portal BC's hub for collaborative archaeology permit & site
-                                            record management
-                                        {% endblocktrans %}
+                                            {% blocktrans %} {% endblocktrans %}
                                         </span>
                                     </h4>
                                 </div>
@@ -440,68 +425,11 @@ along with this program. if not, see <http://www.gnu.org/licenses/>.
                                         access from the archaeology branch.
                                     {% endblocktrans %}
                                 </p>
-                                <p class="app-info-block-text">
-                                    {% blocktrans %}
-                                        The BCAP is a subset of the Provincial Heritage Register of historic and
-                                        archaeological sites that exists as a statutory requirement of the
-                                    {% endblocktrans %}
-                                    <a
-                                        target="hca"
-                                        href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96187_01"
-                                    >
-                                        {% trans "Heritage Conservation Act." %}
-                                    </a>
-                                    Archaeological and pre-1846 sites are not included on the BCAP. Contact the
-                                    <a
-                                        target="achaeology_branch"
-                                        href="https://www2.gov.bc.ca/gov/content/industry/natural-resource-use/archaeology"
-                                    >
-                                        {% trans "Archaeology Branch" %}
-                                    </a>
-                                    {% trans "for information about archaeology in BC." %}
-                                </p>
                             </div>
                         </div>
                     </div>
                 </section>
                 <!-- End Info Block 1 -->
-
-                <!-- Info Block 4 -->
-                <section
-                    id="info-block-4"
-                    class="app-info-block app-info-content relative"
-                >
-                    <div>
-                        <!-- Heading Info -->
-                        <!-- Heading Info -->
-                        <div class="info-body">
-                            <div class="app-info-block-intro">
-                                <h3 class="app-info-block-title">{% trans "Federal Government Historic Places" %}</h3>
-                                <p class="app-info-block-text">
-                                    {% blocktrans %}
-                                        The federal government has responsibility for national-level formal recognition.
-                                        National Historic Sites and other federal recognitions are not officially part
-                                        of the BC Archaeology Portal but are noted in the system.
-                                    {% endblocktrans %}
-                                </p>
-                            </div>
-                        </div>
-                        <!-- Content -->
-                        <figure class="splash-img">
-                            <img
-                                class="sub-block-image"
-                                src="{% webpack_static 'img/front/figure4_details.jpg' %}"
-                                alt="{% trans "Screenshot of Arches details view" %} "
-                            />
-                            <figcaption>
-                                {% blocktrans %}
-                                    Figure 4: National Historic Site search showing Fisgard Lighthouse details page.
-                                {% endblocktrans %}
-                            </figcaption>
-                        </figure>
-                    </div>
-                </section>
-                <!-- End Info Block 4 -->
 
                 <!-- Info Block 5 -->
                 <section
