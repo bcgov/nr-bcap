@@ -20,5 +20,5 @@ class MVTTiler(MVTTiler_Base):
                 "first_date_of_site_visit",
                 "last_date_of_site_visit",
                 "is_site_visit_permitted",
-            ], # Site Visit
+            ],  # Site Visit
         }
