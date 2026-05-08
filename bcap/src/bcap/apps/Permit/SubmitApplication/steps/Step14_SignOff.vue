@@ -177,10 +177,10 @@ defineExpose({ isValid });
         </ul>
         <div class="checkboxContainer">
             <input
-                type="checkbox"
                 v-model="isConsented"
-                @change="handleConsent"
+                type="checkbox"
                 style="width: 18px; height: 18px; margin-top: -5px"
+                @change="handleConsent"
             />
             <label style="font-weight: bold">
                 I certify that I have read and agree to the terms and conditions
