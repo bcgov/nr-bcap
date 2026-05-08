@@ -15,4 +15,10 @@ class MVTTiler(MVTTiler_Base):
                 "borden_number",
                 "registration_status",
             ],  # Archaeological Site
+            "cf40edc0-13f0-11f0-9404-0242ac170007": [
+                "site_visit_type",
+                "first_date_of_site_visit",
+                "last_date_of_site_visit",
+                "is_site_visit_permitted",
+            ], # Site Visit
         }
