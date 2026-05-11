@@ -95,6 +95,7 @@ const popupDataProvider = {
         'WHSE_LEGAL_ADMIN_BOUNDARIES.ABMS_LOCAL_TRUST_AREAS_SP',
         'WHSE_LEGAL_ADMIN_BOUNDARIES.ADM_TOURISM_REGIONS_SP',
         'WHSE_TANTALIS.TA_PARK_ECORES_PA_SVW',
+        'WHSE_ARCHAEOLOGY.RAAD_BORDENGRID',
         '9f2c9e28-dedb-11ed-ac5a-5254004d77d3' /* Project Sandbox layer */,
     ],
 
