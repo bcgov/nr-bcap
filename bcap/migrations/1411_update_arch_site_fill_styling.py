@@ -2,9 +2,11 @@ import json
 import os
 
 from django.db import migrations
+from arches.app.models.graph import Graph
 from arches.app.models.models import Node
 from bcap.migrations.util.migration_util import format_sql
 
+ARCH_SITE_GRAPH = "cef9c510-e3e6-4057-ac08-89ad926180b4"
 ARCH_SITE_GEOM_NODE = "b18223c2-13ef-11f0-8695-0242ac170007"
 SOURCE_NAME = f"resources-{ARCH_SITE_GEOM_NODE}"
 
@@ -141,12 +143,18 @@ def update_arch_site_styling(apps, schema_editor):
     node.config["advancedStyle"] = json.dumps(defs, indent=2)
     node.save()
 
+    graph = Graph.objects.get(graphid=ARCH_SITE_GRAPH, source_identifier_id=None)
+    graph.update_published_graphs(notes="sync site_boundary advancedStyle #1411")
+
 
 def revert_arch_site_styling(apps, schema_editor):
     node = Node.objects.get(nodeid=ARCH_SITE_GEOM_NODE)
     node.config["advancedStyling"] = False
     node.config["advancedStyle"] = ""
     node.save()
+
+    graph = Graph.objects.get(graphid=ARCH_SITE_GRAPH, source_identifier_id=None)
+    graph.update_published_graphs(notes="revert site_boundary advancedStyle #1411")
 
 
 class Migration(migrations.Migration):
