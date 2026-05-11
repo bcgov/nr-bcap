@@ -48,6 +48,7 @@ ko.bindingHandlers.mapboxgl.init = ((originalInit) => (element, valueAccessor) =
                 if (typeof afterRender === 'function') afterRender(map);
                 console.log('[bcap] mapbox-gl binding loaded');
                 map.on('load', () => Object.keys(PATTERNS).forEach(id => addPattern(map, id)));
+                map.on('styleimagemissing', (e) => addPattern(map, e.id));
             },
         };
     });

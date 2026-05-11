@@ -1,7 +1,9 @@
 import json
+import os
 
 from django.db import migrations
 from arches.app.models.models import Node
+from bcap.migrations.util.migration_util import format_sql
 
 ARCH_SITE_GEOM_NODE = "b18223c2-13ef-11f0-8695-0242ac170007"
 SOURCE_NAME = f"resources-{ARCH_SITE_GEOM_NODE}"
@@ -151,6 +153,14 @@ class Migration(migrations.Migration):
 
     dependencies = [("bcap", "1291_add_internal_plugin")]
 
+    forward_file = os.path.join(
+        "sql", "v100", "v2026.05.11__get_map_attribute_data.sql"
+    )
+
     operations = [
-        migrations.RunPython(update_arch_site_styling, revert_arch_site_styling)
+        migrations.RunSQL(
+            format_sql(forward_file),
+            migrations.RunSQL.noop,
+        ),
+        migrations.RunPython(update_arch_site_styling, revert_arch_site_styling),
     ]
