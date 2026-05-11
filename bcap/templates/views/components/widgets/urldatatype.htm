@@ -1,0 +1,111 @@
+{# Override of node_modules/arches/arches/app/templates/views/components/widgets/urldatatype.htm #}
+{#                                                                                                 #}
+{# This file is a verbatim copy of the upstream arches widget with two patches                     #}
+{# added so the graph designer's "Disable Editing" switch works for url nodes                      #}
+{# (#1179). The diff vs. upstream is contained to the two `BCAP OVERRIDE` blocks                   #}
+{# below - keep this file in sync with upstream when bumping arches, applying                      #}
+{# only those two changes.                                                                         #}
+{% extends "views/components/widgets/base.htm" %}
+{% load i18n %}
+
+{% block form %}
+<div class="row widget-wrapper" data-bind="class: nodeCssClasses">
+    <div class="form-group">
+        <!-- ko if: node -->
+        <i data-bind="css: {'ion-asterisk widget-label-required': node.isrequired}"></i>
+        <!-- /ko -->
+        <div class="control-label">
+            <label class="control-label widget-input-label" for="">
+                <span data-bind="text: $root.translations.linkText"></span>
+            </label>
+        </div>
+        <div class="col-xs-12">
+            {# ===== BCAP OVERRIDE (1/2): bind `disable` on both inputs to disabled||uneditable computed ===== #}
+            <input type="string" data-bind="textInput: url_label, disable: disable, attr: {placeholder: url_label_placeholder}" class="form-control input-lg widget-input" style="margin-bottom: 5px">
+        </div>
+        <div class="control-label">
+            <label class="control-label widget-input-label" for="">
+                <span data-bind="text: $root.translations.urlForLink"></span>
+            </label>
+        </div>
+        <div class="col-xs-12">
+            <input type="string" data-bind="textInput: url, disable: disable, attr: {placeholder: url_placeholder}" class="form-control
+            input-lg widget-input" style="margin-bottom: 5px">
+            {# ===== END BCAP OVERRIDE ===== #}
+        </div>
+        <div class="col-xs-12">
+            <label class="control-label widget-input-label" for="">
+                <span data-bind="text: $root.translations.preview"></span>
+            </label>
+            <div style='margin-bottom:2px'>
+                <a target="_blank" data-bind="attr: {href: url}, style: { color: link_color }">
+                    <span data-bind="text: urlPreviewText()"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock form %}
+
+
+{% block config_form %}
+<div class="control-label">
+    <span data-bind="text: $root.translations.urlPlaceholder"></span>
+</div>
+<div class="col-xs-12 crud-widget-container">
+    <input type="" id="" class="form-control input-md widget-input"
+    data-bind="textInput: url_placeholder">
+</div>
+<div class="control-label">
+    <span data-bind="text: $root.translations.urlLabelPlaceholder"></span>
+</div>
+<div class="col-xs-12 crud-widget-container">
+    <input type="" id="" class="form-control input-md widget-input"
+    data-bind="textInput: url_label_placeholder">
+</div>
+<div class="control-label">
+    <span data-bind="text: $root.translations.urlLinkColor"></span>
+</div>
+<div class="col-xs-12 crud-widget-container">
+    <input type="" id="" class="form-control input-md widget-input"
+    data-bind="textInput: link_color">
+</div>
+{# ===== BCAP OVERRIDE (2/2): add the "Disable Editing" switch to the config form ===== #}
+<div class="node-config-item">
+    <div class="control-label">
+        <span class="widget-input-label" data-bind="text: $root.translations.disabled"></span>
+    </div>
+    <div class="pad-no">
+        <div
+            data-bind="
+                component: {
+                    name: 'views/components/simple-switch',
+                    params: {
+                        value: uneditable,
+                        config:{label: $root.translations.disableEditing, subtitle: $root.translations.preventUsersFromEditingValue}
+                    }
+                }
+            "
+        ></div>
+    </div>
+</div>
+{# ===== END BCAP OVERRIDE ===== #}
+{% endblock config_form %}
+
+
+{% block report %}
+<dt data-bind="text: label, class: nodeCssClasses"></dt>
+<dd data-bind="class: nodeCssClasses">
+    <div style='margin-bottom:2px'>
+        <a data-bind="attr: {href: url}, style: { color: link_color }">
+            <span data-bind="text: urlPreviewText()"></span>
+        </a>
+    </div>
+</dd>
+{% endblock report %}
+
+{% block display_value %}
+<a data-bind="attr: {href: url}, style: { color: link_color }, class: nodeCssClasses">
+    <span data-bind="text: urlPreviewText()"></span>
+</a>
+{% endblock display_value %}
