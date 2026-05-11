@@ -157,7 +157,7 @@ def get_user_list():
 4. Start and open the `bcap7-6` container in Docker Desktop
 5. Go to the "Exec" tab and run the following:
 ```
-python3.11 manage.py bc_test_users --refresh
+python3 manage.py bc_test_users --refresh
 ```
 6. Open the "Inspect" tab in the container
 7. `Ctrl + F` for `Networks` and look for `IPAddress`
@@ -169,7 +169,7 @@ python3.11 manage.py bc_test_users --refresh
 11. Go to the "Exec" tab and run the following:
 ```
 npm run build_development
-python3.11 manage.py setup_db
+python3 manage.py setup_db
 ```
 
 #### Authentication
@@ -224,11 +224,11 @@ docker cp bcap.sql bcap7-6:/tmp/bcap.sql
 createdb -U postgres -h postgres16-3_arches7-5-2 bcap
 psql -U postgres -h postgres16-3_arches7-5-2 -d bcap -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 psql -U postgres -h postgres16-3_arches7-5-2 -d bcap -f /tmp/bcap.sql
-python3.11 manage.py es index_database
+python3 manage.py es index_database
 ```
 3. If you are having trouble with logins you might need to refresh your test user list
 ```
-python3.11 manage.py bc_test_users --refresh
+python3 manage.py bc_test_users --refresh
 ```
 
 ## Developing the UI using Vite
@@ -237,7 +237,7 @@ See [README.vite.md](./README.vite.md) for details about developing using the Vi
 ## Running Backend Unit Tests
 
 ```
-python3.11 manage.py test tests --pattern="*.py" --settings="tests.test_settings" --keepdb
+python3 manage.py test tests --pattern="*.py" --settings="tests.test_settings" --keepdb
 ```
 
 - `--keepdb` reuses the existing test database between runs to save time

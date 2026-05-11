@@ -10,7 +10,7 @@ implementations return the same count.
 ### Playwright (inside of the `bcap7-6` container)
 
 ```bash
-python3.11 -m pip install playwright pytest-playwright
+python3 -m pip install playwright pytest-playwright
 playwright install --with-deps chromium
 ```
 
@@ -49,8 +49,8 @@ just unit
 just mock
 
 # Or inside the container
-python3.11 -m pytest tests/search_components/cross_model_advanced_search/unit/ -v
-python3.11 -m pytest tests/search_components/cross_model_advanced_search/mock/ -v
+python3 -m pytest tests/search_components/cross_model_advanced_search/unit/ -v
+python3 -m pytest tests/search_components/cross_model_advanced_search/mock/ -v
 ```
 
 ### Scenario Tests
@@ -65,7 +65,7 @@ the pipeline must produce. No database, Elasticsearch, or browser required.
 just scenario
 
 # Or inside the container
-python3.11 -m pytest tests/search_components/cross_model_advanced_search/scenario/ -v
+python3 -m pytest tests/search_components/cross_model_advanced_search/scenario/ -v
 ```
 
 To add a new scenario, append a `Scenario(...)` to `_build_scenarios()` in
