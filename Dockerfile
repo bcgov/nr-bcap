@@ -12,7 +12,6 @@ ENV COMPONENT_LAB_ROOT=${WEB_ROOT}/arches-component-lab
 ENV QUERYSETS_ROOT=${WEB_ROOT}/arches-querysets
 ENV WHEELS=/wheels
 ENV PYTHONUNBUFFERED=1
-ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y make software-properties-common
 # Get the pre-built python wheels from the build environment
 RUN mkdir ${WEB_ROOT}

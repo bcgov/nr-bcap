@@ -6,7 +6,6 @@ ENV APP_ROOT=${WEB_ROOT}/bcap
 ENV ARCHES_COMMON=${WEB_ROOT}/bcgov-arches-common
 ENV ARCHES_COMPONENT_LAB=${WEB_ROOT}/arches-component-lab
 ENV NODE_MAJOR=20
-ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p ${APP_ROOT}/bcap/webpack
 
 RUN apt-get update && apt-get install -y make software-properties-common && apt-get install -y ca-certificates curl gnupg && mkdir -p /etc/apt/keyrings
