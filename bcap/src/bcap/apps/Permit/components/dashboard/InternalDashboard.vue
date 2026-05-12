@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
-//import mockProjectsData from './mockData.json';
+// import mockProjectsData from './mockData2.json';
+
+// Grab the current route name so the cards always have a valid destination
+const currentRoute = useRoute();
 
 interface ProjectData {
     id: string;
@@ -28,32 +32,54 @@ interface ProjectData {
     urgency: number;
 }
 
-// Maps raw data to the generic ProjectData interface
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapToDashboardCard = (rawItem: any): ProjectData => {
+interface RawRequirementData {
+    resourceinstanceid: string;
+    displayname: string;
+    displaydescription?: string;
+    graph_id: string;
+    tiles: Record<string, unknown>[];
+    display_values: Record<string, unknown>;
+}
+
+// Maps the backend nested JSON to the generic Dashboard Card interface
+const mapToDashboardCard = (
+    rawItem: RawRequirementData,
+    index: number,
+): ProjectData => {
+    // Safely extract the flattened display values, fallback to empty object
+    const vals = rawItem.display_values || {};
+
+    // Because the values are 'unknown', we safely cast them to Strings for the UI
+    const reqId = vals['Requirement Identification']
+        ? String(vals['Requirement Identification'])
+        : 'Unknown ID';
+
+    const reqName = vals['Requirement Name']
+        ? String(vals['Requirement Name'])
+        : rawItem.displayname;
+
     return {
-        id: rawItem.id,
-        capPriority: rawItem.capPriority || false,
-        capLabel: rawItem.capLabel || 'Unknown Process',
-        capDate: rawItem.capDate || '',
+        id: rawItem.resourceinstanceid || `fallback-id-${index}`,
+        capPriority: false,
+        capLabel: 'Process Requirement',
+        capDate: 'Pending',
+        icon: 'fa-solid fa-file-signature',
 
-        icon: rawItem.icon || 'fa-solid fa-file',
-        bodyTitle: rawItem.projectName || rawItem.name || 'Untitled',
-        bodySubtitle1:
-            rawItem.projectId || rawItem.submissionNumber || 'Pending',
-        bodySubtitle2: rawItem.bodySubtitle2 || rawItem.sector || '',
+        bodyTitle: rawItem.displayname || 'Unnamed Requirement',
+        bodySubtitle1: reqId,
+        bodySubtitle2: 'Regulatory Review',
 
-        // Passthrough the rest
-        body1: rawItem.body1 || '',
-        body2: rawItem.body2 || '',
-        body3: rawItem.body3 || '',
-        body4: rawItem.body4 || '',
-        body5: rawItem.body5 || '',
+        body1: `Req Name:${reqName}`,
+        body2: `System ID:${rawItem.resourceinstanceid.substring(0, 8)}...`,
+        body3: `Graph:${rawItem.graph_id.substring(0, 8)}`,
+        body4: 'Live from Arches DB',
+        body5: '',
 
-        footerDate: rawItem.footerDate || new Date().toISOString(),
-        footerName: rawItem.footerName || '',
-        route: rawItem.route || 'default-route',
-        urgency: rawItem.urgency || '',
+        footerDate: new Date().toISOString().split('T')[0],
+        footerName: 'John Doe',
+
+        route: (currentRoute.name as string) || 'Home',
+        urgency: 1,
     };
 };
 
@@ -72,7 +98,7 @@ const sortOptions = [
     { label: 'Sector', value: 'bodySubtitle2' },
 ];
 
-// backend "API" call
+// backend API call
 const fetchProjects = async () => {
     try {
         const apiUrl = '/bcap/api/dashboard';
@@ -82,7 +108,7 @@ const fetchProjects = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        return data;
+        return data as RawRequirementData[];
     } catch (error) {
         console.error('Error fetching projects from backend:', error);
         return [];
@@ -105,9 +131,11 @@ onMounted(() => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const data = (await fetchProjects()) as any[];
-        rawProjects.value = data.map(mapToDashboardCard);
+        const data = await fetchProjects();
+        // Pass the index into the translator to guarantee unique keys
+        rawProjects.value = data.map((item, index) =>
+            mapToDashboardCard(item, index),
+        );
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -213,6 +241,11 @@ const formatBodyLine = (text?: string) => {
     }
     return text;
 };
+
+const navigateToReport = (reportId: string) => {
+    // This punches out of the dashboard and loads the Arches Modular Report
+    window.location.href = `/bcap/report/${reportId}`;
+};
 </script>
 
 <template>
@@ -274,6 +307,7 @@ const formatBodyLine = (text?: string) => {
                     :body5="formatBodyLine(item.body5)"
                     :route="{ name: item.route }"
                     :search-query="currentSearch"
+                    @click.capture.prevent="navigateToReport(item.id)"
                 />
             </div>
 
@@ -285,6 +319,9 @@ const formatBodyLine = (text?: string) => {
             </div>
         </Fluid>
     </Panel>
+    <br />
+    <br />
+    <br />
 </template>
 
 <style scoped>
