@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import {
     useResourceData,
@@ -18,6 +18,7 @@ import Section9 from '@/bcap/components/pages/details/ArchaeologicalSite/section
 import type { DetailsData } from '@/bcap/types.ts';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { PublicationSchema } from '@/bcap/schema/PublicationSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import DataTable from 'primevue/datatable';
@@ -49,6 +50,12 @@ const { data: currentData, loading: siteDataLoading } =
 const { data: siteVisitData, loading: siteVisitDataLoading } =
     useRelatedResourceData<SiteVisitSchema>('site_visit', resourceId);
 
+const { data: publicationData, loading: publicationDataLoading } =
+    useRelatedResourceData<PublicationSchema>(
+        'archaeological_site',
+        resourceId,
+    );
+
 const { data: childSiteData, loading: childSiteDataLoading } =
     useRelatedResourceData<ArchaeologySiteSchema>(
         'archaeological_site',
@@ -61,6 +68,15 @@ const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
         resourceId,
         true,
     );
+
+watch(currentData, () => {
+    if (currentData.value) {
+        console.log(
+            'Current archaeological site data updated:',
+            currentData.value,
+        );
+    }
+});
 
 const typedCurrentData = computed(
     () => currentData.value as ArchaeologySiteSchema | undefined,
@@ -76,6 +92,10 @@ const typedChildSiteData = computed(
 
 const typedHriaData = computed(
     () => hriaDiscontinuedData.value as HriaDiscontinuedDataSchema | undefined,
+);
+
+const typedPublicationData = computed(
+    () => publicationData.value as PublicationSchema | undefined,
 );
 </script>
 
@@ -166,7 +186,10 @@ const typedHriaData = computed(
         <Section9
             :data="typedCurrentData?.aliased_data?.related_documents"
             :hria-data="typedHriaData"
-            :loading="siteDataLoading || hriaDataLoading"
+            :publication-data="typedPublicationData"
+            :loading="
+                siteDataLoading || hriaDataLoading || publicationDataLoading
+            "
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"

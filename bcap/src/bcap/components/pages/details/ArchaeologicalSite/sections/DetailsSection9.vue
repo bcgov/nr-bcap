@@ -6,6 +6,7 @@ import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTabl
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
+import type { PublicationSchema } from '@/bcap/schema/PublicationSchema.ts';
 import type { RelatedDocumentsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     HriaDiscontinuedDataSchema,
@@ -19,6 +20,7 @@ const props = withDefaults(
     defineProps<{
         data: RelatedDocumentsTile | undefined;
         hriaData?: HriaDiscontinuedDataSchema;
+        publicationData?: PublicationSchema;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -32,6 +34,7 @@ const props = withDefaults(
         editLogData: () => ({}),
         showAuditFields: false,
         hriaData: undefined,
+        publicationData: undefined,
     },
 );
 
@@ -150,6 +153,7 @@ const hasOtherMaps = computed(() => {
 </script>
 
 <template>
+    <div>{{ publicationData }}</div>
     <DetailsSection
         section-title="9. References & Related Documents"
         :loading="props.loading"

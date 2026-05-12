@@ -951,7 +951,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Description",
                         "maxLength": null,
                         "placeholder": {
@@ -974,7 +976,9 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Act/Section",
                         "placeholder": {
                             "en": "Select an option"
@@ -995,7 +999,9 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Government",
                         "placeholder": {
                             "en": "Select an option"
@@ -1021,7 +1027,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Biogeography Description",
                         "maxLength": "125",
                         "placeholder": {
@@ -1049,7 +1057,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "General Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1077,7 +1087,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Street Number",
                         "maxLength": "50",
                         "placeholder": {
@@ -1105,7 +1117,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Ancestral Remains Remarks (Restricted)",
                         "maxLength": "125",
                         "placeholder": {
@@ -1128,7 +1142,9 @@
                     "card_id": "14179b58-64ad-11f0-a4ef-6e5bb479055b",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Entered By",
                         "placeholder": {
                             "en": "Select a person"
@@ -1198,7 +1214,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Inventory Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1226,7 +1244,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "City",
                         "maxLength": "80",
                         "placeholder": {
@@ -1254,7 +1274,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Street Name",
                         "maxLength": "80",
                         "placeholder": {
@@ -1282,7 +1304,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Postal Code",
                         "maxLength": "7",
                         "placeholder": {
@@ -1310,7 +1334,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Legal Description",
                         "maxLength": "2000",
                         "placeholder": {
@@ -1360,7 +1386,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "NROS File #",
                         "maxLength": "125",
                         "placeholder": {
@@ -1405,7 +1433,9 @@
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Entered By",
                         "placeholder": {
                             "en": ""
@@ -1431,7 +1461,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Document Description",
                         "maxLength": "250",
                         "placeholder": {
@@ -1473,7 +1505,9 @@
                 {
                     "card_id": "2ad1641e-50ad-11f0-a6c8-0242ac170006",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Document Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1499,7 +1533,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Tenure Remarks",
                         "maxLength": "125",
                         "placeholder": {
@@ -1527,7 +1563,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Tenure Type",
                         "maxLength": null,
                         "placeholder": {
@@ -1549,7 +1587,9 @@
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Registration Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1569,7 +1609,9 @@
                 {
                     "card_id": "67ab15bd-7377-44c4-a9e2-0ff632b14bd9",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Biogeography Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1595,7 +1637,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "PID",
                         "maxLength": "9",
                         "placeholder": {
@@ -1637,7 +1681,9 @@
                 {
                     "card_id": "068500bc-0d07-11ed-8804-5254008afee6",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "BCAP Submission Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1683,7 +1729,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "HCA Contraventions",
                         "maxLength": null,
                         "placeholder": {
@@ -1707,7 +1755,11 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Upper (m asl)",
                         "max": "",
                         "min": "",
@@ -1765,7 +1817,9 @@
                 {
                     "card_id": "a9ce5a20-d085-4fa2-9f5b-2b812223b3d1",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "External URL Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1797,7 +1851,7 @@
                         "en": "Reference File"
                     },
                     "node_id": "bb15839e-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000019"
@@ -1811,7 +1865,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Boundary Description",
                         "maxLength": null,
                         "placeholder": {
@@ -1833,7 +1889,9 @@
                 {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Protection Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1908,7 +1966,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Address and Legal Description Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1931,7 +1991,9 @@
                     "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "PID",
                         "maxLength": "9",
                         "placeholder": {
@@ -1959,7 +2021,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Address",
                         "maxLength": "250",
                         "placeholder": {
@@ -1987,7 +2051,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alert Subject",
                         "maxLength": "125",
                         "placeholder": {
@@ -2015,7 +2081,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Biogeography Name",
                         "maxLength": "125",
                         "placeholder": {
@@ -2065,7 +2133,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Typology Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2108,7 +2178,9 @@
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Entered By",
                         "placeholder": {
                             "en": "Select a person"
@@ -2151,7 +2223,9 @@
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Register Type(s)",
                         "multiValue": true,
                         "placeholder": {
@@ -2168,6 +2242,28 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000104"
+                },
+                {
+                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Publication",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "869b4236-99ef-423f-a54e-35ebdbb5a79c",
+                    "label": {
+                        "en": "Publication"
+                    },
+                    "node_id": "6b0b6935-eb55-4838-8142-3ec77f1ed5ed",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 },
                 {
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
@@ -2200,7 +2296,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Parcel Owner Type(s)",
                         "maxLength": null,
                         "placeholder": {
@@ -2228,7 +2326,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Inventory Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2256,7 +2356,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alert Details",
                         "maxLength": null,
                         "placeholder": {
@@ -2300,7 +2402,9 @@
                 {
                     "card_id": "05baee08-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "General Remark Source",
                         "placeholder": {
                             "en": "Select an option"
@@ -2326,7 +2430,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Tenure Description",
                         "maxLength": null,
                         "placeholder": {
@@ -2354,7 +2460,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Restricted Information",
                         "maxLength": null,
                         "placeholder": {
@@ -2382,7 +2490,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Accuracy Remarks",
                         "maxLength": "500",
                         "placeholder": {
@@ -2463,7 +2573,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Source Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -2491,7 +2603,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Keyword(s)",
                         "maxLength": "500",
                         "placeholder": {
@@ -2519,7 +2633,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference Remarks",
                         "maxLength": "500",
                         "placeholder": {
@@ -2533,7 +2649,7 @@
                         "en": "Reference Remarks"
                     },
                     "node_id": "bb15818c-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -2541,7 +2657,9 @@
                 {
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -2553,7 +2671,7 @@
                         "en": "Reference Type"
                     },
                     "node_id": "bb157f66-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -2575,7 +2693,7 @@
                         "en": "Reference Year"
                     },
                     "node_id": "bb15809c-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -2584,7 +2702,9 @@
                     "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference Author(s)",
                         "placeholder": {
                             "en": "Select a person"
@@ -2596,7 +2716,7 @@
                         "en": "Reference Author(s)"
                     },
                     "node_id": "bb15829a-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -2610,7 +2730,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference Title",
                         "maxLength": "500",
                         "placeholder": {
@@ -2624,7 +2746,7 @@
                         "en": "Reference Title"
                     },
                     "node_id": "bb157e3a-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -2638,7 +2760,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Location Description",
                         "maxLength": null,
                         "placeholder": {
@@ -2666,7 +2790,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Convictions",
                         "maxLength": null,
                         "placeholder": {
@@ -2694,7 +2820,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Copyright",
                         "maxLength": "80",
                         "placeholder": {
@@ -2716,7 +2844,9 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -2781,7 +2911,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image Caption",
                         "maxLength": null,
                         "placeholder": {
@@ -2803,7 +2935,9 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image View",
                         "placeholder": {
                             "en": "Select an option"
@@ -2829,7 +2963,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image Photographer",
                         "maxLength": "80",
                         "placeholder": {
@@ -2857,7 +2993,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Image Feature(s)",
                         "maxLength": "250",
                         "placeholder": {
@@ -2900,7 +3038,9 @@
                     "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "PIN",
                         "maxLength": "10",
                         "placeholder": {
@@ -2923,7 +3063,9 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Reference #",
                         "maxLength": "125",
                         "placeholder": {
@@ -2951,7 +3093,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Name Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2979,7 +3123,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Name",
                         "maxLength": "250",
                         "placeholder": {
@@ -3001,7 +3147,9 @@
                 {
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Site Name Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3022,7 +3170,9 @@
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Assigned or Reported By",
                         "placeholder": {
                             "en": "Select a person"
@@ -3065,7 +3215,9 @@
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Parent Site",
                         "placeholder": {
                             "en": "Select parent site (if applicable)"
@@ -3085,7 +3237,9 @@
                 {
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Typology",
                         "placeholder": {
                             "en": "Select an option"
@@ -3105,7 +3259,9 @@
                 {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Edit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3131,7 +3287,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Restricted Remarks (Branch Access Only)",
                         "maxLength": null,
                         "placeholder": {
@@ -3159,7 +3317,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "General Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3201,7 +3361,9 @@
                 {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Legal Instrument",
                         "placeholder": {
                             "en": "Select an option"
@@ -3222,7 +3384,9 @@
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alert Branch Contact",
                         "placeholder": {
                             "en": "Select a person"
@@ -3248,7 +3412,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Elevation Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3272,7 +3438,11 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Lower (m asl)",
                         "max": "",
                         "min": "",
@@ -3326,7 +3496,9 @@
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Decision Maker",
                         "placeholder": {
                             "en": "Select a person"
@@ -3346,7 +3518,9 @@
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Decision/Criteria",
                         "placeholder": {
                             "en": "Select an option"
@@ -3367,7 +3541,9 @@
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Recommended By",
                         "placeholder": {
                             "en": "Select a person"
@@ -3415,7 +3591,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Decision Rationale",
                         "maxLength": null,
                         "placeholder": {
@@ -4143,6 +4321,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "rangenode_id": "5513b739-04f5-4c98-9e6f-def560ff3555",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
+                    "edgeid": "af10f5cf-e590-47f4-8231-ae3ca186253f",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "6b0b6935-eb55-4838-8142-3ec77f1ed5ed",
                     "source_identifier_id": null
                 },
                 {
@@ -6460,6 +6648,38 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "publication",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
+                                "name": "Publication"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance-list",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Publication",
+                    "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
+                    "nodeid": "6b0b6935-eb55-4838-8142-3ec77f1ed5ed",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "biogeography_type",
                     "config": {
                         "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
@@ -7645,7 +7865,10 @@
                         "falseLabel": {
                             "en": "Additional Image"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Primary Image"
                         }
@@ -7893,7 +8116,10 @@
                         "falseLabel": {
                             "en": "Unrestricted"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Restricted"
                         }
@@ -8206,9 +8432,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "Make Arch Site geometries exportable",
-                "publicationid": "f718a53f-f99a-44af-8ed7-a54790b102c3",
-                "published_time": "2026-05-04T01:22:11.374"
+                "notes": "Add publication resource instance list",
+                "publicationid": "8942b194-6fee-4f68-aada-e1a436d888ba",
+                "published_time": "2026-05-08T03:00:57.983"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -8308,7 +8534,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "d5a4f8fb2c 2026-04-22 06:33:18 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }
