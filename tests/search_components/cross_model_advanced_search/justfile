@@ -51,17 +51,17 @@ snapshot-update:
 # Run unit tests
 unit:
     {{ clr }}
-    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3.11 -m pytest {{ test_path }}/unit/ -v
+    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3 -m pytest {{ test_path }}/unit/ -v
 
 # Run mock tests
 mock:
     {{ clr }}
-    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3.11 -m pytest {{ test_path }}/mock/ -v
+    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3 -m pytest {{ test_path }}/mock/ -v
 
 # Run scenario tests
 scenario:
     {{ clr }}
-    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3.11 -m pytest {{ test_path }}/scenario/ -v
+    docker exec -it -e PYTHONUNBUFFERED=1 {{ container }} python3 -m pytest {{ test_path }}/scenario/ -v
 
 # Launch Chromium with remote debugging enabled
 [windows]
