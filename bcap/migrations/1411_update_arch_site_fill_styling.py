@@ -1,14 +1,24 @@
 import json
 import os
 
+from django.conf import settings
 from django.db import migrations
 from arches.app.models.graph import Graph
-from arches.app.models.models import Node
+from arches.app.models.models import MapMarker, Node
 from bcap.migrations.util.migration_util import format_sql
 
 ARCH_SITE_GRAPH = "cef9c510-e3e6-4057-ac08-89ad926180b4"
 ARCH_SITE_GEOM_NODE = "b18223c2-13ef-11f0-8695-0242ac170007"
 SOURCE_NAME = f"resources-{ARCH_SITE_GEOM_NODE}"
+
+# Pattern images referenced by the PATTERN_ID layer below. Registered as
+# MapMarker rows so the upstream mapbox-gl ko binding picks them up via
+# map.loadImage / map.addImage on every map at load time.
+PATTERN_MARKERS = {
+    "pattern-crosshatch-red": settings.STATIC_URL + "img/patterns/crosshatch-red.png",
+    "pattern-vertical-red": settings.STATIC_URL + "img/patterns/vertical-red.png",
+    "pattern-horizontal-red": settings.STATIC_URL + "img/patterns/horizontal-red.png",
+}
 
 # Note this takes out line + halo + hover + cluster + click + count stylings
 # that you'd typically see when you toggle advanced settings on.
@@ -104,12 +114,12 @@ def update_arch_site_styling(apps, schema_editor):
                         "match",
                         ["get", "registration_status"],
                         "Legacy",
-                        "pattern-crosshatch",
+                        "pattern-crosshatch-red",
                         "Recorded/Unprotected",
-                        "pattern-vertical",
+                        "pattern-vertical-red",
                         "Cancelled Record",
-                        "pattern-horizontal",
-                        "pattern-horizontal",
+                        "pattern-horizontal-red",
+                        "pattern-horizontal-red",
                     ],
                 },
             }
@@ -157,6 +167,15 @@ def revert_arch_site_styling(apps, schema_editor):
     graph.update_published_graphs(notes="revert site_boundary advancedStyle #1411")
 
 
+def add_pattern_markers(apps, schema_editor):
+    for name, url in PATTERN_MARKERS.items():
+        MapMarker.objects.update_or_create(name=name, defaults={"url": url})
+
+
+def remove_pattern_markers(apps, schema_editor):
+    MapMarker.objects.filter(name__in=PATTERN_MARKERS).delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [("bcap", "1291_add_internal_plugin")]
@@ -171,4 +190,5 @@ class Migration(migrations.Migration):
             migrations.RunSQL.noop,
         ),
         migrations.RunPython(update_arch_site_styling, revert_arch_site_styling),
+        migrations.RunPython(add_pattern_markers, remove_pattern_markers),
     ]
