@@ -10,7 +10,7 @@ else
 	PACKAGE_JSON_FOLDER=${ARCHES_ROOT}
 fi
 
-PYTHON_EXEC=python3.11
+PYTHON_EXEC=python3
 
 # Environmental Variables
 export DJANGO_PORT=${DJANGO_PORT:-8000}
