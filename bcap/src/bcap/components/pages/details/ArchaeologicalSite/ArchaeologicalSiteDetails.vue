@@ -51,10 +51,7 @@ const { data: siteVisitData, loading: siteVisitDataLoading } =
     useRelatedResourceData<SiteVisitSchema>('site_visit', resourceId);
 
 const { data: publicationData, loading: publicationDataLoading } =
-    useRelatedResourceData<PublicationSchema>(
-        'archaeological_site',
-        resourceId,
-    );
+    useRelatedResourceData<PublicationSchema>('publication', resourceId);
 
 const { data: childSiteData, loading: childSiteDataLoading } =
     useRelatedResourceData<ArchaeologySiteSchema>(
