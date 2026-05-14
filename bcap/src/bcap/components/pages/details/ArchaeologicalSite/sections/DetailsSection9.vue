@@ -4,8 +4,16 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
-import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import type {
+    AliasedTileDataWithAudit,
+    EditLogData,
+} from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
+import type {
+    PublicationDetailsTile,
+    PublicationSchema,
+    AuthorsTile,
+} from '@/bcap/schema/PublicationSchema.ts';
 import type { RelatedDocumentsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     HriaDiscontinuedDataSchema,
@@ -19,6 +27,7 @@ const props = withDefaults(
     defineProps<{
         data: RelatedDocumentsTile | undefined;
         hriaData?: HriaDiscontinuedDataSchema;
+        publicationData?: PublicationSchema[] | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -32,6 +41,7 @@ const props = withDefaults(
         editLogData: () => ({}),
         showAuditFields: false,
         hriaData: undefined,
+        publicationData: undefined,
     },
 );
 
@@ -48,12 +58,45 @@ const relatedDocumentsData = computed(() => {
     return expandDocumentRows(docsArray, 'related_site_documents');
 });
 
-const referencesColumns: ColumnDefinition[] = [
-    { field: 'reference_type', label: 'Reference Type' },
-    { field: 'reference_title', label: 'Title' },
-    { field: 'reference_year', label: 'Year' },
-    { field: 'reference_authors', label: 'Author(s)' },
-    { field: 'reference_remarks', label: 'Remarks' },
+type PublicationDetailsTileWithAuthors = AliasedTileDataWithAudit &
+    PublicationDetailsTile & {
+        aliased_data: PublicationDetailsTile['aliased_data'] & {
+            authors: AuthorsTile | undefined;
+        };
+    };
+const publicationReferencesData = computed<PublicationDetailsTileWithAuthors[]>(
+    () => {
+        return (props.publicationData ?? []).map((publication) => {
+            let data = publication.aliased_data
+                .publication_details as PublicationDetailsTileWithAuthors;
+            data.aliased_data.authors = publication.aliased_data.authors;
+            return data;
+        });
+    },
+);
+
+const publicationColumns: ColumnDefinition[] = [
+    {
+        field: 'publication_type',
+        label: 'Reference Type',
+    },
+    { field: 'title', label: 'Title' },
+    {
+        field: 'year_of_publication',
+        label: 'Year',
+    },
+    {
+        field: 'authors.0.aliased_data.authors',
+        label: 'Author(s)',
+        displayFunction: (value: AliasedTileDataWithAudit) =>
+            (value.aliased_data?.authors as AuthorsTile[])
+                ?.map((author) => author?.aliased_data?.authors?.display_value)
+                .join(', '),
+    },
+    {
+        label: 'Remarks',
+        field: 'publication_remarks',
+    },
 ];
 
 const relatedDocumentsColumns = computed<ColumnDefinition[]>(() => {
@@ -166,8 +209,8 @@ const hasOtherMaps = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasReferences"
-                        :table-data="currentData?.publication_reference ?? []"
-                        :column-definitions="referencesColumns"
+                        :table-data="publicationReferencesData"
+                        :column-definitions="publicationColumns"
                         :initial-sort-field-index="2"
                     />
                     <EmptyState
