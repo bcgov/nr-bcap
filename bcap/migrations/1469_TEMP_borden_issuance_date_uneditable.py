@@ -7,7 +7,6 @@ from arches.app.models.models import CardXNodeXWidget
 from arches.app.models.graph import Graph
 from django.db import migrations
 
-
 ARCH_SITE_GRAPH = "cef9c510-e3e6-4057-ac08-89ad926180b4"
 CARD_X_NODE_X_WIDGET_ID = "86aa4b00-f92f-487b-81ea-74694f6db441"
 
