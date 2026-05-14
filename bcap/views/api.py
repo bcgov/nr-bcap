@@ -41,6 +41,7 @@ from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
 from arches.app.models.resource import Resource
+from arches.app.models.models import Tile
 
 logger = logging.getLogger(__name__)
 
@@ -539,20 +540,55 @@ class RegisterType(APIBase):
             )
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
 
+class ProcessRequirement(APIBase):
 
-class PermitRequirement(APIBase):
     def get(self, request, resource_id):
         try:
-            resource = Resource.objects.get(resourceinstanceid=resource_id)
-            serialized_data = resource.serialize()
-            return JSONResponse(serialized_data)
+            hydrated_res = Resource.objects.get(resourceinstanceid=resource_id)
+            serialized_data = hydrated_res.serialize()
+            
+            tiles_queryset = Tile.objects.filter(
+                resourceinstance_id=resource_id
+            ).values("tileid", "nodegroup_id", "parenttile_id", "data")
+            
+            serialized_data["tiles"] = list(tiles_queryset)
+            
+            return JsonResponse(serialized_data, safe=False)
 
-        except Resource.DoesNotExist:
-            return JSONResponse({"error": "Permit Requirement not found"}, status=404)
         except Exception as e:
-            logger.exception(f"Unable to fetch Permit Requirement {resource_id}")
-            return JSONResponse({"error": str(e)}, status=500)
+            print(f"Process Requirement API Error: {e}")
+            import traceback
+            traceback.print_exc() 
 
+            return JsonResponse({"error": str(e)}, status=500)
+
+    def post(self, request, resource_id):
+        try:
+            payload = json.loads(request.body)
+            updated_requirements = payload.get("requirements", [])
+            NODE_SATISFIED = '49d33cbb-e857-4b21-8bfe-f6632ce53f9f'
+            NODE_NOTES = 'a44988ea-0c8a-40f0-a51c-90fb5616e34e'
+
+            for req in updated_requirements:
+                tile_id = req.get("id")
+                if tile_id:
+                    tile = Tile.objects.get(tileid=tile_id)
+                    tile.data[NODE_SATISFIED] = req.get("isSatisfied", False)
+                    tile.data[NODE_NOTES] = {
+                        "en": {
+                            "value": req.get("notes", ""),
+                            "direction": "ltr"
+                        }
+                    }
+                    tile.save()
+
+            return JsonResponse({"status": "success", "message": "Checklist saved!"})
+
+        except Exception as e:
+            print(f"Process Requirement Save Error: {e}")
+            import traceback
+            traceback.print_exc() 
+            return JsonResponse({"error": str(e)}, status=500)
 
 class RequirementSubmission(APIBase):
     def get(self, request, resource_id):

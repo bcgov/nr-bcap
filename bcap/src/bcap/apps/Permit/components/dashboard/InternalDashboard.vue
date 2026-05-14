@@ -244,7 +244,8 @@ const formatBodyLine = (text?: string) => {
 
 const navigateToReport = (reportId: string) => {
     // This punches out of the dashboard and loads the Arches Modular Report
-    window.location.href = `/bcap/report/${reportId}`;
+    //window.location.href = `/bcap/report/${reportId}`;
+    window.location.href = `/bcap/plugins/internal-permit-dashboard/checklist?id=${reportId}`;
 };
 </script>
 
