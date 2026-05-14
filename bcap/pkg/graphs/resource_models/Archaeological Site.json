@@ -2252,7 +2252,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
-                        "uneditable": false,
+                        "uneditable": true,
                         "viewMode": "days"
                     },
                     "id": "86aa4b00-f92f-487b-81ea-74694f6db441",
