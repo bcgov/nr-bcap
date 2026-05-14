@@ -1361,9 +1361,7 @@
                 },
                 {
                     "alias": "publication_identifier_type",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
