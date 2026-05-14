@@ -11,6 +11,7 @@ class Command(BaseCommand):
             "lg_person",
             "local_government",
             "legislative_act",
+            "publication",
             "repository",
             "hca_permit",
             "archaeological_site",

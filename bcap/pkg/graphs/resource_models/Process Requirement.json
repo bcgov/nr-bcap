@@ -1578,7 +1578,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "d5a4f8fb2c 2026-04-22 06:33:18 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }

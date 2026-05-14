@@ -8,6 +8,7 @@ import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
+import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
 
 export interface SpatialAccuracyEntry extends AliasedTileData {
     aliased_data: {
@@ -251,6 +252,7 @@ export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
 
 export interface PublicationReferenceTile extends AliasedTileData {
     aliased_data: {
+        publication?: ResourceInstanceListValue;
         reference_type?: AliasedNodeData;
         reference_title?: AliasedNodeData;
         reference_year?: AliasedNodeData;
