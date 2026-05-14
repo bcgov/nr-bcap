@@ -69,9 +69,6 @@ function generateConfig(): Promise<UserConfig> {
             resolve: {
                 // Force these bare imports to resolve from this repo's
                 // node_modules, regardless of where the importing file lives.
-                // Needed because bcgov_arches_common is installed into Python
-                // site-packages in CI (and into /web_root/bcgov-arches-common
-                // locally), neither of which have a node_modules nearby.
                 dedupe: ['vue', 'dompurify', 'primevue'],
             },
             test: {
