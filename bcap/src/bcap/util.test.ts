@@ -18,6 +18,10 @@ describe('formatDateTime', () => {
         expect(formatDateTime(null)).toBeNull();
     });
 
+    it('returns null for empty string input', () => {
+        expect(formatDateTime('')).toBeNull();
+    });
+
     it('formats a typical PM time with seconds and Canadian date', () => {
         // Local-time ISO without timezone to avoid environment tz flakiness
         const iso = '2025-06-21T13:05:09'; // 1:05:09 PM local time
