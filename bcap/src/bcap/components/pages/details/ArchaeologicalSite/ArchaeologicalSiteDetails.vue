@@ -92,7 +92,7 @@ const typedHriaData = computed(
 );
 
 const typedPublicationData = computed(
-    () => publicationData.value as PublicationSchema | undefined,
+    () => publicationData.value as PublicationSchema[] | undefined,
 );
 </script>
 

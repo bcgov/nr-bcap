@@ -94,7 +94,7 @@ const publicationColumns: ColumnDefinition[] = [
                 .join(', '),
     },
     {
-        label: 'Remarks2',
+        label: 'Remarks',
         field: 'publication_remarks',
     },
 ];
