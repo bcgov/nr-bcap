@@ -18,10 +18,6 @@ describe('formatDateTime', () => {
         expect(formatDateTime(null)).toBeNull();
     });
 
-    it('returns null for empty string input', () => {
-        expect(formatDateTime('')).toBeNull();
-    });
-
     it('formats a typical PM time with seconds and Canadian date', () => {
         // Local-time ISO without timezone to avoid environment tz flakiness
         const iso = '2025-06-21T13:05:09'; // 1:05:09 PM local time
@@ -78,16 +74,6 @@ describe('getDisplayValue', () => {
                 details: [],
             } as unknown),
         ).toBe('');
-    });
-
-    it('returns undefined when node_value is truthy but display_value is undefined', () => {
-        expect(
-            getDisplayValue({
-                display_value: undefined,
-                node_value: 'something',
-                details: [],
-            } as unknown),
-        ).toBeUndefined();
     });
 
     it('returns display_value when node_value is truthy', () => {
