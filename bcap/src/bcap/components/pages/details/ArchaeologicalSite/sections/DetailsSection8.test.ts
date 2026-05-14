@@ -26,11 +26,37 @@ it('merges arch-site and mapped site-visit remarks into the general remarks tabl
                             aliased_data: {
                                 general_remark: [
                                     {
-                                        tileid: 'sv',
+                                        tileid: 'sv1-a',
                                         aliased_data: {
-                                            remark_source: 's',
-                                            remark_date: 'd',
-                                            remark: 'r',
+                                            remark_source: 's1a',
+                                            remark_date: 'd1a',
+                                            remark: 'r1a',
+                                        },
+                                    },
+                                    {
+                                        tileid: 'sv1-b',
+                                        aliased_data: {
+                                            remark_source: 's1b',
+                                            remark_date: 'd1b',
+                                            remark: 'r1b',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                {
+                    aliased_data: {
+                        remarks_and_recommendations: {
+                            aliased_data: {
+                                general_remark: [
+                                    {
+                                        tileid: 'sv2-a',
+                                        aliased_data: {
+                                            remark_source: 's2a',
+                                            remark_date: 'd2a',
+                                            remark: 'r2a',
                                         },
                                     },
                                 ],
@@ -63,11 +89,27 @@ it('merges arch-site and mapped site-visit remarks into the general remarks tabl
             },
         },
         {
-            tileid: 'sv',
+            tileid: 'sv1-a',
             aliased_data: {
-                general_remark_source: 's',
-                general_remark_date: 'd',
-                general_remark: 'r',
+                general_remark_source: 's1a',
+                general_remark_date: 'd1a',
+                general_remark: 'r1a',
+            },
+        },
+        {
+            tileid: 'sv1-b',
+            aliased_data: {
+                general_remark_source: 's1b',
+                general_remark_date: 'd1b',
+                general_remark: 'r1b',
+            },
+        },
+        {
+            tileid: 'sv2-a',
+            aliased_data: {
+                general_remark_source: 's2a',
+                general_remark_date: 'd2a',
+                general_remark: 'r2a',
             },
         },
     ]);
