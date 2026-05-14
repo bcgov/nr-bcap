@@ -80,6 +80,16 @@ describe('getDisplayValue', () => {
         ).toBe('');
     });
 
+    it('returns undefined when node_value is truthy but display_value is undefined', () => {
+        expect(
+            getDisplayValue({
+                display_value: undefined,
+                node_value: 'something',
+                details: [],
+            } as unknown),
+        ).toBeUndefined();
+    });
+
     it('returns display_value when node_value is truthy', () => {
         expect(
             getDisplayValue({
