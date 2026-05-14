@@ -6538,13 +6538,13 @@
                     "sourcebranchpublication_id": "cff9eab9-8348-4095-8b99-938e063fa1ad"
                 },
                 {
-                    "alias": "application_requirement",
+                    "alias": "process_requirement",
                     "config": {
                         "graphs": [
                             {
                                 "graphid": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
                                 "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Permit Requirement",
+                                "name": "Process Requirement",
                                 "relationshipCollection": "00000000-0000-0000-0000-000000000005",
                                 "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
                                 "useOntologyRelationship": false
@@ -6564,7 +6564,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Application Requirement",
+                    "name": "Process Requirement",
                     "nodegroup_id": "c0b5fc20-bab5-4240-87aa-dcd0c96dfa58",
                     "nodeid": "c0b5fc20-bab5-4240-87aa-dcd0c96dfa58",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
@@ -7490,9 +7490,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Removed hyphen from node name",
-                "publicationid": "85b33d48-bc96-48da-9a77-821d72a2022d",
-                "published_time": "2026-05-13T16:26:13.910"
+                "notes": "Change Application Requirement to Process Requirement",
+                "publicationid": "e5912248-587b-4132-8062-8c8f50e08ec0",
+                "published_time": "2026-05-13T21:40:56.600"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
