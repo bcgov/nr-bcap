@@ -39,10 +39,13 @@ export interface KeywordTile extends AliasedTileData {
 export interface PublicationDetailsTile extends AliasedTileData {
     aliased_data: {
         publication_type?: AliasedNodeData;
-        title?: AliasedNodeData;
+        title?: StringValue;
         year_of_publication?: DateValue;
-        reference_authors?: AliasedNodeData;
-        reference_remarks?: AliasedNodeData;
+        page_range_start?: AliasedNodeData;
+        page_range_end?: AliasedNodeData;
+        publication_remarks?: StringValue;
+        journal_or_volume_name?: AliasedNodeData;
+        other_journal_or_volume_name?: StringValue;
     };
 }
 export interface ReferenceLinkTile extends AliasedTileData {

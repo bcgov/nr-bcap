@@ -94,17 +94,8 @@ const publicationColumns: ColumnDefinition[] = [
                 .join(', '),
     },
     {
-        label: 'Remarks',
-        field: 'reference_remarks',
-        displayFunction: (value: AliasedTileDataWithAudit) => {
-            const publication_ref = currentData?.value?.publication_reference;
-            const remark = publication_ref?.filter(
-                (ref) =>
-                    ref?.aliased_data?.publication?.node_value?.[0]
-                        .resourceId === value.resourceinstance,
-            )?.[0];
-            return `${remark?.aliased_data?.reference_remarks?.display_value}`;
-        },
+        label: 'Remarks2',
+        field: 'publication_remarks',
     },
 ];
 
