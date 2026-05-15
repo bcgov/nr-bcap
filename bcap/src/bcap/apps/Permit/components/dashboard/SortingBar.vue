@@ -146,10 +146,10 @@ const activeSortLabel = computed(() => {
         <div class="search-section">
             <div class="search-bar-wrapper">
                 <button
-                    class="icon-btn"
-                    @click="toggleSortMenu"
                     aria-label="Sort Options"
+                    class="icon-btn"
                     style="display: flex; gap: 5px"
+                    @click="toggleSortMenu"
                 >
                     <i class="fa-solid fa-bars"></i>
                     <i
@@ -164,11 +164,11 @@ const activeSortLabel = computed(() => {
                 </button>
 
                 <input
-                    type="text"
                     v-model="searchQuery"
-                    @input="handleSearchInput"
+                    type="text"
                     class="search-input"
                     placeholder="Search projects..."
+                    @input="handleSearchInput"
                 />
 
                 <button
@@ -198,8 +198,8 @@ const activeSortLabel = computed(() => {
 
                 <i
                     class="fa-solid fa-circle-xmark clear-sort"
-                    @click="emit('update:currentSort', 'default')"
                     title="Clear sort"
+                    @click="emit('update:currentSort', 'default')"
                 ></i>
             </div>
         </div>
@@ -207,9 +207,9 @@ const activeSortLabel = computed(() => {
         <div class="flex-spacer"></div>
 
         <div
+            role="button"
             class="status-pill"
             @click="$emit('refresh')"
-            role="button"
         >
             <i class="fa-solid fa-rotate-right refresh-icon"></i>
             lastupdated - {{ formattedTime }}
