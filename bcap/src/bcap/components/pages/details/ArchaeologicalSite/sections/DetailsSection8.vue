@@ -13,8 +13,12 @@ import type {
     RemarksAndRestrictedInformationTile,
     ContraventionDocumentTile,
     RestrictedDocumentTile,
+    GeneralRemarkTile,
 } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type {
+    SiteVisitSchema,
+    GeneralRemarkTile as SiteVisitGeneralRemarkTile,
+} from '@/bcap/schema/SiteVisitSchema.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
 import {
@@ -162,9 +166,26 @@ const convictionColumns = computed<ColumnDefinition[]>(() => {
     ];
 });
 
-const generalRemarksData = computed(
-    () => currentData.value?.general_remark_information || [],
-);
+const toArchSiteRemark = (
+    tile: SiteVisitGeneralRemarkTile,
+): GeneralRemarkTile => ({
+    ...tile,
+    aliased_data: {
+        general_remark_source: tile.aliased_data.remark_source,
+        general_remark_date: tile.aliased_data.remark_date,
+        general_remark: tile.aliased_data.remark,
+    },
+});
+
+const remarksFromSiteVisit = (sv: SiteVisitSchema): GeneralRemarkTile[] =>
+    sv.aliased_data?.remarks_and_recommendations?.aliased_data?.general_remark?.map(
+        toArchSiteRemark,
+    ) ?? [];
+
+const generalRemarksData = computed<GeneralRemarkTile[]>(() => [
+    ...(currentData.value?.general_remark_information ?? []),
+    ...props.siteVisitData.flatMap(remarksFromSiteVisit),
+]);
 const hcaContraventionsData = computed(
     () => currentData.value?.hca_contravention || [],
 );
