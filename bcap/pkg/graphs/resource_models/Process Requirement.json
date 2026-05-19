@@ -348,7 +348,7 @@
                         "en": "Default Target Processing Time (days)"
                     },
                     "node_id": "1974cf1e-e31a-428a-b64e-7eefbe2f4e5c",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000008"
@@ -481,6 +481,22 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
+                    "card_id": "d11d5b64-9c25-4233-a300-67c78eeed2ed",
+                    "config": {
+                        "defaultValue": true,
+                        "label": "Is Internal Requirement"
+                    },
+                    "id": "5cb3acdf-d41a-46c5-aa91-2a2b7cf895c9",
+                    "label": {
+                        "en": "Is Internal Requirement"
+                    },
+                    "node_id": "610647c4-77c3-4775-9772-3832f39e2447",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
                     "card_id": "53bc8b8e-16a4-4add-8bd9-a13c1d4b6ab2",
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
@@ -558,7 +574,7 @@
                         "en": "Has Submission Requirement"
                     },
                     "node_id": "4f23f343-0769-473b-9f5f-1a6dfbf16171",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -712,6 +728,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P82b_end_of_the_end",
                     "rangenode_id": "0cadf9ba-0e2d-42e9-b11e-042390bcb88c",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "62ffee00-47d5-4b48-84fc-8e76de1cfd94",
+                    "edgeid": "9d9274a9-70df-47ac-aee3-da664e69be13",
+                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "610647c4-77c3-4775-9772-3832f39e2447",
                     "source_identifier_id": null
                 },
                 {
@@ -1077,6 +1103,40 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 4,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "is_internal_requirement",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": "If this requirement is only used internally",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Is Internal Requirement",
+                    "nodegroup_id": "62ffee00-47d5-4b48-84fc-8e76de1cfd94",
+                    "nodeid": "610647c4-77c3-4775-9772-3832f39e2447",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1476,9 +1536,9 @@
             "publication": {
                 "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
                 "most_recent_edit_id": null,
-                "notes": "Add sub-requirement sort order and mandatory fields",
-                "publicationid": "601d1ce0-2cc6-4e3d-b8b6-01e90b42cf09",
-                "published_time": "2026-05-04T20:55:44.919"
+                "notes": "Introduce the internal/external requirement concept",
+                "publicationid": "74653947-b51f-43eb-9663-61cdae6591d4",
+                "published_time": "2026-05-19T16:42:37.476"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
