@@ -13,6 +13,7 @@ const currentRoute = useRoute();
 
 interface ProjectData {
     id: string;
+    reqId?: string;
     capPriority: boolean;
     capLabel: string;
     capDate: string;
@@ -34,6 +35,8 @@ interface ProjectData {
 
 interface RawRequirementData {
     resourceinstanceid: string;
+    resourceinstance_id?: string; // <-- Add this
+    id?: string;
     displayname: string;
     displaydescription?: string;
     graph_id: string;
@@ -41,46 +44,95 @@ interface RawRequirementData {
     display_values: Record<string, unknown>;
 }
 
-// Maps the backend nested JSON to the generic Dashboard Card interface
-const mapToDashboardCard = (
-    rawItem: RawRequirementData,
-    index: number,
-): ProjectData => {
-    // Safely extract the flattened display values, fallback to empty object
+interface RawApplicationData {
+    resourceinstanceid: string;
+    displayname: string;
+    displaydescription?: string;
+    graph_id: string;
+    tiles: Record<string, unknown>[];
+    display_values: Record<string, unknown>;
+    nested_process_requirements?: RawRequirementData[];
+}
+
+// Maps the backend nested JSON to the Dashboard Card interface still needs work
+// Removed the unused 'index' parameter
+const mapToDashboardCard = (rawItem: RawApplicationData): ProjectData[] => {
+    if (
+        !rawItem.nested_process_requirements ||
+        rawItem.nested_process_requirements.length === 0
+    ) {
+        return [];
+    }
+
     const vals = rawItem.display_values || {};
 
-    // Because the values are 'unknown', we safely cast them to Strings for the UI
-    const reqId = vals['Requirement Identification']
-        ? String(vals['Requirement Identification'])
-        : 'Unknown ID';
+    const appId = vals['Application ID']
+        ? String(vals['Application ID'])
+        : 'Unknown App ID';
 
-    const reqName = vals['Requirement Name']
-        ? String(vals['Requirement Name'])
+    const projectName = vals['Project Name']
+        ? String(vals['Project Name'])
         : rawItem.displayname;
 
-    return {
-        id: rawItem.resourceinstanceid || `fallback-id-${index}`,
-        capPriority: false,
-        capLabel: 'Process Requirement',
-        capDate: 'Pending',
-        icon: 'fa-solid fa-file-signature',
+    const assignee = vals['Ministry Assignee']
+        ? String(vals['Ministry Assignee'])
+        : 'Unassigned';
 
-        bodyTitle: rawItem.displayname || 'Unnamed Requirement',
-        bodySubtitle1: reqId,
-        bodySubtitle2: 'Regulatory Review',
+    // Parse Urgency as a number, defaulting to 0 if blank
+    const rawPriority = vals['Application Priority Level'];
+    const urgencyLevel = rawPriority
+        ? parseInt(String(rawPriority), 10) || 0
+        : 0;
 
-        body1: `Req Name:${reqName}`,
-        body2: `System ID:${rawItem.resourceinstanceid.substring(0, 8)}...`,
-        body3: `Graph:${rawItem.graph_id.substring(0, 8)}`,
-        body4: 'Live from Arches DB',
-        body5: '',
+    return rawItem.nested_process_requirements.map((req) => {
+        const reqVals = req.display_values || {};
 
-        footerDate: new Date().toISOString().split('T')[0],
-        footerName: 'John Doe',
+        const reqNameDisplay = reqVals['Requirement Name']
+            ? String(reqVals['Requirement Name'])
+            : req.displayname;
 
-        route: (currentRoute.name as string) || 'Home',
-        urgency: 1,
-    };
+        const dueDate = reqVals['Process Due Date']
+            ? String(reqVals['Process Due Date'])
+            : 'Due date';
+
+        const startDate = reqVals['Process Start Date']
+            ? String(reqVals['Process Start Date'])
+            : 'Not Started';
+
+        const targetReqId =
+            req.resourceinstanceid || req.resourceinstance_id || req.id;
+
+        return {
+            id: `${rawItem.resourceinstanceid}-${targetReqId}`,
+            reqId: targetReqId,
+
+            capPriority: false,
+
+            // From Process Requirement
+            capLabel: reqNameDisplay,
+            capDate: dueDate,
+            icon: 'fa-solid fa-list-check',
+
+            // From Permit Application
+            bodyTitle: projectName,
+            bodySubtitle1: appId,
+            bodySubtitle2: 'Sector',
+
+            // Dummy values waiting for the Related Permit linking
+            body1: 'Permit Type: permit type',
+            body2: 'Permit: 00000-0000',
+            body3: 'Permit Holder: permit holder',
+            body4: '',
+            body5: '',
+
+            // Mixed footer info
+            footerDate: startDate,
+            footerName: assignee !== 'Unassigned' ? assignee : 'John Doe',
+            route: (currentRoute.name as string) || 'Home',
+
+            urgency: urgencyLevel,
+        };
+    });
 };
 
 // Sorting options array
@@ -108,7 +160,7 @@ const fetchProjects = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        return data as RawRequirementData[];
+        return data as RawApplicationData[];
     } catch (error) {
         console.error('Error fetching projects from backend:', error);
         return [];
@@ -132,10 +184,7 @@ const loadData = async () => {
     isLoading.value = true;
     try {
         const data = await fetchProjects();
-        // Pass the index into the translator to guarantee unique keys
-        rawProjects.value = data.map((item, index) =>
-            mapToDashboardCard(item, index),
-        );
+        rawProjects.value = data.flatMap((item) => mapToDashboardCard(item));
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -242,10 +291,8 @@ const formatBodyLine = (text?: string) => {
     return text;
 };
 
-const navigateToReport = (reportId: string) => {
-    // This punches out of the dashboard and loads the Arches Modular Report
-    //window.location.href = `/bcap/report/${reportId}`;
-    window.location.href = `/bcap/plugins/internal-permit-dashboard/checklist?id=${reportId}`;
+const navigateToReport = (item: ProjectData) => {
+    window.location.href = `/bcap/plugins/internal-permit-dashboard/checklist?id=${item.reqId}`;
 };
 </script>
 
@@ -308,7 +355,7 @@ const navigateToReport = (reportId: string) => {
                     :body5="formatBodyLine(item.body5)"
                     :route="{ name: item.route }"
                     :search-query="currentSearch"
-                    @click.capture.prevent="navigateToReport(item.id)"
+                    @click.capture.prevent="navigateToReport(item)"
                 />
             </div>
 
