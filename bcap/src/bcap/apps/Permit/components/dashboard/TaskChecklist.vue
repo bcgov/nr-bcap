@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const idFromUrl = route.query.id;
 const subRequirements = ref([]);
+const dateTile = ref(null);
 const isLoading = ref(true);
 const errorMessage = ref('');
 
@@ -13,8 +14,11 @@ const SUB_REQ_NODEGROUP = '5ea00f2f-1a7b-47ee-b23c-9dd8cb3c5cd7';
 const NODE_SORT = '461e5988-c6c7-41a7-ac48-abbd28216542';
 const NODE_NAME = '9e5eff66-1dc8-41de-a544-930e348b3782';
 const NODE_DESC = 'feddcbb3-e905-44e4-93b7-d63ce3be92fa';
-const NODE_SATISFIED = '49d33cbb-e857-4b21-8bfe-f6632ce53f9f'; // The Boolean
-const NODE_NOTES = 'a44988ea-0c8a-40f0-a51c-90fb5616e34e'; // The Text Notes
+const NODE_SATISFIED = '49d33cbb-e857-4b21-8bfe-f6632ce53f9f';
+const NODE_NOTES = 'a44988ea-0c8a-40f0-a51c-90fb5616e34e';
+const DATE_NODEGROUP = '71cc085c-9f66-47d6-8b56-b223e9a60cb8';
+const NODE_START_DATE = '8c896564-f9c9-44ac-a563-93c1ee751fea';
+const NODE_COMP_DATE = '0cadf9ba-0e2d-42e9-b11e-042390bcb88c';
 
 const loadData = async () => {
     if (!idFromUrl) {
@@ -27,14 +31,25 @@ const loadData = async () => {
         const response = await fetch(
             `/bcap/api/process_requirements/${idFromUrl}`,
         );
-
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error(`API returned status: ${response.status}`);
-        }
 
         const data = await response.json();
 
         if (data.tiles && data.tiles.length > 0) {
+            const foundDateTile = data.tiles.find(
+                (t) => t.nodegroup_id === DATE_NODEGROUP,
+            );
+            if (foundDateTile) {
+                dateTile.value = foundDateTile;
+            } else {
+                dateTile.value = {
+                    tileid: null,
+                    nodegroup_id: DATE_NODEGROUP,
+                    data: {},
+                };
+            }
+
             subRequirements.value = data.tiles
                 .filter((tile) => tile.nodegroup_id === SUB_REQ_NODEGROUP)
                 .map((tile) => {
@@ -67,6 +82,28 @@ onMounted(() => {
     loadData();
 });
 
+const handleCheckboxChange = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const anyChecked = subRequirements.value.some((req) => req.isSatisfied);
+    const allChecked = subRequirements.value.every((req) => req.isSatisfied);
+
+    //if any are checked and the start date node is empty
+    if (anyChecked && !dateTile.value.data[NODE_START_DATE]) {
+        dateTile.value.data[NODE_START_DATE] = today;
+    }
+    //if ALL are checked and the completion date node is empty
+    if (allChecked && !dateTile.value.data[NODE_COMP_DATE]) {
+        dateTile.value.data[NODE_COMP_DATE] = today;
+    }
+    //if they unchecked something, clear the completion date node so it's active again
+    else if (!allChecked && dateTile.value.data[NODE_COMP_DATE]) {
+        dateTile.value.data[NODE_COMP_DATE] = null;
+    }
+
+    saveChanges();
+};
+
+// a little slow sometimes, might need an indicator so user doesn't click away before it finishes
 const saveChanges = async () => {
     try {
         const response = await fetch(
@@ -81,7 +118,9 @@ const saveChanges = async () => {
                             .find((row) => row.startsWith('csrftoken='))
                             ?.split('=')[1] || '',
                 },
+                //send sub requirements array and updated date to the API
                 body: JSON.stringify({
+                    dateTile: dateTile.value,
                     requirements: subRequirements.value,
                 }),
             },
@@ -98,6 +137,26 @@ const saveChanges = async () => {
     <div class="checklist-container">
         <div class="title-row">
             <h2 class="page-title">Process Sub-Requirements</h2>
+
+            <div
+                class="date-metadata"
+                v-if="dateTile"
+            >
+                <span
+                    class="date-pill"
+                    :class="{ active: dateTile.data[NODE_START_DATE] }"
+                >
+                    <strong>Started:</strong>
+                    {{ dateTile.data[NODE_START_DATE] || 'Pending' }}
+                </span>
+                <span
+                    class="date-pill"
+                    :class="{ complete: dateTile.data[NODE_COMP_DATE] }"
+                >
+                    <strong>Completed:</strong>
+                    {{ dateTile.data[NODE_COMP_DATE] || 'Pending' }}
+                </span>
+            </div>
         </div>
 
         <div
@@ -128,7 +187,7 @@ const saveChanges = async () => {
                         type="checkbox"
                         :id="'check-' + req.id"
                         v-model="req.isSatisfied"
-                        @change="saveChanges"
+                        @change="handleCheckboxChange"
                         class="req-checkbox"
                     />
                     <div class="req-titles">
@@ -181,6 +240,9 @@ const saveChanges = async () => {
     border-bottom: 3px solid #333;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 }
 
 .page-title {
@@ -188,6 +250,33 @@ const saveChanges = async () => {
     margin: 0;
     font-size: 2.5rem;
     font-weight: 700;
+}
+
+/* date pills */
+.date-metadata {
+    display: flex;
+    gap: 1rem;
+}
+
+.date-pill {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.date-pill.active {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+.date-pill.complete {
+    background-color: #dcfce3;
+    color: #166534;
+    border-color: #bbf7d0;
 }
 
 .checklist-items {

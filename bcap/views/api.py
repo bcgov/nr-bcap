@@ -42,6 +42,7 @@ from oauth2_provider.views.generic import ProtectedResourceView
 import re
 from arches.app.models.resource import Resource
 from arches.app.models.models import Tile
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -566,6 +567,8 @@ class ProcessRequirement(APIBase):
         try:
             payload = json.loads(request.body)
             updated_requirements = payload.get("requirements", [])
+            date_tile_payload = payload.get("dateTile")
+
             NODE_SATISFIED = '49d33cbb-e857-4b21-8bfe-f6632ce53f9f'
             NODE_NOTES = 'a44988ea-0c8a-40f0-a51c-90fb5616e34e'
 
@@ -582,7 +585,28 @@ class ProcessRequirement(APIBase):
                     }
                     tile.save()
 
-            return JsonResponse({"status": "success", "message": "Checklist saved!"})
+            if date_tile_payload:
+                date_tile_id = date_tile_payload.get("tileid")
+                date_nodegroup_id = date_tile_payload.get("nodegroup_id")
+                new_date_data = date_tile_payload.get("data", {})
+
+                if date_tile_id:
+                    dtile = Tile.objects.get(tileid=date_tile_id)
+                    for key, value in new_date_data.items():
+                        dtile.data[key] = value
+                    
+                    dtile.save()
+                    
+                elif date_nodegroup_id:
+                    new_tile = Tile(
+                        tileid=uuid.uuid4(),
+                        resourceinstance_id=resource_id,
+                        nodegroup_id=date_nodegroup_id,
+                        data=new_date_data
+                    )
+                    new_tile.save()
+
+            return JsonResponse({"status": "success", "message": "Checklist and Dates saved!"})
 
         except Exception as e:
             print(f"Process Requirement Save Error: {e}")

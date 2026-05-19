@@ -54,8 +54,12 @@ interface RawApplicationData {
     nested_process_requirements?: RawRequirementData[];
 }
 
+const DATE_NODEGROUP = '71cc085c-9f66-47d6-8b56-b223e9a60cb8';
+const NODE_START_DATE = '8c896564-f9c9-44ac-a563-93c1ee751fea';
+const NODE_COMP_DATE = '0cadf9ba-0e2d-42e9-b11e-042390bcb88c';
+const NODE_DUE_DATE = 'b3cf5f46-c54f-48ca-adb1-4c08682ac81a';
+
 // Maps the backend nested JSON to the Dashboard Card interface still needs work
-// Removed the unused 'index' parameter
 const mapToDashboardCard = (rawItem: RawApplicationData): ProjectData[] => {
     if (
         !rawItem.nested_process_requirements ||
@@ -65,74 +69,104 @@ const mapToDashboardCard = (rawItem: RawApplicationData): ProjectData[] => {
     }
 
     const vals = rawItem.display_values || {};
-
     const appId = vals['Application ID']
         ? String(vals['Application ID'])
         : 'Unknown App ID';
-
     const projectName = vals['Project Name']
         ? String(vals['Project Name'])
         : rawItem.displayname;
-
     const assignee = vals['Ministry Assignee']
         ? String(vals['Ministry Assignee'])
         : 'Unassigned';
 
-    // Parse Urgency as a number, defaulting to 0 if blank
     const rawPriority = vals['Application Priority Level'];
     const urgencyLevel = rawPriority
         ? parseInt(String(rawPriority), 10) || 0
         : 0;
 
-    return rawItem.nested_process_requirements.map((req) => {
-        const reqVals = req.display_values || {};
+    let activeReq = null;
+    let reqNameDisplay = 'No Requirement Linked';
+    let targetReqId = undefined;
+    let startDate = 'Not Started';
+    let dueDate = 'Pending';
 
-        const reqNameDisplay = reqVals['Requirement Name']
+    if (
+        rawItem.nested_process_requirements &&
+        rawItem.nested_process_requirements.length > 0
+    ) {
+        activeReq = rawItem.nested_process_requirements.find((req) => {
+            if (!req.tiles) return true;
+
+            const dateTile = req.tiles.find(
+                (t: Record<string, unknown>) =>
+                    t.nodegroup_id === DATE_NODEGROUP,
+            );
+            if (!dateTile || !dateTile.data) return true;
+
+            const tileData = dateTile.data as Record<string, unknown>;
+            return !tileData[NODE_COMP_DATE];
+        });
+
+        if (!activeReq) {
+            activeReq =
+                rawItem.nested_process_requirements[
+                    rawItem.nested_process_requirements.length - 1
+                ];
+        }
+
+        const reqVals = activeReq.display_values || {};
+        reqNameDisplay = reqVals['Requirement Name']
             ? String(reqVals['Requirement Name'])
-            : req.displayname;
+            : activeReq.displayname;
+        targetReqId =
+            activeReq.resourceinstanceid ||
+            activeReq.resourceinstance_id ||
+            activeReq.id;
 
-        const dueDate = reqVals['Process Due Date']
-            ? String(reqVals['Process Due Date'])
-            : 'Due date';
+        if (activeReq.tiles && activeReq.tiles.length > 0) {
+            const dateTile = activeReq.tiles.find(
+                (t: Record<string, unknown>) =>
+                    t.nodegroup_id === DATE_NODEGROUP,
+            );
+            if (dateTile && dateTile.data) {
+                const tileData = dateTile.data as Record<string, unknown>;
+                startDate = tileData[NODE_START_DATE]
+                    ? String(tileData[NODE_START_DATE])
+                    : 'Not Started';
+                dueDate = tileData[NODE_DUE_DATE]
+                    ? String(tileData[NODE_DUE_DATE])
+                    : 'Pending';
+            }
+        }
+    }
 
-        const startDate = reqVals['Process Start Date']
-            ? String(reqVals['Process Start Date'])
-            : 'Not Started';
-
-        const targetReqId =
-            req.resourceinstanceid || req.resourceinstance_id || req.id;
-
-        return {
-            id: `${rawItem.resourceinstanceid}-${targetReqId}`,
+    return [
+        {
+            id: rawItem.resourceinstanceid,
             reqId: targetReqId,
 
-            capPriority: false,
-
-            // From Process Requirement
-            capLabel: reqNameDisplay,
+            capPriority: urgencyLevel > 0,
+            capLabel: activeReq ? reqNameDisplay : 'Permit Application',
             capDate: dueDate,
-            icon: 'fa-solid fa-list-check',
+            icon: 'fa-solid fa-folder-open',
 
-            // From Permit Application
             bodyTitle: projectName,
             bodySubtitle1: appId,
             bodySubtitle2: 'Sector',
 
-            // Dummy values waiting for the Related Permit linking
-            body1: 'Permit Type: permit type',
-            body2: 'Permit: 00000-0000',
-            body3: 'Permit Holder: permit holder',
+            body1: 'Permit: permit number',
+            body2: 'Project officer: Jane Smith',
+            body3: '',
             body4: '',
             body5: '',
 
-            // Mixed footer info
             footerDate: startDate,
             footerName: assignee !== 'Unassigned' ? assignee : 'John Doe',
             route: (currentRoute.name as string) || 'Home',
 
             urgency: urgencyLevel,
-        };
-    });
+        },
+    ];
 };
 
 // Sorting options array
