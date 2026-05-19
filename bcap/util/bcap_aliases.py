@@ -14,5 +14,6 @@ class GraphSlugs:
     ARCHAEOLOGICAL_SITE = "archaeological_site"
     HRIA_DISCONTINUED_DATA = "hria_discontinued_data"
     LEGISLATIVE_ACT = "legislative_act"
+    PUBLICATION = "publication"
     SITE_SUBMISSION = "site_submission"
     SITE_VISIT = "site_visit"

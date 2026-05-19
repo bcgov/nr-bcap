@@ -189,11 +189,21 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
                     as_representation=True,
                 ).select_related("graph")
 
-                qs = (
-                    qs.filter(parent_site__id__in=resource_ids_string)
-                    if self.graph_slug == "archaeological_site"
-                    else qs.filter(archaeological_site__id__in=resource_ids_string)
-                )
+                if self.graph_slug == "archaeological_site":
+                    qs = qs.filter(parent_site__id__in=resource_ids_string)
+                elif self.graph_slug == "publication":
+                    publication_ids = (
+                        ResourceXResource.objects.filter(
+                            from_resource_id__in=resource_ids_string
+                        )
+                        .values("to_resource_id")
+                        .all()
+                    )
+                    qs = qs.filter(
+                        resourceinstanceid__in=publication_ids
+                    ).select_related("graph")
+                else:
+                    qs = qs.filter(archaeological_site__id__in=resource_ids_string)
 
                 if Version(arches_version) >= Version("8.0"):
                     qs = qs.select_related("resource_instance_lifecycle_state")

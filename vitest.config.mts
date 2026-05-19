@@ -66,6 +66,11 @@ function generateConfig(): Promise<UserConfig> {
 
         resolve({
             plugins: [vue() as any],
+            resolve: {
+                // Force these bare imports to resolve from this repo's
+                // node_modules, regardless of where the importing file lives.
+                dedupe: ['vue', 'dompurify', 'primevue'],
+            },
             test: {
                 alias: alias,
                 coverage: {
