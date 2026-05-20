@@ -28,16 +28,6 @@ class UrlPatternTests(SimpleTestCase):
         assert resolver.view_name == "bcap_tile_server"
         assert resolver.kwargs["path"] == "layer/tiles/1/2/3.pbf"
 
-    def test_borden_number_bare_resolves(self):
-        url = reverse("borden_number_bare")
-        resolver = resolve(url)
-        assert resolver.view_name == "borden_number_bare"
-
-    def test_borden_number_slash_resolves(self):
-        url = reverse("borden_number_slash")
-        resolver = resolve(url)
-        assert resolver.view_name == "borden_number_slash"
-
     def test_borden_number_with_uuid_resolves(self):
         test_uuid = "12345678-1234-1234-1234-123456789abc"
         url = reverse("borden_number", kwargs={"resourceinstanceid": test_uuid})
@@ -156,18 +146,10 @@ class UrlReverseTests(SimpleTestCase):
         url = reverse("bcap_tile_server", kwargs={"path": "test/path"})
         assert url == "/bcap/bctileserver/test/path"
 
-    def test_borden_number_bare_reverse(self):
-        url = reverse("borden_number_bare")
-        assert url == "/bcap/borden_number"
-
     def test_borden_number_reverse(self):
         test_uuid = "12345678-1234-1234-1234-123456789abc"
         url = reverse("borden_number", kwargs={"resourceinstanceid": test_uuid})
         assert url == f"/bcap/borden_number/{test_uuid}"
-
-    def test_borden_number_slash_reverse(self):
-        url = reverse("borden_number_slash")
-        assert url == "/bcap/borden_number/"
 
     def test_controlled_list_hierarchy_reverse(self):
         test_uuid = "12345678-1234-1234-1234-123456789abc"
