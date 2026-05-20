@@ -13,7 +13,7 @@ _BOM = codecs.BOM_UTF8.decode("utf-8")
 
 
 @override_settings(
-    ROOT_URLCONF="bcap.tests.test_urls",
+    ROOT_URLCONF="tests.test_urls",
     SEARCH_EXPORT_IMMEDIATE_DOWNLOAD_THRESHOLD=10000,
 )
 class TestExportResultsView(AuthTestHelper, TestCase):

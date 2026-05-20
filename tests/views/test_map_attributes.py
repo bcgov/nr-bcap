@@ -83,5 +83,3 @@ class TestMVTTilerQueryConfig(TestCase):
             MVTTiler.get_query_config(),
             {nodeid: fields for nodeid, _, fields in GRAPH_CONFIG.values()},
         )
-
-
