@@ -1,4 +1,3 @@
-# bcap/tests/util/test_borden_number_api.py
 import json
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -41,7 +40,7 @@ class _FakePoint:
         return self._y
 
 
-@override_settings(ROOT_URLCONF="bcap.tests.test_urls")
+@override_settings(ROOT_URLCONF="tests.test_urls")
 class BordenNumberApiTests(TestCase):
     def setUp(self):
         self.api = BordenNumberApi()
