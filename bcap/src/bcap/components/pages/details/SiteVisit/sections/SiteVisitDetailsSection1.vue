@@ -106,7 +106,6 @@ const biogeographyColumns = [
                                         ?.display_value
                                 }}
                             </dd>
-
                         </dl>
                     </div>
                     <EmptyState v-else />
