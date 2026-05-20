@@ -73,7 +73,6 @@ class SiteVisitAliases(AbstractAliases):
     SITE_IMAGES = "site_images"
     SITE_VISIT_LOCATION = "site_visit_location"
     SITE_VISIT_TYPE = "site_visit_type"
-    SOURCE_NOTES = "source_notes"
     START_YEAR_CALENDAR = "start_year_calendar"
     START_YEAR_QUALIFIER = "start_year_qualifier"
     START_YEAR = "start_year"

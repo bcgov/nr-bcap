@@ -30,7 +30,6 @@ export interface SiteVisitLocationBiogeographyTile extends AliasedTileData {
 // ---------- Site Visit Location ----------
 export interface SiteVisitLocationTile extends AliasedTileData {
     aliased_data: {
-        source_notes: StringValue; // string (i18n)
         accuracy_remarks: StringValue; // string (i18n)
         latest_edit_type: ReferenceSelectValue; // reference
         site_visit_location: GeoJSONFeatureCollectionValue; // geojson-feature-collection

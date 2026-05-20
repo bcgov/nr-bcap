@@ -107,14 +107,6 @@ const biogeographyColumns = [
                                 }}
                             </dd>
 
-                            <dt>Source Notes</dt>
-                            <dd>
-                                {{
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.source_notes
-                                        ?.display_value
-                                }}
-                            </dd>
                         </dl>
                     </div>
                     <EmptyState v-else />
