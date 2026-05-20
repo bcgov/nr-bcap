@@ -1,6 +1,7 @@
 import uuid
 
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
+from django.urls import resolve, reverse
 
 from arches.app.models.models import (
     GraphModel,
@@ -11,6 +12,7 @@ from arches.app.models.models import (
 )
 from bcap.util.map_attributes import GRAPH_CONFIG, inject_map_attributes
 from bcap.util.mvt_tiler import MVTTiler
+from bcap.views.api import BCAPResourceDetailView
 
 SLUG = "archaeological_site"
 NODEID, ALIAS, FIELDS = GRAPH_CONFIG[SLUG]
@@ -39,6 +41,19 @@ class TestInjectMapAttributes(TestCase):
         response = _response_with([{"properties": {"id": 1}}])
         inject_map_attributes(response, str(uuid.uuid4()), "not_a_slug")
         self.assertEqual(_features_of(response)[0]["properties"], {"id": 1})
+
+    def test_no_op_when_resource_has_no_attribute_data(self):
+        graph = GraphModel.objects.get(slug=SLUG)
+        resource = ResourceInstance.objects.create(
+            graph=graph,
+            resource_instance_lifecycle_state=(
+                ResourceInstanceLifecycleState.objects.first()
+            ),
+        )
+
+        response = _response_with([{"properties": {"id": 1}}])
+        inject_map_attributes(response, str(resource.resourceinstanceid), SLUG)
+        self.assertEqual(_features_of(response), [{"properties": {"id": 1}}])
 
     def test_attrs_injected_for_real_resource(self):
         graph = GraphModel.objects.get(slug=SLUG)
@@ -70,3 +85,13 @@ class TestMVTTilerQueryConfig(TestCase):
             MVTTiler.get_query_config(),
             {nodeid: fields for nodeid, _, fields in GRAPH_CONFIG.values()},
         )
+
+
+class TestResourceDetailURLRouting(SimpleTestCase):
+    # arches_querysets also defines a resource-detail route at the same
+    # path. Our entry must precede that include in urls.py, otherwise our
+    # MVT-attribute injection silently stops working. This test catches
+    # any reordering that would re-route the URL away from BCAPResourceDetailView.
+    def test_url_resolves_to_bcap_view(self):
+        url = reverse("api-resource", kwargs={"graph": SLUG, "pk": uuid.uuid4()})
+        self.assertIs(resolve(url).func.view_class, BCAPResourceDetailView)
