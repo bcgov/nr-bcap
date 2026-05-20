@@ -3,6 +3,7 @@ from django.test import SimpleTestCase
 from django.urls import path, resolve, reverse
 
 import bcap.urls as bcap_urls
+from bcap.views.api import BCAPResourceDetailView
 
 
 def protected_test_view(request):
@@ -135,6 +136,20 @@ class UrlPatternTests(SimpleTestCase):
         resolver = resolve(url)
         assert resolver.view_name == "user_profile"
 
+    def test_api_resource_url_resolves_to_bcap_view(self):
+        # arches_querysets also defines a resource-detail route at the same
+        # path; the bcap entry must precede that include in urls.py or the
+        # MVT-attribute injection silently stops working. Asserting the view
+        # class (not just the URL name) is what catches that regression.
+        test_uuid = "12345678-1234-1234-1234-123456789abc"
+        url = reverse(
+            "api-resource", kwargs={"graph": "archaeological_site", "pk": test_uuid}
+        )
+        resolver = resolve(url)
+        assert resolver.func.view_class is BCAPResourceDetailView
+        assert resolver.kwargs["graph"] == "archaeological_site"
+        assert str(resolver.kwargs["pk"]) == test_uuid
+
 
 class UrlReverseTests(SimpleTestCase):
     def test_bctileserver_reverse(self):
@@ -196,6 +211,13 @@ class UrlReverseTests(SimpleTestCase):
     def test_user_profile_reverse(self):
         url = reverse("user_profile")
         assert "/user_profile" in url
+
+    def test_api_resource_reverse(self):
+        test_uuid = "12345678-1234-1234-1234-123456789abc"
+        url = reverse(
+            "api-resource", kwargs={"graph": "archaeological_site", "pk": test_uuid}
+        )
+        assert url == f"/bcap/api/resource/archaeological_site/{test_uuid}"
 
 
 class UrlEdgeCaseTests(SimpleTestCase):

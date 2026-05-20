@@ -1,7 +1,6 @@
 import uuid
 
-from django.test import SimpleTestCase, TestCase
-from django.urls import resolve, reverse
+from django.test import TestCase
 
 from arches.app.models.models import (
     GraphModel,
@@ -12,7 +11,6 @@ from arches.app.models.models import (
 )
 from bcap.util.map_attributes import GRAPH_CONFIG, inject_map_attributes
 from bcap.util.mvt_tiler import MVTTiler
-from bcap.views.api import BCAPResourceDetailView
 
 SLUG = "archaeological_site"
 NODEID, ALIAS, FIELDS = GRAPH_CONFIG[SLUG]
@@ -87,11 +85,3 @@ class TestMVTTilerQueryConfig(TestCase):
         )
 
 
-class TestResourceDetailURLRouting(SimpleTestCase):
-    # arches_querysets also defines a resource-detail route at the same
-    # path. Our entry must precede that include in urls.py, otherwise our
-    # MVT-attribute injection silently stops working. This test catches
-    # any reordering that would re-route the URL away from BCAPResourceDetailView.
-    def test_url_resolves_to_bcap_view(self):
-        url = reverse("api-resource", kwargs={"graph": SLUG, "pk": uuid.uuid4()})
-        self.assertIs(resolve(url).func.view_class, BCAPResourceDetailView)
