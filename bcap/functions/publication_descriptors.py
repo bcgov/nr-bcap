@@ -6,7 +6,7 @@ from bcgov_arches_common.util.bc_primary_descriptors_function import (
 from bcgov_arches_common.util.graph_lookup import GraphLookup
 
 details = {
-    "functionid": "60000000-0000-0000-0000-000000001003",
+    "functionid": "60000000-0000-0000-0000-000000001004",
     "name": "Publication Descriptors",
     "type": "primarydescriptors",
     "modulename": "publication_descriptors.py",
