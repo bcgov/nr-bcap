@@ -73,6 +73,7 @@ const siteBoundaryNode = computed<
         :aliased-node-data="
             siteBoundaryNode as AliasedGeojsonFeatureCollectionNode
         "
+        :use-utm-coords="true"
     ></Map>
     <DetailsSection
         section-title="1. Spatial View"
