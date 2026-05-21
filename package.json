@@ -20,7 +20,8 @@
         "start": "cross-env webpack serve --config ./webpack/webpack.config.dev.js",
         "vite_dev": "DEBUG=vite:* vite --host --force",
         "vite_build": "DEBUG=vite:*  vite build",
-        "vitest": "vitest --run --coverage"
+        "vitest": "vitest --run --coverage",
+        "openapi:types": "openapi-typescript schema.yml -o bcap/src/bcap/api-types.ts"
     },
     "overrides": {
         "moment-timezone": "^0.5.45",
@@ -37,6 +38,7 @@
         "@types/underscore": "^1.13.0",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
         "eslint-config-prettier": "^10.1.5",
+        "openapi-typescript": "^7.13.0",
         "prettier": "^3.7.1",
         "prettier-plugin-jinja-template": "^2.1.0",
         "unplugin-vue-components": "^29.0.0",

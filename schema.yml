@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: BCAP API
+  version: 2.0.0
+  description: BC Archaeology Portal API
+paths:
+  /bcap/api/dashboard:
+    get:
+      operationId: api_dashboard_list
+      description: Returns dashboard cards for the current user based on their role.
+      parameters:
+      - in: query
+        name: filter_by
+        schema:
+          type: string
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          default: 50
+      - in: query
+        name: order_by
+        schema:
+          type: string
+          minLength: 1
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: status
+        schema:
+          enum:
+          - assigned
+          - unassigned
+          type: string
+          minLength: 1
+        description: |-
+          * `assigned` - assigned
+          * `unassigned` - unassigned
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DashboardCardResponse'
+          description: ''
+  /bcap/user_profile:
+    get:
+      operationId: user_profile_retrieve
+      description: Returns the authenticated user's profile, group memberships, and
+        linked Contributor resource id.
+      tags:
+      - user_profile
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+          description: ''
+components:
+  schemas:
+    DashboardCardResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        cap_priority:
+          type: boolean
+        cap_label:
+          type: string
+        cap_date:
+          type: string
+        icon:
+          type: string
+        project_name:
+          type: string
+        project_id:
+          type: string
+        sector:
+          type: string
+        body1:
+          type: string
+        body2:
+          type: string
+        body3:
+          type: string
+        body4:
+          type: string
+        footer_date:
+          type: string
+        footer_name:
+          type: string
+        urgency:
+          type: integer
+      required:
+      - body1
+      - body2
+      - body3
+      - body4
+      - cap_date
+      - cap_label
+      - cap_priority
+      - footer_date
+      - footer_name
+      - icon
+      - id
+      - project_id
+      - project_name
+      - sector
+      - urgency
+    UserProfileResponse:
+      type: object
+      properties:
+        username:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        groups:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        contributor_id:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - contributor_id
+      - first_name
+      - groups
+      - last_name
+      - username
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: bcap
