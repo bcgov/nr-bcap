@@ -731,3 +731,14 @@ class DashboardView(APIBase):
             import traceback
             traceback.print_exc() 
             return JsonResponse([], safe=False)
+
+class BCAPResourceDetailView(ArchesResourceDetailView):
+    """Standard arches_querysets resource detail. For graphs declared in
+    map_attributes.GRAPH_CONFIG we inject the configured attributes into
+    the geojson FeatureCollection node's per-feature properties so the
+    map can drive styling from them without a second fetch."""
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super().retrieve(request, *args, **kwargs)
+        inject_map_attributes(response.data, kwargs["pk"], kwargs.get("graph"))
+        return response
