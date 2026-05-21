@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
 from arches.app.views.file import FileView
 from bcap.views.api import (
+    BCAPResourceDetailView,
     BordenNumber,
     BordenNumberExternal,
     DashboardView,
@@ -129,6 +130,14 @@ urlpatterns = [
         name="dashboard",
     ),
     path(f"{PREFIX}search/export_results", export_results, name="export_results"),
+    # Override arches_querysets' resource detail route so the response is
+    # post-processed to inject MVTTiler-configured attrs into geojson
+    # feature properties. Must precede the arches_querysets include.
+    path(
+        f"{PREFIX}api/resource/<slug:graph>/<uuid:pk>",
+        BCAPResourceDetailView.as_view(),
+        name="api-resource",
+    ),
     path(f"{PREFIX}", include("bcgov_arches_common.urls")),
     path(f"{PREFIX}", include("arches_controlled_lists.urls")),
     path(f"{PREFIX}", include("arches_component_lab.urls")),

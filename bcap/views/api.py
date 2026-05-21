@@ -26,12 +26,14 @@ from arches.app.utils.betterJSONSerializer import JSONSerializer
 from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
 from bcap.util.register_type_api import RegisterTypeApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
+from bcap.util.map_attributes import inject_map_attributes
 from bcap.util.mvt_tiler import MVTTiler
 from arches.app.models.system_settings import settings
 from arches.app.search.components.base import SearchFilterFactory
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineInstance
 
+from arches_querysets.rest_framework.generic_views import ArchesResourceDetailView
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor

@@ -8,7 +8,7 @@ from django.urls import reverse
 from tests.views.helpers import AuthTestHelper
 
 
-@override_settings(ROOT_URLCONF="bcap.tests.test_urls")
+@override_settings(ROOT_URLCONF="tests.test_urls")
 class DashboardViewGetTests(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()
@@ -47,7 +47,7 @@ class DashboardViewGetTests(AuthTestHelper, TestCase):
         self.assertGreater(len(data), 0)
 
 
-@override_settings(ROOT_URLCONF="bcap.tests.test_urls")
+@override_settings(ROOT_URLCONF="tests.test_urls")
 class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()
