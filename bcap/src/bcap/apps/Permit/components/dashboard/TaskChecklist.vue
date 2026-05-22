@@ -1,11 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
+interface SubRequirement {
+    id: string;
+    sortOrder: number;
+    name: string;
+    description: string;
+    isSatisfied: boolean;
+    notes: string;
+}
+
+interface DateTile {
+    tileid: string | null;
+    nodegroup_id: string;
+    data: Record<string, any>;
+}
+
 const route = useRoute();
 const idFromUrl = route.query.id;
-const subRequirements = ref([]);
-const dateTile = ref(null);
+const subRequirements = ref<SubRequirement[]>([]);
+const dateTile = ref<DateTile | null>(null);
 const isLoading = ref(true);
 const errorMessage = ref('');
 
@@ -38,10 +53,10 @@ const loadData = async () => {
 
         if (data.tiles && data.tiles.length > 0) {
             const foundDateTile = data.tiles.find(
-                (t) => t.nodegroup_id === DATE_NODEGROUP,
+                (t: Record<string, any>) => t.nodegroup_id === DATE_NODEGROUP,
             );
             if (foundDateTile) {
-                dateTile.value = foundDateTile;
+                dateTile.value = foundDateTile as DateTile;
             } else {
                 dateTile.value = {
                     tileid: null,
@@ -51,10 +66,14 @@ const loadData = async () => {
             }
 
             subRequirements.value = data.tiles
-                .filter((tile) => tile.nodegroup_id === SUB_REQ_NODEGROUP)
-                .map((tile) => {
+                .filter(
+                    (tile: Record<string, any>) =>
+                        tile.nodegroup_id === SUB_REQ_NODEGROUP,
+                )
+                .map((tile: Record<string, any>): SubRequirement => {
                     const tileData = tile.data;
-                    const extractText = (node) => node?.en?.value || node || '';
+                    const extractText = (node: any) =>
+                        node?.en?.value || node || '';
 
                     return {
                         id: tile.tileid,
@@ -68,7 +87,10 @@ const loadData = async () => {
                         notes: extractText(tileData[NODE_NOTES]),
                     };
                 })
-                .sort((a, b) => a.sortOrder - b.sortOrder);
+                .sort(
+                    (a: SubRequirement, b: SubRequirement) =>
+                        a.sortOrder - b.sortOrder,
+                );
         }
     } catch (error) {
         console.error('Failed to load sub-requirements:', error);
@@ -83,27 +105,23 @@ onMounted(() => {
 });
 
 const handleCheckboxChange = () => {
+    if (!dateTile.value) return;
     const today = new Date().toISOString().split('T')[0];
     const anyChecked = subRequirements.value.some((req) => req.isSatisfied);
     const allChecked = subRequirements.value.every((req) => req.isSatisfied);
 
-    //if any are checked and the start date node is empty
     if (anyChecked && !dateTile.value.data[NODE_START_DATE]) {
         dateTile.value.data[NODE_START_DATE] = today;
     }
-    //if ALL are checked and the completion date node is empty
     if (allChecked && !dateTile.value.data[NODE_COMP_DATE]) {
         dateTile.value.data[NODE_COMP_DATE] = today;
-    }
-    //if they unchecked something, clear the completion date node so it's active again
-    else if (!allChecked && dateTile.value.data[NODE_COMP_DATE]) {
+    } else if (!allChecked && dateTile.value.data[NODE_COMP_DATE]) {
         dateTile.value.data[NODE_COMP_DATE] = null;
     }
 
     saveChanges();
 };
 
-// a little slow sometimes, might need an indicator so user doesn't click away before it finishes
 const saveChanges = async () => {
     try {
         const response = await fetch(
@@ -118,7 +136,6 @@ const saveChanges = async () => {
                             .find((row) => row.startsWith('csrftoken='))
                             ?.split('=')[1] || '',
                 },
-                //send sub requirements array and updated date to the API
                 body: JSON.stringify({
                     dateTile: dateTile.value,
                     requirements: subRequirements.value,
