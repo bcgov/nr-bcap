@@ -553,25 +553,27 @@ class RegisterType(APIBase):
             )
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
 
+
 class ProcessRequirement(APIBase):
 
     def get(self, request, resource_id):
         try:
             hydrated_res = Resource.objects.get(resourceinstanceid=resource_id)
             serialized_data = hydrated_res.serialize()
-            
+
             tiles_queryset = Tile.objects.filter(
                 resourceinstance_id=resource_id
             ).values("tileid", "nodegroup_id", "parenttile_id", "data")
-            
+
             serialized_data["tiles"] = list(tiles_queryset)
-            
+
             return JsonResponse(serialized_data, safe=False)
 
         except Exception as e:
             print(f"Process Requirement API Error: {e}")
             import traceback
-            traceback.print_exc() 
+
+            traceback.print_exc()
 
             return JsonResponse({"error": str(e)}, status=500)
 
@@ -581,8 +583,8 @@ class ProcessRequirement(APIBase):
             updated_requirements = payload.get("requirements", [])
             date_tile_payload = payload.get("dateTile")
 
-            NODE_SATISFIED = '49d33cbb-e857-4b21-8bfe-f6632ce53f9f'
-            NODE_NOTES = 'a44988ea-0c8a-40f0-a51c-90fb5616e34e'
+            NODE_SATISFIED = "49d33cbb-e857-4b21-8bfe-f6632ce53f9f"
+            NODE_NOTES = "a44988ea-0c8a-40f0-a51c-90fb5616e34e"
 
             for req in updated_requirements:
                 tile_id = req.get("id")
@@ -590,10 +592,7 @@ class ProcessRequirement(APIBase):
                     tile = Tile.objects.get(tileid=tile_id)
                     tile.data[NODE_SATISFIED] = req.get("isSatisfied", False)
                     tile.data[NODE_NOTES] = {
-                        "en": {
-                            "value": req.get("notes", ""),
-                            "direction": "ltr"
-                        }
+                        "en": {"value": req.get("notes", ""), "direction": "ltr"}
                     }
                     tile.save()
 
@@ -606,25 +605,29 @@ class ProcessRequirement(APIBase):
                     dtile = Tile.objects.get(tileid=date_tile_id)
                     for key, value in new_date_data.items():
                         dtile.data[key] = value
-                    
+
                     dtile.save()
-                    
+
                 elif date_nodegroup_id:
                     new_tile = Tile(
                         tileid=uuid.uuid4(),
                         resourceinstance_id=resource_id,
                         nodegroup_id=date_nodegroup_id,
-                        data=new_date_data
+                        data=new_date_data,
                     )
                     new_tile.save()
 
-            return JsonResponse({"status": "success", "message": "Checklist and Dates saved!"})
+            return JsonResponse(
+                {"status": "success", "message": "Checklist and Dates saved!"}
+            )
 
         except Exception as e:
             print(f"Process Requirement Save Error: {e}")
             import traceback
-            traceback.print_exc() 
+
+            traceback.print_exc()
             return JsonResponse({"error": str(e)}, status=500)
+
 
 class RequirementSubmission(APIBase):
     def get(self, request, resource_id):
@@ -669,68 +672,85 @@ class DashboardView(APIBase):
     #         pr_graph = GraphModel.objects.get(name__icontains="Process Requirement", is_active=True)
     #         db_records = ResourceInstance.objects.filter(graph_id=pr_graph.graphid)
     #         raw_data = []
-            
+
     #         for db_res in db_records:
     #             hydrated_res = Resource.objects.get(resourceinstanceid=db_res.resourceinstanceid)
     #             raw_data.append(hydrated_res.serialize())
-                
+
     #         return JsonResponse(raw_data, safe=False)
 
     #     except Exception as e:
     #         print(f"Dashboard API Error: {e}")
     #         import traceback
-    #         traceback.print_exc() 
-            
+    #         traceback.print_exc()
+
     #         return JsonResponse([], safe=False)
 
     def get(self, request: HttpRequest) -> JsonResponse:
         try:
-            pr_graph = GraphModel.objects.get(name__icontains="Process Requirement", is_active=True)
-            pa_graph = GraphModel.objects.get(name__icontains="Permit Application", is_active=True)
-            
+            pr_graph = GraphModel.objects.get(
+                name__icontains="Process Requirement", is_active=True
+            )
+            pa_graph = GraphModel.objects.get(
+                name__icontains="Permit Application", is_active=True
+            )
+
             # 1. Fetch Process Requirements and build the lookup dict
             pr_records = ResourceInstance.objects.filter(graph_id=pr_graph.graphid)
             pr_lookup = {}
             for pr in pr_records:
-                hydrated_pr = Resource.objects.get(resourceinstanceid=pr.resourceinstanceid)
-                hydrated_pr.load_tiles() # Safety check to force data hydration
+                hydrated_pr = Resource.objects.get(
+                    resourceinstanceid=pr.resourceinstanceid
+                )
+                hydrated_pr.load_tiles()  # Safety check to force data hydration
                 pr_lookup[str(pr.resourceinstanceid)] = hydrated_pr.serialize()
-                
+
             # 2. Fetch Permit Applications
             pa_records = ResourceInstance.objects.filter(graph_id=pa_graph.graphid)
             nested_applications = []
-            
+
             for pa in pa_records:
-                hydrated_pa = Resource.objects.get(resourceinstanceid=pa.resourceinstanceid)
-                hydrated_pa.load_tiles() # Safety check to force data hydration
+                hydrated_pa = Resource.objects.get(
+                    resourceinstanceid=pa.resourceinstanceid
+                )
+                hydrated_pa.load_tiles()  # Safety check to force data hydration
                 pa_data = hydrated_pa.serialize()
-                
+
                 # Prep the empty array for nested requirements
-                pa_data['nested_process_requirements'] = []
-                
+                pa_data["nested_process_requirements"] = []
+
                 # 3. Only look for links IF the application actually has tiles
-                if 'tiles' in pa_data and len(pa_data['tiles']) > 0:
-                    for tile in pa_data['tiles']:
-                        data = tile.get('data', {})
+                if "tiles" in pa_data and len(pa_data["tiles"]) > 0:
+                    for tile in pa_data["tiles"]:
+                        data = tile.get("data", {})
                         for key, value in data.items():
                             # If we spot a resource link array
-                            if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict) and 'resourceId' in value[0]:
+                            if (
+                                isinstance(value, list)
+                                and len(value) > 0
+                                and isinstance(value[0], dict)
+                                and "resourceId" in value[0]
+                            ):
                                 for link in value:
-                                    linked_uuid = str(link.get('resourceId', ''))
-                                    
+                                    linked_uuid = str(link.get("resourceId", ""))
+
                                     # If it matches our checklist list, nest it!
                                     if linked_uuid in pr_lookup:
-                                        pa_data['nested_process_requirements'].append(pr_lookup[linked_uuid])
-                
+                                        pa_data["nested_process_requirements"].append(
+                                            pr_lookup[linked_uuid]
+                                        )
+
                 nested_applications.append(pa_data)
-                
+
             return JsonResponse(nested_applications, safe=False)
 
         except Exception as e:
             print(f"Dashboard API Error: {e}")
             import traceback
-            traceback.print_exc() 
+
+            traceback.print_exc()
             return JsonResponse([], safe=False)
+
 
 class BCAPResourceDetailView(ArchesResourceDetailView):
     """Standard arches_querysets resource detail. For graphs declared in
