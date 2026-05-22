@@ -1,0 +1,139 @@
+import uuid
+
+from django.test import SimpleTestCase, TestCase
+
+from arches.app.models.models import GraphModel, Node, ResourceXResource
+
+from arches_controlled_lists.models import List, ListItem, ListItemValue
+
+from bcap.util.dashboard_seed import DashboardDemoBuilder
+
+
+class _SeedControlledListsMixin:
+    """The contributor_type and hca_permit_type controlled lists the builder reads
+    are referenced by the graphs but not populated by the package load, so insert
+    the minimal list items here and remove them afterward (LIFO addCleanup)."""
+
+    def setUp(self):
+        super().setUp()
+        self._seed_item("contributor", "contributor_type", "Archaeologist", 1)
+        self._seed_item("contributor", "contributor_type", "Consultant", 2)
+        self._seed_item("hca_permit", "hca_permit_type", "Investigation", 1)
+
+    def _seed_item(self, slug, alias, label, sortorder):
+        node = Node.objects.get(graph__slug=slug, alias=alias, source_identifier=None)
+        list_id = node.config["controlledList"]
+        controlled_list, created = List.objects.get_or_create(
+            pk=list_id,
+            defaults={"name": alias, "dynamic": False, "searchable": False},
+        )
+        if created:
+            self.addCleanup(controlled_list.delete)
+        item = ListItem.objects.create(
+            id=uuid.uuid4(),
+            list=controlled_list,
+            sortorder=sortorder,
+            uri=f"https://bcap.test/clm/{uuid.uuid4()}",
+        )
+        self.addCleanup(item.delete)
+        ListItemValue.objects.create(
+            id=uuid.uuid4(),
+            list_item=item,
+            valuetype_id="prefLabel",
+            language_id="en",
+            value=label,
+        )
+        return item
+
+
+class LocalizedTests(SimpleTestCase):
+    def test_wraps_value_in_string_datatype_shape(self):
+        self.assertEqual(
+            DashboardDemoBuilder.localized("Review"),
+            {"en": {"value": "Review", "direction": "ltr"}},
+        )
+
+
+class ReferenceValueTests(_SeedControlledListsMixin, TestCase):
+    """reference_value resolves a node's controlled list to a single item id."""
+
+    def test_returns_item_matching_label(self):
+        result = DashboardDemoBuilder.reference_value(
+            "hca_permit", "hca_permit_type", "Investigation"
+        )
+
+        self.assertEqual(len(result), 1)
+        item = ListItem.objects.get(pk=result[0])
+        self.assertTrue(item.list_item_values.filter(value="Investigation").exists())
+
+    def test_returns_first_item_by_sort_order_when_no_label(self):
+        node = Node.objects.get(
+            graph__slug="contributor",
+            alias="contributor_type",
+            source_identifier=None,
+        )
+        list_id = node.config.get("controlledList")
+        expected = (
+            ListItem.objects.filter(list_id=list_id).order_by("sortorder").first()
+        )
+
+        result = DashboardDemoBuilder.reference_value("contributor", "contributor_type")
+
+        self.assertEqual(result, [str(expected.pk)])
+
+    def test_raises_when_list_has_no_matching_item(self):
+        with self.assertRaises(RuntimeError):
+            DashboardDemoBuilder.reference_value(
+                "contributor", "contributor_type", "Nope"
+            )
+
+
+class BuildDashboardDemoDataTests(_SeedControlledListsMixin, TestCase):
+    """Integration test for the full builder."""
+
+    def _slug(self, resource):
+        return GraphModel.objects.get(pk=resource.graph_id).slug
+
+    def _link_targets(self, resource):
+        return {
+            str(rxr.to_resource_id)
+            for rxr in ResourceXResource.objects.filter(from_resource_id=resource.pk)
+        }
+
+    def test_creates_resources_on_the_expected_graphs(self):
+        data = DashboardDemoBuilder().build()
+
+        self.assertEqual(self._slug(data.assignees[0]), "contributor")
+        self.assertEqual(self._slug(data.holders[0]), "contributor")
+        self.assertEqual(self._slug(data.hca_permit), "hca_permit")
+        self.assertEqual(
+            self._slug(data.process_requirements[0]), "process_requirement"
+        )
+        self.assertEqual(self._slug(data.permit), "permit_application")
+
+    def test_links_permit_to_its_related_resources(self):
+        data = DashboardDemoBuilder().build()
+
+        # related_permit -> HCA permit, plus each application_admin child's
+        # process_requirement and ministry_assignee links (one child per requirement).
+        self.assertEqual(
+            self._link_targets(data.permit),
+            {str(data.hca_permit.pk)}
+            | {str(req.pk) for req in data.process_requirements}
+            | {str(assignee.pk) for assignee in data.assignees},
+        )
+        # HCA permit's permit_holder points at every holder contributor.
+        self.assertEqual(
+            self._link_targets(data.hca_permit),
+            {str(holder.pk) for holder in data.holders},
+        )
+
+    def test_routes_to_first_unsatisfied_sub_requirement(self):
+        data = DashboardDemoBuilder().build()
+
+        # process_requirements[0] is fully satisfied (route id is None); [1] has an
+        # unsatisfied sub, so its route id points at one of its sub-requirement tiles.
+        sub_tiles = data.process_requirements[1].aliased_data.sub_requirement
+        self.assertIn(
+            data.sub_requirement_tile_ids[1], {str(tile.pk) for tile in sub_tiles}
+        )

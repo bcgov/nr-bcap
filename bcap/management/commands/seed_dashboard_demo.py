@@ -58,6 +58,5 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Created Permit Application {data.permit.pk}")
         )
         self.stdout.write(f"  can be accessed at {_resource_url(data.permit.pk)}")
-        self.stdout.write(f"  process_requirement: {data.process_requirements[0].pk}")
         if options["no_index"]:
             self.stdout.write("Skipped indexing (--no-index).")

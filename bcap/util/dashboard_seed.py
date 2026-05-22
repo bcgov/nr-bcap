@@ -91,7 +91,7 @@ class DashboardDemoBuilder:
         """A `reference` value from a node's controlled list: the item matching
         ``label``, or the first item if ``label`` is None."""
         node = Node.objects.get(graph__slug=slug, alias=alias, source_identifier=None)
-        list_id = (node.config or {}).get("controlledList")
+        list_id = node.config.get("controlledList")
         items = ListItem.objects.filter(list_id=list_id)
         if label is not None:
             item = items.filter(list_item_values__value=label).first()
