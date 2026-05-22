@@ -115,10 +115,17 @@ class DashboardDemoBuilder:
             setattr(tile.aliased_data, alias, value)
         return tile
 
+    def _graph_id(self, slug):
+        """Cache slug -> graphid; _new_resource is called once per resource but
+        there are only a handful of distinct graphs."""
+        if slug not in self._graph_ids:
+            self._graph_ids[slug] = GraphModel.objects.get(slug=slug).pk
+        return self._graph_ids[slug]
+
     def _new_resource(self, slug):
         """A fresh ResourceTileTree with its resource row already persisted."""
         resource = ResourceTileTree(
-            graph_id=GraphModel.objects.get(slug=slug).pk,
+            graph_id=self._graph_id(slug),
             resource_instance_lifecycle_state=self.state,
             createdtime=timezone.now(),
         )
@@ -195,6 +202,7 @@ class DashboardDemoBuilder:
         """Create the demo graph and return the resources it produced."""
         self.state = ResourceInstanceLifecycleState.objects.first()
         self.save_kwargs = {"force_admin": True, "partial": False, "index": False}
+        self._graph_ids = {}
         contributor_type = self.reference_value("contributor", "contributor_type")
 
         assignees = [
