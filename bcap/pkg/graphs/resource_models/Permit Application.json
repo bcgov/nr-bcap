@@ -2972,6 +2972,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "b2efb04e-02f7-4daf-b4fc-83512e63fb54",
+                    "edgeid": "37120081-a601-42b9-b43f-0206638c8cac",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "rangenode_id": "45c54857-1073-4424-aa64-7877c0f16532",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "42e822bc-dea7-465b-a1f3-27d1732e9393",
                     "edgeid": "37f923c3-48e7-42a0-9e4a-a48ca59d321b",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
@@ -5083,6 +5093,38 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 4,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "project_officer",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Project Officer",
+                    "nodegroup_id": "b2efb04e-02f7-4daf-b4fc-83512e63fb54",
+                    "nodeid": "45c54857-1073-4424-aa64-7877c0f16532",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -7360,9 +7402,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Change Application Requirement to Process Requirement",
-                "publicationid": "e5912248-587b-4132-8062-8c8f50e08ec0",
-                "published_time": "2026-05-13T21:40:56.600"
+                "notes": "Added missing requirement order and project officer nodes",
+                "publicationid": "8a80e2f3-beee-44cc-8157-8c72e7a30aa4",
+                "published_time": "2026-05-19T16:37:57.956"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
