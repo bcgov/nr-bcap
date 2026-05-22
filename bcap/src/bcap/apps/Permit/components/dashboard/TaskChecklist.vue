@@ -14,7 +14,13 @@ interface SubRequirement {
 interface DateTile {
     tileid: string | null;
     nodegroup_id: string;
-    data: Record<string, any>;
+    data: Record<string, unknown>;
+}
+
+interface RawTile {
+    tileid: string | null;
+    nodegroup_id: string;
+    data: Record<string, unknown>;
 }
 
 const route = useRoute();
@@ -53,7 +59,7 @@ const loadData = async () => {
 
         if (data.tiles && data.tiles.length > 0) {
             const foundDateTile = data.tiles.find(
-                (t: Record<string, any>) => t.nodegroup_id === DATE_NODEGROUP,
+                (t: RawTile) => t.nodegroup_id === DATE_NODEGROUP,
             );
             if (foundDateTile) {
                 dateTile.value = foundDateTile as DateTile;
@@ -67,17 +73,26 @@ const loadData = async () => {
 
             subRequirements.value = data.tiles
                 .filter(
-                    (tile: Record<string, any>) =>
-                        tile.nodegroup_id === SUB_REQ_NODEGROUP,
+                    (tile: RawTile) => tile.nodegroup_id === SUB_REQ_NODEGROUP,
                 )
-                .map((tile: Record<string, any>): SubRequirement => {
+                .map((tile: RawTile): SubRequirement => {
                     const tileData = tile.data;
-                    const extractText = (node: any) =>
-                        node?.en?.value || node || '';
+                    const extractText = (node: unknown): string => {
+                        if (!node) return '';
+                        if (typeof node === 'string') return node;
+
+                        const obj = node as { en?: { value?: unknown } };
+                        if (obj.en && obj.en.value) {
+                            return String(obj.en.value);
+                        }
+                        return String(node);
+                    };
 
                     return {
-                        id: tile.tileid,
-                        sortOrder: tileData[NODE_SORT] || 99,
+                        id:
+                            tile.tileid ||
+                            `temp-${Math.random().toString(36).slice(2, 9)}`,
+                        sortOrder: Number(tileData[NODE_SORT]) || 99,
                         name:
                             extractText(tileData[NODE_NAME]) || 'Unnamed Step',
                         description: extractText(tileData[NODE_DESC]),
