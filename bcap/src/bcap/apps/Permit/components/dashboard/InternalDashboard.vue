@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
-//import mockProjectsData from './mockData.json';
+// import mockProjectsData from './mockData2.json';
+
+// Grab the current route name so the cards always have a valid destination
+const currentRoute = useRoute();
 
 interface ProjectData {
     id: string;
+    reqId?: string;
     capPriority: boolean;
     capLabel: string;
     capDate: string;
@@ -28,33 +33,140 @@ interface ProjectData {
     urgency: number;
 }
 
-// Maps raw data to the generic ProjectData interface
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapToDashboardCard = (rawItem: any): ProjectData => {
-    return {
-        id: rawItem.id,
-        capPriority: rawItem.capPriority || false,
-        capLabel: rawItem.capLabel || 'Unknown Process',
-        capDate: rawItem.capDate || '',
+interface RawRequirementData {
+    resourceinstanceid: string;
+    resourceinstance_id?: string; // <-- Add this
+    id?: string;
+    displayname: string;
+    displaydescription?: string;
+    graph_id: string;
+    tiles: Record<string, unknown>[];
+    display_values: Record<string, unknown>;
+}
 
-        icon: rawItem.icon || 'fa-solid fa-file',
-        bodyTitle: rawItem.projectName || rawItem.name || 'Untitled',
-        bodySubtitle1:
-            rawItem.projectId || rawItem.submissionNumber || 'Pending',
-        bodySubtitle2: rawItem.bodySubtitle2 || rawItem.sector || '',
+interface RawApplicationData {
+    resourceinstanceid: string;
+    displayname: string;
+    displaydescription?: string;
+    graph_id: string;
+    tiles: Record<string, unknown>[];
+    display_values: Record<string, unknown>;
+    nested_process_requirements?: RawRequirementData[];
+}
 
-        // Passthrough the rest
-        body1: rawItem.body1 || '',
-        body2: rawItem.body2 || '',
-        body3: rawItem.body3 || '',
-        body4: rawItem.body4 || '',
-        body5: rawItem.body5 || '',
+const DATE_NODEGROUP = '71cc085c-9f66-47d6-8b56-b223e9a60cb8';
+const NODE_START_DATE = '8c896564-f9c9-44ac-a563-93c1ee751fea';
+const NODE_COMP_DATE = '0cadf9ba-0e2d-42e9-b11e-042390bcb88c';
+const NODE_DUE_DATE = 'b3cf5f46-c54f-48ca-adb1-4c08682ac81a';
 
-        footerDate: rawItem.footerDate || new Date().toISOString(),
-        footerName: rawItem.footerName || '',
-        route: rawItem.route || 'default-route',
-        urgency: rawItem.urgency || '',
-    };
+// Maps the backend nested JSON to the Dashboard Card interface still needs work
+const mapToDashboardCard = (rawItem: RawApplicationData): ProjectData[] => {
+    if (
+        !rawItem.nested_process_requirements ||
+        rawItem.nested_process_requirements.length === 0
+    ) {
+        return [];
+    }
+
+    const vals = rawItem.display_values || {};
+    const appId = vals['Application ID']
+        ? String(vals['Application ID'])
+        : 'Unknown App ID';
+    const projectName = vals['Project Name']
+        ? String(vals['Project Name'])
+        : rawItem.displayname;
+    const assignee = vals['Ministry Assignee']
+        ? String(vals['Ministry Assignee'])
+        : 'Unassigned';
+
+    const rawPriority = vals['Application Priority Level'];
+    const urgencyLevel = rawPriority
+        ? parseInt(String(rawPriority), 10) || 0
+        : 0;
+
+    let activeReq = null;
+    let reqNameDisplay = 'No Requirement Linked';
+    let targetReqId = undefined;
+    let startDate = 'Not Started';
+    let dueDate = 'Pending';
+
+    if (
+        rawItem.nested_process_requirements &&
+        rawItem.nested_process_requirements.length > 0
+    ) {
+        activeReq = rawItem.nested_process_requirements.find((req) => {
+            if (!req.tiles) return true;
+
+            const dateTile = req.tiles.find(
+                (t: Record<string, unknown>) =>
+                    t.nodegroup_id === DATE_NODEGROUP,
+            );
+            if (!dateTile || !dateTile.data) return true;
+
+            const tileData = dateTile.data as Record<string, unknown>;
+            return !tileData[NODE_COMP_DATE];
+        });
+
+        if (!activeReq) {
+            activeReq =
+                rawItem.nested_process_requirements[
+                    rawItem.nested_process_requirements.length - 1
+                ];
+        }
+
+        const reqVals = activeReq.display_values || {};
+        reqNameDisplay = reqVals['Requirement Name']
+            ? String(reqVals['Requirement Name'])
+            : activeReq.displayname;
+        targetReqId =
+            activeReq.resourceinstanceid ||
+            activeReq.resourceinstance_id ||
+            activeReq.id;
+
+        if (activeReq.tiles && activeReq.tiles.length > 0) {
+            const dateTile = activeReq.tiles.find(
+                (t: Record<string, unknown>) =>
+                    t.nodegroup_id === DATE_NODEGROUP,
+            );
+            if (dateTile && dateTile.data) {
+                const tileData = dateTile.data as Record<string, unknown>;
+                startDate = tileData[NODE_START_DATE]
+                    ? String(tileData[NODE_START_DATE])
+                    : 'Not Started';
+                dueDate = tileData[NODE_DUE_DATE]
+                    ? String(tileData[NODE_DUE_DATE])
+                    : 'Pending';
+            }
+        }
+    }
+
+    return [
+        {
+            id: rawItem.resourceinstanceid,
+            reqId: targetReqId,
+
+            capPriority: urgencyLevel > 0,
+            capLabel: activeReq ? reqNameDisplay : 'Permit Application',
+            capDate: dueDate,
+            icon: 'fa-solid fa-folder-open',
+
+            bodyTitle: projectName,
+            bodySubtitle1: appId,
+            bodySubtitle2: 'Sector',
+
+            body1: 'Permit: permit number',
+            body2: 'Project officer: Jane Smith',
+            body3: '',
+            body4: '',
+            body5: '',
+
+            footerDate: startDate,
+            footerName: assignee !== 'Unassigned' ? assignee : 'John Doe',
+            route: (currentRoute.name as string) || 'Home',
+
+            urgency: urgencyLevel,
+        },
+    ];
 };
 
 // Sorting options array
@@ -72,7 +184,7 @@ const sortOptions = [
     { label: 'Sector', value: 'bodySubtitle2' },
 ];
 
-// backend "API" call
+// backend API call
 const fetchProjects = async () => {
     try {
         const apiUrl = '/bcap/api/dashboard';
@@ -82,7 +194,7 @@ const fetchProjects = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        return data;
+        return data as RawApplicationData[];
     } catch (error) {
         console.error('Error fetching projects from backend:', error);
         return [];
@@ -105,9 +217,8 @@ onMounted(() => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const data = (await fetchProjects()) as any[];
-        rawProjects.value = data.map(mapToDashboardCard);
+        const data = await fetchProjects();
+        rawProjects.value = data.flatMap((item) => mapToDashboardCard(item));
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -213,6 +324,10 @@ const formatBodyLine = (text?: string) => {
     }
     return text;
 };
+
+const navigateToReport = (item: ProjectData) => {
+    window.location.href = `/bcap/plugins/internal-permit-dashboard/checklist?id=${item.reqId}`;
+};
 </script>
 
 <template>
@@ -274,6 +389,7 @@ const formatBodyLine = (text?: string) => {
                     :body5="formatBodyLine(item.body5)"
                     :route="{ name: item.route }"
                     :search-query="currentSearch"
+                    @click.capture.prevent="navigateToReport(item)"
                 />
             </div>
 
@@ -285,6 +401,9 @@ const formatBodyLine = (text?: string) => {
             </div>
         </Fluid>
     </Panel>
+    <br />
+    <br />
+    <br />
 </template>
 
 <style scoped>

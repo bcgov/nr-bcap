@@ -1,34 +1,35 @@
 ---
 repos:
+    - repo: https://github.com/kynan/nbstripout
+      rev: 0.9.1
+      hooks:
+          - id: nbstripout
 
-  - repo: meta
-    hooks:
-      - id: check-hooks-apply
+    - repo: meta
+      hooks:
+          - id: check-hooks-apply
 
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks:
-      - id: black
-        args: [--quiet]
-        exclude: node_modules
+    - repo: https://github.com/psf/black
+      rev: 24.4.2
+      hooks:
+          - id: black
+            args: [--quiet]
+            exclude: node_modules
 
-  - repo: local
-    hooks:
-      - id: prettier
-        name: prettier
-        entry: npm run prettier:fix
-        language: system
-        files: bcap/src
-      - id: eslint
-        name: eslint
-        entry: npm run eslint:fix
-        language: system
-        files: bcap/src
-      - id: typescript
-        name: typescript
-        entry: bash -c 'npm run ts:check'
-        language: system
-        types_or: [
-          "ts",
-          "vue",
-        ]
+    - repo: local
+      hooks:
+          - id: prettier
+            name: prettier
+            entry: npm run prettier:fix
+            language: system
+            files: bcap/src
+          - id: eslint
+            name: eslint
+            entry: npm run eslint:fix
+            language: system
+            files: bcap/src
+          - id: typescript
+            name: typescript
+            entry: bash -c 'npm run ts:check'
+            language: system
+            types_or: ['ts', 'vue']

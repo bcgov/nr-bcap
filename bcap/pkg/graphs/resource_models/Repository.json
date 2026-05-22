@@ -148,9 +148,7 @@
                     "card_id": "ea5abc22-14d4-11ec-aa11-5254008afee6",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Repository Code",
                         "maxLength": null,
                         "placeholder": {
@@ -178,9 +176,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Repository Name",
                         "maxLength": null,
                         "placeholder": {
@@ -208,9 +204,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Place Description",
                         "maxLength": null,
                         "placeholder": {
@@ -238,9 +232,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Address Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -268,9 +260,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "City",
                         "maxLength": null,
                         "placeholder": {
@@ -346,9 +336,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Address Line 2",
                         "maxLength": null,
                         "placeholder": {
@@ -376,9 +364,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Postal Code",
                         "maxLength": null,
                         "placeholder": {
@@ -406,9 +392,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Address Line 1",
                         "maxLength": null,
                         "placeholder": {
@@ -436,9 +420,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Note",
                         "maxLength": null,
                         "placeholder": {
@@ -460,9 +442,7 @@
                 {
                     "card_id": "ba92777c-14d5-11ec-a57a-5254008afee6",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Province",
                         "placeholder": {
                             "en": "Select an option"
@@ -487,9 +467,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate Name",
                         "maxLength": null,
                         "placeholder": {
@@ -517,9 +495,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Primary Email",
                         "maxLength": null,
                         "placeholder": {

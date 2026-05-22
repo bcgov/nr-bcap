@@ -176,9 +176,7 @@
                 {
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requested Operation",
                         "placeholder": {
                             "en": "Select an option"
@@ -198,9 +196,7 @@
                     "card_id": "247a4e3c-3122-4351-9b1e-83f1d5e104bb",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Recipients",
                         "placeholder": {
                             "en": "Select recipients of this comment"
@@ -219,9 +215,7 @@
                 {
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Submission Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -247,9 +241,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Internal Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -317,9 +309,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Site Internal Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -347,9 +337,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Operation Details",
                         "maxLength": null,
                         "placeholder": {
@@ -373,11 +361,7 @@
                     "config": {
                         "defaultValue": 0,
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Total Number Submitted",
                         "max": "",
                         "min": "0",
@@ -409,9 +393,7 @@
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate BCAP Asignee",
                         "placeholder": {
                             "en": "Select BCAP Assignee if different from Submission Assignee"
@@ -452,9 +434,7 @@
                     "card_id": "29b8f4ca-7306-406b-9e30-f617e86d3eb5",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Submitting Government",
                         "placeholder": {
                             "en": "Select government responsible for the submitted site(s)"
@@ -474,9 +454,7 @@
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Archaeological Site",
                         "placeholder": {
                             "en": "Select or create the site"
@@ -496,9 +474,7 @@
                     "card_id": "496b9d34-958a-41fd-8302-d6d877bbb477",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Information Provided",
                         "options": [
                             {
@@ -563,9 +539,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Comments to Submitting Government",
                         "maxLength": null,
                         "placeholder": {
@@ -588,9 +562,7 @@
                     "card_id": "29b8f4ca-7306-406b-9e30-f617e86d3eb5",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assigned To",
                         "placeholder": {
                             "en": ""

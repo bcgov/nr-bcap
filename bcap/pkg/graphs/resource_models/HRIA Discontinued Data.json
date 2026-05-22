@@ -228,11 +228,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Length (m)",
                         "max": "",
                         "min": "",
@@ -264,9 +260,7 @@
                     "card_id": "c3195a8a-c6c4-4d5b-916e-28df0be9e2dd",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
@@ -289,9 +283,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "RCD Lab Code",
                         "maxLength": null,
                         "placeholder": {
@@ -314,9 +306,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "RCD Adjusted Var (+/-)",
                         "maxLength": null,
                         "placeholder": {
@@ -339,9 +329,7 @@
                     "card_id": "4611f674-8235-445d-92ae-f664bf926fbf",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Edited By",
                         "maxLength": null,
                         "placeholder": {
@@ -364,9 +352,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "RCD Unadjusted",
                         "maxLength": null,
                         "placeholder": {
@@ -394,9 +380,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Jurisdiction",
                         "maxLength": null,
                         "placeholder": {
@@ -419,9 +403,7 @@
                     "card_id": "98c7b0d7-72af-4ec2-a784-365059cdb05d",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Borden Number",
                         "placeholder": {
                             "en": ""
@@ -467,9 +449,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Accuracy Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -497,9 +477,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Boundary Type",
                         "maxLength": null,
                         "placeholder": {
@@ -527,9 +505,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Tenure Description",
                         "maxLength": null,
                         "placeholder": {
@@ -588,9 +564,7 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "From Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
@@ -609,9 +583,7 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "From Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
@@ -630,9 +602,7 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "To Date Qualifier",
                         "placeholder": {
                             "en": "Select an option"
@@ -651,9 +621,7 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "To Date Calendar",
                         "placeholder": {
                             "en": "Select an option"
@@ -678,9 +646,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Source",
                         "maxLength": "250",
                         "placeholder": {
@@ -703,9 +669,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Event",
                         "options": [],
                         "placeholder": {
@@ -752,9 +716,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Chronology Remarks",
                         "maxLength": "250",
                         "placeholder": {
@@ -776,9 +738,7 @@
                 {
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Method",
                         "placeholder": {
                             "en": "Select an option"
@@ -799,11 +759,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Site Area",
                         "max": "",
                         "min": "",
@@ -835,9 +791,7 @@
                     "card_id": "2054fef7-03f5-4cbf-98df-c057ba81d3c7",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Length Direction",
                         "maxLength": null,
                         "placeholder": {
@@ -860,9 +814,7 @@
                     "card_id": "2054fef7-03f5-4cbf-98df-c057ba81d3c7",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
@@ -885,9 +837,7 @@
                     "card_id": "bc39d9ae-1e69-4efe-8dd6-6bc14d23adc6",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
@@ -931,9 +881,7 @@
                     "card_id": "2054fef7-03f5-4cbf-98df-c057ba81d3c7",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Width Direction",
                         "maxLength": null,
                         "placeholder": {
@@ -977,9 +925,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
@@ -1007,9 +953,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Tenure Type",
                         "maxLength": null,
                         "placeholder": {
@@ -1037,9 +981,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
@@ -1067,9 +1009,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Name",
                         "maxLength": null,
                         "placeholder": {
@@ -1092,9 +1032,7 @@
                     "card_id": "c0e4a234-d288-419c-895c-74b9c24ec95f",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "maxLength": null,
                         "placeholder": {
@@ -1117,9 +1055,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "RCD Lab Number",
                         "maxLength": null,
                         "placeholder": {
@@ -1142,9 +1078,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "RCD Adjusted",
                         "maxLength": null,
                         "placeholder": {
@@ -1188,9 +1122,7 @@
                     "card_id": "7e48c072-52b2-11f0-9251-2a3f36199137",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "RCD Unadjusted Var (+/-)",
                         "maxLength": null,
                         "placeholder": {
@@ -1235,11 +1167,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Width (m)",
                         "max": "",
                         "min": "",
@@ -1271,9 +1199,7 @@
                     "card_id": "c3195a8a-c6c4-4d5b-916e-28df0be9e2dd",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Type",
                         "maxLength": null,
                         "placeholder": {
@@ -1301,9 +1227,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Map Name",
                         "maxLength": null,
                         "placeholder": {
@@ -1331,9 +1255,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Map Scale",
                         "maxLength": null,
                         "placeholder": {
@@ -1382,9 +1304,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Tenure Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1433,9 +1353,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Source Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -1463,9 +1381,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Description",
                         "maxLength": null,
                         "placeholder": {
@@ -2357,10 +2273,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }

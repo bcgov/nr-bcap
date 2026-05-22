@@ -43,6 +43,8 @@ from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
 from arches.app.models.resource import Resource
+from arches.app.models.models import Tile
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -552,18 +554,79 @@ class RegisterType(APIBase):
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
 
 
-class PermitRequirement(APIBase):
+class ProcessRequirement(APIBase):
+
     def get(self, request, resource_id):
         try:
-            resource = Resource.objects.get(resourceinstanceid=resource_id)
-            serialized_data = resource.serialize()
-            return JSONResponse(serialized_data)
+            hydrated_res = Resource.objects.get(resourceinstanceid=resource_id)
+            serialized_data = hydrated_res.serialize()
 
-        except Resource.DoesNotExist:
-            return JSONResponse({"error": "Permit Requirement not found"}, status=404)
+            tiles_queryset = Tile.objects.filter(
+                resourceinstance_id=resource_id
+            ).values("tileid", "nodegroup_id", "parenttile_id", "data")
+
+            serialized_data["tiles"] = list(tiles_queryset)
+
+            return JsonResponse(serialized_data, safe=False)
+
         except Exception as e:
-            logger.exception(f"Unable to fetch Permit Requirement {resource_id}")
-            return JSONResponse({"error": str(e)}, status=500)
+            print(f"Process Requirement API Error: {e}")
+            import traceback
+
+            traceback.print_exc()
+
+            return JsonResponse({"error": str(e)}, status=500)
+
+    def post(self, request, resource_id):
+        try:
+            payload = json.loads(request.body)
+            updated_requirements = payload.get("requirements", [])
+            date_tile_payload = payload.get("dateTile")
+
+            NODE_SATISFIED = "49d33cbb-e857-4b21-8bfe-f6632ce53f9f"
+            NODE_NOTES = "a44988ea-0c8a-40f0-a51c-90fb5616e34e"
+
+            for req in updated_requirements:
+                tile_id = req.get("id")
+                if tile_id:
+                    tile = Tile.objects.get(tileid=tile_id)
+                    tile.data[NODE_SATISFIED] = req.get("isSatisfied", False)
+                    tile.data[NODE_NOTES] = {
+                        "en": {"value": req.get("notes", ""), "direction": "ltr"}
+                    }
+                    tile.save()
+
+            if date_tile_payload:
+                date_tile_id = date_tile_payload.get("tileid")
+                date_nodegroup_id = date_tile_payload.get("nodegroup_id")
+                new_date_data = date_tile_payload.get("data", {})
+
+                if date_tile_id:
+                    dtile = Tile.objects.get(tileid=date_tile_id)
+                    for key, value in new_date_data.items():
+                        dtile.data[key] = value
+
+                    dtile.save()
+
+                elif date_nodegroup_id:
+                    new_tile = Tile(
+                        tileid=uuid.uuid4(),
+                        resourceinstance_id=resource_id,
+                        nodegroup_id=date_nodegroup_id,
+                        data=new_date_data,
+                    )
+                    new_tile.save()
+
+            return JsonResponse(
+                {"status": "success", "message": "Checklist and Dates saved!"}
+            )
+
+        except Exception as e:
+            print(f"Process Requirement Save Error: {e}")
+            import traceback
+
+            traceback.print_exc()
+            return JsonResponse({"error": str(e)}, status=500)
 
 
 class RequirementSubmission(APIBase):
@@ -598,11 +661,95 @@ class DashboardView(APIBase):
     #   return JsonResponse(cards, safe=False)
     """
 
-    MOCK_DATA = [{"id": "PRJ-001", "capPriority": True, "capLabel": "Review Comments", "capDate": "April 20 2026", "icon": "fa-solid fa-bolt", "projectName": "New HCA Permit Application", "projectId": "112200-30/20A00344", "sector": "Environmental", "body1": "Permit: 2202-1122", "body2": "Permit holder: John Doe", "body3": "Project officer: Jane Smith", "body4": "Client requested change to report formatting.", "footerDate": "April 18 2026", "footerName": "John Doe", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 2}, {"id": "PRJ-005", "capPriority": True, "capLabel": "Site Inspection", "capDate": "May 12 2026", "icon": "fa-solid fa-map-location-dot", "projectName": "Highway 99 Expansion", "projectId": "112200-30/20A00350", "sector": "Infrastructure", "body1": "Permit: 2202-1130", "body2": "Permit holder: BC Ministry of Transport", "body3": "Project officer: John Doe", "body4": "Requires helicopter access for sector B.", "footerDate": "May 10 2026", "footerName": "John Doe", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-006", "capPriority": False, "capLabel": "Draft Report", "capDate": "May 22 2026", "icon": "fa-solid fa-tree", "projectName": "Cariboo Logging Block A", "projectId": "112200-30/20A00351", "sector": "Forestry", "body1": "Permit: 2202-1131", "body2": "Permit holder: West Fraser Timber", "body3": "Project officer: John Doe", "body4": "Awaiting biological survey results.", "footerDate": "May 15 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-007", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 01 2026", "icon": "fa-solid fa-building", "projectName": "Downtown Core Redev", "projectId": "112200-30/20A00352", "sector": "Urban Development", "body1": "Permit: 2202-1132", "body2": "Permit holder: Concord Pacific", "body3": "Project officer: John Doe", "body4": "Check heritage boundaries before approval.", "footerDate": "May 25 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-008", "capPriority": True, "capLabel": "Validate Permit Report", "capDate": "June 10 2026", "icon": "fa-solid fa-water", "projectName": "Fraser River Dredging", "projectId": "112200-30/20A00353", "sector": "Environmental", "body1": "Permit: 2202-1133", "body2": "Permit holder: Port Authority", "body3": "Project officer: John Doe", "body4": "Fisheries window closing next month.", "footerDate": "June 05 2026", "footerName": "John Doe", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 0}, {"id": "PRJ-009", "capPriority": False, "capLabel": "Evaluate Comments", "capDate": "June 15 2026", "icon": "fa-solid fa-mountain", "projectName": "Whistler Trail Reroute", "projectId": "112200-30/20A00354", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1134", "body2": "Permit holder: RMOW", "body3": "Project officer: John Doe", "body4": "Public feedback integrated into draft 2.", "footerDate": "June 12 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-010", "capPriority": False, "capLabel": "Final Approval", "capDate": "July 01 2026", "icon": "fa-solid fa-trowel-bricks", "projectName": "New Hospital Wing", "projectId": "112200-30/20A00355", "sector": "Infrastructure", "body1": "Permit: 2202-1135", "body2": "Permit holder: Health Authority", "body3": "Project officer: John Doe", "body4": "Expedite requested by ministry.", "footerDate": "June 28 2026", "footerName": "Emily Chen", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-011", "capPriority": False, "capLabel": "Draft Report", "capDate": "July 12 2026", "icon": "fa-solid fa-bridge", "projectName": "Capilano Suspension Repair", "projectId": "112200-30/20A00356", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1136", "body2": "Permit holder: Capilano Group", "body3": "Project officer: John Doe", "body4": "Engineering specs look good.", "footerDate": "July 05 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-002", "capPriority": False, "capLabel": "Validate Permit Report", "capDate": "May 5 2026", "icon": "fa-solid fa-campground", "projectName": "Riverside Park Expansion", "projectId": "112200-30/20A00345", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1123", "body2": "Permit holder: Alice Johnson", "body3": "Project officer: Mark Davis", "body4": "Awaiting final sign-off from municipality.", "footerDate": "May 1 2026", "footerName": "Alice Johnson", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-004", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 1 2026", "icon": "fa-solid fa-water", "projectName": "Coastal Restoration Phase 1", "projectId": "112200-30/20A00347", "sector": "Environmental", "body1": "Permit: 2202-1125", "body2": "Permit holder: Emily Chen", "body3": "Project officer: David Kim", "body4": "Initial documentation received.", "footerDate": "May 28 2026", "footerName": "Emily Chen", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-012", "capPriority": True, "capLabel": "Evaluate Comments", "capDate": "May 18 2026", "icon": "fa-solid fa-tractor", "projectName": "Peace River Substation", "projectId": "112200-30/20A00360", "sector": "Infrastructure", "body1": "Permit: 2202-1140", "body2": "Permit holder: BC Hydro", "body3": "Project officer: Sarah Lee", "body4": "First Nation consultation complete.", "footerDate": "May 15 2026", "footerName": "Sarah Lee", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 2}, {"id": "PRJ-013", "capPriority": False, "capLabel": "Draft Report", "capDate": "May 20 2026", "icon": "fa-solid fa-gem", "projectName": "Highland Valley Copper Expansion", "projectId": "112200-30/20A00361", "sector": "Mining", "body1": "Permit: 2202-1141", "body2": "Permit holder: Teck Resources", "body3": "Project officer: Marcus Vance", "body4": "Water management plan under review.", "footerDate": "May 12 2026", "footerName": "Marcus Vance", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-014", "capPriority": True, "capLabel": "Site Inspection", "capDate": "June 05 2026", "icon": "fa-solid fa-fish", "projectName": "Skeena Salmon Hatchery", "projectId": "112200-30/20A00362", "sector": "Environmental", "body1": "Permit: 2202-1142", "body2": "Permit holder: Skeena Wild", "body3": "Project officer: David Kim", "body4": "Site visit scheduled for Tuesday.", "footerDate": "June 01 2026", "footerName": "David Kim", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-015", "capPriority": False, "capLabel": "Review Comments", "capDate": "June 18 2026", "icon": "fa-solid fa-tree-city", "projectName": "Burnaby Mountain Gondola", "projectId": "112200-30/20A00363", "sector": "Urban Development", "body1": "Permit: 2202-1143", "body2": "Permit holder: TransLink", "body3": "Project officer: Alice Johnson", "body4": "Route 1 alignment finalized.", "footerDate": "June 10 2026", "footerName": "Alice Johnson", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-016", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 25 2026", "icon": "fa-solid fa-leaf", "projectName": "Stanley Park Seawall Repair", "projectId": "112200-30/20A00364", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1144", "body2": "Permit holder: Vancouver Parks", "body3": "Project officer: Sarah Lee", "body4": "Checking storm damage reports.", "footerDate": "June 20 2026", "footerName": "Sarah Lee", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-017", "capPriority": True, "capLabel": "Final Approval", "capDate": "July 10 2026", "icon": "fa-solid fa-train-tram", "projectName": "Surrey Langley SkyTrain", "projectId": "112200-30/20A00365", "sector": "Infrastructure", "body1": "Permit: 2202-1145", "body2": "Permit holder: Ministry of Infrastructure", "body3": "Project officer: Marcus Vance", "body4": "Signatures required by EOD.", "footerDate": "July 08 2026", "footerName": "Marcus Vance", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-018", "capPriority": False, "capLabel": "Draft Report", "capDate": "July 20 2026", "icon": "fa-solid fa-wind", "projectName": "Tumbler Ridge Wind Farm", "projectId": "112200-30/20A00366", "sector": "Environmental", "body1": "Permit: 2202-1146", "body2": "Permit holder: Boralex", "body3": "Project officer: Emily Chen", "body4": "Avian impact study attached.", "footerDate": "July 15 2026", "footerName": "Emily Chen", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-003", "capPriority": True, "capLabel": "Evaluate Comments", "capDate": "May 12 2026", "icon": "fa-solid fa-helmet-safety", "projectName": "Dam Construction Project", "projectId": "112200-30/20A00346", "sector": "Infrastructure", "body1": "Permit: 2202-1124", "body2": "Permit holder: Bob Williams", "body3": "Project officer: Unassigned", "body4": "Environmental review pending.", "footerDate": "May 10 2026", "footerName": "", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 0}, {"id": "PRJ-019", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 05 2026", "icon": "fa-solid fa-location-dot", "projectName": "Northern Pipeline Extension", "projectId": "112200-30/20A00370", "sector": "Infrastructure", "body1": "Permit: 2202-1150", "body2": "Permit holder: Coastal GasLink", "body3": "Project officer: Unassigned", "body4": "Needs officer assignment ASAP.", "footerDate": "June 01 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 2}, {"id": "PRJ-020", "capPriority": False, "capLabel": "Validate Permit Report", "capDate": "June 12 2026", "icon": "fa-solid fa-tree", "projectName": "MacMillan Provincial Park Upgrades", "projectId": "112200-30/20A00371", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1151", "body2": "Permit holder: BC Parks", "body3": "Project officer: Unassigned", "body4": "Boardwalk replacement plans attached.", "footerDate": "June 08 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-021", "capPriority": True, "capLabel": "Site Inspection", "capDate": "June 20 2026", "icon": "fa-solid fa-mountain-sun", "projectName": "Golden Mine Tailings Facility", "projectId": "112200-30/20A00372", "sector": "Mining", "body1": "Permit: 2202-1152", "body2": "Permit holder: Golden Mining Corp", "body3": "Project officer: Unassigned", "body4": "Urgent review required for stability phase.", "footerDate": "June 15 2026", "footerName": "", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 0}, {"id": "PRJ-022", "capPriority": False, "capLabel": "Initial Review", "capDate": "July 05 2026", "icon": "fa-solid fa-house-crack", "projectName": "Abbotsford Flood Mitigation", "projectId": "112200-30/20A00373", "sector": "Urban Development", "body1": "Permit: 2202-1153", "body2": "Permit holder: City of Abbotsford", "body3": "Project officer: Unassigned", "body4": "Dike repair phase 2.", "footerDate": "July 01 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-023", "capPriority": False, "capLabel": "Review Comments", "capDate": "July 25 2026", "icon": "fa-solid fa-leaf", "projectName": "Okanagan Wetland Restoration", "projectId": "112200-30/20A00374", "sector": "Environmental", "body1": "Permit: 2202-1154", "body2": "Permit holder: Ducks Unlimited", "body3": "Project officer: Unassigned", "body4": "Waiting on federal grant approval.", "footerDate": "July 20 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 0}]  # fmt: skip
+    # MOCK_DATA = [{"id": "PRJ-001", "capPriority": True, "capLabel": "Review Comments", "capDate": "April 20 2026", "icon": "fa-solid fa-bolt", "projectName": "New HCA Permit Application", "projectId": "112200-30/20A00344", "sector": "Environmental", "body1": "Permit: 2202-1122", "body2": "Permit holder: John Doe", "body3": "Project officer: Jane Smith", "body4": "Client requested change to report formatting.", "footerDate": "April 18 2026", "footerName": "John Doe", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 2}, {"id": "PRJ-005", "capPriority": True, "capLabel": "Site Inspection", "capDate": "May 12 2026", "icon": "fa-solid fa-map-location-dot", "projectName": "Highway 99 Expansion", "projectId": "112200-30/20A00350", "sector": "Infrastructure", "body1": "Permit: 2202-1130", "body2": "Permit holder: BC Ministry of Transport", "body3": "Project officer: John Doe", "body4": "Requires helicopter access for sector B.", "footerDate": "May 10 2026", "footerName": "John Doe", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-006", "capPriority": False, "capLabel": "Draft Report", "capDate": "May 22 2026", "icon": "fa-solid fa-tree", "projectName": "Cariboo Logging Block A", "projectId": "112200-30/20A00351", "sector": "Forestry", "body1": "Permit: 2202-1131", "body2": "Permit holder: West Fraser Timber", "body3": "Project officer: John Doe", "body4": "Awaiting biological survey results.", "footerDate": "May 15 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-007", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 01 2026", "icon": "fa-solid fa-building", "projectName": "Downtown Core Redev", "projectId": "112200-30/20A00352", "sector": "Urban Development", "body1": "Permit: 2202-1132", "body2": "Permit holder: Concord Pacific", "body3": "Project officer: John Doe", "body4": "Check heritage boundaries before approval.", "footerDate": "May 25 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-008", "capPriority": True, "capLabel": "Validate Permit Report", "capDate": "June 10 2026", "icon": "fa-solid fa-water", "projectName": "Fraser River Dredging", "projectId": "112200-30/20A00353", "sector": "Environmental", "body1": "Permit: 2202-1133", "body2": "Permit holder: Port Authority", "body3": "Project officer: John Doe", "body4": "Fisheries window closing next month.", "footerDate": "June 05 2026", "footerName": "John Doe", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 0}, {"id": "PRJ-009", "capPriority": False, "capLabel": "Evaluate Comments", "capDate": "June 15 2026", "icon": "fa-solid fa-mountain", "projectName": "Whistler Trail Reroute", "projectId": "112200-30/20A00354", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1134", "body2": "Permit holder: RMOW", "body3": "Project officer: John Doe", "body4": "Public feedback integrated into draft 2.", "footerDate": "June 12 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-010", "capPriority": False, "capLabel": "Final Approval", "capDate": "July 01 2026", "icon": "fa-solid fa-trowel-bricks", "projectName": "New Hospital Wing", "projectId": "112200-30/20A00355", "sector": "Infrastructure", "body1": "Permit: 2202-1135", "body2": "Permit holder: Health Authority", "body3": "Project officer: John Doe", "body4": "Expedite requested by ministry.", "footerDate": "June 28 2026", "footerName": "Emily Chen", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-011", "capPriority": False, "capLabel": "Draft Report", "capDate": "July 12 2026", "icon": "fa-solid fa-bridge", "projectName": "Capilano Suspension Repair", "projectId": "112200-30/20A00356", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1136", "body2": "Permit holder: Capilano Group", "body3": "Project officer: John Doe", "body4": "Engineering specs look good.", "footerDate": "July 05 2026", "footerName": "John Doe", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-002", "capPriority": False, "capLabel": "Validate Permit Report", "capDate": "May 5 2026", "icon": "fa-solid fa-campground", "projectName": "Riverside Park Expansion", "projectId": "112200-30/20A00345", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1123", "body2": "Permit holder: Alice Johnson", "body3": "Project officer: Mark Davis", "body4": "Awaiting final sign-off from municipality.", "footerDate": "May 1 2026", "footerName": "Alice Johnson", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-004", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 1 2026", "icon": "fa-solid fa-water", "projectName": "Coastal Restoration Phase 1", "projectId": "112200-30/20A00347", "sector": "Environmental", "body1": "Permit: 2202-1125", "body2": "Permit holder: Emily Chen", "body3": "Project officer: David Kim", "body4": "Initial documentation received.", "footerDate": "May 28 2026", "footerName": "Emily Chen", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-012", "capPriority": True, "capLabel": "Evaluate Comments", "capDate": "May 18 2026", "icon": "fa-solid fa-tractor", "projectName": "Peace River Substation", "projectId": "112200-30/20A00360", "sector": "Infrastructure", "body1": "Permit: 2202-1140", "body2": "Permit holder: BC Hydro", "body3": "Project officer: Sarah Lee", "body4": "First Nation consultation complete.", "footerDate": "May 15 2026", "footerName": "Sarah Lee", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 2}, {"id": "PRJ-013", "capPriority": False, "capLabel": "Draft Report", "capDate": "May 20 2026", "icon": "fa-solid fa-gem", "projectName": "Highland Valley Copper Expansion", "projectId": "112200-30/20A00361", "sector": "Mining", "body1": "Permit: 2202-1141", "body2": "Permit holder: Teck Resources", "body3": "Project officer: Marcus Vance", "body4": "Water management plan under review.", "footerDate": "May 12 2026", "footerName": "Marcus Vance", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-014", "capPriority": True, "capLabel": "Site Inspection", "capDate": "June 05 2026", "icon": "fa-solid fa-fish", "projectName": "Skeena Salmon Hatchery", "projectId": "112200-30/20A00362", "sector": "Environmental", "body1": "Permit: 2202-1142", "body2": "Permit holder: Skeena Wild", "body3": "Project officer: David Kim", "body4": "Site visit scheduled for Tuesday.", "footerDate": "June 01 2026", "footerName": "David Kim", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-015", "capPriority": False, "capLabel": "Review Comments", "capDate": "June 18 2026", "icon": "fa-solid fa-tree-city", "projectName": "Burnaby Mountain Gondola", "projectId": "112200-30/20A00363", "sector": "Urban Development", "body1": "Permit: 2202-1143", "body2": "Permit holder: TransLink", "body3": "Project officer: Alice Johnson", "body4": "Route 1 alignment finalized.", "footerDate": "June 10 2026", "footerName": "Alice Johnson", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-016", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 25 2026", "icon": "fa-solid fa-leaf", "projectName": "Stanley Park Seawall Repair", "projectId": "112200-30/20A00364", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1144", "body2": "Permit holder: Vancouver Parks", "body3": "Project officer: Sarah Lee", "body4": "Checking storm damage reports.", "footerDate": "June 20 2026", "footerName": "Sarah Lee", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-017", "capPriority": True, "capLabel": "Final Approval", "capDate": "July 10 2026", "icon": "fa-solid fa-train-tram", "projectName": "Surrey Langley SkyTrain", "projectId": "112200-30/20A00365", "sector": "Infrastructure", "body1": "Permit: 2202-1145", "body2": "Permit holder: Ministry of Infrastructure", "body3": "Project officer: Marcus Vance", "body4": "Signatures required by EOD.", "footerDate": "July 08 2026", "footerName": "Marcus Vance", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 3}, {"id": "PRJ-018", "capPriority": False, "capLabel": "Draft Report", "capDate": "July 20 2026", "icon": "fa-solid fa-wind", "projectName": "Tumbler Ridge Wind Farm", "projectId": "112200-30/20A00366", "sector": "Environmental", "body1": "Permit: 2202-1146", "body2": "Permit holder: Boralex", "body3": "Project officer: Emily Chen", "body4": "Avian impact study attached.", "footerDate": "July 15 2026", "footerName": "Emily Chen", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-003", "capPriority": True, "capLabel": "Evaluate Comments", "capDate": "May 12 2026", "icon": "fa-solid fa-helmet-safety", "projectName": "Dam Construction Project", "projectId": "112200-30/20A00346", "sector": "Infrastructure", "body1": "Permit: 2202-1124", "body2": "Permit holder: Bob Williams", "body3": "Project officer: Unassigned", "body4": "Environmental review pending.", "footerDate": "May 10 2026", "footerName": "", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 0}, {"id": "PRJ-019", "capPriority": False, "capLabel": "Initial Review", "capDate": "June 05 2026", "icon": "fa-solid fa-location-dot", "projectName": "Northern Pipeline Extension", "projectId": "112200-30/20A00370", "sector": "Infrastructure", "body1": "Permit: 2202-1150", "body2": "Permit holder: Coastal GasLink", "body3": "Project officer: Unassigned", "body4": "Needs officer assignment ASAP.", "footerDate": "June 01 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 2}, {"id": "PRJ-020", "capPriority": False, "capLabel": "Validate Permit Report", "capDate": "June 12 2026", "icon": "fa-solid fa-tree", "projectName": "MacMillan Provincial Park Upgrades", "projectId": "112200-30/20A00371", "sector": "Rec Sites & Trails", "body1": "Permit: 2202-1151", "body2": "Permit holder: BC Parks", "body3": "Project officer: Unassigned", "body4": "Boardwalk replacement plans attached.", "footerDate": "June 08 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 0}, {"id": "PRJ-021", "capPriority": True, "capLabel": "Site Inspection", "capDate": "June 20 2026", "icon": "fa-solid fa-mountain-sun", "projectName": "Golden Mine Tailings Facility", "projectId": "112200-30/20A00372", "sector": "Mining", "body1": "Permit: 2202-1152", "body2": "Permit holder: Golden Mining Corp", "body3": "Project officer: Unassigned", "body4": "Urgent review required for stability phase.", "footerDate": "June 15 2026", "footerName": "", "class": "dashboard-card ipa", "route": "newPermit", "urgency": 0}, {"id": "PRJ-022", "capPriority": False, "capLabel": "Initial Review", "capDate": "July 05 2026", "icon": "fa-solid fa-house-crack", "projectName": "Abbotsford Flood Mitigation", "projectId": "112200-30/20A00373", "sector": "Urban Development", "body1": "Permit: 2202-1153", "body2": "Permit holder: City of Abbotsford", "body3": "Project officer: Unassigned", "body4": "Dike repair phase 2.", "footerDate": "July 01 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 1}, {"id": "PRJ-023", "capPriority": False, "capLabel": "Review Comments", "capDate": "July 25 2026", "icon": "fa-solid fa-leaf", "projectName": "Okanagan Wetland Restoration", "projectId": "112200-30/20A00374", "sector": "Environmental", "body1": "Permit: 2202-1154", "body2": "Permit holder: Ducks Unlimited", "body3": "Project officer: Unassigned", "body4": "Waiting on federal grant approval.", "footerDate": "July 20 2026", "footerName": "", "class": "dashboard-card", "route": "newPermit", "urgency": 0}]  # fmt: skip
+
+    # def get(self, request: HttpRequest) -> JsonResponse:
+    #     # Might need some sort of model here and serializer?
+    #     return JsonResponse(self.MOCK_DATA, safe=False)
+
+    # def get(self, request: HttpRequest) -> JsonResponse:
+    #     try:
+    #         pr_graph = GraphModel.objects.get(name__icontains="Process Requirement", is_active=True)
+    #         db_records = ResourceInstance.objects.filter(graph_id=pr_graph.graphid)
+    #         raw_data = []
+
+    #         for db_res in db_records:
+    #             hydrated_res = Resource.objects.get(resourceinstanceid=db_res.resourceinstanceid)
+    #             raw_data.append(hydrated_res.serialize())
+
+    #         return JsonResponse(raw_data, safe=False)
+
+    #     except Exception as e:
+    #         print(f"Dashboard API Error: {e}")
+    #         import traceback
+    #         traceback.print_exc()
+
+    #         return JsonResponse([], safe=False)
 
     def get(self, request: HttpRequest) -> JsonResponse:
-        # Might need some sort of model here and serializer?
-        return JsonResponse(self.MOCK_DATA, safe=False)
+        try:
+            pr_graph = GraphModel.objects.get(
+                name__icontains="Process Requirement", is_active=True
+            )
+            pa_graph = GraphModel.objects.get(
+                name__icontains="Permit Application", is_active=True
+            )
+
+            # 1. Fetch Process Requirements and build the lookup dict
+            pr_records = ResourceInstance.objects.filter(graph_id=pr_graph.graphid)
+            pr_lookup = {}
+            for pr in pr_records:
+                hydrated_pr = Resource.objects.get(
+                    resourceinstanceid=pr.resourceinstanceid
+                )
+                hydrated_pr.load_tiles()  # Safety check to force data hydration
+                pr_lookup[str(pr.resourceinstanceid)] = hydrated_pr.serialize()
+
+            # 2. Fetch Permit Applications
+            pa_records = ResourceInstance.objects.filter(graph_id=pa_graph.graphid)
+            nested_applications = []
+
+            for pa in pa_records:
+                hydrated_pa = Resource.objects.get(
+                    resourceinstanceid=pa.resourceinstanceid
+                )
+                hydrated_pa.load_tiles()  # Safety check to force data hydration
+                pa_data = hydrated_pa.serialize()
+
+                # Prep the empty array for nested requirements
+                pa_data["nested_process_requirements"] = []
+
+                # 3. Only look for links IF the application actually has tiles
+                if "tiles" in pa_data and len(pa_data["tiles"]) > 0:
+                    for tile in pa_data["tiles"]:
+                        data = tile.get("data", {})
+                        for key, value in data.items():
+                            # If we spot a resource link array
+                            if (
+                                isinstance(value, list)
+                                and len(value) > 0
+                                and isinstance(value[0], dict)
+                                and "resourceId" in value[0]
+                            ):
+                                for link in value:
+                                    linked_uuid = str(link.get("resourceId", ""))
+
+                                    # If it matches our checklist list, nest it!
+                                    if linked_uuid in pr_lookup:
+                                        pa_data["nested_process_requirements"].append(
+                                            pr_lookup[linked_uuid]
+                                        )
+
+                nested_applications.append(pa_data)
+
+            return JsonResponse(nested_applications, safe=False)
+
+        except Exception as e:
+            print(f"Dashboard API Error: {e}")
+            import traceback
+
+            traceback.print_exc()
+            return JsonResponse([], safe=False)
 
 
 class BCAPResourceDetailView(ArchesResourceDetailView):
