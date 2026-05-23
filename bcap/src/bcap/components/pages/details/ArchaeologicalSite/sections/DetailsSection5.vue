@@ -101,8 +101,7 @@ const hasSpatialAccuracy = computed(() => {
         ) ||
             !isEmpty(
                 currentSiteBoundary.value.accuracy_remarks as AliasedNodeData,
-            ) ||
-            !isEmpty(currentSiteBoundary.value.source_notes as AliasedNodeData))
+            ))
     );
 });
 

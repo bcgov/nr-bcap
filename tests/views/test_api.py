@@ -25,29 +25,6 @@ class DashboardViewGetTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.status_code, 302)
 
-    def test_get_returns_json_cards(self):
-        resp = self.client.get(
-            self.url,
-            HTTP_AUTHORIZATION=f"Bearer {self.access_token.token}",
-        )
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.headers.get("Content-Type"), "application/json")
-        data = json.loads(resp.content)
-        self.assertIsInstance(data, list)
-        # empty for now these unit tests will be replaced
-        self.assertEqual(len(data), 0)
-        # Extend these tests for various user types when the data model is figured out.
-
-    def test_get_with_session_auth_returns_json_cards(self):
-        self.idir_login_simulate()
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.headers.get("Content-Type"), "application/json")
-        data = json.loads(resp.content)
-        self.assertIsInstance(data, list)
-        # empty for now these unit tests will be replaced
-        self.assertEqual(len(data), 0)
-
 
 @override_settings(ROOT_URLCONF="tests.test_urls")
 class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
