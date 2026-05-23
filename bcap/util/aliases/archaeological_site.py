@@ -92,7 +92,6 @@ class ArchaeologicalSiteAliases(AbstractAliases):
     SITE_TENURE_IDENTIFIER = "site_tenure_identifier"
     SITE_TENURE_REMARKS = "site_tenure_remarks"
     SITE_TENURE_TYPE = "site_tenure_type"
-    SOURCE_NOTES = "source_notes"
     STREET_NAME = "street_name"
     STREET_NUMBER = "street_number"
     TYPOLOGY_CLASS = "typology_class"
