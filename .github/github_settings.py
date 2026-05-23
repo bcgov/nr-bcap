@@ -141,7 +141,14 @@ ELASTICSEARCH_API_KEY = get_env_variable("ES_API_KEY", default=None)
 # a prefix to append to all elasticsearch indexes, note: must be lower case
 ELASTICSEARCH_PREFIX = "bcap" + APP_SUFFIX
 
-ELASTICSEARCH_CUSTOM_INDEXES = []
+REFERENCES_INDEX_NAME = "references"
+ELASTICSEARCH_CUSTOM_INDEXES = [
+    {
+        "module": "arches_controlled_lists.search_indexes.reference_index.ReferenceIndex",
+        "name": REFERENCES_INDEX_NAME,
+        "should_update_asynchronously": True,
+    }
+]
 # [{
 #     'module': 'bcap.search_indexes.sample_index.SampleIndex',
 #     'name': 'my_new_custom_index', <-- follow ES index naming rules

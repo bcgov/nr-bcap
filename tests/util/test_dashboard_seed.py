@@ -12,7 +12,7 @@ from bcap.util.dashboard_seed import DashboardDemoBuilder
 class _SeedControlledListsMixin:
     """The contributor_type and hca_permit_type controlled lists the builder reads
     are referenced by the graphs but not populated by the package load, so insert
-    the minimal list items here and remove them afterward (LIFO addCleanup)."""
+    the minimal list items here and remove them afterward."""
 
     def setUp(self):
         super().setUp()
