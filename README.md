@@ -93,18 +93,18 @@ To activate this debugging mode:
 ```
 cd nr-bcap && docker compose up -d
 ```
-3. Let the `bcap7-6` container fully load (i.e., watch the "Logs" tab). There will be a warning about missing environment variables.
+3. Let the `bcap` container fully load (i.e., watch the "Logs" tab). There will be a warning about missing environment variables.
     - You will see: `django.core.exceptions.ImproperlyConfigured: Set the BCGOV_PROXY_PREFIX environment variable`
     - This can take some time.
 4. You need to create or move the .env file to `bcap/nr-bcap/.env`
-6. Restart the `bcap7-6` container in Docker Desktop
-7. Open the `bcap7-6` container in Docker Desktop
+6. Restart the `bcap` container in Docker Desktop
+7. Open the `bcap` container in Docker Desktop
 8. Go to the "Exec" tab and run the following:
 ```
 bash
 cd bcap && mkdir logs
 ```
-9. Restart the `bcap7-6` container in Docker Desktop
+9. Restart the `bcap` container in Docker Desktop
 
 #### `test_user_list.py`
 1. Create  `test_user_list.py` in `bcap/nr-bcap/bcap/management/data/test_user_list.py`
@@ -154,7 +154,7 @@ def get_user_list():
 - OIDC is used so when authenticating you will use your IDIR username and password.
 - The `@idir` suffix is necessary
 - The `<idir username>` must be in lowercase
-4. Start and open the `bcap7-6` container in Docker Desktop
+4. Start and open the `bcap` container in Docker Desktop
 5. Go to the "Exec" tab and run the following:
 ```
 python3 manage.py bc_test_users --refresh
@@ -165,7 +165,7 @@ python3 manage.py bc_test_users --refresh
 9. Add the IP Address to the `AUTH_BYPASS_HOSTS` variable:
     - `AUTH_BYPASS_HOSTS = ... ... <IPAddress>`
 
-10. Open the `bcap7-6` container in Docker Desktop
+10. Open the `bcap` container in Docker Desktop
 11. Go to the "Exec" tab and run the following:
 ```
 npm run build_development
@@ -206,7 +206,7 @@ python3 manage.py setup_db
 #### Run
 1. You should now be able to access BCAP at http://localhost:82/bcap
 2. If it doesn't work, then open or navigate to the `bcap` directory in the terminal
-2. Restart the `bcap7-6` container or run the following command:
+2. Restart the `bcap` container or run the following command:
 ```
 cd nr-bcap && docker compose up -d
 ```
@@ -217,7 +217,7 @@ cd nr-bcap && docker compose up -d
 If you have been given a database dump like bcap.sql follow these steps to load it into the system.
 1. Copy db file into your docker container from any terminal.
 ```
-docker cp bcap.sql bcap7-6:/tmp/bcap.sql
+docker cp bcap.sql bcap:/tmp/bcap.sql
 ```
 2. Create and index the database from the Exec tab inside your container (indexing may take up to an hour).
 ```
