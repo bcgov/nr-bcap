@@ -22,7 +22,8 @@ repos:
             name: prettier
             entry: npm run prettier:fix
             language: system
-            files: bcap/src
+            # Matches any file inside bcap/src/ OR pkg/graphs/
+            files: ^(bcap/src/|(.*/)?pkg/graphs/)
           - id: eslint
             name: eslint
             entry: npm run eslint:fix
