@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/bcap/api/dashboard": {
+    '/bcap/api/dashboard': {
         parameters: {
             query?: never;
             header?: never;
@@ -12,7 +12,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Returns dashboard cards for the current user based on their role. */
-        get: operations["api_dashboard_list"];
+        get: operations['api_dashboard_retrieve'];
         put?: never;
         post?: never;
         delete?: never;
@@ -21,7 +21,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/bcap/user_profile": {
+    '/bcap/user_profile': {
         parameters: {
             query?: never;
             header?: never;
@@ -29,7 +29,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Returns the authenticated user's profile, group memberships, and linked Contributor resource id. */
-        get: operations["user_profile_retrieve"];
+        get: operations['user_profile_retrieve'];
         put?: never;
         post?: never;
         delete?: never;
@@ -42,28 +42,43 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        DashboardCardResponse: {
+        DashboardCard: {
             id: string;
-            cap_priority: boolean;
-            cap_label: string;
-            cap_date: string;
-            icon: string;
-            project_name: string;
-            project_id: string;
-            sector: string;
-            body1: string;
-            body2: string;
-            body3: string;
-            body4: string;
-            footer_date: string;
-            footer_name: string;
-            urgency: number;
+            cap_label?: string;
+            cap_date?: string;
+            body_title?: string;
+            body_subtitle1?: string;
+            body_subtitle2?: string;
+            body1?: string;
+            body2?: string;
+            body3?: string;
+            body4?: string;
+            body5?: string;
+            footer_name?: string;
+            footer_date?: string;
+            route?: string;
+            urgency?: number;
+            cap_priority?: string;
+        };
+        /**
+         * @description One page of dashboard cards for the current user.
+         *
+         *     `count` is the total number of cards matching the query across all pages;
+         *     `page` and `limit` echo the requested page number and page size; `results`
+         *     holds the cards for this page (at most `limit` of them).
+         */
+        DashboardPage: {
+            count?: number;
+            page?: number;
+            limit?: number;
+            results?: components['schemas']['DashboardCard'][];
         };
         UserProfileResponse: {
             username: string;
             first_name: string;
             last_name: string;
             readonly groups: string[];
+            /** @description TODO fill this in. */
             readonly contributor_id: string | null;
         };
     };
@@ -75,18 +90,14 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    api_dashboard_list: {
+    api_dashboard_retrieve: {
         parameters: {
             query?: {
-                filter_by?: string;
+                contributor_id?: string | null;
                 limit?: number;
-                order_by?: string;
+                order_by?: string | null;
                 page?: number;
-                /**
-                 * @description * `assigned` - assigned
-                 *     * `unassigned` - unassigned
-                 */
-                status?: "assigned" | "unassigned";
+                status?: string | null;
             };
             header?: never;
             path?: never;
@@ -99,7 +110,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DashboardCardResponse"][];
+                    'application/json': components['schemas']['DashboardPage'];
                 };
             };
         };
@@ -118,7 +129,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserProfileResponse"];
+                    'application/json': components['schemas']['UserProfileResponse'];
                 };
             };
         };

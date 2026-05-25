@@ -1,10 +1,14 @@
 # Note: We are using snake_case to be consistent with other arches returns.
 from rest_framework.serializers import (
     Serializer,
-    BooleanField,
     CharField,
-    IntegerField,
     SerializerMethodField,
+)
+from rest_framework_dataclasses.serializers import DataclassSerializer
+
+from bcap.services.dashboard.dashboard_types import (
+    DashboardPage,
+    DashboardQuery,
 )
 
 
@@ -23,28 +27,21 @@ class UserProfileResponseSerializer(Serializer):
         pass
 
 
-class DashboardQuerySerializer(Serializer):
-    filter_by = CharField(required=False, allow_blank=True)
-    status = CharField(required=False, allow_blank=True)
-    limit = IntegerField(required=False, default=50, min_value=1)
-    page = IntegerField(required=False, default=1, min_value=1)
-    order_by = CharField(required=False)
+class DashboardQuerySerializer(DataclassSerializer):
+    """The dashboard's query string parameters: an optional contributor filter
+    and the paging controls (which page, and how many cards per page)."""
+
+    class Meta:
+        dataclass = DashboardQuery
 
 
-class DashboardCardResponseSerializer(Serializer):
-    id = CharField()
-    cap_priority = BooleanField()
-    cap_label = CharField(allow_blank=True)
-    cap_date = CharField(allow_blank=True)
-    body_title = CharField(allow_blank=True)
-    body_subtitle1 = CharField(allow_blank=True)
-    body_subtitle2 = CharField(allow_blank=True)
-    body1 = CharField(required=False, allow_blank=True)
-    body2 = CharField(required=False, allow_blank=True)
-    body3 = CharField(required=False, allow_blank=True)
-    body4 = CharField(required=False, allow_blank=True)
-    body5 = CharField(required=False, allow_blank=True)
-    footer_date = CharField(allow_blank=True)
-    footer_name = CharField(required=False, allow_blank=True)
-    route = CharField(allow_blank=True)
-    urgency = IntegerField()
+class DashboardPageResponseSerializer(DataclassSerializer):
+    """One page of dashboard cards for the current user.
+
+    `count` is the total number of cards matching the query across all pages;
+    `page` and `limit` echo the requested page number and page size; `results`
+    holds the cards for this page (at most `limit` of them).
+    """
+
+    class Meta:
+        dataclass = DashboardPage

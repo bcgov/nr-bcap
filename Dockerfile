@@ -58,7 +58,7 @@ COPY ./arches ${ARCHES_ROOT}
 # From here, run commands from ARCHES_ROOT
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev] && \
-    pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis drf-spectacular==0.29.0 && \
+    pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis drf-spectacular==0.29.0 djangorestframework-dataclasses==1.4.0 && \
     pip install --upgrade cryptography PyJWT Authlib
 
 ARG INSTALL_PYCHARM_DEBUG=false

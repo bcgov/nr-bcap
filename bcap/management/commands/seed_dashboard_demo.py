@@ -13,7 +13,7 @@ from arches.app.search.search_engine_factory import SearchEngineFactory
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from bcap.util.dashboard_seed import DashboardDemoBuilder
+from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
 
 
 def _bulk_index(resources):

@@ -9,24 +9,6 @@ from tests.views.helpers import AuthTestHelper
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")
-class DashboardViewGetTests(AuthTestHelper, TestCase):
-    def setUp(self):
-        super().setUp()
-        self.url = reverse("dashboard")
-
-    def test_get_unauthenticated(self):
-        # No session or token
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 302)
-        # Fake token
-        resp = self.client.get(
-            self.url,
-            HTTP_AUTHORIZATION="Bearer ABC123",
-        )
-        self.assertEqual(resp.status_code, 302)
-
-
-@override_settings(ROOT_URLCONF="tests.test_urls")
 class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()

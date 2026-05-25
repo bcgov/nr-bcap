@@ -16,7 +16,8 @@ from bcap.views.api import (
     ProcessRequirement,
     RequirementSubmission,
 )
-from bcap.views.dashboard_api import DashboardView, UserProfile
+from bcap.views.dashboard_api import DashboardView
+from bcap.views.user_api import UserProfile
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
 from bcgov_arches_common.views.map import BCTileserverProxyView

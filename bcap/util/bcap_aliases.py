@@ -12,8 +12,12 @@ class AbstractAliases:
 
 class GraphSlugs:
     ARCHAEOLOGICAL_SITE = "archaeological_site"
+    CONTRIBUTOR = "contributor"
+    HCA_PERMIT = "hca_permit"
     HRIA_DISCONTINUED_DATA = "hria_discontinued_data"
     LEGISLATIVE_ACT = "legislative_act"
+    PERMIT_APPLICATION = "permit_application"
+    PROCESS_REQUIREMENT = "process_requirement"
     PUBLICATION = "publication"
     SITE_SUBMISSION = "site_submission"
     SITE_VISIT = "site_visit"

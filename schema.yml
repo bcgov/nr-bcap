@@ -6,41 +6,38 @@ info:
 paths:
   /bcap/api/dashboard:
     get:
-      operationId: api_dashboard_list
+      operationId: api_dashboard_retrieve
       description: Returns dashboard cards for the current user based on their role.
       parameters:
       - in: query
-        name: filter_by
+        name: contributor_id
         schema:
           type: string
+          nullable: true
+          minLength: 1
       - in: query
         name: limit
         schema:
           type: integer
+          maximum: 100
           minimum: 1
-          default: 50
       - in: query
         name: order_by
         schema:
           type: string
+          nullable: true
           minLength: 1
       - in: query
         name: page
         schema:
           type: integer
           minimum: 1
-          default: 1
       - in: query
         name: status
         schema:
-          enum:
-          - assigned
-          - unassigned
           type: string
+          nullable: true
           minLength: 1
-        description: |-
-          * `assigned` - assigned
-          * `unassigned` - unassigned
       tags:
       - api
       security:
@@ -51,9 +48,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DashboardCardResponse'
+                $ref: '#/components/schemas/DashboardPage'
           description: ''
   /bcap/user_profile:
     get:
@@ -74,24 +69,20 @@ paths:
           description: ''
 components:
   schemas:
-    DashboardCardResponse:
+    DashboardCard:
       type: object
       properties:
         id:
           type: string
-        cap_priority:
-          type: boolean
         cap_label:
           type: string
         cap_date:
           type: string
-        icon:
+        body_title:
           type: string
-        project_name:
+        body_subtitle1:
           type: string
-        project_id:
-          type: string
-        sector:
+        body_subtitle2:
           type: string
         body1:
           type: string
@@ -101,28 +92,39 @@ components:
           type: string
         body4:
           type: string
-        footer_date:
+        body5:
           type: string
         footer_name:
           type: string
+        footer_date:
+          type: string
+        route:
+          type: string
         urgency:
           type: integer
+        cap_priority:
+          type: string
       required:
-      - body1
-      - body2
-      - body3
-      - body4
-      - cap_date
-      - cap_label
-      - cap_priority
-      - footer_date
-      - footer_name
-      - icon
       - id
-      - project_id
-      - project_name
-      - sector
-      - urgency
+    DashboardPage:
+      type: object
+      description: |-
+        One page of dashboard cards for the current user.
+
+        `count` is the total number of cards matching the query across all pages;
+        `page` and `limit` echo the requested page number and page size; `results`
+        holds the cards for this page (at most `limit` of them).
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardCard'
     UserProfileResponse:
       type: object
       properties:
@@ -140,6 +142,7 @@ components:
         contributor_id:
           type: string
           nullable: true
+          description: TODO fill this in.
           readOnly: true
       required:
       - contributor_id
