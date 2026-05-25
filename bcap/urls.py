@@ -13,7 +13,7 @@ from bcap.views.api import (
     ControlledListHierarchy,
     TranslatableResourceTypesView,
     TranslateToResourceTypeView,
-    PermitRequirement,
+    ProcessRequirement,
     RequirementSubmission,
 )
 from bcap.views.dashboard_api import DashboardView, UserProfile
@@ -116,9 +116,9 @@ urlpatterns = [
         name="translate_to_resource_type",
     ),
     path(
-        f"{PREFIX}api/permit_requirements/<uuid:resource_id>",
-        PermitRequirement.as_view(),
-        name="permit_requirement",
+        f"{PREFIX}api/process_requirements/<uuid:resource_id>",
+        ProcessRequirement.as_view(),
+        name="process_requirement",
     ),
     path(
         f"{PREFIX}api/requirement_submissions/<uuid:resource_id>",

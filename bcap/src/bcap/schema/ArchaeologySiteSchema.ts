@@ -23,7 +23,6 @@ export interface SiteBoundaryTile extends AliasedTileData {
     aliased_data: {
         site_boundary?: AliasedGeojsonFeatureCollectionNode;
         latest_edit_type?: AliasedNodeData;
-        source_notes?: AliasedNodeData;
         accuracy_remarks?: AliasedNodeData;
         spatial_accuracy_history?: SpatialAccuracyEntry[];
         site_boundary_description?: AliasedNodeData;
