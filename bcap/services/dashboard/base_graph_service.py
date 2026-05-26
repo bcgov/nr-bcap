@@ -55,17 +55,14 @@ class BaseGraphService:
                 yield from cls._leaf_values(tile.aliased_data)
 
     @classmethod
-    def _node_values(cls, aliased_data, alias):
-        """Yield every value under the given alias, descending into nested
-        nodegroup tiles."""
-        return (value for key, value in cls._leaf_values(aliased_data) if key == alias)
-
-    @classmethod
     def _node_value(cls, aliased_data, alias):
-        """First value under the given alias as a representation dict, or an
-        empty dict if absent. Callers read keys defensively, so the empty case
-        needs no fixed shape."""
-        return next(cls._node_values(aliased_data, alias), {})
+        """First value under the given alias as a representation dict,
+        descending into nested nodegroup tiles, or an empty dict if absent.
+        Callers read keys defensively, so the empty case needs no fixed shape."""
+        values = (
+            value for key, value in cls._leaf_values(aliased_data) if key == alias
+        )
+        return next(values, {})
 
     @staticmethod
     def _resource_ids(value):
