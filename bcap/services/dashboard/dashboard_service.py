@@ -1,4 +1,3 @@
-from collections import defaultdict
 from dataclasses import dataclass, field, replace
 from itertools import chain
 
@@ -119,7 +118,10 @@ class DashboardService(BaseGraphService):
 
     def _permits(self, query):
         """The query's page of Permit Application resources, and the total
-        count. Filtering, counting, and paging all run in the DB."""
+        count. Filtering, counting, and paging all run in the DB. Loads the
+        process_requirement tiles in the same pass (they nest under
+        application_admin), so _requirement_tiles_by_permit needs no extra
+        query."""
         queryset = (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PERMIT_APPLICATION,
@@ -131,6 +133,8 @@ class DashboardService(BaseGraphService):
                         self.PA.INDUSTRIAL_SECTOR,
                         self.PA.APPLICATION_PRIORITY_LEVEL,
                         self.PA.RELATED_PERMIT,
+                        self.PA.PROCESS_REQUIREMENT,
+                        self.PA.PROCESS_REQUIREMENT_ORDER,
                         self.PA.MINISTRY_ASSIGNEE,
                     ],
                 ),
@@ -151,27 +155,17 @@ class DashboardService(BaseGraphService):
     def _requirement_tiles_by_permit(self, permits):
         """Map permit id -> its process_requirement tiles, sorted by
         process_requirement_order so the first is the one the card surfaces (the
-        query has no inherent order). A permit has many such tiles (one per
-        requirement/assignee pair)."""
-        permit_ids = [str(p.pk) for p in permits]
-        tiles = TileTree.get_tiles(
-            GraphSlugs.PERMIT_APPLICATION,
-            self.PA.PROCESS_REQUIREMENT,
-            resource_ids=permit_ids,
-            nodes=self._nodes(
-                GraphSlugs.PERMIT_APPLICATION,
-                [
-                    self.PA.PROCESS_REQUIREMENT,
-                    self.PA.PROCESS_REQUIREMENT_ORDER,
-                    self.PA.MINISTRY_ASSIGNEE,
-                ],
-            ),
-            as_representation=True,
-        )
-
-        requirements_by_permit = defaultdict(list)
-        for tile in sorted(tiles, key=self._requirement_order):
-            requirements_by_permit[str(tile.resourceinstance_id)].append(tile)
+        query has no inherent order). The tiles were loaded with the permits (see
+        _permits), so this just reads them out of the loaded tree -- no query. A
+        permit has many such tiles (one per requirement/assignee pair)."""
+        requirements_by_permit = {}
+        for permit in permits:
+            tiles = []
+            for admin in self._nested_tiles(permit.aliased_data.application_admin):
+                tiles += self._nested_tiles(admin.aliased_data.process_requirement)
+            requirements_by_permit[str(permit.pk)] = sorted(
+                tiles, key=self._requirement_order
+            )
         return requirements_by_permit
 
     def _hca_permits(self, permits):
