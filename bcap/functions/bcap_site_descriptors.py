@@ -131,7 +131,10 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                     return_value += BCAPSiteDescriptors._format_value(
                         "Descriptor", typology_values, config
                     )
-                elif alias == aliases.DECISION_REGISTRATION_STATUS and alias in display_values:
+                elif (
+                    alias == aliases.DECISION_REGISTRATION_STATUS
+                    and alias in display_values
+                ):
                     return_value += BCAPSiteDescriptors._format_value(
                         "Registration Status", display_values[alias], config
                     )
