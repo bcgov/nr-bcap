@@ -56,11 +56,11 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
     # @todo Change these to aliases
     _name_nodes = [aliases.BORDEN_NUMBER]
     _sig_event_nodes = [
-        aliases.REGISTRATION_STATUS,
+        aliases.DECISION_REGISTRATION_STATUS,
         aliases.TYPOLOGY_CLASS,
     ]
-    _popup_nodes = [aliases.REGISTRATION_STATUS, aliases.NAME, "typologies"]
-    _card_nodes = [aliases.REGISTRATION_STATUS, aliases.NAME, "typologies"]
+    _popup_nodes = [aliases.DECISION_REGISTRATION_STATUS, aliases.NAME, "typologies"]
+    _card_nodes = [aliases.DECISION_REGISTRATION_STATUS, aliases.NAME, "typologies"]
     _address_nodes = [
         [aliases.STREET_NUMBER, aliases.STREET_NAME],
         [aliases.CITY, "postal_code"],
@@ -131,7 +131,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
                     return_value += BCAPSiteDescriptors._format_value(
                         "Descriptor", typology_values, config
                     )
-                elif alias == aliases.REGISTRATION_STATUS and alias in display_values:
+                elif alias == aliases.DECISION_REGISTRATION_STATUS and alias in display_values:
                     return_value += BCAPSiteDescriptors._format_value(
                         "Registration Status", display_values[alias], config
                     )

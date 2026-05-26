@@ -2,10 +2,10 @@ from bcap.util.bcap_aliases import AbstractAliases
 
 
 class HCAPermitAliases(AbstractAliases):
-    # Partial subset of the hca_permit graph: only the nodes the dashboard
-    # reads. Extend as more of the graph gets consumed.
-    PERMIT_NUMBER = "permit_number"
+    HCA_PERMIT_TYPE = "hca_permit_type"
+    ISSUING_AGENCY = "issuing_agency"
     PERMIT_HOLDER = "permit_holder"
+    PERMIT_NUMBER = "permit_number"
 
     @staticmethod
     def get_aliases():
