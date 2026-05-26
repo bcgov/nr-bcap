@@ -23,6 +23,7 @@ def build_permit_graph():
     ada = builder.make_contributor(contributor_type, "Ada", "Lovelace")
     grace = builder.make_contributor(contributor_type, "Grace", "Hopper")
     acme = builder.make_contributor(contributor_type, None, "Acme Corp")
+    alan = builder.make_contributor(contributor_type, "Alan", "Turing")
 
     hca_permit = builder.new_resource("hca_permit")
     builder.append_blank_tile_for_group(
@@ -105,6 +106,7 @@ def build_permit_graph():
     )
     permit.append_tile("application_admin")
     admin = permit.aliased_data.application_admin
+    admin.aliased_data.project_officer = alan
     # One application_admin child per (requirement, assignee, order). "Site
     # Inspection" (order 3) precedes "Field Assessment" (order 2) in tile order,
     # so the card only surfaces the right row by lowest order, not position.
@@ -128,6 +130,7 @@ def build_permit_graph():
         ada=ada,
         grace=grace,
         acme=acme,
+        alan=alan,
         review=review,
         assessment=assessment,
         site=site,
@@ -135,9 +138,20 @@ def build_permit_graph():
 
 
 def build_minimal_permit(builder, name):
-    """A permit_application with only the tiles a card needs (identification and
-    admin priority), so pagination tests can cheaply create several permits.
-    Returns the created resource."""
+    """A permit_application with only the tiles a card needs (identification,
+    admin priority, and one outstanding requirement so it isn't hidden), so
+    pagination tests can cheaply create several visible permits. Returns the
+    created resource."""
+    requirement = builder.make_process_requirement(
+        {
+            "id": f"REQ-{name}",
+            "name": "Outstanding",
+            "due": "2026-03-01",
+            "notes": "",
+            "satisfied": False,
+            "sub_requirements": [],
+        }
+    )
     permit = builder.new_resource("permit_application")
     builder.append_blank_tile_for_group(
         permit,
@@ -156,6 +170,9 @@ def build_minimal_permit(builder, name):
             ),
         },
     )
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
     permit.save(**builder.save_kwargs)
     return permit
 
@@ -236,6 +253,7 @@ class _DashboardServiceData:
         cls.ada_id = str(graph.ada.pk)
         cls.grace_id = str(graph.grace.pk)
         cls.acme_id = str(graph.acme.pk)
+        cls.alan_id = str(graph.alan.pk)
         cls.review_id = str(graph.review.pk)
         cls.assessment_id = str(graph.assessment.pk)
         cls.site_id = str(graph.site.pk)
@@ -260,6 +278,8 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(card.route, self.assessment_id)
         self.assertEqual(card.body1, "Permit: HCA-001")
         self.assertEqual(card.body2, "Permit holder: Acme Corp")
+        # The project_officer on the permit's application_admin group.
+        self.assertEqual(card.body3, "Project officer: Alan Turing")
         # The assignee on the chosen ("Field Assessment") tile.
         self.assertEqual(card.footer_name, "Grace Hopper")
 
@@ -342,7 +362,8 @@ class DashboardServiceNoPermitsTests(TestCase):
 
 
 class DashboardServiceAllSatisfiedTests(TestCase):
-    """A permit whose requirements are all satisfied surfaces none on its card."""
+    """A permit whose requirements are all satisfied has nothing actionable, so
+    it is hidden from the dashboard entirely."""
 
     @classmethod
     def setUpTestData(cls):
@@ -351,17 +372,11 @@ class DashboardServiceAllSatisfiedTests(TestCase):
         cls.permit_id = str(build_all_satisfied_permit(builder, "Done").pk)
         cls.service = DashboardService()
 
-    def test_card_shows_all_satisfied_label_and_routes_to_permit(self):
+    def test_all_satisfied_permit_is_hidden(self):
         page = self.service.get_cards(DashboardFilter())
 
-        card = page.results[0]
-        self.assertEqual(card.id, self.permit_id)
-        self.assertEqual(card.cap_label, self.service.ALL_SATISFIED_LABEL)
-        # No requirement to drill into, so the card routes to the permit itself.
-        self.assertEqual(card.route, self.permit_id)
-        # The CAP date and assignee footer have no source, so they stay blank.
-        self.assertEqual(card.cap_date, "")
-        self.assertEqual(card.footer_name, "")
+        self.assertEqual(page.count, 0)
+        self.assertEqual(page.results, [])
 
 
 class DashboardServiceStepsTests(_DashboardServiceData, TestCase):

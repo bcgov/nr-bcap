@@ -20,6 +20,7 @@ class DashboardDemoData:
     assignees: list[ResourceTileTree]
     holders: list[ResourceTileTree]
     process_requirements: list[ResourceTileTree]
+    project_officer: ResourceTileTree
 
 
 class DashboardDemoBuilder(ResourceBuilder):
@@ -36,6 +37,7 @@ class DashboardDemoBuilder(ResourceBuilder):
         ("Alan", "Turing"),
     ]
     _HOLDER_NAMES = ["Acme Corp", "Globex"]
+    _PROJECT_OFFICER_NAME = ("Jordan", "Lee")
 
     _REQUIREMENTS = [
         {
@@ -136,6 +138,9 @@ class DashboardDemoBuilder(ResourceBuilder):
             self.make_contributor(contributor_type, None, org)
             for org in self._HOLDER_NAMES
         ]
+        project_officer = self.make_contributor(
+            contributor_type, *self._PROJECT_OFFICER_NAME
+        )
 
         hca_permit = self.new_resource("hca_permit")
         self.append_blank_tile_for_group(
@@ -171,6 +176,7 @@ class DashboardDemoBuilder(ResourceBuilder):
         )
         permit.append_tile("application_admin")
         admin = permit.aliased_data.application_admin
+        admin.aliased_data.project_officer = project_officer
         for i, (spec, requirement) in enumerate(zip(self._REQUIREMENTS, requirements)):
             if i > 0:
                 admin.append_tile("process_requirement")
@@ -188,4 +194,5 @@ class DashboardDemoBuilder(ResourceBuilder):
             assignees=assignees,
             holders=holders,
             process_requirements=requirements,
+            project_officer=project_officer,
         )

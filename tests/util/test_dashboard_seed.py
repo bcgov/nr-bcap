@@ -77,11 +77,12 @@ class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
     def test_links_permit_to_its_related_resources(self):
         data = DashboardDemoBuilder().build()
 
-        # related_permit -> HCA permit, plus each application_admin child's
-        # process_requirement and ministry_assignee links (one child per requirement).
+        # related_permit -> HCA permit, the application_admin's project_officer,
+        # plus each application_admin child's process_requirement and
+        # ministry_assignee links (one child per requirement).
         self.assertEqual(
             self._link_targets(data.permit),
-            {str(data.hca_permit.pk)}
+            {str(data.hca_permit.pk), str(data.project_officer.pk)}
             | {str(req.pk) for req in data.process_requirements}
             | {str(assignee.pk) for assignee in data.assignees},
         )

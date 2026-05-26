@@ -43,8 +43,7 @@ class HcaPermit:
 class Requirement:
     """An unsatisfied process requirement as the card needs it, paired with the
     permit's process_requirement tile that points at it. The tile carries the
-    ministry_assignee and the id the assignee edit-log date is keyed by; it stays
-    None on the empty Requirement used when a permit has none unsatisfied."""
+    ministry_assignee and the id the assignee edit-log date is keyed by."""
 
     name: str = ""
     due_date: str = ""
@@ -66,8 +65,6 @@ class DashboardData:
 class DashboardService(BaseGraphService):
     PA = PermitApplicationAliases
     PR = ProcessRequirementAliases
-    # Shown in the CAP row when a permit has no unsatisfied requirement.
-    ALL_SATISFIED_LABEL = "All requirements met"
     # status filter value: permits whose active requirement has no assignee.
     STATUS_UNASSIGNED = "UNASSIGNED"
 
@@ -80,23 +77,20 @@ class DashboardService(BaseGraphService):
           body_title     <- permit_application.project_name
           body_subtitle1 <- permit_application.application_id
           body_subtitle2 <- permit_application.industrial_sector (reference label)
-          cap_label      <- chosen requirement's requirement_name, or
-                            ALL_SATISFIED_LABEL when none are unsatisfied
+          cap_label      <- chosen requirement's requirement_name
           cap_date       <- chosen requirement's requirement_process_due_date
           body1          <- related HCA Permit.permit_number
           body2          <- related HCA Permit.permit_holder (Contributor name)
-          body3          <- Project Officer (not working locally for me)
+          body3          <- application_admin.project_officer (Contributor name)
           body4          <- chosen requirement's assessment_notes
           footer_name    <- chosen tile's ministry_assignee (Contributor) name
           footer_date    <- edit-log timestamp of the last change to that tile's
                             ministry_assignee node (assignee_change_dates)
           route          <- chosen (first unsatisfied) Process Requirement
-                            resourceinstanceid; falls back to the permit's own
-                            id when none are unsatisfied (drill-in target)
+                            resourceinstanceid (drill-in target)
           cap_priority   <- permit_application.application_priority_level
                             (reference label)
-
-        not yet specified, placeholders: body5, urgency.
+          urgency        <- Target date completion / current date (asking requirements)
         """
         if query.order_by:
             raise NotImplementedError("order_by is not supported yet")
@@ -112,12 +106,13 @@ class DashboardService(BaseGraphService):
         chosen_by_permit = self._choose_requirements(
             requirements_by_permit, referenced[self.PA.PROCESS_REQUIREMENT]
         )
+        officer_ids = self._referenced_ids(permits, self.PA.PROJECT_OFFICER)
         data = DashboardData(
             chosen_by_permit=chosen_by_permit,
             assignee_dates=self._assignee_change_dates(chosen_by_permit),
             hca_permits=hca_permits,
             contributor_names=self._contributor_names(
-                referenced[self.PA.MINISTRY_ASSIGNEE], hca_permits
+                referenced[self.PA.MINISTRY_ASSIGNEE] | officer_ids, hca_permits
             ),
         )
         return DashboardPage(
@@ -147,6 +142,7 @@ class DashboardService(BaseGraphService):
                         self.PA.PROCESS_REQUIREMENT,
                         self.PA.PROCESS_REQUIREMENT_ORDER,
                         self.PA.MINISTRY_ASSIGNEE,
+                        self.PA.PROJECT_OFFICER,
                     ],
                 ),
                 as_representation=True,
@@ -154,17 +150,17 @@ class DashboardService(BaseGraphService):
             .select_related("graph")
             .order_by("pk")  # stable, so LIMIT/OFFSET pages don't overlap
         )
-        if query.contributor_id or query.status == self.STATUS_UNASSIGNED:
-            queryset = queryset.annotate(
-                active_requirement=self._active_requirement_subquery(),
-                active_assignee=self._active_assignee_subquery(),
-            )
+        queryset = queryset.annotate(
+            active_requirement=self._active_requirement_subquery(),
+            active_assignee=self._active_assignee_subquery(),
+        )
+        # A permit with no unsatisfied requirement (all met, or none at all) has
+        # nothing actionable to surface, so it gets no card.
+        queryset = queryset.filter(active_requirement__isnull=False)
         if query.contributor_id:
             queryset = queryset.filter(active_assignee=str(query.contributor_id))
         if query.status == self.STATUS_UNASSIGNED:
-            queryset = queryset.filter(
-                active_requirement__isnull=False, active_assignee__isnull=True
-            )
+            queryset = queryset.filter(active_assignee__isnull=True)
 
         start = (query.page - 1) * query.limit
         return queryset.count(), list(queryset[start : start + query.limit])
@@ -384,11 +380,7 @@ class DashboardService(BaseGraphService):
         lookups. The full field mapping is documented on get_cards."""
         PA = PermitApplicationAliases
         aliased = permit.aliased_data
-        # No unsatisfied requirement: label the CAP row complete and drill in to
-        # the permit itself (there's no requirement to route to).
-        requirement = data.chosen_by_permit.get(str(permit.pk)) or Requirement(
-            name=self.ALL_SATISFIED_LABEL, route=str(permit.pk)
-        )
+        requirement = data.chosen_by_permit[str(permit.pk)]
         tile = requirement.tile
         identification = aliased.application_identification.aliased_data
         admin = aliased.application_admin.aliased_data
@@ -399,9 +391,12 @@ class DashboardService(BaseGraphService):
         hca = data.hca_permits.get(related_permit_id) or HcaPermit()
         holder_names = self._join_names(hca.holder_ids, data.contributor_names)
 
-        assignee_id = tile and self._resource_id(tile.aliased_data.ministry_assignee)
+        assignee_id = self._resource_id(tile.aliased_data.ministry_assignee)
         footer_name = data.contributor_names.get(assignee_id, "")
-        footer_date = data.assignee_dates.get(str(tile.pk), "") if tile else ""
+        footer_date = data.assignee_dates.get(str(tile.pk), "")
+
+        officer_id = self._resource_id(self._node_value(aliased, PA.PROJECT_OFFICER))
+        officer_name = data.contributor_names.get(officer_id, "")
 
         # Leaving this in one spot for now so we can change it easier in the future.
         return DashboardCard(
@@ -414,9 +409,9 @@ class DashboardService(BaseGraphService):
             body_subtitle2=self._node_value(aliased, PA.INDUSTRIAL_SECTOR).get(
                 "display_value", ""
             ),
-            body1="Permit: " + hca.number,
-            body2="Permit holder: " + holder_names,
-            body3="Project officer: " + "FillMeInWhenModelReady",
+            body1=f"Permit: {hca.number}",
+            body2=f"Permit holder: {holder_names}",
+            body3=f"Project officer: {officer_name}",
             body4=requirement.notes,
             body5="",
             footer_name=footer_name,
