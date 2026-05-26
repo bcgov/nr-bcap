@@ -89,6 +89,8 @@ class DashboardService(BaseGraphService):
         """
         if query.order_by:
             raise NotImplementedError("order_by is not supported yet")
+        if query.status:
+            raise NotImplementedError("status is not supported yet")
         count, permits = self._permits(query)
         requirements_by_permit = self._requirement_tiles_by_permit(permits)
         hca_permits = self._hca_permits(permits)

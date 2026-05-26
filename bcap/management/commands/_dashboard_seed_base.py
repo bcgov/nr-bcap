@@ -85,5 +85,13 @@ class DashboardSeedCommand(BaseCommand):
             self.style.SUCCESS(f"Created Permit Application {data.permit.pk}")
         )
         self.stdout.write(f"  can be accessed at {_resource_url(data.permit.pk)}")
+
+        # The dashboard's contributor_id filter matches a ministry assignee, so
+        # surface the assignee ids (with names) to filter by.
+        self.stdout.write("Contributor ids for contributor_id filtering:")
+        for assignee in data.assignees:
+            name = Resource.objects.get(pk=assignee.pk).displayname()
+            self.stdout.write(f"  {assignee.pk}  {name}")
+
         if options["no_index"]:
             self.stdout.write("Skipped indexing (--no-index).")
