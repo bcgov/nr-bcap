@@ -4,7 +4,7 @@ from types import SimpleNamespace
 from django.test import TestCase
 
 from bcap.services.dashboard.dashboard_service import DashboardService
-from bcap.services.dashboard.dashboard_types import DashboardQuery
+from bcap.services.dashboard.dashboard_types import DashboardFilter
 from bcap.util.dashboard.resource_builder import ResourceBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
@@ -215,7 +215,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
     """The public get_cards() API, end to end."""
 
     def test_get_cards_builds_one_card_from_the_permit_graph(self):
-        page = self.service.get_cards(DashboardQuery())
+        page = self.service.get_cards(DashboardFilter())
 
         self.assertEqual(page.count, 1)
         self.assertEqual(len(page.results), 1)
@@ -235,12 +235,12 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
 
     def test_get_cards_filters_by_contributor_id(self):
         # An assignee on the permit's requirements matches the permit.
-        matching = self.service.get_cards(DashboardQuery(contributor_id=self.ada_id))
+        matching = self.service.get_cards(DashboardFilter(contributor_id=self.ada_id))
         self.assertEqual(matching.count, 1)
         self.assertEqual([card.id for card in matching.results], [self.permit_id])
 
         # A permit holder is not a ministry assignee, so nothing matches.
-        none = self.service.get_cards(DashboardQuery(contributor_id=self.acme_id))
+        none = self.service.get_cards(DashboardFilter(contributor_id=self.acme_id))
         self.assertEqual(none.count, 0)
         self.assertEqual(none.results, [])
 
@@ -258,7 +258,7 @@ class DashboardServicePaginationTests(TestCase):
         cls.service = DashboardService()
 
     def test_limit_caps_page_size_but_not_count(self):
-        page = self.service.get_cards(DashboardQuery(limit=2, page=1))
+        page = self.service.get_cards(DashboardFilter(limit=2, page=1))
 
         self.assertEqual(page.count, 3)
         self.assertEqual(page.limit, 2)
@@ -266,8 +266,8 @@ class DashboardServicePaginationTests(TestCase):
         self.assertEqual(len(page.results), 2)
 
     def test_pages_partition_every_permit_without_overlap(self):
-        first = self.service.get_cards(DashboardQuery(limit=2, page=1))
-        second = self.service.get_cards(DashboardQuery(limit=2, page=2))
+        first = self.service.get_cards(DashboardFilter(limit=2, page=1))
+        second = self.service.get_cards(DashboardFilter(limit=2, page=2))
 
         self.assertEqual(len(first.results), 2)
         self.assertEqual(len(second.results), 1)
@@ -275,7 +275,7 @@ class DashboardServicePaginationTests(TestCase):
         self.assertEqual(seen, self.permit_ids)
 
     def test_page_past_the_end_is_empty_but_count_holds(self):
-        page = self.service.get_cards(DashboardQuery(limit=2, page=99))
+        page = self.service.get_cards(DashboardFilter(limit=2, page=99))
 
         self.assertEqual(page.count, 3)
         self.assertEqual(page.results, [])
@@ -286,7 +286,7 @@ class DashboardServiceNoPermitsTests(TestCase):
     case builds no graph, so the permit query comes back empty."""
 
     def test_get_cards_returns_empty_page(self):
-        page = DashboardService().get_cards(DashboardQuery())
+        page = DashboardService().get_cards(DashboardFilter())
         self.assertEqual(page.count, 0)
         self.assertEqual(page.results, [])
 
@@ -302,7 +302,7 @@ class DashboardServiceAllSatisfiedTests(TestCase):
         cls.service = DashboardService()
 
     def test_card_shows_all_satisfied_label_and_routes_to_permit(self):
-        page = self.service.get_cards(DashboardQuery())
+        page = self.service.get_cards(DashboardFilter())
 
         card = page.results[0]
         self.assertEqual(card.id, self.permit_id)
@@ -318,14 +318,14 @@ class DashboardServiceStepsTests(_DashboardServiceData, TestCase):
     """The individual data-gathering steps get_cards() chains together."""
 
     def test_permits_returns_count_and_the_permit_application(self):
-        count, permits = self.service._permits(DashboardQuery())
+        count, permits = self.service._permits(DashboardFilter())
 
         self.assertEqual(count, 1)
         self.assertEqual(len(permits), 1)
         self.assertEqual(str(permits[0].pk), self.permit_id)
 
     def test_requirement_tiles_by_permit_groups_by_permit(self):
-        _, permits = self.service._permits(DashboardQuery())
+        _, permits = self.service._permits(DashboardFilter())
 
         by_permit = self.service._requirement_tiles_by_permit(permits)
 
@@ -334,7 +334,7 @@ class DashboardServiceStepsTests(_DashboardServiceData, TestCase):
         self.assertEqual(len(by_permit[self.permit_id]), 3)
 
     def test_choose_requirements_picks_lowest_order_unsatisfied(self):
-        _, permits = self.service._permits(DashboardQuery())
+        _, permits = self.service._permits(DashboardFilter())
         by_permit = self.service._requirement_tiles_by_permit(permits)
         ids = self.service._referenced_ids(
             chain.from_iterable(by_permit.values()), self.service.PA.PROCESS_REQUIREMENT
@@ -363,7 +363,7 @@ class DashboardServiceStepsTests(_DashboardServiceData, TestCase):
         self.assertIsNotNone(requirement.tile)
 
     def test_hca_permits_maps_number_and_holders(self):
-        _, permits = self.service._permits(DashboardQuery())
+        _, permits = self.service._permits(DashboardFilter())
 
         hca_permits = self.service._hca_permits(permits)
 
@@ -373,7 +373,7 @@ class DashboardServiceStepsTests(_DashboardServiceData, TestCase):
         self.assertEqual(hca.holder_ids, [self.acme_id])
 
     def test_contributor_names_resolves_assignees_and_holders(self):
-        _, permits = self.service._permits(DashboardQuery())
+        _, permits = self.service._permits(DashboardFilter())
         by_permit = self.service._requirement_tiles_by_permit(permits)
         hca_permits = self.service._hca_permits(permits)
         assignee_ids = self.service._referenced_ids(
