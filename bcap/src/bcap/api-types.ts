@@ -97,7 +97,8 @@ export interface operations {
                 limit?: number;
                 order_by?: string | null;
                 page?: number;
-                status?: string | null;
+                /** @description * `UNASSIGNED` - Unassigned */
+                status?: 'UNASSIGNED' | null;
             };
             header?: never;
             path?: never;

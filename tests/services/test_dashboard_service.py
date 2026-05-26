@@ -190,6 +190,36 @@ def build_all_satisfied_permit(builder, name):
     return permit
 
 
+def build_unassigned_permit(builder, name):
+    """A permit_application whose active (unsatisfied) requirement has no
+    ministry_assignee. Returns the created resource."""
+    requirement = builder.make_process_requirement(
+        {
+            "id": "REQ-UNASSIGNED",
+            "name": "Needs Owner",
+            "due": "2026-03-01",
+            "notes": "nobody assigned",
+            "satisfied": False,
+            "sub_requirements": [],
+        }
+    )
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    permit.append_tile("application_admin")
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
+    permit.save(**builder.save_kwargs)
+    return permit
+
+
 class _DashboardServiceData:
     """Builds the test graph once per class and exposes the resources' ids as
     strings -- the form the service returns -- so the assertions stay readable."""
@@ -233,16 +263,36 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         # The assignee on the chosen ("Field Assessment") tile.
         self.assertEqual(card.footer_name, "Grace Hopper")
 
-    def test_get_cards_filters_by_contributor_id(self):
-        # An assignee on the permit's requirements matches the permit.
-        matching = self.service.get_cards(DashboardFilter(contributor_id=self.ada_id))
+    def test_get_cards_filters_by_active_requirements_assignee(self):
+        # Grace is the assignee of the active ("Field Assessment") requirement,
+        # so filtering by her returns the permit.
+        matching = self.service.get_cards(DashboardFilter(contributor_id=self.grace_id))
         self.assertEqual(matching.count, 1)
         self.assertEqual([card.id for card in matching.results], [self.permit_id])
+
+        # Ada is on the satisfied "Review" and the later-ordered unsatisfied
+        # "Site Inspection" -- never the active requirement -- so she matches
+        # nothing, even though she is an assignee on the permit.
+        ada = self.service.get_cards(DashboardFilter(contributor_id=self.ada_id))
+        self.assertEqual(ada.count, 0)
+        self.assertEqual(ada.results, [])
 
         # A permit holder is not a ministry assignee, so nothing matches.
         none = self.service.get_cards(DashboardFilter(contributor_id=self.acme_id))
         self.assertEqual(none.count, 0)
         self.assertEqual(none.results, [])
+
+    def test_unassigned_status_returns_only_permits_with_no_active_assignee(self):
+        # The graph permit's active requirement ("Field Assessment") is assigned
+        # to Grace, so it is excluded; add a permit whose active requirement has
+        # no assignee, which is the only UNASSIGNED match.
+        unassigned_id = str(build_unassigned_permit(ResourceBuilder(), "Orphan").pk)
+
+        page = self.service.get_cards(
+            DashboardFilter(status=DashboardService.STATUS_UNASSIGNED)
+        )
+
+        self.assertEqual([card.id for card in page.results], [unassigned_id])
 
 
 class DashboardServicePaginationTests(TestCase):

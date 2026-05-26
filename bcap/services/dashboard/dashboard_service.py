@@ -1,11 +1,20 @@
 from dataclasses import dataclass, field, replace
 from itertools import chain
 
-from django.db.models import F, Max, TextField, Value
-from django.db.models.fields.json import KeyTextTransform
-from django.db.models.functions import Coalesce
+from django.db.models import (
+    F,
+    IntegerField,
+    Max,
+    OuterRef,
+    Subquery,
+    TextField,
+    UUIDField,
+    Value,
+)
+from django.db.models.fields.json import KeyTextTransform, KeyTransform
+from django.db.models.functions import Cast, Coalesce
 
-from arches.app.models.models import EditLog, Node
+from arches.app.models.models import EditLog, Node, TileModel
 
 from arches_querysets.models import ResourceTileTree, TileTree
 
@@ -59,6 +68,8 @@ class DashboardService(BaseGraphService):
     PR = ProcessRequirementAliases
     # Shown in the CAP row when a permit has no unsatisfied requirement.
     ALL_SATISFIED_LABEL = "All requirements met"
+    # status filter value: permits whose active requirement has no assignee.
+    STATUS_UNASSIGNED = "UNASSIGNED"
 
     def get_cards(self, query: DashboardFilter) -> DashboardPage:
         """Build dashboard cards from Permit Application resources and their
@@ -89,8 +100,6 @@ class DashboardService(BaseGraphService):
         """
         if query.order_by:
             raise NotImplementedError("order_by is not supported yet")
-        if query.status:
-            raise NotImplementedError("status is not supported yet")
         count, permits = self._permits(query)
         requirements_by_permit = self._requirement_tiles_by_permit(permits)
         hca_permits = self._hca_permits(permits)
@@ -119,8 +128,8 @@ class DashboardService(BaseGraphService):
         )
 
     def _permits(self, query):
-        """The query's page of Permit Application resources, and the total
-        count. Filtering, counting, and paging all run in the DB. Loads the
+        """The query's page of permits and the total count, counting, paging,
+        and the contributor/status filters all run in the DB. Loads the
         process_requirement tiles in the same pass (they nest under
         application_admin), so _requirement_tiles_by_permit needs no extra
         query."""
@@ -141,18 +150,63 @@ class DashboardService(BaseGraphService):
                     ],
                 ),
                 as_representation=True,
-                # Stable order so LIMIT/OFFSET pages don't overlap or skip rows.
             )
             .select_related("graph")
-            .order_by("pk")
+            .order_by("pk")  # stable, so LIMIT/OFFSET pages don't overlap
         )
+        if query.contributor_id or query.status == self.STATUS_UNASSIGNED:
+            queryset = queryset.annotate(
+                active_requirement=self._active_requirement_subquery(),
+                active_assignee=self._active_assignee_subquery(),
+            )
         if query.contributor_id:
+            queryset = queryset.filter(active_assignee=str(query.contributor_id))
+        if query.status == self.STATUS_UNASSIGNED:
             queryset = queryset.filter(
-                ministry_assignee__ids_contain=str(query.contributor_id)
+                active_requirement__isnull=False, active_assignee__isnull=True
             )
 
         start = (query.page - 1) * query.limit
         return queryset.count(), list(queryset[start : start + query.limit])
+
+    def _active_assignee_subquery(self):
+        """Per permit, the ministry_assignee id of its active requirement."""
+        return Subquery(self._active_requirement_tiles().values("assignee")[:1])
+
+    def _active_requirement_subquery(self):
+        """Per permit, the resource id of its active requirement (null if none)."""
+        return Subquery(self._active_requirement_tiles().values("requirement")[:1])
+
+    def _active_requirement_tiles(self):
+        """Per-permit subquery (via OuterRef) of its unsatisfied
+        process_requirement tiles, lowest order first; the first row is the
+        active one the card surfaces."""
+        app, req = GraphSlugs.PERMIT_APPLICATION, GraphSlugs.PROCESS_REQUIREMENT
+        order_id, child_ng = self._node_info(app, self.PA.PROCESS_REQUIREMENT_ORDER)
+        assignee_id = self._node_id(app, self.PA.MINISTRY_ASSIGNEE)
+        requirement_id = self._node_id(app, self.PA.PROCESS_REQUIREMENT)
+        status_id, status_ng = self._node_info(req, self.PR.REQUIREMENT_STATUS)
+
+        def get_json_resource_id(node_id):
+            return KeyTextTransform(
+                "resourceId", KeyTransform("0", KeyTransform(node_id, "data"))
+            )
+
+        satisfied_ids = TileModel.objects.filter(
+            nodegroup_id=status_ng, **{f"data__{status_id}": True}
+        ).values_list("resourceinstance_id", flat=True)
+        return (
+            TileModel.objects.filter(
+                resourceinstance_id=OuterRef("pk"), nodegroup_id=child_ng
+            )
+            .annotate(
+                requirement=Cast(get_json_resource_id(requirement_id), UUIDField()),
+                assignee=get_json_resource_id(assignee_id),
+                order_value=Cast(KeyTextTransform(order_id, "data"), IntegerField()),
+            )
+            .exclude(requirement__in=satisfied_ids)
+            .order_by("order_value")
+        )
 
     def _requirement_tiles_by_permit(self, permits):
         """Map permit id -> its process_requirement tiles, sorted by

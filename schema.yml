@@ -35,9 +35,13 @@ paths:
       - in: query
         name: status
         schema:
+          enum:
+          - UNASSIGNED
+          - null
           type: string
           nullable: true
           minLength: 1
+        description: '* `UNASSIGNED` - Unassigned'
       tags:
       - api
       security:

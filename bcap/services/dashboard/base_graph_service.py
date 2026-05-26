@@ -21,6 +21,24 @@ class BaseGraphService:
             .select_related("nodegroup__parentnodegroup")
         )
 
+    @staticmethod
+    def _node_info(graph_slug, alias):
+        """(nodeid, nodegroup_id) as strings for a graph's node alias; cached for
+        the process since node ids are stable for the life of the graph."""
+        node = (
+            Node.objects.filter(
+                graph__slug=graph_slug, alias=alias, source_identifier=None
+            )
+            .values("nodeid", "nodegroup_id")
+            .first()
+        )
+        return str(node["nodeid"]), str(node["nodegroup_id"])
+
+    @classmethod
+    def _node_id(cls, graph_slug, alias):
+        """nodeid as a string for a graph's node alias."""
+        return cls._node_info(graph_slug, alias)[0]
+
     @classmethod
     def _resources(cls, slug, ids, aliases):
         """Resources of the given graph for the given ids, with the requested

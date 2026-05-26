@@ -36,6 +36,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         graph = build_permit_graph()
         cls.permit_id = str(graph.permit.pk)
         cls.ada_id = str(graph.ada.pk)
+        cls.grace_id = str(graph.grace.pk)
         cls.acme_id = str(graph.acme.pk)
 
     def setUp(self):
@@ -59,12 +60,19 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual(card["footer_name"], "Grace Hopper")
 
     def test_get_filters_by_contributor_id(self):
-        # An assignee on the permit's requirements matches the permit.
-        resp = self.client.get(self.url, {"contributor_id": self.ada_id})
+        # Grace is the assignee of the active ("Field Assessment") requirement,
+        # so filtering by her matches the permit.
+        resp = self.client.get(self.url, {"contributor_id": self.grace_id})
         self.assertEqual(resp.status_code, 200)
         body = resp.json()
         self.assertEqual(body["count"], 1)
         self.assertEqual([c["id"] for c in body["results"]], [self.permit_id])
+
+        # Ada is only on the satisfied and later-ordered requirements, never the
+        # active one, so she matches nothing.
+        resp = self.client.get(self.url, {"contributor_id": self.ada_id})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["count"], 0)
 
         # A permit holder is not a ministry assignee, so nothing matches.
         resp = self.client.get(self.url, {"contributor_id": self.acme_id})
@@ -99,4 +107,14 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
 
     def test_non_integer_limit_returns_400(self):
         resp = self.client.get(self.url, {"limit": "not-a-number"})
+        self.assertEqual(resp.status_code, 400)
+
+    def test_unassigned_status_with_contributor_id_returns_400(self):
+        resp = self.client.get(
+            self.url, {"status": "UNASSIGNED", "contributor_id": self.ada_id}
+        )
+        self.assertEqual(resp.status_code, 400)
+
+    def test_unknown_status_returns_400(self):
+        resp = self.client.get(self.url, {"status": "BOGUS"})
         self.assertEqual(resp.status_code, 400)
