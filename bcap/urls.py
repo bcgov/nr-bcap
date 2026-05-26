@@ -134,7 +134,7 @@ urlpatterns = [
     path(f"{PREFIX}search/export_results", export_results, name="export_results"),
     path(
         f"{PREFIX}api/schema",
-        SpectacularAPIView.as_view(),
+        SpectacularAPIView.as_view(urlconf="bcap.documented_api_urls"),
         name="schema",
     ),
     path(
