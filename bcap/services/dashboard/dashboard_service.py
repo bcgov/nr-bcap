@@ -12,7 +12,7 @@ from arches_querysets.models import ResourceTileTree, TileTree
 from bcap.services.dashboard.dashboard_types import (
     DashboardCard,
     DashboardPage,
-    DashboardQuery,
+    DashboardFilter,
 )
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.contributor import ContributorAliases
@@ -60,7 +60,7 @@ class DashboardService(BaseGraphService):
     # Shown in the CAP row when a permit has no unsatisfied requirement.
     ALL_SATISFIED_LABEL = "All requirements met"
 
-    def get_cards(self, query: DashboardQuery) -> DashboardPage:
+    def get_cards(self, query: DashboardFilter) -> DashboardPage:
         """Build dashboard cards from Permit Application resources and their
         related Process Requirement, HCA Permit, and Contributor resources.
 

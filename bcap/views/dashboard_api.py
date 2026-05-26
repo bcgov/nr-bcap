@@ -12,7 +12,7 @@ from drf_spectacular.utils import extend_schema
 
 from bcap.serializers.dashboard_serializers import (
     DashboardPageResponseSerializer,
-    DashboardQuerySerializer,
+    DashboardFilterSerializer,
 )
 from bcap.services.dashboard.dashboard_service import DashboardService
 
@@ -23,11 +23,11 @@ class DashboardView(APIView):
     authentication_classes = [SessionAuthentication]
 
     @extend_schema(
-        parameters=[DashboardQuerySerializer],
+        parameters=[DashboardFilterSerializer],
         responses=DashboardPageResponseSerializer,
     )
     def get(self, request):
-        query = DashboardQuerySerializer(data=request.query_params)
+        query = DashboardFilterSerializer(data=request.query_params)
         query.is_valid(raise_exception=True)
         page = DashboardService().get_cards(query.validated_data)
         return Response(DashboardPageResponseSerializer(page).data)

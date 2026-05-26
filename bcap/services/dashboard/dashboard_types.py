@@ -8,7 +8,7 @@ def constrained(default, **serializer_kwargs):
 
 
 @dataclass
-class DashboardQuery:
+class DashboardFilter:
     """The request parameters that filter and page the dashboard cards."""
 
     contributor_id: str | None = None

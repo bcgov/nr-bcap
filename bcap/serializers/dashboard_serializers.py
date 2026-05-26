@@ -8,7 +8,7 @@ from rest_framework_dataclasses.serializers import DataclassSerializer
 
 from bcap.services.dashboard.dashboard_types import (
     DashboardPage,
-    DashboardQuery,
+    DashboardFilter,
 )
 
 
@@ -27,12 +27,12 @@ class UserProfileResponseSerializer(Serializer):
         pass
 
 
-class DashboardQuerySerializer(DataclassSerializer):
+class DashboardFilterSerializer(DataclassSerializer):
     """The dashboard's query string parameters: an optional contributor filter
     and the paging controls (which page, and how many cards per page)."""
 
     class Meta:
-        dataclass = DashboardQuery
+        dataclass = DashboardFilter
 
 
 class DashboardPageResponseSerializer(DataclassSerializer):
