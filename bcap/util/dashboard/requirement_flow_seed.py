@@ -352,3 +352,4 @@ class RequirementFlowBuilder(DashboardDemoBuilder):
     graph assembly are inherited."""
 
     _REQUIREMENTS = _REQUIREMENTS
+    _SEED_UNASSIGNED_PERMIT = False

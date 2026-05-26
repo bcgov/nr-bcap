@@ -71,9 +71,14 @@ class DashboardSeedCommand(BaseCommand):
         # block, which cannot be nested inside another atomic.
         data = self.builder_class().build()
 
+        permits = [("Permit Application", data.permit)]
+        if data.unassigned_permit is not None:
+            permits.append(("Unassigned Permit Application", data.unassigned_permit))
+
         resources = [
-            data.permit,
+            *(permit for _, permit in permits),
             data.hca_permit,
+            data.project_officer,
             *data.process_requirements,
             *data.assignees,
             *data.holders,
@@ -81,10 +86,9 @@ class DashboardSeedCommand(BaseCommand):
         if not options["no_index"]:
             _bulk_index(resources)
 
-        self.stdout.write(
-            self.style.SUCCESS(f"Created Permit Application {data.permit.pk}")
-        )
-        self.stdout.write(f"  can be accessed at {_resource_url(data.permit.pk)}")
+        for label, permit in permits:
+            self.stdout.write(self.style.SUCCESS(f"Created {label} {permit.pk}"))
+            self.stdout.write(f"  can be accessed at {_resource_url(permit.pk)}")
 
         # The dashboard's contributor_id filter matches a ministry assignee, so
         # surface the assignee ids (with names) to filter by.
