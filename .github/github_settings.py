@@ -219,9 +219,23 @@ INSTALLED_APPS = (
     "arches_component_lab",
     "arches_controlled_lists",
     "rest_framework",
+    "drf_spectacular",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += ("arches.app",)
+
+# Mirror bcap/settings.py so the OpenAPI schema endpoints behave the same in CI.
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "BCAP API",
+    "DESCRIPTION": "BC Archaeology Portal API",
+    "VERSION": "2.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_URLCONF": "bcap.documented_api_urls",
+}
 
 ROOT_HOSTCONF = "bcap.hosts"
 DEFAULT_HOST = "bcap"
