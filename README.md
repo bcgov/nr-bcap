@@ -250,10 +250,14 @@ npm run openapi:types
 To load sample dashboard data into the current database (permit application, related resources, and Elasticsearch indexing):
 
 ```bash
+# Small demo graph (one permit, three short requirements)
 python3 manage.py seed_dashboard_demo
+
+# One permit carrying the full real-world requirement flow
+python3 manage.py seed_permit_application
 ```
 
-Use `--no-index` when Elasticsearch is not running. This command is a temporary developer aid and will be removed in a future release.
+Both take `--no-index` for when Elasticsearch is not running. They are temporary developer aids and will be removed in a future release.
 
 ## Running Backend Unit Tests
 
