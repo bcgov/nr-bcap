@@ -53,11 +53,11 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual(len(body["results"]), 1)
         card = body["results"][0]
         self.assertEqual(card["id"], self.permit_id)
-        self.assertEqual(card["body_title"], "My Project")
-        self.assertEqual(card["body_subtitle1"], "APP-1")
+        self.assertEqual(card["project_name"], "My Project")
+        self.assertEqual(card["application_id"], "APP-1")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
-        self.assertEqual(card["cap_label"], "Field Assessment")
-        self.assertEqual(card["footer_name"], "Grace Hopper")
+        self.assertEqual(card["requirement_name"], "Field Assessment")
+        self.assertEqual(card["ministry_assignee_name"], "Grace Hopper")
 
     def test_get_filters_by_contributor_id(self):
         # Grace is the assignee of the active ("Field Assessment") requirement,

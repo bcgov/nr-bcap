@@ -72,25 +72,9 @@ class DashboardService(BaseGraphService):
         """Build dashboard cards from Permit Application resources and their
         related Process Requirement, HCA Permit, and Contributor resources.
 
-        Field mapping (see the dashboard card dataclass):
-          id             <- permit_application resourceinstanceid (drill-in GUID)
-          body_title     <- permit_application.project_name
-          body_subtitle1 <- permit_application.application_id
-          body_subtitle2 <- permit_application.industrial_sector (reference label)
-          cap_label      <- chosen requirement's requirement_name
-          cap_date       <- chosen requirement's requirement_process_due_date
-          body1          <- related HCA Permit.permit_number
-          body2          <- related HCA Permit.permit_holder (Contributor name)
-          body3          <- application_admin.project_officer (Contributor name)
-          body4          <- chosen requirement's assessment_notes
-          footer_name    <- chosen tile's ministry_assignee (Contributor) name
-          footer_date    <- edit-log timestamp of the last change to that tile's
-                            ministry_assignee node (assignee_change_dates)
-          route          <- chosen (first unsatisfied) Process Requirement
-                            resourceinstanceid (drill-in target)
-          cap_priority   <- permit_application.application_priority_level
-                            (reference label)
-          urgency        <- Target date completion / current date (asking requirements)
+        Each card field and the resource value it maps to is documented as
+        help_text on the DashboardCard dataclass, so the mapping also surfaces
+        per field in the generated OpenAPI spec.
         """
         if query.order_by:
             raise NotImplementedError("order_by is not supported yet")
@@ -392,8 +376,8 @@ class DashboardService(BaseGraphService):
         holder_names = self._join_names(hca.holder_ids, data.contributor_names)
 
         assignee_id = self._resource_id(tile.aliased_data.ministry_assignee)
-        footer_name = data.contributor_names.get(assignee_id, "")
-        footer_date = data.assignee_dates.get(str(tile.pk), "")
+        ministry_assignee_name = data.contributor_names.get(assignee_id, "")
+        ministry_assignee_change_date = data.assignee_dates.get(str(tile.pk), "")
 
         officer_id = self._resource_id(self._node_value(aliased, PA.PROJECT_OFFICER))
         officer_name = data.contributor_names.get(officer_id, "")
@@ -401,22 +385,21 @@ class DashboardService(BaseGraphService):
         # Leaving this in one spot for now so we can change it easier in the future.
         return DashboardCard(
             id=str(permit.pk),
-            cap_label=requirement.name,
-            cap_date=requirement.due_date,
-            body_title=identification.project_name["display_value"],
-            body_subtitle1=identification.application_id["display_value"],
+            requirement_name=requirement.name,
+            requirement_due_date=requirement.due_date,
+            project_name=identification.project_name["display_value"],
+            application_id=identification.application_id["display_value"],
             # industrial_sector is nested two groups deep, so keep the helper.
-            body_subtitle2=self._node_value(aliased, PA.INDUSTRIAL_SECTOR).get(
+            industrial_sector=self._node_value(aliased, PA.INDUSTRIAL_SECTOR).get(
                 "display_value", ""
             ),
-            body1=hca.number,
-            body2=holder_names,
-            body3=officer_name,
-            body4=requirement.notes,
-            body5="",
-            footer_name=footer_name,
-            footer_date=footer_date,
-            route=requirement.route,
+            permit_number=hca.number,
+            permit_holder=holder_names,
+            project_officer=officer_name,
+            assessment_notes=requirement.notes,
+            ministry_assignee_name=ministry_assignee_name,
+            ministry_assignee_change_date=ministry_assignee_change_date,
+            requirement_route=requirement.route,
             urgency=0,
-            cap_priority=admin.application_priority_level["display_value"],
+            priority_level=admin.application_priority_level["display_value"],
         )

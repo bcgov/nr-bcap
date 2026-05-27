@@ -78,36 +78,54 @@ components:
       properties:
         id:
           type: string
-        cap_label:
+          description: Permit application resourceinstanceid; the card's drill-in
+            GUID.
+        requirement_name:
           type: string
-        cap_date:
+          description: Name of the chosen (first unsatisfied) process requirement.
+        requirement_due_date:
           type: string
-        body_title:
+          description: Process due date of the chosen requirement.
+        project_name:
           type: string
-        body_subtitle1:
+          description: Permit application's project name.
+        application_id:
           type: string
-        body_subtitle2:
+          description: Permit application's application ID.
+        industrial_sector:
           type: string
-        body1:
+          description: Permit application's industrial sector (reference label).
+        permit_number:
           type: string
-        body2:
+          description: Permit number of the related HCA Permit.
+        permit_holder:
           type: string
-        body3:
+          description: Permit holder name(s) on the related HCA Permit (Contributor).
+        project_officer:
           type: string
-        body4:
+          description: Project officer on the permit's application_admin group (Contributor
+            name).
+        assessment_notes:
           type: string
-        body5:
+          description: Assessment notes on the chosen requirement.
+        ministry_assignee_name:
           type: string
-        footer_name:
+          description: Ministry assignee on the chosen requirement tile (Contributor
+            name).
+        ministry_assignee_change_date:
           type: string
-        footer_date:
+          description: Edit-log date the chosen tile's ministry_assignee last changed.
+        requirement_route:
           type: string
-        route:
-          type: string
+          description: Resourceinstanceid of the chosen Process Requirement; the drill-in
+            target.
         urgency:
           type: integer
-        cap_priority:
+          description: Relative urgency from the target completion date and the current
+            date.
+        priority_level:
           type: string
+          description: Permit application's priority level (reference label).
       required:
       - id
     DashboardPage:
@@ -117,7 +135,9 @@ components:
 
         `count` is the total number of cards matching the query across all pages;
         `page` and `limit` echo the requested page number and page size; `results`
-        holds the cards for this page (at most `limit` of them).
+        holds the cards for this page (at most `limit` of them). Each card's fields
+        are documented on the DashboardCard dataclass (as field help_text), so the
+        per-field descriptions surface in the generated OpenAPI spec.
       properties:
         count:
           type: integer

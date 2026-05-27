@@ -57,7 +57,9 @@ class DashboardPageResponseSerializer(DataclassSerializer):
 
     `count` is the total number of cards matching the query across all pages;
     `page` and `limit` echo the requested page number and page size; `results`
-    holds the cards for this page (at most `limit` of them).
+    holds the cards for this page (at most `limit` of them). Each card's fields
+    are documented on the DashboardCard dataclass (as field help_text), so the
+    per-field descriptions surface in the generated OpenAPI spec.
     """
 
     class Meta:

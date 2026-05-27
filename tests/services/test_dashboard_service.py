@@ -269,19 +269,19 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(len(page.results), 1)
         card = page.results[0]
         self.assertEqual(card.id, self.permit_id)
-        self.assertEqual(card.body_title, "My Project")
-        self.assertEqual(card.body_subtitle1, "APP-1")
+        self.assertEqual(card.project_name, "My Project")
+        self.assertEqual(card.application_id, "APP-1")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
-        self.assertEqual(card.cap_label, "Field Assessment")
-        self.assertEqual(card.cap_date, "2026-02-15")
-        self.assertEqual(card.body4, "awaiting site access")
-        self.assertEqual(card.route, self.assessment_id)
-        self.assertEqual(card.body1, "HCA-001")
-        self.assertEqual(card.body2, "Acme Corp")
+        self.assertEqual(card.requirement_name, "Field Assessment")
+        self.assertEqual(card.requirement_due_date, "2026-02-15")
+        self.assertEqual(card.assessment_notes, "awaiting site access")
+        self.assertEqual(card.requirement_route, self.assessment_id)
+        self.assertEqual(card.permit_number, "HCA-001")
+        self.assertEqual(card.permit_holder, "Acme Corp")
         # The project_officer on the permit's application_admin group.
-        self.assertEqual(card.body3, "Alan Turing")
+        self.assertEqual(card.project_officer, "Alan Turing")
         # The assignee on the chosen ("Field Assessment") tile.
-        self.assertEqual(card.footer_name, "Grace Hopper")
+        self.assertEqual(card.ministry_assignee_name, "Grace Hopper")
 
     def test_get_cards_filters_by_active_requirements_assignee(self):
         # Grace is the assignee of the active ("Field Assessment") requirement,

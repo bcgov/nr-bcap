@@ -43,29 +43,45 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         DashboardCard: {
+            /** @description Permit application resourceinstanceid; the card's drill-in GUID. */
             id: string;
-            cap_label?: string;
-            cap_date?: string;
-            body_title?: string;
-            body_subtitle1?: string;
-            body_subtitle2?: string;
-            body1?: string;
-            body2?: string;
-            body3?: string;
-            body4?: string;
-            body5?: string;
-            footer_name?: string;
-            footer_date?: string;
-            route?: string;
+            /** @description Name of the chosen (first unsatisfied) process requirement. */
+            requirement_name?: string;
+            /** @description Process due date of the chosen requirement. */
+            requirement_due_date?: string;
+            /** @description Permit application's project name. */
+            project_name?: string;
+            /** @description Permit application's application ID. */
+            application_id?: string;
+            /** @description Permit application's industrial sector (reference label). */
+            industrial_sector?: string;
+            /** @description Permit number of the related HCA Permit. */
+            permit_number?: string;
+            /** @description Permit holder name(s) on the related HCA Permit (Contributor). */
+            permit_holder?: string;
+            /** @description Project officer on the permit's application_admin group (Contributor name). */
+            project_officer?: string;
+            /** @description Assessment notes on the chosen requirement. */
+            assessment_notes?: string;
+            /** @description Ministry assignee on the chosen requirement tile (Contributor name). */
+            ministry_assignee_name?: string;
+            /** @description Edit-log date the chosen tile's ministry_assignee last changed. */
+            ministry_assignee_change_date?: string;
+            /** @description Resourceinstanceid of the chosen Process Requirement; the drill-in target. */
+            requirement_route?: string;
+            /** @description Relative urgency from the target completion date and the current date. */
             urgency?: number;
-            cap_priority?: string;
+            /** @description Permit application's priority level (reference label). */
+            priority_level?: string;
         };
         /**
          * @description One page of dashboard cards for the current user.
          *
          *     `count` is the total number of cards matching the query across all pages;
          *     `page` and `limit` echo the requested page number and page size; `results`
-         *     holds the cards for this page (at most `limit` of them).
+         *     holds the cards for this page (at most `limit` of them). Each card's fields
+         *     are documented on the DashboardCard dataclass (as field help_text), so the
+         *     per-field descriptions surface in the generated OpenAPI spec.
          */
         DashboardPage: {
             count?: number;
