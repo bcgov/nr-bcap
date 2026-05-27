@@ -241,6 +241,10 @@ class DashboardDemoBuilder(ResourceBuilder):
             "related_permit",
             {"related_permit": spec.hca_permit, "is_related_permit": True},
         )
+        proposed = self.append_blank_tile_for_group(permit, "proposed_project", {})
+        proposed.aliased_data.development_project_details.aliased_data.industrial_sector = self.random_reference_value(
+            "permit_application", "industrial_sector"
+        )
         permit.append_tile("application_admin")
         admin = permit.aliased_data.application_admin
         admin.aliased_data.project_officer = spec.project_officer
