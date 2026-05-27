@@ -24,6 +24,16 @@ class DashboardDemoData:
     unassigned_permit: ResourceTileTree | None = None
 
 
+@dataclass
+class PermitSpec:
+    project_name: str
+    application_id: str
+    hca_permit: ResourceTileTree
+    project_officer: ResourceTileTree
+    children: list
+    priority: str | None = None
+
+
 class DashboardDemoBuilder(ResourceBuilder):
     """Create the demo graph and return the resources it produced.
 
@@ -162,16 +172,19 @@ class DashboardDemoBuilder(ResourceBuilder):
             self.make_process_requirement(spec) for spec in self._REQUIREMENTS
         ]
         permit = self._make_permit(
-            "My Project",
-            "APP-1",
-            hca_permit,
-            project_officer,
-            [
-                (requirement, spec["process_requirement_order"], assignee)
-                for spec, requirement, assignee in zip(
-                    self._REQUIREMENTS, requirements, assignees
-                )
-            ],
+            PermitSpec(
+                project_name="My Project",
+                application_id="APP-1",
+                hca_permit=hca_permit,
+                project_officer=project_officer,
+                children=[
+                    (requirement, spec["process_requirement_order"], assignee)
+                    for spec, requirement, assignee in zip(
+                        self._REQUIREMENTS, requirements, assignees
+                    )
+                ],
+                priority="High",
+            )
         )
 
         unassigned_permit = None
@@ -191,11 +204,14 @@ class DashboardDemoBuilder(ResourceBuilder):
                 }
             )
             unassigned_permit = self._make_permit(
-                "Unassigned Project",
-                "APP-2",
-                hca_permit,
-                project_officer,
-                [(unassigned_requirement, 1, None)],
+                PermitSpec(
+                    project_name="Unassigned Project",
+                    application_id="APP-2",
+                    hca_permit=hca_permit,
+                    project_officer=project_officer,
+                    children=[(unassigned_requirement, 1, None)],
+                    priority="Regular",
+                )
             )
 
         return DashboardDemoData(
@@ -208,30 +224,31 @@ class DashboardDemoBuilder(ResourceBuilder):
             project_officer=project_officer,
         )
 
-    def _make_permit(
-        self, project_name, application_id, hca_permit, project_officer, children
-    ):
-        """Create a permit_application linked to ``hca_permit`` with one
-        application_admin child per ``(requirement, order, assignee)`` in
-        ``children``; a None assignee leaves ministry_assignee unset."""
+    def _make_permit(self, spec: PermitSpec):
+        """Create a permit_application from a PermitSpec: linked to its HCA
+        Permit, with one application_admin child per requirement."""
         permit = self.new_resource("permit_application")
         self.append_blank_tile_for_group(
             permit,
             "application_identification",
             {
-                "project_name": self.localized(project_name),
-                "application_id": self.localized(application_id),
+                "project_name": self.localized(spec.project_name),
+                "application_id": self.localized(spec.application_id),
             },
         )
         self.append_blank_tile_for_group(
             permit,
             "related_permit",
-            {"related_permit": hca_permit, "is_related_permit": True},
+            {"related_permit": spec.hca_permit, "is_related_permit": True},
         )
         permit.append_tile("application_admin")
         admin = permit.aliased_data.application_admin
-        admin.aliased_data.project_officer = project_officer
-        for i, (requirement, order, assignee) in enumerate(children):
+        admin.aliased_data.project_officer = spec.project_officer
+        if spec.priority is not None:
+            admin.aliased_data.application_priority_level = self.reference_value(
+                "permit_application", "application_priority_level", spec.priority
+            )
+        for i, (requirement, order, assignee) in enumerate(spec.children):
             if i > 0:
                 admin.append_tile("process_requirement")
             child = admin.aliased_data.process_requirement[i]

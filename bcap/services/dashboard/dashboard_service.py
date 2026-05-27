@@ -347,10 +347,7 @@ class DashboardService(BaseGraphService):
             .values("tileinstanceid")
             .annotate(changed=Max("timestamp"))
         )
-        return {
-            str(row["tileinstanceid"]): row["changed"].strftime("%B %d %Y")
-            for row in rows
-        }
+        return {str(row["tileinstanceid"]): row["changed"].isoformat() for row in rows}
 
     def _cards_to_json(self, permits, data: DashboardData):
         """Assemble a DashboardCard for each permit from the gathered lookups."""
