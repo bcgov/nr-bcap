@@ -184,7 +184,7 @@ class DashboardDemoBuilder(ResourceBuilder):
                     "id": "REQ-2026-UNASSIGNED",
                     "name": "Awaiting assignment",
                     "due": "2026-05-01",
-                    "notes": "no officer assigned yet",
+                    "notes": "check out this feature",
                     "satisfied": False,
                     "process_requirement_order": 1,
                     "sub_requirements": [],

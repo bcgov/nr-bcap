@@ -409,9 +409,9 @@ class DashboardService(BaseGraphService):
             body_subtitle2=self._node_value(aliased, PA.INDUSTRIAL_SECTOR).get(
                 "display_value", ""
             ),
-            body1=f"Permit: {hca.number}",
-            body2=f"Permit holder: {holder_names}",
-            body3=f"Project officer: {officer_name}",
+            body1=hca.number,
+            body2=holder_names,
+            body3=officer_name,
             body4=requirement.notes,
             body5="",
             footer_name=footer_name,
