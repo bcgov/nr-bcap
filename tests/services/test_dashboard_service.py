@@ -276,10 +276,10 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(card.cap_date, "2026-02-15")
         self.assertEqual(card.body4, "awaiting site access")
         self.assertEqual(card.route, self.assessment_id)
-        self.assertEqual(card.body1, "Permit: HCA-001")
-        self.assertEqual(card.body2, "Permit holder: Acme Corp")
+        self.assertEqual(card.body1, "HCA-001")
+        self.assertEqual(card.body2, "Acme Corp")
         # The project_officer on the permit's application_admin group.
-        self.assertEqual(card.body3, "Project officer: Alan Turing")
+        self.assertEqual(card.body3, "Alan Turing")
         # The assignee on the chosen ("Field Assessment") tile.
         self.assertEqual(card.footer_name, "Grace Hopper")
 
