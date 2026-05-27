@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/bcap/api/dashboard": {
+    '/bcap/api/dashboard': {
         parameters: {
             query?: never;
             header?: never;
@@ -12,7 +12,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Returns dashboard cards for the current user based on their role. */
-        get: operations["api_dashboard_retrieve"];
+        get: operations['api_dashboard_retrieve'];
         put?: never;
         post?: never;
         delete?: never;
@@ -21,7 +21,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/bcap/user_profile": {
+    '/bcap/user_profile': {
         parameters: {
             query?: never;
             header?: never;
@@ -29,7 +29,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Returns the authenticated user's profile, group memberships, and linked Contributor resource id. */
-        get: operations["user_profile_retrieve"];
+        get: operations['user_profile_retrieve'];
         put?: never;
         post?: never;
         delete?: never;
@@ -95,7 +95,7 @@ export interface components {
             count?: number;
             page?: number;
             limit?: number;
-            results?: components["schemas"]["DashboardCard"][];
+            results?: components['schemas']['DashboardCard'][];
         };
         UserProfileResponse: {
             username: string;
@@ -122,7 +122,7 @@ export interface operations {
                 order_by?: string | null;
                 page?: number;
                 /** @description * `UNASSIGNED` - Unassigned */
-                status?: "UNASSIGNED" | null;
+                status?: 'UNASSIGNED' | null;
             };
             header?: never;
             path?: never;
@@ -135,7 +135,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DashboardPage"];
+                    'application/json': components['schemas']['DashboardPage'];
                 };
             };
         };
@@ -154,7 +154,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserProfileResponse"];
+                    'application/json': components['schemas']['UserProfileResponse'];
                 };
             };
         };
