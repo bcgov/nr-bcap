@@ -48,9 +48,7 @@ class DashboardCard:
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
     )
-    permit_number: str = described(
-        "Permit number of the related HCA Permit.", ""
-    )
+    permit_number: str = described("Permit number of the related HCA Permit.", "")
     permit_holder: str = described(
         "Permit holder name(s) on the related HCA Permit (Contributor).", ""
     )
@@ -58,9 +56,7 @@ class DashboardCard:
         "Project officer on the permit's application_admin group (Contributor name).",
         "",
     )
-    assessment_notes: str = described(
-        "Assessment notes on the chosen requirement.", ""
-    )
+    assessment_notes: str = described("Assessment notes on the chosen requirement.", "")
     ministry_assignee_name: str = described(
         "Ministry assignee on the chosen requirement tile (Contributor name).", ""
     )
