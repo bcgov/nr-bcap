@@ -6,9 +6,8 @@ import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
-// import mockProjectsData from './mockData2.json';
+import type { components } from '@/bcap/api-types';
 
-// Grab the current route name so the cards always have a valid destination
 const currentRoute = useRoute();
 
 interface ProjectData {
@@ -33,140 +32,48 @@ interface ProjectData {
     urgency: number;
 }
 
-interface RawRequirementData {
-    resourceinstanceid: string;
-    resourceinstance_id?: string; // <-- Add this
-    id?: string;
-    displayname: string;
-    displaydescription?: string;
-    graph_id: string;
-    tiles: Record<string, unknown>[];
-    display_values: Record<string, unknown>;
-}
+// Extract the new types directly from the generated backend schema
+type GeneratedDashboardCard = components['schemas']['DashboardCard'];
+type GeneratedDashboardPage = components['schemas']['DashboardPage'];
 
-interface RawApplicationData {
-    resourceinstanceid: string;
-    displayname: string;
-    displaydescription?: string;
-    graph_id: string;
-    tiles: Record<string, unknown>[];
-    display_values: Record<string, unknown>;
-    nested_process_requirements?: RawRequirementData[];
-}
+// Maps backend JSON directly to the Dashboard Card
+const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
+    const safeUrgency = rawItem.urgency ?? 0;
+    const isPriority = rawItem.priority_level === 'High' || false;
 
-const DATE_NODEGROUP = '71cc085c-9f66-47d6-8b56-b223e9a60cb8';
-const NODE_START_DATE = '8c896564-f9c9-44ac-a563-93c1ee751fea';
-const NODE_COMP_DATE = '0cadf9ba-0e2d-42e9-b11e-042390bcb88c';
-const NODE_DUE_DATE = 'b3cf5f46-c54f-48ca-adb1-4c08682ac81a';
+    return {
+        id: rawItem.id,
+        reqId: rawItem.requirement_id || rawItem.id,
 
-// Maps the backend nested JSON to the Dashboard Card interface still needs work
-const mapToDashboardCard = (rawItem: RawApplicationData): ProjectData[] => {
-    if (
-        !rawItem.nested_process_requirements ||
-        rawItem.nested_process_requirements.length === 0
-    ) {
-        return [];
-    }
+        // Cap
+        capPriority: isPriority,
+        capLabel: rawItem.requirement_name || '',
+        capDate: rawItem.requirement_due_date || 'Pending',
 
-    const vals = rawItem.display_values || {};
-    const appId = vals['Application ID']
-        ? String(vals['Application ID'])
-        : 'Unknown App ID';
-    const projectName = vals['Project Name']
-        ? String(vals['Project Name'])
-        : rawItem.displayname;
-    const assignee = vals['Ministry Assignee']
-        ? String(vals['Ministry Assignee'])
-        : 'Unassigned';
+        // Title & Subtitles
+        icon: 'fa-solid fa-folder-open',
+        bodyTitle: rawItem.project_name || 'Unknown Project',
+        bodySubtitle1: rawItem.application_number || 'No App #',
+        bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-    const rawPriority = vals['Application Priority Level'];
-    const urgencyLevel = rawPriority
-        ? parseInt(String(rawPriority), 10) || 0
-        : 0;
+        // Body
+        body1: rawItem.permit_number
+            ? `Permit: ${rawItem.permit_number}`
+            : undefined,
+        body2: rawItem.permit_holder
+            ? `Holder: ${rawItem.permit_holder}`
+            : undefined,
+        body3: `Officer: ${rawItem.project_officer || ''}`,
+        body4: undefined,
+        body5: undefined,
 
-    let activeReq = null;
-    let reqNameDisplay = 'No Requirement Linked';
-    let targetReqId = undefined;
-    let startDate = 'Not Started';
-    let dueDate = 'Pending';
+        // Footer
+        footerDate: rawItem.requirement_due_date || 'Not Started',
+        footerName: rawItem.ministry_assignee_name || 'Unassigned',
 
-    if (
-        rawItem.nested_process_requirements &&
-        rawItem.nested_process_requirements.length > 0
-    ) {
-        activeReq = rawItem.nested_process_requirements.find((req) => {
-            if (!req.tiles) return true;
-
-            const dateTile = req.tiles.find(
-                (t: Record<string, unknown>) =>
-                    t.nodegroup_id === DATE_NODEGROUP,
-            );
-            if (!dateTile || !dateTile.data) return true;
-
-            const tileData = dateTile.data as Record<string, unknown>;
-            return !tileData[NODE_COMP_DATE];
-        });
-
-        if (!activeReq) {
-            activeReq =
-                rawItem.nested_process_requirements[
-                    rawItem.nested_process_requirements.length - 1
-                ];
-        }
-
-        const reqVals = activeReq.display_values || {};
-        reqNameDisplay = reqVals['Requirement Name']
-            ? String(reqVals['Requirement Name'])
-            : activeReq.displayname;
-        targetReqId =
-            activeReq.resourceinstanceid ||
-            activeReq.resourceinstance_id ||
-            activeReq.id;
-
-        if (activeReq.tiles && activeReq.tiles.length > 0) {
-            const dateTile = activeReq.tiles.find(
-                (t: Record<string, unknown>) =>
-                    t.nodegroup_id === DATE_NODEGROUP,
-            );
-            if (dateTile && dateTile.data) {
-                const tileData = dateTile.data as Record<string, unknown>;
-                startDate = tileData[NODE_START_DATE]
-                    ? String(tileData[NODE_START_DATE])
-                    : 'Not Started';
-                dueDate = tileData[NODE_DUE_DATE]
-                    ? String(tileData[NODE_DUE_DATE])
-                    : 'Pending';
-            }
-        }
-    }
-
-    return [
-        {
-            id: rawItem.resourceinstanceid,
-            reqId: targetReqId,
-
-            capPriority: urgencyLevel > 0,
-            capLabel: activeReq ? reqNameDisplay : 'Permit Application',
-            capDate: dueDate,
-            icon: 'fa-solid fa-folder-open',
-
-            bodyTitle: projectName,
-            bodySubtitle1: appId,
-            bodySubtitle2: 'Sector',
-
-            body1: 'Permit: permit number',
-            body2: 'Project officer: Jane Smith',
-            body3: '',
-            body4: '',
-            body5: '',
-
-            footerDate: startDate,
-            footerName: assignee !== 'Unassigned' ? assignee : 'John Doe',
-            route: (currentRoute.name as string) || 'Home',
-
-            urgency: urgencyLevel,
-        },
-    ];
+        route: (currentRoute.name as string) || 'Home',
+        urgency: safeUrgency,
+    };
 };
 
 // Sorting options array
@@ -184,17 +91,25 @@ const sortOptions = [
     { label: 'Sector', value: 'bodySubtitle2' },
 ];
 
-// backend API call
+// Backend API call using the generated schema format
 const fetchProjects = async () => {
     try {
-        const apiUrl = '/bcap/api/dashboard';
+        // Will need to update to all
+        const apiUrl = '/bcap/api/dashboard?limit=100&page=1&status=UNASSIGNED';
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        return data as RawApplicationData[];
+
+        const data = (await response.json()) as GeneratedDashboardPage;
+        console.log('Raw API response:', data);
+
+        if (data && 'results' in data && Array.isArray(data.results)) {
+            return data.results as GeneratedDashboardCard[];
+        }
+
+        return [];
     } catch (error) {
         console.error('Error fetching projects from backend:', error);
         return [];
@@ -218,7 +133,7 @@ const loadData = async () => {
     isLoading.value = true;
     try {
         const data = await fetchProjects();
-        rawProjects.value = data.flatMap((item) => mapToDashboardCard(item));
+        rawProjects.value = data.map((item) => mapToDashboardCard(item));
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -237,7 +152,7 @@ const displayedProjects = computed(() => {
     if (currentFilter.value === 'my_projects') {
         filtered = filtered.filter((item) => item.footerName === userName);
     } else if (currentFilter.value === 'unassigned') {
-        filtered = filtered.filter((item) => !item.footerName);
+        filtered = filtered.filter((item) => item.footerName === 'Unassigned');
     }
 
     if (currentSearch.value) {
