@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: BCAP API
+  version: 2.0.0
+  description: BC Archaeology Portal API
+paths:
+  /bcap/api/dashboard:
+    get:
+      operationId: api_dashboard_retrieve
+      description: Returns dashboard cards for the current user based on their role.
+      parameters:
+      - in: query
+        name: contributor_id
+        schema:
+          type: string
+          nullable: true
+          minLength: 1
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+      - in: query
+        name: order_by
+        schema:
+          type: string
+          nullable: true
+          minLength: 1
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+      - in: query
+        name: status
+        schema:
+          enum:
+          - UNASSIGNED
+          - null
+          type: string
+          nullable: true
+          minLength: 1
+        description: '* `UNASSIGNED` - Unassigned'
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardPage'
+          description: ''
+  /bcap/user_profile:
+    get:
+      operationId: user_profile_retrieve
+      description: Returns the authenticated user's profile, group memberships, and
+        linked Contributor resource id.
+      tags:
+      - user_profile
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+          description: ''
+components:
+  schemas:
+    DashboardCard:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Permit application resourceinstanceid; the card's drill-in
+            GUID.
+        requirement_name:
+          type: string
+          description: Name of the chosen (first unsatisfied) process requirement.
+        requirement_due_date:
+          type: string
+          description: Process due date of the chosen requirement.
+        project_name:
+          type: string
+          description: Permit application's project name.
+        application_number:
+          type: string
+          description: Permit application's human-readable application reference (e.g.
+            "APP-1"); not a GUID. The application's GUID is the card's `id`.
+        industrial_sector:
+          type: string
+          description: Permit application's industrial sector (reference label).
+        permit_id:
+          type: string
+          nullable: true
+          description: Resourceinstanceid of the related HCA Permit; its drill-in
+            GUID.
+        permit_number:
+          type: string
+          description: Permit number of the related HCA Permit.
+        permit_holder:
+          type: string
+          description: Permit holder name(s) on the related HCA Permit (Contributor).
+        permit_holder_ids:
+          type: array
+          items:
+            type: string
+          description: Resourceinstanceids of the permit holder Contributor(s); their
+            drill-in GUIDs.
+        project_officer:
+          type: string
+          description: Project officer on the permit's application_admin group (Contributor
+            name).
+        project_officer_id:
+          type: string
+          nullable: true
+          description: Resourceinstanceid of the project officer Contributor; its
+            drill-in GUID.
+        assessment_notes:
+          type: string
+          description: Assessment notes on the chosen requirement.
+        ministry_assignee_name:
+          type: string
+          description: Ministry assignee on the chosen requirement tile (Contributor
+            name).
+        ministry_assignee_id:
+          type: string
+          nullable: true
+          description: Resourceinstanceid of the ministry assignee Contributor; its
+            drill-in GUID.
+        ministry_assignee_change_date:
+          type: string
+          description: Edit-log date the chosen tile's ministry_assignee last changed.
+        requirement_id:
+          type: string
+          description: Resourceinstanceid of the chosen Process Requirement; the drill-in
+            target.
+        urgency:
+          type: integer
+          description: Relative urgency from the target completion date and the current
+            date.
+        priority_level:
+          type: string
+          description: Permit application's priority level (reference label).
+      required:
+      - id
+    DashboardPage:
+      type: object
+      description: |-
+        One page of dashboard cards for the current user.
+
+        `count` is the total number of cards matching the query across all pages;
+        `page` and `limit` echo the requested page number and page size; `results`
+        holds the cards for this page (at most `limit` of them). Each card's fields
+        are documented on the DashboardCard dataclass (as field help_text), so the
+        per-field descriptions surface in the generated OpenAPI spec.
+      properties:
+        count:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardCard'
+    UserProfileResponse:
+      type: object
+      properties:
+        username:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        groups:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        contributor_id:
+          type: string
+          nullable: true
+          description: TODO fill this in.
+          readOnly: true
+      required:
+      - contributor_id
+      - first_name
+      - groups
+      - last_name
+      - username
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: bcap

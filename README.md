@@ -234,6 +234,31 @@ python3 manage.py bc_test_users --refresh
 ## Developing the UI using Vite
 See [README.vite.md](./README.vite.md) for details about developing using the Vite dev server.
 
+### Dashboard API contract
+
+Dashboard endpoints are documented with drf-spectacular and consumed by the Vue app through generated TypeScript types. After changing dashboard serializers or views, refresh the contract from the `bcap` container Exec tab (or any shell with Django on `PYTHONPATH`):
+
+NOTE: These will be enabled for the arches-queryset routes later on, this only covers limited routes for now.
+```bash
+# 1. Regenerate the OpenAPI spec (DRF serializers → schema.yml)
+python3 manage.py spectacular --urlconf bcap.documented_api_urls --file schema.yml
+
+# 2. Regenerate frontend types (schema.yml → bcap/src/bcap/api-types.ts)
+npm run openapi:types
+```
+
+To load sample dashboard data into the current database (permit application, related resources, and Elasticsearch indexing):
+
+```bash
+# Small demo graph (one permit, three short requirements)
+python3 manage.py seed_dashboard_demo
+
+# One permit carrying the full real-world requirement flow
+python3 manage.py seed_permit_application
+```
+
+Both take `--no-index` for when Elasticsearch is not running. They are temporary developer aids and will be removed in a future release.
+
 ## Running Backend Unit Tests
 
 ```

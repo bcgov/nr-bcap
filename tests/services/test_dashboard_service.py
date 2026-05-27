@@ -1,0 +1,461 @@
+from itertools import chain
+from types import SimpleNamespace
+
+from django.test import TestCase
+
+from bcap.services.dashboard.dashboard_service import DashboardService
+from bcap.services.dashboard.dashboard_types import DashboardFilter
+from bcap.util.dashboard.resource_builder import ResourceBuilder
+
+from tests.controlled_list_fixtures import ControlledListFixtures
+
+
+def build_permit_graph():
+    """A minimal Permit Application graph for the dashboard tests: one permit
+    linked to an HCA Permit (held by Acme Corp) and three process requirements
+    -- satisfied "Review" (order 1), outstanding "Field Assessment" (order 2),
+    and outstanding "Site Inspection" (order 3). The card surfaces the
+    lowest-order outstanding requirement, "Field Assessment". Returns the
+    created resources."""
+    builder = ResourceBuilder()
+    contributor_type = builder.reference_value("contributor", "contributor_type")
+
+    ada = builder.make_contributor(contributor_type, "Ada", "Lovelace")
+    grace = builder.make_contributor(contributor_type, "Grace", "Hopper")
+    acme = builder.make_contributor(contributor_type, None, "Acme Corp")
+    alan = builder.make_contributor(contributor_type, "Alan", "Turing")
+
+    hca_permit = builder.new_resource("hca_permit")
+    builder.append_blank_tile_for_group(
+        hca_permit,
+        "permit_identification",
+        {
+            "permit_number": "HCA-001",
+            "permit_holder": [acme],
+            "hca_permit_type": builder.reference_value(
+                "hca_permit", "hca_permit_type", "Investigation"
+            ),
+        },
+    )
+    hca_permit.save(**builder.save_kwargs)
+
+    review = builder.make_process_requirement(
+        {
+            "id": "REQ-1",
+            "name": "Review",
+            "due": "2026-01-02",
+            "notes": "done",
+            "satisfied": True,
+            "sub_requirements": [
+                {
+                    "name": "Forms",
+                    "sort_order": 1,
+                    "description": "",
+                    "sub_satisfied": True,
+                },
+            ],
+        }
+    )
+    assessment = builder.make_process_requirement(
+        {
+            "id": "REQ-2",
+            "name": "Field Assessment",
+            "due": "2026-02-15",
+            "notes": "awaiting site access",
+            "satisfied": False,
+            "sub_requirements": [
+                {
+                    "name": "Forms",
+                    "sort_order": 1,
+                    "description": "",
+                    "sub_satisfied": False,
+                },
+                {
+                    "name": "Inspection",
+                    "sort_order": 2,
+                    "description": "",
+                    "sub_satisfied": True,
+                },
+            ],
+        }
+    )
+    site = builder.make_process_requirement(
+        {
+            "id": "REQ-3",
+            "name": "Site Inspection",
+            "due": "2026-04-01",
+            "notes": "not started",
+            "satisfied": False,
+            "sub_requirements": [],
+        }
+    )
+
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized("My Project"),
+            "application_id": builder.localized("APP-1"),
+        },
+    )
+    builder.append_blank_tile_for_group(
+        permit,
+        "related_permit",
+        {"related_permit": hca_permit, "is_related_permit": True},
+    )
+    permit.append_tile("application_admin")
+    admin = permit.aliased_data.application_admin
+    admin.aliased_data.project_officer = alan
+    # One application_admin child per (requirement, assignee, order). "Site
+    # Inspection" (order 3) precedes "Field Assessment" (order 2) in tile order,
+    # so the card only surfaces the right row by lowest order, not position.
+    children = [
+        (review, ada, 1),
+        (site, ada, 3),
+        (assessment, grace, 2),
+    ]
+    for i, (requirement, assignee, order) in enumerate(children):
+        if i > 0:
+            admin.append_tile("process_requirement")
+        child = admin.aliased_data.process_requirement[i]
+        child.aliased_data.process_requirement_order = order
+        child.aliased_data.process_requirement = requirement
+        child.aliased_data.ministry_assignee = assignee
+    permit.save(**builder.save_kwargs)
+
+    return SimpleNamespace(
+        permit=permit,
+        hca_permit=hca_permit,
+        ada=ada,
+        grace=grace,
+        acme=acme,
+        alan=alan,
+        review=review,
+        assessment=assessment,
+        site=site,
+    )
+
+
+def build_minimal_permit(builder, name):
+    """A permit_application with only the tiles a card needs (identification,
+    admin priority, and one outstanding requirement so it isn't hidden), so
+    pagination tests can cheaply create several visible permits. Returns the
+    created resource."""
+    requirement = builder.make_process_requirement(
+        {
+            "id": f"REQ-{name}",
+            "name": "Outstanding",
+            "due": "2026-03-01",
+            "notes": "",
+            "satisfied": False,
+            "sub_requirements": [],
+        }
+    )
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_admin",
+        {
+            "application_priority_level": builder.reference_value(
+                "permit_application", "application_priority_level"
+            ),
+        },
+    )
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
+    permit.save(**builder.save_kwargs)
+    return permit
+
+
+def build_all_satisfied_permit(builder, name):
+    """A permit_application whose only process requirement is satisfied, so the
+    card has none to surface. Returns the created resource."""
+    requirement = builder.make_process_requirement(
+        {
+            "id": "REQ-DONE",
+            "name": "Review",
+            "due": "2026-01-02",
+            "notes": "done",
+            "satisfied": True,
+            "sub_requirements": [],
+        }
+    )
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    permit.append_tile("application_admin")
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
+    permit.save(**builder.save_kwargs)
+    return permit
+
+
+def build_unassigned_permit(builder, name):
+    """A permit_application whose active (unsatisfied) requirement has no
+    ministry_assignee. Returns the created resource."""
+    requirement = builder.make_process_requirement(
+        {
+            "id": "REQ-UNASSIGNED",
+            "name": "Needs Owner",
+            "due": "2026-03-01",
+            "notes": "nobody assigned",
+            "satisfied": False,
+            "sub_requirements": [],
+        }
+    )
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    permit.append_tile("application_admin")
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
+    permit.save(**builder.save_kwargs)
+    return permit
+
+
+class _DashboardServiceData:
+    """Builds the test graph once per class and exposes the resources' ids as
+    strings -- the form the service returns -- so the assertions stay readable."""
+
+    @classmethod
+    def setUpTestData(cls):
+        # Seeded resources are rolled back with the class transaction.
+        ControlledListFixtures.seed()
+        cls.service = DashboardService()
+        graph = build_permit_graph()
+
+        cls.permit_id = str(graph.permit.pk)
+        cls.hca_permit_id = str(graph.hca_permit.pk)
+        cls.ada_id = str(graph.ada.pk)
+        cls.grace_id = str(graph.grace.pk)
+        cls.acme_id = str(graph.acme.pk)
+        cls.alan_id = str(graph.alan.pk)
+        cls.review_id = str(graph.review.pk)
+        cls.assessment_id = str(graph.assessment.pk)
+        cls.site_id = str(graph.site.pk)
+
+
+class DashboardServiceTests(_DashboardServiceData, TestCase):
+    """The public get_cards() API, end to end."""
+
+    def test_get_cards_builds_one_card_from_the_permit_graph(self):
+        page = self.service.get_cards(DashboardFilter())
+
+        self.assertEqual(page.count, 1)
+        self.assertEqual(len(page.results), 1)
+        card = page.results[0]
+        self.assertEqual(card.id, self.permit_id)
+        self.assertEqual(card.project_name, "My Project")
+        self.assertEqual(card.application_number, "APP-1")
+        # "Review" is satisfied, so the card surfaces "Field Assessment".
+        self.assertEqual(card.requirement_name, "Field Assessment")
+        self.assertEqual(card.requirement_due_date, "2026-02-15")
+        self.assertEqual(card.assessment_notes, "awaiting site access")
+        self.assertEqual(card.requirement_id, self.assessment_id)
+        self.assertEqual(card.permit_number, "HCA-001")
+        self.assertEqual(card.permit_id, self.hca_permit_id)
+        self.assertEqual(card.permit_holder, "Acme Corp")
+        self.assertEqual(card.permit_holder_ids, [self.acme_id])
+        # The project_officer on the permit's application_admin group.
+        self.assertEqual(card.project_officer, "Alan Turing")
+        self.assertEqual(card.project_officer_id, self.alan_id)
+        # The assignee on the chosen ("Field Assessment") tile.
+        self.assertEqual(card.ministry_assignee_name, "Grace Hopper")
+        self.assertEqual(card.ministry_assignee_id, self.grace_id)
+
+    def test_get_cards_filters_by_active_requirements_assignee(self):
+        # Grace is the assignee of the active ("Field Assessment") requirement,
+        # so filtering by her returns the permit.
+        matching = self.service.get_cards(DashboardFilter(contributor_id=self.grace_id))
+        self.assertEqual(matching.count, 1)
+        self.assertEqual([card.id for card in matching.results], [self.permit_id])
+
+        # Ada is on the satisfied "Review" and the later-ordered unsatisfied
+        # "Site Inspection" -- never the active requirement -- so she matches
+        # nothing, even though she is an assignee on the permit.
+        ada = self.service.get_cards(DashboardFilter(contributor_id=self.ada_id))
+        self.assertEqual(ada.count, 0)
+        self.assertEqual(ada.results, [])
+
+        # A permit holder is not a ministry assignee, so nothing matches.
+        none = self.service.get_cards(DashboardFilter(contributor_id=self.acme_id))
+        self.assertEqual(none.count, 0)
+        self.assertEqual(none.results, [])
+
+    def test_unassigned_status_returns_only_permits_with_no_active_assignee(self):
+        # The graph permit's active requirement ("Field Assessment") is assigned
+        # to Grace, so it is excluded; add a permit whose active requirement has
+        # no assignee, which is the only UNASSIGNED match.
+        unassigned_id = str(build_unassigned_permit(ResourceBuilder(), "Orphan").pk)
+
+        page = self.service.get_cards(
+            DashboardFilter(status=DashboardService.STATUS_UNASSIGNED)
+        )
+
+        self.assertEqual([card.id for card in page.results], [unassigned_id])
+
+
+class DashboardServicePaginationTests(TestCase):
+    """limit/page slicing, against several permits so paging is observable."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = ResourceBuilder()
+        # Three bare permits are enough to observe limit capping and paging.
+        permits = [build_minimal_permit(builder, f"Permit {i}") for i in range(3)]
+        cls.permit_ids = {str(p.pk) for p in permits}
+        cls.service = DashboardService()
+
+    def test_limit_caps_page_size_but_not_count(self):
+        page = self.service.get_cards(DashboardFilter(limit=2, page=1))
+
+        self.assertEqual(page.count, 3)
+        self.assertEqual(page.limit, 2)
+        self.assertEqual(page.page, 1)
+        self.assertEqual(len(page.results), 2)
+
+    def test_pages_partition_every_permit_without_overlap(self):
+        first = self.service.get_cards(DashboardFilter(limit=2, page=1))
+        second = self.service.get_cards(DashboardFilter(limit=2, page=2))
+
+        self.assertEqual(len(first.results), 2)
+        self.assertEqual(len(second.results), 1)
+        seen = {card.id for card in first.results + second.results}
+        self.assertEqual(seen, self.permit_ids)
+
+    def test_page_past_the_end_is_empty_but_count_holds(self):
+        page = self.service.get_cards(DashboardFilter(limit=2, page=99))
+
+        self.assertEqual(page.count, 3)
+        self.assertEqual(page.results, [])
+
+
+class DashboardServiceNoPermitsTests(TestCase):
+    """get_cards() with no Permit Application resources in the database. This
+    case builds no graph, so the permit query comes back empty."""
+
+    def test_get_cards_returns_empty_page(self):
+        page = DashboardService().get_cards(DashboardFilter())
+        self.assertEqual(page.count, 0)
+        self.assertEqual(page.results, [])
+
+
+class DashboardServiceAllSatisfiedTests(TestCase):
+    """A permit whose requirements are all satisfied has nothing actionable, so
+    it is hidden from the dashboard entirely."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = ResourceBuilder()
+        cls.permit_id = str(build_all_satisfied_permit(builder, "Done").pk)
+        cls.service = DashboardService()
+
+    def test_all_satisfied_permit_is_hidden(self):
+        page = self.service.get_cards(DashboardFilter())
+
+        self.assertEqual(page.count, 0)
+        self.assertEqual(page.results, [])
+
+
+class DashboardServiceStepsTests(_DashboardServiceData, TestCase):
+    """The individual data-gathering steps get_cards() chains together."""
+
+    def test_permits_returns_count_and_the_permit_application(self):
+        count, permits = self.service._permits(DashboardFilter())
+
+        self.assertEqual(count, 1)
+        self.assertEqual(len(permits), 1)
+        self.assertEqual(str(permits[0].pk), self.permit_id)
+
+    def test_requirement_tiles_by_permit_groups_by_permit(self):
+        _, permits = self.service._permits(DashboardFilter())
+
+        by_permit = self.service._requirement_tiles_by_permit(permits)
+
+        # The permit's three process-requirement tiles are grouped under its id.
+        self.assertEqual(list(by_permit), [self.permit_id])
+        self.assertEqual(len(by_permit[self.permit_id]), 3)
+
+    def test_choose_requirements_picks_lowest_order_unsatisfied(self):
+        _, permits = self.service._permits(DashboardFilter())
+        by_permit = self.service._requirement_tiles_by_permit(permits)
+        ids = self.service._referenced_ids(
+            chain.from_iterable(by_permit.values()), self.service.PA.PROCESS_REQUIREMENT
+        )
+
+        chosen = self.service._choose_requirements(by_permit, ids)
+
+        # "Review" (order 1) is satisfied; of the outstanding rows the card
+        # surfaces "Field Assessment" (order 2) over "Site Inspection" (order 3).
+        requirement = chosen[self.permit_id]
+        self.assertEqual(
+            (
+                requirement.name,
+                requirement.due_date,
+                requirement.route,
+                requirement.notes,
+            ),
+            (
+                "Field Assessment",
+                "2026-02-15",
+                self.assessment_id,
+                "awaiting site access",
+            ),
+        )
+        # The chosen requirement carries its process_requirement tile.
+        self.assertIsNotNone(requirement.tile)
+
+    def test_hca_permits_maps_number_and_holders(self):
+        _, permits = self.service._permits(DashboardFilter())
+
+        hca_permits = self.service._hca_permits(permits)
+
+        self.assertEqual(list(hca_permits), [self.hca_permit_id])
+        hca = hca_permits[self.hca_permit_id]
+        self.assertEqual(hca.number, "HCA-001")
+        self.assertEqual(hca.holder_ids, [self.acme_id])
+
+    def test_contributor_names_resolves_assignees_and_holders(self):
+        _, permits = self.service._permits(DashboardFilter())
+        by_permit = self.service._requirement_tiles_by_permit(permits)
+        hca_permits = self.service._hca_permits(permits)
+        assignee_ids = self.service._referenced_ids(
+            chain.from_iterable(by_permit.values()), self.service.PA.MINISTRY_ASSIGNEE
+        )
+
+        names = self.service._contributor_names(assignee_ids, hca_permits)
+
+        self.assertEqual(
+            names,
+            {
+                self.ada_id: "Ada Lovelace",
+                self.grace_id: "Grace Hopper",
+                self.acme_id: "Acme Corp",
+            },
+        )
