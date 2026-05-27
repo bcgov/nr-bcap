@@ -388,18 +388,22 @@ class DashboardService(BaseGraphService):
             requirement_name=requirement.name,
             requirement_due_date=requirement.due_date,
             project_name=identification.project_name["display_value"],
-            application_id=identification.application_id["display_value"],
+            application_number=identification.application_id["display_value"],
             # industrial_sector is nested two groups deep, so keep the helper.
             industrial_sector=self._node_value(aliased, PA.INDUSTRIAL_SECTOR).get(
                 "display_value", ""
             ),
+            permit_id=related_permit_id,
             permit_number=hca.number,
             permit_holder=holder_names,
+            permit_holder_ids=hca.holder_ids,
             project_officer=officer_name,
+            project_officer_id=officer_id,
             assessment_notes=requirement.notes,
             ministry_assignee_name=ministry_assignee_name,
+            ministry_assignee_id=assignee_id,
             ministry_assignee_change_date=ministry_assignee_change_date,
-            requirement_route=requirement.route,
+            requirement_id=requirement.route,
             urgency=0,
             priority_level=admin.application_priority_level["display_value"],
         )

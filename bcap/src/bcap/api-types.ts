@@ -51,24 +51,32 @@ export interface components {
             requirement_due_date?: string;
             /** @description Permit application's project name. */
             project_name?: string;
-            /** @description Permit application's application ID. */
-            application_id?: string;
+            /** @description Permit application's human-readable application reference (e.g. "APP-1"); not a GUID. The application's GUID is the card's `id`. */
+            application_number?: string;
             /** @description Permit application's industrial sector (reference label). */
             industrial_sector?: string;
+            /** @description Resourceinstanceid of the related HCA Permit; its drill-in GUID. */
+            permit_id?: string | null;
             /** @description Permit number of the related HCA Permit. */
             permit_number?: string;
             /** @description Permit holder name(s) on the related HCA Permit (Contributor). */
             permit_holder?: string;
+            /** @description Resourceinstanceids of the permit holder Contributor(s); their drill-in GUIDs. */
+            permit_holder_ids?: string[];
             /** @description Project officer on the permit's application_admin group (Contributor name). */
             project_officer?: string;
+            /** @description Resourceinstanceid of the project officer Contributor; its drill-in GUID. */
+            project_officer_id?: string | null;
             /** @description Assessment notes on the chosen requirement. */
             assessment_notes?: string;
             /** @description Ministry assignee on the chosen requirement tile (Contributor name). */
             ministry_assignee_name?: string;
+            /** @description Resourceinstanceid of the ministry assignee Contributor; its drill-in GUID. */
+            ministry_assignee_id?: string | null;
             /** @description Edit-log date the chosen tile's ministry_assignee last changed. */
             ministry_assignee_change_date?: string;
             /** @description Resourceinstanceid of the chosen Process Requirement; the drill-in target. */
-            requirement_route?: string;
+            requirement_id?: string;
             /** @description Relative urgency from the target completion date and the current date. */
             urgency?: number;
             /** @description Permit application's priority level (reference label). */

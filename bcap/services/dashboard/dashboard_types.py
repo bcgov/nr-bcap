@@ -44,26 +44,49 @@ class DashboardCard:
         "Process due date of the chosen requirement.", ""
     )
     project_name: str = described("Permit application's project name.", "")
-    application_id: str = described("Permit application's application ID.", "")
+    application_number: str = described(
+        'Permit application\'s human-readable application reference (e.g. "APP-1"); '
+        "not a GUID. The application's GUID is the card's `id`.",
+        "",
+    )
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
+    )
+    permit_id: str | None = described(
+        "Resourceinstanceid of the related HCA Permit; its drill-in GUID.", None
     )
     permit_number: str = described("Permit number of the related HCA Permit.", "")
     permit_holder: str = described(
         "Permit holder name(s) on the related HCA Permit (Contributor).", ""
     )
+    permit_holder_ids: list[str] = field(
+        default_factory=list,
+        metadata={
+            "serializer_kwargs": {
+                "help_text": "Resourceinstanceids of the permit holder Contributor(s); their drill-in GUIDs."
+            }
+        },
+    )
     project_officer: str = described(
         "Project officer on the permit's application_admin group (Contributor name).",
         "",
+    )
+    project_officer_id: str | None = described(
+        "Resourceinstanceid of the project officer Contributor; its drill-in GUID.",
+        None,
     )
     assessment_notes: str = described("Assessment notes on the chosen requirement.", "")
     ministry_assignee_name: str = described(
         "Ministry assignee on the chosen requirement tile (Contributor name).", ""
     )
+    ministry_assignee_id: str | None = described(
+        "Resourceinstanceid of the ministry assignee Contributor; its drill-in GUID.",
+        None,
+    )
     ministry_assignee_change_date: str = described(
         "Edit-log date the chosen tile's ministry_assignee last changed.", ""
     )
-    requirement_route: str = described(
+    requirement_id: str = described(
         "Resourceinstanceid of the chosen Process Requirement; the drill-in target.",
         "",
     )

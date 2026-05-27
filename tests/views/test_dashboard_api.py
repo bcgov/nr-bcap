@@ -54,7 +54,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         card = body["results"][0]
         self.assertEqual(card["id"], self.permit_id)
         self.assertEqual(card["project_name"], "My Project")
-        self.assertEqual(card["application_id"], "APP-1")
+        self.assertEqual(card["application_number"], "APP-1")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
         self.assertEqual(card["requirement_name"], "Field Assessment")
         self.assertEqual(card["ministry_assignee_name"], "Grace Hopper")
