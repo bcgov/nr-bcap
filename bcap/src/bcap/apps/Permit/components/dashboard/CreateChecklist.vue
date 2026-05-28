@@ -1,11 +1,48 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const processId = computed(() => route.query.id as string | undefined);
+const isEditing = computed(() => !!processId.value);
+const isLoading = ref(false);
+const originalData = ref<ArchesResourcePayload | null>(null);
+
+interface ArchesResourcePayload {
+    displayname?: string;
+    resource: {
+        'Requirement Identification'?: {
+            'Requirement Name'?: string;
+            'Is Template Requirement'?: {
+                'Has Submission Requirement'?: string;
+                [key: string]: unknown;
+            };
+            [key: string]: unknown;
+        };
+        'Sub Requirement'?: ArchesSubRequirement[];
+        [key: string]: unknown;
+    };
+    [key: string]: unknown;
+}
 
 interface DraftRequirement {
     id: string;
     sortOrder: number;
     name: string;
     description: string;
+}
+
+interface ArchesNodeValue {
+    '@value'?: string;
+    [key: string]: unknown;
+}
+
+// Defines the Sub Requirement object
+interface ArchesSubRequirement {
+    'Sub Requirement Name'?: ArchesNodeValue | string;
+    'Sub Requirement Description'?: ArchesNodeValue | string;
+    Description?: ArchesNodeValue | string;
+    [key: string]: unknown;
 }
 
 const requirementTitle = ref('');
@@ -24,6 +61,64 @@ const requirements = ref<DraftRequirement[]>([
 const isSaving = ref(false);
 const saveMessage = ref('');
 
+onMounted(async () => {
+    if (isEditing.value) {
+        isLoading.value = true;
+        try {
+            const apiUrl = `/bcap/resources/${processId.value}?format=json`;
+            const response = await fetch(apiUrl);
+
+            if (!response.ok) throw new Error('Failed to fetch data');
+
+            const data = await response.json();
+            originalData.value = data;
+            requirementTitle.value = data.displayname || '';
+            requiresSubmission.value =
+                data.resource?.['Requirement Identification']?.[
+                    'Is Template Requirement'
+                ] === 'True';
+
+            const subRequirements = data.resource?.['Sub Requirement'];
+
+            if (Array.isArray(subRequirements) && subRequirements.length > 0) {
+                requirements.value = subRequirements.map(
+                    (subItem: ArchesSubRequirement, index: number) => {
+                        const nameData = subItem['Sub Requirement Name'];
+                        const reqName =
+                            nameData &&
+                            typeof nameData === 'object' &&
+                            '@value' in nameData
+                                ? String(nameData['@value'])
+                                : String(nameData || '');
+
+                        const descData =
+                            subItem['Sub Requirement Description'] ||
+                            subItem['Description'];
+                        const reqDesc =
+                            descData &&
+                            typeof descData === 'object' &&
+                            '@value' in descData
+                                ? String(descData['@value'])
+                                : String(descData || '');
+
+                        return {
+                            id: `temp-${Math.random().toString(36).slice(2, 9)}`,
+                            sortOrder: index + 1,
+                            name: reqName,
+                            description: reqDesc,
+                        };
+                    },
+                );
+            }
+        } catch (error) {
+            console.error('Error loading process requirement:', error);
+            saveMessage.value = 'Error loading existing checklist data.';
+        } finally {
+            isLoading.value = false;
+        }
+    }
+});
+
 // drag and drop logic
 const draggedIndex = ref<number | null>(null);
 
@@ -37,13 +132,9 @@ const onDragStart = (index: number, event: DragEvent) => {
 const onDrop = (dropIndex: number) => {
     if (draggedIndex.value === null || draggedIndex.value === dropIndex) return;
 
-    // Remove the dragged item from its original position
     const draggedItem = requirements.value.splice(draggedIndex.value, 1)[0];
-
-    // Insert it at the new drop position
     requirements.value.splice(dropIndex, 0, draggedItem);
 
-    // Re-calculate all sortOrders based on their new array positions
     requirements.value.forEach((req, idx) => {
         req.sortOrder = idx + 1;
     });
@@ -51,7 +142,6 @@ const onDrop = (dropIndex: number) => {
     draggedIndex.value = null;
 };
 
-// Guarantee the drag state resets even if dropped outside a valid zone
 const onDragEnd = () => {
     draggedIndex.value = null;
 };
@@ -68,7 +158,6 @@ const addRequirement = () => {
 
 const removeRequirement = (index: number) => {
     requirements.value.splice(index, 1);
-    // Re-calculate sort orders after deletion
     requirements.value.forEach((req, idx) => {
         req.sortOrder = idx + 1;
     });
@@ -79,35 +168,64 @@ const saveRequirements = async () => {
     saveMessage.value = '';
 
     try {
-        console.log('Saving:', {
-            title: requirementTitle.value,
-            requiresSubmission: requiresSubmission.value,
-            requirements: requirements.value,
-        });
+        const payload = JSON.parse(
+            JSON.stringify(originalData.value),
+        ) as ArchesResourcePayload;
 
-        // Backend magic here
+        payload.displayname = requirementTitle.value;
 
-        saveMessage.value = 'Checklist saved successfully!';
+        payload.resource['Requirement Identification'] ||= {};
+        payload.resource['Requirement Identification'][
+            'Is Template Requirement'
+        ] ||= {};
+        payload.resource['Requirement Identification']['Requirement Name'] =
+            requirementTitle.value;
+        payload.resource['Requirement Identification'][
+            'Is Template Requirement'
+        ]['Has Submission Requirement'] = requiresSubmission.value
+            ? 'True'
+            : 'False';
+
+        payload.resource['Sub Requirement'] = requirements.value.map((req) => ({
+            'Sub Requirement Name': {
+                '@value': req.name,
+                'Sub Requirement Description': req.description,
+                'Sub Requirement Sort Order': String(req.sortOrder),
+                'Sub Requirement Mandatory': '',
+                'Sub Requirement Assessment': {
+                    'Sub Requirement Assessment Notes': '',
+                    'Sub Requirement Satisfied': '',
+                },
+            },
+        }));
+
+        console.log('Sending Mutated Payload to Backend:', payload);
+
+        // Backend call
+
+        saveMessage.value = 'Checklist updated successfully!';
     } catch (error) {
         console.error('Save error:', error);
-        saveMessage.value = 'Error saving checklist.';
+        saveMessage.value = 'Error saving checklist to backend.';
     } finally {
         isSaving.value = false;
+        setTimeout(() => {
+            saveMessage.value = '';
+        }, 3000);
     }
-    setTimeout(() => {
-        saveMessage.value = '';
-    }, 3000);
 };
 </script>
 
 <template>
     <div class="checklist-container">
         <div class="title-row">
-            <h2 class="page-title">Create Process Requirement</h2>
+            <h2 class="page-title">
+                {{ isEditing ? 'Edit' : 'Create' }} Process Requirement
+            </h2>
             <button
                 class="btn-primary"
                 @click="saveRequirements"
-                :disabled="isSaving"
+                :disabled="isSaving || isLoading"
             >
                 {{ isSaving ? 'Saving...' : 'Save Checklist' }}
             </button>
@@ -121,93 +239,103 @@ const saveRequirements = async () => {
             <p>{{ saveMessage }}</p>
         </div>
 
-        <div class="main-settings">
-            <input
-                type="text"
-                v-model="requirementTitle"
-                class="req-title-input"
-                placeholder="Requirement List Title"
-            />
-
-            <div class="checkbox-group">
-                <input
-                    type="checkbox"
-                    id="require-submission"
-                    v-model="requiresSubmission"
-                    class="req-checkbox"
-                />
-                <label for="require-submission">Require a submission</label>
-            </div>
+        <div
+            v-if="isLoading"
+            style="text-align: center; padding: 3rem"
+        >
+            <p>Loading requirement data...</p>
         </div>
-        <br />
-        <div class="checklist-items">
-            <div
-                v-for="(req, index) in requirements"
-                :key="req.id"
-                class="requirement-item"
-                draggable="true"
-                @dragstart="onDragStart(index, $event)"
-                @dragover.prevent
-                @dragenter.prevent
-                @drop="onDrop(index)"
-                @dragend="onDragEnd"
-                :class="{ 'is-dragging': draggedIndex === index }"
-            >
-                <div class="req-header">
-                    <div
-                        class="drag-handle"
-                        title="Drag to reorder"
-                    >
-                        &#x2630;
-                    </div>
 
-                    <div class="req-inputs">
-                        <div class="input-group">
-                            <label :for="'name-' + req.id">
-                                Step {{ req.sortOrder }} Title
-                            </label>
-                            <input
-                                type="text"
-                                :id="'name-' + req.id"
-                                v-model="req.name"
-                                class="req-title-input"
-                                placeholder="E.g. 'Submit Application'"
-                            />
-                        </div>
+        <div v-else>
+            <div class="main-settings">
+                <input
+                    type="text"
+                    v-model="requirementTitle"
+                    class="req-title-input"
+                    placeholder="Requirement List Title"
+                />
 
-                        <div class="input-group">
-                            <label :for="'desc-' + req.id">
-                                Description / Instructions
-                            </label>
-                            <textarea
-                                :id="'desc-' + req.id"
-                                v-model="req.description"
-                                class="req-notes-input"
-                                rows="2"
-                                placeholder="Add specific considerations or instructions..."
-                            ></textarea>
-                        </div>
-                    </div>
-
-                    <button
-                        class="btn-delete"
-                        @click="removeRequirement(index)"
-                        title="Remove Step"
-                        v-if="requirements.length > 1"
-                    >
-                        &times;
-                    </button>
+                <div class="checkbox-group">
+                    <input
+                        type="checkbox"
+                        id="require-submission"
+                        v-model="requiresSubmission"
+                        class="req-checkbox"
+                    />
+                    <label for="require-submission">Require a submission</label>
                 </div>
             </div>
-        </div>
+            <br />
 
-        <div class="action-row">
-            <button
-                class="btn-secondary"
-                @click="addRequirement"
-            >
-                + Add Another Step
-            </button>
+            <div class="checklist-items">
+                <div
+                    v-for="(req, index) in requirements"
+                    :key="req.id"
+                    class="requirement-item"
+                    draggable="true"
+                    @dragstart="onDragStart(index, $event)"
+                    @dragover.prevent
+                    @dragenter.prevent
+                    @drop="onDrop(index)"
+                    @dragend="onDragEnd"
+                    :class="{ 'is-dragging': draggedIndex === index }"
+                >
+                    <div class="req-header">
+                        <div
+                            class="drag-handle"
+                            title="Drag to reorder"
+                        >
+                            &#x2630;
+                        </div>
+
+                        <div class="req-inputs">
+                            <div class="input-group">
+                                <label :for="'name-' + req.id">
+                                    Step {{ req.sortOrder }} Title
+                                </label>
+                                <input
+                                    type="text"
+                                    :id="'name-' + req.id"
+                                    v-model="req.name"
+                                    class="req-title-input"
+                                    placeholder="E.g. 'Submit Application'"
+                                />
+                            </div>
+
+                            <div class="input-group">
+                                <label :for="'desc-' + req.id">
+                                    Description / Instructions
+                                </label>
+                                <textarea
+                                    :id="'desc-' + req.id"
+                                    v-model="req.description"
+                                    class="req-notes-input"
+                                    rows="2"
+                                    placeholder="Add specific considerations or instructions..."
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <button
+                            class="btn-delete"
+                            @click="removeRequirement(index)"
+                            title="Remove Step"
+                            v-if="requirements.length > 1"
+                        >
+                            &times;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button
+                    class="btn-secondary"
+                    @click="addRequirement"
+                >
+                    + Add Another Step
+                </button>
+            </div>
         </div>
     </div>
     <br />
