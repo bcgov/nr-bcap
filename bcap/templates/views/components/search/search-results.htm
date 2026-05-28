@@ -158,10 +158,11 @@
                 <!--ko if: canEdit -->
                 <a
                     class="search-candidate-link"
-                    href="#"
-                    data-bind="onEnterkeyClick, onSpaceClick, click: $parent.editResource.bind($parent),
-                    attr: {'aria-label': $root.translations.editResource(displayname)},
-                "
+                    data-bind="onEnterkeyClick, onSpaceClick,
+                    attr: {
+                        'href': '/bcap/plugins/internal-permit-dashboard/createchecklist?id=' + resourceinstanceid,
+                        'aria-label': $root.translations.editResource(displayname)
+                    }"
                 >
                     <i class="ion-ios-refresh-empty"></i>
                     <span data-bind="text: $root.translations.edit"></span>
