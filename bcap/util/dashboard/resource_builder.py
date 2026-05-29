@@ -6,6 +6,7 @@ the seeder composes these into a full demo graph, while tests can use the
 primitives to build just the resources a case needs."""
 
 import uuid
+import random
 from dataclasses import dataclass
 
 from django.utils import timezone
@@ -57,6 +58,22 @@ class ResourceBuilder:
                 f"{'matching ' if label else ''}items; load its reference data first."
             )
         return [str(item.pk)]
+
+    @staticmethod
+    def random_reference_value(slug, alias):
+        """A `reference` value: a randomly chosen item from the node's
+        controlled list."""
+        node = Node.objects.get(graph__slug=slug, alias=alias, source_identifier=None)
+        list_id = node.config.get("controlledList")
+        item_ids = list(
+            ListItem.objects.filter(list_id=list_id).values_list("pk", flat=True)
+        )
+        if not item_ids:
+            raise RuntimeError(
+                f"Controlled list {list_id} backing {slug}.{alias} has no items; "
+                "load its reference data first."
+            )
+        return [str(random.choice(item_ids))]
 
     @staticmethod
     def append_blank_tile_for_group(container, grouping_alias, values):
