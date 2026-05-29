@@ -19,8 +19,6 @@ class ControlledListFixtures:
         ("contributor", "contributor_type", "Archaeologist", 1),
         ("contributor", "contributor_type", "Consultant", 2),
         ("hca_permit", "hca_permit_type", "Investigation", 1),
-        ("permit_application", "industrial_sector", "Forestry", 1),
-        ("permit_application", "industrial_sector", "Mining", 2),
     ]
 
     @classmethod
