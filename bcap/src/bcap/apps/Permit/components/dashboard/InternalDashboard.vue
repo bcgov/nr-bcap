@@ -95,7 +95,7 @@ const sortOptions = [
 const fetchProjects = async () => {
     try {
         // Will need to update to all
-        const apiUrl = '/bcap/api/dashboard?limit=100&page=1&status=UNASSIGNED';
+        const apiUrl = '/bcap/api/dashboard?limit=100&page=1';
         const response = await fetch(apiUrl);
 
         if (!response.ok) {

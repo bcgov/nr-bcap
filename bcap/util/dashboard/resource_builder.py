@@ -5,6 +5,7 @@ Shared by the dashboard demo seeder (``dashboard_seed``) and the unit tests:
 the seeder composes these into a full demo graph, while tests can use the
 primitives to build just the resources a case needs."""
 
+import uuid
 from dataclasses import dataclass
 
 from django.utils import timezone
@@ -17,6 +18,10 @@ from arches.app.models.models import (
 
 from arches_controlled_lists.models import ListItem
 from arches_querysets.models import AliasedData, ResourceTileTree
+
+# Marker written to legacyid of every resource the seeders create, so the
+# clear command can find and delete only seeded data.
+SEED_LEGACYID_PREFIX = "dashboard-seed"
 
 
 class ResourceBuilder:
@@ -80,6 +85,7 @@ class ResourceBuilder:
             graph_id=self.graph_id(slug),
             resource_instance_lifecycle_state=self.state,
             createdtime=timezone.now(),
+            legacyid=f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}",
         )
         resource.aliased_data = AliasedData()
         return resource

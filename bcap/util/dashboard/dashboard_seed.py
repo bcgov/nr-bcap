@@ -7,7 +7,11 @@ with how the service reads.
 """
 
 from dataclasses import dataclass
+from datetime import timezone as dt_timezone
 
+from faker import Faker
+
+from arches.app.models.models import EditLog
 from arches_querysets.models import ResourceTileTree
 
 from bcap.util.dashboard.resource_builder import ResourceBuilder
@@ -42,14 +46,36 @@ class DashboardDemoBuilder(ResourceBuilder):
     it uses live in ``ResourceBuilder``.
     """
 
-    _ASSIGNEE_NAMES = [
-        ("Ada", "Lovelace"),
-        ("Grace", "Hopper"),
-        ("Alan", "Turing"),
-    ]
-    _HOLDER_NAMES = ["Acme Corp", "Globex"]
-    _PROJECT_OFFICER_NAME = ("Jordan", "Lee")
+    _HOLDER_COUNT = 2
     _SEED_UNASSIGNED_PERMIT = True
+
+    def __init__(self):
+        super().__init__()
+        self.faker = Faker()
+
+    def _random_application_id(self):
+        return f"APP-{self.faker.random_int(min=1000, max=9999)}"
+
+    def _random_due_date(self):
+        """A due date spread around now, so some cards read as overdue and
+        some as upcoming."""
+        return self.faker.date_between(
+            start_date="-30d", end_date="+180d"
+        ).isoformat()
+
+    def _with_random_due(self, spec):
+        return {**spec, "due": self._random_due_date()}
+
+    def _randomize_assignee_change_date(self, permit):
+        """ministry_assignee_change_date is derived from the edit-log timestamp
+        of the assignment (there is no assignment-date node), so vary that
+        timestamp to spread the seeded cards out."""
+        changed = self.faker.date_time_between(
+            start_date="-60d", end_date="now", tzinfo=dt_timezone.utc
+        )
+        EditLog.objects.filter(resourceinstanceid=str(permit.pk)).update(
+            timestamp=changed
+        )
 
     _REQUIREMENTS = [
         {
@@ -142,16 +168,19 @@ class DashboardDemoBuilder(ResourceBuilder):
         """Create the demo graph and return the resources it produced."""
         contributor_type = self.reference_value("contributor", "contributor_type")
 
+        # One ministry assignee per requirement (they are zipped together below).
         assignees = [
-            self.make_contributor(contributor_type, first, last)
-            for first, last in self._ASSIGNEE_NAMES
+            self.make_contributor(
+                contributor_type, self.faker.first_name(), self.faker.last_name()
+            )
+            for _ in self._REQUIREMENTS
         ]
         holders = [
-            self.make_contributor(contributor_type, None, org)
-            for org in self._HOLDER_NAMES
+            self.make_contributor(contributor_type, None, self.faker.company())
+            for _ in range(self._HOLDER_COUNT)
         ]
         project_officer = self.make_contributor(
-            contributor_type, *self._PROJECT_OFFICER_NAME
+            contributor_type, self.faker.first_name(), self.faker.last_name()
         )
 
         hca_permit = self.new_resource("hca_permit")
@@ -169,12 +198,13 @@ class DashboardDemoBuilder(ResourceBuilder):
         hca_permit.save(**self.save_kwargs)
 
         requirements = [
-            self.make_process_requirement(spec) for spec in self._REQUIREMENTS
+            self.make_process_requirement(self._with_random_due(spec))
+            for spec in self._REQUIREMENTS
         ]
         permit = self._make_permit(
             PermitSpec(
                 project_name="My Project",
-                application_id="APP-1",
+                application_id=self._random_application_id(),
                 hca_permit=hca_permit,
                 project_officer=project_officer,
                 children=[
@@ -196,7 +226,7 @@ class DashboardDemoBuilder(ResourceBuilder):
                 {
                     "id": "REQ-2026-UNASSIGNED",
                     "name": "Awaiting assignment",
-                    "due": "2026-05-01",
+                    "due": self._random_due_date(),
                     "notes": "check out this feature",
                     "satisfied": False,
                     "process_requirement_order": 1,
@@ -206,7 +236,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             unassigned_permit = self._make_permit(
                 PermitSpec(
                     project_name="Unassigned Project",
-                    application_id="APP-2",
+                    application_id=self._random_application_id(),
                     hca_permit=hca_permit,
                     project_officer=project_officer,
                     children=[(unassigned_requirement, 1, None)],
@@ -257,4 +287,5 @@ class DashboardDemoBuilder(ResourceBuilder):
             if assignee is not None:
                 child.aliased_data.ministry_assignee = assignee
         permit.save(**self.save_kwargs)
+        self._randomize_assignee_change_date(permit)
         return permit
