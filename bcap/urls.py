@@ -17,6 +17,7 @@ from bcap.views.api import (
     RequirementSubmission,
 )
 from bcap.views.dashboard_api import DashboardView
+from bcap.views.process_requirement_api import ProcessRequirementWriteView
 from bcap.views.user_api import UserProfile
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
@@ -37,6 +38,11 @@ PREFIX = (
 documented_api_patterns = [
     path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
     path(f"{PREFIX}api/dashboard", DashboardView.as_view(), name="dashboard"),
+    path(
+        f"{PREFIX}api/process_requirement/<uuid:resource_id>",
+        ProcessRequirementWriteView.as_view(),
+        name="process_requirement_write",
+    ),
 ]
 
 

@@ -21,6 +21,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    '/bcap/api/process_requirement/{resource_id}': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Apply the provided dates and sub-requirement edits, then save. */
+        patch: operations['api_process_requirement_partial_update'];
+        trace?: never;
+    };
     '/bcap/user_profile': {
         parameters: {
             query?: never;
@@ -97,6 +114,62 @@ export interface components {
             limit?: number;
             results?: components['schemas']['DashboardCard'][];
         };
+        /** @description A Process Requirement's process dates and its sub-requirements. */
+        PatchedProcessRequirement: {
+            /** @description Resource id (set on the response). */
+            id?: string | null;
+            /**
+             * Format: date
+             * @description Process start date PST (YYYY-MM-DD); null clears it.
+             */
+            start_date?: string | null;
+            /**
+             * Format: date
+             * @description Process due date PST (YYYY-MM-DD); null clears it.
+             */
+            due_date?: string | null;
+            /**
+             * Format: date
+             * @description Process completion date PST (YYYY-MM-DD); null clears it.
+             */
+            completion_date?: string | null;
+            /** @description Sub-requirements, in display order. */
+            sub_requirements?: components['schemas']['SubRequirement'][] | null;
+        };
+        /** @description A Process Requirement's process dates and its sub-requirements. */
+        ProcessRequirement: {
+            /** @description Resource id (set on the response). */
+            id?: string | null;
+            /**
+             * Format: date
+             * @description Process start date PST (YYYY-MM-DD); null clears it.
+             */
+            start_date?: string | null;
+            /**
+             * Format: date
+             * @description Process due date PST (YYYY-MM-DD); null clears it.
+             */
+            due_date?: string | null;
+            /**
+             * Format: date
+             * @description Process completion date PST (YYYY-MM-DD); null clears it.
+             */
+            completion_date?: string | null;
+            /** @description Sub-requirements, in display order. */
+            sub_requirements?: components['schemas']['SubRequirement'][] | null;
+        };
+        SubRequirement: {
+            /** @description Sub-requirement tile id; omit to add a new sub-requirement. */
+            id?: string | null;
+            /** @description Sub-requirement name; required when adding one. */
+            name?: string | null;
+            /** @description Whether it is satisfied. */
+            satisfied?: boolean | null;
+            /** @description Assessment notes. */
+            assessment_notes?: string | null;
+            /** @description Sort order; required when adding a new sub-requirement. */
+            sort_order?: number | null;
+        };
         UserProfileResponse: {
             username: string;
             first_name: string;
@@ -136,6 +209,31 @@ export interface operations {
                 };
                 content: {
                     'application/json': components['schemas']['DashboardPage'];
+                };
+            };
+        };
+    };
+    api_process_requirement_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resource_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                'application/json': components['schemas']['PatchedProcessRequirement'];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['ProcessRequirement'];
                 };
             };
         };

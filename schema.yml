@@ -54,6 +54,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/DashboardPage'
           description: ''
+  /bcap/api/process_requirement/{resource_id}:
+    patch:
+      operationId: api_process_requirement_partial_update
+      description: Apply the provided dates and sub-requirement edits, then save.
+      parameters:
+      - in: path
+        name: resource_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProcessRequirement'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessRequirement'
+          description: ''
   /bcap/user_profile:
     get:
       operationId: user_profile_retrieve
@@ -171,6 +198,87 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DashboardCard'
+    PatchedProcessRequirement:
+      type: object
+      description: A Process Requirement's process dates and its sub-requirements.
+      properties:
+        id:
+          type: string
+          nullable: true
+          description: Resource id (set on the response).
+        start_date:
+          type: string
+          format: date
+          nullable: true
+          description: Process start date PST (YYYY-MM-DD); null clears it.
+        due_date:
+          type: string
+          format: date
+          nullable: true
+          description: Process due date PST (YYYY-MM-DD); null clears it.
+        completion_date:
+          type: string
+          format: date
+          nullable: true
+          description: Process completion date PST (YYYY-MM-DD); null clears it.
+        sub_requirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubRequirement'
+          nullable: true
+          description: Sub-requirements, in display order.
+    ProcessRequirement:
+      type: object
+      description: A Process Requirement's process dates and its sub-requirements.
+      properties:
+        id:
+          type: string
+          nullable: true
+          description: Resource id (set on the response).
+        start_date:
+          type: string
+          format: date
+          nullable: true
+          description: Process start date PST (YYYY-MM-DD); null clears it.
+        due_date:
+          type: string
+          format: date
+          nullable: true
+          description: Process due date PST (YYYY-MM-DD); null clears it.
+        completion_date:
+          type: string
+          format: date
+          nullable: true
+          description: Process completion date PST (YYYY-MM-DD); null clears it.
+        sub_requirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubRequirement'
+          nullable: true
+          description: Sub-requirements, in display order.
+    SubRequirement:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+          description: Sub-requirement tile id; omit to add a new sub-requirement.
+        name:
+          type: string
+          nullable: true
+          description: Sub-requirement name; required when adding one.
+        satisfied:
+          type: boolean
+          nullable: true
+          description: Whether it is satisfied.
+        assessment_notes:
+          type: string
+          nullable: true
+          description: Assessment notes.
+        sort_order:
+          type: integer
+          nullable: true
+          description: Sort order; required when adding a new sub-requirement.
     UserProfileResponse:
       type: object
       properties:

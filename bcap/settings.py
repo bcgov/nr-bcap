@@ -14,6 +14,8 @@ from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 
+from bcap.util.dates import to_long
+
 
 def get_env_variable(var_name, is_optional=False):
     msg = "Set the %s environment variable"
@@ -610,9 +612,9 @@ RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER = False
 # Dictionary containing any additional context items for customising email templates
 EXTRA_EMAIL_CONTEXT = {
     "salutation": _("Hi"),
-    "expiration": (
+    "expiration": to_long(
         datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)
-    ).strftime("%A, %d %B %Y"),
+    ),
 }
 
 # see https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference
