@@ -131,6 +131,7 @@ class ResourceBuilder:
                 {
                     "sub_requirement_name": self.localized(sub["name"]),
                     "sub_requirement_description": self.localized(sub["description"]),
+                    "sub_requirement_mandatory": sub.get("mandatory", False),
                     "sub_requirement_satisfied": sub["sub_satisfied"],
                     "sub_requirement_sort_order": sub["sort_order"],
                 },

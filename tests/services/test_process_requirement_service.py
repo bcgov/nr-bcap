@@ -30,7 +30,8 @@ def make_requirement(builder, subs=()):
             "sub_requirements": [
                 {
                     "name": name,
-                    "description": "",
+                    "description": f"{name} description",
+                    "mandatory": True,
                     "sub_satisfied": satisfied,
                     "sort_order": sort_order,
                 }
@@ -114,14 +115,26 @@ class EditSubRequirementsTests(ProcessRequirementServiceTestCase):
         resource = self.reload(self.requirement)
         self.service.edit_sub_requirements(
             resource,
-            [SubRequirement(id=self.sub1, satisfied=True, assessment_notes="done")],
+            [
+                SubRequirement(
+                    id=self.sub1,
+                    description="updated",
+                    mandatory=False,
+                    satisfied=True,
+                    assessment_notes="done",
+                )
+            ],
         )
         resource.save(**SAVE)
 
         subs = self.output_by_id()
+        self.assertEqual(subs[self.sub1].description, "updated")
+        self.assertFalse(subs[self.sub1].mandatory)
         self.assertTrue(subs[self.sub1].satisfied)
         self.assertEqual(subs[self.sub1].assessment_notes, "done")
         self.assertFalse(subs[self.sub2].satisfied)  # untouched
+        self.assertEqual(subs[self.sub2].description, "Sub-2 description")  # untouched
+        self.assertTrue(subs[self.sub2].mandatory)  # untouched
 
     def test_omitted_sort_order_leaves_existing_unchanged(self):
         resource = self.reload(self.requirement)
@@ -179,7 +192,12 @@ class EditSubRequirementsTests(ProcessRequirementServiceTestCase):
             resource,
             [
                 SubRequirement(
-                    name="Sub-3", satisfied=True, assessment_notes="new", sort_order=3
+                    name="Sub-3",
+                    description="Sub-3 description",
+                    mandatory=True,
+                    satisfied=True,
+                    assessment_notes="new",
+                    sort_order=3,
                 )
             ],
         )
@@ -190,6 +208,8 @@ class EditSubRequirementsTests(ProcessRequirementServiceTestCase):
         added = out.sub_requirements[-1]
         self.assertNotIn(added.id, (self.sub1, self.sub2))
         self.assertEqual(added.name, "Sub-3")
+        self.assertEqual(added.description, "Sub-3 description")
+        self.assertTrue(added.mandatory)
         self.assertTrue(added.satisfied)
         self.assertEqual(added.assessment_notes, "new")
         self.assertEqual(added.sort_order, 3)

@@ -19,6 +19,10 @@ class SubRequirement:
     name: str | None = described(
         "Sub-requirement name; required when adding one.", None
     )
+    description: str | None = described(
+        "Sub-requirement description.", None, allow_blank=True
+    )
+    mandatory: bool | None = described("Whether it is mandatory.", None)
     satisfied: bool | None = described("Whether it is satisfied.", None)
     assessment_notes: str | None = described(
         "Assessment notes.", None, allow_blank=True

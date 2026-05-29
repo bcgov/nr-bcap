@@ -76,6 +76,10 @@ class ProcessRequirementService:
             data = tile.aliased_data
             if sub.name is not None:
                 data.sub_requirement_name = sub.name
+            if sub.description is not None:
+                data.sub_requirement_description = sub.description
+            if sub.mandatory is not None:
+                data.sub_requirement_mandatory = sub.mandatory
             if sub.satisfied is not None:
                 data.sub_requirement_satisfied = sub.satisfied
             if sub.assessment_notes is not None:
@@ -117,6 +121,8 @@ class ProcessRequirementService:
                 SubRequirement(
                     id=str(tile.pk),
                     name=to_text(data.sub_requirement_name),
+                    description=to_text(data.sub_requirement_description),
+                    mandatory=data.sub_requirement_mandatory,
                     satisfied=data.sub_requirement_satisfied,
                     assessment_notes=to_text(data.sub_requirement_assessment_notes),
                     sort_order=data.sub_requirement_sort_order,

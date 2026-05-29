@@ -163,6 +163,10 @@ export interface components {
             id?: string | null;
             /** @description Sub-requirement name; required when adding one. */
             name?: string | null;
+            /** @description Sub-requirement description. */
+            description?: string | null;
+            /** @description Whether it is mandatory. */
+            mandatory?: boolean | null;
             /** @description Whether it is satisfied. */
             satisfied?: boolean | null;
             /** @description Assessment notes. */

@@ -269,6 +269,14 @@ components:
           type: string
           nullable: true
           description: Sub-requirement name; required when adding one.
+        description:
+          type: string
+          nullable: true
+          description: Sub-requirement description.
+        mandatory:
+          type: boolean
+          nullable: true
+          description: Whether it is mandatory.
         satisfied:
           type: boolean
           nullable: true
