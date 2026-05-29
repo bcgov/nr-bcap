@@ -11,3 +11,5 @@ class ProcessRequirementSerializer(DataclassSerializer):
 
     class Meta:
         dataclass = ProcessRequirement
+        # The resource id comes from the URL; it's returned, never accepted.
+        read_only_fields = ["id"]

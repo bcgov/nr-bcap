@@ -117,7 +117,7 @@ export interface components {
         /** @description A Process Requirement's process dates and its sub-requirements. */
         PatchedProcessRequirement: {
             /** @description Resource id (set on the response). */
-            id?: string | null;
+            readonly id?: string;
             /**
              * Format: date
              * @description Process start date PST (YYYY-MM-DD); null clears it.
@@ -139,7 +139,7 @@ export interface components {
         /** @description A Process Requirement's process dates and its sub-requirements. */
         ProcessRequirement: {
             /** @description Resource id (set on the response). */
-            id?: string | null;
+            readonly id: string;
             /**
              * Format: date
              * @description Process start date PST (YYYY-MM-DD); null clears it.

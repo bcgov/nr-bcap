@@ -204,7 +204,7 @@ components:
       properties:
         id:
           type: string
-          nullable: true
+          readOnly: true
           description: Resource id (set on the response).
         start_date:
           type: string
@@ -233,7 +233,7 @@ components:
       properties:
         id:
           type: string
-          nullable: true
+          readOnly: true
           description: Resource id (set on the response).
         start_date:
           type: string
@@ -256,6 +256,8 @@ components:
             $ref: '#/components/schemas/SubRequirement'
           nullable: true
           description: Sub-requirements, in display order.
+      required:
+      - id
     SubRequirement:
       type: object
       properties:
