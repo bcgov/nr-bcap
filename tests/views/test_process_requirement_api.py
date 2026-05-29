@@ -66,8 +66,10 @@ class ProcessRequirementWriteViewTests(AuthTestHelper, TestCase):
             {"start_date": "2026-01-01", "completion_date": "2026-03-01"}
         )
         self.assertEqual(resp.status_code, 200)
+        # id is read-only: present in the response body, but dropped by the
+        # serializer on the way back in (so check the raw json for it).
+        self.assertEqual(resp.json()["id"], self.resource_id)
         result = self._object(resp)
-        self.assertEqual(result.id, self.resource_id)
         self.assertEqual(result.start_date, date(2026, 1, 1))
         self.assertEqual(result.completion_date, date(2026, 3, 1))
         self.assertEqual(result.due_date, date(2026, 2, 1))  # untouched
@@ -134,8 +136,8 @@ class ProcessRequirementWriteViewTests(AuthTestHelper, TestCase):
         )
         resp = self._patch(payload)
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["id"], self.resource_id)  # read-only, in body
         result = self._object(resp)
-        self.assertEqual(result.id, self.resource_id)
         self.assertEqual(result.start_date, date(2026, 1, 1))
         self.assertEqual(result.due_date, date(2026, 2, 10))
         self.assertEqual(result.completion_date, date(2026, 3, 1))
