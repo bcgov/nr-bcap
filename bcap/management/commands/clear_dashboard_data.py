@@ -31,7 +31,9 @@ class Command(BaseCommand):
 
         se = SearchEngineFactory().create()
         se.delete(
-            index=RESOURCES_INDEX, query={"query": {"ids": {"values": ids}}}, refresh=True
+            index=RESOURCES_INDEX,
+            query={"query": {"ids": {"values": ids}}},
+            refresh=True,
         )
         se.delete(
             index=TERMS_INDEX,

@@ -29,12 +29,8 @@ class ClearDashboardDataCommandTests(SeedControlledListsMixin, TestCase):
 
         call_command("clear_dashboard_data")
 
-        self.assertFalse(
-            ResourceInstance.objects.filter(pk__in=tagged_pks).exists()
-        )
-        self.assertTrue(
-            ResourceInstance.objects.filter(pk=untagged.pk).exists()
-        )
+        self.assertFalse(ResourceInstance.objects.filter(pk__in=tagged_pks).exists())
+        self.assertTrue(ResourceInstance.objects.filter(pk=untagged.pk).exists())
 
     def test_reports_when_nothing_to_delete(self):
         out = []

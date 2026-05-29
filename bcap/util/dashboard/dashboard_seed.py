@@ -49,6 +49,32 @@ class DashboardDemoBuilder(ResourceBuilder):
     _HOLDER_COUNT = 2
     _SEED_UNASSIGNED_PERMIT = True
 
+    # Plausible values so randomized cards still read sensibly.
+    _REQUIREMENT_NAME_POOL = [
+        "Initial Review",
+        "Completeness Check",
+        "Field Assessment",
+        "Archaeological Impact Assessment",
+        "First Nations Consultation",
+        "Technical Review",
+        "Site Inspection",
+        "Heritage Conservation Review",
+        "Permit Recommendation",
+        "Final Sign-off",
+        "Decision Summary",
+    ]
+    _PROJECT_TYPES = [
+        "Pipeline",
+        "Highway Expansion",
+        "Subdivision",
+        "Quarry",
+        "Transmission Line",
+        "Bridge Replacement",
+        "Wind Farm",
+        "Residential Development",
+        "Site Survey",
+    ]
+
     def __init__(self):
         super().__init__()
         self.faker = Faker()
@@ -59,12 +85,16 @@ class DashboardDemoBuilder(ResourceBuilder):
     def _random_due_date(self):
         """A due date spread around now, so some cards read as overdue and
         some as upcoming."""
-        return self.faker.date_between(
-            start_date="-30d", end_date="+180d"
-        ).isoformat()
+        return self.faker.date_between(start_date="-30d", end_date="+180d").isoformat()
 
     def _with_random_due(self, spec):
         return {**spec, "due": self._random_due_date()}
+
+    def _random_permit_number(self):
+        return f"HCA-{self.faker.random_int(min=1000, max=9999)}"
+
+    def _random_project_name(self):
+        return f"{self.faker.city()} {self.faker.random_element(self._PROJECT_TYPES)}"
 
     def _randomize_assignee_change_date(self, permit):
         """ministry_assignee_change_date is derived from the edit-log timestamp
@@ -188,7 +218,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             hca_permit,
             "permit_identification",
             {
-                "permit_number": "HCA-001",
+                "permit_number": self._random_permit_number(),
                 "permit_holder": holders,
                 "hca_permit_type": self.reference_value(
                     "hca_permit", "hca_permit_type", "Investigation"
@@ -197,13 +227,19 @@ class DashboardDemoBuilder(ResourceBuilder):
         )
         hca_permit.save(**self.save_kwargs)
 
+        # Distinct sensible names per permit, in requirement order.
+        names = self.faker.random_elements(
+            elements=self._REQUIREMENT_NAME_POOL,
+            length=len(self._REQUIREMENTS),
+            unique=True,
+        )
         requirements = [
-            self.make_process_requirement(self._with_random_due(spec))
-            for spec in self._REQUIREMENTS
+            self.make_process_requirement({**self._with_random_due(spec), "name": name})
+            for spec, name in zip(self._REQUIREMENTS, names)
         ]
         permit = self._make_permit(
             PermitSpec(
-                project_name="My Project",
+                project_name=self._random_project_name(),
                 application_id=self._random_application_id(),
                 hca_permit=hca_permit,
                 project_officer=project_officer,
@@ -225,7 +261,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             unassigned_requirement = self.make_process_requirement(
                 {
                     "id": "REQ-2026-UNASSIGNED",
-                    "name": "Awaiting assignment",
+                    "name": self.faker.random_element(self._REQUIREMENT_NAME_POOL),
                     "due": self._random_due_date(),
                     "notes": "check out this feature",
                     "satisfied": False,
@@ -235,7 +271,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             )
             unassigned_permit = self._make_permit(
                 PermitSpec(
-                    project_name="Unassigned Project",
+                    project_name=self._random_project_name(),
                     application_id=self._random_application_id(),
                     hca_permit=hca_permit,
                     project_officer=project_officer,
