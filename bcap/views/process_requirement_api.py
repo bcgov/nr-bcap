@@ -55,9 +55,11 @@ class ProcessRequirementWriteView(GenericAPIView):
         try:
             self.service.edit_sub_requirements(resource, data.sub_requirements)
         except StaleReference as exc:
-            raise NotFound(str(exc)) from exc
+            raise NotFound("Sub-requirement not found on this requirement.") from exc
         except ValueError as exc:
-            raise ValidationError(str(exc)) from exc
+            raise ValidationError(
+                "A new sub-requirement needs a name and sort order."
+            ) from exc
 
         resource.save(request=request)
         result = self.service.to_output(resource)
