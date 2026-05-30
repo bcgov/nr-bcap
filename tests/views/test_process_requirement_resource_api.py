@@ -46,16 +46,24 @@ class ProcessRequirementResourceViewTests(AuthTestHelper, TestCase):
     def test_get_returns_nested_tile_tree(self):
         data = self._aliased_data()
         sub = data["sub_requirement"][0]
-        self.assertEqual(sub["aliased_data"]["sub_requirement_name"], "Sub-1")
+        # Nodes serialize in arches representation form (node_value/display_value).
+        self.assertEqual(
+            sub["aliased_data"]["sub_requirement_name"]["display_value"], "Sub-1"
+        )
 
     def test_patch_sets_completion_date(self):
+        # requirement_execution_duration is a cardinality-1 tile; the patch must
+        # carry its tileid so the serializer updates it rather than minting a
+        # second tile (which would trip a cardinality error).
+        dates = self._aliased_data()["requirement_execution_duration"]
         resp = self._patch(
             {
                 "aliased_data": {
                     "requirement_execution_duration": {
+                        "tileid": dates["tileid"],
                         "aliased_data": {
                             "requirement_process_completion_date": "2026-03-01"
-                        }
+                        },
                     }
                 }
             }
@@ -68,13 +76,19 @@ class ProcessRequirementResourceViewTests(AuthTestHelper, TestCase):
 
     def test_patch_edits_sub_requirement(self):
         sub_tile_id = self._aliased_data()["sub_requirement"][0]["tileid"]
+        # Each tile in the list is validated as a whole card, so the card's
+        # required nodes (name + sort order) must accompany the edited field.
         resp = self._patch(
             {
                 "aliased_data": {
                     "sub_requirement": [
                         {
                             "tileid": sub_tile_id,
-                            "aliased_data": {"sub_requirement_satisfied": True},
+                            "aliased_data": {
+                                "sub_requirement_satisfied": True,
+                                "sub_requirement_name": "Sub-1",
+                                "sub_requirement_sort_order": 1,
+                            },
                         }
                     ]
                 }
@@ -102,7 +116,7 @@ class ProcessRequirementResourceViewTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.status_code, 200)
         names = {
-            s["aliased_data"]["sub_requirement_name"]["node_value"]
+            s["aliased_data"]["sub_requirement_name"]["display_value"]
             for s in self._aliased_data()["sub_requirement"]
         }
         self.assertIn("Sub-2", names)
