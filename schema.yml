@@ -81,6 +81,119 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
+  /bcap/api/process_requirement_resource/{id}:
+    get:
+      operationId: api_process_requirement_resource_retrieve
+      description: |-
+        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+        PATCH applies a partial diff (only the tiles present in the body); PUT
+        replaces. Either way the serializer saves the nested sub-requirement tiles.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessRequirementResource'
+          description: ''
+    put:
+      operationId: api_process_requirement_resource_update
+      description: |-
+        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+        PATCH applies a partial diff (only the tiles present in the body); PUT
+        replaces. Either way the serializer saves the nested sub-requirement tiles.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessRequirementResource'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProcessRequirementResource'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessRequirementResource'
+          description: ''
+    patch:
+      operationId: api_process_requirement_resource_partial_update
+      description: |-
+        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+        PATCH applies a partial diff (only the tiles present in the body); PUT
+        replaces. Either way the serializer saves the nested sub-requirement tiles.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProcessRequirementResource'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProcessRequirementResource'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessRequirementResource'
+          description: ''
+    delete:
+      operationId: api_process_requirement_resource_destroy
+      description: |-
+        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+        PATCH applies a partial diff (only the tiles present in the body); PUT
+        replaces. Either way the serializer saves the nested sub-requirement tiles.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /bcap/user_profile:
     get:
       operationId: user_profile_retrieve
@@ -227,6 +340,49 @@ components:
             $ref: '#/components/schemas/SubRequirement'
           nullable: true
           description: Sub-requirements, in display order.
+    PatchedProcessRequirementResource:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/ResourceAliasedData'
+        graph_has_different_publication:
+          type: string
+          readOnly: true
+        name:
+          readOnly: true
+          nullable: true
+        descriptors:
+          readOnly: true
+          nullable: true
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
     ProcessRequirement:
       type: object
       description: A Process Requirement's process dates and its sub-requirements.
@@ -258,6 +414,354 @@ components:
           description: Sub-requirements, in display order.
       required:
       - id
+    ProcessRequirementResource:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/ResourceAliasedData'
+        graph_has_different_publication:
+          type: string
+          readOnly: true
+        name:
+          readOnly: true
+          nullable: true
+        descriptors:
+          readOnly: true
+          nullable: true
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+    Process_Requirement_Is_Template_Requirement_Aliased_Data:
+      type: object
+      properties:
+        has_submission_requirement:
+          type: boolean
+          nullable: true
+        is_internal_requirement:
+          type: boolean
+          nullable: true
+        default_target_processing_time:
+          type: number
+          format: double
+          nullable: true
+          title: Default Target Processing Time (days)
+          description: Enter number
+        is_template_requirement:
+          type: boolean
+          nullable: true
+      required:
+      - has_submission_requirement
+      - is_internal_requirement
+      - is_template_requirement
+    Process_Requirement_Is_Template_Requirement_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Process_Requirement_Is_Template_Requirement_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          nullable: true
+    Process_Requirement_Requirement_Execution_Duration_Aliased_Data:
+      type: object
+      properties:
+        requirement_process_start_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Enter date
+        requirement_process_due_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Enter date
+        requirement_process_completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          description: Enter date
+    Process_Requirement_Requirement_Execution_Duration_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Process_Requirement_Requirement_Execution_Duration_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          nullable: true
+    Process_Requirement_Requirement_Identification_Aliased_Data:
+      type: object
+      properties:
+        requirement_name:
+          nullable: true
+          description: Enter text
+        requirement_identification:
+          nullable: true
+          description: Enter text
+        is_template_requirement:
+          allOf:
+          - $ref: '#/components/schemas/Process_Requirement_Is_Template_Requirement_Tile'
+          nullable: true
+      required:
+      - requirement_identification
+      - requirement_name
+    Process_Requirement_Requirement_Identification_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Process_Requirement_Requirement_Identification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          nullable: true
+    Process_Requirement_Requirment_Submission_Aliased_Data:
+      type: object
+      properties:
+        requirment_submission:
+          nullable: true
+    Process_Requirement_Requirment_Submission_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Process_Requirement_Requirment_Submission_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          nullable: true
+    Process_Requirement_Sub_Requirement_Aliased_Data:
+      type: object
+      properties:
+        sub_requirement_description:
+          nullable: true
+          title: Description
+          description: Enter text
+        sub_requirement_assessment_notes:
+          nullable: true
+          title: Assessment Notes
+          description: Enter text
+        sub_requirement_satisfied:
+          type: boolean
+          nullable: true
+          title: Requirement Satisfied
+        sub_requirement_sort_order:
+          type: number
+          format: double
+          nullable: true
+          title: Sort Order
+          description: Enter number
+        sub_requirement_mandatory:
+          type: boolean
+          nullable: true
+          title: Mandatory
+        sub_requirement_reference:
+          nullable: true
+        sub_requirement_name:
+          nullable: true
+          title: Requirement
+          description: Enter text
+      required:
+      - sub_requirement_name
+      - sub_requirement_sort_order
+    Process_Requirement_Sub_Requirement_Assessment_N1_Aliased_Data:
+      type: object
+      properties:
+        requirement_status:
+          type: boolean
+          nullable: true
+        assessment_notes:
+          nullable: true
+          description: Enter text
+    Process_Requirement_Sub_Requirement_Assessment_N1_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Assessment_N1_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          nullable: true
+    Process_Requirement_Sub_Requirement_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          nullable: true
+    ResourceAliasedData:
+      type: object
+      properties:
+        requirement_identification:
+          allOf:
+          - $ref: '#/components/schemas/Process_Requirement_Requirement_Identification_Tile'
+          nullable: true
+        requirement_execution_duration:
+          allOf:
+          - $ref: '#/components/schemas/Process_Requirement_Requirement_Execution_Duration_Tile'
+          nullable: true
+        requirment_submission:
+          allOf:
+          - $ref: '#/components/schemas/Process_Requirement_Requirment_Submission_Tile'
+          nullable: true
+        sub_requirement_assessment_n1:
+          allOf:
+          - $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Assessment_N1_Tile'
+          nullable: true
+        sub_requirement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Tile'
+          nullable: true
     SubRequirement:
       type: object
       properties:

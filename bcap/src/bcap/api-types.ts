@@ -38,6 +38,46 @@ export interface paths {
         patch: operations['api_process_requirement_partial_update'];
         trace?: never;
     };
+    '/bcap/api/process_requirement_resource/{id}': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
+        get: operations['api_process_requirement_resource_retrieve'];
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
+        put: operations['api_process_requirement_resource_update'];
+        post?: never;
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
+        delete: operations['api_process_requirement_resource_destroy'];
+        options?: never;
+        head?: never;
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
+        patch: operations['api_process_requirement_resource_partial_update'];
+        trace?: never;
+    };
     '/bcap/user_profile': {
         parameters: {
             query?: never;
@@ -136,6 +176,24 @@ export interface components {
             /** @description Sub-requirements, in display order. */
             sub_requirements?: components['schemas']['SubRequirement'][] | null;
         };
+        PatchedProcessRequirementResource: {
+            /** Format: uuid */
+            resourceinstanceid?: string | null;
+            aliased_data?: components['schemas']['ResourceAliasedData'];
+            readonly graph_has_different_publication?: string;
+            readonly name?: unknown;
+            readonly descriptors?: unknown;
+            readonly legacyid?: string | null;
+            /** Format: date-time */
+            readonly createdtime?: string;
+            /** Format: uuid */
+            graph?: string | null;
+            /** Format: uuid */
+            readonly graph_publication?: string | null;
+            /** Format: uuid */
+            readonly resource_instance_lifecycle_state?: string;
+            readonly principaluser?: number | null;
+        };
         /** @description A Process Requirement's process dates and its sub-requirements. */
         ProcessRequirement: {
             /** @description Resource id (set on the response). */
@@ -157,6 +215,192 @@ export interface components {
             completion_date?: string | null;
             /** @description Sub-requirements, in display order. */
             sub_requirements?: components['schemas']['SubRequirement'][] | null;
+        };
+        ProcessRequirementResource: {
+            /** Format: uuid */
+            resourceinstanceid?: string | null;
+            aliased_data?: components['schemas']['ResourceAliasedData'];
+            readonly graph_has_different_publication: string;
+            readonly name: unknown;
+            readonly descriptors: unknown;
+            readonly legacyid: string | null;
+            /** Format: date-time */
+            readonly createdtime: string;
+            /** Format: uuid */
+            graph?: string | null;
+            /** Format: uuid */
+            readonly graph_publication: string | null;
+            /** Format: uuid */
+            readonly resource_instance_lifecycle_state: string;
+            readonly principaluser: number | null;
+        };
+        Process_Requirement_Is_Template_Requirement_Aliased_Data: {
+            has_submission_requirement: boolean | null;
+            is_internal_requirement: boolean | null;
+            /**
+             * Default Target Processing Time (days)
+             * Format: double
+             * @description Enter number
+             */
+            default_target_processing_time?: number | null;
+            is_template_requirement: boolean | null;
+        };
+        Process_Requirement_Is_Template_Requirement_Tile: {
+            /** Format: uuid */
+            tileid?: string | null;
+            /** Format: uuid */
+            resourceinstance?: string | null;
+            /** Format: uuid */
+            nodegroup?: string | null;
+            /** Format: uuid */
+            parenttile?: string | null;
+            aliased_data?: components['schemas']['Process_Requirement_Is_Template_Requirement_Aliased_Data'];
+            sortorder?: number | null;
+            provisionaledits?: unknown;
+        };
+        Process_Requirement_Requirement_Execution_Duration_Aliased_Data: {
+            /**
+             * Format: date-time
+             * @description Enter date
+             */
+            requirement_process_start_date?: string | null;
+            /**
+             * Format: date-time
+             * @description Enter date
+             */
+            requirement_process_due_date?: string | null;
+            /**
+             * Format: date-time
+             * @description Enter date
+             */
+            requirement_process_completion_date?: string | null;
+        };
+        Process_Requirement_Requirement_Execution_Duration_Tile: {
+            /** Format: uuid */
+            tileid?: string | null;
+            /** Format: uuid */
+            resourceinstance?: string | null;
+            /** Format: uuid */
+            nodegroup?: string | null;
+            /** Format: uuid */
+            parenttile?: string | null;
+            aliased_data?: components['schemas']['Process_Requirement_Requirement_Execution_Duration_Aliased_Data'];
+            sortorder?: number | null;
+            provisionaledits?: unknown;
+        };
+        Process_Requirement_Requirement_Identification_Aliased_Data: {
+            /** @description Enter text */
+            requirement_name: unknown;
+            /** @description Enter text */
+            requirement_identification: unknown;
+            is_template_requirement?:
+                | components['schemas']['Process_Requirement_Is_Template_Requirement_Tile']
+                | null;
+        };
+        Process_Requirement_Requirement_Identification_Tile: {
+            /** Format: uuid */
+            tileid?: string | null;
+            /** Format: uuid */
+            resourceinstance?: string | null;
+            /** Format: uuid */
+            nodegroup?: string | null;
+            /** Format: uuid */
+            parenttile?: string | null;
+            aliased_data?: components['schemas']['Process_Requirement_Requirement_Identification_Aliased_Data'];
+            sortorder?: number | null;
+            provisionaledits?: unknown;
+        };
+        Process_Requirement_Requirment_Submission_Aliased_Data: {
+            requirment_submission?: unknown;
+        };
+        Process_Requirement_Requirment_Submission_Tile: {
+            /** Format: uuid */
+            tileid?: string | null;
+            /** Format: uuid */
+            resourceinstance?: string | null;
+            /** Format: uuid */
+            nodegroup?: string | null;
+            /** Format: uuid */
+            parenttile?: string | null;
+            aliased_data?: components['schemas']['Process_Requirement_Requirment_Submission_Aliased_Data'];
+            sortorder?: number | null;
+            provisionaledits?: unknown;
+        };
+        Process_Requirement_Sub_Requirement_Aliased_Data: {
+            /**
+             * Description
+             * @description Enter text
+             */
+            sub_requirement_description?: unknown;
+            /**
+             * Assessment Notes
+             * @description Enter text
+             */
+            sub_requirement_assessment_notes?: unknown;
+            /** Requirement Satisfied */
+            sub_requirement_satisfied?: boolean | null;
+            /**
+             * Sort Order
+             * Format: double
+             * @description Enter number
+             */
+            sub_requirement_sort_order: number | null;
+            /** Mandatory */
+            sub_requirement_mandatory?: boolean | null;
+            sub_requirement_reference?: unknown;
+            /**
+             * Requirement
+             * @description Enter text
+             */
+            sub_requirement_name: unknown;
+        };
+        Process_Requirement_Sub_Requirement_Assessment_N1_Aliased_Data: {
+            requirement_status?: boolean | null;
+            /** @description Enter text */
+            assessment_notes?: unknown;
+        };
+        Process_Requirement_Sub_Requirement_Assessment_N1_Tile: {
+            /** Format: uuid */
+            tileid?: string | null;
+            /** Format: uuid */
+            resourceinstance?: string | null;
+            /** Format: uuid */
+            nodegroup?: string | null;
+            /** Format: uuid */
+            parenttile?: string | null;
+            aliased_data?: components['schemas']['Process_Requirement_Sub_Requirement_Assessment_N1_Aliased_Data'];
+            sortorder?: number | null;
+            provisionaledits?: unknown;
+        };
+        Process_Requirement_Sub_Requirement_Tile: {
+            /** Format: uuid */
+            tileid?: string | null;
+            /** Format: uuid */
+            resourceinstance?: string | null;
+            /** Format: uuid */
+            nodegroup?: string | null;
+            /** Format: uuid */
+            parenttile?: string | null;
+            aliased_data?: components['schemas']['Process_Requirement_Sub_Requirement_Aliased_Data'];
+            sortorder?: number | null;
+            provisionaledits?: unknown;
+        };
+        ResourceAliasedData: {
+            requirement_identification?:
+                | components['schemas']['Process_Requirement_Requirement_Identification_Tile']
+                | null;
+            requirement_execution_duration?:
+                | components['schemas']['Process_Requirement_Requirement_Execution_Duration_Tile']
+                | null;
+            requirment_submission?:
+                | components['schemas']['Process_Requirement_Requirment_Submission_Tile']
+                | null;
+            sub_requirement_assessment_n1?:
+                | components['schemas']['Process_Requirement_Sub_Requirement_Assessment_N1_Tile']
+                | null;
+            sub_requirement?:
+                | components['schemas']['Process_Requirement_Sub_Requirement_Tile'][]
+                | null;
         };
         SubRequirement: {
             /** @description Sub-requirement tile id; omit to add a new sub-requirement. */
@@ -238,6 +482,99 @@ export interface operations {
                 };
                 content: {
                     'application/json': components['schemas']['ProcessRequirement'];
+                };
+            };
+        };
+    };
+    api_process_requirement_resource_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['ProcessRequirementResource'];
+                };
+            };
+        };
+    };
+    api_process_requirement_resource_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                'application/json': components['schemas']['ProcessRequirementResource'];
+                'multipart/form-data': components['schemas']['ProcessRequirementResource'];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['ProcessRequirementResource'];
+                };
+            };
+        };
+    };
+    api_process_requirement_resource_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_process_requirement_resource_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                'application/json': components['schemas']['PatchedProcessRequirementResource'];
+                'multipart/form-data': components['schemas']['PatchedProcessRequirementResource'];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['ProcessRequirementResource'];
                 };
             };
         };

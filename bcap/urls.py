@@ -18,6 +18,7 @@ from bcap.views.api import (
 )
 from bcap.views.dashboard_api import DashboardView
 from bcap.views.process_requirement_api import ProcessRequirementWriteView
+from bcap.views.process_requirement_resource_api import ProcessRequirementResourceView
 from bcap.views.user_api import UserProfile
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
@@ -42,6 +43,11 @@ documented_api_patterns = [
         f"{PREFIX}api/process_requirement/<uuid:resource_id>",
         ProcessRequirementWriteView.as_view(),
         name="process_requirement_write",
+    ),
+    path(
+        f"{PREFIX}api/process_requirement_resource/<uuid:pk>",
+        ProcessRequirementResourceView.as_view(),
+        name="process_requirement_resource",
     ),
 ]
 
