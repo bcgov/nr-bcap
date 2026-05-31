@@ -21,61 +21,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    '/bcap/api/process_requirement/{resource_id}': {
+    '/bcap/api/process_requirement/{id}': {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
+        get: operations['api_process_requirement_retrieve'];
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
+        put: operations['api_process_requirement_update'];
         post?: never;
-        delete?: never;
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
+        delete: operations['api_process_requirement_destroy'];
         options?: never;
         head?: never;
-        /** @description Apply the provided dates and sub-requirement edits, then save. */
+        /**
+         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+         *
+         *     PATCH applies a partial diff (only the tiles present in the body); PUT
+         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
+         */
         patch: operations['api_process_requirement_partial_update'];
-        trace?: never;
-    };
-    '/bcap/api/process_requirement_resource/{id}': {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-         *
-         *     PATCH applies a partial diff (only the tiles present in the body); PUT
-         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
-         */
-        get: operations['api_process_requirement_resource_retrieve'];
-        /**
-         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-         *
-         *     PATCH applies a partial diff (only the tiles present in the body); PUT
-         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
-         */
-        put: operations['api_process_requirement_resource_update'];
-        post?: never;
-        /**
-         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-         *
-         *     PATCH applies a partial diff (only the tiles present in the body); PUT
-         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
-         */
-        delete: operations['api_process_requirement_resource_destroy'];
-        options?: never;
-        head?: never;
-        /**
-         * @description GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-         *
-         *     PATCH applies a partial diff (only the tiles present in the body); PUT
-         *     replaces. Either way the serializer saves the nested sub-requirement tiles.
-         */
-        patch: operations['api_process_requirement_resource_partial_update'];
         trace?: never;
     };
     '/bcap/user_profile': {
@@ -154,29 +137,7 @@ export interface components {
             limit?: number;
             results?: components['schemas']['DashboardCard'][];
         };
-        /** @description A Process Requirement's process dates and its sub-requirements. */
         PatchedProcessRequirement: {
-            /** @description Resource id (set on the response). */
-            readonly id?: string;
-            /**
-             * Format: date
-             * @description Process start date PST (YYYY-MM-DD); null clears it.
-             */
-            start_date?: string | null;
-            /**
-             * Format: date
-             * @description Process due date PST (YYYY-MM-DD); null clears it.
-             */
-            due_date?: string | null;
-            /**
-             * Format: date
-             * @description Process completion date PST (YYYY-MM-DD); null clears it.
-             */
-            completion_date?: string | null;
-            /** @description Sub-requirements, in display order. */
-            sub_requirements?: components['schemas']['SubRequirement'][] | null;
-        };
-        PatchedProcessRequirementResource: {
             /** Format: uuid */
             resourceinstanceid?: string | null;
             aliased_data?: components['schemas']['ResourceAliasedData'];
@@ -194,29 +155,7 @@ export interface components {
             readonly resource_instance_lifecycle_state?: string;
             readonly principaluser?: number | null;
         };
-        /** @description A Process Requirement's process dates and its sub-requirements. */
         ProcessRequirement: {
-            /** @description Resource id (set on the response). */
-            readonly id: string;
-            /**
-             * Format: date
-             * @description Process start date PST (YYYY-MM-DD); null clears it.
-             */
-            start_date?: string | null;
-            /**
-             * Format: date
-             * @description Process due date PST (YYYY-MM-DD); null clears it.
-             */
-            due_date?: string | null;
-            /**
-             * Format: date
-             * @description Process completion date PST (YYYY-MM-DD); null clears it.
-             */
-            completion_date?: string | null;
-            /** @description Sub-requirements, in display order. */
-            sub_requirements?: components['schemas']['SubRequirement'][] | null;
-        };
-        ProcessRequirementResource: {
             /** Format: uuid */
             resourceinstanceid?: string | null;
             aliased_data?: components['schemas']['ResourceAliasedData'];
@@ -402,22 +341,6 @@ export interface components {
                 | components['schemas']['Process_Requirement_Sub_Requirement_Tile'][]
                 | null;
         };
-        SubRequirement: {
-            /** @description Sub-requirement tile id; omit to add a new sub-requirement. */
-            id?: string | null;
-            /** @description Sub-requirement name; required when adding one. */
-            name?: string | null;
-            /** @description Sub-requirement description. */
-            description?: string | null;
-            /** @description Whether it is mandatory. */
-            mandatory?: boolean | null;
-            /** @description Whether it is satisfied. */
-            satisfied?: boolean | null;
-            /** @description Assessment notes. */
-            assessment_notes?: string | null;
-            /** @description Sort order; required when adding a new sub-requirement. */
-            sort_order?: number | null;
-        };
         UserProfileResponse: {
             username: string;
             first_name: string;
@@ -461,32 +384,7 @@ export interface operations {
             };
         };
     };
-    api_process_requirement_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                resource_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                'application/json': components['schemas']['PatchedProcessRequirement'];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    'application/json': components['schemas']['ProcessRequirement'];
-                };
-            };
-        };
-    };
-    api_process_requirement_resource_retrieve: {
+    api_process_requirement_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -502,12 +400,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    'application/json': components['schemas']['ProcessRequirementResource'];
+                    'application/json': components['schemas']['ProcessRequirement'];
                 };
             };
         };
     };
-    api_process_requirement_resource_update: {
+    api_process_requirement_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -518,8 +416,8 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                'application/json': components['schemas']['ProcessRequirementResource'];
-                'multipart/form-data': components['schemas']['ProcessRequirementResource'];
+                'application/json': components['schemas']['ProcessRequirement'];
+                'multipart/form-data': components['schemas']['ProcessRequirement'];
             };
         };
         responses: {
@@ -528,12 +426,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    'application/json': components['schemas']['ProcessRequirementResource'];
+                    'application/json': components['schemas']['ProcessRequirement'];
                 };
             };
         };
     };
-    api_process_requirement_resource_destroy: {
+    api_process_requirement_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -553,7 +451,7 @@ export interface operations {
             };
         };
     };
-    api_process_requirement_resource_partial_update: {
+    api_process_requirement_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -564,8 +462,8 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                'application/json': components['schemas']['PatchedProcessRequirementResource'];
-                'multipart/form-data': components['schemas']['PatchedProcessRequirementResource'];
+                'application/json': components['schemas']['PatchedProcessRequirement'];
+                'multipart/form-data': components['schemas']['PatchedProcessRequirement'];
             };
         };
         responses: {
@@ -574,7 +472,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    'application/json': components['schemas']['ProcessRequirementResource'];
+                    'application/json': components['schemas']['ProcessRequirement'];
                 };
             };
         };

@@ -54,13 +54,75 @@ paths:
               schema:
                 $ref: '#/components/schemas/DashboardPage'
           description: ''
-  /bcap/api/process_requirement/{resource_id}:
-    patch:
-      operationId: api_process_requirement_partial_update
-      description: Apply the provided dates and sub-requirement edits, then save.
+  /bcap/api/process_requirement/{id}:
+    get:
+      operationId: api_process_requirement_retrieve
+      description: |-
+        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+        PATCH applies a partial diff (only the tiles present in the body); PUT
+        replaces. Either way the serializer saves the nested sub-requirement tiles.
       parameters:
       - in: path
-        name: resource_id
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessRequirement'
+          description: ''
+    put:
+      operationId: api_process_requirement_update
+      description: |-
+        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+        PATCH applies a partial diff (only the tiles present in the body); PUT
+        replaces. Either way the serializer saves the nested sub-requirement tiles.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessRequirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProcessRequirement'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessRequirement'
+          description: ''
+    patch:
+      operationId: api_process_requirement_partial_update
+      description: |-
+        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+        PATCH applies a partial diff (only the tiles present in the body); PUT
+        replaces. Either way the serializer saves the nested sub-requirement tiles.
+      parameters:
+      - in: path
+        name: id
         schema:
           type: string
           format: uuid
@@ -72,6 +134,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedProcessRequirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProcessRequirement'
       security:
       - cookieAuth: []
       responses:
@@ -81,100 +146,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
-  /bcap/api/process_requirement_resource/{id}:
-    get:
-      operationId: api_process_requirement_resource_retrieve
-      description: |-
-        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces. Either way the serializer saves the nested sub-requirement tiles.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - api
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProcessRequirementResource'
-          description: ''
-    put:
-      operationId: api_process_requirement_resource_update
-      description: |-
-        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces. Either way the serializer saves the nested sub-requirement tiles.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProcessRequirementResource'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/ProcessRequirementResource'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProcessRequirementResource'
-          description: ''
-    patch:
-      operationId: api_process_requirement_resource_partial_update
-      description: |-
-        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces. Either way the serializer saves the nested sub-requirement tiles.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedProcessRequirementResource'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedProcessRequirementResource'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProcessRequirementResource'
-          description: ''
     delete:
-      operationId: api_process_requirement_resource_destroy
+      operationId: api_process_requirement_destroy
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -313,35 +286,6 @@ components:
             $ref: '#/components/schemas/DashboardCard'
     PatchedProcessRequirement:
       type: object
-      description: A Process Requirement's process dates and its sub-requirements.
-      properties:
-        id:
-          type: string
-          readOnly: true
-          description: Resource id (set on the response).
-        start_date:
-          type: string
-          format: date
-          nullable: true
-          description: Process start date PST (YYYY-MM-DD); null clears it.
-        due_date:
-          type: string
-          format: date
-          nullable: true
-          description: Process due date PST (YYYY-MM-DD); null clears it.
-        completion_date:
-          type: string
-          format: date
-          nullable: true
-          description: Process completion date PST (YYYY-MM-DD); null clears it.
-        sub_requirements:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubRequirement'
-          nullable: true
-          description: Sub-requirements, in display order.
-    PatchedProcessRequirementResource:
-      type: object
       properties:
         resourceinstanceid:
           type: string
@@ -384,37 +328,6 @@ components:
           readOnly: true
           nullable: true
     ProcessRequirement:
-      type: object
-      description: A Process Requirement's process dates and its sub-requirements.
-      properties:
-        id:
-          type: string
-          readOnly: true
-          description: Resource id (set on the response).
-        start_date:
-          type: string
-          format: date
-          nullable: true
-          description: Process start date PST (YYYY-MM-DD); null clears it.
-        due_date:
-          type: string
-          format: date
-          nullable: true
-          description: Process due date PST (YYYY-MM-DD); null clears it.
-        completion_date:
-          type: string
-          format: date
-          nullable: true
-          description: Process completion date PST (YYYY-MM-DD); null clears it.
-        sub_requirements:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubRequirement'
-          nullable: true
-          description: Sub-requirements, in display order.
-      required:
-      - id
-    ProcessRequirementResource:
       type: object
       properties:
         resourceinstanceid:
@@ -762,37 +675,6 @@ components:
           items:
             $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Tile'
           nullable: true
-    SubRequirement:
-      type: object
-      properties:
-        id:
-          type: string
-          nullable: true
-          description: Sub-requirement tile id; omit to add a new sub-requirement.
-        name:
-          type: string
-          nullable: true
-          description: Sub-requirement name; required when adding one.
-        description:
-          type: string
-          nullable: true
-          description: Sub-requirement description.
-        mandatory:
-          type: boolean
-          nullable: true
-          description: Whether it is mandatory.
-        satisfied:
-          type: boolean
-          nullable: true
-          description: Whether it is satisfied.
-        assessment_notes:
-          type: string
-          nullable: true
-          description: Assessment notes.
-        sort_order:
-          type: integer
-          nullable: true
-          description: Sort order; required when adding a new sub-requirement.
     UserProfileResponse:
       type: object
       properties:

@@ -3,11 +3,11 @@ UI and ReDoc viewers. SPECTACULAR_SETTINGS pins SERVE_URLCONF to
 bcap.documented_api_urls, so the served schema documents only the bcap API
 (the dashboard and user-profile endpoints), not all of Arches.
 
-The endpoints sit behind the app's auth middleware (unauthenticated requests
-redirect to login), so these log in first."""
+The endpoints sit behind IsAdminUser so these log in as the admin user."""
 
 import yaml
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -22,7 +22,8 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.idir_login_simulate()
+        admin = get_user_model().objects.get(username="admin")
+        self.idir_login_simulate(admin)
 
     def test_schema_endpoint_returns_openapi_document(self):
         resp = self.client.get(reverse("schema"))
@@ -66,7 +67,8 @@ class SchemaViewerTests(AuthTestHelper, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.idir_login_simulate()
+        admin = get_user_model().objects.get(username="admin")
+        self.idir_login_simulate(admin)
 
     def test_swagger_ui_renders(self):
         resp = self.client.get(reverse("swagger-ui"))

@@ -1,66 +1,55 @@
-"""Process Requirement write API: validate the body, drive the service, save."""
+"""Process Requirement GET/PUT/PATCH/DELETE via arches_querysets' generic resource serializer."""
 
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.exceptions import NotFound, ValidationError
-from rest_framework.generics import GenericAPIView
-from rest_framework.parsers import JSONParser
-from rest_framework.request import Request
-from rest_framework.response import Response
 
-from drf_spectacular.utils import extend_schema
+from arches_querysets.rest_framework.generic_views import ArchesResourceDetailView
+from arches_querysets.rest_framework.serializers import ArchesResourceSerializer
+from arches_querysets.utils.models import ensure_request
 
-from arches_querysets.models import ResourceTileTree
-from arches_querysets.rest_framework.permissions import ResourceEditor
-
-from bcap.serializers.process_requirement_serializers import (
-    ProcessRequirementSerializer,
-)
-from bcap.services.exceptions import StaleReference
-from bcap.services.process_requirement.process_requirement_service import (
-    ProcessRequirementService,
-)
-from bcap.services.process_requirement.process_requirement_types import (
-    ProcessRequirement,
-)
+from bcap.schema import ArchesTileAutoSchema
+from bcap.util.bcap_aliases import GraphSlugs
 
 
-class ProcessRequirementWriteView(GenericAPIView):
-    """Edit an existing Process Requirement; it does not create one."""
+class ProcessRequirementSerializer(ArchesResourceSerializer):
+    class Meta(ArchesResourceSerializer.Meta):
+        graph_slug = GraphSlugs.PROCESS_REQUIREMENT
+
+    @extend_schema_field(bool)
+    def get_graph_has_different_publication(self, obj):
+        return super().get_graph_has_different_publication(obj)
+
+
+@extend_schema(tags=["process_requirement"])
+class ProcessRequirementView(ArchesResourceDetailView):
+    """GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+
+    PATCH applies a partial diff (only the tiles present in the body); PUT
+    replaces. Either way the serializer saves the nested sub-requirement tiles.
+    """
 
     authentication_classes = [SessionAuthentication]
-    # Will need to extend this later.
-    permission_classes = [ResourceEditor]
-    parser_classes = [JSONParser]
     serializer_class = ProcessRequirementSerializer
-    lookup_url_kwarg = "resource_id"
-    service = ProcessRequirementService()
+    schema = ArchesTileAutoSchema()
 
-    def get_queryset(self):
-        """The Process Requirement tile trees get_object() resolves against."""
-        return self.service.get_queryset()
+    def get_serializer(self, *args, **kwargs):
+        # During schema introspection the serializer can't resolve nodegroups
+        # without a real user, so supply the admin user to get the full field list.
+        if getattr(self, "swagger_fake_view", False):
+            return self.get_serializer_class()(
+                *args, request=ensure_request(None, force_admin=True)
+            )
+        return super().get_serializer(*args, **kwargs)
 
-    @extend_schema(responses=ProcessRequirementSerializer)
-    def patch(self, request: Request, *args, **kwargs) -> Response:
-        """Apply the provided dates and sub-requirement edits, then save."""
-        serializer = self.get_serializer(data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        data: ProcessRequirement = serializer.validated_data
-        resource: ResourceTileTree = self.get_object()  # 404s if it doesn't exist
-        self.service.set_requirement_process_dates(
-            resource,
-            start_date=data.start_date,
-            due_date=data.due_date,
-            completion_date=data.completion_date,
-        )
-        try:
-            self.service.edit_sub_requirements(resource, data.sub_requirements)
-        except StaleReference as exc:
-            raise NotFound("Sub-requirement not found on this requirement.") from exc
-        except ValueError as exc:
-            raise ValidationError(
-                "A new sub-requirement needs a name and sort order."
-            ) from exc
+    def retrieve(self, request, *args, **kwargs):
+        # GET - post-process the response (e.g. inject extra fields)
+        response = super().retrieve(request, *args, **kwargs)
+        return response
 
-        resource.save(request=request)
-        result = self.service.to_output(resource)
-        return Response(ProcessRequirementSerializer(result).data)
+    def perform_update(self, serializer):
+        # PUT/PATCH - runs after validation, before save; mutate the instance here
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        # DELETE - add guards or cascade logic before removing
+        super().perform_destroy(instance)
