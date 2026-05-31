@@ -43,7 +43,7 @@ paths:
           minLength: 1
         description: '* `UNASSIGNED` - Unassigned'
       tags:
-      - api
+      - dashboard
       security:
       - cookieAuth: []
       - {}
@@ -70,7 +70,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - api
+      - process_requirement
       security:
       - cookieAuth: []
       responses:
@@ -95,7 +95,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - api
+      - process_requirement
       requestBody:
         content:
           application/json:
@@ -128,7 +128,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - api
+      - process_requirement
       requestBody:
         content:
           application/json:
@@ -161,7 +161,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - api
+      - process_requirement
       security:
       - cookieAuth: []
       responses:
@@ -294,7 +294,7 @@ components:
         aliased_data:
           $ref: '#/components/schemas/ResourceAliasedData'
         graph_has_different_publication:
-          type: string
+          type: boolean
           readOnly: true
         name:
           readOnly: true
@@ -337,7 +337,7 @@ components:
         aliased_data:
           $ref: '#/components/schemas/ResourceAliasedData'
         graph_has_different_publication:
-          type: string
+          type: boolean
           readOnly: true
         name:
           readOnly: true

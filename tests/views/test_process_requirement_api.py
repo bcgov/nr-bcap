@@ -46,6 +46,7 @@ UNKNOWN_ID = "00000000-0000-0000-0000-000000000000"
 class ProcessRequirementViewTests(AuthTestHelper, TestCase):
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         requirement = make_requirement(ResourceBuilder(), subs=[("Sub-1", False, 1)])
         cls.resource_id = str(requirement.pk)
 

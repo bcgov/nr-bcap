@@ -141,7 +141,7 @@ export interface components {
             /** Format: uuid */
             resourceinstanceid?: string | null;
             aliased_data?: components['schemas']['ResourceAliasedData'];
-            readonly graph_has_different_publication?: string;
+            readonly graph_has_different_publication?: boolean;
             readonly name?: unknown;
             readonly descriptors?: unknown;
             readonly legacyid?: string | null;
@@ -159,7 +159,7 @@ export interface components {
             /** Format: uuid */
             resourceinstanceid?: string | null;
             aliased_data?: components['schemas']['ResourceAliasedData'];
-            readonly graph_has_different_publication: string;
+            readonly graph_has_different_publication: boolean;
             readonly name: unknown;
             readonly descriptors: unknown;
             readonly legacyid: string | null;
