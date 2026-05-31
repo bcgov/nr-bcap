@@ -1,8 +1,12 @@
 """Custom drf-spectacular AutoSchema subclasses for bcap views."""
 
+import logging
+
 from drf_spectacular.openapi import AutoSchema
 
 from arches_querysets.rest_framework.serializers import TileAliasedDataSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class ArchesTileAutoSchema(AutoSchema):
@@ -15,7 +19,14 @@ class ArchesTileAutoSchema(AutoSchema):
             try:
                 serializer.fields
             except Exception:
-                pass
+                # Falls through to the default name below; log so a silently
+                # un-specialized component name is still traceable.
+                logger.debug(
+                    "Could not resolve fields for %s; component name not "
+                    "specialized by nodegroup.",
+                    getattr(serializer, "graph_slug", serializer),
+                    exc_info=True,
+                )
             root_node = getattr(serializer, "_root_node", None)
             alias = getattr(root_node, "alias", root_node)
             if alias and serializer.graph_slug:
