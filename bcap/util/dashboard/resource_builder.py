@@ -5,6 +5,8 @@ Shared by the dashboard demo seeder (``dashboard_seed``) and the unit tests:
 the seeder composes these into a full demo graph, while tests can use the
 primitives to build just the resources a case needs."""
 
+import uuid
+import random
 from dataclasses import dataclass
 
 from django.utils import timezone
@@ -17,6 +19,10 @@ from arches.app.models.models import (
 
 from arches_controlled_lists.models import ListItem
 from arches_querysets.models import AliasedData, ResourceTileTree
+
+# Marker written to legacyid of every resource the seeders create, so the
+# clear command can find and delete only seeded data.
+SEED_LEGACYID_PREFIX = "dashboard-seed"
 
 
 class ResourceBuilder:
@@ -54,6 +60,22 @@ class ResourceBuilder:
         return [str(item.pk)]
 
     @staticmethod
+    def random_reference_value(slug, alias):
+        """A `reference` value: a randomly chosen item from the node's
+        controlled list."""
+        node = Node.objects.get(graph__slug=slug, alias=alias, source_identifier=None)
+        list_id = node.config.get("controlledList")
+        item_ids = list(
+            ListItem.objects.filter(list_id=list_id).values_list("pk", flat=True)
+        )
+        if not item_ids:
+            raise RuntimeError(
+                f"Controlled list {list_id} backing {slug}.{alias} has no items; "
+                "load its reference data first."
+            )
+        return [str(random.choice(item_ids))]
+
+    @staticmethod
     def append_blank_tile_for_group(container, grouping_alias, values):
         """Append a blank tile for ``grouping_alias`` and set its node values by alias."""
         container.append_tile(grouping_alias)
@@ -80,6 +102,7 @@ class ResourceBuilder:
             graph_id=self.graph_id(slug),
             resource_instance_lifecycle_state=self.state,
             createdtime=timezone.now(),
+            legacyid=f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}",
         )
         resource.aliased_data = AliasedData()
         return resource
