@@ -4,18 +4,11 @@ import { useRoute } from 'vue-router';
 import arches from 'arches';
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
 import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
-import Checkbox from 'primevue/checkbox';
-
-interface DateTile {
-    tileid: string | null;
-    nodegroup_id: string;
-    data: Record<string, unknown>;
-}
 
 const route = useRoute();
 const idFromUrl = route.query.id;
-const dateTile = ref<DateTile | null>(null);
 const isLoading = ref(true);
+const isSaving = ref(false);
 const errorMessage = ref('');
 
 const requirementData = ref<PermitRequirementSchema | null>(null);
@@ -23,6 +16,57 @@ const requirementData = ref<PermitRequirementSchema | null>(null);
 const subRequirements = computed(
     () => requirementData.value?.aliased_data?.sub_requirement || [],
 );
+
+const requirementName = computed(
+    () =>
+        requirementData.value?.aliased_data?.requirement_identification
+            ?.aliased_data?.requirement_name?.display_value ?? '',
+);
+
+// Requirement-level status + notes (the assessment tile).
+const assessment = computed(
+    () => requirementData.value?.aliased_data?.sub_requirement_assessment_n1,
+);
+
+// String nodes carry a localized value ({ en: { value } }), so binding
+// node_value directly renders "[object Object]". These read/write the inner
+// string instead. Used by every notes textarea (sub-requirement + assessment).
+type LocalizedString = { en?: { value?: string } };
+
+const readText = (node?: { node_value?: unknown } | null): string => {
+    const value = node?.node_value as
+        | LocalizedString
+        | string
+        | null
+        | undefined;
+    if (value == null) return '';
+    return typeof value === 'string' ? value : (value.en?.value ?? '');
+};
+
+const writeText = (
+    node: { node_value?: unknown } | null | undefined,
+    text: string,
+) => {
+    if (node) {
+        node.node_value = { en: { value: text, direction: 'ltr' } };
+    }
+};
+
+// Manual save: snapshot the last-saved state so we can detect edits and revert.
+const savedSnapshot = ref('');
+const isDirty = computed(
+    () =>
+        !!requirementData.value &&
+        savedSnapshot.value !== JSON.stringify(requirementData.value),
+);
+const markPristine = () => {
+    savedSnapshot.value = JSON.stringify(requirementData.value);
+};
+const undoChanges = () => {
+    if (savedSnapshot.value) {
+        requirementData.value = JSON.parse(savedSnapshot.value);
+    }
+};
 
 const startDate = computed(() => {
     return requirementData.value?.aliased_data?.requirement_execution_duration
@@ -44,6 +88,7 @@ const loadData = async () => {
         requirementData.value = await getProcessRequirementData(
             idFromUrl as string,
         );
+        markPristine();
     } catch (error) {
         console.error('Failed to load sub-requirements:', error);
         errorMessage.value = 'Failed to load checklist data. Please try again.';
@@ -56,40 +101,49 @@ onMounted(() => {
     loadData();
 });
 
-const handleCheckboxChange = () => {
+// Derive start/completion dates from the checklist. Run on Save (not on each
+// toggle) so the dates only change when the user commits.
+const applyDerivedDates = () => {
+    if (!requirementData.value) return;
     const today = new Date().toISOString().split('T')[0];
-    const anyChecked = subRequirements.value.some(
+    const duration =
+        requirementData.value.aliased_data.requirement_execution_duration
+            .aliased_data;
+    const subs = subRequirements.value;
+    const anyChecked = subs.some(
         (req) => req.aliased_data.sub_requirement_satisfied.node_value,
     );
-    const allChecked = subRequirements.value.every(
-        (req) => req.aliased_data.sub_requirement_satisfied.node_value,
-    );
+    const allChecked =
+        subs.length > 0 &&
+        subs.every(
+            (req) => req.aliased_data.sub_requirement_satisfied.node_value,
+        );
 
-    console.log('All checked:', allChecked);
-    console.log('Any checked:', anyChecked);
-
-    if (anyChecked && requirementData.value && !startDate.value) {
-        requirementData.value.aliased_data.requirement_execution_duration.aliased_data.requirement_process_start_date.node_value =
-            today;
+    if (anyChecked && !duration.requirement_process_start_date.node_value) {
+        duration.requirement_process_start_date.node_value = today;
     }
-
-    if (allChecked && requirementData.value && !completedDate.value) {
-        requirementData.value.aliased_data.requirement_execution_duration.aliased_data.requirement_process_completion_date.node_value =
-            today;
-    } else if (!allChecked && requirementData.value && completedDate.value) {
-        requirementData.value.aliased_data.requirement_execution_duration.aliased_data.requirement_process_completion_date.node_value =
-            null;
+    if (
+        allChecked &&
+        !duration.requirement_process_completion_date.node_value
+    ) {
+        duration.requirement_process_completion_date.node_value = today;
+    } else if (
+        !allChecked &&
+        duration.requirement_process_completion_date.node_value
+    ) {
+        duration.requirement_process_completion_date.node_value = null;
     }
-
-    saveChanges();
 };
 
 const saveChanges = async () => {
+    if (!requirementData.value || isSaving.value) return;
+    applyDerivedDates();
+    isSaving.value = true;
     try {
         const response = await fetch(
             arches.urls.api_process_requirements(idFromUrl),
             {
-                method: 'POST',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken':
@@ -99,15 +153,17 @@ const saveChanges = async () => {
                             ?.split('=')[1] || '',
                 },
                 body: JSON.stringify({
-                    dateTile: dateTile.value,
-                    requirements: subRequirements.value,
+                    aliased_data: requirementData.value.aliased_data,
                 }),
             },
         );
 
         if (!response.ok) throw new Error('Failed to save');
+        markPristine();
     } catch (error) {
         console.error('Save error:', error);
+    } finally {
+        isSaving.value = false;
     }
 };
 </script>
@@ -116,10 +172,7 @@ const saveChanges = async () => {
     <div class="checklist-container">
         <div class="title-row">
             <h2 class="page-title">
-                {{
-                    requirementData?.aliased_data?.requirement_identification
-                        ?.aliased_data?.requirement_name?.display_value
-                }}
+                {{ requirementName || 'Process Requirement' }}
             </h2>
 
             <div class="date-metadata">
@@ -175,7 +228,6 @@ const saveChanges = async () => {
                         "
                         type="checkbox"
                         class="req-checkbox"
-                        @change="handleCheckboxChange"
                     />
                     <div class="req-titles">
                         <label
@@ -187,7 +239,13 @@ const saveChanges = async () => {
                                     ?.display_value
                             }}
                         </label>
-                        <p class="req-desc">
+                        <p
+                            v-if="
+                                req.aliased_data.sub_requirement_description
+                                    ?.display_value
+                            "
+                            class="req-desc"
+                        >
                             {{
                                 req.aliased_data.sub_requirement_description
                                     ?.display_value
@@ -199,14 +257,22 @@ const saveChanges = async () => {
                 <div class="req-body">
                     <textarea
                         :id="'notes-' + req.tileid"
-                        v-model="
-                            req.aliased_data.sub_requirement_assessment_notes
-                                .node_value as string
+                        :value="
+                            readText(
+                                req.aliased_data
+                                    .sub_requirement_assessment_notes,
+                            )
                         "
                         class="req-notes-input"
                         rows="2"
                         placeholder="Add assessment notes..."
-                        @change="saveChanges"
+                        @input="
+                            writeText(
+                                req.aliased_data
+                                    .sub_requirement_assessment_notes,
+                                ($event.target as HTMLTextAreaElement).value,
+                            )
+                        "
                     ></textarea>
                 </div>
             </div>
@@ -219,36 +285,79 @@ const saveChanges = async () => {
             </div>
         </div>
 
-        <div class="subtitle-row">
-            <h3 class="page-subtitle">Requirement Status & Summary</h3>
-        </div>
+        <div
+            v-if="!isLoading && !errorMessage && assessment"
+            class="requirement-summary"
+        >
+            <div class="subtitle-row">
+                <h3 class="page-subtitle">Requirement Status & Summary</h3>
+            </div>
 
-        <div class="req-header">
-            <input
-                id="requirement_satisfied"
-                type="checkbox"
-                class="req-checkbox"
-            />
-            <div class="req-titles">
-                <label
-                    for="requirement_satisfied"
-                    class="req-name"
-                >
-                    Requirement Review Completed
-                </label>
+            <div class="req-header">
+                <input
+                    id="requirement_satisfied"
+                    v-model="
+                        assessment.aliased_data.requirement_status.node_value
+                    "
+                    type="checkbox"
+                    class="req-checkbox"
+                />
+                <div class="req-titles">
+                    <label
+                        for="requirement_satisfied"
+                        class="req-name"
+                    >
+                        Requirement Review Completed
+                    </label>
+                </div>
+            </div>
+
+            <div class="req-body">
+                <textarea
+                    id="requirement-notes"
+                    :value="readText(assessment.aliased_data.assessment_notes)"
+                    class="req-notes-input"
+                    rows="8"
+                    placeholder="Add assessment summary and notes..."
+                    @input="
+                        writeText(
+                            assessment.aliased_data.assessment_notes,
+                            ($event.target as HTMLTextAreaElement).value,
+                        )
+                    "
+                ></textarea>
             </div>
         </div>
 
-        <div class="req-body">
-            <textarea
-                id="requirement-notes"
-                class="req-notes-input"
-                rows="8"
-                placeholder="Add assessment summary and notes..."
-                @change="saveChanges"
-            ></textarea>
+        <div
+            v-if="isDirty"
+            class="actions-bar"
+        >
+            <button
+                type="button"
+                class="action-btn undo-btn"
+                :disabled="isSaving"
+                @click="undoChanges"
+            >
+                <i class="fa-solid fa-rotate-left"></i>
+                Undo
+            </button>
+            <button
+                type="button"
+                class="action-btn save-btn"
+                :disabled="isSaving"
+                @click="saveChanges"
+            >
+                <i
+                    :class="
+                        isSaving
+                            ? 'fa-solid fa-spinner fa-spin'
+                            : 'fa-solid fa-floppy-disk'
+                    "
+                ></i>
+                {{ isSaving ? 'Saving…' : 'Save' }}
+            </button>
         </div>
-        <div style="margin-bottom: 10rem"></div>
     </div>
 </template>
 
@@ -290,6 +399,98 @@ const saveChanges = async () => {
     margin: 0;
     font-size: 1.75rem;
     font-weight: 700;
+}
+
+.notes-header {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Save / Undo action bar */
+.actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.6rem;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.05s ease;
+}
+
+.action-btn:active {
+    transform: translateY(1px);
+}
+
+.action-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.action-btn i {
+    font-size: 1rem;
+}
+
+.save-btn {
+    background-color: #003366;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 51, 102, 0.25);
+}
+
+.save-btn:hover {
+    background-color: #00264d;
+    box-shadow: 0 4px 10px rgba(0, 51, 102, 0.3);
+}
+
+.undo-btn {
+    background-color: #ffffff;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.undo-btn:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+/* Requirement-level satisfied checkbox + note */
+.requirement-satisfied {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #333;
+}
+
+.satisfied-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    cursor: pointer;
+}
+
+.satisfied-label {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
 }
 
 /* date pills */
@@ -335,7 +536,7 @@ const saveChanges = async () => {
 
 .req-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 1.25rem;
     margin-bottom: 1.25rem;
 }

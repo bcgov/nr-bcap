@@ -34,8 +34,8 @@ export interface RequirementSubmissionTile extends AliasedTileData {
 
 export interface RequirementAssessmentTile extends AliasedTileData {
     aliased_data: {
-        requirement_status?: AliasedNodeData;
-        assessment_notes?: AliasedNodeData;
+        requirement_status: AliasedNodeData;
+        assessment_notes: AliasedNodeData;
     };
 }
 

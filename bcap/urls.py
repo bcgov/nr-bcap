@@ -39,7 +39,7 @@ documented_api_patterns = [
     path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
     path(f"{PREFIX}api/dashboard", DashboardView.as_view(), name="dashboard"),
     path(
-        f"{PREFIX}api/process_requirement/<uuid:pk>",
+        f"{PREFIX}api/resource/process_requirement/<uuid:pk>",
         ProcessRequirementView.as_view(),
         name="process_requirement",
     ),
