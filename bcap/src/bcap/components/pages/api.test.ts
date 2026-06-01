@@ -41,7 +41,10 @@ describe('getResourceData', () => {
     });
 
     it('throws with response text on error', async () => {
-        vi.stubGlobal('fetch', mockFetchError(404, 'Not Found', 'Resource missing'));
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(404, 'Not Found', 'Resource missing'),
+        );
 
         await expect(getResourceData('arch-site', '999')).rejects.toThrow(
             'Resource missing',
@@ -49,7 +52,10 @@ describe('getResourceData', () => {
     });
 
     it('throws with statusText when response body is empty', async () => {
-        vi.stubGlobal('fetch', mockFetchError(500, 'Internal Server Error', ''));
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(500, 'Internal Server Error', ''),
+        );
 
         await expect(getResourceData('arch-site', '1')).rejects.toThrow(
             'Internal Server Error',
@@ -71,7 +77,10 @@ describe('getRelatedResourceData', () => {
     });
 
     it('throws with response text on error', async () => {
-        vi.stubGlobal('fetch', mockFetchError(403, 'Forbidden', 'Access denied'));
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(403, 'Forbidden', 'Access denied'),
+        );
 
         await expect(getRelatedResourceData('arch-site', '1')).rejects.toThrow(
             'Access denied',
@@ -99,7 +108,10 @@ describe('getPermitRequirementData', () => {
     });
 
     it('throws with response text on error', async () => {
-        vi.stubGlobal('fetch', mockFetchError(404, 'Not Found', 'Permit not found'));
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(404, 'Not Found', 'Permit not found'),
+        );
 
         await expect(getPermitRequirementData('p99')).rejects.toThrow(
             'Permit not found',
@@ -107,7 +119,10 @@ describe('getPermitRequirementData', () => {
     });
 
     it('throws with statusText when response body is empty', async () => {
-        vi.stubGlobal('fetch', mockFetchError(500, 'Internal Server Error', ''));
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(500, 'Internal Server Error', ''),
+        );
 
         await expect(getPermitRequirementData('p1')).rejects.toThrow(
             'Internal Server Error',
@@ -129,7 +144,10 @@ describe('getRequirementSubmissionData', () => {
     });
 
     it('throws with response text on error', async () => {
-        vi.stubGlobal('fetch', mockFetchError(404, 'Not Found', 'Submission not found'));
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(404, 'Not Found', 'Submission not found'),
+        );
 
         await expect(getRequirementSubmissionData('s99')).rejects.toThrow(
             'Submission not found',
@@ -137,7 +155,10 @@ describe('getRequirementSubmissionData', () => {
     });
 
     it('throws with statusText when response body is empty', async () => {
-        vi.stubGlobal('fetch', mockFetchError(500, 'Internal Server Error', ''));
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(500, 'Internal Server Error', ''),
+        );
 
         await expect(getRequirementSubmissionData('s1')).rejects.toThrow(
             'Internal Server Error',
