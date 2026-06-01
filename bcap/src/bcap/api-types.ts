@@ -137,6 +137,19 @@ export interface components {
             limit?: number;
             results?: components['schemas']['DashboardCard'][];
         };
+        /**
+         * @description The {node_value, display_value, details} object node value fields emit when as_representation is True.
+         *
+         *     Mirrors the dict built in arches_querysets TileTree.get_value_with_context;
+         *     keep in sync if that shape changes upstream.
+         */
+        NodeValueEnvelope: {
+            node_value: unknown;
+            readonly display_value: string;
+            readonly details: {
+                [key: string]: unknown;
+            }[];
+        };
         PatchedProcessRequirement: {
             /** Format: uuid */
             resourceinstanceid?: string | null;
@@ -174,15 +187,22 @@ export interface components {
             readonly principaluser: number | null;
         };
         Process_Requirement_Is_Template_Requirement_Aliased_Data: {
-            has_submission_requirement: boolean | null;
-            is_internal_requirement: boolean | null;
+            has_submission_requirement:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
+            is_internal_requirement:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             /**
              * Default Target Processing Time (days)
-             * Format: double
              * @description Enter number
              */
-            default_target_processing_time?: number | null;
-            is_template_requirement: boolean | null;
+            default_target_processing_time?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
+            is_template_requirement:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
         };
         Process_Requirement_Is_Template_Requirement_Tile: {
             /** Format: uuid */
@@ -198,21 +218,18 @@ export interface components {
             provisionaledits?: unknown;
         };
         Process_Requirement_Requirement_Execution_Duration_Aliased_Data: {
-            /**
-             * Format: date-time
-             * @description Enter date
-             */
-            requirement_process_start_date?: string | null;
-            /**
-             * Format: date-time
-             * @description Enter date
-             */
-            requirement_process_due_date?: string | null;
-            /**
-             * Format: date-time
-             * @description Enter date
-             */
-            requirement_process_completion_date?: string | null;
+            /** @description Enter date */
+            requirement_process_start_date?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
+            /** @description Enter date */
+            requirement_process_due_date?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
+            /** @description Enter date */
+            requirement_process_completion_date?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
         };
         Process_Requirement_Requirement_Execution_Duration_Tile: {
             /** Format: uuid */
@@ -229,9 +246,11 @@ export interface components {
         };
         Process_Requirement_Requirement_Identification_Aliased_Data: {
             /** @description Enter text */
-            requirement_name: unknown;
+            requirement_name: components['schemas']['NodeValueEnvelope'] | null;
             /** @description Enter text */
-            requirement_identification: unknown;
+            requirement_identification:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             is_template_requirement?:
                 | components['schemas']['Process_Requirement_Is_Template_Requirement_Tile']
                 | null;
@@ -250,7 +269,9 @@ export interface components {
             provisionaledits?: unknown;
         };
         Process_Requirement_Requirment_Submission_Aliased_Data: {
-            requirment_submission?: unknown;
+            requirment_submission?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
         };
         Process_Requirement_Requirment_Submission_Tile: {
             /** Format: uuid */
@@ -270,33 +291,50 @@ export interface components {
              * Description
              * @description Enter text
              */
-            sub_requirement_description?: unknown;
+            sub_requirement_description?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             /**
              * Assessment Notes
              * @description Enter text
              */
-            sub_requirement_assessment_notes?: unknown;
+            sub_requirement_assessment_notes?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             /** Requirement Satisfied */
-            sub_requirement_satisfied?: boolean | null;
+            sub_requirement_satisfied?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             /**
              * Sort Order
-             * Format: double
              * @description Enter number
              */
-            sub_requirement_sort_order: number | null;
+            sub_requirement_sort_order:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             /** Mandatory */
-            sub_requirement_mandatory?: boolean | null;
-            sub_requirement_reference?: unknown;
+            sub_requirement_mandatory?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
+            sub_requirement_reference?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             /**
              * Requirement
              * @description Enter text
              */
-            sub_requirement_name: unknown;
+            sub_requirement_name:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
         };
         Process_Requirement_Sub_Requirement_Assessment_N1_Aliased_Data: {
-            requirement_status?: boolean | null;
+            requirement_status?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
             /** @description Enter text */
-            assessment_notes?: unknown;
+            assessment_notes?:
+                | components['schemas']['NodeValueEnvelope']
+                | null;
         };
         Process_Requirement_Sub_Requirement_Assessment_N1_Tile: {
             /** Format: uuid */

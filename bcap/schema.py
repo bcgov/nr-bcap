@@ -2,11 +2,39 @@
 
 import logging
 
+from drf_spectacular.extensions import OpenApiSerializerFieldExtension
 from drf_spectacular.openapi import AutoSchema
+from rest_framework import serializers
 
+from arches_querysets.rest_framework.field_mixins import NodeValueMixin
 from arches_querysets.rest_framework.serializers import TileAliasedDataSerializer
 
 logger = logging.getLogger(__name__)
+
+
+class NodeValueEnvelopeSerializer(serializers.Serializer):
+    """The {node_value, display_value, details} object node value fields emit when as_representation is True.
+
+    Mirrors the dict built in arches_querysets TileTree.get_value_with_context;
+    keep in sync if that shape changes upstream (unit test covers this).
+    """
+
+    node_value = serializers.JSONField()
+    display_value = serializers.CharField(read_only=True)
+    details = serializers.ListField(child=serializers.DictField(), read_only=True)
+
+
+class NodeValueFieldExtension(OpenApiSerializerFieldExtension):
+    """Map node value fields to the shared NodeValueEnvelope component."""
+
+    target_class = NodeValueMixin
+    match_subclasses = True
+
+    def map_serializer_field(self, auto_schema, direction):
+        # Pass the class; resolve_serializer force-instances it.
+        return auto_schema.resolve_serializer(
+            NodeValueEnvelopeSerializer, direction
+        ).ref
 
 
 class ArchesTileAutoSchema(AutoSchema):

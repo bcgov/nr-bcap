@@ -284,6 +284,28 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DashboardCard'
+    NodeValueEnvelope:
+      type: object
+      description: |-
+        The {node_value, display_value, details} object node value fields emit when as_representation is True.
+
+        Mirrors the dict built in arches_querysets TileTree.get_value_with_context;
+        keep in sync if that shape changes upstream.
+      properties:
+        node_value: {}
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - details
+      - display_value
+      - node_value
     PatchedProcessRequirement:
       type: object
       properties:
@@ -383,19 +405,22 @@ components:
       type: object
       properties:
         has_submission_requirement:
-          type: boolean
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
         is_internal_requirement:
-          type: boolean
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
         default_target_processing_time:
-          type: number
-          format: double
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Default Target Processing Time (days)
           description: Enter number
         is_template_requirement:
-          type: boolean
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
       required:
       - has_submission_requirement
@@ -433,18 +458,18 @@ components:
       type: object
       properties:
         requirement_process_start_date:
-          type: string
-          format: date-time
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter date
         requirement_process_due_date:
-          type: string
-          format: date-time
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter date
         requirement_process_completion_date:
-          type: string
-          format: date-time
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter date
     Process_Requirement_Requirement_Execution_Duration_Tile:
@@ -479,9 +504,13 @@ components:
       type: object
       properties:
         requirement_name:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter text
         requirement_identification:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter text
         is_template_requirement:
@@ -523,6 +552,8 @@ components:
       type: object
       properties:
         requirment_submission:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
     Process_Requirement_Requirment_Submission_Tile:
       type: object
@@ -556,30 +587,40 @@ components:
       type: object
       properties:
         sub_requirement_description:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Description
           description: Enter text
         sub_requirement_assessment_notes:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Assessment Notes
           description: Enter text
         sub_requirement_satisfied:
-          type: boolean
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Requirement Satisfied
         sub_requirement_sort_order:
-          type: number
-          format: double
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Sort Order
           description: Enter number
         sub_requirement_mandatory:
-          type: boolean
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Mandatory
         sub_requirement_reference:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
         sub_requirement_name:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Requirement
           description: Enter text
@@ -590,9 +631,12 @@ components:
       type: object
       properties:
         requirement_status:
-          type: boolean
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
         assessment_notes:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter text
     Process_Requirement_Sub_Requirement_Assessment_N1_Tile:
