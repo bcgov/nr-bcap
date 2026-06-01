@@ -36,10 +36,15 @@ class ResourceBuilder:
     Holds the shared save state (lifecycle state, save kwargs, graphid cache) so
     one builder can create several resources."""
 
-    def __init__(self):
+    def __init__(self, skip_refresh=True):
         self.state = ResourceInstanceLifecycleState.objects.first()
         self.save_kwargs = {"force_admin": True, "partial": False, "index": False}
         self._graph_ids = {}
+        # save() re-runs the full get_tiles() query afterwards to rehydrate
+        # aliased_data -- ~70% of the save cost. Builders only need the saved pk
+        # (and persisted rows), so this is skipped by default. Pass
+        # skip_refresh=False if a caller needs the refreshed tree back.
+        self.skip_refresh = skip_refresh
 
     @staticmethod
     def localized(value):
@@ -110,6 +115,8 @@ class ResourceBuilder:
             legacyid=f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}",
         )
         resource.aliased_data = AliasedData()
+        if self.skip_refresh:
+            resource.refresh_from_db = lambda *args, **kwargs: None
         return resource
 
     def make_contributor(self, contributor_type, first_name, name):
@@ -164,6 +171,7 @@ class ResourceBuilder:
                 {
                     "sub_requirement_name": self.localized(sub["name"]),
                     "sub_requirement_description": self.localized(sub["description"]),
+                    "sub_requirement_mandatory": sub.get("mandatory", False),
                     "sub_requirement_satisfied": sub["sub_satisfied"],
                     "sub_requirement_sort_order": sub["sort_order"],
                 },
