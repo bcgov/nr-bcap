@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import arches from 'arches';
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
 import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
+import Checkbox from 'primevue/checkbox';
 
 interface DateTile {
     tileid: string | null;
@@ -114,7 +115,12 @@ const saveChanges = async () => {
 <template>
     <div class="checklist-container">
         <div class="title-row">
-            <h2 class="page-title">Process Sub-Requirements</h2>
+            <h2 class="page-title">
+                {{
+                    requirementData?.aliased_data?.requirement_identification
+                        ?.aliased_data?.requirement_name?.display_value
+                }}
+            </h2>
 
             <div class="date-metadata">
                 <span
@@ -152,6 +158,9 @@ const saveChanges = async () => {
             v-else
             class="checklist-items"
         >
+            <div class="subtitle-row">
+                <h3 class="page-subtitle">Requirement Tasks</h3>
+            </div>
             <div
                 v-for="req in subRequirements"
                 :key="req.tileid ?? ''"
@@ -209,11 +218,38 @@ const saveChanges = async () => {
                 <p>No sub-requirements found for this process.</p>
             </div>
         </div>
+
+        <div class="subtitle-row">
+            <h3 class="page-subtitle">Requirement Status & Summary</h3>
+        </div>
+
+        <div class="req-header">
+            <input
+                id="requirement_satisfied"
+                type="checkbox"
+                class="req-checkbox"
+            />
+            <div class="req-titles">
+                <label
+                    for="requirement_satisfied"
+                    class="req-name"
+                >
+                    Requirement Review Completed
+                </label>
+            </div>
+        </div>
+
+        <div class="req-body">
+            <textarea
+                id="requirement-notes"
+                class="req-notes-input"
+                rows="8"
+                placeholder="Add assessment summary and notes..."
+                @change="saveChanges"
+            ></textarea>
+        </div>
+        <div style="margin-bottom: 10rem"></div>
     </div>
-    <br />
-    <br />
-    <br />
-    <br />
 </template>
 
 <style scoped>
@@ -234,10 +270,25 @@ const saveChanges = async () => {
     align-items: flex-end;
 }
 
+.subtitle-row {
+    border-bottom: 1px solid #333;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
 .page-title {
     color: #003366;
     margin: 0;
     font-size: 2.5rem;
+    font-weight: 700;
+}
+.page-subtitle {
+    color: #003366;
+    margin: 0;
+    font-size: 1.75rem;
     font-weight: 700;
 }
 
@@ -290,8 +341,8 @@ const saveChanges = async () => {
 }
 
 .req-checkbox {
-    width: 28px;
-    height: 28px;
+    width: 18px;
+    height: 18px;
     margin-top: 4px;
     cursor: pointer;
     accent-color: #003366;
