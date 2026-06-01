@@ -536,7 +536,7 @@ const saveChanges = async () => {
 
 .req-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1.25rem;
     margin-bottom: 1.25rem;
 }
@@ -547,6 +547,7 @@ const saveChanges = async () => {
     flex-shrink: 0;
     cursor: pointer;
     accent-color: #003366;
+    margin-top: 5px;
 }
 
 .req-titles {
