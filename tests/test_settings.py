@@ -61,6 +61,12 @@ CACHES = {
 
 LOGGING["loggers"]["arches"]["level"] = "ERROR"
 
+# Silence the per-file DEBUG chatter from the storage filename generator.
+LOGGING["loggers"]["bcap.util.storage_filename_generator"] = {
+    "level": "INFO",
+    "propagate": True,
+}
+
 ELASTICSEARCH_PREFIX = "test"
 
 TEST_RUNNER = "tests.runner.BcapTestRunner"

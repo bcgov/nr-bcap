@@ -10,7 +10,7 @@ from arches.app.search.mappings import RESOURCES_INDEX, TERMS_INDEX
 from arches.app.search.search_engine_factory import SearchEngineFactory
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 def _bulk_index(resources):
@@ -65,24 +65,53 @@ class DashboardSeedCommand(BaseCommand):
             action="store_true",
             help="Skip Elasticsearch indexing (use when ES is not running).",
         )
+        parser.add_argument(
+            "--count",
+            type=int,
+            default=1,
+            help="Number of permit cards to create (default: 1).",
+        )
 
     def handle(self, *args, **options):
+        count = options["count"]
+        if count < 1:
+            raise CommandError("--count must be at least 1.")
+
+        permits = []
+        resources = []
+        assignees = []
         # No outer transaction: arches-querysets saves open a durable atomic
         # block, which cannot be nested inside another atomic.
-        data = self.builder_class().build()
+        for i in range(count):
+            builder = self.builder_class()
+            # Seed the demo's unassigned permit only once; the extra cards are
+            # ordinary assigned permits.
+            if i > 0:
+                builder._SEED_UNASSIGNED_PERMIT = False
+            data = builder.build()
 
-        permits = [("Permit Application", data.permit)]
-        if data.unassigned_permit is not None:
-            permits.append(("Unassigned Permit Application", data.unassigned_permit))
+            permits.append(("Permit Application", data.permit))
+            if data.unassigned_permit is not None:
+                permits.append(
+                    ("Unassigned Permit Application", data.unassigned_permit)
+                )
+            resources.extend(
+                [
+                    data.permit,
+                    *(
+                        [data.unassigned_permit]
+                        if data.unassigned_permit is not None
+                        else []
+                    ),
+                    data.hca_permit,
+                    data.project_officer,
+                    *data.process_requirements,
+                    *data.assignees,
+                    *data.holders,
+                ]
+            )
+            assignees.extend(data.assignees)
 
-        resources = [
-            *(permit for _, permit in permits),
-            data.hca_permit,
-            data.project_officer,
-            *data.process_requirements,
-            *data.assignees,
-            *data.holders,
-        ]
         if not options["no_index"]:
             _bulk_index(resources)
 
@@ -93,7 +122,7 @@ class DashboardSeedCommand(BaseCommand):
         # The dashboard's contributor_id filter matches a ministry assignee, so
         # surface the assignee ids (with names) to filter by.
         self.stdout.write("Contributor ids for contributor_id filtering:")
-        for assignee in data.assignees:
+        for assignee in assignees:
             name = Resource.objects.get(pk=assignee.pk).displayname()
             self.stdout.write(f"  {assignee.pk}  {name}")
 

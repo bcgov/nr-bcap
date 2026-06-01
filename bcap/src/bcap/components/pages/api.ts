@@ -65,3 +65,27 @@ export const getRequirementSubmissionData = async (
 
     return await response.json();
 };
+
+export const getInternalDashboardData = async () => {
+    try {
+        // Will need to update to all
+        const apiUrl = '/bcap/api/dashboard?limit=100&page=1&status=UNASSIGNED';
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Raw API response:', data);
+
+        if (data && 'results' in data && Array.isArray(data.results)) {
+            return data.results;
+        }
+
+        return [];
+    } catch (error) {
+        console.error('Error fetching projects from backend:', error);
+        return [];
+    }
+};
