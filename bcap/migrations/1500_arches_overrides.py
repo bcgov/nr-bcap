@@ -77,9 +77,7 @@ def update_basemap(apps, schema_editor):
     widget = Widget.objects.filter(name="map-widget").first()
     widget.defaultconfig["basemap"] = "British Columbia Roads"
     widget.save()
-    report_template = ReportTemplate.objects.filter(
-        componentname="map-report"
-    ).first()
+    report_template = ReportTemplate.objects.filter(componentname="map-report").first()
     report_template.defaultconfig["basemap"] = "British Columbia Roads"
     report_template.save()
 
