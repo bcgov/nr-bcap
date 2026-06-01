@@ -547,7 +547,8 @@ const saveChanges = async () => {
     flex-shrink: 0;
     cursor: pointer;
     accent-color: #003366;
-    margin-top: 5px;
+    /* center the 18px box on the first line of the 1.5rem/1.2 label REMOVE THIS LATER*/
+    margin-top: calc((1.5rem * 1.2 - 18px) / 2);
 }
 
 .req-titles {
