@@ -1,0 +1,10 @@
+{
+    "pluginid": "70000000-0000-0000-0000-000000000001",
+    "name": { "en": "External Permit Submissions" },
+    "icon": "fa fa-play-circle",
+    "component": "views/components/plugins/external-permit-workflows",
+    "componentname": "external-permit-workflows",
+    "config": { "show": true, "workflows": [] },
+    "slug": "external-permit-workflows",
+    "sortorder": 0
+}

@@ -31,25 +31,9 @@ class Migration(migrations.Migration):
         delete from functions where functionid = '60000000-0000-0000-0000-000000002001';
     """
 
-    widget_sql = """
-    INSERT INTO widgets (widgetid, name, component, defaultconfig, helptext, datatype) 
-    VALUES ('0346bc9c-d235-4313-adc8-d0e210b2ef25', 
-        'checkbox-boolean-widget', 
-        'views/components/widgets/checkbox-boolean-widget', 
-        '{"defaultValue": false}', null, 'boolean');
-    """
-
-    reverse_widget_sql = """
-        delete from widgets where widgetid = '0346bc9c-d235-4313-adc8-d0e210b2ef25';
-    """
-
     operations = [
         migrations.RunSQL(
             fn_sql,
             reverse_fn_sql,
-        ),
-        migrations.RunSQL(
-            widget_sql,
-            reverse_widget_sql,
         ),
     ]

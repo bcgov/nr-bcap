@@ -1,0 +1,10 @@
+{
+    "pluginid": "70000000-0000-0000-0000-000000000002",
+    "name": { "en": "Internal Permit Dashboard" },
+    "icon": "fa fa-share-from-square",
+    "component": "views/components/plugins/internal-permit-dashboard",
+    "componentname": "internal-permit-dashboard",
+    "config": { "show": true, "workflows": [] },
+    "slug": "internal-permit-dashboard",
+    "sortorder": 1
+}

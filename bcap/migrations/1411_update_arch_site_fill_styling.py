@@ -24,7 +24,7 @@ def remove_pattern_markers(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [("bcap", "1291_add_internal_plugin")]
+    dependencies = [("bcap", "855_add_qgis_views")]
 
     forward_file = os.path.join(
         "sql", "v100", "v2026.05.11__get_map_attribute_data.sql"
