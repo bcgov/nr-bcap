@@ -1,3 +1,4 @@
+import arches from 'arches';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     SiteVisitResponse,
@@ -14,7 +15,7 @@ export const getResourceData = async (
     ArchaeologySiteSchema | SiteVisitSchema | HriaDiscontinuedDataSchema
 > => {
     const response = await fetch(
-        `/bcap/api/resource/${graph_slug}/${resource_id}`,
+        arches.urls.api_resource(graph_slug, resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -28,7 +29,7 @@ export const getRelatedResourceData = async (
     resource_id: string,
 ): Promise<SiteVisitSchema[] | HriaDiscontinuedDataSchema[]> => {
     const response = await fetch(
-        `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
+        arches.urls.api_site_related_resources(graph_slug, resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -42,7 +43,7 @@ export const getPermitRequirementData = async (
     resource_id: string,
 ): Promise<PermitRequirementSchema> => {
     const response = await fetch(
-        `/bcap/api/permit_requirements/${resource_id}/`,
+        arches.urls.api_process_requirements(resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -56,7 +57,7 @@ export const getRequirementSubmissionData = async (
     resource_id: string,
 ): Promise<RequirementSubmissionSchema> => {
     const response = await fetch(
-        `/bcap/api/requirement_submissions/${resource_id}/`,
+        arches.urls.api_requirement_submission(resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -66,10 +67,14 @@ export const getRequirementSubmissionData = async (
     return await response.json();
 };
 
-export const getInternalDashboardData = async () => {
+export const getInternalDashboardData = async (
+    showUnassigned: boolean = false,
+    page: number = 1,
+    limit: number = 1,
+) => {
     try {
         // Will need to update to all
-        const apiUrl = '/bcap/api/dashboard?limit=100&page=1&status=UNASSIGNED';
+        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${showUnassigned ? '&status=UNASSIGNED' : ''}`;
         const response = await fetch(apiUrl);
 
         if (!response.ok) {

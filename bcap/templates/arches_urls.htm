@@ -1,0 +1,19 @@
+{% extends "arches_urls.htm" %}
+
+{% load static %}
+{% load l10n %}
+{% load i18n %}
+
+{% block arches_urls %}
+{{ block.super }}
+<div class="arches-urls"
+     api_user_profile="{% url 'user_profile' %}"
+     dashboard="{% url 'dashboard' %}"
+     api_requirement_submission='(resource_id) => {return "{% url "requirement_submission" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     api_process_requirements='(resource_id) => {return "{% url "process_requirement" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     api_resource='(graph_slug, resource_id) => {return "{% url "api-resource" "----p1" "00000000-0000-0000-0000-000000000000"%}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     >
+</div>
+
+{% endblock arches_urls %}

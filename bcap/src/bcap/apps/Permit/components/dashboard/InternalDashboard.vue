@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
@@ -8,6 +8,7 @@ import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
 import type { components } from '@/bcap/api-types';
 import { getInternalDashboardData } from '@/bcap/components/pages/api.ts';
+import arches from 'arches';
 
 const currentRoute = useRoute();
 
@@ -100,15 +101,26 @@ const lastUpdateDate = ref(new Date());
 const userName = 'John Doe';
 const currentSort = ref('default');
 const sortOrder = ref<'asc' | 'desc'>('asc');
+const page = ref(1);
+const pageLimit = ref(100);
+const UNASSIGNED = 'unassigned';
 
 onMounted(() => {
     loadData();
 });
 
+watch(currentFilter, (value, oldValue) => {
+    if (value !== oldValue) loadData();
+});
+
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const data = await getInternalDashboardData();
+        const data = await getInternalDashboardData(
+            currentFilter.value === UNASSIGNED,
+            page.value,
+            pageLimit.value,
+        );
         const cards = data as GeneratedDashboardCard[];
         rawProjects.value = cards.map((item) => mapToDashboardCard(item));
         lastUpdateDate.value = new Date();
@@ -128,7 +140,7 @@ const displayedProjects = computed(() => {
 
     if (currentFilter.value === 'my_projects') {
         filtered = filtered.filter((item) => item.footerName === userName);
-    } else if (currentFilter.value === 'unassigned') {
+    } else if (currentFilter.value === UNASSIGNED) {
         filtered = filtered.filter((item) => item.footerName === 'Unassigned');
     }
 
@@ -218,7 +230,10 @@ const formatBodyLine = (text?: string) => {
 };
 
 const navigateToReport = (item: ProjectData) => {
-    window.location.href = `/bcap/plugins/internal-permit-dashboard/checklist?id=${item.reqId}`;
+    window.open(
+        `${arches.urls.plugin('internal-permit-dashboard')}/checklist?id=${item.reqId}`,
+        item.reqId,
+    );
 };
 </script>
 
