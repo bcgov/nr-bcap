@@ -429,7 +429,11 @@ describe('sorting', () => {
     it('sorts starred cards first when sorting by priority', async () => {
         getInternalDashboardData.mockResolvedValue([
             makeCard({ id: 'lo', project_name: 'Low', priority_level: 'Low' }),
-            makeCard({ id: 'hi', project_name: 'High', priority_level: 'High' }),
+            makeCard({
+                id: 'hi',
+                project_name: 'High',
+                priority_level: 'High',
+            }),
         ]);
         const wrapper = mountDashboard();
         await flushPromises();
