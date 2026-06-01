@@ -52,10 +52,10 @@ class Migration(migrations.Migration):
         skos_dir = os.path.join(settings.APP_ROOT, "pkg", "reference_data", "skos")
         files = os.listdir(skos_dir)
         print(f"Files: {list(files)}")
-        skos = SKOSReader()
         for file in files:
             if file.endswith(".xml"):
                 print(f"Loading {os.path.join(skos_dir, file)}")
+                skos = SKOSReader()
                 rdf = skos.read_file(os.path.join(skos_dir, file))
                 concepts = skos.save_controlled_lists_from_skos(rdf)
 
