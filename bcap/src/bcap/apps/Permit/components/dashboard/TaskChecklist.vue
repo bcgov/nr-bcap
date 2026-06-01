@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import arches from 'arches';
 
 interface SubRequirement {
     id: string;
@@ -50,7 +51,7 @@ const loadData = async () => {
 
     try {
         const response = await fetch(
-            `/bcap/api/process_requirements/${idFromUrl}`,
+            arches.urls.api_process_requirements(idFromUrl),
         );
         if (!response.ok)
             throw new Error(`API returned status: ${response.status}`);
@@ -140,7 +141,7 @@ const handleCheckboxChange = () => {
 const saveChanges = async () => {
     try {
         const response = await fetch(
-            `/bcap/api/process_requirements/${idFromUrl}`,
+            arches.urls.api_process_requirements(idFromUrl),
             {
                 method: 'POST',
                 headers: {
@@ -171,8 +172,8 @@ const saveChanges = async () => {
             <h2 class="page-title">Process Sub-Requirements</h2>
 
             <div
-                class="date-metadata"
                 v-if="dateTile"
+                class="date-metadata"
             >
                 <span
                     class="date-pill"
@@ -216,11 +217,11 @@ const saveChanges = async () => {
             >
                 <div class="req-header">
                     <input
-                        type="checkbox"
                         :id="'check-' + req.id"
                         v-model="req.isSatisfied"
-                        @change="handleCheckboxChange"
+                        type="checkbox"
                         class="req-checkbox"
+                        @change="handleCheckboxChange"
                     />
                     <div class="req-titles">
                         <label
@@ -237,10 +238,10 @@ const saveChanges = async () => {
                     <textarea
                         :id="'notes-' + req.id"
                         v-model="req.notes"
-                        @change="saveChanges"
                         class="req-notes-input"
                         rows="2"
                         placeholder="Add assessment notes..."
+                        @change="saveChanges"
                     ></textarea>
                 </div>
             </div>

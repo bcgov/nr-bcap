@@ -39,7 +39,7 @@ export const getRelatedResourceData = async (
     return parsed.results;
 };
 
-export const getPermitRequirementData = async (
+export const getProcessRequirementData = async (
     resource_id: string,
 ): Promise<PermitRequirementSchema> => {
     const response = await fetch(

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
     getResourceData,
     getRelatedResourceData,
-    getPermitRequirementData,
+    getProcessRequirementData,
     getRequirementSubmissionData,
     getInternalDashboardData,
 } from './api';
@@ -96,12 +96,12 @@ describe('getRelatedResourceData', () => {
     });
 });
 
-describe('getPermitRequirementData', () => {
+describe('getProcessRequirementData', () => {
     it('returns parsed JSON on success', async () => {
         const data = { permit_id: 'p1', requirements: [] };
         vi.stubGlobal('fetch', mockFetchOk(data));
 
-        const result = await getPermitRequirementData('p1');
+        const result = await getProcessRequirementData('p1');
 
         expect(fetch).toHaveBeenCalledWith('/bcap/api/permit_requirements/p1/');
         expect(result).toEqual(data);
@@ -113,7 +113,7 @@ describe('getPermitRequirementData', () => {
             mockFetchError(404, 'Not Found', 'Permit not found'),
         );
 
-        await expect(getPermitRequirementData('p99')).rejects.toThrow(
+        await expect(getProcessRequirementData('p99')).rejects.toThrow(
             'Permit not found',
         );
     });
@@ -124,7 +124,7 @@ describe('getPermitRequirementData', () => {
             mockFetchError(500, 'Internal Server Error', ''),
         );
 
-        await expect(getPermitRequirementData('p1')).rejects.toThrow(
+        await expect(getProcessRequirementData('p1')).rejects.toThrow(
             'Internal Server Error',
         );
     });
