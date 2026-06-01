@@ -43,7 +43,7 @@ export const getProcessRequirementData = async (
     resource_id: string,
 ): Promise<PermitRequirementSchema> => {
     const response = await fetch(
-        arches.urls.api_resource('process_requirement', resource_id),
+        arches.urls.api_process_requirements(resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -70,7 +70,7 @@ export const getRequirementSubmissionData = async (
 export const getInternalDashboardData = async (
     showUnassigned: boolean = false,
     page: number = 1,
-    limit: number = 1,
+    limit: number = 100,
 ) => {
     try {
         // Will need to update to all

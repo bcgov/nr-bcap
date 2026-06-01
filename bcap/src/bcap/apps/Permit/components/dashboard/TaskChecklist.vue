@@ -544,7 +544,7 @@ const saveChanges = async () => {
 .req-checkbox {
     width: 18px;
     height: 18px;
-    margin-top: 4px;
+    flex-shrink: 0;
     cursor: pointer;
     accent-color: #003366;
 }
@@ -570,7 +570,8 @@ const saveChanges = async () => {
 }
 
 .req-body {
-    padding-left: 3rem;
+    /* line the notes box up with the label text (checkbox width + header gap) */
+    padding-left: calc(18px + 1.25rem);
 }
 
 .req-notes-input {
