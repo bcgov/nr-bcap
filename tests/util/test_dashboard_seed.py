@@ -3,7 +3,9 @@ from django.test import SimpleTestCase, TestCase
 from arches.app.models.models import GraphModel, Node, ResourceXResource
 
 from arches_controlled_lists.models import ListItem
+from arches_querysets.models import ResourceTileTree
 
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
 
 from tests.controlled_list_fixtures import SeedControlledListsMixin
@@ -73,6 +75,17 @@ class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
             self._slug(data.process_requirements[0]), "process_requirement"
         )
         self.assertEqual(self._slug(data.permit), "permit_application")
+        for requirement in data.process_requirements:
+            self.assertFalse(self._is_template(requirement))
+
+    def _is_template(self, requirement):
+        tree = ResourceTileTree.get_tiles(
+            GraphSlugs.PROCESS_REQUIREMENT, resource_ids=[requirement.pk]
+        ).get()
+        identification = tree.aliased_data.requirement_identification.aliased_data
+        return (
+            identification.is_template_requirement.aliased_data.is_template_requirement
+        )
 
     def test_links_permit_to_its_related_resources(self):
         data = DashboardDemoBuilder().build()

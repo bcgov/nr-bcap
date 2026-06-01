@@ -7,6 +7,7 @@ primitives to build just the resources a case needs."""
 
 import uuid
 import random
+from copy import deepcopy
 from dataclasses import dataclass
 
 from django.utils import timezone
@@ -16,9 +17,13 @@ from arches.app.models.models import (
     Node,
     ResourceInstanceLifecycleState,
 )
+from arches.app.models.resource import Resource
+from arches.app.models.tile import Tile
 
 from arches_controlled_lists.models import ListItem
 from arches_querysets.models import AliasedData, ResourceTileTree
+
+from bcap.util.bcap_aliases import GraphSlugs
 
 # Marker written to legacyid of every resource the seeders create, so the
 # clear command can find and delete only seeded data.
@@ -136,6 +141,11 @@ class ResourceBuilder:
         )
         self.append_blank_tile_for_group(
             requirement,
+            "is_template_requirement",
+            {"is_template_requirement": spec.get("is_template", False)},
+        )
+        self.append_blank_tile_for_group(
+            requirement,
             "requirement_execution_duration",
             {"requirement_process_due_date": spec["due"]},
         )
@@ -158,5 +168,52 @@ class ResourceBuilder:
                     "sub_requirement_sort_order": sub["sort_order"],
                 },
             )
+        requirement.save(**self.save_kwargs)
+        return requirement
+
+    def _deep_copy_resource(self, resource_id):
+        """Duplicate a resource and all its tiles, like arches' Resource.copy()
+        but saved with index=False to keep off the (test-broken) search path."""
+        source = Resource.objects.get(pk=resource_id)
+        source.load_tiles()
+        clone = Resource(
+            graph=source.graph,
+            resource_instance_lifecycle_state=self.state,
+            legacyid=f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}",
+        )
+        id_map = {}
+        for tile in source.tiles:
+            new_tile = Tile(
+                data=deepcopy(tile.data),
+                nodegroup=tile.nodegroup,
+                parenttile=tile.parenttile,
+                sortorder=tile.sortorder,
+                resourceinstance=clone,
+            )
+            clone.tiles.append(new_tile)
+            id_map[tile.pk] = new_tile
+        for tile in clone.tiles:
+            if tile.parenttile:
+                tile.parenttile = id_map[tile.parenttile_id]
+
+        clone.tiles.sort(key=lambda tile: tile.parenttile is not None)
+        clone.save(index=False)
+        return clone
+
+    def clone_requirement_as_working_document(self, template_resource_id, due=None):
+        """Clone a template requirement into a working document: clear the
+        template flag and, if given, set a fresh due date."""
+        clone = self._deep_copy_resource(template_resource_id)
+        requirement = ResourceTileTree.get_tiles(
+            GraphSlugs.PROCESS_REQUIREMENT, resource_ids=[clone.pk]
+        ).get()
+        # is_template_requirement is a child nodegroup of requirement_identification.
+        identification = requirement.aliased_data.requirement_identification
+        identification.aliased_data.is_template_requirement.aliased_data.is_template_requirement = (
+            False
+        )
+        if due is not None:
+            duration = requirement.aliased_data.requirement_execution_duration
+            duration.aliased_data.requirement_process_due_date = due
         requirement.save(**self.save_kwargs)
         return requirement
