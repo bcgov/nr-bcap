@@ -26,6 +26,7 @@ class DashboardDemoData:
     process_requirements: list[ResourceTileTree]
     project_officer: ResourceTileTree
     unassigned_permit: ResourceTileTree | None = None
+    requirement_templates: list[ResourceTileTree] | None = None
 
 
 @dataclass
@@ -86,9 +87,6 @@ class DashboardDemoBuilder(ResourceBuilder):
         """A due date spread around now, so some cards read as overdue and
         some as upcoming."""
         return self.faker.date_between(start_date="-30d", end_date="+180d").isoformat()
-
-    def _with_random_due(self, spec):
-        return {**spec, "due": self._random_due_date()}
 
     def _random_permit_number(self):
         return f"HCA-{self.faker.random_int(min=1000, max=9999)}"
@@ -194,8 +192,29 @@ class DashboardDemoBuilder(ResourceBuilder):
         },
     ]
 
-    def build(self):
-        """Create the demo graph and return the resources it produced."""
+    def make_requirement_templates(self):
+        """Create one is_template_requirement=True requirement per spec -- the
+        template set every permit's requirements are cloned from. Once per run."""
+        names = self.faker.random_elements(
+            elements=self._REQUIREMENT_NAME_POOL,
+            length=len(self._REQUIREMENTS),
+            unique=True,
+        )
+        return [
+            self.make_process_requirement({**spec, "name": name, "is_template": True})
+            for spec, name in zip(self._REQUIREMENTS, names)
+        ]
+
+    def _clone_working_document(self, template):
+        """A working-document clone of ``template`` with a fresh due date."""
+        return self.clone_requirement_as_working_document(
+            template.pk, due=self._random_due_date()
+        )
+
+    def build(self, requirement_templates=None):
+        """Create the demo graph and return the resources it produced. The seed
+        command passes the run's shared ``requirement_templates``; tests omit
+        them and get a per-build set."""
         contributor_type = self.reference_value("contributor", "contributor_type")
 
         # One ministry assignee per requirement (they are zipped together below).
@@ -227,16 +246,12 @@ class DashboardDemoBuilder(ResourceBuilder):
         )
         hca_permit.save(**self.save_kwargs)
 
-        # Distinct sensible names per permit, in requirement order.
-        names = self.faker.random_elements(
-            elements=self._REQUIREMENT_NAME_POOL,
-            length=len(self._REQUIREMENTS),
-            unique=True,
-        )
-        requirements = [
-            self.make_process_requirement({**self._with_random_due(spec), "name": name})
-            for spec, name in zip(self._REQUIREMENTS, names)
-        ]
+        if requirement_templates is None:
+            requirement_templates = self.make_requirement_templates()
+
+        # Each requirement on the permit is a working-document clone of one
+        # template (one per template/assignee, ordered).
+        requirements = [self._clone_working_document(t) for t in requirement_templates]
         permit = self._make_permit(
             PermitSpec(
                 project_name=self._random_project_name(),
@@ -244,9 +259,9 @@ class DashboardDemoBuilder(ResourceBuilder):
                 hca_permit=hca_permit,
                 project_officer=project_officer,
                 children=[
-                    (requirement, spec["process_requirement_order"], assignee)
-                    for spec, requirement, assignee in zip(
-                        self._REQUIREMENTS, requirements, assignees
+                    (requirement, order, assignee)
+                    for order, (requirement, assignee) in enumerate(
+                        zip(requirements, assignees), start=1
                     )
                 ],
                 priority="High",
@@ -257,18 +272,14 @@ class DashboardDemoBuilder(ResourceBuilder):
         if self._SEED_UNASSIGNED_PERMIT:
             # A second permit whose outstanding requirement has no
             # ministry_assignee, so the UNASSIGNED status filter has something
-            # to surface.
-            unassigned_requirement = self.make_process_requirement(
-                {
-                    "id": "REQ-2026-UNASSIGNED",
-                    "name": self.faker.random_element(self._REQUIREMENT_NAME_POOL),
-                    "due": self._random_due_date(),
-                    "notes": "check out this feature",
-                    "satisfied": False,
-                    "process_requirement_order": 1,
-                    "sub_requirements": [],
-                }
+            # to surface. Clone an unsatisfied template -- a satisfied one would
+            # leave the permit with no active requirement and no card at all.
+            outstanding = next(
+                template
+                for template, spec in zip(requirement_templates, self._REQUIREMENTS)
+                if not spec["satisfied"]
             )
+            unassigned_requirement = self._clone_working_document(outstanding)
             unassigned_permit = self._make_permit(
                 PermitSpec(
                     project_name=self._random_project_name(),
@@ -288,6 +299,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             holders=holders,
             process_requirements=requirements,
             project_officer=project_officer,
+            requirement_templates=requirement_templates,
         )
 
     def _make_permit(self, spec: PermitSpec):
