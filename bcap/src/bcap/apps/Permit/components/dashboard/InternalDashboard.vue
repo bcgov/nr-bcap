@@ -36,7 +36,6 @@ interface ProjectData {
 
 // Extract the new types directly from the generated backend schema
 type GeneratedDashboardCard = components['schemas']['DashboardCard'];
-// type GeneratedDashboardPage = components['schemas']['DashboardPage'];
 
 // Maps backend JSON directly to the Dashboard Card
 const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
