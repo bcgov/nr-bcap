@@ -7,6 +7,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
 import type { components } from '@/bcap/api-types';
+import { getInternalDashboardData } from '@/bcap/components/pages/api.ts';
 
 const currentRoute = useRoute();
 
@@ -34,7 +35,7 @@ interface ProjectData {
 
 // Extract the new types directly from the generated backend schema
 type GeneratedDashboardCard = components['schemas']['DashboardCard'];
-type GeneratedDashboardPage = components['schemas']['DashboardPage'];
+// type GeneratedDashboardPage = components['schemas']['DashboardPage'];
 
 // Maps backend JSON directly to the Dashboard Card
 const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
@@ -91,31 +92,6 @@ const sortOptions = [
     { label: 'Sector', value: 'bodySubtitle2' },
 ];
 
-// Backend API call using the generated schema format
-const fetchProjects = async () => {
-    try {
-        // Will need to update to all
-        const apiUrl = '/bcap/api/dashboard?limit=100&page=1';
-        const response = await fetch(apiUrl);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = (await response.json()) as GeneratedDashboardPage;
-        console.log('Raw API response:', data);
-
-        if (data && 'results' in data && Array.isArray(data.results)) {
-            return data.results as GeneratedDashboardCard[];
-        }
-
-        return [];
-    } catch (error) {
-        console.error('Error fetching projects from backend:', error);
-        return [];
-    }
-};
-
 const rawProjects = ref<ProjectData[]>([]);
 const isLoading = ref(true);
 const currentFilter = ref('my_projects');
@@ -132,8 +108,9 @@ onMounted(() => {
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const data = await fetchProjects();
-        rawProjects.value = data.map((item) => mapToDashboardCard(item));
+        const data = await getInternalDashboardData();
+        const cards = data as GeneratedDashboardCard[];
+        rawProjects.value = cards.map((item) => mapToDashboardCard(item));
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
