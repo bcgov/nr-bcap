@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("bcap", "1032_update_map_filter_config"),
+        ("bcap", "0003_add_test_users"),
     ]
 
     operations = [
