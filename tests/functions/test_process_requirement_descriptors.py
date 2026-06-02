@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+from django.test import TestCase
+
 from bcap.functions.process_requirement_descriptors import ProcessRequirementDescriptors
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as A
 
@@ -41,7 +43,7 @@ def _reset_class_state():
 # ── Tests: _format_value (pure static method, no mocking needed) ──────────────
 
 
-class TestFormatValue:
+class TestFormatValue(TestCase):
     def _call(self, name, value, show_name, first_only=False):
         config = {"show_name": show_name, "first_only": first_only}
         return ProcessRequirementDescriptors._format_value(name, value, config)
@@ -77,8 +79,11 @@ class TestFormatValue:
 # ── Tests: _get_value_from_node ───────────────────────────────────────────────
 
 
-class TestGetValueFromNode:
-    def setup_method(self):
+class TestGetValueFromNode(TestCase):
+    def setUp(self):
+        _reset_class_state()
+
+    def tearDown(self):
         _reset_class_state()
 
     def test_returns_none_when_alias_not_registered(self):
@@ -149,11 +154,14 @@ class TestGetValueFromNode:
 # ── Tests: get_primary_descriptor_from_nodes ──────────────────────────────────
 
 
-class TestGetPrimaryDescriptorFromNodes:
-    def setup_method(self):
+class TestGetPrimaryDescriptorFromNodes(TestCase):
+    def setUp(self):
         _reset_class_state()
         ProcessRequirementDescriptors._initialized = True  # skip initialize()
         self.fn = ProcessRequirementDescriptors()
+
+    def tearDown(self):
+        _reset_class_state()
 
     def test_name_config_delegates_to_get_process_requirement_name(self):
         resource = MagicMock()
@@ -251,15 +259,18 @@ class TestGetPrimaryDescriptorFromNodes:
 # ── Tests: _get_process_requirement_name ──────────────────────────────────────
 
 
-class TestGetProcessRequirementName:
+class TestGetProcessRequirementName(TestCase):
     NAME_NODE_ID = "node-name"
     TMPL_NODE_ID = "node-tmpl"
 
-    def setup_method(self):
+    def setUp(self):
         _reset_class_state()
         ProcessRequirementDescriptors._initialized = True
         self._setup_nodes()
         self.fn = ProcessRequirementDescriptors()
+
+    def tearDown(self):
+        _reset_class_state()
 
     def _setup_nodes(self):
         name_node = _make_node(
@@ -348,8 +359,11 @@ class TestGetProcessRequirementName:
 # ── Tests: initialize ─────────────────────────────────────────────────────────
 
 
-class TestInitialize:
-    def setup_method(self):
+class TestInitialize(TestCase):
+    def setUp(self):
+        _reset_class_state()
+
+    def tearDown(self):
         _reset_class_state()
 
     @patch("bcap.functions.process_requirement_descriptors.models")
