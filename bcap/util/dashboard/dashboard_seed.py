@@ -257,10 +257,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             {
                 **spec,
                 "name": name,
-                "sub_requirements": [
-                    {**sub, "name": self._suffixed(sub["name"])}
-                    for sub in spec["sub_requirements"]
-                ],
+                "sub_requirements": [{**sub} for sub in spec["sub_requirements"]],
             }
             for spec, name in zip(self._REQUIREMENTS, names)
         ]
