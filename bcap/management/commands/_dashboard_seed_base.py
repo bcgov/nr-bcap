@@ -44,7 +44,7 @@ def _bulk_index(resources):
 def _resource_url(pk):
     """Resource editor URL, honouring the app's origin and sub-path mount
     (eg http://localhost:82/bcap/resource/<id>)."""
-    origin = (settings.PUBLIC_ORIGIN or "").rstrip("/")
+    origin = (settings.PUBLIC_SERVER_ADDRESS or "").rstrip("/")
     # The app is mounted under /bcap (see VITE_BASE etc.); FORCE_SCRIPT_NAME
     # overrides that when set.
     prefix = (settings.FORCE_SCRIPT_NAME or "/bcap/").strip("/")
@@ -78,41 +78,41 @@ class DashboardSeedCommand(BaseCommand):
             raise CommandError("--count must be at least 1.")
 
         permits = []
-        resources = []
-        assignees = []
-        # No outer transaction: arches-querysets saves open a durable atomic
-        # block, which cannot be nested inside another atomic.
-        for i in range(count):
-            builder = self.builder_class()
-            # Seed the demo's unassigned permit only once; the extra cards are
-            # ordinary assigned permits.
-            if i > 0:
-                builder._SEED_UNASSIGNED_PERMIT = False
-            # Each permit gets its own requirement template set (3 per permit).
-            data = builder.build()
+        # One builder per run so its graph cache and shared resources are reused.
+        builder = self.builder_class()
+        with builder.deferred_descriptors():
+            shared = builder.build_shared()
+            # Shared resources are the same objects on every card; collect once.
+            assignees = shared.assignees
+            resources = [
+                *shared.project_officers,
+                *shared.requirement_templates,
+                *assignees,
+                *(hca.permit for hca in shared.hca_permits),
+                *(holder for hca in shared.hca_permits for holder in hca.holders),
+            ]
+            # No outer transaction: each save opens its own durable atomic block.
+            for i in range(count):
+                # Seed the unassigned permit only on the first card.
+                builder._SEED_UNASSIGNED_PERMIT = i == 0
+                data = builder.build(shared=shared)
 
-            permits.append(("Permit Application", data.permit))
-            if data.unassigned_permit is not None:
-                permits.append(
-                    ("Unassigned Permit Application", data.unassigned_permit)
+                permits.append(("Permit Application", data.permit))
+                if data.unassigned_permit is not None:
+                    permits.append(
+                        ("Unassigned Permit Application", data.unassigned_permit)
+                    )
+                resources.extend(
+                    [
+                        data.permit,
+                        *(
+                            [data.unassigned_permit]
+                            if data.unassigned_permit is not None
+                            else []
+                        ),
+                        *data.process_requirements,
+                    ]
                 )
-            resources.extend(
-                [
-                    data.permit,
-                    *(
-                        [data.unassigned_permit]
-                        if data.unassigned_permit is not None
-                        else []
-                    ),
-                    data.hca_permit,
-                    data.project_officer,
-                    *data.requirement_templates,
-                    *data.process_requirements,
-                    *data.assignees,
-                    *data.holders,
-                ]
-            )
-            assignees.extend(data.assignees)
 
         if not options["no_index"]:
             _bulk_index(resources)

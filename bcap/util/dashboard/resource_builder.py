@@ -7,23 +7,22 @@ primitives to build just the resources a case needs."""
 
 import uuid
 import random
-from copy import deepcopy
-from dataclasses import dataclass
+from contextlib import contextmanager
 
 from django.utils import timezone
 
 from arches.app.models.models import (
-    GraphModel,
     Node,
     ResourceInstanceLifecycleState,
 )
-from arches.app.models.resource import Resource
 from arches.app.models.tile import Tile
 
 from arches_controlled_lists.models import ListItem
-from arches_querysets.models import AliasedData, ResourceTileTree
-
-from bcap.util.bcap_aliases import GraphSlugs
+from arches_querysets.models import (
+    AliasedData,
+    GraphWithPrefetching,
+    ResourceTileTree,
+)
 
 # Marker written to legacyid of every resource the seeders create, so the
 # clear command can find and delete only seeded data.
@@ -39,12 +38,26 @@ class ResourceBuilder:
     def __init__(self, skip_refresh=True):
         self.state = ResourceInstanceLifecycleState.objects.first()
         self.save_kwargs = {"force_admin": True, "partial": False, "index": False}
-        self._graph_ids = {}
+        self._graphs = {}
         # save() re-runs the full get_tiles() query afterwards to rehydrate
         # aliased_data -- ~70% of the save cost. Builders only need the saved pk
         # (and persisted rows), so this is skipped by default. Pass
         # skip_refresh=False if a caller needs the refreshed tree back.
         self.skip_refresh = skip_refresh
+
+    @contextmanager
+    def deferred_descriptors(self):
+        """Skip the per-tile descriptor function; save() recomputes the
+        descriptor once per resource anyway, so displaynames are unchanged."""
+        pre_save = Tile._Tile__preSave
+        post_save = Tile._Tile__postSave
+        Tile._Tile__preSave = lambda *args, **kwargs: None
+        Tile._Tile__postSave = lambda *args, **kwargs: None
+        try:
+            yield
+        finally:
+            Tile._Tile__preSave = pre_save
+            Tile._Tile__postSave = post_save
 
     @staticmethod
     def localized(value):
@@ -97,24 +110,39 @@ class ResourceBuilder:
             setattr(tile.aliased_data, alias, value)
         return tile
 
+    def graph(self, slug):
+        """Cache slug -> a graph with nodes/nodegroups/cards/widgets prefetched.
+
+        append_tile() and save() both read ``resource.graph.node_set`` (and the
+        graph publication); on an unsealed resource that re-queries the graph and
+        all its metadata every call -- ~40 of the ~110 queries per save. Sealing
+        one prefetched graph onto every resource of a slug (the same object
+        get_tiles() attaches) lets all of them share that single load."""
+        if slug not in self._graphs:
+            self._graphs[slug] = GraphWithPrefetching.objects.prefetch(
+                graph_slug=slug
+            ).get()
+        return self._graphs[slug]
+
     def graph_id(self, slug):
-        """Cache slug -> graphid; new_resource is called once per resource but
-        there are only a handful of distinct graphs."""
-        if slug not in self._graph_ids:
-            self._graph_ids[slug] = GraphModel.objects.get(slug=slug).pk
-        return self._graph_ids[slug]
+        return self.graph(slug).pk
 
     def new_resource(self, slug):
         """A fresh, unsaved ResourceTileTree. Its resource row is created on the
         first save(), as a side effect of saving its tiles, so callers must add
         at least one tile before saving."""
+        graph = self.graph(slug)
         resource = ResourceTileTree(
-            graph_id=self.graph_id(slug),
+            graph_id=graph.pk,
             resource_instance_lifecycle_state=self.state,
             createdtime=timezone.now(),
             legacyid=f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}",
         )
         resource.aliased_data = AliasedData()
+        # Reuse the prefetched graph instead of letting each append_tile/save
+        # reload it; sealed=True tells arches-querysets it is already prefetched.
+        resource.graph = graph
+        resource.sealed = True
         if self.skip_refresh:
             resource.refresh_from_db = lambda *args, **kwargs: None
         return resource
@@ -138,7 +166,7 @@ class ResourceBuilder:
         """Create and return a process requirement resource."""
         requirement = self.new_resource("process_requirement")
         # requirement_identification is a grouping node that also holds a required value.
-        self.append_blank_tile_for_group(
+        identification = self.append_blank_tile_for_group(
             requirement,
             "requirement_identification",
             {
@@ -146,10 +174,12 @@ class ResourceBuilder:
                 "requirement_name": self.localized(spec["name"]),
             },
         )
-        self.append_blank_tile_for_group(
-            requirement,
-            "is_template_requirement",
-            {"is_template_requirement": spec.get("is_template", False)},
+        # is_template_requirement is a cardinality-1 child nodegroup of
+        # requirement_identification, auto-created blank with the parent. Set the
+        # flag on that child; a top-level append would leave the value on an
+        # orphan tile while the real child kept its node default.
+        identification.aliased_data.is_template_requirement.aliased_data.is_template_requirement = spec.get(
+            "is_template", False
         )
         self.append_blank_tile_for_group(
             requirement,
@@ -176,52 +206,5 @@ class ResourceBuilder:
                     "sub_requirement_sort_order": sub["sort_order"],
                 },
             )
-        requirement.save(**self.save_kwargs)
-        return requirement
-
-    def _deep_copy_resource(self, resource_id):
-        """Duplicate a resource and all its tiles, like arches' Resource.copy()
-        but saved with index=False to keep off the (test-broken) search path."""
-        source = Resource.objects.get(pk=resource_id)
-        source.load_tiles()
-        clone = Resource(
-            graph=source.graph,
-            resource_instance_lifecycle_state=self.state,
-            legacyid=f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}",
-        )
-        id_map = {}
-        for tile in source.tiles:
-            new_tile = Tile(
-                data=deepcopy(tile.data),
-                nodegroup=tile.nodegroup,
-                parenttile=tile.parenttile,
-                sortorder=tile.sortorder,
-                resourceinstance=clone,
-            )
-            clone.tiles.append(new_tile)
-            id_map[tile.pk] = new_tile
-        for tile in clone.tiles:
-            if tile.parenttile:
-                tile.parenttile = id_map[tile.parenttile_id]
-
-        clone.tiles.sort(key=lambda tile: tile.parenttile is not None)
-        clone.save(index=False)
-        return clone
-
-    def clone_requirement_as_working_document(self, template_resource_id, due=None):
-        """Clone a template requirement into a working document: clear the
-        template flag and, if given, set a fresh due date."""
-        clone = self._deep_copy_resource(template_resource_id)
-        requirement = ResourceTileTree.get_tiles(
-            GraphSlugs.PROCESS_REQUIREMENT, resource_ids=[clone.pk]
-        ).get()
-        # is_template_requirement is a child nodegroup of requirement_identification.
-        identification = requirement.aliased_data.requirement_identification
-        identification.aliased_data.is_template_requirement.aliased_data.is_template_requirement = (
-            False
-        )
-        if due is not None:
-            duration = requirement.aliased_data.requirement_execution_duration
-            duration.aliased_data.requirement_process_due_date = due
         requirement.save(**self.save_kwargs)
         return requirement
