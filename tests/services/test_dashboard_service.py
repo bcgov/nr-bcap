@@ -260,7 +260,9 @@ class _DashboardServiceData:
 
 
 class DashboardServiceTests(_DashboardServiceData, TestCase):
-    """The public get_cards() API, end to end."""
+    """The dashboard service against the shared permit graph: the public
+    get_cards() API end to end, plus the individual steps it chains together.
+    Both share one graph build (setUpTestData runs once per class)."""
 
     def test_get_cards_builds_one_card_from_the_permit_graph(self):
         page = self.service.get_cards(DashboardFilter())
@@ -317,74 +319,6 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         )
 
         self.assertEqual([card.id for card in page.results], [unassigned_id])
-
-
-class DashboardServicePaginationTests(TestCase):
-    """limit/page slicing, against several permits so paging is observable."""
-
-    @classmethod
-    def setUpTestData(cls):
-        ControlledListFixtures.seed()
-        builder = ResourceBuilder()
-        # Three bare permits are enough to observe limit capping and paging.
-        permits = [build_minimal_permit(builder, f"Permit {i}") for i in range(3)]
-        cls.permit_ids = {str(p.pk) for p in permits}
-        cls.service = DashboardService()
-
-    def test_limit_caps_page_size_but_not_count(self):
-        page = self.service.get_cards(DashboardFilter(limit=2, page=1))
-
-        self.assertEqual(page.count, 3)
-        self.assertEqual(page.limit, 2)
-        self.assertEqual(page.page, 1)
-        self.assertEqual(len(page.results), 2)
-
-    def test_pages_partition_every_permit_without_overlap(self):
-        first = self.service.get_cards(DashboardFilter(limit=2, page=1))
-        second = self.service.get_cards(DashboardFilter(limit=2, page=2))
-
-        self.assertEqual(len(first.results), 2)
-        self.assertEqual(len(second.results), 1)
-        seen = {card.id for card in first.results + second.results}
-        self.assertEqual(seen, self.permit_ids)
-
-    def test_page_past_the_end_is_empty_but_count_holds(self):
-        page = self.service.get_cards(DashboardFilter(limit=2, page=99))
-
-        self.assertEqual(page.count, 3)
-        self.assertEqual(page.results, [])
-
-
-class DashboardServiceNoPermitsTests(TestCase):
-    """get_cards() with no Permit Application resources in the database. This
-    case builds no graph, so the permit query comes back empty."""
-
-    def test_get_cards_returns_empty_page(self):
-        page = DashboardService().get_cards(DashboardFilter())
-        self.assertEqual(page.count, 0)
-        self.assertEqual(page.results, [])
-
-
-class DashboardServiceAllSatisfiedTests(TestCase):
-    """A permit whose requirements are all satisfied has nothing actionable, so
-    it is hidden from the dashboard entirely."""
-
-    @classmethod
-    def setUpTestData(cls):
-        ControlledListFixtures.seed()
-        builder = ResourceBuilder()
-        cls.permit_id = str(build_all_satisfied_permit(builder, "Done").pk)
-        cls.service = DashboardService()
-
-    def test_all_satisfied_permit_is_hidden(self):
-        page = self.service.get_cards(DashboardFilter())
-
-        self.assertEqual(page.count, 0)
-        self.assertEqual(page.results, [])
-
-
-class DashboardServiceStepsTests(_DashboardServiceData, TestCase):
-    """The individual data-gathering steps get_cards() chains together."""
 
     def test_permits_returns_count_and_the_permit_application(self):
         count, permits = self.service._permits(DashboardFilter())
@@ -459,3 +393,67 @@ class DashboardServiceStepsTests(_DashboardServiceData, TestCase):
                 self.acme_id: "Acme Corp",
             },
         )
+
+
+class DashboardServicePaginationTests(TestCase):
+    """limit/page slicing, against several permits so paging is observable."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = ResourceBuilder()
+        # Three bare permits are enough to observe limit capping and paging.
+        permits = [build_minimal_permit(builder, f"Permit {i}") for i in range(3)]
+        cls.permit_ids = {str(p.pk) for p in permits}
+        cls.service = DashboardService()
+
+    def test_limit_caps_page_size_but_not_count(self):
+        page = self.service.get_cards(DashboardFilter(limit=2, page=1))
+
+        self.assertEqual(page.count, 3)
+        self.assertEqual(page.limit, 2)
+        self.assertEqual(page.page, 1)
+        self.assertEqual(len(page.results), 2)
+
+    def test_pages_partition_every_permit_without_overlap(self):
+        first = self.service.get_cards(DashboardFilter(limit=2, page=1))
+        second = self.service.get_cards(DashboardFilter(limit=2, page=2))
+
+        self.assertEqual(len(first.results), 2)
+        self.assertEqual(len(second.results), 1)
+        seen = {card.id for card in first.results + second.results}
+        self.assertEqual(seen, self.permit_ids)
+
+    def test_page_past_the_end_is_empty_but_count_holds(self):
+        page = self.service.get_cards(DashboardFilter(limit=2, page=99))
+
+        self.assertEqual(page.count, 3)
+        self.assertEqual(page.results, [])
+
+
+class DashboardServiceNoPermitsTests(TestCase):
+    """get_cards() with no Permit Application resources in the database. This
+    case builds no graph, so the permit query comes back empty."""
+
+    def test_get_cards_returns_empty_page(self):
+        page = DashboardService().get_cards(DashboardFilter())
+        self.assertEqual(page.count, 0)
+        self.assertEqual(page.results, [])
+
+
+class DashboardServiceAllSatisfiedTests(TestCase):
+    """A permit whose requirements are all satisfied has nothing actionable, so
+    it is hidden from the dashboard entirely."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = ResourceBuilder()
+        cls.permit_id = str(build_all_satisfied_permit(builder, "Done").pk)
+        cls.service = DashboardService()
+
+    def test_all_satisfied_permit_is_hidden(self):
+        page = self.service.get_cards(DashboardFilter())
+
+        self.assertEqual(page.count, 0)
+        self.assertEqual(page.results, [])

@@ -11,15 +11,6 @@ export interface IsTemplateRequirementTile extends AliasedTileData {
     };
 }
 
-export interface SimpleSubRequirementTile extends AliasedTileData {
-    aliased_data: {
-        simple_sub_requirement_name?: AliasedNodeData;
-        simple_sub_requirement_description?: AliasedNodeData;
-        sub_requirement_satisfied?: AliasedNodeData;
-        sub_requirement_assessment_notes?: AliasedNodeData;
-    };
-}
-
 export interface RequirementIdentificationTile extends AliasedTileData {
     aliased_data: {
         requirement_name?: AliasedNodeData;
@@ -29,9 +20,9 @@ export interface RequirementIdentificationTile extends AliasedTileData {
 
 export interface RequirementExecutionDurationTile extends AliasedTileData {
     aliased_data: {
-        requirement_process_start_date?: AliasedNodeData; // YYYY-MM-DD
-        requirement_process_due_date?: AliasedNodeData; // YYYY-MM-DD
-        requirement_process_completion_date?: AliasedNodeData; // YYYY-MM-DD
+        requirement_process_start_date: AliasedNodeData; // YYYY-MM-DD
+        requirement_process_due_date: AliasedNodeData; // YYYY-MM-DD
+        requirement_process_completion_date: AliasedNodeData; // YYYY-MM-DD
     };
 }
 
@@ -43,22 +34,27 @@ export interface RequirementSubmissionTile extends AliasedTileData {
 
 export interface RequirementAssessmentTile extends AliasedTileData {
     aliased_data: {
-        requirement_status?: AliasedNodeData;
-        assessment_notes?: AliasedNodeData;
+        requirement_status: AliasedNodeData;
+        assessment_notes: AliasedNodeData;
     };
 }
 
 export interface SubRequirementTile extends AliasedTileData {
     aliased_data: {
-        sub_requirement_reference?: AliasedNodeData;
-        simple_sub_requirement_name?: SimpleSubRequirementTile;
+        // sub_requirement_reference?: AliasedNodeData;
+        sub_requirement_description?: AliasedNodeData;
+        sub_requirement_name?: AliasedNodeData;
+        sub_requirement_assessment_notes: AliasedNodeData;
+        sub_requirement_mandatory?: AliasedNodeData;
+        sub_requirement_sort_order?: AliasedNodeData;
+        sub_requirement_satisfied: AliasedNodeData;
     };
 }
 
 export interface PermitRequirementSchema extends AliasedTileData {
     aliased_data: {
         requirement_identification?: RequirementIdentificationTile;
-        requirement_execution_duration?: RequirementExecutionDurationTile;
+        requirement_execution_duration: RequirementExecutionDurationTile;
         requirment_submission?: RequirementSubmissionTile;
         sub_requirement_assessment_n1?: RequirementAssessmentTile;
         sub_requirement?: SubRequirementTile[];

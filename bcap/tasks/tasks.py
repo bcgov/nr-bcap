@@ -11,6 +11,8 @@ from arches.app.tasks import create_user_task_record, update_user_task_record, l
 from arches.app.utils.message_contexts import return_message_context
 from tempfile import NamedTemporaryFile
 
+from bcap.util.dates import to_long
+
 
 # Copy of arches.app.tasks.export_search_results, with BCAPSearchResultsExporter
 # substituted for SearchResultsExporter to add a UTF-8 BOM to CSV exports.
@@ -67,7 +69,7 @@ def export_search_results(self, userid, request_values, format, report_link):
     expiration_date = datetime.now() + timedelta(
         seconds=settings.CELERY_SEARCH_EXPORT_EXPIRES
     )
-    formatted_expiration_date = expiration_date.strftime("%A, %d %B %Y")
+    formatted_expiration_date = to_long(expiration_date)
 
     context = return_message_context(
         greeting=_(

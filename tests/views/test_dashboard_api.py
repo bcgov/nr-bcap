@@ -31,6 +31,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         # Rolled back with the class transaction.
         ControlledListFixtures.seed()
         graph = build_permit_graph()

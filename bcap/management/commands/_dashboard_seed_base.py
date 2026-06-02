@@ -88,6 +88,7 @@ class DashboardSeedCommand(BaseCommand):
             # ordinary assigned permits.
             if i > 0:
                 builder._SEED_UNASSIGNED_PERMIT = False
+            # Each permit gets its own requirement template set (3 per permit).
             data = builder.build()
 
             permits.append(("Permit Application", data.permit))
@@ -105,6 +106,7 @@ class DashboardSeedCommand(BaseCommand):
                     ),
                     data.hca_permit,
                     data.project_officer,
+                    *data.requirement_templates,
                     *data.process_requirements,
                     *data.assignees,
                     *data.holders,

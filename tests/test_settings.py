@@ -79,3 +79,11 @@ SILENCED_SYSTEM_CHECKS.append(
 ELASTICSEARCH_HOSTS = [
     {"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
 ]
+
+# No broker in tests. Empty short-circuits check_if_celery_available() so every
+# resource save indexes inline instead of probing the dead broker (~6s backoff
+# per save). Same inline-index result the fallback already produces.
+CELERY_BROKER_URL = ""
+
+# Do not use on prod, just for unit test performance.
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]

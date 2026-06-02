@@ -1,8 +1,30 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Stand in for the runtime-injected `arches.urls` so these tests don't depend
+// on the real arches.js bundle resolving. Mirrors the patterns in bcap/urls.py.
+vi.mock('arches', () => ({
+    default: {
+        urls: {
+            api_resource: (graph_slug: string, resource_id: string) =>
+                `/bcap/api/resource/${graph_slug}/${resource_id}`,
+            api_site_related_resources: (
+                graph_slug: string,
+                resource_id: string,
+            ) =>
+                `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
+            api_process_requirements: (resource_id: string) =>
+                `/bcap/api/resource/process_requirement/${resource_id}`,
+            api_requirement_submission: (resource_id: string) =>
+                `/bcap/api/requirement_submissions/${resource_id}/`,
+            dashboard: '/bcap/api/dashboard',
+        },
+    },
+}));
+
 import {
     getResourceData,
     getRelatedResourceData,
-    getPermitRequirementData,
+    getProcessRequirementData,
     getRequirementSubmissionData,
     getInternalDashboardData,
 } from './api';
@@ -96,14 +118,16 @@ describe('getRelatedResourceData', () => {
     });
 });
 
-describe('getPermitRequirementData', () => {
+describe('getProcessRequirementData', () => {
     it('returns parsed JSON on success', async () => {
         const data = { permit_id: 'p1', requirements: [] };
         vi.stubGlobal('fetch', mockFetchOk(data));
 
-        const result = await getPermitRequirementData('p1');
+        const result = await getProcessRequirementData('p1');
 
-        expect(fetch).toHaveBeenCalledWith('/bcap/api/permit_requirements/p1/');
+        expect(fetch).toHaveBeenCalledWith(
+            '/bcap/api/resource/process_requirement/p1',
+        );
         expect(result).toEqual(data);
     });
 
@@ -113,7 +137,7 @@ describe('getPermitRequirementData', () => {
             mockFetchError(404, 'Not Found', 'Permit not found'),
         );
 
-        await expect(getPermitRequirementData('p99')).rejects.toThrow(
+        await expect(getProcessRequirementData('p99')).rejects.toThrow(
             'Permit not found',
         );
     });
@@ -124,7 +148,7 @@ describe('getPermitRequirementData', () => {
             mockFetchError(500, 'Internal Server Error', ''),
         );
 
-        await expect(getPermitRequirementData('p1')).rejects.toThrow(
+        await expect(getProcessRequirementData('p1')).rejects.toThrow(
             'Internal Server Error',
         );
     });
@@ -174,7 +198,7 @@ describe('getInternalDashboardData', () => {
         const result = await getInternalDashboardData();
 
         expect(fetch).toHaveBeenCalledWith(
-            '/bcap/api/dashboard?limit=100&page=1&status=UNASSIGNED',
+            '/bcap/api/dashboard?limit=100&page=1',
         );
         expect(result).toEqual(results);
     });
