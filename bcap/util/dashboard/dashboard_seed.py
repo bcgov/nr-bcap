@@ -30,6 +30,26 @@ class DashboardDemoData:
 
 
 @dataclass
+class HcaPermit:
+    permit: ResourceTileTree
+    holders: list[ResourceTileTree]
+
+
+@dataclass
+class SharedResources:
+    """The resources that don't have to be recreated for every card. Built once
+    by ``build_shared`` and passed to each ``build`` so a multi-card seed pays
+    for them only on the first card. The pools (assignees, hca_permits) let each
+    card draw a varied subset without recreating contributors/permits."""
+
+    contributor_type: list
+    assignees: list[ResourceTileTree]
+    project_officers: list[ResourceTileTree]
+    hca_permits: list[HcaPermit]
+    requirement_templates: list[ResourceTileTree]
+
+
+@dataclass
 class PermitSpec:
     project_name: str
     application_id: str
@@ -48,21 +68,39 @@ class DashboardDemoBuilder(ResourceBuilder):
     """
 
     _HOLDER_COUNT = 2
+    # Shared pools reused across cards: each card draws from them, so cards vary
+    # without recreating these contributors/permits per card.
+    _ASSIGNEE_POOL_SIZE = 6
+    _HCA_POOL_SIZE = 4
+    _OFFICER_POOL_SIZE = 4
     _SEED_UNASSIGNED_PERMIT = True
 
-    # Plausible values so randomized cards still read sensibly.
-    _REQUIREMENT_NAME_POOL = [
-        "Initial Review",
-        "Completeness Check",
-        "Field Assessment",
-        "Archaeological Impact Assessment",
-        "First Nations Consultation",
-        "Technical Review",
-        "Site Inspection",
-        "Heritage Conservation Review",
-        "Permit Recommendation",
-        "Final Sign-off",
-        "Decision Summary",
+    # Requirement names are composed prefix + suffix so they read sensibly while
+    # giving many distinct combinations to randomize over.
+    _REQUIREMENT_NAME_PREFIXES = [
+        "Initial",
+        "Preliminary",
+        "Completeness",
+        "Field",
+        "Technical",
+        "Archaeological",
+        "Heritage",
+        "Cultural",
+        "Environmental",
+        "Final",
+        "Site",
+    ]
+    _REQUIREMENT_NAME_SUFFIXES = [
+        "Review",
+        "Assessment",
+        "Inspection",
+        "Consultation",
+        "Check",
+        "Evaluation",
+        "Screening",
+        "Sign-off",
+        "Recommendation",
+        "Survey",
     ]
     _PROJECT_TYPES = [
         "Pipeline",
@@ -192,46 +230,45 @@ class DashboardDemoBuilder(ResourceBuilder):
         },
     ]
 
-    def make_requirement_templates(self):
-        """Create one is_template_requirement=True requirement per spec -- the
-        template set every permit's requirements are cloned from. Once per run."""
-        names = self.faker.random_elements(
-            elements=self._REQUIREMENT_NAME_POOL,
-            length=len(self._REQUIREMENTS),
-            unique=True,
+    def _random_requirement_name(self):
+        return (
+            f"{self.faker.random_element(self._REQUIREMENT_NAME_PREFIXES)} "
+            f"{self.faker.random_element(self._REQUIREMENT_NAME_SUFFIXES)}"
         )
+
+    def _requirement_specs(self):
+        """A fresh set of requirement specs, each with a randomized name. Called
+        per card (and once for the templates) so requirement names vary."""
+        names = []
+        while len(names) < len(self._REQUIREMENTS):
+            name = self._random_requirement_name()
+            if name not in names:
+                names.append(name)
+        return [{**spec, "name": name} for spec, name in zip(self._REQUIREMENTS, names)]
+
+    def make_requirement_templates(self, specs):
+        """Create one is_template_requirement=True requirement per spec. Once
+        per run."""
         return [
-            self.make_process_requirement({**spec, "name": name, "is_template": True})
-            for spec, name in zip(self._REQUIREMENTS, names)
+            self.make_process_requirement({**spec, "is_template": True})
+            for spec in specs
         ]
 
-    def _clone_working_document(self, template):
-        """A working-document clone of ``template`` with a fresh due date."""
-        return self.clone_requirement_as_working_document(
-            template.pk, due=self._random_due_date()
+    def _make_working_requirement(self, spec):
+        """A working-document requirement built fresh from a template's spec:
+        is_template stays False and it gets its own due date. Built directly
+        rather than cloned -- one queryset save instead of a deep copy plus a
+        reload and second save."""
+        return self.make_process_requirement(
+            {**spec, "is_template": False, "due": self._random_due_date()}
         )
 
-    def build(self, requirement_templates=None):
-        """Create the demo graph and return the resources it produced. The seed
-        command passes the run's shared ``requirement_templates``; tests omit
-        them and get a per-build set."""
-        contributor_type = self.reference_value("contributor", "contributor_type")
-
-        # One ministry assignee per requirement (they are zipped together below).
-        assignees = [
-            self.make_contributor(
-                contributor_type, self.faker.first_name(), self.faker.last_name()
-            )
-            for _ in self._REQUIREMENTS
-        ]
+    def _make_hca_permit(self, contributor_type):
+        """An HCA permit with its own holders and a random number/type."""
         holders = [
             self.make_contributor(contributor_type, None, self.faker.company())
             for _ in range(self._HOLDER_COUNT)
         ]
-        project_officer = self.make_contributor(
-            contributor_type, self.faker.first_name(), self.faker.last_name()
-        )
-
         hca_permit = self.new_resource("hca_permit")
         self.append_blank_tile_for_group(
             hca_permit,
@@ -239,29 +276,80 @@ class DashboardDemoBuilder(ResourceBuilder):
             {
                 "permit_number": self._random_permit_number(),
                 "permit_holder": holders,
-                "hca_permit_type": self.reference_value(
-                    "hca_permit", "hca_permit_type", "Investigation"
+                "hca_permit_type": self.random_reference_value(
+                    "hca_permit", "hca_permit_type"
                 ),
             },
         )
         hca_permit.save(**self.save_kwargs)
+        return HcaPermit(permit=hca_permit, holders=holders)
 
-        if requirement_templates is None:
-            requirement_templates = self.make_requirement_templates()
+    def build_shared(self):
+        """Create the resources a card can reuse rather than recreate: the
+        contributor and HCA-permit pools and the requirement template set. Call
+        once per run and pass the result to ``build`` -- these dominate the
+        per-card cost, so sharing them across cards is most of the speedup."""
+        contributor_type = self.reference_value("contributor", "contributor_type")
 
-        # Each requirement on the permit is a working-document clone of one
-        # template (one per template/assignee, ordered).
-        requirements = [self._clone_working_document(t) for t in requirement_templates]
+        # Pools each card draws from, so cards vary without recreating these.
+        assignees = [
+            self.make_contributor(
+                contributor_type, self.faker.first_name(), self.faker.last_name()
+            )
+            for _ in range(self._ASSIGNEE_POOL_SIZE)
+        ]
+        hca_permits = [
+            self._make_hca_permit(contributor_type) for _ in range(self._HCA_POOL_SIZE)
+        ]
+        project_officers = [
+            self.make_contributor(
+                contributor_type, self.faker.first_name(), self.faker.last_name()
+            )
+            for _ in range(self._OFFICER_POOL_SIZE)
+        ]
+
+        return SharedResources(
+            contributor_type=contributor_type,
+            assignees=assignees,
+            project_officers=project_officers,
+            hca_permits=hca_permits,
+            requirement_templates=self.make_requirement_templates(
+                self._requirement_specs()
+            ),
+        )
+
+    def build(self, shared=None):
+        """Create one card's resources and return everything the run produced.
+        The seed command builds ``shared`` once and passes it to every card so
+        the contributors/HCA permit/templates are paid for once; tests omit it
+        and get a per-build set."""
+        if shared is None:
+            shared = self.build_shared()
+
+        # Fresh specs (with randomized names) per card, so requirements vary.
+        card_specs = self._requirement_specs()
+        # Each requirement on the permit is a working document built from one
+        # spec (one per spec/assignee, ordered).
+        requirements = [self._make_working_requirement(spec) for spec in card_specs]
+        # Draw this card's assignees and HCA permit from the shared pools, so
+        # cards differ without creating new contributors/permits.
+        card_assignees = list(
+            self.faker.random_elements(
+                elements=shared.assignees, length=len(requirements), unique=True
+            )
+        )
+        hca = self.faker.random_element(shared.hca_permits)
+        project_officer = self.faker.random_element(shared.project_officers)
         permit = self._make_permit(
             PermitSpec(
                 project_name=self._random_project_name(),
                 application_id=self._random_application_id(),
-                hca_permit=hca_permit,
+                hca_permit=hca.permit,
                 project_officer=project_officer,
                 children=[
                     (requirement, order, assignee)
                     for order, (requirement, assignee) in enumerate(
-                        zip(requirements, assignees), start=1
+                        zip(requirements, card_assignees), start=1
                     )
                 ],
                 priority="High",
@@ -272,19 +360,15 @@ class DashboardDemoBuilder(ResourceBuilder):
         if self._SEED_UNASSIGNED_PERMIT:
             # A second permit whose outstanding requirement has no
             # ministry_assignee, so the UNASSIGNED status filter has something
-            # to surface. Clone an unsatisfied template -- a satisfied one would
-            # leave the permit with no active requirement and no card at all.
-            outstanding = next(
-                template
-                for template, spec in zip(requirement_templates, self._REQUIREMENTS)
-                if not spec["satisfied"]
-            )
-            unassigned_requirement = self._clone_working_document(outstanding)
+            # to surface. Use an unsatisfied spec -- a satisfied one would leave
+            # the permit with no active requirement and no card at all.
+            outstanding = next(spec for spec in card_specs if not spec["satisfied"])
+            unassigned_requirement = self._make_working_requirement(outstanding)
             unassigned_permit = self._make_permit(
                 PermitSpec(
                     project_name=self._random_project_name(),
                     application_id=self._random_application_id(),
-                    hca_permit=hca_permit,
+                    hca_permit=hca.permit,
                     project_officer=project_officer,
                     children=[(unassigned_requirement, 1, None)],
                     priority="Regular",
@@ -294,12 +378,12 @@ class DashboardDemoBuilder(ResourceBuilder):
         return DashboardDemoData(
             permit=permit,
             unassigned_permit=unassigned_permit,
-            hca_permit=hca_permit,
-            assignees=assignees,
-            holders=holders,
+            hca_permit=hca.permit,
+            assignees=card_assignees,
+            holders=hca.holders,
             process_requirements=requirements,
             project_officer=project_officer,
-            requirement_templates=requirement_templates,
+            requirement_templates=shared.requirement_templates,
         )
 
     def _make_permit(self, spec: PermitSpec):
