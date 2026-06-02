@@ -4,6 +4,7 @@ Unit tests for ProcessRequirementDescriptors.
 Django/Arches is already configured by the test runner; individual ORM calls
 are mocked with @patch so no database access is required.
 """
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -11,8 +12,8 @@ from unittest.mock import MagicMock, patch
 from bcap.functions.process_requirement_descriptors import ProcessRequirementDescriptors
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as A
 
-
 # ── Helpers ────────────────────────────────────────────────────────────────────
+
 
 def _make_node(alias, name, datatype="string", nodegroup_id="ng-1", nodeid="node-1"):
     node = MagicMock()
@@ -38,6 +39,7 @@ def _reset_class_state():
 
 
 # ── Tests: _format_value (pure static method, no mocking needed) ──────────────
+
 
 class TestFormatValue:
     def _call(self, name, value, show_name, first_only=False):
@@ -74,6 +76,7 @@ class TestFormatValue:
 
 # ── Tests: _get_value_from_node ───────────────────────────────────────────────
 
+
 class TestGetValueFromNode:
     def setup_method(self):
         _reset_class_state()
@@ -87,7 +90,9 @@ class TestGetValueFromNode:
         node = _make_node(A.REQUIREMENT_NAME, "Name")
         ProcessRequirementDescriptors._nodes[A.REQUIREMENT_NAME] = node
         ProcessRequirementDescriptors._datatypes[A.REQUIREMENT_NAME] = MagicMock()
-        mock_models.TileModel.objects.filter.return_value.filter.return_value.all.return_value = []
+        mock_models.TileModel.objects.filter.return_value.filter.return_value.all.return_value = (
+            []
+        )
 
         result = ProcessRequirementDescriptors._get_value_from_node(
             A.REQUIREMENT_NAME, resourceinstanceid="res-1"
@@ -119,7 +124,8 @@ class TestGetValueFromNode:
 
         tile1, tile2 = _make_tile(), _make_tile()
         mock_models.TileModel.objects.filter.return_value.filter.return_value.all.return_value = [
-            tile1, tile2
+            tile1,
+            tile2,
         ]
         result = ProcessRequirementDescriptors._get_value_from_node(
             A.REQUIREMENT_STATUS, resourceinstanceid="res-1"
@@ -141,6 +147,7 @@ class TestGetValueFromNode:
 
 
 # ── Tests: get_primary_descriptor_from_nodes ──────────────────────────────────
+
 
 class TestGetPrimaryDescriptorFromNodes:
     def setup_method(self):
@@ -168,7 +175,9 @@ class TestGetPrimaryDescriptorFromNodes:
 
     def test_description_concatenates_all_non_null_values(self):
         ProcessRequirementDescriptors._nodes = {
-            A.REQUIREMENT_IDENTIFICATION: _make_node(A.REQUIREMENT_IDENTIFICATION, "ID"),
+            A.REQUIREMENT_IDENTIFICATION: _make_node(
+                A.REQUIREMENT_IDENTIFICATION, "ID"
+            ),
             A.REQUIREMENT_STATUS: _make_node(A.REQUIREMENT_STATUS, "Status"),
             A.REQUIREMENT_PROCESS_START_DATE: _make_node(
                 A.REQUIREMENT_PROCESS_START_DATE, "Start"
@@ -198,7 +207,9 @@ class TestGetPrimaryDescriptorFromNodes:
 
     def test_first_only_returns_on_first_truthy_value_and_stops(self):
         ProcessRequirementDescriptors._nodes = {
-            A.REQUIREMENT_IDENTIFICATION: _make_node(A.REQUIREMENT_IDENTIFICATION, "ID"),
+            A.REQUIREMENT_IDENTIFICATION: _make_node(
+                A.REQUIREMENT_IDENTIFICATION, "ID"
+            ),
             A.REQUIREMENT_STATUS: _make_node(A.REQUIREMENT_STATUS, "Status"),
         }
         ProcessRequirementDescriptors._datatypes = {
@@ -209,10 +220,16 @@ class TestGetPrimaryDescriptorFromNodes:
 
         def side_effect(alias, resource):
             call_log.append(alias)
-            return "First Value" if alias == A.REQUIREMENT_IDENTIFICATION else "Should not reach"
+            return (
+                "First Value"
+                if alias == A.REQUIREMENT_IDENTIFICATION
+                else "Should not reach"
+            )
 
         with patch.object(
-            ProcessRequirementDescriptors, "_get_value_from_node", side_effect=side_effect
+            ProcessRequirementDescriptors,
+            "_get_value_from_node",
+            side_effect=side_effect,
         ):
             result = self.fn.get_primary_descriptor_from_nodes(
                 MagicMock(),
@@ -233,6 +250,7 @@ class TestGetPrimaryDescriptorFromNodes:
 
 # ── Tests: _get_process_requirement_name ──────────────────────────────────────
 
+
 class TestGetProcessRequirementName:
     NAME_NODE_ID = "node-name"
     TMPL_NODE_ID = "node-tmpl"
@@ -245,12 +263,16 @@ class TestGetProcessRequirementName:
 
     def _setup_nodes(self):
         name_node = _make_node(
-            A.REQUIREMENT_NAME, "Name",
-            nodeid=self.NAME_NODE_ID, nodegroup_id="ng-name",
+            A.REQUIREMENT_NAME,
+            "Name",
+            nodeid=self.NAME_NODE_ID,
+            nodegroup_id="ng-name",
         )
         tmpl_node = _make_node(
-            A.IS_TEMPLATE_REQUIREMENT, "Is Template",
-            nodeid=self.TMPL_NODE_ID, nodegroup_id="ng-tmpl",
+            A.IS_TEMPLATE_REQUIREMENT,
+            "Is Template",
+            nodeid=self.TMPL_NODE_ID,
+            nodegroup_id="ng-tmpl",
         )
         self.name_datatype = MagicMock()
         ProcessRequirementDescriptors._nodes = {
@@ -265,7 +287,9 @@ class TestGetProcessRequirementName:
     @patch("bcap.functions.process_requirement_descriptors.models")
     def test_no_name_tile_no_permit_returns_unknown_prefix(self, mock_models):
         mock_models.TileModel.objects.filter.return_value.first.return_value = None
-        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = None
+        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
+            None
+        )
 
         result = self.fn._get_process_requirement_name(MagicMock())
 
@@ -278,7 +302,8 @@ class TestGetProcessRequirementName:
         name_tile = _make_tile()
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: True})
         mock_models.TileModel.objects.filter.return_value.first.side_effect = [
-            name_tile, tmpl_tile
+            name_tile,
+            tmpl_tile,
         ]
 
         result = self.fn._get_process_requirement_name(MagicMock())
@@ -292,9 +317,12 @@ class TestGetProcessRequirementName:
         permit = MagicMock()
         permit.from_resource.descriptors = {"en": {"name": "Permit ABC"}}
         mock_models.TileModel.objects.filter.return_value.first.side_effect = [
-            name_tile, tmpl_tile
+            name_tile,
+            tmpl_tile,
         ]
-        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = permit
+        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
+            permit
+        )
 
         result = self.fn._get_process_requirement_name(MagicMock())
         assert result == "Permit ABC - My Requirement"
@@ -305,16 +333,20 @@ class TestGetProcessRequirementName:
         name_tile = _make_tile()
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: False})
         mock_models.TileModel.objects.filter.return_value.first.side_effect = [
-            name_tile, tmpl_tile
+            name_tile,
+            tmpl_tile,
         ]
         # None.from_resource raises AttributeError → bare except fires
-        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = None
+        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
+            None
+        )
 
         result = self.fn._get_process_requirement_name(MagicMock())
         assert result == "(Unknown) - My Requirement"
 
 
 # ── Tests: initialize ─────────────────────────────────────────────────────────
+
 
 class TestInitialize:
     def setup_method(self):
