@@ -44,7 +44,7 @@ def _bulk_index(resources):
 def _resource_url(pk):
     """Resource editor URL, honouring the app's origin and sub-path mount
     (eg http://localhost:82/bcap/resource/<id>)."""
-    origin = (settings.PUBLIC_ORIGIN or "").rstrip("/")
+    origin = (settings.PUBLIC_SERVER_ADDRESS or "").rstrip("/")
     # The app is mounted under /bcap (see VITE_BASE etc.); FORCE_SCRIPT_NAME
     # overrides that when set.
     prefix = (settings.FORCE_SCRIPT_NAME or "/bcap/").strip("/")
