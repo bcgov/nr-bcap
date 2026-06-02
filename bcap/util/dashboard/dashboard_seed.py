@@ -67,6 +67,10 @@ class DashboardDemoBuilder(ResourceBuilder):
     it uses live in ``ResourceBuilder``.
     """
 
+    # Appended to every generated name so seeded demo data is identifiable (and
+    # easy to filter out) in the UI.
+    _TEST_DATA_SUFFIX = "TEST-DATA-DASHBOARD"
+
     _HOLDER_COUNT = 2
     # Shared pools reused across cards: each card draws from them, so cards vary
     # without recreating these contributors/permits per card.
@@ -118,8 +122,11 @@ class DashboardDemoBuilder(ResourceBuilder):
         super().__init__()
         self.faker = Faker()
 
+    def _suffixed(self, name):
+        return f"{name} {self._TEST_DATA_SUFFIX}"
+
     def _random_application_id(self):
-        return f"APP-{self.faker.random_int(min=1000, max=9999)}"
+        return self._suffixed(f"APP-{self.faker.random_int(min=1000, max=9999)}")
 
     def _random_due_date(self):
         """A due date spread around now, so some cards read as overdue and
@@ -127,10 +134,12 @@ class DashboardDemoBuilder(ResourceBuilder):
         return self.faker.date_between(start_date="-30d", end_date="+180d").isoformat()
 
     def _random_permit_number(self):
-        return f"HCA-{self.faker.random_int(min=1000, max=9999)}"
+        return self._suffixed(f"HCA-{self.faker.random_int(min=1000, max=9999)}")
 
     def _random_project_name(self):
-        return f"{self.faker.city()} {self.faker.random_element(self._PROJECT_TYPES)}"
+        return self._suffixed(
+            f"{self.faker.city()} {self.faker.random_element(self._PROJECT_TYPES)}"
+        )
 
     def _randomize_assignee_change_date(self, permit):
         """ministry_assignee_change_date is derived from the edit-log timestamp
@@ -231,7 +240,7 @@ class DashboardDemoBuilder(ResourceBuilder):
     ]
 
     def _random_requirement_name(self):
-        return (
+        return self._suffixed(
             f"{self.faker.random_element(self._REQUIREMENT_NAME_PREFIXES)} "
             f"{self.faker.random_element(self._REQUIREMENT_NAME_SUFFIXES)}"
         )
@@ -244,7 +253,17 @@ class DashboardDemoBuilder(ResourceBuilder):
             name = self._random_requirement_name()
             if name not in names:
                 names.append(name)
-        return [{**spec, "name": name} for spec, name in zip(self._REQUIREMENTS, names)]
+        return [
+            {
+                **spec,
+                "name": name,
+                "sub_requirements": [
+                    {**sub, "name": self._suffixed(sub["name"])}
+                    for sub in spec["sub_requirements"]
+                ],
+            }
+            for spec, name in zip(self._REQUIREMENTS, names)
+        ]
 
     def make_requirement_templates(self, specs):
         """Create one is_template_requirement=True requirement per spec. Once
@@ -266,7 +285,9 @@ class DashboardDemoBuilder(ResourceBuilder):
     def _make_hca_permit(self, contributor_type):
         """An HCA permit with its own holders and a random number/type."""
         holders = [
-            self.make_contributor(contributor_type, None, self.faker.company())
+            self.make_contributor(
+                contributor_type, None, self._suffixed(self.faker.company())
+            )
             for _ in range(self._HOLDER_COUNT)
         ]
         hca_permit = self.new_resource("hca_permit")
@@ -294,7 +315,9 @@ class DashboardDemoBuilder(ResourceBuilder):
         # Pools each card draws from, so cards vary without recreating these.
         assignees = [
             self.make_contributor(
-                contributor_type, self.faker.first_name(), self.faker.last_name()
+                contributor_type,
+                self.faker.first_name(),
+                self._suffixed(self.faker.last_name()),
             )
             for _ in range(self._ASSIGNEE_POOL_SIZE)
         ]
@@ -303,7 +326,9 @@ class DashboardDemoBuilder(ResourceBuilder):
         ]
         project_officers = [
             self.make_contributor(
-                contributor_type, self.faker.first_name(), self.faker.last_name()
+                contributor_type,
+                self.faker.first_name(),
+                self._suffixed(self.faker.last_name()),
             )
             for _ in range(self._OFFICER_POOL_SIZE)
         ]
