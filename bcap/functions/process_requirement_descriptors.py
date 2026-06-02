@@ -47,7 +47,7 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
     # For Name part of descriptor
     graph_slug = "process_requirement"
 
-    _empty_name_value = "(No official name)"
+    _empty_permit_value = "(Unknown)"
     _nodes = {}
     _datatypes = {}
 
@@ -185,36 +185,6 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
             )
         return value
 
-    @staticmethod
-    def _get_address(resource):
-        address = ""
-        nodes = ProcessRequirementDescriptors._nodes
-
-        for address_line_nodes in ProcessRequirementDescriptors._address_nodes:
-            if address:
-                address += "<br>"
-            line = ""
-            for address_node_alias in address_line_nodes:
-                tile = (
-                    models.TileModel.objects.filter(
-                        nodegroup_id=nodes[address_node_alias].nodegroup_id
-                    )
-                    .filter(resourceinstance_id=resource.resourceinstanceid)
-                    .first()
-                )
-                if line:
-                    line += " "
-                display_value = ProcessRequirementDescriptors._get_value_from_node(
-                    node_alias=address_node_alias, data_tile=tile
-                )
-                display_value = (
-                    display_value[0] if type(display_value) is list else display_value
-                )
-                line += display_value if display_value is not None else ""
-            if line:
-                address += line
-        return address if address else None
-
     def _get_process_requirement_name(self, resource):
         name_datatype = ProcessRequirementDescriptors._datatypes[
             aliases.REQUIREMENT_NAME
@@ -258,6 +228,6 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
                 ).first()
                 display_value = f"{permit.from_resource.descriptors['en']['name']} - {display_value}"
             except:
-                display_value = f"??? - {display_value}"
+                display_value = f"{self._empty_permit_value} - {display_value}"
 
         return display_value if display_value else self._empty_name_value
