@@ -7,7 +7,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
 import { z } from 'zod';
-import { zDashboardCard } from '@/bcap/client/zod.gen';
+import { zDashboardCard } from '@/bcap/client/zod.gen.ts';
 import { getInternalDashboardData } from '@/bcap/components/pages/api.ts';
 import arches from 'arches';
 
