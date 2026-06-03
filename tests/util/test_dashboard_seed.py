@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase, TestCase
 
-from arches.app.models.models import GraphModel, Node, ResourceXResource
+from arches.app.models.models import EditLog, GraphModel, Node, ResourceXResource
 
 from arches_controlled_lists.models import ListItem
 from arches_querysets.models import ResourceTileTree
@@ -54,7 +54,16 @@ class ReferenceValueTests(SeedControlledListsMixin, TestCase):
 
 
 class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
-    """Integration test for the full builder."""
+    """Integration test for the full builder.
+
+    Builds through performance_workarounds() -- the way the seed command runs --
+    so those arches workarounds stay covered and are shown not to change the
+    persisted data."""
+
+    def _build(self):
+        builder = DashboardDemoBuilder()
+        with builder.performance_workarounds():
+            return builder.build()
 
     def _slug(self, resource):
         return GraphModel.objects.get(pk=resource.graph_id).slug
@@ -66,7 +75,7 @@ class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
         }
 
     def test_creates_resources_on_the_expected_graphs(self):
-        data = DashboardDemoBuilder().build()
+        data = self._build()
 
         self.assertEqual(self._slug(data.assignees[0]), "contributor")
         self.assertEqual(self._slug(data.holders[0]), "contributor")
@@ -88,7 +97,7 @@ class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
         )
 
     def test_links_permit_to_its_related_resources(self):
-        data = DashboardDemoBuilder().build()
+        data = self._build()
 
         # related_permit -> HCA permit, the application_admin's project_officer,
         # plus each application_admin child's process_requirement and
@@ -103,4 +112,10 @@ class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
         self.assertEqual(
             self._link_targets(data.hca_permit),
             {str(holder.pk) for holder in data.holders},
+        )
+        # The dashboard derives the assignee change date from edit-log rows, so
+        # they must survive the edit-log workarounds (cached_edit_log_resource
+        # and skip_edit_log_overwrite_probe both touch this path).
+        self.assertTrue(
+            EditLog.objects.filter(resourceinstanceid=str(data.permit.pk)).exists()
         )

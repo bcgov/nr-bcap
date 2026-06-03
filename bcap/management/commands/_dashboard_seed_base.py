@@ -80,7 +80,7 @@ class DashboardSeedCommand(BaseCommand):
         permits = []
         # One builder per run so its graph cache and shared resources are reused.
         builder = self.builder_class()
-        with builder.deferred_descriptors():
+        with builder.performance_workarounds():
             shared = builder.build_shared()
             # Shared resources are the same objects on every card; collect once.
             assignees = shared.assignees
