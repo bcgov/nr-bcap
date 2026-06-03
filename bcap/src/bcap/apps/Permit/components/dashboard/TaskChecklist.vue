@@ -18,9 +18,7 @@ const subRequirements = computed(
 );
 
 const requirementName = computed(
-    () =>
-        requirementData.value?.aliased_data?.requirement_identification
-            ?.aliased_data?.requirement_name?.display_value ?? '',
+    () => requirementData.value?.descriptors?.en.name ?? '',
 );
 
 // Requirement-level status + notes (the assessment tile).

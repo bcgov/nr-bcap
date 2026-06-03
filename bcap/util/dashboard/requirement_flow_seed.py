@@ -353,3 +353,4 @@ class RequirementFlowBuilder(DashboardDemoBuilder):
 
     _REQUIREMENTS = _REQUIREMENTS
     _SEED_UNASSIGNED_PERMIT = False
+    _RANDOMIZE_NAME = False
