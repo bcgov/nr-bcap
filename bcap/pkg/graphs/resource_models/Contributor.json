@@ -69,7 +69,7 @@
                         "placeholder": {
                             "en": "Enter text"
                         },
-                        "uneditable": true,
+                        "uneditable": false,
                         "width": "100%"
                     },
                     "id": "1e0bf20f-fbc6-44f8-81bf-f4c9fb71b519",
