@@ -6,7 +6,8 @@ import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
-import type { components } from '@/bcap/api-types';
+import { z } from 'zod';
+import { zDashboardCard } from '@/bcap/client/zod.gen';
 import { getInternalDashboardData } from '@/bcap/components/pages/api.ts';
 import arches from 'arches';
 
@@ -34,8 +35,8 @@ interface ProjectData {
     urgency: number;
 }
 
-// Extract the new types directly from the generated backend schema
-type GeneratedDashboardCard = components['schemas']['DashboardCard'];
+// Extract the new types directly from the generated Zod backend schema
+type GeneratedDashboardCard = z.infer<typeof zDashboardCard>;
 
 // Maps backend JSON directly to the Dashboard Card
 const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {

@@ -6,10 +6,48 @@ from drf_spectacular.extensions import OpenApiSerializerFieldExtension
 from drf_spectacular.openapi import AutoSchema
 from rest_framework import serializers
 
+from arches.app.models.models import Node
+
 from arches_querysets.rest_framework.field_mixins import NodeValueMixin
 from arches_querysets.rest_framework.serializers import TileAliasedDataSerializer
 
 logger = logging.getLogger(__name__)
+
+
+def _sort_properties_in_place(node, sortorder):
+    """Reorder Arches tile-bag properties (all keys node aliases) by node
+    sortorder, then alias; leave other maps in declared order."""
+
+    def node_order(alias):
+        # Nodes with no sortorder sort last; alias breaks ties.
+        sort = sortorder[alias]
+        return (sort is None, sort, alias)
+
+    if isinstance(node, list):
+        for item in node:
+            _sort_properties_in_place(item, sortorder)
+    elif isinstance(node, dict):
+        props = node.get("properties")
+        all_keys_are_nodes = (
+            isinstance(props, dict) and props and all(k in sortorder for k in props)
+        )
+        if all_keys_are_nodes:
+            node["properties"] = {k: props[k] for k in sorted(props, key=node_order)}
+        for child in node.values():
+            _sort_properties_in_place(child, sortorder)
+
+
+def sort_generated_schema_properties(result, generator, request, public):
+    """Hook: order tile-schema properties by node sortorder for stable diffs."""
+    # alias -> Node.sortorder, for every node in every graph.
+    sortorder = dict(
+        Node.objects.exclude(alias=None)
+        .order_by("alias", "sortorder")
+        .values_list("alias", "sortorder")
+    )
+    for schema in result.get("components", {}).get("schemas", {}).values():
+        _sort_properties_in_place(schema, sortorder)
+    return result
 
 
 class NodeValueEnvelopeSerializer(serializers.Serializer):

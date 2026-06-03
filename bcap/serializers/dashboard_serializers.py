@@ -20,14 +20,9 @@ class UserProfileResponseSerializer(Serializer):
     first_name = CharField(allow_blank=True)
     last_name = CharField(allow_blank=True)
     groups = SerializerMethodField()
-    contributor_id = SerializerMethodField()
 
     def get_groups(self, user) -> list[str]:
         return [group.name for group in user.groups.all()]
-
-    def get_contributor_id(self, user) -> str | None:
-        """TODO fill this in."""
-        pass
 
 
 class DashboardFilterSerializer(DataclassSerializer):

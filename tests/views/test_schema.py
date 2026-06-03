@@ -20,7 +20,11 @@ from arches.app.models.models import Node
 from arches_querysets.models import ResourceTileTree
 from arches_querysets.rest_framework.serializers import _wrap_serializer_field
 
-from bcap.schema import NodeValueEnvelopeSerializer, NodeValueFieldExtension
+from bcap.schema import (
+    NodeValueEnvelopeSerializer,
+    NodeValueFieldExtension,
+    _sort_properties_in_place,
+)
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.dashboard.resource_builder import ResourceBuilder
 from tests.views.helpers import AuthTestHelper
@@ -162,3 +166,20 @@ class NodeValueEnvelopeContractTests(TestCase):
         pair = tile.get_value_with_context(node, node_value=tile.data[str(node.pk)])
 
         self.assertEqual(set(pair), set(NodeValueEnvelopeSerializer().fields))
+
+
+class SchemaPropertySortingTests(SimpleTestCase):
+    """Arches node-derived properties order by (Node.sortorder, alias); maps with
+    any non-alias key (hand-written serializers) keep their declared order."""
+
+    ORDER = {"a_node": 1, "b_node": 0, "c_node": 0}  # b, c tie at 0
+
+    def test_node_derived_map_sorted_by_sortorder_then_alias(self):
+        schema = {"properties": {"a_node": {}, "c_node": {}, "b_node": {}}}
+        _sort_properties_in_place(schema, self.ORDER)
+        self.assertEqual(list(schema["properties"]), ["b_node", "c_node", "a_node"])
+
+    def test_map_with_a_non_alias_key_keeps_declared_order(self):
+        schema = {"properties": {"id": {}, "c_node": {}, "b_node": {}}}
+        _sort_properties_in_place(schema, self.ORDER)
+        self.assertEqual(list(schema["properties"]), ["id", "c_node", "b_node"])

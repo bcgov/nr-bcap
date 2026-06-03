@@ -54,9 +54,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/DashboardPage'
           description: ''
-  /bcap/api/process_requirement/{id}:
+  /bcap/api/resource/process_requirement/{id}:
     get:
-      operationId: api_process_requirement_retrieve
+      operationId: api_resource_process_requirement_retrieve
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -81,7 +81,7 @@ paths:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
     put:
-      operationId: api_process_requirement_update
+      operationId: api_resource_process_requirement_update
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -114,7 +114,7 @@ paths:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
     patch:
-      operationId: api_process_requirement_partial_update
+      operationId: api_resource_process_requirement_partial_update
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -147,7 +147,7 @@ paths:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
     delete:
-      operationId: api_process_requirement_destroy
+      operationId: api_resource_process_requirement_destroy
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -290,7 +290,7 @@ components:
         The {node_value, display_value, details} object node value fields emit when as_representation is True.
 
         Mirrors the dict built in arches_querysets TileTree.get_value_with_context;
-        keep in sync if that shape changes upstream.
+        keep in sync if that shape changes upstream (unit test covers this).
       properties:
         node_value: {}
         display_value:
@@ -503,12 +503,12 @@ components:
     Process_Requirement_Requirement_Identification_Aliased_Data:
       type: object
       properties:
-        requirement_name:
+        requirement_identification:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter text
-        requirement_identification:
+        requirement_name:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
@@ -586,18 +586,27 @@ components:
     Process_Requirement_Sub_Requirement_Aliased_Data:
       type: object
       properties:
-        sub_requirement_description:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          title: Description
-          description: Enter text
         sub_requirement_assessment_notes:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Assessment Notes
           description: Enter text
+        sub_requirement_description:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
+          nullable: true
+          title: Description
+          description: Enter text
+        sub_requirement_mandatory:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
+          nullable: true
+          title: Mandatory
+        sub_requirement_reference:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
+          nullable: true
         sub_requirement_satisfied:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
@@ -609,15 +618,6 @@ components:
           nullable: true
           title: Sort Order
           description: Enter number
-        sub_requirement_mandatory:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          title: Mandatory
-        sub_requirement_reference:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
         sub_requirement_name:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
