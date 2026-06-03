@@ -62,6 +62,29 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "BCAP Username",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": true,
+                        "width": "100%"
+                    },
+                    "id": "1e0bf20f-fbc6-44f8-81bf-f4c9fb71b519",
+                    "label": {
+                        "en": "BCAP Username"
+                    },
+                    "node_id": "a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
+                    "config": {
                         "defaultValue": {
                             "en": {
                                 "direction": "ltr",
@@ -178,7 +201,7 @@
                         "en": "Inactive"
                     },
                     "node_id": "99643f1e-9e4e-11ed-b6d5-5254004d77d3",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "0346bc9c-d235-4313-adc8-d0e210b2ef25"
@@ -719,10 +742,10 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "user_id",
+                    "alias": "bcap_username",
                     "config": {},
                     "datatype": "non-localized-string",
-                    "description": "This is for a mapping to the Django auth_users table.",
+                    "description": "Example(s): travis@idir / john@bceid / brett@bcsc. This is for a mapping to a BCAP user.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
@@ -732,7 +755,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "User ID",
+                    "name": "BCAP Username",
                     "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
                     "nodeid": "a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
