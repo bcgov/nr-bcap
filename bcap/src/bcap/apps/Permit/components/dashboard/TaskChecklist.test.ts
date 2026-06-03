@@ -28,6 +28,7 @@ const mockedGet = vi.mocked(getProcessRequirementData);
 // one not), and no dates yet. Cast loosely — the component only reads a slice.
 function buildRequirement(): PermitRequirementSchema {
     return {
+        descriptors: { en: { name: 'APP-001 Heritage Permit' } },
         aliased_data: {
             requirement_identification: {
                 aliased_data: {
@@ -78,7 +79,7 @@ describe('TaskChecklist', () => {
         await flushPromises();
 
         expect(mockedGet).toHaveBeenCalledWith('res-1');
-        expect(wrapper.text()).toContain('Heritage Permit');
+        expect(wrapper.text()).toContain('APP-001 Heritage Permit');
         expect(wrapper.text()).toContain('Submit application forms');
         expect(wrapper.text()).toContain('Pay processing fee');
     });
