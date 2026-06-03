@@ -10,7 +10,7 @@ from arches.app.search.mappings import RESOURCES_INDEX, TERMS_INDEX
 from arches.app.search.search_engine_factory import SearchEngineFactory
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 
 def _bulk_index(resources):
@@ -44,7 +44,7 @@ def _bulk_index(resources):
 def _resource_url(pk):
     """Resource editor URL, honouring the app's origin and sub-path mount
     (eg http://localhost:82/bcap/resource/<id>)."""
-    origin = (settings.PUBLIC_ORIGIN or "").rstrip("/")
+    origin = (settings.PUBLIC_SERVER_ADDRESS or "").rstrip("/")
     # The app is mounted under /bcap (see VITE_BASE etc.); FORCE_SCRIPT_NAME
     # overrides that when set.
     prefix = (settings.FORCE_SCRIPT_NAME or "/bcap/").strip("/")
@@ -65,24 +65,55 @@ class DashboardSeedCommand(BaseCommand):
             action="store_true",
             help="Skip Elasticsearch indexing (use when ES is not running).",
         )
+        parser.add_argument(
+            "--count",
+            type=int,
+            default=1,
+            help="Number of permit cards to create (default: 1).",
+        )
 
     def handle(self, *args, **options):
-        # No outer transaction: arches-querysets saves open a durable atomic
-        # block, which cannot be nested inside another atomic.
-        data = self.builder_class().build()
+        count = options["count"]
+        if count < 1:
+            raise CommandError("--count must be at least 1.")
 
-        permits = [("Permit Application", data.permit)]
-        if data.unassigned_permit is not None:
-            permits.append(("Unassigned Permit Application", data.unassigned_permit))
+        permits = []
+        # One builder per run so its graph cache and shared resources are reused.
+        builder = self.builder_class()
+        with builder.deferred_descriptors():
+            shared = builder.build_shared()
+            # Shared resources are the same objects on every card; collect once.
+            assignees = shared.assignees
+            resources = [
+                *shared.project_officers,
+                *shared.requirement_templates,
+                *assignees,
+                *(hca.permit for hca in shared.hca_permits),
+                *(holder for hca in shared.hca_permits for holder in hca.holders),
+            ]
+            # No outer transaction: each save opens its own durable atomic block.
+            for i in range(count):
+                # Seed the unassigned permit only on the first card.
+                builder._SEED_UNASSIGNED_PERMIT = i == 0
+                data = builder.build(shared=shared)
 
-        resources = [
-            *(permit for _, permit in permits),
-            data.hca_permit,
-            data.project_officer,
-            *data.process_requirements,
-            *data.assignees,
-            *data.holders,
-        ]
+                permits.append(("Permit Application", data.permit))
+                if data.unassigned_permit is not None:
+                    permits.append(
+                        ("Unassigned Permit Application", data.unassigned_permit)
+                    )
+                resources.extend(
+                    [
+                        data.permit,
+                        *(
+                            [data.unassigned_permit]
+                            if data.unassigned_permit is not None
+                            else []
+                        ),
+                        *data.process_requirements,
+                    ]
+                )
+
         if not options["no_index"]:
             _bulk_index(resources)
 
@@ -93,7 +124,7 @@ class DashboardSeedCommand(BaseCommand):
         # The dashboard's contributor_id filter matches a ministry assignee, so
         # surface the assignee ids (with names) to filter by.
         self.stdout.write("Contributor ids for contributor_id filtering:")
-        for assignee in data.assignees:
+        for assignee in assignees:
             name = Resource.objects.get(pk=assignee.pk).displayname()
             self.stdout.write(f"  {assignee.pk}  {name}")
 

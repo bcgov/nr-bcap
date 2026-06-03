@@ -7312,7 +7312,7 @@
                 {
                     "alias": "industrial_sector",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "553328cc-16ab-4c84-9a15-35e2a4dc90d5",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -8379,7 +8379,7 @@
                 {
                     "alias": "mza_industrial_sector",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "553328cc-16ab-4c84-9a15-35e2a4dc90d5",
                         "multiValue": false
                     },
                     "datatype": "reference",

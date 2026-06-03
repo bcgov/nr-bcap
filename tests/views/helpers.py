@@ -7,28 +7,32 @@ from oauth2_provider.models import AccessToken, get_application_model
 
 
 class AuthTestHelper:
-    """Sets up self.user, self.application, self.access_token for auth tests."""
+    """Sets up cls.user, cls.application, cls.access_token for auth tests.
 
-    def setUp(self):
-        super().setUp()
+    Subclasses that define setUpTestData must call super().setUpTestData().
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
         User = get_user_model()
-        self.user = User.objects.create_user(
+        cls.user = User.objects.create_user(
             username="testuser",
             password="pass",
             email="testuser@example.com",
         )
 
         Application = get_application_model()
-        self.application = Application.objects.create(
-            user=self.user,
+        cls.application = Application.objects.create(
+            user=cls.user,
             name="test-app",
             client_type=Application.CLIENT_CONFIDENTIAL,
             authorization_grant_type=Application.GRANT_PASSWORD,
         )
 
-        self.access_token = AccessToken.objects.create(
-            user=self.user,
-            application=self.application,
+        cls.access_token = AccessToken.objects.create(
+            user=cls.user,
+            application=cls.application,
             token="test-access-token",
             scope="read write",
             expires=timezone.now() + timedelta(hours=1),

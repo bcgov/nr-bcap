@@ -1,3 +1,4 @@
+import arches from 'arches';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     SiteVisitResponse,
@@ -14,7 +15,7 @@ export const getResourceData = async (
     ArchaeologySiteSchema | SiteVisitSchema | HriaDiscontinuedDataSchema
 > => {
     const response = await fetch(
-        `/bcap/api/resource/${graph_slug}/${resource_id}`,
+        arches.urls.api_resource(graph_slug, resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -28,7 +29,7 @@ export const getRelatedResourceData = async (
     resource_id: string,
 ): Promise<SiteVisitSchema[] | HriaDiscontinuedDataSchema[]> => {
     const response = await fetch(
-        `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
+        arches.urls.api_site_related_resources(graph_slug, resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -38,11 +39,11 @@ export const getRelatedResourceData = async (
     return parsed.results;
 };
 
-export const getPermitRequirementData = async (
+export const getProcessRequirementData = async (
     resource_id: string,
 ): Promise<PermitRequirementSchema> => {
     const response = await fetch(
-        `/bcap/api/permit_requirements/${resource_id}/`,
+        arches.urls.api_process_requirements(resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -56,7 +57,7 @@ export const getRequirementSubmissionData = async (
     resource_id: string,
 ): Promise<RequirementSubmissionSchema> => {
     const response = await fetch(
-        `/bcap/api/requirement_submissions/${resource_id}/`,
+        arches.urls.api_requirement_submission(resource_id),
     );
     if (!response.ok) {
         const text = await response.text();
@@ -64,4 +65,32 @@ export const getRequirementSubmissionData = async (
     }
 
     return await response.json();
+};
+
+export const getInternalDashboardData = async (
+    showUnassigned: boolean = false,
+    page: number = 1,
+    limit: number = 100,
+) => {
+    try {
+        // Will need to update to all
+        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${showUnassigned ? '&status=UNASSIGNED' : ''}`;
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Raw API response:', data);
+
+        if (data && 'results' in data && Array.isArray(data.results)) {
+            return data.results;
+        }
+
+        return [];
+    } catch (error) {
+        console.error('Error fetching projects from backend:', error);
+        return [];
+    }
 };

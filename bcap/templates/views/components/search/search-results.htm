@@ -156,6 +156,20 @@
                 <!-- /ko -->
 
                 <!--ko if: canEdit -->
+                <!--ko if: graph_id === '0e74b1fa-1da4-4f17-9e65-dd79fbc96313' -->
+                <a
+                    class="search-candidate-link"
+                    data-bind="onEnterkeyClick, onSpaceClick,
+                    attr: {
+                        'href': '/bcap/plugins/internal-permit-dashboard/createchecklist?id=' + resourceinstanceid,
+                        'aria-label': $root.translations.editResource(displayname)
+                    }"
+                >
+                    <i class="ion-ios-refresh-empty"></i>
+                    <span data-bind="text: $root.translations.edit"></span>
+                </a>
+                <!--/ko-->
+                <!--ko ifnot: graph_id === '0e74b1fa-1da4-4f17-9e65-dd79fbc96313' -->
                 <a
                     class="search-candidate-link"
                     href="#"
@@ -166,6 +180,8 @@
                     <i class="ion-ios-refresh-empty"></i>
                     <span data-bind="text: $root.translations.edit"></span>
                 </a>
+
+                <!--/ko-->
                 <!--/ko-->
 
                 <!-- ko if: !!$parent.mapFilter -->

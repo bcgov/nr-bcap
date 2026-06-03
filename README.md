@@ -255,9 +255,20 @@ python3 manage.py seed_dashboard_demo
 
 # One permit carrying the full real-world requirement flow
 python3 manage.py seed_permit_application
+
+# Seed several cards at once (each with randomized names and application id)
+python3 manage.py seed_dashboard_demo --count 20
 ```
 
-Both take `--no-index` for when Elasticsearch is not running. They are temporary developer aids and will be removed in a future release.
+Seeded data uses [Faker](https://faker.readthedocs.io/) to randomize holder names, project officer, ministry assignees, and the application id, so each card is distinct. Both commands take `--count N` (default 1) and `--no-index` (for when Elasticsearch is not running).
+
+To remove the seeded data again (only resources the seeders created are deleted — real data in the same graphs is left untouched):
+
+```bash
+python3 manage.py clear_dashboard_data
+```
+
+These are temporary developer aids and will be removed in a future release.
 
 ## Running Backend Unit Tests
 

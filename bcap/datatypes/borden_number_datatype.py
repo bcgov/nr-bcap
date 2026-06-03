@@ -7,6 +7,7 @@ from arches.app.datatypes.datatypes import NonLocalizedStringDataType
 from arches.app.models import models
 
 from bcap.models.borden_number import BordenNumberCounter
+from bcap.util.dates import to_iso
 
 borden_number_widget = models.Widget.objects.get(name="borden-number-widget")
 
@@ -63,4 +64,4 @@ class BordenNumberDataType(NonLocalizedStringDataType):
         issuance_date_nodeid = self._get_issuance_date_nodeid(tile)
         if issuance_date_nodeid and not tile.data[issuance_date_nodeid]:
             logger.debug("Setting issuance date")
-            tile.data[issuance_date_nodeid] = datetime.now().strftime("%Y-%m-%d")
+            tile.data[issuance_date_nodeid] = to_iso(datetime.now().date())
