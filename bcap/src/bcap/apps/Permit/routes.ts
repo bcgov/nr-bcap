@@ -33,12 +33,19 @@ const routes = [
         component: () =>
             import('@/bcap/apps/Permit/components/dashboard/TaskChecklist.vue'),
     },
+    {
+        path: arches.urls.plugin('internal-permit-dashboard/CreateChecklist'),
+        name: 'CreateChecklist',
+        component: () =>
+            import('@/bcap/apps/Permit/components/dashboard/CreateChecklist.vue'),
+    },
 ];
 
 type ExternalPermitRouteNamesType = RouteNamesType & {
     home: string;
     newPermit: string;
     checklist: string;
+    createchecklist: string;
 };
 
 const routeNames: ExternalPermitRouteNamesType = {
@@ -46,6 +53,7 @@ const routeNames: ExternalPermitRouteNamesType = {
     newPermit: 'newPermit',
     login: '',
     checklist: 'Checklist',
+    createchecklist: 'CreateChecklist',
     // updateSite: 'updateSite',
     // editSite: 'editSite',
     // search: "search",

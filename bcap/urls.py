@@ -6,27 +6,44 @@ from bcap.views.api import (
     BCAPResourceDetailView,
     BordenNumber,
     BordenNumberExternal,
-    DashboardView,
     MVT,
     LegislativeAct,
     RegisterType,
-    UserProfile,
     RelatedSiteVisits,
     ControlledListHierarchy,
     TranslatableResourceTypesView,
     TranslateToResourceTypeView,
-    ProcessRequirement,
     RequirementSubmission,
 )
+from bcap.views.dashboard_api import DashboardView
+from bcap.views.process_requirement_api import ProcessRequirementView
+from bcap.views.user_api import UserProfile
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
 from bcgov_arches_common.views.map import BCTileserverProxyView
+from rest_framework.permissions import IsAdminUser
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView,
+)
 
 uuid_regex = settings.UUID_REGEX
 
 PREFIX = (
     settings.BCGOV_PROXY_PREFIX.rstrip("/") + "/" if settings.BCGOV_PROXY_PREFIX else ""
 )
+
+# Routes included in the OpenAPI schema (passed to SpectacularAPIView).
+documented_api_patterns = [
+    path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
+    path(f"{PREFIX}api/dashboard", DashboardView.as_view(), name="dashboard"),
+    path(
+        f"{PREFIX}api/resource/process_requirement/<uuid:pk>",
+        ProcessRequirementView.as_view(),
+        name="process_requirement",
+    ),
+]
 
 
 urlpatterns = [
@@ -71,11 +88,7 @@ urlpatterns = [
         ControlledListHierarchy.as_view(),
         name="controlled_list_hierarchy",
     ),
-    path(
-        f"{PREFIX}user_profile",
-        UserProfile.as_view(),
-        name="user_profile",
-    ),
+    *documented_api_patterns,
     # MVT requires regex due to literal {z}, {x}, {y} placeholders
     re_path(
         rf"^{PREFIX}"
@@ -110,11 +123,6 @@ urlpatterns = [
         name="translate_to_resource_type",
     ),
     path(
-        f"{PREFIX}api/process_requirements/<uuid:resource_id>",
-        ProcessRequirement.as_view(),
-        name="process_requirement",
-    ),
-    path(
         f"{PREFIX}api/requirement_submissions/<uuid:resource_id>",
         RequirementSubmission.as_view(),
         name="requirement_submission",
@@ -124,12 +132,26 @@ urlpatterns = [
         TranslatableResourceTypesView.as_view(),
         name="translatable_resource_types",
     ),
-    path(
-        f"{PREFIX}api/dashboard",
-        DashboardView.as_view(),
-        name="dashboard",
-    ),
     path(f"{PREFIX}search/export_results", export_results, name="export_results"),
+    path(
+        f"{PREFIX}api/schema",
+        SpectacularAPIView.as_view(permission_classes=[IsAdminUser]),
+        name="schema",
+    ),
+    path(
+        f"{PREFIX}api/schema/swagger-ui",
+        SpectacularSwaggerView.as_view(
+            url_name="schema", permission_classes=[IsAdminUser]
+        ),
+        name="swagger-ui",
+    ),
+    path(
+        f"{PREFIX}api/schema/redoc",
+        SpectacularRedocView.as_view(
+            url_name="schema", permission_classes=[IsAdminUser]
+        ),
+        name="redoc",
+    ),
     # Override arches_querysets' resource detail route so the response is
     # post-processed to inject MVTTiler-configured attrs into geojson
     # feature properties. Must precede the arches_querysets include.

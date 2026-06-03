@@ -20,9 +20,9 @@ repos:
       hooks:
           - id: prettier
             name: prettier
-            entry: npm run prettier:fix
+            entry: npm run prettier:fix:all
             language: system
-            files: bcap/src
+            always_run: true
           - id: eslint
             name: eslint
             entry: npm run eslint:fix

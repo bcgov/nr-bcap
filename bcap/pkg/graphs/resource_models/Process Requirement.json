@@ -822,25 +822,35 @@
             "functions_x_graphs": [
                 {
                     "config": {
+                        "class_name": "ProcessRequirementDescriptors",
                         "descriptor_types": {
                             "description": {
-                                "nodegroup_id": "62ffee00-47d5-4b48-84fc-8e76de1cfd94",
-                                "string_template": "<Is Template Requirement>, <Default Target Processing Time>, <Has Submission Requirement>"
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [],
+                                "show_name": true,
+                                "type": "description"
                             },
                             "map_popup": {
-                                "nodegroup_id": "",
-                                "string_template": ""
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [],
+                                "show_name": true,
+                                "type": "map_popup"
                             },
                             "name": {
-                                "nodegroup_id": "ff51d94c-03c3-42e0-8195-83dc6669e8ad",
-                                "string_template": "<Requirement Name>"
+                                "first_only": true,
+                                "node_ids": [],
+                                "show_name": false,
+                                "type": "name"
                             }
                         },
+                        "module": "bcap.functions.process_requirement_descriptors",
                         "triggering_nodegroups": []
                     },
-                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "function_id": "60000000-0000-0000-0000-000000001006",
                     "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
-                    "id": "350ad50b-8641-458b-8ae3-9c528f2512a9"
+                    "id": "aef207d8-a311-45d8-8752-58e6c7e2fbad"
                 }
             ],
             "graphid": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",

@@ -1,45 +1,81 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-
-interface SubRequirement {
-    id: string;
-    sortOrder: number;
-    name: string;
-    description: string;
-    isSatisfied: boolean;
-    notes: string;
-}
-
-interface DateTile {
-    tileid: string | null;
-    nodegroup_id: string;
-    data: Record<string, unknown>;
-}
-
-interface RawTile {
-    tileid: string | null;
-    nodegroup_id: string;
-    data: Record<string, unknown>;
-}
+import arches from 'arches';
+import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
+import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
 
 const route = useRoute();
 const idFromUrl = route.query.id;
-const subRequirements = ref<SubRequirement[]>([]);
-const dateTile = ref<DateTile | null>(null);
 const isLoading = ref(true);
+const isSaving = ref(false);
 const errorMessage = ref('');
 
-// Arches UUID Constants
-const SUB_REQ_NODEGROUP = '5ea00f2f-1a7b-47ee-b23c-9dd8cb3c5cd7';
-const NODE_SORT = '461e5988-c6c7-41a7-ac48-abbd28216542';
-const NODE_NAME = '9e5eff66-1dc8-41de-a544-930e348b3782';
-const NODE_DESC = 'feddcbb3-e905-44e4-93b7-d63ce3be92fa';
-const NODE_SATISFIED = '49d33cbb-e857-4b21-8bfe-f6632ce53f9f';
-const NODE_NOTES = 'a44988ea-0c8a-40f0-a51c-90fb5616e34e';
-const DATE_NODEGROUP = '71cc085c-9f66-47d6-8b56-b223e9a60cb8';
-const NODE_START_DATE = '8c896564-f9c9-44ac-a563-93c1ee751fea';
-const NODE_COMP_DATE = '0cadf9ba-0e2d-42e9-b11e-042390bcb88c';
+const requirementData = ref<PermitRequirementSchema | null>(null);
+
+const subRequirements = computed(
+    () => requirementData.value?.aliased_data?.sub_requirement || [],
+);
+
+const requirementName = computed(
+    () =>
+        requirementData.value?.aliased_data?.requirement_identification
+            ?.aliased_data?.requirement_name?.display_value ?? '',
+);
+
+// Requirement-level status + notes (the assessment tile).
+const assessment = computed(
+    () => requirementData.value?.aliased_data?.sub_requirement_assessment_n1,
+);
+
+// String nodes carry a localized value ({ en: { value } }), so binding
+// node_value directly renders "[object Object]". These read/write the inner
+// string instead. Used by every notes textarea (sub-requirement + assessment).
+type LocalizedString = { en?: { value?: string } };
+
+const readText = (node?: { node_value?: unknown } | null): string => {
+    const value = node?.node_value as
+        | LocalizedString
+        | string
+        | null
+        | undefined;
+    if (value == null) return '';
+    return typeof value === 'string' ? value : (value.en?.value ?? '');
+};
+
+const writeText = (
+    node: { node_value?: unknown } | null | undefined,
+    text: string,
+) => {
+    if (node) {
+        node.node_value = { en: { value: text, direction: 'ltr' } };
+    }
+};
+
+// Manual save: snapshot the last-saved state so we can detect edits and revert.
+const savedSnapshot = ref('');
+const isDirty = computed(
+    () =>
+        !!requirementData.value &&
+        savedSnapshot.value !== JSON.stringify(requirementData.value),
+);
+const markPristine = () => {
+    savedSnapshot.value = JSON.stringify(requirementData.value);
+};
+const undoChanges = () => {
+    if (savedSnapshot.value) {
+        requirementData.value = JSON.parse(savedSnapshot.value);
+    }
+};
+
+const startDate = computed(() => {
+    return requirementData.value?.aliased_data?.requirement_execution_duration
+        ?.aliased_data?.requirement_process_start_date?.node_value;
+});
+const completedDate = computed(() => {
+    return requirementData.value?.aliased_data?.requirement_execution_duration
+        ?.aliased_data?.requirement_process_completion_date?.node_value;
+});
 
 const loadData = async () => {
     if (!idFromUrl) {
@@ -49,64 +85,10 @@ const loadData = async () => {
     }
 
     try {
-        const response = await fetch(
-            `/bcap/api/process_requirements/${idFromUrl}`,
+        requirementData.value = await getProcessRequirementData(
+            idFromUrl as string,
         );
-        if (!response.ok)
-            throw new Error(`API returned status: ${response.status}`);
-
-        const data = await response.json();
-
-        if (data.tiles && data.tiles.length > 0) {
-            const foundDateTile = data.tiles.find(
-                (t: RawTile) => t.nodegroup_id === DATE_NODEGROUP,
-            );
-            if (foundDateTile) {
-                dateTile.value = foundDateTile as DateTile;
-            } else {
-                dateTile.value = {
-                    tileid: null,
-                    nodegroup_id: DATE_NODEGROUP,
-                    data: {},
-                };
-            }
-
-            subRequirements.value = data.tiles
-                .filter(
-                    (tile: RawTile) => tile.nodegroup_id === SUB_REQ_NODEGROUP,
-                )
-                .map((tile: RawTile): SubRequirement => {
-                    const tileData = tile.data;
-                    const extractText = (node: unknown): string => {
-                        if (!node) return '';
-                        if (typeof node === 'string') return node;
-
-                        const obj = node as { en?: { value?: unknown } };
-                        if (obj.en && obj.en.value) {
-                            return String(obj.en.value);
-                        }
-                        return String(node);
-                    };
-
-                    return {
-                        id:
-                            tile.tileid ||
-                            `temp-${Math.random().toString(36).slice(2, 9)}`,
-                        sortOrder: Number(tileData[NODE_SORT]) || 99,
-                        name:
-                            extractText(tileData[NODE_NAME]) || 'Unnamed Step',
-                        description: extractText(tileData[NODE_DESC]),
-                        isSatisfied:
-                            tileData[NODE_SATISFIED] === true ||
-                            tileData[NODE_SATISFIED] === 'true',
-                        notes: extractText(tileData[NODE_NOTES]),
-                    };
-                })
-                .sort(
-                    (a: SubRequirement, b: SubRequirement) =>
-                        a.sortOrder - b.sortOrder,
-                );
-        }
+        markPristine();
     } catch (error) {
         console.error('Failed to load sub-requirements:', error);
         errorMessage.value = 'Failed to load checklist data. Please try again.';
@@ -119,30 +101,49 @@ onMounted(() => {
     loadData();
 });
 
-const handleCheckboxChange = () => {
-    if (!dateTile.value) return;
+// Derive start/completion dates from the checklist. Run on Save (not on each
+// toggle) so the dates only change when the user commits.
+const applyDerivedDates = () => {
+    if (!requirementData.value) return;
     const today = new Date().toISOString().split('T')[0];
-    const anyChecked = subRequirements.value.some((req) => req.isSatisfied);
-    const allChecked = subRequirements.value.every((req) => req.isSatisfied);
+    const duration =
+        requirementData.value.aliased_data.requirement_execution_duration
+            .aliased_data;
+    const subs = subRequirements.value;
+    const anyChecked = subs.some(
+        (req) => req.aliased_data.sub_requirement_satisfied.node_value,
+    );
+    const allChecked =
+        subs.length > 0 &&
+        subs.every(
+            (req) => req.aliased_data.sub_requirement_satisfied.node_value,
+        );
 
-    if (anyChecked && !dateTile.value.data[NODE_START_DATE]) {
-        dateTile.value.data[NODE_START_DATE] = today;
+    if (anyChecked && !duration.requirement_process_start_date.node_value) {
+        duration.requirement_process_start_date.node_value = today;
     }
-    if (allChecked && !dateTile.value.data[NODE_COMP_DATE]) {
-        dateTile.value.data[NODE_COMP_DATE] = today;
-    } else if (!allChecked && dateTile.value.data[NODE_COMP_DATE]) {
-        dateTile.value.data[NODE_COMP_DATE] = null;
+    if (
+        allChecked &&
+        !duration.requirement_process_completion_date.node_value
+    ) {
+        duration.requirement_process_completion_date.node_value = today;
+    } else if (
+        !allChecked &&
+        duration.requirement_process_completion_date.node_value
+    ) {
+        duration.requirement_process_completion_date.node_value = null;
     }
-
-    saveChanges();
 };
 
 const saveChanges = async () => {
+    if (!requirementData.value || isSaving.value) return;
+    applyDerivedDates();
+    isSaving.value = true;
     try {
         const response = await fetch(
-            `/bcap/api/process_requirements/${idFromUrl}`,
+            arches.urls.api_process_requirements(idFromUrl),
             {
-                method: 'POST',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken':
@@ -152,15 +153,17 @@ const saveChanges = async () => {
                             ?.split('=')[1] || '',
                 },
                 body: JSON.stringify({
-                    dateTile: dateTile.value,
-                    requirements: subRequirements.value,
+                    aliased_data: requirementData.value.aliased_data,
                 }),
             },
         );
 
         if (!response.ok) throw new Error('Failed to save');
+        markPristine();
     } catch (error) {
         console.error('Save error:', error);
+    } finally {
+        isSaving.value = false;
     }
 };
 </script>
@@ -168,25 +171,24 @@ const saveChanges = async () => {
 <template>
     <div class="checklist-container">
         <div class="title-row">
-            <h2 class="page-title">Process Sub-Requirements</h2>
+            <h2 class="page-title">
+                {{ requirementName || 'Process Requirement' }}
+            </h2>
 
-            <div
-                class="date-metadata"
-                v-if="dateTile"
-            >
+            <div class="date-metadata">
                 <span
                     class="date-pill"
-                    :class="{ active: dateTile.data[NODE_START_DATE] }"
+                    :class="{ active: startDate }"
                 >
                     <strong>Started:</strong>
-                    {{ dateTile.data[NODE_START_DATE] || 'Pending' }}
+                    {{ startDate || 'Pending' }}
                 </span>
                 <span
                     class="date-pill"
-                    :class="{ complete: dateTile.data[NODE_COMP_DATE] }"
+                    :class="{ complete: completedDate }"
                 >
                     <strong>Completed:</strong>
-                    {{ dateTile.data[NODE_COMP_DATE] || 'Pending' }}
+                    {{ completedDate || 'Pending' }}
                 </span>
             </div>
         </div>
@@ -209,38 +211,68 @@ const saveChanges = async () => {
             v-else
             class="checklist-items"
         >
+            <div class="subtitle-row">
+                <h3 class="page-subtitle">Requirement Tasks</h3>
+            </div>
             <div
                 v-for="req in subRequirements"
-                :key="req.id"
+                :key="req.tileid ?? ''"
                 class="requirement-item"
             >
                 <div class="req-header">
                     <input
+                        :id="'check-' + (req.tileid ?? '')"
+                        v-model="
+                            req.aliased_data.sub_requirement_satisfied
+                                .node_value
+                        "
                         type="checkbox"
-                        :id="'check-' + req.id"
-                        v-model="req.isSatisfied"
-                        @change="handleCheckboxChange"
                         class="req-checkbox"
                     />
                     <div class="req-titles">
                         <label
-                            :for="'check-' + req.id"
+                            :for="'check-' + (req.tileid ?? '')"
                             class="req-name"
                         >
-                            {{ req.name }}
+                            {{
+                                req.aliased_data.sub_requirement_name
+                                    ?.display_value
+                            }}
                         </label>
-                        <p class="req-desc">{{ req.description }}</p>
+                        <p
+                            v-if="
+                                req.aliased_data.sub_requirement_description
+                                    ?.display_value
+                            "
+                            class="req-desc"
+                        >
+                            {{
+                                req.aliased_data.sub_requirement_description
+                                    ?.display_value
+                            }}
+                        </p>
                     </div>
                 </div>
 
                 <div class="req-body">
                     <textarea
-                        :id="'notes-' + req.id"
-                        v-model="req.notes"
-                        @change="saveChanges"
+                        :id="'notes-' + req.tileid"
+                        :value="
+                            readText(
+                                req.aliased_data
+                                    .sub_requirement_assessment_notes,
+                            )
+                        "
                         class="req-notes-input"
                         rows="2"
                         placeholder="Add assessment notes..."
+                        @input="
+                            writeText(
+                                req.aliased_data
+                                    .sub_requirement_assessment_notes,
+                                ($event.target as HTMLTextAreaElement).value,
+                            )
+                        "
                     ></textarea>
                 </div>
             </div>
@@ -252,17 +284,87 @@ const saveChanges = async () => {
                 <p>No sub-requirements found for this process.</p>
             </div>
         </div>
+
+        <div
+            v-if="!isLoading && !errorMessage && assessment"
+            class="requirement-summary"
+        >
+            <div class="subtitle-row">
+                <h3 class="page-subtitle">Requirement Status & Summary</h3>
+            </div>
+
+            <div class="req-header">
+                <input
+                    id="requirement_satisfied"
+                    v-model="
+                        assessment.aliased_data.requirement_status.node_value
+                    "
+                    type="checkbox"
+                    class="req-checkbox"
+                />
+                <div class="req-titles">
+                    <label
+                        for="requirement_satisfied"
+                        class="req-name"
+                    >
+                        Requirement Review Completed
+                    </label>
+                </div>
+            </div>
+
+            <div class="req-body">
+                <textarea
+                    id="requirement-notes"
+                    :value="readText(assessment.aliased_data.assessment_notes)"
+                    class="req-notes-input"
+                    rows="8"
+                    placeholder="Add assessment summary and notes..."
+                    @input="
+                        writeText(
+                            assessment.aliased_data.assessment_notes,
+                            ($event.target as HTMLTextAreaElement).value,
+                        )
+                    "
+                ></textarea>
+            </div>
+        </div>
+
+        <div
+            v-if="isDirty"
+            class="actions-bar"
+        >
+            <button
+                type="button"
+                class="action-btn undo-btn"
+                :disabled="isSaving"
+                @click="undoChanges"
+            >
+                <i class="fa-solid fa-rotate-left"></i>
+                Undo
+            </button>
+            <button
+                type="button"
+                class="action-btn save-btn"
+                :disabled="isSaving"
+                @click="saveChanges"
+            >
+                <i
+                    :class="
+                        isSaving
+                            ? 'fa-solid fa-spinner fa-spin'
+                            : 'fa-solid fa-floppy-disk'
+                    "
+                ></i>
+                {{ isSaving ? 'Saving…' : 'Save' }}
+            </button>
+        </div>
     </div>
-    <br />
-    <br />
-    <br />
-    <br />
 </template>
 
 <style scoped>
 .checklist-container {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto 50px auto;
     padding: 2rem 1rem;
     font-family: Arial, sans-serif;
     color: #222;
@@ -277,11 +379,118 @@ const saveChanges = async () => {
     align-items: flex-end;
 }
 
+.subtitle-row {
+    border-bottom: 1px solid #333;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
 .page-title {
     color: #003366;
     margin: 0;
     font-size: 2.5rem;
     font-weight: 700;
+}
+.page-subtitle {
+    color: #003366;
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.notes-header {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Save / Undo action bar */
+.actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.6rem;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.05s ease;
+}
+
+.action-btn:active {
+    transform: translateY(1px);
+}
+
+.action-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.action-btn i {
+    font-size: 1rem;
+}
+
+.save-btn {
+    background-color: #003366;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 51, 102, 0.25);
+}
+
+.save-btn:hover {
+    background-color: #00264d;
+    box-shadow: 0 4px 10px rgba(0, 51, 102, 0.3);
+}
+
+.undo-btn {
+    background-color: #ffffff;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.undo-btn:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+/* Requirement-level satisfied checkbox + note */
+.requirement-satisfied {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #333;
+}
+
+.satisfied-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    cursor: pointer;
+}
+
+.satisfied-label {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
 }
 
 /* date pills */
@@ -333,11 +542,13 @@ const saveChanges = async () => {
 }
 
 .req-checkbox {
-    width: 28px;
-    height: 28px;
-    margin-top: 4px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
     cursor: pointer;
     accent-color: #003366;
+    /* center the 18px box on the first line of the 1.5rem/1.2 label REMOVE THIS LATER*/
+    margin-top: calc((1.5rem * 1.2 - 18px) / 2);
 }
 
 .req-titles {
@@ -361,7 +572,8 @@ const saveChanges = async () => {
 }
 
 .req-body {
-    padding-left: 3rem;
+    /* line the notes box up with the label text (checkbox width + header gap) */
+    padding-left: calc(18px + 1.25rem);
 }
 
 .req-notes-input {

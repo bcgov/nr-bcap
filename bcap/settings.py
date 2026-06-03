@@ -14,6 +14,8 @@ from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 
+from bcap.util.dates import to_long
+
 
 def get_env_variable(var_name, is_optional=False):
     msg = "Set the %s environment variable"
@@ -233,12 +235,25 @@ INSTALLED_APPS = (
     "arches_component_lab",
     "arches_controlled_lists",
     "rest_framework",
+    "drf_spectacular",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += (
     "arches.app",
     "django.contrib.admin",
 )
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "BCAP API",
+    "DESCRIPTION": "BC Archaeology Portal API",
+    "VERSION": "2.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_URLCONF": "bcap.documented_api_urls",
+}
 
 # toggle Vite injection
 USE_VITE = False
@@ -597,9 +612,9 @@ RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER = False
 # Dictionary containing any additional context items for customising email templates
 EXTRA_EMAIL_CONTEXT = {
     "salutation": _("Hi"),
-    "expiration": (
+    "expiration": to_long(
         datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)
-    ).strftime("%A, %d %B %Y"),
+    ),
 }
 
 # see https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference

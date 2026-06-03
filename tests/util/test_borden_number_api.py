@@ -252,6 +252,14 @@ class BordenNumberApiReserveDbTests(TransactionTestCase):
     the real table `bcap_borden_number_counters`.
     """
 
+    def _fixture_teardown(self):
+        # TransactionTestCase's default teardown runs `flush`, truncating EVERY
+        # table -- including the package data loaded by the 0002_load_package
+        # migration (GraphModels, nodes, ...). With --keepdb that empty state
+        # persists and breaks subsequent runs with GraphModel.DoesNotExist.
+        with connection.cursor() as cur:
+            cur.execute("TRUNCATE bcap_borden_number_counters")
+
     @classmethod
     def tearDownClass(cls):
         connections.close_all()
