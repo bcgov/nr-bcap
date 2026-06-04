@@ -50,7 +50,7 @@
         "@primeuix/styles": "^1.2.3",
         "@primeuix/themes": "^1.2.3",
         "ajv": "^8.17.1",
-        "arches": "bcgov/arches#dev/8.1.x_bcgov",
+        "arches": "bcgov/arches#stable/8.1.2_bcgov_12776",
         "arches-component-lab": "archesproject/arches-component-lab#v0.0.1a9",
         "arches-controlled-lists": "archesproject/arches-controlled-lists#brf/feat/176_support_freeform_search",
         "bcgov_arches_common": "bcgov/bcgov-arches-common#release/2.1.x",
