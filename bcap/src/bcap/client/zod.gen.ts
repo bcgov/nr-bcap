@@ -7,6 +7,18 @@
 //            Update=PUT, PartialUpdate=PATCH, Destroy=DELETE
 // Look up <Operation> in schema.yml `paths` for the url.
 // Names without an Api* prefix (e.g. zDashboardCard) are shared, route-agnostic components.
+//
+// Field suffixes mirror the spec's `required` + `nullable`:
+//   .nullable()  value may be null, but the field is still present
+//   .optional()  field may be absent (undefined), but never null
+//   .nullish()   both: null OR absent  (nullable + not required)
+//
+// zFoo vs zFooWritable: a component reused as BOTH a response and a
+// request body splits in two when it has readOnly fields.
+//   zFoo          response shape -- every field, incl. readOnly ones
+//   zFooWritable  request-body shape -- readOnly fields dropped
+//                 (e.g. display_value, details, name, descriptors)
+// Parse responses with zFoo; build request bodies with zFooWritable.
 
 import * as z from 'zod';
 
