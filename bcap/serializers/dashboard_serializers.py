@@ -4,15 +4,14 @@ from rest_framework.serializers import (
     CharField,
     ChoiceField,
     SerializerMethodField,
-    ValidationError,
 )
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
-from bcap.services.dashboard.dashboard_service import DashboardService
 from bcap.services.dashboard.dashboard_types import (
     DashboardPage,
     DashboardFilter,
 )
+from bcap.util.enums import DashboardStatus
 
 
 class UserProfileResponseSerializer(Serializer):
@@ -20,36 +19,20 @@ class UserProfileResponseSerializer(Serializer):
     first_name = CharField(allow_blank=True)
     last_name = CharField(allow_blank=True)
     groups = SerializerMethodField()
-    contributor_id = SerializerMethodField()
 
     def get_groups(self, user) -> list[str]:
         return [group.name for group in user.groups.all()]
 
-    def get_contributor_id(self, user) -> str | None:
-        """TODO fill this in."""
-        pass
-
 
 class DashboardFilterSerializer(DataclassSerializer):
-    """The dashboard's query string parameters: an optional contributor filter
-    and the paging controls (which page, and how many cards per page)."""
+    """The dashboard's query string parameters: an optional assignment status
+    filter and the paging controls (which page, and how many cards per page)."""
 
     # Declared so OpenAPI spec advertises the allowed status values as an enum.
-    status = ChoiceField(
-        choices=[(DashboardService.STATUS_UNASSIGNED, "Unassigned")],
-        required=False,
-        allow_null=True,
-    )
+    status = ChoiceField(choices=DashboardStatus.choices, required=False)
 
     class Meta:
         dataclass = DashboardFilter
-
-    def validate(self, attrs):
-        if attrs.status == DashboardService.STATUS_UNASSIGNED and attrs.contributor_id:
-            raise ValidationError(
-                "status=UNASSIGNED cannot be combined with contributor_id."
-            )
-        return attrs
 
 
 class DashboardPageResponseSerializer(DataclassSerializer):

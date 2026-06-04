@@ -5,7 +5,8 @@ from django.test import TestCase
 
 from bcap.services.dashboard.dashboard_service import DashboardService
 from bcap.services.dashboard.dashboard_types import DashboardFilter
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.util.enums import DashboardStatus
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -20,10 +21,22 @@ def build_permit_graph():
     builder = ResourceBuilder()
     contributor_type = builder.reference_value("contributor", "contributor_type")
 
-    ada = builder.make_contributor(contributor_type, "Ada", "Lovelace")
-    grace = builder.make_contributor(contributor_type, "Grace", "Hopper")
-    acme = builder.make_contributor(contributor_type, None, "Acme Corp")
-    alan = builder.make_contributor(contributor_type, "Alan", "Turing")
+    ada = builder.make_contributor(ContributorSpec(contributor_type, "Ada", "Lovelace"))
+    acme = builder.make_contributor(
+        ContributorSpec(contributor_type, None, "Acme Corp")
+    )
+    # Grace maps to the test user (bcap_username) and belongs to Acme, so she is
+    # the ASSIGNED_TO_ME match and Acme is her ASSIGNED_TO_ASSOCIATED_COMPANIES.
+    grace = builder.make_contributor(
+        ContributorSpec(
+            contributor_type,
+            "Grace",
+            "Hopper",
+            bcap_username="testuser",
+            associated_organization=acme,
+        )
+    )
+    alan = builder.make_contributor(ContributorSpec(contributor_type, "Alan", "Turing"))
 
     hca_permit = builder.new_resource("hca_permit")
     builder.append_blank_tile_for_group(
@@ -289,24 +302,44 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(card.ministry_assignee_name, "Grace Hopper")
         self.assertEqual(card.ministry_assignee_id, self.grace_id)
 
-    def test_get_cards_filters_by_active_requirements_assignee(self):
-        # Grace is the assignee of the active ("Field Assessment") requirement,
-        # so filtering by her returns the permit.
-        matching = self.service.get_cards(DashboardFilter(contributor_id=self.grace_id))
+    def test_assigned_to_me_status_filters_by_user_bcap_username(self):
+        # Grace's bcap_username is "testuser" and she is the assignee of the
+        # active ("Field Assessment") requirement, so ASSIGNED_TO_ME returns the
+        # permit for that user.
+        matching = self.service.get_cards(
+            DashboardFilter(status=DashboardStatus.ASSIGNED_TO_ME), "testuser"
+        )
         self.assertEqual(matching.count, 1)
         self.assertEqual([card.id for card in matching.results], [self.permit_id])
 
-        # Ada is on the satisfied "Review" and the later-ordered unsatisfied
-        # "Site Inspection" -- never the active requirement -- so she matches
-        # nothing, even though she is an assignee on the permit.
-        ada = self.service.get_cards(DashboardFilter(contributor_id=self.ada_id))
-        self.assertEqual(ada.count, 0)
-        self.assertEqual(ada.results, [])
-
-        # A permit holder is not a ministry assignee, so nothing matches.
-        none = self.service.get_cards(DashboardFilter(contributor_id=self.acme_id))
+        # A user with no matching Contributor (bcap_username) matches nothing.
+        none = self.service.get_cards(
+            DashboardFilter(status=DashboardStatus.ASSIGNED_TO_ME), "nobody"
+        )
         self.assertEqual(none.count, 0)
         self.assertEqual(none.results, [])
+
+    def test_assigned_to_my_company_status_includes_organization_members(self):
+        # Grace belongs to Acme, so ASSIGNED_TO_ASSOCIATED_COMPANIES for her user returns
+        # the permit whose active requirement she is assigned to.
+        company = self.service.get_cards(
+            DashboardFilter(status=DashboardStatus.ASSIGNED_TO_ASSOCIATED_COMPANIES),
+            "testuser",
+        )
+        self.assertEqual(company.count, 1)
+        self.assertEqual([card.id for card in company.results], [self.permit_id])
+
+    def test_blank_username_assignment_filters_require_a_user(self):
+        # The assignment statuses are keyed on the viewer's Contributor, so a
+        # blank username is rejected rather than matching every permit.
+        for username in (None, ""):
+            for status in (
+                DashboardStatus.ASSIGNED_TO_ME,
+                DashboardStatus.ASSIGNED_TO_ASSOCIATED_COMPANIES,
+            ):
+                with self.subTest(username=username, status=status):
+                    with self.assertRaises(ValueError):
+                        self.service.get_cards(DashboardFilter(status=status), username)
 
     def test_unassigned_status_returns_only_permits_with_no_active_assignee(self):
         # The graph permit's active requirement ("Field Assessment") is assigned
@@ -315,7 +348,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         unassigned_id = str(build_unassigned_permit(ResourceBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(
-            DashboardFilter(status=DashboardService.STATUS_UNASSIGNED)
+            DashboardFilter(status=DashboardStatus.UNASSIGNED)
         )
 
         self.assertEqual([card.id for card in page.results], [unassigned_id])

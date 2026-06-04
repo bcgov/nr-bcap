@@ -10,12 +10,6 @@ paths:
       description: Returns dashboard cards for the current user based on their role.
       parameters:
       - in: query
-        name: contributor_id
-        schema:
-          type: string
-          nullable: true
-          minLength: 1
-      - in: query
         name: limit
         schema:
           type: integer
@@ -37,11 +31,14 @@ paths:
         schema:
           enum:
           - UNASSIGNED
-          - null
+          - ASSIGNED_TO_ME
+          - ASSIGNED_TO_ASSOCIATED_COMPANIES
           type: string
-          nullable: true
           minLength: 1
-        description: '* `UNASSIGNED` - Unassigned'
+        description: |-
+          * `UNASSIGNED` - Unassigned
+          * `ASSIGNED_TO_ME` - Assigned to me
+          * `ASSIGNED_TO_ASSOCIATED_COMPANIES` - Assigned to associated companies
       tags:
       - dashboard
       security:
@@ -54,9 +51,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/DashboardPage'
           description: ''
-  /bcap/api/process_requirement/{id}:
+  /bcap/api/resource/process_requirement/{id}:
     get:
-      operationId: api_process_requirement_retrieve
+      operationId: api_resource_process_requirement_retrieve
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -81,7 +78,7 @@ paths:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
     put:
-      operationId: api_process_requirement_update
+      operationId: api_resource_process_requirement_update
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -114,7 +111,7 @@ paths:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
     patch:
-      operationId: api_process_requirement_partial_update
+      operationId: api_resource_process_requirement_partial_update
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -147,7 +144,7 @@ paths:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
     delete:
-      operationId: api_process_requirement_destroy
+      operationId: api_resource_process_requirement_destroy
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -290,7 +287,7 @@ components:
         The {node_value, display_value, details} object node value fields emit when as_representation is True.
 
         Mirrors the dict built in arches_querysets TileTree.get_value_with_context;
-        keep in sync if that shape changes upstream.
+        keep in sync if that shape changes upstream (unit test covers this).
       properties:
         node_value: {}
         display_value:
@@ -412,16 +409,16 @@ components:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
+        is_template_requirement:
+          allOf:
+          - $ref: '#/components/schemas/NodeValueEnvelope'
+          nullable: true
         default_target_processing_time:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Default Target Processing Time (days)
           description: Enter number
-        is_template_requirement:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
       required:
       - has_submission_requirement
       - is_internal_requirement
@@ -586,23 +583,22 @@ components:
     Process_Requirement_Sub_Requirement_Aliased_Data:
       type: object
       properties:
-        sub_requirement_description:
+        sub_requirement_reference:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
-          title: Description
-          description: Enter text
         sub_requirement_assessment_notes:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Assessment Notes
           description: Enter text
-        sub_requirement_satisfied:
+        sub_requirement_description:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
-          title: Requirement Satisfied
+          title: Description
+          description: Enter text
         sub_requirement_sort_order:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
@@ -614,10 +610,11 @@ components:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           title: Mandatory
-        sub_requirement_reference:
+        sub_requirement_satisfied:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
+          title: Requirement Satisfied
         sub_requirement_name:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
@@ -733,13 +730,7 @@ components:
           items:
             type: string
           readOnly: true
-        contributor_id:
-          type: string
-          nullable: true
-          description: TODO fill this in.
-          readOnly: true
       required:
-      - contributor_id
       - first_name
       - groups
       - last_name

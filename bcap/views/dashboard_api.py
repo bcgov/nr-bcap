@@ -30,5 +30,5 @@ class DashboardView(APIView):
     def get(self, request):
         query = DashboardFilterSerializer(data=request.query_params)
         query.is_valid(raise_exception=True)
-        page = DashboardService().get_cards(query.validated_data)
+        page = DashboardService().get_cards(query.validated_data, request.user.username)
         return Response(DashboardPageResponseSerializer(page).data)
