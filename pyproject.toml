@@ -22,7 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "arches @ git+https://github.com/bcgov/arches@dev/8.1.x_bcgov",
+    "arches @ git+https://github.com/bcgov/arches@stable/8.1.2_bcgov_12776",
     "arches-component-lab>=0.0.1a11",
     "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@dev/1.1.x",
     "arches-querysets",
