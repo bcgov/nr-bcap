@@ -186,7 +186,7 @@ paths:
           description: ''
 components:
   schemas:
-    BooleanNodeValueEnvelope:
+    BooleanAliasedNodeData:
       type: object
       properties:
         node_value:
@@ -301,7 +301,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DashboardCard'
-    DateNodeValueEnvelope:
+    DateAliasedNodeData:
       type: object
       properties:
         node_value:
@@ -320,7 +320,7 @@ components:
           readOnly: true
       required:
       - node_value
-    NumberNodeValueEnvelope:
+    NumberAliasedNodeData:
       type: object
       properties:
         node_value:
@@ -353,11 +353,23 @@ components:
           type: boolean
           readOnly: true
         name:
+          type: string
           readOnly: true
           nullable: true
         descriptors:
+          type: object
           readOnly: true
           nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
         legacyid:
           type: string
           readOnly: true
@@ -396,11 +408,23 @@ components:
           type: boolean
           readOnly: true
         name:
+          type: string
           readOnly: true
           nullable: true
         descriptors:
+          type: object
           readOnly: true
           nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
         legacyid:
           type: string
           readOnly: true
@@ -440,21 +464,21 @@ components:
       properties:
         has_submission_requirement:
           allOf:
-          - $ref: '#/components/schemas/BooleanNodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
         is_internal_requirement:
           allOf:
-          - $ref: '#/components/schemas/BooleanNodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
         default_target_processing_time:
           allOf:
-          - $ref: '#/components/schemas/NumberNodeValueEnvelope'
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
           title: Default Target Processing Time (days)
           description: Enter number
         is_template_requirement:
           allOf:
-          - $ref: '#/components/schemas/BooleanNodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
       required:
       - has_submission_requirement
@@ -487,23 +511,43 @@ components:
           minimum: -2147483648
           nullable: true
         provisionaledits:
+          type: object
           nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Process_Requirement_Requirement_Execution_Duration_Aliased_Data:
       type: object
       properties:
         requirement_process_start_date:
           allOf:
-          - $ref: '#/components/schemas/DateNodeValueEnvelope'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
         requirement_process_due_date:
           allOf:
-          - $ref: '#/components/schemas/DateNodeValueEnvelope'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
         requirement_process_completion_date:
           allOf:
-          - $ref: '#/components/schemas/DateNodeValueEnvelope'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
     Process_Requirement_Requirement_Execution_Duration_Tile:
@@ -533,18 +577,38 @@ components:
           minimum: -2147483648
           nullable: true
         provisionaledits:
+          type: object
           nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Process_Requirement_Requirement_Identification_Aliased_Data:
       type: object
       properties:
         requirement_identification:
           allOf:
-          - $ref: '#/components/schemas/StringNodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
         requirement_name:
           allOf:
-          - $ref: '#/components/schemas/StringNodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
         is_template_requirement:
@@ -581,13 +645,33 @@ components:
           minimum: -2147483648
           nullable: true
         provisionaledits:
+          type: object
           nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Process_Requirement_Requirment_Submission_Aliased_Data:
       type: object
       properties:
         requirment_submission:
           allOf:
-          - $ref: '#/components/schemas/ResourceInstanceNodeValueEnvelope'
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
     Process_Requirement_Requirment_Submission_Tile:
       type: object
@@ -616,45 +700,65 @@ components:
           minimum: -2147483648
           nullable: true
         provisionaledits:
+          type: object
           nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Process_Requirement_Sub_Requirement_Aliased_Data:
       type: object
       properties:
         sub_requirement_assessment_notes:
           allOf:
-          - $ref: '#/components/schemas/StringNodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Assessment Notes
           description: Enter text
         sub_requirement_description:
           allOf:
-          - $ref: '#/components/schemas/StringNodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Description
           description: Enter text
         sub_requirement_mandatory:
           allOf:
-          - $ref: '#/components/schemas/BooleanNodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           title: Mandatory
         sub_requirement_reference:
           allOf:
-          - $ref: '#/components/schemas/ResourceInstanceNodeValueEnvelope'
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
         sub_requirement_satisfied:
           allOf:
-          - $ref: '#/components/schemas/BooleanNodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           title: Requirement Satisfied
         sub_requirement_sort_order:
           allOf:
-          - $ref: '#/components/schemas/NumberNodeValueEnvelope'
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
           title: Sort Order
           description: Enter number
         sub_requirement_name:
           allOf:
-          - $ref: '#/components/schemas/StringNodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Requirement
           description: Enter text
@@ -666,11 +770,11 @@ components:
       properties:
         requirement_status:
           allOf:
-          - $ref: '#/components/schemas/BooleanNodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
         assessment_notes:
           allOf:
-          - $ref: '#/components/schemas/StringNodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
     Process_Requirement_Sub_Requirement_Assessment_N1_Tile:
@@ -700,7 +804,27 @@ components:
           minimum: -2147483648
           nullable: true
         provisionaledits:
+          type: object
           nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Process_Requirement_Sub_Requirement_Tile:
       type: object
       properties:
@@ -728,7 +852,27 @@ components:
           minimum: -2147483648
           nullable: true
         provisionaledits:
+          type: object
           nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     ResourceAliasedData:
       type: object
       properties:
@@ -753,6 +897,35 @@ components:
           items:
             $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Tile'
           nullable: true
+    ResourceInstanceAliasedNodeData:
+      type: object
+      properties:
+        node_value:
+          type: object
+          properties:
+            resourceId:
+              type: string
+              format: uuid
+            ontologyProperty:
+              type: string
+              nullable: true
+            resourceXresourceId:
+              type: string
+              nullable: true
+            inverseOntologyProperty:
+              type: string
+              nullable: true
+          nullable: true
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceInstanceDetail'
+          readOnly: true
+      required:
+      - node_value
     ResourceInstanceDetail:
       type: object
       description: One related resource summarized into a resource-instance node's
@@ -767,27 +940,24 @@ components:
       required:
       - display_value
       - resource_id
-    ResourceInstanceNodeValueEnvelope:
+    StringAliasedNodeData:
       type: object
       properties:
         node_value:
+          type: object
           nullable: true
-        display_value:
-          type: string
-          readOnly: true
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResourceInstanceDetail'
-          readOnly: true
-      required:
-      - node_value
-    StringNodeValueEnvelope:
-      type: object
-      properties:
-        node_value:
-          nullable: true
-          description: Enter text
+          properties:
+            en:
+              type: object
+              properties:
+                value:
+                  type: string
+                  nullable: true
+                direction:
+                  type: string
+                  enum:
+                  - ltr
+                  - rtl
         display_value:
           type: string
           readOnly: true

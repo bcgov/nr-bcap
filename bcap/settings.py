@@ -259,6 +259,7 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.hooks.postprocess_schema_enums",
         "bcap.schema.sort_generated_schema_properties",
+        "bcap.schema.type_base_serializer_fields",
     ],
 }
 
