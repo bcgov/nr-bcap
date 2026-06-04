@@ -58,21 +58,84 @@ class NodeValueEnvelopeSerializer(serializers.Serializer):
     """
 
     node_value = serializers.JSONField()
-    display_value = serializers.CharField(read_only=True)
-    details = serializers.ListField(child=serializers.DictField(), read_only=True)
+    display_value = serializers.CharField()
+    details = serializers.ListField(child=serializers.DictField())
+
+
+class ConceptValueDetailSerializer(serializers.Serializer):
+    """One controlled-list value as serialized into a concept node's `details`
+    (arches betterJSONSerializer keys foreign keys by their `_id` attname)."""
+
+    valueid = serializers.UUIDField()
+    value = serializers.CharField()
+    concept_id = serializers.UUIDField()
+    valuetype_id = serializers.CharField()
+    language_id = serializers.CharField(allow_null=True)
+
+
+class ResourceInstanceDetailSerializer(serializers.Serializer):
+    """One related resource summarized into a resource-instance node's `details`."""
+
+    resource_id = serializers.UUIDField(allow_null=True)
+    display_value = serializers.CharField()
+
+
+# Datatypes whose get_details() emits a structured list worth typing.
+_CONCEPT_DATATYPES = frozenset({"concept", "concept-list"})
+_RESOURCE_DATATYPES = frozenset({"resource-instance", "resource-instance-list"})
 
 
 class NodeValueFieldExtension(OpenApiSerializerFieldExtension):
-    """Map node value fields to the shared NodeValueEnvelope component."""
+    """Type the {node_value, display_value, details} envelope per Arches datatype.
+
+    node_value is derived from the field's own underlying type, so new datatypes
+    need no changes here; details is typed only for the families that emit
+    structured details. get_name() gives each datatype its own component."""
 
     target_class = NodeValueMixin
     match_subclasses = True
 
+    def _datatype(self):
+        # Arches stamps the datatype onto the field's style.
+        return (getattr(self.target, "style", None) or {}).get("datatype")
+
+    def get_name(self):
+        datatype = self._datatype()
+        if not datatype:
+            return "NodeValueEnvelope"
+        pascal = "".join(p.title() for p in datatype.replace("-", "_").split("_"))
+        return f"{pascal}NodeValueEnvelope"
+
     def map_serializer_field(self, auto_schema, direction):
-        # Pass the class; resolve_serializer force-instances it.
-        return auto_schema.resolve_serializer(
-            NodeValueEnvelopeSerializer, direction
-        ).ref
+        # Type node_value from the field's real base (FloatField, DateField, ...);
+        # bypass_extensions stops this extension from recursing.
+        node_value_schema = auto_schema._map_serializer_field(
+            self.target, direction, bypass_extensions=True
+        )
+        return {
+            "type": "object",
+            "properties": {
+                "node_value": node_value_schema,
+                "display_value": {"type": "string", "readOnly": True},
+                "details": self._details_schema(auto_schema, direction),
+            },
+            "required": ["node_value"],
+        }
+
+    def _details_schema(self, auto_schema, direction):
+        datatype = self._datatype()
+        if datatype in _CONCEPT_DATATYPES:
+            child = auto_schema.resolve_serializer(
+                ConceptValueDetailSerializer, direction
+            ).ref
+        elif datatype in _RESOURCE_DATATYPES:
+            child = auto_schema.resolve_serializer(
+                ResourceInstanceDetailSerializer, direction
+            ).ref
+        else:
+            # Scalars emit no structured details; unmodeled datatypes stay generic.
+            child = {"type": "object", "additionalProperties": {}}
+        return {"type": "array", "items": child, "readOnly": True}
 
 
 class ArchesTileAutoSchema(AutoSchema):

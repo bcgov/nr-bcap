@@ -99,10 +99,9 @@ class SchemaViewerTests(AuthTestHelper, TestCase):
 
 
 class NodeValueFieldExtensionTests(SimpleTestCase):
-    """The extension maps node value fields to the NodeValueEnvelope component.
-
-    Driven directly to stay off the full-document path, which needs a seeded
-    graph and an authenticated user."""
+    """The extension types the {node_value, display_value, details} envelope per
+    Arches datatype. Driven directly to stay off the full-document path, which
+    needs a seeded graph and an authenticated user."""
 
     def map_field(self, field):
         auto = AutoSchema()
@@ -114,30 +113,62 @@ class NodeValueFieldExtensionTests(SimpleTestCase):
             )
         return schema, auto.registry
 
-    def component(self, registry, name="NodeValueEnvelope"):
-        return next(c for c in registry._components.values() if c.name == name).schema
+    def wrapped(self, drf_field=serializers.CharField, datatype=None):
+        # _wrap_serializer_field builds every node value field; style.datatype is
+        # what arches_querysets stamps on, and what the extension reads.
+        field = _wrap_serializer_field(drf_field)()
+        if datatype is not None:
+            field.style = {"datatype": datatype}
+        return field
 
     def test_wrapped_node_value_fields_match_the_extension(self):
-        # _wrap_serializer_field builds every node value field.
-        wrapped = _wrap_serializer_field(serializers.CharField)()
-        self.assertIsInstance(wrapped, NodeValueFieldExtension.target_class)
-
-    def test_field_references_the_shared_envelope_component(self):
-        schema, _ = self.map_field(_wrap_serializer_field(serializers.CharField)())
-        self.assertEqual(schema, {"$ref": "#/components/schemas/NodeValueEnvelope"})
+        self.assertIsInstance(self.wrapped(), NodeValueFieldExtension.target_class)
 
     def test_envelope_exposes_node_value_display_value_and_details(self):
-        _, registry = self.map_field(_wrap_serializer_field(serializers.IntegerField)())
+        schema, _ = self.map_field(self.wrapped(serializers.IntegerField))
         self.assertEqual(
-            set(self.component(registry)["properties"]),
-            {"node_value", "display_value", "details"},
+            set(schema["properties"]), {"node_value", "display_value", "details"}
         )
 
     def test_display_value_and_details_are_read_only(self):
-        _, registry = self.map_field(_wrap_serializer_field(serializers.CharField)())
-        properties = self.component(registry)["properties"]
+        schema, _ = self.map_field(self.wrapped())
+        properties = schema["properties"]
         self.assertTrue(properties["display_value"]["readOnly"])
         self.assertTrue(properties["details"]["readOnly"])
+
+    def test_node_value_typed_from_the_underlying_field(self):
+        # An integer-backed node documents node_value as an integer, not opaque JSON.
+        schema, _ = self.map_field(self.wrapped(serializers.IntegerField))
+        self.assertEqual(schema["properties"]["node_value"]["type"], "integer")
+
+    def test_component_name_defaults_without_a_datatype(self):
+        extension = NodeValueFieldExtension(self.wrapped())
+        self.assertEqual(extension.get_name(), "NodeValueEnvelope")
+
+    def test_component_name_specialized_per_datatype(self):
+        extension = NodeValueFieldExtension(self.wrapped(datatype="concept-list"))
+        self.assertEqual(extension.get_name(), "ConceptListNodeValueEnvelope")
+
+    def test_concept_details_typed_as_value_objects(self):
+        schema, _ = self.map_field(
+            self.wrapped(serializers.UUIDField, datatype="concept")
+        )
+        ref = schema["properties"]["details"]["items"]["$ref"]
+        self.assertTrue(ref.endswith("/ConceptValueDetail"), ref)
+
+    def test_resource_instance_details_typed(self):
+        schema, _ = self.map_field(
+            self.wrapped(serializers.JSONField, datatype="resource-instance")
+        )
+        ref = schema["properties"]["details"]["items"]["$ref"]
+        self.assertTrue(ref.endswith("/ResourceInstanceDetail"), ref)
+
+    def test_scalar_details_stay_generic(self):
+        schema, _ = self.map_field(
+            self.wrapped(serializers.CharField, datatype="string")
+        )
+        items = schema["properties"]["details"]["items"]
+        self.assertEqual(items, {"type": "object", "additionalProperties": {}})
 
 
 class NodeValueEnvelopeContractTests(TestCase):
