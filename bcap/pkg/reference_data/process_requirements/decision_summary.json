@@ -1,0 +1,82 @@
+{
+    "id": "REQ-2026-003",
+    "name": "Decision Summary",
+    "due": "2026-03-30",
+    "notes": "",
+    "satisfied": false,
+    "process_requirement_order": 3,
+    "sub_requirements": [
+        {
+            "name": "Decision rendered",
+            "description": "Authorize permit / reject application / hold on decision",
+            "sort_order": 1,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Decision made by",
+            "description": "SDM name",
+            "sort_order": 2,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Date of decision",
+            "description": "Auth. date",
+            "sort_order": 3,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Relevant HCA section",
+            "description": "s 12.2 / s 12.4 / other",
+            "sort_order": 4,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Has the duty to consult been met",
+            "description": "",
+            "sort_order": 5,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Concerns with consultation",
+            "description": "",
+            "sort_order": 6,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Decision letters related to decision",
+            "description": "",
+            "sort_order": 7,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Were any previous decisions considered/referenced in the making of this decision",
+            "description": "",
+            "sort_order": 8,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Other considerations related to this decision",
+            "description": "",
+            "sort_order": 9,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Changes to conditions of the permit",
+            "description": "",
+            "sort_order": 10,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Changes to SME recommendations",
+            "description": "",
+            "sort_order": 11,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Processing Notes",
+            "description": "e.g. additional documents for inclusion, concurrent issuances",
+            "sort_order": 12,
+            "sub_satisfied": false
+        }
+    ]
+}
