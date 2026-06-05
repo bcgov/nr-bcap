@@ -20,12 +20,11 @@ class ProcessRequirementSerializer(ArchesResourceSerializer):
         return super().get_graph_has_different_publication(obj)
 
 
-@extend_schema(tags=["process_requirement"])
-class ProcessRequirementView(ArchesResourceDetailView):
-    """GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
+class ProcessRequirementViewMixin:
+    """Shared config for the Process Requirement detail view.
 
-    PATCH applies a partial diff (only the tiles present in the body); PUT
-    replaces. Either way the serializer saves the nested sub-requirement tiles.
+    Carries the serializer, auth, schema, and the swagger_fake_view serializer
+    fix. Must precede the DRF generic view in the MRO so its get_serializer wins.
     """
 
     authentication_classes = [SessionAuthentication]
@@ -41,15 +40,15 @@ class ProcessRequirementView(ArchesResourceDetailView):
             )
         return super().get_serializer(*args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        # GET - post-process the response (e.g. inject extra fields)
-        response = super().retrieve(request, *args, **kwargs)
-        return response
 
-    def perform_update(self, serializer):
-        # PUT/PATCH - runs after validation, before save; mutate the instance here
-        super().perform_update(serializer)
+@extend_schema(tags=["process_requirement"])
+class ProcessRequirementView(ProcessRequirementViewMixin, ArchesResourceDetailView):
+    """GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
-    def perform_destroy(self, instance):
-        # DELETE - add guards or cascade logic before removing
-        super().perform_destroy(instance)
+    PATCH applies a partial diff (only the tiles present in the body); PUT
+    replaces. Either way the serializer saves the nested sub-requirement tiles.
+
+    Process Requirements are created internally (cloned from templates by the
+    process_requirement service), not via a public POST, so there is no create
+    route here.
+    """

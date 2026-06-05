@@ -17,6 +17,10 @@ from bcap.views.api import (
 )
 from bcap.views.dashboard_api import DashboardView
 from bcap.views.process_requirement_api import ProcessRequirementView
+from bcap.views.permit_application_api import (
+    PermitApplicationView,
+    PermitApplicationCreateView,
+)
 from bcap.views.user_api import UserProfile
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
@@ -42,6 +46,16 @@ documented_api_patterns = [
         f"{PREFIX}api/resource/process_requirement/<uuid:pk>",
         ProcessRequirementView.as_view(),
         name="process_requirement",
+    ),
+    path(
+        f"{PREFIX}api/resource/permit_application/",
+        PermitApplicationCreateView.as_view(),
+        name="permit_application_create",
+    ),
+    path(
+        f"{PREFIX}api/resource/permit_application/<uuid:pk>",
+        PermitApplicationView.as_view(),
+        name="permit_application",
     ),
 ]
 
