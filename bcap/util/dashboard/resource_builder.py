@@ -8,6 +8,7 @@ primitives to build just the resources a case needs."""
 import uuid
 import random
 from contextlib import contextmanager
+from dataclasses import dataclass
 
 from django.utils import timezone
 
@@ -27,6 +28,20 @@ from arches_querysets.models import (
 # Marker written to legacyid of every resource the seeders create, so the
 # clear command can find and delete only seeded data.
 SEED_LEGACYID_PREFIX = "dashboard-seed"
+
+
+@dataclass
+class ContributorSpec:
+    """Fields for a contributor resource."""
+
+    contributor_type: object
+    first_name: object  # None for an organization
+    name: object
+    bcap_username: object = None  # maps the contributor to a BCAP user
+    associated_organization: object = None  # the organization it belongs to
+    inactive: object = None  # the inactive flag on the contributor tile
+    start_date: object = None  # membership start on the associated_organization tile
+    end_date: object = None  # membership end on the associated_organization tile
 
 
 class ResourceBuilder:
@@ -147,18 +162,32 @@ class ResourceBuilder:
             resource.refresh_from_db = lambda *args, **kwargs: None
         return resource
 
-    def make_contributor(self, contributor_type, first_name, name):
-        """``first_name`` is None for an organization."""
+    def make_contributor(self, spec):
+        """Create and return a contributor resource from a ``ContributorSpec``."""
         contributor = self.new_resource("contributor")
-        self.append_blank_tile_for_group(
+        contributor_tile = self.append_blank_tile_for_group(
             contributor,
             "contributor",
             {
-                "first_name": self.localized(first_name) if first_name else None,
-                "contributor_name": self.localized(name),
-                "contributor_type": contributor_type,
+                "first_name": (
+                    self.localized(spec.first_name) if spec.first_name else None
+                ),
+                "contributor_name": self.localized(spec.name),
+                "contributor_type": spec.contributor_type,
+                "bcap_username": spec.bcap_username,
+                "inactive": spec.inactive,
             },
         )
+        if spec.associated_organization is not None:
+            self.append_blank_tile_for_group(
+                contributor_tile,
+                "associated_organization",
+                {
+                    "associated_organization": spec.associated_organization,
+                    "start_date": spec.start_date,
+                    "end_date": spec.end_date,
+                },
+            )
         contributor.save(**self.save_kwargs)
         return contributor
 

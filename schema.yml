@@ -10,12 +10,6 @@ paths:
       description: Returns dashboard cards for the current user based on their role.
       parameters:
       - in: query
-        name: contributor_id
-        schema:
-          type: string
-          nullable: true
-          minLength: 1
-      - in: query
         name: limit
         schema:
           type: integer
@@ -37,11 +31,14 @@ paths:
         schema:
           enum:
           - UNASSIGNED
-          - null
+          - ASSIGNED_TO_ME
+          - ASSIGNED_TO_ASSOCIATED_COMPANIES
           type: string
-          nullable: true
           minLength: 1
-        description: '* `UNASSIGNED` - Unassigned'
+        description: |-
+          * `UNASSIGNED` - Unassigned
+          * `ASSIGNED_TO_ME` - Assigned to me
+          * `ASSIGNED_TO_ASSOCIATED_COMPANIES` - Assigned to associated companies
       tags:
       - dashboard
       security:
@@ -1947,13 +1944,7 @@ components:
           items:
             type: string
           readOnly: true
-        contributor_id:
-          type: string
-          nullable: true
-          description: TODO fill this in.
-          readOnly: true
       required:
-      - contributor_id
       - first_name
       - groups
       - last_name

@@ -21,7 +21,6 @@ def described(help_text, default=MISSING, **serializer_kwargs):
 class DashboardFilter:
     """The request parameters that filter and page the dashboard cards."""
 
-    contributor_id: str | None = None
     status: str | None = None
     limit: int = constrained(50, min_value=1, max_value=100)
     page: int = constrained(1, min_value=1)
