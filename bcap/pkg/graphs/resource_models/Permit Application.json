@@ -4979,7 +4979,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "concurrent_permits_list",
@@ -5067,7 +5067,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 4,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "application_dates",
@@ -6120,7 +6120,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "section_4_recordings",
@@ -6250,7 +6250,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 3,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "first_nations_consultation",
@@ -7076,7 +7076,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "additional_repository_and_curation_comments",
@@ -7222,7 +7222,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 3,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "inspection",
@@ -7473,7 +7473,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "mza_project_boundary",
@@ -7745,7 +7745,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "applicant_name",
@@ -8221,7 +8221,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "street_name",
@@ -8246,7 +8246,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "approach_on_concurrent_permits",
@@ -8541,7 +8541,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 5,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "a493759a-3f7f-401c-ac20-6981cbbb6f31"
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
