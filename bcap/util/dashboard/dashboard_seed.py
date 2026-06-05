@@ -78,6 +78,7 @@ class DashboardDemoBuilder(ResourceBuilder):
     _HCA_POOL_SIZE = 4
     _OFFICER_POOL_SIZE = 4
     _SEED_UNASSIGNED_PERMIT = True
+    _RANDOMIZE_NAME = True
 
     # Requirement names are composed prefix + suffix so they read sensibly while
     # giving many distinct combinations to randomize over.
@@ -256,7 +257,7 @@ class DashboardDemoBuilder(ResourceBuilder):
         return [
             {
                 **spec,
-                "name": name,
+                "name": name if self._RANDOMIZE_NAME else spec["name"],
                 "sub_requirements": [{**sub} for sub in spec["sub_requirements"]],
             }
             for spec, name in zip(self._REQUIREMENTS, names)
