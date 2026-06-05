@@ -10,3 +10,11 @@ class HCAPermitAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(HCAPermitAliases)
+
+
+class HCAPermitGroupAliases(AbstractAliases):
+    PERMIT_IDENTIFICATION = "permit_identification"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(HCAPermitGroupAliases)

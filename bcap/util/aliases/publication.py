@@ -27,3 +27,12 @@ class PublicationAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(PublicationAliases)
+
+
+class PublicationGroupAliases(AbstractAliases):
+    PUBLICATION_DETAILS = "publication_details"
+    REFERENCE_LINK = "reference_link"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(PublicationGroupAliases)

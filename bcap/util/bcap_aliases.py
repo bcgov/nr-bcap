@@ -1,3 +1,7 @@
+# The arches_querysets serializer key wrapping each tile's node values.
+ALIASED_DATA = "aliased_data"
+
+
 # Classes to standardize the resource model node aliases
 class AbstractAliases:
     @staticmethod

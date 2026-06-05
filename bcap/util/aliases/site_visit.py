@@ -83,3 +83,25 @@ class SiteVisitAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(SiteVisitAliases)
+
+
+class SiteVisitGroupAliases(AbstractAliases):
+    ADDITIONAL_SITE_TYPOLOGY = "additional_site_typology"
+    ANCESTRAL_REMAINS = "ancestral_remains"
+    ARCHAEOLOGICAL_DATA = "archaeological_data"
+    BIOGEOGRAPHY = "biogeography"
+    CHRONOLOGY = "chronology"
+    CULTURAL_MATERIAL = "cultural_material"
+    GENERAL_REMARK = "general_remark"
+    IDENTIFICATION = "identification"
+    NEW_SITE_NAMES = "new_site_names"
+    RECOMMENDATION = "recommendation"
+    RELATED_DOCUMENTS = "related_documents"
+    REMARKS_AND_RECOMMENDATIONS = "remarks_and_recommendations"
+    SITE_DISTURBANCE = "site_disturbance"
+    SITE_VISIT_DETAILS = "site_visit_details"
+    SITE_VISIT_TEAM = "site_visit_team"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(SiteVisitGroupAliases)

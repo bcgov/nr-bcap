@@ -3,6 +3,7 @@ from bcap.util.bcap_aliases import AbstractAliases
 
 class ContributorAliases(AbstractAliases):
     ASSOCIATED_ORGANIZATION = "associated_organization"
+    BCAP_USERNAME = "bcap_username"
     CONTACT_EMAIL = "contact_email"
     CONTACT_PHONE_NUMBER = "contact_phone_number"
     CONTRIBUTOR_NAME = "contributor_name"
@@ -16,3 +17,11 @@ class ContributorAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(ContributorAliases)
+
+
+class ContributorGroupAliases(AbstractAliases):
+    CONTRIBUTOR = "contributor"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(ContributorGroupAliases)

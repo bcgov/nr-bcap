@@ -115,3 +115,31 @@ class PermitApplicationAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(PermitApplicationAliases)
+
+
+class PermitApplicationGroupAliases(AbstractAliases):
+    APPLICATION_ADMIN = "application_admin"
+    APPLICATION_CONTACTS = "application_contacts"
+    APPLICATION_IDENTIFICATION = "application_identification"
+    ARCHAEOLOGICAL_ASSESSMENT_PLAN = "archaeological_assessment_plan"
+    DEVELOPMENT_PROJECT_DETAILS = "development_project_details"
+    FIRST_NATION_CONSULTATION = "first_nation_consultation"
+    FIRST_NATIONS_CONSULTATION = "first_nations_consultation"
+    INSPECTION = "inspection"
+    INVESTIGATION = "investigation"
+    LEGAL_AND_CONSENT = "legal_and_consent"
+    MULTI_ZONE_AREA_ADDITION = "multi_zone_area_addition"
+    MZA_PROJECT_DETAILS = "mza_project_details"
+    PROPOSED_PROJECT = "proposed_project"
+    PROPOSED_PROJECT_N1 = "proposed_project_n1"
+    SECTION_1_OVERVIEW = "section_1_overview"
+    SECTION_2_PERSONNEL = "section_2_personnel"
+    SECTION_3_METHODS = "section_3_methods"
+    SECTION_4_RECORDINGS = "section_4_recordings"
+    SECTION_5_MATERIAL_COLLECTION = "section_5_material_collection"
+    SECTION_6_ANCESTRAL_REMAINS = "section_6_ancestral_remains"
+    SECTION_7_REPOSITORY_AND_CURATION = "section_7_repository_and_curation"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(PermitApplicationGroupAliases)

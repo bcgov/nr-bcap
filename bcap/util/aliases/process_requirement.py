@@ -13,7 +13,7 @@ class ProcessRequirementAliases(AbstractAliases):
     REQUIREMENT_PROCESS_DUE_DATE = "requirement_process_due_date"
     REQUIREMENT_PROCESS_START_DATE = "requirement_process_start_date"
     REQUIREMENT_STATUS = "requirement_status"
-    REQUIRMENT_SUBMISSION = "requirment_submission"
+    REQUIREMENT_SUBMISSION = "requirement_submission"
     SUB_REQUIREMENT_ASSESSMENT_NOTES = "sub_requirement_assessment_notes"
     SUB_REQUIREMENT_DESCRIPTION = "sub_requirement_description"
     SUB_REQUIREMENT_MANDATORY = "sub_requirement_mandatory"
@@ -24,3 +24,13 @@ class ProcessRequirementAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(ProcessRequirementAliases)
+
+
+class ProcessRequirementGroupAliases(AbstractAliases):
+    REQUIREMENT_EXECUTION_DURATION = "requirement_execution_duration"
+    SUB_REQUIREMENT = "sub_requirement"
+    SUB_REQUIREMENT_ASSESSMENT_N1 = "sub_requirement_assessment_n1"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(ProcessRequirementGroupAliases)
