@@ -41,7 +41,6 @@ export interface RequirementAssessmentTile extends AliasedTileData {
 
 export interface SubRequirementTile extends AliasedTileData {
     aliased_data: {
-        // sub_requirement_reference?: AliasedNodeData;
         sub_requirement_description?: AliasedNodeData;
         sub_requirement_name?: AliasedNodeData;
         sub_requirement_assessment_notes: AliasedNodeData;
