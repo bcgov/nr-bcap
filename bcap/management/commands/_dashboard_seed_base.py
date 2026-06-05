@@ -121,9 +121,9 @@ class DashboardSeedCommand(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"Created {label} {permit.pk}"))
             self.stdout.write(f"  can be accessed at {_resource_url(permit.pk)}")
 
-        # The dashboard's contributor_id filter matches a ministry assignee, so
-        # surface the assignee ids (with names) to filter by.
-        self.stdout.write("Contributor ids for contributor_id filtering:")
+        # matches a ministry assignee by the logged-in user's bcap_username, so
+        # surface the assignee ids (with names) for reference.
+        self.stdout.write("Ministry assignee Contributor ids:")
         for assignee in assignees:
             name = Resource.objects.get(pk=assignee.pk).displayname()
             self.stdout.write(f"  {assignee.pk}  {name}")

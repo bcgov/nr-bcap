@@ -14,7 +14,7 @@ from django.db.models import (
 from django.db.models.fields.json import KeyTextTransform, KeyTransform
 from django.db.models.functions import Cast, Coalesce
 
-from arches.app.models.models import EditLog, Node, TileModel
+from arches.app.models.models import EditLog, TileModel
 
 from arches_querysets.models import ResourceTileTree, TileTree
 
@@ -24,11 +24,13 @@ from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
 )
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.util.aliases.contributor import ContributorAliases
+from bcap.services.dashboard.contributor_service import ContributorService
 from bcap.util.aliases.hca_permit import HCAPermitAliases
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases
+from bcap.util.enums import DashboardStatus
 from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.queryset import filter_or_empty
 
 
 @dataclass
@@ -65,10 +67,11 @@ class DashboardData:
 class DashboardService(BaseGraphService):
     PA = PermitApplicationAliases
     PR = ProcessRequirementAliases
-    # status filter value: permits whose active requirement has no assignee.
-    STATUS_UNASSIGNED = "UNASSIGNED"
 
-    def get_cards(self, query: DashboardFilter) -> DashboardPage:
+    def __init__(self):
+        self.contributors = ContributorService()
+
+    def get_cards(self, query: DashboardFilter, username: str = "") -> DashboardPage:
         """Build dashboard cards from Permit Application resources and their
         related Process Requirement, HCA Permit, and Contributor resources.
 
@@ -78,7 +81,7 @@ class DashboardService(BaseGraphService):
         """
         if query.order_by:
             raise NotImplementedError("order_by is not supported yet")
-        count, permits = self._permits(query)
+        count, permits = self._permits(query, username)
         requirements_by_permit = self._requirement_tiles_by_permit(permits)
         hca_permits = self._hca_permits(permits)
         # One traversal of the requirement tiles yields both the requirement ids
@@ -106,12 +109,11 @@ class DashboardService(BaseGraphService):
             results=self._cards_to_json(permits, data),
         )
 
-    def _permits(self, query):
+    def _permits(self, query, username=""):
         """The query's page of permits and the total count, counting, paging,
-        and the contributor/status filters all run in the DB. Loads the
-        process_requirement tiles in the same pass (they nest under
-        application_admin), so _requirement_tiles_by_permit needs no extra
-        query."""
+        and the status filter all run in the DB. Loads the process_requirement
+        tiles in the same pass (they nest under application_admin), so
+        _requirement_tiles_by_permit needs no extra query."""
         queryset = (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PERMIT_APPLICATION,
@@ -141,13 +143,29 @@ class DashboardService(BaseGraphService):
         # A permit with no unsatisfied requirement (all met, or none at all) has
         # nothing actionable to surface, so it gets no card.
         queryset = queryset.filter(active_requirement__isnull=False)
-        if query.contributor_id:
-            queryset = queryset.filter(active_assignee=str(query.contributor_id))
-        if query.status == self.STATUS_UNASSIGNED:
-            queryset = queryset.filter(active_assignee__isnull=True)
+        queryset = self._filter_by_status(queryset, query.status, username)
 
         start = (query.page - 1) * query.limit
         return queryset.count(), list(queryset[start : start + query.limit])
+
+    def _filter_by_status(self, queryset, status, username):
+        """Narrow permits by the active requirement's ministry_assignee."""
+        match status:
+            case DashboardStatus.UNASSIGNED:
+                return queryset.filter(active_assignee__isnull=True)
+            case DashboardStatus.ASSIGNED_TO_ME:
+                if not username:
+                    raise ValueError(f"username is required for status {status}")
+                my_contributor_id = self.contributors.username_contributor_id(username)
+                # Avoid returning unassigned.
+                return filter_or_empty(queryset, active_assignee=my_contributor_id)
+            case DashboardStatus.ASSIGNED_TO_ASSOCIATED_COMPANIES:
+                if not username:
+                    raise ValueError(f"username is required for status {status}")
+                ids = self.contributors.company_contributor_ids(username)
+                return queryset.filter(active_assignee__in=ids)
+            case _:
+                return queryset
 
     def _active_assignee_subquery(self):
         """Per permit, the ministry_assignee id of its active requirement."""
@@ -227,27 +245,12 @@ class DashboardService(BaseGraphService):
         return hca_permits
 
     def _contributor_names(self, assignee_ids, hca_permits):
-        """Map id -> display name for every Contributor involved: each tile's
-        ministry_assignee plus each HCA Permit's permit_holder(s)."""
+        """Map id -> display name for every Contributor a card references: each
+        tile's ministry_assignee plus each HCA Permit's permit_holder(s)."""
         ids = set(assignee_ids)
         for hca in hca_permits.values():
             ids.update(hca.holder_ids)
-        if not ids:
-            return {}
-
-        resources = self._resources(
-            GraphSlugs.CONTRIBUTOR,
-            ids,
-            [ContributorAliases.FIRST_NAME, ContributorAliases.CONTRIBUTOR_NAME],
-        )
-
-        names = {}
-        for contributor in resources:
-            data = contributor.aliased_data.contributor.aliased_data
-            first = data.first_name["display_value"]
-            last = data.contributor_name["display_value"]
-            names[str(contributor.pk)] = " ".join(filter(None, (first, last)))
-        return names
+        return self.contributors.names_by_contributor_id(ids)
 
     def _choose_requirements(self, requirements_by_permit, requirement_ids):
         """Map permit id -> Requirement: per permit, the unsatisfied requirement
@@ -287,18 +290,15 @@ class DashboardService(BaseGraphService):
         for permit_id, tiles in requirements_by_permit.items():
             # Tiles are sorted by order upstream, so the first unsatisfied wins.
             # Attach the chosen tile to a copy so the shared lookup keeps tile=None.
-            chosen[permit_id] = next(
-                (
-                    replace(requirement, tile=tile)
-                    for tile in tiles
-                    if (
-                        requirement := requirements.get(
-                            self._resource_id(tile.aliased_data.process_requirement)
-                        )
-                    )
-                ),
-                None,
-            )
+            chosen[permit_id] = None
+            for tile in tiles:
+                requirement_id = self._resource_id(
+                    tile.aliased_data.process_requirement
+                )
+                requirement = requirements.get(requirement_id)
+                if requirement:
+                    chosen[permit_id] = replace(requirement, tile=tile)
+                    break
         return chosen
 
     def _requirement_order(self, tile):
@@ -316,17 +316,9 @@ class DashboardService(BaseGraphService):
         if not tile_ids:
             return {}
 
-        node = (
-            Node.objects.filter(
-                graph__slug=GraphSlugs.PERMIT_APPLICATION,
-                alias=PermitApplicationAliases.MINISTRY_ASSIGNEE,
-            )
-            .values("nodeid")
-            .first()
+        node_id = self._node_id(
+            GraphSlugs.PERMIT_APPLICATION, self.PA.MINISTRY_ASSIGNEE
         )
-        if not node:
-            return {}
-        node_id = str(node["nodeid"])
 
         # NULL-coalesced so an initial assignment (key absent in oldvalue)
         # registers as a change rather than NULL == NULL.

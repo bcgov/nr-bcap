@@ -14,7 +14,7 @@ from faker import Faker
 from arches.app.models.models import EditLog
 from arches_querysets.models import ResourceTileTree
 
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
 
 
 @dataclass
@@ -284,7 +284,9 @@ class DashboardDemoBuilder(ResourceBuilder):
         """An HCA permit with its own holders and a random number/type."""
         holders = [
             self.make_contributor(
-                contributor_type, None, self._suffixed(self.faker.company())
+                ContributorSpec(
+                    contributor_type, None, self._suffixed(self.faker.company())
+                )
             )
             for _ in range(self._HOLDER_COUNT)
         ]
@@ -313,9 +315,11 @@ class DashboardDemoBuilder(ResourceBuilder):
         # Pools each card draws from, so cards vary without recreating these.
         assignees = [
             self.make_contributor(
-                contributor_type,
-                self.faker.first_name(),
-                self._suffixed(self.faker.last_name()),
+                ContributorSpec(
+                    contributor_type,
+                    self.faker.first_name(),
+                    self._suffixed(self.faker.last_name()),
+                )
             )
             for _ in range(self._ASSIGNEE_POOL_SIZE)
         ]
@@ -324,9 +328,11 @@ class DashboardDemoBuilder(ResourceBuilder):
         ]
         project_officers = [
             self.make_contributor(
-                contributor_type,
-                self.faker.first_name(),
-                self._suffixed(self.faker.last_name()),
+                ContributorSpec(
+                    contributor_type,
+                    self.faker.first_name(),
+                    self._suffixed(self.faker.last_name()),
+                )
             )
             for _ in range(self._OFFICER_POOL_SIZE)
         ]

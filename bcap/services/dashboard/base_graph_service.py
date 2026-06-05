@@ -6,6 +6,23 @@ from arches_querysets.models import ResourceTileTree, TileTree
 class BaseGraphService:
     """Stateless helpers for reading representation-form node values."""
 
+    # graph_slug -> {alias: (nodeid, nodegroup_id)}, filled once per process.
+    _node_cache = {}
+
+    @classmethod
+    def _graph_nodes(cls, graph_slug):
+        """Every node of a graph as {alias: (nodeid, nodegroup_id)}, fetched in a
+        single query the first time and cached for the process (node ids are
+        stable for the life of the graph)."""
+        if graph_slug not in cls._node_cache:
+            cls._node_cache[graph_slug] = {
+                node["alias"]: (str(node["nodeid"]), str(node["nodegroup_id"]))
+                for node in Node.objects.filter(
+                    graph__slug=graph_slug, source_identifier=None
+                ).values("alias", "nodeid", "nodegroup_id")
+            }
+        return cls._node_cache[graph_slug]
+
     @staticmethod
     def _nodes(graph_slug, aliases):
         """Node queryset for the given aliases, shaped to pass as the nodes
@@ -21,18 +38,10 @@ class BaseGraphService:
             .select_related("nodegroup__parentnodegroup")
         )
 
-    @staticmethod
-    def _node_info(graph_slug, alias):
-        """(nodeid, nodegroup_id) as strings for a graph's node alias; cached for
-        the process since node ids are stable for the life of the graph."""
-        node = (
-            Node.objects.filter(
-                graph__slug=graph_slug, alias=alias, source_identifier=None
-            )
-            .values("nodeid", "nodegroup_id")
-            .first()
-        )
-        return str(node["nodeid"]), str(node["nodegroup_id"])
+    @classmethod
+    def _node_info(cls, graph_slug, alias):
+        """(nodeid, nodegroup_id) as strings for a graph's node alias."""
+        return cls._graph_nodes(graph_slug)[alias]
 
     @classmethod
     def _node_id(cls, graph_slug, alias):
@@ -81,6 +90,12 @@ class BaseGraphService:
             value for key, value in cls._leaf_values(aliased_data) if key == alias
         )
         return next(values, {})
+
+    @classmethod
+    def _raw_value(cls, aliased_data, alias):
+        """The stored node_value under the given alias (the raw value, not the
+        formatted display_value), or None if unset."""
+        return cls._node_value(aliased_data, alias).get("node_value")
 
     @staticmethod
     def _resource_ids(value):
