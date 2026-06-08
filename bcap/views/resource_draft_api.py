@@ -53,7 +53,7 @@ class ResourceDraftViewMixin:
         return drafts.filter(user=self.request.user)
 
 
-@extend_schema(tags=["resource_draft"])
+@extend_schema(tags=["External: resource_draft"])
 class ResourceDraftListCreateView(ResourceDraftViewMixin, ListCreateAPIView):
     """GET the current user's drafts for a graph; POST a new draft."""
 
@@ -66,7 +66,7 @@ class ResourceDraftListCreateView(ResourceDraftViewMixin, ListCreateAPIView):
         )
 
 
-@extend_schema(tags=["resource_draft"])
+@extend_schema(tags=["External: resource_draft"])
 class ResourceDraftDetailView(ResourceDraftViewMixin, RetrieveUpdateDestroyAPIView):
     """GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
     shallow-merges by section key -- untouched sections are kept, but a section

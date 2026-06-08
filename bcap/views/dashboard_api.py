@@ -23,7 +23,7 @@ class DashboardView(APIView):
     authentication_classes = [SessionAuthentication]
 
     @extend_schema(
-        tags=["dashboard"],
+        tags=["Internal: dashboard"],
         parameters=[DashboardFilterSerializer],
         responses=DashboardPageResponseSerializer,
     )

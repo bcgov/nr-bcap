@@ -46,7 +46,7 @@ class HCAPermitViewMixin:
         return super().get_serializer(*args, **kwargs)
 
 
-@extend_schema(tags=["hca_permit"])
+@extend_schema(tags=["External: hca_permit"])
 class HCAPermitListView(
     HCAPermitViewMixin,
     UserOwnedResourceMixin,
@@ -62,7 +62,7 @@ class HCAPermitListView(
     pagination_class = ArchesLimitOffsetPagination
 
 
-@extend_schema(tags=["hca_permit"])
+@extend_schema(tags=["External: hca_permit"])
 class HCAPermitView(
     HCAPermitViewMixin,
     UserOwnedResourceMixin,

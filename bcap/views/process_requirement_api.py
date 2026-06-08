@@ -41,7 +41,7 @@ class ProcessRequirementViewMixin:
         return super().get_serializer(*args, **kwargs)
 
 
-@extend_schema(tags=["process_requirement"])
+@extend_schema(tags=["Internal: process_requirement"])
 class ProcessRequirementView(ProcessRequirementViewMixin, ArchesResourceDetailView):
     """GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 

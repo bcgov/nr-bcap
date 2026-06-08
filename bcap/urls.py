@@ -46,7 +46,7 @@ PREFIX = (
 # Routes included in the OpenAPI schema (passed to SpectacularAPIView).
 documented_api_patterns = [
     path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
-    # Internal / External might need new route to split
+    # Internal / External need new route to split (future)
     path(f"{PREFIX}api/dashboard", DashboardView.as_view(), name="dashboard"),
     # Internal - Checklists
     path(

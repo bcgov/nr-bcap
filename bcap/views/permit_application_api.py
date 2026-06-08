@@ -52,7 +52,7 @@ class PermitApplicationViewMixin:
         return super().get_serializer(*args, **kwargs)
 
 
-@extend_schema(tags=["permit_application"])
+@extend_schema(tags=["External: permit_application"])
 class PermitApplicationView(
     PermitApplicationViewMixin, UserOwnedResourceMixin, ArchesResourceDetailView
 ):
@@ -66,7 +66,7 @@ class PermitApplicationView(
     """
 
 
-@extend_schema(tags=["permit_application"])
+@extend_schema(tags=["External: permit_application"])
 class PermitApplicationCreateView(
     PermitApplicationViewMixin, ArchesModelAPIMixin, CreateAPIView
 ):
