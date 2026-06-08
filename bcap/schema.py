@@ -9,7 +9,10 @@ from rest_framework import serializers
 from arches.app.models.models import Node
 
 from arches_querysets.rest_framework.field_mixins import NodeValueMixin
-from arches_querysets.rest_framework.serializers import TileAliasedDataSerializer
+from arches_querysets.rest_framework.serializers import (
+    ResourceAliasedDataSerializer,
+    TileAliasedDataSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -467,9 +470,22 @@ class AliasedNodeDataExtension(OpenApiSerializerFieldExtension):
 
 
 class ArchesTileAutoSchema(AutoSchema):
-    """Key each TileAliasedData component name off its nodegroup so drf-spectacular doesn't collapse them all into one."""
+    """Key each aliased_data component name off its graph (and nodegroup, for
+    tiles) so drf-spectacular doesn't collapse every graph's aliased_data into
+    one shared component."""
 
     def get_serializer_name(self, serializer, direction):
+        # Resource-level aliased_data: the generated serializer class is named
+        # the same ("ResourceAliasedData") for every graph, so without this the
+        # first graph processed wins and all resources share its fields.
+        if isinstance(serializer, ResourceAliasedDataSerializer):
+            if serializer.graph_slug:
+                kind = (
+                    "resource_top_nodegroups_aliased_data"
+                    if serializer.Meta.exclude_children
+                    else "resource_aliased_data"
+                )
+                return f"{serializer.graph_slug}_{kind}".title()
         if isinstance(serializer, TileAliasedDataSerializer):
             # Resolving .fields runs the DB introspection that pins _root_node
             # to the nodegroup's grouping Node.

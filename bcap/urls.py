@@ -16,6 +16,7 @@ from bcap.views.api import (
     RequirementSubmission,
 )
 from bcap.views.dashboard_api import DashboardView
+from bcap.views.hca_permit_api import HCAPermitListView, HCAPermitView
 from bcap.views.process_requirement_api import ProcessRequirementView
 from bcap.views.permit_application_api import (
     PermitApplicationView,
@@ -41,17 +42,33 @@ PREFIX = (
 # Routes included in the OpenAPI schema (passed to SpectacularAPIView).
 documented_api_patterns = [
     path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
+    # Internal / External might need new route to split
     path(f"{PREFIX}api/dashboard", DashboardView.as_view(), name="dashboard"),
+    # Internal - Checklists
     path(
         f"{PREFIX}api/resource/process_requirement/<uuid:pk>",
         ProcessRequirementView.as_view(),
         name="process_requirement",
     ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource/hca_permit/",
+        HCAPermitListView.as_view(),
+        name="hca_permit_list",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource/hca_permit/<uuid:pk>",
+        HCAPermitView.as_view(),
+        name="hca_permit",
+    ),
+    # External - object level user filtering
     path(
         f"{PREFIX}api/resource/permit_application/",
         PermitApplicationCreateView.as_view(),
         name="permit_application_create",
     ),
+    # External - object level user filtering
     path(
         f"{PREFIX}api/resource/permit_application/<uuid:pk>",
         PermitApplicationView.as_view(),

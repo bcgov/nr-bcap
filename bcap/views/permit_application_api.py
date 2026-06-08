@@ -19,6 +19,7 @@ from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
 from bcap.util.bcap_aliases import GraphSlugs
+from bcap.views.mixins import UserOwnedResourceMixin
 
 
 class PermitApplicationSerializer(ArchesResourceSerializer):
@@ -52,8 +53,13 @@ class PermitApplicationViewMixin:
 
 
 @extend_schema(tags=["permit_application"])
-class PermitApplicationView(PermitApplicationViewMixin, ArchesResourceDetailView):
+class PermitApplicationView(
+    PermitApplicationViewMixin, UserOwnedResourceMixin, ArchesResourceDetailView
+):
     """GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
+
+    Scoped to the requesting user's own applications: requesting one created by
+    another user returns 404.
 
     PATCH applies a partial diff (only the tiles present in the body); PUT
     replaces.
