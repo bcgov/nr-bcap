@@ -9,6 +9,7 @@ metadata in `data`. GOTCHA: Arches won't auto-promote a TempFile's bytes into a
 resource `File`, so submit must re-send the files via multipart or copy the bytes
 across itself (and bcap's FILENAME_GENERATOR needs the tile to build the path)."""
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -52,6 +53,7 @@ class ResourceDraftViewMixin:
         return drafts.filter(user=self.request.user)
 
 
+@extend_schema(tags=["resource_draft"])
 class ResourceDraftListCreateView(ResourceDraftViewMixin, ListCreateAPIView):
     """GET the current user's drafts for a graph; POST a new draft."""
 
@@ -64,6 +66,7 @@ class ResourceDraftListCreateView(ResourceDraftViewMixin, ListCreateAPIView):
         )
 
 
+@extend_schema(tags=["resource_draft"])
 class ResourceDraftDetailView(ResourceDraftViewMixin, RetrieveUpdateDestroyAPIView):
     """GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
     shallow-merges by section key -- untouched sections are kept, but a section
