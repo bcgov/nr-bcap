@@ -25,7 +25,7 @@ class ResourceDraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceDraft
         exclude = ["user"]  # owner is set server-side, never client-supplied
-        # Stamped on create (draftid/updated already read-only via field options).
+        # Stamped on create (id/updated already read-only via field options).
         read_only_fields = ["graph_slug", "graph_publication_id", "created"]
 
     def get_graph_has_different_publication(self, obj) -> bool:

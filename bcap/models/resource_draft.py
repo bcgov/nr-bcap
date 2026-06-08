@@ -9,7 +9,7 @@ class ResourceDraft(models.Model):
     blob. The real resource is created and validated only on submit, so a draft
     can hold data the resource schema would reject (e.g. blank required fields)."""
 
-    draftid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -46,4 +46,4 @@ class ResourceDraft(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.graph_slug} draft for {self.user} ({self.draftid})"
+        return f"{self.graph_slug} draft for {self.user} ({self.id})"

@@ -62,7 +62,7 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(body["frontend_version"], "2.1.0")
         self.assertEqual(body["graph_slug"], SLUG)
 
-        draft = ResourceDraft.objects.get(draftid=body["draftid"])
+        draft = ResourceDraft.objects.get(pk=body["id"])
         self.assertEqual(draft.user, self.editor)
         self.assertEqual(
             draft.graph_publication_id, get_current_graph(SLUG).publication_id
@@ -97,7 +97,7 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
         # Editor sees only their own draft; superuser sees both.
         resp = self.client.get(self.list_url)
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual({row["draftid"] for row in resp.json()}, {str(mine.pk)})
+        self.assertEqual({row["id"] for row in resp.json()}, {str(mine.pk)})
         self.idir_login_simulate(self.admin)
         self.assertEqual(len(self.client.get(self.list_url).json()), 2)
 
@@ -140,7 +140,7 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
         draft = self._create_draft()
         resp = self.client.delete(self._detail_url(draft.pk))
         self.assertEqual(resp.status_code, 204)
-        self.assertFalse(ResourceDraft.objects.filter(draftid=draft.pk).exists())
+        self.assertFalse(ResourceDraft.objects.filter(pk=draft.pk).exists())
 
     def test_without_resource_editor_role_is_forbidden(self):
         # Drafts are editor-only on every verb, reads included.
