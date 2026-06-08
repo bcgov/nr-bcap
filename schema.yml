@@ -40,7 +40,7 @@ paths:
           * `ASSIGNED_TO_ME` - Assigned to me
           * `ASSIGNED_TO_ASSOCIATED_COMPANIES` - Assigned to associated companies
       tags:
-      - dashboard
+      - 'Internal: dashboard'
       security:
       - cookieAuth: []
       - {}
@@ -72,7 +72,7 @@ paths:
         schema:
           type: integer
       tags:
-      - hca_permit
+      - 'External: hca_permit'
       security:
       - cookieAuth: []
       responses:
@@ -98,7 +98,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - hca_permit
+      - 'External: hca_permit'
       security:
       - cookieAuth: []
       responses:
@@ -117,7 +117,7 @@ paths:
         Create-only: CreateAPIView exposes just POST (and OPTIONS); there is no
         list/GET route.
       tags:
-      - permit_application
+      - 'External: permit_application'
       requestBody:
         content:
           application/json:
@@ -151,7 +151,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - permit_application
+      - 'External: permit_application'
       security:
       - cookieAuth: []
       responses:
@@ -179,7 +179,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - permit_application
+      - 'External: permit_application'
       requestBody:
         content:
           application/json:
@@ -215,7 +215,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - permit_application
+      - 'External: permit_application'
       requestBody:
         content:
           application/json:
@@ -251,7 +251,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - permit_application
+      - 'External: permit_application'
       security:
       - cookieAuth: []
       responses:
@@ -277,7 +277,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - process_requirement
+      - 'Internal: process_requirement'
       security:
       - cookieAuth: []
       responses:
@@ -306,7 +306,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - process_requirement
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -343,7 +343,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - process_requirement
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -380,7 +380,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - process_requirement
+      - 'Internal: process_requirement'
       security:
       - cookieAuth: []
       responses:
@@ -397,7 +397,7 @@ paths:
           type: string
         required: true
       tags:
-      - resource_draft
+      - 'External: resource_draft'
       security:
       - cookieAuth: []
       responses:
@@ -419,7 +419,7 @@ paths:
           type: string
         required: true
       tags:
-      - resource_draft
+      - 'External: resource_draft'
       requestBody:
         content:
           application/json:
@@ -461,7 +461,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - resource_draft
+      - 'External: resource_draft'
       security:
       - cookieAuth: []
       responses:
@@ -491,7 +491,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - resource_draft
+      - 'External: resource_draft'
       requestBody:
         content:
           application/json:
@@ -532,7 +532,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - resource_draft
+      - 'External: resource_draft'
       requestBody:
         content:
           application/json:
@@ -573,7 +573,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - resource_draft
+      - 'External: resource_draft'
       security:
       - cookieAuth: []
       responses:
@@ -585,7 +585,7 @@ paths:
       description: Returns the authenticated user's profile, group memberships, and
         linked Contributor resource id.
       tags:
-      - user_profile
+      - 'External: user_profile'
       security:
       - cookieAuth: []
       - {}
