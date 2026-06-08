@@ -21,7 +21,8 @@
         "vite_dev": "DEBUG=vite:* vite --host --force",
         "vite_build": "DEBUG=vite:*  vite build",
         "vitest": "vitest --run --coverage",
-        "openapi:types": "openapi-typescript schema.yml -o bcap/src/bcap/api-types.ts"
+        "openapi:zod": "openapi-ts",
+        "api:gen": "./scripts/generate_api_contract.sh"
     },
     "overrides": {
         "moment-timezone": "^0.5.45",
@@ -31,6 +32,7 @@
         "geojson": "0.5.0"
     },
     "devDependencies": {
+        "@hey-api/openapi-ts": "^0.95.0",
         "@maplibre/maplibre-gl-style-spec": "^24.1.1",
         "@primevue/auto-import-resolver": "^4.3.7",
         "@types/geojson": "^7946.0.16",
@@ -38,7 +40,6 @@
         "@types/underscore": "^1.13.0",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x",
         "eslint-config-prettier": "^10.1.5",
-        "openapi-typescript": "^7.13.0",
         "prettier": "^3.7.1",
         "prettier-plugin-jinja-template": "^2.1.0",
         "unplugin-vue-components": "^29.0.0",

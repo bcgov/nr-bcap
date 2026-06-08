@@ -51,146 +51,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/DashboardPage'
           description: ''
-  /bcap/api/resource/permit_application/:
-    post:
-      operationId: api_resource_permit_application_create
-      description: |-
-        POST a new Permit Application.
-
-        Create-only: CreateAPIView exposes just POST (and OPTIONS); there is no
-        list/GET route.
-      tags:
-      - permit_application
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PermitApplication'
-          description: ''
-  /bcap/api/resource/permit_application/{id}:
+  /bcap/api/process_requirement/{id}:
     get:
-      operationId: api_resource_permit_application_retrieve
-      description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - permit_application
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PermitApplication'
-          description: ''
-    put:
-      operationId: api_resource_permit_application_update
-      description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - permit_application
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PermitApplication'
-          description: ''
-    patch:
-      operationId: api_resource_permit_application_partial_update
-      description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - permit_application
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPermitApplication'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedPermitApplication'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PermitApplication'
-          description: ''
-    delete:
-      operationId: api_resource_permit_application_destroy
-      description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - permit_application
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /bcap/api/resource/process_requirement/{id}:
-    get:
-      operationId: api_resource_process_requirement_retrieve
+      operationId: api_process_requirement_retrieve
       description: |-
         GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
 
@@ -336,6 +199,23 @@ paths:
           description: ''
 components:
   schemas:
+    BooleanAliasedNodeData:
+      type: object
+      properties:
+        node_value:
+          type: boolean
+          nullable: true
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
     DashboardCard:
       type: object
       properties:
@@ -434,15 +314,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DashboardCard'
-    NodeValueEnvelope:
+    DateAliasedNodeData:
       type: object
       description: |-
         The {node_value, display_value, details} object node value fields emit when as_representation is True.
 
         Mirrors the dict built in arches_querysets TileTree.get_value_with_context;
-        keep in sync if that shape changes upstream (unit test covers this).
+        keep in sync if that shape changes upstream.
       properties:
-        node_value: {}
+        node_value:
+          type: string
+          format: date-time
+          nullable: true
+          description: Enter date
         display_value:
           type: string
           readOnly: true
@@ -453,8 +337,26 @@ components:
             additionalProperties: {}
           readOnly: true
       required:
-      - details
-      - display_value
+      - node_value
+    NumberAliasedNodeData:
+      type: object
+      properties:
+        node_value:
+          type: number
+          format: double
+          nullable: true
+          title: Default Target Processing Time (days)
+          description: Enter number
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
       - node_value
     PatchedPermitApplication:
       type: object
@@ -512,11 +414,23 @@ components:
           type: boolean
           readOnly: true
         name:
+          type: string
           readOnly: true
           nullable: true
         descriptors:
+          type: object
           readOnly: true
           nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
         legacyid:
           type: string
           readOnly: true
@@ -555,11 +469,23 @@ components:
           type: boolean
           readOnly: true
         name:
+          type: string
           readOnly: true
           nullable: true
         descriptors:
+          type: object
           readOnly: true
           nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
         legacyid:
           type: string
           readOnly: true
@@ -599,21 +525,21 @@ components:
       properties:
         application_submission_date:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           description: Enter date
         application_priority_level:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           description: Select an option
         project_officer:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
         permit_duration_years_requested:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           title: Permit Duration Requested
           description: Enter number of years requested
@@ -650,20 +576,20 @@ components:
           nullable: true
         provisionaledits:
           nullable: true
-    Permit_Application_Application_Contacts_Aliased_Data:
+    Process_Requirement_Requirement_Execution_Duration_Aliased_Data:
       type: object
       properties:
         application_proponent:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
         rationale_for_no_archaeologist:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
         application_archaeologist:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
         has_retained_archaeologist:
           allOf:
@@ -697,307 +623,17 @@ components:
           nullable: true
         provisionaledits:
           nullable: true
-    Permit_Application_Application_Identification_Aliased_Data:
+    Process_Requirement_Requirement_Identification_Aliased_Data:
       type: object
       properties:
-        application_id:
+        requirement_name:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter application ID
-        project_name:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter project name
-        map_or_hip:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Select an option
-        is_replacement:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        supplemental_information:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-      required:
-      - application_id
-      - project_name
-    Permit_Application_Application_Identification_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_Application_Identification_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_Archaeological_Assessment_Plan_Aliased_Data:
-      type: object
-      properties:
-        section_7_repository_and_curation:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Section_7_Repository_And_Curation_Tile'
-          nullable: true
-        section_6_ancestral_remains:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Section_6_Ancestral_Remains_Tile'
-          nullable: true
-        section_5_material_collection:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Section_5_Material_Collection_Tile'
-          nullable: true
-        section_1_overview:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Section_1_Overview_Tile'
-          nullable: true
-        section_2_personnel:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Section_2_Personnel_Tile'
-          nullable: true
-        section_4_recordings:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Section_4_Recordings_Tile'
-          nullable: true
-        section_3_methods:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Section_3_Methods_Tile'
-          nullable: true
-    Permit_Application_Archaeological_Assessment_Plan_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_Archaeological_Assessment_Plan_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_Development_Project_Details_Aliased_Data:
-      type: object
-      properties:
-        industrial_sector:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Select an option
-        alteration_details:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-    Permit_Application_Development_Project_Details_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_Development_Project_Details_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_First_Nation_Consultation_Aliased_Data:
-      type: object
-      properties:
-        fn_file_numbers:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        has_fn_endorsements:
+        requirement_identification:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-    Permit_Application_First_Nation_Consultation_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_First_Nation_Consultation_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_First_Nations_Consultation_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_Inspection_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_Investigation_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_Legal_And_Consent_Aliased_Data:
-      type: object
-      properties:
-        grant_of_license_to_ministry:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        is_consent_given:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        copyright_authorization:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        responsible_external_archaeologist:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        time_of_consent:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter date
-        applicant_name:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
     Permit_Application_Legal_And_Consent_Tile:
@@ -1159,12 +795,12 @@ components:
           nullable: true
         provisionaledits:
           nullable: true
-    Permit_Application_Proposed_Project_Aliased_Data:
+    Process_Requirement_Requirment_Submission_Aliased_Data:
       type: object
       properties:
         scope_of_work:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
           description: Describe the scope of work to be competed as part of the proposed
             project
@@ -1245,40 +881,12 @@ components:
           nullable: true
         provisionaledits:
           nullable: true
-    Permit_Application_Proposed_Project_Tile:
+    Process_Requirement_Sub_Requirement_Aliased_Data:
       type: object
       properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_Proposed_Project_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_Related_Permit_Aliased_Data:
-      type: object
-      properties:
-        has_concurrent_permits:
+        sub_requirement_description:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
         is_related_permit:
           allOf:
@@ -1459,40 +1067,34 @@ components:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
           description: Enter text
-        has_pre_field_research:
+        sub_requirement_assessment_notes:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-        has_survey_coverage:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        survey_coverage_approach:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
+          title: Assessment Notes
           description: Enter text
-        has_arch_potential:
+        sub_requirement_satisfied:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
         arch_potential_approach:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
-          description: Enter text
-        arch_bearing_sediment:
+          title: Sort Order
+          description: Enter number
+        sub_requirement_mandatory:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
-          description: Enter text
-        has_subsurface_testing:
+          title: Mandatory
+        sub_requirement_reference:
           allOf:
           - $ref: '#/components/schemas/NodeValueEnvelope'
           nullable: true
-        subsurface_testing_approach:
+        sub_requirement_name:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
         has_machine_assisted_inspection:
@@ -1566,11 +1168,11 @@ components:
       properties:
         has_cmt_survey:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
         alternate_rock_art_recording_approach:
           allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Alternate Rock Art Approach
           description: Enter text
@@ -1659,40 +1261,7 @@ components:
           nullable: true
         provisionaledits:
           nullable: true
-    Permit_Application_Section_5_Material_Collection_Aliased_Data:
-      type: object
-      properties:
-        collection_approach_details:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-        collection_approach:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-        collection_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-        details_of_collected_materials:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-        details_of_collected_samples:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-        additional_collection_and_sampling_details:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-    Permit_Application_Section_5_Material_Collection_Tile:
+    Process_Requirement_Sub_Requirement_Tile:
       type: object
       properties:
         tileid:
@@ -1720,160 +1289,6 @@ components:
           nullable: true
         provisionaledits:
           nullable: true
-    Permit_Application_Section_6_Ancestral_Remains_Aliased_Data:
-      type: object
-      properties:
-        ancestral_remains_approach_compliant:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        alternate_ancestral_remains_approach:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_methods:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-    Permit_Application_Section_6_Ancestral_Remains_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_Section_6_Ancestral_Remains_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    Permit_Application_Section_7_Repository_And_Curation_Aliased_Data:
-      type: object
-      properties:
-        has_repository_been_contacted:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        is_repository_required:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        has_repository_agreement:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        destination_repository:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-        additional_repository_and_curation_comments:
-          allOf:
-          - $ref: '#/components/schemas/NodeValueEnvelope'
-          nullable: true
-          description: Enter text
-    Permit_Application_Section_7_Repository_And_Curation_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_Section_7_Repository_And_Curation_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          nullable: true
-    ProcessRequirement:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/ResourceAliasedData'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          readOnly: true
-          nullable: true
-        descriptors:
-          readOnly: true
-          nullable: true
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-      required:
-      - createdtime
-      - descriptors
-      - graph_has_different_publication
-      - graph_publication
-      - legacyid
-      - name
-      - principaluser
-      - resource_instance_lifecycle_state
     ResourceAliasedData:
       type: object
       properties:
@@ -1930,6 +1345,78 @@ components:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Admin_Tile'
           nullable: true
+    ResourceInstanceAliasedNodeData:
+      type: object
+      properties:
+        node_value:
+          type: object
+          properties:
+            resourceId:
+              type: string
+              format: uuid
+            ontologyProperty:
+              type: string
+              nullable: true
+            resourceXresourceId:
+              type: string
+              nullable: true
+            inverseOntologyProperty:
+              type: string
+              nullable: true
+          nullable: true
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceInstanceDetail'
+          readOnly: true
+      required:
+      - node_value
+    ResourceInstanceDetail:
+      type: object
+      description: One related resource summarized into a resource-instance node's
+        `details`.
+      properties:
+        resource_id:
+          type: string
+          format: uuid
+          nullable: true
+        display_value:
+          type: string
+      required:
+      - display_value
+      - resource_id
+    StringAliasedNodeData:
+      type: object
+      properties:
+        node_value:
+          type: object
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                value:
+                  type: string
+                  nullable: true
+                direction:
+                  type: string
+                  enum:
+                  - ltr
+                  - rtl
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
     UserProfileResponse:
       type: object
       properties:
