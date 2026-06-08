@@ -70,7 +70,7 @@ class PermitApplicationCreateView(
     list/GET route.
     """
 
-    permission_classes = [ResourceEditor | ReadOnly]
+    permission_classes = [ResourceEditor]
     parser_classes = [JSONParser]
     http_method_names = ["post", "options"]
 
