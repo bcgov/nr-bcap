@@ -137,6 +137,18 @@ export const zNumberAliasedNodeDataMin0Max10 = z.object({
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
 });
 
+export const zPatchedResourceDraft = z.object({
+    id: z.uuid().readonly().optional(),
+    graph_has_different_publication: z.boolean().readonly().optional(),
+    graph_slug: z.string().readonly().optional(),
+    graph_publication_id: z.uuid().readonly().nullish(),
+    frontend_version: z.string().max(50).nullish(),
+    resourceinstanceid: z.uuid().nullish(),
+    data: z.unknown().optional(),
+    created: z.iso.datetime().readonly().optional(),
+    updated: z.iso.datetime().readonly().optional(),
+});
+
 export const zPermitApplicationFirstNationsConsultationTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
@@ -282,6 +294,18 @@ export const zReferenceAliasedNodeData = z.object({
         .nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+});
+
+export const zResourceDraft = z.object({
+    id: z.uuid().readonly(),
+    graph_has_different_publication: z.boolean().readonly(),
+    graph_slug: z.string().readonly(),
+    graph_publication_id: z.uuid().readonly().nullable(),
+    frontend_version: z.string().max(50).nullish(),
+    resourceinstanceid: z.uuid().nullish(),
+    data: z.unknown().optional(),
+    created: z.iso.datetime().readonly(),
+    updated: z.iso.datetime().readonly(),
 });
 
 /**
@@ -1359,6 +1383,12 @@ export const zNumberAliasedNodeDataMin0Max10Writable = z.object({
     node_value: z.number().gte(0).lte(10).nullable(),
 });
 
+export const zPatchedResourceDraftWritable = z.object({
+    frontend_version: z.string().max(50).nullish(),
+    resourceinstanceid: z.uuid().nullish(),
+    data: z.unknown().optional(),
+});
+
 export const zProcessRequirementIsTemplateRequirementAliasedDataWritable =
     z.object({
         has_submission_requirement: zBooleanAliasedNodeDataWritable.nullable(),
@@ -1443,6 +1473,12 @@ export const zReferenceAliasedNodeDataWritable = z.object({
             }),
         )
         .nullable(),
+});
+
+export const zResourceDraftWritable = z.object({
+    frontend_version: z.string().max(50).nullish(),
+    resourceinstanceid: z.uuid().nullish(),
+    data: z.unknown().optional(),
 });
 
 export const zResourceInstanceAliasedNodeDataWritable = z.object({
@@ -2517,5 +2553,54 @@ export const zApiResourceProcessRequirementUpdatePath = z.object({
 });
 
 export const zApiResourceProcessRequirementUpdateResponse = zProcessRequirement;
+
+export const zApiResourceDraftListPath = z.object({
+    graph_slug: z.string(),
+});
+
+export const zApiResourceDraftListResponse = z.array(zResourceDraft);
+
+export const zApiResourceDraftCreateBody = zResourceDraftWritable;
+
+export const zApiResourceDraftCreatePath = z.object({
+    graph_slug: z.string(),
+});
+
+export const zApiResourceDraftCreateResponse = zResourceDraft;
+
+export const zApiResourceDraftDestroyPath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid(),
+});
+
+/**
+ * No response body
+ */
+export const zApiResourceDraftDestroyResponse = z.void();
+
+export const zApiResourceDraftRetrievePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid(),
+});
+
+export const zApiResourceDraftRetrieveResponse = zResourceDraft;
+
+export const zApiResourceDraftPartialUpdateBody = zPatchedResourceDraftWritable;
+
+export const zApiResourceDraftPartialUpdatePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid(),
+});
+
+export const zApiResourceDraftPartialUpdateResponse = zResourceDraft;
+
+export const zApiResourceDraftUpdateBody = zResourceDraftWritable;
+
+export const zApiResourceDraftUpdatePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid(),
+});
+
+export const zApiResourceDraftUpdateResponse = zResourceDraft;
 
 export const zUserProfileRetrieveResponse = zUserProfileResponse;

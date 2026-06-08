@@ -386,6 +386,199 @@ paths:
       responses:
         '204':
           description: No response body
+  /bcap/api/resource_draft/{graph_slug}:
+    get:
+      operationId: api_resource_draft_list
+      description: GET the current user's drafts for a graph; POST a new draft.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceDraft'
+          description: ''
+    post:
+      operationId: api_resource_draft_create
+      description: GET the current user's drafts for a graph; POST a new draft.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceDraft'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceDraft'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceDraft'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDraft'
+          description: ''
+  /bcap/api/resource_draft/{graph_slug}/{id}:
+    get:
+      operationId: api_resource_draft_retrieve
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDraft'
+          description: ''
+    put:
+      operationId: api_resource_draft_update
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceDraft'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceDraft'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceDraft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDraft'
+          description: ''
+    patch:
+      operationId: api_resource_draft_partial_update
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceDraft'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceDraft'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceDraft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDraft'
+          description: ''
+    delete:
+      operationId: api_resource_draft_destroy
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /bcap/user_profile:
     get:
       operationId: user_profile_retrieve
@@ -966,6 +1159,43 @@ components:
           type: integer
           readOnly: true
           nullable: true
+    PatchedResourceDraft:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        graph_has_different_publication:
+          type: boolean
+          description: True when the published graph has moved on since the draft
+            was saved.
+          readOnly: true
+        graph_slug:
+          type: string
+          readOnly: true
+        graph_publication_id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        frontend_version:
+          type: string
+          nullable: true
+          maxLength: 50
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        data: {}
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
     PermitApplication:
       type: object
       properties:
@@ -3315,6 +3545,50 @@ components:
           readOnly: true
       required:
       - node_value
+    ResourceDraft:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        graph_has_different_publication:
+          type: boolean
+          description: True when the published graph has moved on since the draft
+            was saved.
+          readOnly: true
+        graph_slug:
+          type: string
+          readOnly: true
+        graph_publication_id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        frontend_version:
+          type: string
+          nullable: true
+          maxLength: 50
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        data: {}
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created
+      - graph_has_different_publication
+      - graph_publication_id
+      - graph_slug
+      - id
+      - updated
     ResourceInstanceAliasedNodeData:
       type: object
       properties:

@@ -18,6 +18,10 @@ from bcap.views.api import (
 from bcap.views.dashboard_api import DashboardView
 from bcap.views.hca_permit_api import HCAPermitListView, HCAPermitView
 from bcap.views.process_requirement_api import ProcessRequirementView
+from bcap.views.resource_draft_api import (
+    ResourceDraftListCreateView,
+    ResourceDraftDetailView,
+)
 from bcap.views.permit_application_api import (
     PermitApplicationView,
     PermitApplicationCreateView,
@@ -49,6 +53,18 @@ documented_api_patterns = [
         f"{PREFIX}api/resource/process_requirement/<uuid:pk>",
         ProcessRequirementView.as_view(),
         name="process_requirement",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource_draft/<slug:graph_slug>",
+        ResourceDraftListCreateView.as_view(),
+        name="resource_draft_list_create",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource_draft/<slug:graph_slug>/<uuid:pk>",
+        ResourceDraftDetailView.as_view(),
+        name="resource_draft_detail",
     ),
     # External - object level user filtering
     path(
