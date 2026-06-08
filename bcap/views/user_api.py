@@ -18,7 +18,7 @@ class UserProfile(APIView):
     authentication_classes = [SessionAuthentication]
 
     @extend_schema(
-        tags=["Internal: user_profile"],
+        tags=["External: user_profile"],
         responses=UserProfileResponseSerializer,
         description=(
             "Returns the authenticated user's profile, group "
