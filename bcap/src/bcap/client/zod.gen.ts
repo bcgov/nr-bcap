@@ -6,7 +6,7 @@
 //   Method = verb in <Operation>: Retrieve/List=GET, Create=POST,
 //            Update=PUT, PartialUpdate=PATCH, Destroy=DELETE
 // Look up <Operation> in schema.yml `paths` for the url.
-// Names without an Api* prefix (e.g. zDashboardCard) are shared, route-agnostic components.
+// Names without an Api* prefix (e.g. zInternalDashboardCard) are shared, route-agnostic components.
 //
 // Field suffixes mirror the spec's `required` + `nullable`:
 //   .nullable()  value may be null, but the field is still present

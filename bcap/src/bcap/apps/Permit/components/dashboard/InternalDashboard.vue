@@ -7,7 +7,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
 import { z } from 'zod';
-import { zDashboardCard } from '@/bcap/client/zod.gen.ts';
+import { zInternalDashboardCard } from '@/bcap/client/zod.gen.ts';
 import { getInternalDashboardData } from '@/bcap/components/pages/api.ts';
 import arches from 'arches';
 
@@ -36,7 +36,7 @@ interface ProjectData {
 }
 
 // Extract the new types directly from the generated Zod backend schema
-type GeneratedDashboardCard = z.infer<typeof zDashboardCard>;
+type GeneratedDashboardCard = z.infer<typeof zInternalDashboardCard>;
 
 // Maps backend JSON directly to the Dashboard Card
 const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
