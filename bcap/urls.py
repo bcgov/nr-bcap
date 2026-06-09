@@ -15,7 +15,7 @@ from bcap.views.api import (
     TranslateToResourceTypeView,
     RequirementSubmission,
 )
-from bcap.views.dashboard_api import DashboardView
+from bcap.views.dashboard_api import InternalDashboardView, ExternalDashboardView
 from bcap.views.hca_permit_api import HCAPermitListView, HCAPermitView
 from bcap.views.process_requirement_api import ProcessRequirementView
 from bcap.views.resource_draft_api import (
@@ -46,8 +46,16 @@ PREFIX = (
 # Routes included in the OpenAPI schema (passed to SpectacularAPIView).
 documented_api_patterns = [
     path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
-    # Internal / External need new route to split (future)
-    path(f"{PREFIX}api/dashboard", DashboardView.as_view(), name="dashboard"),
+    path(
+        f"{PREFIX}api/dashboard/internal",
+        InternalDashboardView.as_view(),
+        name="dashboard",
+    ),
+    path(
+        f"{PREFIX}api/dashboard/external",
+        ExternalDashboardView.as_view(),
+        name="dashboard_external",
+    ),
     # Internal - Checklists
     path(
         f"{PREFIX}api/resource/process_requirement/<uuid:pk>",

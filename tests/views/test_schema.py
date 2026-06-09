@@ -56,7 +56,8 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
 
         paths = schema["paths"]
         # SERVE_URLCONF limits the schema to the documented bcap routes.
-        self.assertTrue(any(p.endswith("/api/dashboard") for p in paths), paths)
+        self.assertTrue(any(p.endswith("/api/dashboard/internal") for p in paths), paths)
+        self.assertTrue(any(p.endswith("/api/dashboard/external") for p in paths), paths)
         self.assertTrue(any(p.endswith("/user_profile") for p in paths), paths)
 
     def test_dashboard_response_schema_matches_the_page_dataclass(self):
@@ -65,14 +66,14 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
         dashboard = next(
             body
             for path, body in schema["paths"].items()
-            if path.endswith("/api/dashboard")
+            if path.endswith("/api/dashboard/internal")
         )
         ref = dashboard["get"]["responses"]["200"]["content"]["application/json"][
             "schema"
         ]["$ref"]
         component = ref.rsplit("/", 1)[-1]
         page = schema["components"]["schemas"][component]
-        # The DashboardPage dataclass fields the frontend pages on.
+        # The InternalDashboardPage dataclass fields the frontend pages on.
         self.assertEqual(
             set(page["properties"]) & {"count", "page", "limit", "results"},
             {"count", "page", "limit", "results"},

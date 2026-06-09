@@ -8,10 +8,12 @@ from rest_framework.serializers import (
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
 from bcap.services.dashboard.dashboard_types import (
-    DashboardPage,
+    InternalDashboardPage,
     DashboardFilter,
+    ExternalDashboardPage,
+    ExternalDashboardStatus,
+    InternalDashboardStatus,
 )
-from bcap.util.enums import DashboardStatus
 
 
 class UserProfileResponseSerializer(Serializer):
@@ -29,7 +31,7 @@ class DashboardFilterSerializer(DataclassSerializer):
     filter and the paging controls (which page, and how many cards per page)."""
 
     # Declared so OpenAPI spec advertises the allowed status values as an enum.
-    status = ChoiceField(choices=DashboardStatus.choices, required=False)
+    status = ChoiceField(choices=InternalDashboardStatus.choices, required=False)
 
     class Meta:
         dataclass = DashboardFilter
@@ -41,9 +43,27 @@ class DashboardPageResponseSerializer(DataclassSerializer):
     `count` is the total number of cards matching the query across all pages;
     `page` and `limit` echo the requested page number and page size; `results`
     holds the cards for this page (at most `limit` of them). Each card's fields
-    are documented on the DashboardCard dataclass (as field help_text), so the
+    are documented on the InternalDashboardCard dataclass (as field help_text), so the
     per-field descriptions surface in the generated OpenAPI spec.
     """
 
     class Meta:
-        dataclass = DashboardPage
+        dataclass = InternalDashboardPage
+
+
+class ExternalDashboardFilterSerializer(DataclassSerializer):
+    """Query string parameters for the external dashboard: the scope status
+    (drafts / own / associated companies) and the paging controls."""
+
+    status = ChoiceField(choices=ExternalDashboardStatus.choices, required=False)
+
+    class Meta:
+        dataclass = DashboardFilter
+
+
+class ExternalDashboardPageResponseSerializer(DataclassSerializer):
+    """One page of external dashboard cards (see DashboardPageResponseSerializer;
+    fields are documented on the ExternalDashboardCard dataclass)."""
+
+    class Meta:
+        dataclass = ExternalDashboardPage

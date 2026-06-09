@@ -8,19 +8,26 @@ OpenAPI spec that feeds the frontend's generated TypeScript types.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 
 from bcap.serializers.dashboard_serializers import (
     DashboardPageResponseSerializer,
     DashboardFilterSerializer,
+    ExternalDashboardFilterSerializer,
+    ExternalDashboardPageResponseSerializer,
 )
-from bcap.services.dashboard.dashboard_service import DashboardService
+from bcap.services.dashboard.dashboard_service import (
+    InternalDashboardService,
+    ExternalDashboardService,
+)
 
 
-class DashboardView(APIView):
+class InternalDashboardView(APIView):
     """Returns dashboard cards for the current user based on their role."""
 
     authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(
         tags=["Internal: dashboard"],
@@ -30,5 +37,27 @@ class DashboardView(APIView):
     def get(self, request):
         query = DashboardFilterSerializer(data=request.query_params)
         query.is_valid(raise_exception=True)
-        page = DashboardService().get_cards(query.validated_data, request.user.username)
+        page = InternalDashboardService().get_cards(
+            query.validated_data, request.user.username
+        )
         return Response(DashboardPageResponseSerializer(page).data)
+
+
+class ExternalDashboardView(APIView):
+    """The applicant-facing dashboard: cards for the requesting user's own and
+    their associated companies' permit applications (and their drafts), scoped by
+    created-by."""
+
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["External: dashboard"],
+        parameters=[ExternalDashboardFilterSerializer],
+        responses=ExternalDashboardPageResponseSerializer,
+    )
+    def get(self, request):
+        query = ExternalDashboardFilterSerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        page = ExternalDashboardService().get_cards(query.validated_data, request.user)
+        return Response(ExternalDashboardPageResponseSerializer(page).data)

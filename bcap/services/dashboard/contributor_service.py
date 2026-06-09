@@ -8,6 +8,7 @@ from arches.app.models.models import TileModel
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.contributor import ContributorAliases
 from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.user import full_name
 
 
 class ContributorService(BaseGraphService):
@@ -108,5 +109,5 @@ class ContributorService(BaseGraphService):
             data = c.aliased_data.contributor.aliased_data
             first = data.first_name["display_value"]
             last = data.contributor_name["display_value"]
-            names[str(c.pk)] = " ".join(filter(None, [first, last]))
+            names[str(c.pk)] = full_name(first, last)
         return names
