@@ -49,7 +49,7 @@ documented_api_patterns = [
     path(
         f"{PREFIX}api/dashboard/internal",
         InternalDashboardView.as_view(),
-        name="dashboard",
+        name="dashboard_internal",
     ),
     path(
         f"{PREFIX}api/dashboard/external",

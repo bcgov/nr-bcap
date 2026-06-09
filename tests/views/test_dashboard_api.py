@@ -17,7 +17,7 @@ from tests.views.helpers import AuthTestHelper
 class DashboardViewAuthTests(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()
-        self.url = reverse("dashboard")
+        self.url = reverse("dashboard_internal")
 
     def test_get_unauthenticated(self):
         # No session or token
@@ -49,7 +49,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.url = reverse("dashboard")
+        self.url = reverse("dashboard_internal")
         self.idir_login_simulate()
 
     def test_get_returns_serialized_card(self):
