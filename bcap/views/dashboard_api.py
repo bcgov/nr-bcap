@@ -12,13 +12,15 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 
 from bcap.serializers.dashboard_serializers import (
-    DashboardPageResponseSerializer,
-    DashboardFilterSerializer,
+    InternalDashboardPageResponseSerializer,
+    InternalDashboardFilterSerializer,
     ExternalDashboardFilterSerializer,
     ExternalDashboardPageResponseSerializer,
 )
-from bcap.services.dashboard.dashboard_service import (
+from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
+)
+from bcap.services.dashboard.external_dashboard_service import (
     ExternalDashboardService,
 )
 
@@ -31,16 +33,16 @@ class InternalDashboardView(APIView):
 
     @extend_schema(
         tags=["Internal: dashboard"],
-        parameters=[DashboardFilterSerializer],
-        responses=DashboardPageResponseSerializer,
+        parameters=[InternalDashboardFilterSerializer],
+        responses=InternalDashboardPageResponseSerializer,
     )
     def get(self, request):
-        query = DashboardFilterSerializer(data=request.query_params)
+        query = InternalDashboardFilterSerializer(data=request.query_params)
         query.is_valid(raise_exception=True)
         page = InternalDashboardService().get_cards(
             query.validated_data, request.user.username
         )
-        return Response(DashboardPageResponseSerializer(page).data)
+        return Response(InternalDashboardPageResponseSerializer(page).data)
 
 
 class ExternalDashboardView(APIView):

@@ -1,7 +1,8 @@
-from dataclasses import dataclass, field, replace
+from dataclasses import replace
 from itertools import chain
 
 from django.db.models import (
+    Exists,
     F,
     IntegerField,
     Max,
@@ -16,71 +17,33 @@ from django.db.models.functions import Cast, Coalesce
 
 from arches.app.models.models import EditLog, TileModel
 
-from arches_querysets.models import ResourceTileTree, TileTree
+from arches_querysets.models import ResourceTileTree
 
+from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.services.dashboard.dashboard_types import (
-    DashboardCard,
-    DashboardPage,
+    InternalDashboardData,
     DashboardFilter,
+    InternalDashboardCard,
+    InternalDashboardPage,
+    InternalDashboardStatus,
+    Requirement,
 )
-from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.dashboard.contributor_service import ContributorService
-from bcap.util.aliases.hca_permit import HCAPermitAliases
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases
-from bcap.util.enums import DashboardStatus
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.queryset import filter_or_empty
 
 
-@dataclass
-class HcaPermit:
-    """An HCA Permit related to a permit application."""
-
-    number: str = ""
-    holder_ids: list[str] = field(default_factory=list)
-
-
-@dataclass
-class Requirement:
-    """An unsatisfied process requirement as the card needs it, paired with the
-    permit's process_requirement tile that points at it. The tile carries the
-    ministry_assignee and the id the assignee edit-log date is keyed by."""
-
-    name: str = ""
-    due_date: str = ""
-    route: str = ""
-    notes: str = ""
-    tile: TileTree | None = None
-
-
-@dataclass
-class DashboardData:
-    """The per-permit lookups a card is assembled from, keyed by permit/tile id."""
-
-    chosen_by_permit: dict[str, Requirement | None]
-    assignee_dates: dict[str, str]
-    hca_permits: dict[str, HcaPermit]
-    contributor_names: dict[str, str]
-
-
-class DashboardService(BaseGraphService):
-    PA = PermitApplicationAliases
+class InternalDashboardService(BaseDashboardService):
     PR = ProcessRequirementAliases
 
-    def __init__(self):
-        self.contributors = ContributorService()
-
-    def get_cards(self, query: DashboardFilter, username: str = "") -> DashboardPage:
+    def get_cards(
+        self, query: DashboardFilter, username: str = ""
+    ) -> InternalDashboardPage:
         """Build dashboard cards from Permit Application resources and their
         related Process Requirement, HCA Permit, and Contributor resources.
 
-        Each card field and the resource value it maps to is documented as
-        help_text on the DashboardCard dataclass, so the mapping also surfaces
-        per field in the generated OpenAPI spec.
-        """
-        if query.order_by:
-            raise NotImplementedError("order_by is not supported yet")
+        Per-field mappings are documented as help_text on the card dataclass."""
         count, permits = self._permits(query, username)
         requirements_by_permit = self._requirement_tiles_by_permit(permits)
         hca_permits = self._hca_permits(permits)
@@ -94,7 +57,7 @@ class DashboardService(BaseGraphService):
             requirements_by_permit, referenced[self.PA.PROCESS_REQUIREMENT]
         )
         officer_ids = self._referenced_ids(permits, self.PA.PROJECT_OFFICER)
-        data = DashboardData(
+        data = InternalDashboardData(
             chosen_by_permit=chosen_by_permit,
             assignee_dates=self._assignee_change_dates(chosen_by_permit),
             hca_permits=hca_permits,
@@ -102,18 +65,18 @@ class DashboardService(BaseGraphService):
                 referenced[self.PA.MINISTRY_ASSIGNEE] | officer_ids, hca_permits
             ),
         )
-        return DashboardPage(
+        return InternalDashboardPage(
             count=count,
             page=query.page,
             limit=query.limit,
             results=self._cards_to_json(permits, data),
         )
 
-    def _permits(self, query, username=""):
-        """The query's page of permits and the total count, counting, paging,
-        and the status filter all run in the DB. Loads the process_requirement
-        tiles in the same pass (they nest under application_admin), so
-        _requirement_tiles_by_permit needs no extra query."""
+    def _base_permit_queryset(self):
+        """Permit applications with the card's nodes loaded (including the
+        process_requirement tiles, so _requirement_tiles_by_permit needs no extra
+        query) and the active assignee annotated, narrowed to those with an
+        unsatisfied requirement."""
         queryset = (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PERMIT_APPLICATION,
@@ -137,33 +100,31 @@ class DashboardService(BaseGraphService):
             .order_by("pk")  # stable, so LIMIT/OFFSET pages don't overlap
         )
         queryset = queryset.annotate(
-            active_requirement=self._active_requirement_subquery(),
             active_assignee=self._active_assignee_subquery(),
         )
-        # A permit with no unsatisfied requirement (all met, or none at all) has
-        # nothing actionable to surface, so it gets no card.
-        queryset = queryset.filter(active_requirement__isnull=False)
-        queryset = self._filter_by_status(queryset, query.status, username)
+        # No actionable requirement -> no card. Exists() stops at the first
+        # matching tile.
+        return queryset.filter(Exists(self._active_requirement_tiles()))
 
-        start = (query.page - 1) * query.limit
-        return queryset.count(), list(queryset[start : start + query.limit])
+    def _permits(self, query, username=""):
+        """The query's page of permits and the total count; counting, paging,
+        and the status filter all run in the DB."""
+        queryset = self._filter_by_status(
+            self._base_permit_queryset(), query.status, username
+        )
+        return self._page(queryset, query)
 
     def _filter_by_status(self, queryset, status, username):
         """Narrow permits by the active requirement's ministry_assignee."""
         match status:
-            case DashboardStatus.UNASSIGNED:
+            case InternalDashboardStatus.UNASSIGNED:
                 return queryset.filter(active_assignee__isnull=True)
-            case DashboardStatus.ASSIGNED_TO_ME:
+            case InternalDashboardStatus.ASSIGNED_TO_ME:
                 if not username:
                     raise ValueError(f"username is required for status {status}")
                 my_contributor_id = self.contributors.username_contributor_id(username)
                 # Avoid returning unassigned.
                 return filter_or_empty(queryset, active_assignee=my_contributor_id)
-            case DashboardStatus.ASSIGNED_TO_ASSOCIATED_COMPANIES:
-                if not username:
-                    raise ValueError(f"username is required for status {status}")
-                ids = self.contributors.company_contributor_ids(username)
-                return queryset.filter(active_assignee__in=ids)
             case _:
                 return queryset
 
@@ -171,14 +132,11 @@ class DashboardService(BaseGraphService):
         """Per permit, the ministry_assignee id of its active requirement."""
         return Subquery(self._active_requirement_tiles().values("assignee")[:1])
 
-    def _active_requirement_subquery(self):
-        """Per permit, the resource id of its active requirement (null if none)."""
-        return Subquery(self._active_requirement_tiles().values("requirement")[:1])
-
     def _active_requirement_tiles(self):
-        """Per-permit subquery (via OuterRef) of its unsatisfied
-        process_requirement tiles, lowest order first; the first row is the
-        active one the card surfaces."""
+        """Per-permit subquery of its unsatisfied process_requirement tiles that
+        reference a real requirement, lowest order first. The non-null guard
+        keeps this in lockstep with _choose_requirements, so a blank tile never
+        makes a permit appear with no card."""
         app, req = GraphSlugs.PERMIT_APPLICATION, GraphSlugs.PROCESS_REQUIREMENT
         order_id, child_ng = self._node_info(app, self.PA.PROCESS_REQUIREMENT_ORDER)
         assignee_id = self._node_id(app, self.PA.MINISTRY_ASSIGNEE)
@@ -203,15 +161,13 @@ class DashboardService(BaseGraphService):
                 order_value=Cast(KeyTextTransform(order_id, "data"), IntegerField()),
             )
             .exclude(requirement__in=satisfied_ids)
+            .filter(requirement__isnull=False)
             .order_by("order_value")
         )
 
     def _requirement_tiles_by_permit(self, permits):
-        """Map permit id -> its process_requirement tiles, sorted by
-        process_requirement_order so the first is the one the card surfaces (the
-        query has no inherent order). The tiles were loaded with the permits (see
-        _permits), so this just reads them out of the loaded tree -- no query. A
-        permit has many such tiles (one per requirement/assignee pair)."""
+        """Map permit id -> its process_requirement tiles, sorted by order. Read
+        from the already-loaded tree (see _base_permit_queryset), so no query."""
         requirements_by_permit = {}
         for permit in permits:
             tiles = []
@@ -221,28 +177,6 @@ class DashboardService(BaseGraphService):
                 tiles, key=self._requirement_order
             )
         return requirements_by_permit
-
-    def _hca_permits(self, permits):
-        """Map id -> HcaPermit for the permits' related_permit links."""
-        ids = self._referenced_ids(permits, self.PA.RELATED_PERMIT)
-        if not ids:
-            return {}
-
-        resources = self._resources(
-            GraphSlugs.HCA_PERMIT,
-            ids,
-            [HCAPermitAliases.PERMIT_NUMBER, HCAPermitAliases.PERMIT_HOLDER],
-        )
-
-        hca_permits = {}
-        for permit in resources:
-            # permit_identification is a cardinality-1 top-level group.
-            identification = permit.aliased_data.permit_identification.aliased_data
-            hca_permits[str(permit.pk)] = HcaPermit(
-                number=identification.permit_number["display_value"],
-                holder_ids=self._resource_ids(identification.permit_holder),
-            )
-        return hca_permits
 
     def _contributor_names(self, assignee_ids, hca_permits):
         """Map id -> display name for every Contributor a card references: each
@@ -304,7 +238,7 @@ class DashboardService(BaseGraphService):
     def _requirement_order(self, tile):
         """A tile's process_requirement_order as a sort key; tiles with no order
         value sort last (infinity) so a tile that has one always wins."""
-        value = getattr(tile.aliased_data, self.PA.PROCESS_REQUIREMENT_ORDER)
+        value = tile.aliased_data.process_requirement_order
         return value["node_value"] if value else float("inf")
 
     def _assignee_change_dates(self, chosen_by_permit):
@@ -341,27 +275,23 @@ class DashboardService(BaseGraphService):
         )
         return {str(row["tileinstanceid"]): row["changed"].isoformat() for row in rows}
 
-    def _cards_to_json(self, permits, data: DashboardData):
-        """Assemble a DashboardCard for each permit from the gathered lookups."""
+    def _cards_to_json(self, permits, data: InternalDashboardData):
+        """A card for each permit, assembled from the gathered lookups."""
         cards = []
         for permit in permits:
             cards.append(self._card_to_json(permit, data))
         return cards
 
-    def _card_to_json(self, permit, data: DashboardData):
-        """Assemble one permit's DashboardCard from its tiles and the gathered
-        lookups. The full field mapping is documented on get_cards."""
+    def _card_to_json(self, permit, data: InternalDashboardData):
+        """Assemble one permit's card from its tiles and the gathered lookups.
+        The full field mapping is documented on get_cards."""
         PA = PermitApplicationAliases
         aliased = permit.aliased_data
         requirement = data.chosen_by_permit[str(permit.pk)]
         tile = requirement.tile
-        identification = aliased.application_identification.aliased_data
-        admin = aliased.application_admin.aliased_data
+        core = self._application_core(aliased)
 
-        # related_permit is cardinality-n, so descend with the helper for the first.
-        related = self._node_value(aliased, PA.RELATED_PERMIT)
-        related_permit_id = self._resource_id(related)
-        hca = data.hca_permits.get(related_permit_id) or HcaPermit()
+        hca = self._related_hca(core.related_permit_id, data.hca_permits)
         holder_names = self._join_names(hca.holder_ids, data.contributor_names)
 
         assignee_id = self._resource_id(tile.aliased_data.ministry_assignee)
@@ -371,18 +301,14 @@ class DashboardService(BaseGraphService):
         officer_id = self._resource_id(self._node_value(aliased, PA.PROJECT_OFFICER))
         officer_name = data.contributor_names.get(officer_id, "")
 
-        # Leaving this in one spot for now so we can change it easier in the future.
-        return DashboardCard(
+        return InternalDashboardCard(
             id=str(permit.pk),
             requirement_name=requirement.name,
             requirement_due_date=requirement.due_date,
-            project_name=identification.project_name["display_value"],
-            application_number=identification.application_id["display_value"],
-            # industrial_sector is nested two groups deep, so keep the helper.
-            industrial_sector=self._node_value(aliased, PA.INDUSTRIAL_SECTOR).get(
-                "display_value", ""
-            ),
-            permit_id=related_permit_id,
+            project_name=core.project_name,
+            application_number=core.application_number,
+            industrial_sector=core.industrial_sector,
+            permit_id=core.related_permit_id,
             permit_number=hca.number,
             permit_holder=holder_names,
             permit_holder_ids=hca.holder_ids,
@@ -394,5 +320,5 @@ class DashboardService(BaseGraphService):
             ministry_assignee_change_date=ministry_assignee_change_date,
             requirement_id=requirement.route,
             urgency=0,
-            priority_level=admin.application_priority_level["display_value"],
+            priority_level=core.priority_level,
         )

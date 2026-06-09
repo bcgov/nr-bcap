@@ -6,10 +6,13 @@ from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
 )
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
-from tests.services.test_dashboard_service import build_permit_graph
-from tests.services.test_external_dashboard_service import build_external_permit
+from tests.services.test_internal_dashboard_service import build_permit_graph
+from tests.services.test_external_dashboard_service import (
+    build_external_permit,
+    build_hca_permit,
+)
 from tests.views.helpers import AuthTestHelper
 
 
@@ -130,8 +133,16 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         ControlledListFixtures.seed()
         builder = ResourceBuilder()
+        contributor_type = builder.reference_value("contributor", "contributor_type")
+        holder = builder.make_contributor(
+            ContributorSpec(contributor_type, None, "Acme Corp")
+        )
+        hca = build_hca_permit(builder, "HCA-001", holder)
+        cls.hca_id = str(hca.pk)
         # Owned by the session user (testuser), so the created-by scope matches.
-        cls.mine = build_external_permit(builder, "My App", cls.user, "Active")
+        cls.mine = build_external_permit(
+            builder, "My App", cls.user, "Active", hca_permit=hca
+        )
         cls.draft = ResourceDraft.objects.create(
             user=cls.user,
             graph_slug="permit_application",
@@ -151,16 +162,29 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         self.url = reverse("dashboard_external")
         self.idir_login_simulate()
 
+    def test_get_returns_serialized_card(self):
+        resp = self.client.get(self.url)
+
+        self.assertEqual(resp.status_code, 200)
+        body = resp.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["results"]), 1)
+        card = body["results"][0]
+        self.assertEqual(card["id"], str(self.mine.pk))
+        self.assertFalse(card["is_draft"])
+        self.assertEqual(card["status"], "Permit Active")
+        self.assertEqual(card["created_by_name"], "testuser")
+        self.assertEqual(card["project_name"], "My App")
+        self.assertEqual(card["application_number"], "My App")
+        self.assertEqual(card["permit_id"], self.hca_id)
+        self.assertEqual(card["permit_number"], "HCA-001")
+
     def test_get_defaults_to_the_users_own_applications(self):
         resp = self.client.get(self.url)
 
         self.assertEqual(resp.status_code, 200)
         body = resp.json()
         self.assertEqual([c["id"] for c in body["results"]], [str(self.mine.pk)])
-        card = body["results"][0]
-        self.assertEqual(card["project_name"], "My App")
-        self.assertEqual(card["status"], "Permit Active")
-        self.assertFalse(card["is_draft"])
 
     def test_drafts_scope_returns_the_users_drafts(self):
         resp = self.client.get(self.url, {"status": ExternalDashboardStatus.DRAFTS})

@@ -3,10 +3,14 @@ from types import SimpleNamespace
 
 from django.test import TestCase
 
-from bcap.services.dashboard.dashboard_service import DashboardService
-from bcap.services.dashboard.dashboard_types import DashboardFilter
+from bcap.services.dashboard.internal_dashboard_service import (
+    InternalDashboardService,
+)
+from bcap.services.dashboard.dashboard_types import (
+    DashboardFilter,
+    InternalDashboardStatus,
+)
 from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
-from bcap.util.enums import DashboardStatus
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -250,6 +254,26 @@ def build_unassigned_permit(builder, name):
     return permit
 
 
+def build_blank_requirement_permit(builder, name):
+    """A permit_application whose application_admin holds only the blank
+    process_requirement child auto-created with the group -- no requirement
+    assigned (the shape an externally-created application has before any
+    requirement is added). It has nothing actionable, so the dashboard must hide
+    it rather than surface a card with no requirement. Returns the resource."""
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    permit.append_tile("application_admin")
+    permit.save(**builder.save_kwargs)
+    return permit
+
+
 class _DashboardServiceData:
     """Builds the test graph once per class and exposes the resources' ids as
     strings -- the form the service returns -- so the assertions stay readable."""
@@ -258,7 +282,7 @@ class _DashboardServiceData:
     def setUpTestData(cls):
         # Seeded resources are rolled back with the class transaction.
         ControlledListFixtures.seed()
-        cls.service = DashboardService()
+        cls.service = InternalDashboardService()
         graph = build_permit_graph()
 
         cls.permit_id = str(graph.permit.pk)
@@ -307,39 +331,28 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         # active ("Field Assessment") requirement, so ASSIGNED_TO_ME returns the
         # permit for that user.
         matching = self.service.get_cards(
-            DashboardFilter(status=DashboardStatus.ASSIGNED_TO_ME), "testuser"
+            DashboardFilter(status=InternalDashboardStatus.ASSIGNED_TO_ME), "testuser"
         )
         self.assertEqual(matching.count, 1)
         self.assertEqual([card.id for card in matching.results], [self.permit_id])
 
         # A user with no matching Contributor (bcap_username) matches nothing.
         none = self.service.get_cards(
-            DashboardFilter(status=DashboardStatus.ASSIGNED_TO_ME), "nobody"
+            DashboardFilter(status=InternalDashboardStatus.ASSIGNED_TO_ME), "nobody"
         )
         self.assertEqual(none.count, 0)
         self.assertEqual(none.results, [])
 
-    def test_assigned_to_my_company_status_includes_organization_members(self):
-        # Grace belongs to Acme, so ASSIGNED_TO_ASSOCIATED_COMPANIES for her user returns
-        # the permit whose active requirement she is assigned to.
-        company = self.service.get_cards(
-            DashboardFilter(status=DashboardStatus.ASSIGNED_TO_ASSOCIATED_COMPANIES),
-            "testuser",
-        )
-        self.assertEqual(company.count, 1)
-        self.assertEqual([card.id for card in company.results], [self.permit_id])
-
     def test_blank_username_assignment_filters_require_a_user(self):
-        # The assignment statuses are keyed on the viewer's Contributor, so a
-        # blank username is rejected rather than matching every permit.
+        # ASSIGNED_TO_ME is keyed on the viewer's Contributor, so a blank
+        # username is rejected rather than matching every permit.
         for username in (None, ""):
-            for status in (
-                DashboardStatus.ASSIGNED_TO_ME,
-                DashboardStatus.ASSIGNED_TO_ASSOCIATED_COMPANIES,
-            ):
-                with self.subTest(username=username, status=status):
-                    with self.assertRaises(ValueError):
-                        self.service.get_cards(DashboardFilter(status=status), username)
+            with self.subTest(username=username):
+                with self.assertRaises(ValueError):
+                    self.service.get_cards(
+                        DashboardFilter(status=InternalDashboardStatus.ASSIGNED_TO_ME),
+                        username,
+                    )
 
     def test_unassigned_status_returns_only_permits_with_no_active_assignee(self):
         # The graph permit's active requirement ("Field Assessment") is assigned
@@ -348,10 +361,21 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         unassigned_id = str(build_unassigned_permit(ResourceBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(
-            DashboardFilter(status=DashboardStatus.UNASSIGNED)
+            DashboardFilter(status=InternalDashboardStatus.UNASSIGNED)
         )
 
         self.assertEqual([card.id for card in page.results], [unassigned_id])
+
+    def test_no_status_returns_all_actionable_permits_regardless_of_assignee(self):
+        # No status means the assignment filter is not applied: both the
+        # assigned graph permit and an unassigned one are returned.
+        unassigned_id = str(build_unassigned_permit(ResourceBuilder(), "Orphan").pk)
+
+        page = self.service.get_cards(DashboardFilter())
+
+        self.assertEqual(
+            {card.id for card in page.results}, {self.permit_id, unassigned_id}
+        )
 
     def test_permits_returns_count_and_the_permit_application(self):
         count, permits = self.service._permits(DashboardFilter())
@@ -438,7 +462,7 @@ class DashboardServicePaginationTests(TestCase):
         # Three bare permits are enough to observe limit capping and paging.
         permits = [build_minimal_permit(builder, f"Permit {i}") for i in range(3)]
         cls.permit_ids = {str(p.pk) for p in permits}
-        cls.service = DashboardService()
+        cls.service = InternalDashboardService()
 
     def test_limit_caps_page_size_but_not_count(self):
         page = self.service.get_cards(DashboardFilter(limit=2, page=1))
@@ -469,7 +493,7 @@ class DashboardServiceNoPermitsTests(TestCase):
     case builds no graph, so the permit query comes back empty."""
 
     def test_get_cards_returns_empty_page(self):
-        page = DashboardService().get_cards(DashboardFilter())
+        page = InternalDashboardService().get_cards(DashboardFilter())
         self.assertEqual(page.count, 0)
         self.assertEqual(page.results, [])
 
@@ -483,9 +507,30 @@ class DashboardServiceAllSatisfiedTests(TestCase):
         ControlledListFixtures.seed()
         builder = ResourceBuilder()
         cls.permit_id = str(build_all_satisfied_permit(builder, "Done").pk)
-        cls.service = DashboardService()
+        cls.service = InternalDashboardService()
 
     def test_all_satisfied_permit_is_hidden(self):
+        page = self.service.get_cards(DashboardFilter())
+
+        self.assertEqual(page.count, 0)
+        self.assertEqual(page.results, [])
+
+
+class DashboardServiceBlankRequirementTests(TestCase):
+    """A permit whose only process_requirement tile is blank (no requirement
+    assigned) has nothing the card could surface, so the dashboard hides it.
+    Guards against the active-requirement filter and _choose_requirements
+    diverging: an included permit with no choosable requirement would build a
+    card from None."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = ResourceBuilder()
+        cls.permit_id = str(build_blank_requirement_permit(builder, "Blank").pk)
+        cls.service = InternalDashboardService()
+
+    def test_permit_with_only_a_blank_requirement_tile_is_hidden(self):
         page = self.service.get_cards(DashboardFilter())
 
         self.assertEqual(page.count, 0)

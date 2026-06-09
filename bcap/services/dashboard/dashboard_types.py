@@ -233,7 +233,7 @@ class Requirement:
 
 
 @dataclass
-class DashboardData:
+class InternalDashboardData:
     """The per-permit lookups a card is assembled from, keyed by permit/tile id."""
 
     chosen_by_permit: dict[str, Requirement | None]

@@ -28,48 +28,41 @@ export const zBooleanAliasedNodeData = z.object({
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
 });
 
-export const zDashboardCard = z.object({
+export const zDateAliasedNodeData = z.object({
+    node_value: z.iso.datetime().nullable(),
+    display_value: z.string().readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+});
+
+export const zExternalDashboardCard = z.object({
     id: z.string(),
-    requirement_name: z.string().optional(),
-    requirement_due_date: z.string().optional(),
+    is_draft: z.boolean().optional(),
+    status: z.string().optional(),
+    created_by_name: z.string().optional(),
+    created_date: z.string().optional(),
     project_name: z.string().optional(),
     application_number: z.string().optional(),
     industrial_sector: z.string().optional(),
     permit_id: z.string().nullish(),
     permit_number: z.string().optional(),
-    permit_holder: z.string().optional(),
-    permit_holder_ids: z.array(z.string()).optional(),
-    project_officer: z.string().optional(),
-    project_officer_id: z.string().nullish(),
-    assessment_notes: z.string().optional(),
-    ministry_assignee_name: z.string().optional(),
-    ministry_assignee_id: z.string().nullish(),
-    ministry_assignee_change_date: z.string().optional(),
-    requirement_id: z.string().optional(),
     urgency: z.int().optional(),
     priority_level: z.string().optional(),
 });
 
 /**
- * One page of dashboard cards for the current user.
+ * One page of external dashboard cards for the current user.
  *
  * `count` is the total number of cards matching the query across all pages;
  * `page` and `limit` echo the requested page number and page size; `results`
  * holds the cards for this page (at most `limit` of them). Each card's fields
- * are documented on the DashboardCard dataclass (as field help_text), so the
- * per-field descriptions surface in the generated OpenAPI spec.
+ * are documented on the ExternalDashboardCard dataclass (as field help_text),
+ * so the per-field descriptions surface in the generated OpenAPI spec.
  */
-export const zDashboardPage = z.object({
+export const zExternalDashboardPage = z.object({
     count: z.int().optional(),
     page: z.int().optional(),
     limit: z.int().optional(),
-    results: z.array(zDashboardCard).optional(),
-});
-
-export const zDateAliasedNodeData = z.object({
-    node_value: z.iso.datetime().nullable(),
-    display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    results: z.array(zExternalDashboardCard).optional(),
 });
 
 export const zFileListAliasedNodeData = z.object({
@@ -111,6 +104,44 @@ export const zGeojsonFeatureCollectionAliasedNodeData = z.object({
         .nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+});
+
+export const zInternalDashboardCard = z.object({
+    id: z.string(),
+    requirement_name: z.string().optional(),
+    requirement_due_date: z.string().optional(),
+    project_name: z.string().optional(),
+    application_number: z.string().optional(),
+    industrial_sector: z.string().optional(),
+    permit_id: z.string().nullish(),
+    permit_number: z.string().optional(),
+    permit_holder: z.string().optional(),
+    permit_holder_ids: z.array(z.string()).optional(),
+    project_officer: z.string().optional(),
+    project_officer_id: z.string().nullish(),
+    assessment_notes: z.string().optional(),
+    ministry_assignee_name: z.string().optional(),
+    ministry_assignee_id: z.string().nullish(),
+    ministry_assignee_change_date: z.string().optional(),
+    requirement_id: z.string().optional(),
+    urgency: z.int().optional(),
+    priority_level: z.string().optional(),
+});
+
+/**
+ * One page of dashboard cards for the current user.
+ *
+ * `count` is the total number of cards matching the query across all pages;
+ * `page` and `limit` echo the requested page number and page size; `results`
+ * holds the cards for this page (at most `limit` of them). Each card's fields
+ * are documented on the InternalDashboardCard dataclass (as field help_text), so the
+ * per-field descriptions surface in the generated OpenAPI spec.
+ */
+export const zInternalDashboardPage = z.object({
+    count: z.int().optional(),
+    page: z.int().optional(),
+    limit: z.int().optional(),
+    results: z.array(zInternalDashboardCard).optional(),
 });
 
 export const zNonLocalizedStringAliasedNodeData = z.object({
@@ -2452,20 +2483,23 @@ export const zUserProfileResponseWritable = z.object({
     last_name: z.string(),
 });
 
-export const zApiDashboardRetrieveQuery = z.object({
+export const zApiDashboardExternalRetrieveQuery = z.object({
     limit: z.int().gte(1).lte(100).optional(),
-    order_by: z.string().min(1).nullish(),
     page: z.int().gte(1).optional(),
     status: z
-        .enum([
-            'UNASSIGNED',
-            'ASSIGNED_TO_ME',
-            'ASSIGNED_TO_ASSOCIATED_COMPANIES',
-        ])
+        .enum(['DRAFTS', 'CREATED_BY_ME', 'CREATED_BY_ASSOCIATED_COMPANIES'])
         .optional(),
 });
 
-export const zApiDashboardRetrieveResponse = zDashboardPage;
+export const zApiDashboardExternalRetrieveResponse = zExternalDashboardPage;
+
+export const zApiDashboardInternalRetrieveQuery = z.object({
+    limit: z.int().gte(1).lte(100).optional(),
+    page: z.int().gte(1).optional(),
+    status: z.enum(['UNASSIGNED', 'ASSIGNED_TO_ME']).optional(),
+});
+
+export const zApiDashboardInternalRetrieveResponse = zInternalDashboardPage;
 
 export const zApiResourceHcaPermitListQuery = z.object({
     limit: z.int().optional(),

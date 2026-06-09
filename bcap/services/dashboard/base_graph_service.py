@@ -153,6 +153,14 @@ class BaseGraphService:
     @staticmethod
     def _group_aliased_data(data, group):
         """The aliased_data dict of a top-level group within a raw aliased_data
-        dict (e.g. a POST body or draft blob), or {} if absent."""
-        groups = (data or {}).get("aliased_data", {})
-        return (groups.get(group) or {}).get("aliased_data", {}) or {}
+        dict (e.g. a POST body or draft blob), or {} if absent or malformed.
+        Draft blobs are unvalidated, so every level is guarded against a
+        non-dict."""
+
+        def aliased(value):
+            return value.get("aliased_data") if isinstance(value, dict) else None
+
+        groups = aliased(data)
+        group_data = groups.get(group) if isinstance(groups, dict) else None
+        inner = aliased(group_data)
+        return inner if isinstance(inner, dict) else {}

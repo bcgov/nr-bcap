@@ -56,8 +56,12 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
 
         paths = schema["paths"]
         # SERVE_URLCONF limits the schema to the documented bcap routes.
-        self.assertTrue(any(p.endswith("/api/dashboard/internal") for p in paths), paths)
-        self.assertTrue(any(p.endswith("/api/dashboard/external") for p in paths), paths)
+        self.assertTrue(
+            any(p.endswith("/api/dashboard/internal") for p in paths), paths
+        )
+        self.assertTrue(
+            any(p.endswith("/api/dashboard/external") for p in paths), paths
+        )
         self.assertTrue(any(p.endswith("/user_profile") for p in paths), paths)
 
     def test_dashboard_response_schema_matches_the_page_dataclass(self):
