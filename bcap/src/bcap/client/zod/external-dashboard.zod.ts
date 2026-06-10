@@ -4,8 +4,6 @@
  */
 import * as zod from 'zod';
 
-
-
 /**
  * The applicant-facing dashboard: cards for the requesting user's own and
 their associated companies' permit applications (and their drafts), scoped by
@@ -13,32 +11,102 @@ created-by.
  */
 export const apiDashboardExternalRetrieveQueryLimitMax = 100;
 
-
-export const apiDashboardExternalRetrieveQueryStatusDefault = "CREATED_BY_ME";
+export const apiDashboardExternalRetrieveQueryStatusDefault = 'CREATED_BY_ME';
 
 export const apiDashboardExternalRetrieveQueryParams = zod.object({
-  "limit": zod.number().min(1).max(apiDashboardExternalRetrieveQueryLimitMax).optional(),
-  "page": zod.number().min(1).optional(),
-  "status": zod.enum(['DRAFTS', 'CREATED_BY_ME', 'CREATED_BY_ASSOCIATED_COMPANIES']).default(apiDashboardExternalRetrieveQueryStatusDefault).describe('\* `DRAFTS` - Drafts\n\* `CREATED_BY_ME` - My Projects\n\* `CREATED_BY_ASSOCIATED_COMPANIES` - Created by associated companies')
-})
+    limit: zod
+        .number()
+        .min(1)
+        .max(apiDashboardExternalRetrieveQueryLimitMax)
+        .optional(),
+    page: zod.number().min(1).optional(),
+    status: zod
+        .enum(['DRAFTS', 'CREATED_BY_ME', 'CREATED_BY_ASSOCIATED_COMPANIES'])
+        .default(apiDashboardExternalRetrieveQueryStatusDefault)
+        .describe(
+            '\* `DRAFTS` - Drafts\n\* `CREATED_BY_ME` - My Projects\n\* `CREATED_BY_ASSOCIATED_COMPANIES` - Created by associated companies',
+        ),
+});
 
-export const apiDashboardExternalRetrieveResponse = zod.object({
-  "count": zod.number().optional(),
-  "page": zod.number().optional(),
-  "limit": zod.number().optional(),
-  "results": zod.array(zod.object({
-  "id": zod.string().describe('Permit application resourceinstanceid, or draft id when is_draft; the card\'s drill-in \/ resume GUID.'),
-  "is_draft": zod.boolean().optional().describe('True when this card is an unsubmitted draft (from a ResourceDraft, graph_slug=permit_application) rather than a saved application.'),
-  "status": zod.string().optional().describe('Applicant-facing workflow status, e.g. Permit Active, Under Review, Submit Documents, Submission Required.'),
-  "created_by_name": zod.string().optional().describe('Display name of the user who created the application (principaluser).'),
-  "created_date": zod.string().optional().describe('ISO timestamp the application was submitted (its createdtime), or the draft was created when is_draft.'),
-  "project_name": zod.string().optional().describe('Permit application\'s project name.'),
-  "application_number": zod.string().optional().describe('Permit application\'s human-readable application reference; not a GUID.'),
-  "industrial_sector": zod.string().optional().describe('Permit application\'s industrial sector (reference label).'),
-  "permit_id": zod.string().nullish().describe('Resourceinstanceid of the related HCA Permit; its drill-in GUID.'),
-  "permit_number": zod.string().optional().describe('Permit number of the related HCA Permit.'),
-  "urgency": zod.number().optional().describe('Relative urgency from the target completion date and the current date.'),
-  "priority_level": zod.string().optional().describe('Permit application\'s priority level (reference label).')
-})).optional()
-}).describe('One page of external dashboard cards for the current user.\n\n`count` is the total number of cards matching the query across all pages;\n`page` and `limit` echo the requested page number and page size; `results`\nholds the cards for this page (at most `limit` of them). Each card\'s fields\nare documented on the ExternalDashboardCard dataclass (as field help_text),\nso the per-field descriptions surface in the generated OpenAPI spec.')
-
+export const apiDashboardExternalRetrieveResponse = zod
+    .object({
+        count: zod.number().optional(),
+        page: zod.number().optional(),
+        limit: zod.number().optional(),
+        results: zod
+            .array(
+                zod.object({
+                    id: zod
+                        .string()
+                        .describe(
+                            "Permit application resourceinstanceid, or draft id when is_draft; the card's drill-in \/ resume GUID.",
+                        ),
+                    is_draft: zod
+                        .boolean()
+                        .optional()
+                        .describe(
+                            'True when this card is an unsubmitted draft (from a ResourceDraft, graph_slug=permit_application) rather than a saved application.',
+                        ),
+                    status: zod
+                        .string()
+                        .optional()
+                        .describe(
+                            'Applicant-facing workflow status, e.g. Permit Active, Under Review, Submit Documents, Submission Required.',
+                        ),
+                    created_by_name: zod
+                        .string()
+                        .optional()
+                        .describe(
+                            'Display name of the user who created the application (principaluser).',
+                        ),
+                    created_date: zod
+                        .string()
+                        .optional()
+                        .describe(
+                            'ISO timestamp the application was submitted (its createdtime), or the draft was created when is_draft.',
+                        ),
+                    project_name: zod
+                        .string()
+                        .optional()
+                        .describe("Permit application's project name."),
+                    application_number: zod
+                        .string()
+                        .optional()
+                        .describe(
+                            "Permit application's human-readable application reference; not a GUID.",
+                        ),
+                    industrial_sector: zod
+                        .string()
+                        .optional()
+                        .describe(
+                            "Permit application's industrial sector (reference label).",
+                        ),
+                    permit_id: zod
+                        .string()
+                        .nullish()
+                        .describe(
+                            'Resourceinstanceid of the related HCA Permit; its drill-in GUID.',
+                        ),
+                    permit_number: zod
+                        .string()
+                        .optional()
+                        .describe('Permit number of the related HCA Permit.'),
+                    urgency: zod
+                        .number()
+                        .optional()
+                        .describe(
+                            'Relative urgency from the target completion date and the current date.',
+                        ),
+                    priority_level: zod
+                        .string()
+                        .optional()
+                        .describe(
+                            "Permit application's priority level (reference label).",
+                        ),
+                }),
+            )
+            .optional(),
+    })
+    .describe(
+        "One page of external dashboard cards for the current user.\n\n`count` is the total number of cards matching the query across all pages;\n`page` and `limit` echo the requested page number and page size; `results`\nholds the cards for this page (at most `limit` of them). Each card's fields\nare documented on the ExternalDashboardCard dataclass (as field help_text),\nso the per-field descriptions surface in the generated OpenAPI spec.",
+    );

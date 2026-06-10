@@ -4,15 +4,12 @@
  */
 import * as zod from 'zod';
 
-
-
 /**
  * Returns the authenticated user's profile, group memberships, and linked Contributor resource id.
  */
 export const userProfileRetrieveResponse = zod.object({
-  "username": zod.string(),
-  "first_name": zod.string(),
-  "last_name": zod.string(),
-  "groups": zod.array(zod.string())
-})
-
+    username: zod.string(),
+    first_name: zod.string(),
+    last_name: zod.string(),
+    groups: zod.array(zod.string()),
+});

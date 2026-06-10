@@ -92,7 +92,10 @@ export const getInternalDashboardData = async (
             await response.json(),
         );
         if (!result.success) {
-            console.error('Dashboard response failed validation:', result.error);
+            console.error(
+                'Dashboard response failed validation:',
+                result.error,
+            );
             return [];
         }
 
