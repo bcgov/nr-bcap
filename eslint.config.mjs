@@ -40,4 +40,12 @@ export default [
             "semi": ["error", "always"],
         },
     },
+    {
+        // Orval-generated Zod schemas -- formatting/escapes we don't control.
+        "files": ["**/client/zod/**/*.zod.ts"],
+        "rules": {
+            "semi": "off",
+            "no-useless-escape": "off",
+        },
+    },
 ];

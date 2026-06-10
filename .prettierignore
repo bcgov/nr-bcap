@@ -1,0 +1,2 @@
+# Orval-generated Zod schemas -- do not reformat generated output.
+**/client/zod/**/*.zod.ts

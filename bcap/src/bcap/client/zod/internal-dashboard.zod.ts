@@ -4,147 +4,46 @@
  */
 import * as zod from 'zod';
 
+
+
 /**
  * Returns dashboard cards for the current user based on their role.
  */
 export const apiDashboardInternalRetrieveQueryLimitMax = 100;
 
-export const apiDashboardInternalRetrieveQueryParams = zod.object({
-    limit: zod
-        .number()
-        .min(1)
-        .max(apiDashboardInternalRetrieveQueryLimitMax)
-        .optional(),
-    page: zod.number().min(1).optional(),
-    status: zod
-        .enum(['UNASSIGNED', 'ASSIGNED_TO_ME'])
-        .optional()
-        .describe(
-            '\* `UNASSIGNED` - Unassigned\n\* `ASSIGNED_TO_ME` - Assigned to me',
-        ),
-});
 
-export const apiDashboardInternalRetrieveResponse = zod
-    .object({
-        count: zod.number().optional(),
-        page: zod.number().optional(),
-        limit: zod.number().optional(),
-        results: zod
-            .array(
-                zod.object({
-                    id: zod
-                        .string()
-                        .describe(
-                            "Permit application resourceinstanceid; the card's drill-in GUID.",
-                        ),
-                    requirement_name: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            'Name of the chosen (first unsatisfied) process requirement.',
-                        ),
-                    requirement_due_date: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            'Process due date of the chosen requirement.',
-                        ),
-                    project_name: zod
-                        .string()
-                        .optional()
-                        .describe("Permit application's project name."),
-                    application_number: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            "Permit application's human-readable application reference (e.g. \"APP-1\"); not a GUID. The application's GUID is the card's `id`.",
-                        ),
-                    industrial_sector: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            "Permit application's industrial sector (reference label).",
-                        ),
-                    permit_id: zod
-                        .string()
-                        .nullish()
-                        .describe(
-                            'Resourceinstanceid of the related HCA Permit; its drill-in GUID.',
-                        ),
-                    permit_number: zod
-                        .string()
-                        .optional()
-                        .describe('Permit number of the related HCA Permit.'),
-                    permit_holder: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            'Permit holder name(s) on the related HCA Permit (Contributor).',
-                        ),
-                    permit_holder_ids: zod
-                        .array(zod.string())
-                        .optional()
-                        .describe(
-                            'Resourceinstanceids of the permit holder Contributor(s); their drill-in GUIDs.',
-                        ),
-                    project_officer: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            "Project officer on the permit's application_admin group (Contributor name).",
-                        ),
-                    project_officer_id: zod
-                        .string()
-                        .nullish()
-                        .describe(
-                            'Resourceinstanceid of the project officer Contributor; its drill-in GUID.',
-                        ),
-                    assessment_notes: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            'Assessment notes on the chosen requirement.',
-                        ),
-                    ministry_assignee_name: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            'Ministry assignee on the chosen requirement tile (Contributor name).',
-                        ),
-                    ministry_assignee_id: zod
-                        .string()
-                        .nullish()
-                        .describe(
-                            'Resourceinstanceid of the ministry assignee Contributor; its drill-in GUID.',
-                        ),
-                    ministry_assignee_change_date: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            "Edit-log date the chosen tile's ministry_assignee last changed.",
-                        ),
-                    requirement_id: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            'Resourceinstanceid of the chosen Process Requirement; the drill-in target.',
-                        ),
-                    urgency: zod
-                        .number()
-                        .optional()
-                        .describe(
-                            'Relative urgency from the target completion date and the current date.',
-                        ),
-                    priority_level: zod
-                        .string()
-                        .optional()
-                        .describe(
-                            "Permit application's priority level (reference label).",
-                        ),
-                }),
-            )
-            .optional(),
-    })
-    .describe(
-        "One page of dashboard cards for the current user.\n\n`count` is the total number of cards matching the query across all pages;\n`page` and `limit` echo the requested page number and page size; `results`\nholds the cards for this page (at most `limit` of them). Each card's fields\nare documented on the InternalDashboardCard dataclass (as field help_text), so the\nper-field descriptions surface in the generated OpenAPI spec.",
-    );
+
+
+export const apiDashboardInternalRetrieveQueryParams = zod.object({
+  "limit": zod.number().min(1).max(apiDashboardInternalRetrieveQueryLimitMax).optional(),
+  "page": zod.number().min(1).optional(),
+  "status": zod.enum(['UNASSIGNED', 'ASSIGNED_TO_ME']).optional().describe('\* `UNASSIGNED` - Unassigned\n\* `ASSIGNED_TO_ME` - Assigned to me')
+})
+
+export const apiDashboardInternalRetrieveResponse = zod.object({
+  "count": zod.number().optional(),
+  "page": zod.number().optional(),
+  "limit": zod.number().optional(),
+  "results": zod.array(zod.object({
+  "id": zod.string().describe('Permit application resourceinstanceid; the card\'s drill-in GUID.'),
+  "requirement_name": zod.string().optional().describe('Name of the chosen (first unsatisfied) process requirement.'),
+  "requirement_due_date": zod.string().optional().describe('Process due date of the chosen requirement.'),
+  "project_name": zod.string().optional().describe('Permit application\'s project name.'),
+  "application_number": zod.string().optional().describe('Permit application\'s human-readable application reference (e.g. \"APP-1\"); not a GUID. The application\'s GUID is the card\'s `id`.'),
+  "industrial_sector": zod.string().optional().describe('Permit application\'s industrial sector (reference label).'),
+  "permit_id": zod.string().nullish().describe('Resourceinstanceid of the related HCA Permit; its drill-in GUID.'),
+  "permit_number": zod.string().optional().describe('Permit number of the related HCA Permit.'),
+  "permit_holder": zod.string().optional().describe('Permit holder name(s) on the related HCA Permit (Contributor).'),
+  "permit_holder_ids": zod.array(zod.string()).optional().describe('Resourceinstanceids of the permit holder Contributor(s); their drill-in GUIDs.'),
+  "project_officer": zod.string().optional().describe('Project officer on the permit\'s application_admin group (Contributor name).'),
+  "project_officer_id": zod.string().nullish().describe('Resourceinstanceid of the project officer Contributor; its drill-in GUID.'),
+  "assessment_notes": zod.string().optional().describe('Assessment notes on the chosen requirement.'),
+  "ministry_assignee_name": zod.string().optional().describe('Ministry assignee on the chosen requirement tile (Contributor name).'),
+  "ministry_assignee_id": zod.string().nullish().describe('Resourceinstanceid of the ministry assignee Contributor; its drill-in GUID.'),
+  "ministry_assignee_change_date": zod.string().optional().describe('Edit-log date the chosen tile\'s ministry_assignee last changed.'),
+  "requirement_id": zod.string().optional().describe('Resourceinstanceid of the chosen Process Requirement; the drill-in target.'),
+  "urgency": zod.number().optional().describe('Relative urgency from the target completion date and the current date.'),
+  "priority_level": zod.string().optional().describe('Permit application\'s priority level (reference label).')
+})).optional()
+}).describe('One page of dashboard cards for the current user.\n\n`count` is the total number of cards matching the query across all pages;\n`page` and `limit` echo the requested page number and page size; `results`\nholds the cards for this page (at most `limit` of them). Each card\'s fields\nare documented on the InternalDashboardCard dataclass (as field help_text), so the\nper-field descriptions surface in the generated OpenAPI spec.')
+
