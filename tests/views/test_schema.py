@@ -92,9 +92,9 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
             for path, body in schema["paths"].items()
             if path.endswith("/resource_draft/{graph_slug}/{id}")
         )
-        ref = draft["get"]["responses"]["200"]["content"]["application/json"][
-            "schema"
-        ]["$ref"]
+        ref = draft["get"]["responses"]["200"]["content"]["application/json"]["schema"][
+            "$ref"
+        ]
         component = schema["components"]["schemas"][ref.rsplit("/", 1)[-1]]
         # The draft `data` blob is unvalidated, graph-agnostic form state, so it's
         # documented as an arbitrary JSON object -- clients type it as a record
