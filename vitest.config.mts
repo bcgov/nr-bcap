@@ -21,6 +21,9 @@ function generateConfig(): Promise<UserConfig> {
             '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
             '**/build/**',
             '**/staticfiles/**',
+            // Orval-generated zod schemas (see orval.config.ts)
+            '**/client/zod/**',
+            '**/*.zod.ts',
         ];
 
         const rawData = fs.readFileSync(

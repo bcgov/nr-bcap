@@ -21,6 +21,8 @@
         "vite_dev": "DEBUG=vite:* vite --host --force",
         "vite_build": "DEBUG=vite:*  vite build",
         "vitest": "vitest --run --coverage",
+        "coverage": "vitest --run --coverage && node scripts/frontend_coverage.mjs",
+        "coverage:report": "node scripts/frontend_coverage.mjs",
         "openapi:gen": "orval",
         "api:gen": "./scripts/generate_api_contract.sh"
     },
