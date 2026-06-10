@@ -134,3 +134,33 @@ class BaseGraphService:
     def _join_names(ids, names):
         """Comma-join the names looked up for the given ids."""
         return ", ".join(name for nid in ids if (name := names.get(nid, "")))
+
+    @staticmethod
+    def _display_text(value):
+        """Best-effort plain text from a node value in any of the forms the API
+        emits or accepts: a plain string, an i18n string {"en": {"value": ...}},
+        or a representation envelope {"display_value": ...}. "" when empty."""
+        if isinstance(value, str):
+            return value
+        if isinstance(value, dict):
+            if "display_value" in value:
+                return value["display_value"] or ""
+            en = value.get("en")
+            if isinstance(en, dict):
+                return en.get("value") or ""
+        return ""
+
+    @staticmethod
+    def _group_aliased_data(data, group):
+        """The aliased_data dict of a top-level group within a raw aliased_data
+        dict (e.g. a POST body or draft blob), or {} if absent or malformed.
+        Draft blobs are unvalidated, so every level is guarded against a
+        non-dict."""
+
+        def aliased(value):
+            return value.get("aliased_data") if isinstance(value, dict) else None
+
+        groups = aliased(data)
+        group_data = groups.get(group) if isinstance(groups, dict) else None
+        inner = aliased(group_data)
+        return inner if isinstance(inner, dict) else {}

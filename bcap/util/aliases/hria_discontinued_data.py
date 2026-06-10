@@ -54,3 +54,16 @@ class HriaDiscontinuedDataAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(HriaDiscontinuedDataAliases)
+
+
+class HriaDiscontinuedDataGroupAliases(AbstractAliases):
+    BIOGEOGRAPHY = "biogeography"
+    CHRONOLOGY = "chronology"
+    HRIA_JURSIDICTION_AND_TENURE = "hria_jursidiction_and_tenure"
+    OTHER_MAPS = "other_maps"
+    SITE_BOUNDARY_ANNOTATIONS = "site_boundary_annotations"
+    SITE_DIMENSIONS = "site_dimensions"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(HriaDiscontinuedDataGroupAliases)

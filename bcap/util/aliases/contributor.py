@@ -17,3 +17,11 @@ class ContributorAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(ContributorAliases)
+
+
+class ContributorGroupAliases(AbstractAliases):
+    CONTRIBUTOR = "contributor"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(ContributorGroupAliases)

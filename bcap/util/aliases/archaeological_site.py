@@ -96,3 +96,30 @@ class ArchaeologicalSiteAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(ArchaeologicalSiteAliases)
+
+
+class ArchaeologicalSiteGroupAliases(AbstractAliases):
+    ANCESTRAL_REMAINS = "ancestral_remains"
+    ARCHAEOLOGICAL_DATA = "archaeological_data"
+    AUTHORITY = "authority"
+    BC_PROPERTY_ADDRESS = "bc_property_address"
+    BC_PROPERTY_LEGAL_DESCRIPTION = "bc_property_legal_description"
+    BIOGEOGRAPHY = "biogeography"
+    CONVICTION = "conviction"
+    ELEVATION = "elevation"
+    GENERAL_REMARK_INFORMATION = "general_remark_information"
+    HCA_CONTRAVENTION = "hca_contravention"
+    HERITAGE_SITE_LOCATION = "heritage_site_location"
+    IDENTIFICATION_AND_REGISTRATION = "identification_and_registration"
+    RELATED_DOCUMENTS = "related_documents"
+    REMARKS_AND_RESTRICTED_INFORMATION = "remarks_and_restricted_information"
+    RESTRICTED_INFORMATION = "restricted_information"
+    SITE_ALERT = "site_alert"
+    SITE_NAMES = "site_names"
+    SITE_RECORD_ADMIN = "site_record_admin"
+    SITE_TENURE = "site_tenure"
+    SITE_TYPOLOGY = "site_typology"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(ArchaeologicalSiteGroupAliases)

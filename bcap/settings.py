@@ -253,6 +253,14 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "2.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVE_URLCONF": "bcap.documented_api_urls",
+    # The arches-querysets tile schemas are introspected from graph nodes whose
+    # order isn't deterministic; order all component properties by the graph node
+    # sortorder for stable, meaningful diffs. Keep the default enum hook.
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "bcap.schema.sort_generated_schema_properties",
+        "bcap.schema.type_base_serializer_fields",
+    ],
 }
 
 # toggle Vite injection

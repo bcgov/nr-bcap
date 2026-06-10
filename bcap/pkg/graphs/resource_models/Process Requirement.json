@@ -1355,7 +1355,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "requirment_submission",
+                    "alias": "requirement_submission",
                     "config": {
                         "graphs": [
                             {
@@ -1377,7 +1377,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Requirment Submission",
+                    "name": "Requirement Submission",
                     "nodegroup_id": "cada619a-53cd-4261-8067-74341630f39c",
                     "nodeid": "cada619a-53cd-4261-8067-74341630f39c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",

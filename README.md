@@ -236,16 +236,16 @@ See [README.vite.md](./README.vite.md) for details about developing using the Vi
 
 ### Dashboard API contract
 
-Dashboard endpoints are documented with drf-spectacular and consumed by the Vue app through generated TypeScript types. After changing dashboard serializers or views, refresh the contract from the `bcap` container Exec tab (or any shell with Django on `PYTHONPATH`):
+Documented DRF views → `schema.yml` (OpenAPI) → Zod schemas in
+`bcap/src/bcap/client/` (via [@hey-api/openapi-ts](https://heyapi.dev); types via
+`z.infer`). Regenerate in the `bcap` container after changing a documented
+serializer, view, route, or resource model:
 
-NOTE: These will be enabled for the arches-queryset routes later on, this only covers limited routes for now.
 ```bash
-# 1. Regenerate the OpenAPI spec (DRF serializers → schema.yml)
-python3 manage.py spectacular --urlconf bcap.documented_api_urls --file schema.yml
-
-# 2. Regenerate frontend types (schema.yml → bcap/src/bcap/api-types.ts)
-npm run openapi:types
+npm run api:gen   # see scripts/generate_api_contract.sh
 ```
+
+NOTE: Only the limited documented routes for now; arches-queryset routes later.
 
 To load sample dashboard data into the current database (permit application, related resources, and Elasticsearch indexing):
 

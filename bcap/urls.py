@@ -15,8 +15,17 @@ from bcap.views.api import (
     TranslateToResourceTypeView,
     RequirementSubmission,
 )
-from bcap.views.dashboard_api import DashboardView
+from bcap.views.dashboard_api import InternalDashboardView, ExternalDashboardView
+from bcap.views.hca_permit_api import HCAPermitListView, HCAPermitView
 from bcap.views.process_requirement_api import ProcessRequirementView
+from bcap.views.resource_draft_api import (
+    ResourceDraftListCreateView,
+    ResourceDraftDetailView,
+)
+from bcap.views.permit_application_api import (
+    PermitApplicationView,
+    PermitApplicationCreateView,
+)
 from bcap.views.user_api import UserProfile
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
@@ -37,11 +46,57 @@ PREFIX = (
 # Routes included in the OpenAPI schema (passed to SpectacularAPIView).
 documented_api_patterns = [
     path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
-    path(f"{PREFIX}api/dashboard", DashboardView.as_view(), name="dashboard"),
+    path(
+        f"{PREFIX}api/dashboard/internal",
+        InternalDashboardView.as_view(),
+        name="dashboard_internal",
+    ),
+    path(
+        f"{PREFIX}api/dashboard/external",
+        ExternalDashboardView.as_view(),
+        name="dashboard_external",
+    ),
+    # Internal - Checklists
     path(
         f"{PREFIX}api/resource/process_requirement/<uuid:pk>",
         ProcessRequirementView.as_view(),
         name="process_requirement",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource_draft/<slug:graph_slug>",
+        ResourceDraftListCreateView.as_view(),
+        name="resource_draft_list_create",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource_draft/<slug:graph_slug>/<uuid:pk>",
+        ResourceDraftDetailView.as_view(),
+        name="resource_draft_detail",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource/hca_permit/",
+        HCAPermitListView.as_view(),
+        name="hca_permit_list",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource/hca_permit/<uuid:pk>",
+        HCAPermitView.as_view(),
+        name="hca_permit",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource/permit_application/",
+        PermitApplicationCreateView.as_view(),
+        name="permit_application_create",
+    ),
+    # External - object level user filtering
+    path(
+        f"{PREFIX}api/resource/permit_application/<uuid:pk>",
+        PermitApplicationView.as_view(),
+        name="permit_application",
     ),
 ]
 
