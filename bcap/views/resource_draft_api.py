@@ -9,7 +9,7 @@ metadata in `data`. GOTCHA: Arches won't auto-promote a TempFile's bytes into a
 resource `File`, so submit must re-send the files via multipart or copy the bytes
 across itself (and bcap's FILENAME_GENERATOR needs the tile to build the path)."""
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -20,8 +20,16 @@ from bcap.models.resource_draft import ResourceDraft
 from bcap.util.graph import get_current_graph
 
 
+@extend_schema_field({"type": "object", "additionalProperties": True})
+class FreeformJSONField(serializers.JSONField):
+    """A JSONField documented as a freeform object, so clients type it as a
+    record rather than `unknown`. The draft `data` blob is unvalidated,
+    section-keyed form state for any graph (see module docstring)."""
+
+
 class ResourceDraftSerializer(serializers.ModelSerializer):
     graph_has_different_publication = serializers.SerializerMethodField()
+    data = FreeformJSONField(required=False)
 
     class Meta:
         model = ResourceDraft

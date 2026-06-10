@@ -1,4 +1,6 @@
 import arches from 'arches';
+import { z } from 'zod';
+import { apiDashboardInternalRetrieveResponse } from '@/bcap/client/zod/internal-dashboard.zod.ts';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     SiteVisitResponse,
@@ -67,11 +69,16 @@ export const getRequirementSubmissionData = async (
     return await response.json();
 };
 
+// Card shape from the generated Zod response schema (one item of `results`).
+export type InternalDashboardCard = NonNullable<
+    z.infer<typeof apiDashboardInternalRetrieveResponse>['results']
+>[number];
+
 export const getInternalDashboardData = async (
     showUnassigned: boolean = false,
     page: number = 1,
     limit: number = 100,
-) => {
+): Promise<InternalDashboardCard[]> => {
     try {
         // Will need to update to all
         const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${showUnassigned ? '&status=UNASSIGNED' : ''}`;
@@ -81,14 +88,15 @@ export const getInternalDashboardData = async (
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log('Raw API response:', data);
-
-        if (data && 'results' in data && Array.isArray(data.results)) {
-            return data.results;
+        const result = apiDashboardInternalRetrieveResponse.safeParse(
+            await response.json(),
+        );
+        if (!result.success) {
+            console.error('Dashboard response failed validation:', result.error);
+            return [];
         }
 
-        return [];
+        return result.data.results ?? [];
     } catch (error) {
         console.error('Error fetching projects from backend:', error);
         return [];

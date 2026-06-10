@@ -24,6 +24,7 @@ from bcap.schema import (
     AliasedNodeDataSerializer,
     AliasedNodeDataExtension,
     _sort_properties_in_place,
+    strip_enum_length_constraints,
     type_base_serializer_fields,
 )
 from bcap.util.bcap_aliases import GraphSlugs
@@ -82,6 +83,25 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
             set(page["properties"]) & {"count", "page", "limit", "results"},
             {"count", "page", "limit", "results"},
         )
+
+    def test_resource_draft_data_documented_as_a_freeform_object(self):
+        schema = yaml.safe_load(self.client.get(reverse("schema")).content)
+
+        draft = next(
+            body
+            for path, body in schema["paths"].items()
+            if path.endswith("/resource_draft/{graph_slug}/{id}")
+        )
+        ref = draft["get"]["responses"]["200"]["content"]["application/json"][
+            "schema"
+        ]["$ref"]
+        component = schema["components"]["schemas"][ref.rsplit("/", 1)[-1]]
+        # The draft `data` blob is unvalidated, graph-agnostic form state, so it's
+        # documented as an arbitrary JSON object -- clients type it as a record
+        # rather than `unknown` (see ResourceDraftSerializer.FreeformJSONField).
+        data = component["properties"]["data"]
+        self.assertEqual(data.get("type"), "object")
+        self.assertEqual(data.get("additionalProperties"), True)
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")
@@ -394,3 +414,18 @@ class BaseSerializerFieldTypingTests(SimpleTestCase):
         node_name = {"allOf": [{"$ref": "#/components/schemas/StringAliasedNodeData"}]}
         out = self.run_hook({"Tile": {"properties": {"name": node_name}}})
         self.assertEqual(out["Tile"]["properties"]["name"], node_name)
+
+
+class EnumLengthConstraintHookTests(SimpleTestCase):
+    """The hook drops redundant minLength/maxLength from enum schemas (DRF stamps
+    `minLength: 1` on required CharField choices), which trips clients into
+    invalid code, while leaving length on genuine (non-enum) strings intact."""
+
+    def test_length_stripped_from_enum_but_kept_on_plain_string(self):
+        result = {
+            "choice": {"type": "string", "enum": ["A", "B"], "minLength": 1},
+            "free": {"type": "string", "minLength": 1},
+        }
+        out = strip_enum_length_constraints(result, None, None, None)
+        self.assertEqual(out["choice"], {"type": "string", "enum": ["A", "B"]})
+        self.assertEqual(out["free"], {"type": "string", "minLength": 1})

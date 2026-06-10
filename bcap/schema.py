@@ -130,6 +130,29 @@ def type_base_serializer_fields(result, generator, request, public):
     return result
 
 
+def _strip_enum_length_constraints(node):
+    """Drop minLength/maxLength from any schema that also carries an enum,
+    anywhere in the document (including query-parameter schemas)."""
+    if isinstance(node, list):
+        for item in node:
+            _strip_enum_length_constraints(item)
+    elif isinstance(node, dict):
+        if isinstance(node.get("enum"), list):
+            node.pop("minLength", None)
+            node.pop("maxLength", None)
+        for child in node.values():
+            _strip_enum_length_constraints(child)
+
+
+def strip_enum_length_constraints(result, generator, request, public):
+    """Hook: remove redundant length constraints from enum schemas. DRF emits
+    `minLength: 1` for required CharField choices (e.g. the dashboard `status`
+    filter); length on an enum is meaningless, and some clients (orval/zod)
+    mistranslate the minLength+enum combo into invalid code."""
+    _strip_enum_length_constraints(result)
+    return result
+
+
 class AliasedNodeDataSerializer(serializers.Serializer):
     """The {node_value, display_value, details} object node value fields emit when as_representation is True.
 

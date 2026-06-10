@@ -7,7 +7,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
 import { z } from 'zod';
-import { zInternalDashboardCard } from '@/bcap/client/zod.gen.ts';
+import { apiDashboardInternalRetrieveResponse } from '@/bcap/client/zod/internal-dashboard.zod.ts';
 import { getInternalDashboardData } from '@/bcap/components/pages/api.ts';
 import arches from 'arches';
 
@@ -35,8 +35,10 @@ interface ProjectData {
     urgency: number;
 }
 
-// Extract the new types directly from the generated Zod backend schema
-type GeneratedDashboardCard = z.infer<typeof zInternalDashboardCard>;
+// Derive the card shape from the generated Zod response schema (one item of `results`).
+type GeneratedDashboardCard = NonNullable<
+    z.infer<typeof apiDashboardInternalRetrieveResponse>['results']
+>[number];
 
 // Maps backend JSON directly to the Dashboard Card
 const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
@@ -121,8 +123,7 @@ const loadData = async () => {
             page.value,
             pageLimit.value,
         );
-        const cards = data as GeneratedDashboardCard[];
-        rawProjects.value = cards.map((item) => mapToDashboardCard(item));
+        rawProjects.value = data.map((item) => mapToDashboardCard(item));
         lastUpdateDate.value = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);

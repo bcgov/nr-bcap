@@ -32,7 +32,6 @@ paths:
           - CREATED_BY_ASSOCIATED_COMPANIES
           type: string
           default: CREATED_BY_ME
-          minLength: 1
         description: |-
           * `DRAFTS` - Drafts
           * `CREATED_BY_ME` - My Projects
@@ -71,7 +70,6 @@ paths:
           - UNASSIGNED
           - ASSIGNED_TO_ME
           type: string
-          minLength: 1
         description: |-
           * `UNASSIGNED` - Unassigned
           * `ASSIGNED_TO_ME` - Assigned to me
@@ -1276,6 +1274,9 @@ components:
           description: True when the published graph has moved on since the draft
             was saved.
           readOnly: true
+        data:
+          type: object
+          additionalProperties: true
         graph_slug:
           type: string
           readOnly: true
@@ -1292,7 +1293,6 @@ components:
           type: string
           format: uuid
           nullable: true
-        data: {}
         created:
           type: string
           format: date-time
@@ -3662,6 +3662,9 @@ components:
           description: True when the published graph has moved on since the draft
             was saved.
           readOnly: true
+        data:
+          type: object
+          additionalProperties: true
         graph_slug:
           type: string
           readOnly: true
@@ -3678,7 +3681,6 @@ components:
           type: string
           format: uuid
           nullable: true
-        data: {}
         created:
           type: string
           format: date-time
