@@ -9,9 +9,9 @@ vi.mock(
             default: defineComponent({
                 name: 'MapStub',
                 props: {
-                    graphSlug: String,
-                    nodeAlias: String,
-                    mode: String,
+                    graphSlug: { type: String, default: undefined },
+                    nodeAlias: { type: String, default: undefined },
+                    mode: { type: String, default: undefined },
                     aliasedNodeData: { type: Object, default: undefined },
                     useUtmCoords: { type: Boolean, default: false },
                 },
