@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, /*provide,*/ onMounted } from 'vue';
+import { computed, ref, provide, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
@@ -11,8 +12,7 @@ import StepperNavigation from '@/bcgov_arches_common/components/Stepper/componen
 import Panel from 'primevue/panel';
 
 import type { Ref } from 'vue';
-import type { StepperProps } from 'primevue/stepper';
-import type { StepperState } from 'primevue/stepper';
+import type { StepperProps, StepperState } from 'primevue/stepper';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prelim.vue';
@@ -25,58 +25,24 @@ const submitted = ref(false);
 const submitting = ref(false);
 const devMode = ref(true);
 const isDataLoaded = ref(false);
+const graphSlug = 'permit_application';
+const draftId = ref<string | null>(null);
+const draftData = ref<Record<string, unknown>>({});
+const route = useRoute();
 
-//placeholder function for final submission
-// const submitNewSiteData = async () => {
-//     console.log('submit Heritage Site', heritageSite);
-//     submitting.value = true;
-//     submissionErrors.value = [];
-//     submitHeritageSite(heritageSite.value)
-//         .then((updatedHeritageSite) => {
-//             heritageSite.value =
-//                 updatedHeritageSite as Promise<HeritageSiteType>;
-//             myStepper.value.d_value++;
-//             // Didn't throw an exception so the last step is valid.
-//             setCurrentStepValid(true, myStepper.value.d_value);
-//             submissionErrors.value = [];
-//             submitting.value = false;
-//         })
-//         .catch((error) => {
-//             console.log('raw error', error);
-//             submissionErrors.value = parseBackendError(error);
-//             submitting.value = false;
-//         });
-// };
+provide('draftId', draftId);
+provide('draftData', draftData);
 
-// const parseBackendError = (backendError: any): ErrorMessage[] => {
-//     const payload = backendError?.response?.data || backendError;
-//     const type = payload?.type || 'Validation Error';
-//     const messageStr = payload?.message || '';
-//     const errorMatches = [
-//         ...messageStr.matchAll(
-//             /'([^']+)'\s*:\s*\[ErrorDetail\(string=".*?\s*-\s*(.*?)",/g,
-//         ),
-//     ];
-//
-//     if (errorMatches.length > 0) {
-//         return errorMatches.map((match) => ({
-//             type: type,
-//             error: match[1].replace('_', ' ').toUpperCase(),
-//             message: match[2],
-//         }));
-//     }
-//
-//     return [
-//         {
-//             type: type,
-//             error: payload?.error || 'Submission Failed',
-//             message:
-//                 typeof messageStr === 'string'
-//                     ? messageStr
-//                     : 'Please review your inputs.',
-//         },
-//     ];
-// };
+// TODO: Update this later to POST to the final resource endpoint and DELETE the draft
+const submitNewSiteData = async () => {
+    console.log('Submitting final application...');
+    submitting.value = true;
+    submissionErrors.value = [];
+
+    // Final submission logic goes here later...
+
+    submitting.value = false;
+};
 
 const print = () => {
     window.print();
@@ -85,8 +51,9 @@ const print = () => {
 const activateNextStep = async () => {
     if (currentStep.value === steps.length) {
         print();
-        // } else if (currentStep.value === 11) {
-        //     submitNewSiteData();
+    } else if (currentStep.value === steps.length - 1) {
+        submitNewSiteData();
+        myStepper.value.d_value++;
     } else {
         myStepper.value.d_value++;
         setCurrentStepValid(
@@ -137,44 +104,81 @@ const isValid = (step: number) => {
     return stepValid;
 };
 
-// const printDetails = () => {
-//     console.log('printDetails');
-// };
-
 const stepperProps: Ref<StepperProps | null> = ref(null);
 const stepperState: Ref<StepperState | null> = ref(null);
 const myStepper = ref();
 const step1 = ref();
 const step2 = ref();
 const step3 = ref();
+const step4 = ref();
 const step99 = ref();
 const steps: Ref[] = [];
 let lastStep = 1;
+
 const currentStep = computed(() => {
     return myStepper.value?.d_value;
 });
-// const heritageSite: Ref<HeritageSiteType> = ref(getHeritageSite());
 
-// provide('heritageSite', heritageSite);
+// Add this simple helper to grab the token from the browser cookie
+const getCsrfToken = () => {
+    return (
+        document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('csrftoken='))
+            ?.split('=')[1] || ''
+    );
+};
 
-onMounted(() => {
-    console.log(submissionErrors);
-    steps.push(step1, step2, step3, step99);
+onMounted(async () => {
+    steps.push(step1, step2, step3, step4, step99);
 
-    // if (siteId) {
-    //     getHeritageSiteById(siteId).then((existingData) => {
-    //         heritageSite.value = existingData as unknown as HeritageSiteType;
-    //
-    //         isDataLoaded.value = true;
-    //         console.log('existing data object', heritageSite.value);
-    //     });
-    // } else {
-    // getBlankHeritageSite().then((response) => {
-    //     heritageSite.value = response as unknown as HeritageSiteType;
-    //     isDataLoaded.value = true;
-    // });
-    // }
-    isDataLoaded.value = true;
+    try {
+        //Check if the URL has a draftId
+        const targetDraftId = route.query.draftId;
+
+        if (targetDraftId) {
+            console.log(`Resuming specific draft: ${targetDraftId}`);
+
+            const response = await fetch(
+                `/bcap/api/resource_draft/${graphSlug}/${targetDraftId}`,
+            );
+
+            if (!response.ok)
+                throw new Error(`Failed to fetch draft ${targetDraftId}`);
+
+            const draft = await response.json();
+            draftId.value = draft.id;
+            draftData.value = draft.data || {};
+        } else {
+            console.log('No draftId in URL, creating a brand new draft...');
+
+            const createResponse = await fetch(
+                `/bcap/api/resource_draft/${graphSlug}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    body: JSON.stringify({ data: {} }),
+                },
+            );
+
+            if (!createResponse.ok)
+                throw new Error(
+                    `Failed to create draft. Status: ${createResponse.status}`,
+                );
+
+            const newDraft = await createResponse.json();
+            draftId.value = newDraft.id;
+            draftData.value = {};
+        }
+
+        isDataLoaded.value = true;
+    } catch (error) {
+        console.error('Failed to initialize draft:', error);
+        isDataLoaded.value = true;
+    }
 });
 
 const nextLabel = computed(() => {
@@ -274,9 +278,9 @@ const showDebug = ref(false);
                                 Review Submission
                             </h3>
                             <Step99_Review
-                                ref="step15"
+                                ref="step4"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 15)
+                                    setCurrentStepValid($event, 4)
                                 "
                             ></Step99_Review>
                         </StepPanel>
@@ -285,7 +289,7 @@ const showDebug = ref(false);
                             <Step99_Review
                                 ref="step99"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 16)
+                                    setCurrentStepValid($event, 5)
                                 "
                             ></Step99_Review>
                         </StepPanel>
@@ -306,6 +310,7 @@ const showDebug = ref(false);
     <br />
     <br />
 </template>
+
 <style>
 @import url('@/bcgov_arches_common/css/arches_common.css');
 .language-selector {

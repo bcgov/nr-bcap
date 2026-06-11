@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import { useGettext } from 'vue3-gettext';
@@ -8,6 +8,21 @@ import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
 const { $gettext } = useGettext();
+const savedDrafts = ref<ResourceDraft[]>([]);
+
+interface ResourceDraft {
+    id: string;
+    created: string;
+    updated: string;
+    data: {
+        project_name?: {
+            display_value: string;
+            [key: string]: unknown;
+        };
+        [key: string]: unknown;
+    };
+}
+
 const workflowItems = ref([
     {
         id: 'base-module',
@@ -73,12 +88,26 @@ const workflowItems = ref([
         routeName: routeNames.recordingsModule,
     },
 ]);
+
+onMounted(async () => {
+    try {
+        const response = await fetch(
+            '/bcap/api/resource_draft/permit_application',
+        );
+        if (response.ok) {
+            savedDrafts.value = await response.json();
+        }
+    } catch (error) {
+        console.error('Failed to load drafts for dashboard:', error);
+    }
+});
 </script>
 
 <template>
     <Panel
-        header="Workflows"
+        header="Start New Workflow"
         class="full-height"
+        style="margin-bottom: 2rem"
     >
         <Fluid>
             <div class="dashboard-div-flex">
@@ -95,6 +124,36 @@ const workflowItems = ref([
             </div>
         </Fluid>
     </Panel>
+
+    <Panel
+        v-if="savedDrafts.length > 0"
+        header="In Progress Drafts"
+        class="full-height"
+    >
+        <Fluid>
+            <div class="dashboard-div-flex">
+                <Card
+                    v-for="draft in savedDrafts"
+                    :key="draft.id"
+                    :label="
+                        draft.data?.project_name?.display_value ||
+                        'Untitled Application'
+                    "
+                    description="Permit Application Draft"
+                    :subtitle="`Last updated: ${new Date(draft.updated || draft.created).toLocaleDateString()}`"
+                    icon="fa fa-file-pen"
+                    class="dashboard-card ipa"
+                    :route="{
+                        name: routeNames.baseModule,
+                        query: { draftId: draft.id },
+                    }"
+                />
+            </div>
+        </Fluid>
+    </Panel>
+    <br />
+    <br />
+    <br />
 </template>
 
 <style scoped>
