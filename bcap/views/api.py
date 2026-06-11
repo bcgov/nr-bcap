@@ -147,9 +147,11 @@ class ControlledListHierarchy(APIBase):
 
 class LegislativeAct(APIBase):
     def get(self, request, act_id):
-        legislative_act_proxy = LegislativeActDataProxy()
-        act = legislative_act_proxy.get_authorities(act_id)
-        # print("Scientific Names: %s" % names)
+        if not Resource.objects.filter(resourceinstanceid=act_id).exists():
+            return JSONResponse(
+                {"error": "Legislative Act not found"}, status=404
+            )
+        act = LegislativeActDataProxy().get_authorities(str(act_id))
         return JSONResponse(JSONSerializer().serializeToPython(act))
 
 
@@ -182,6 +184,8 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
 
     def get_queryset(self):
         options = self.serializer_class.Meta
+        if self.resource_ids is None:
+            raise Http404()
         resource_ids_string = [str(uuid) for uuid in self.resource_ids]
 
         try:
