@@ -70,3 +70,44 @@ export const currentDateValue = function () {
         details: [] as never[],
     };
 };
+
+export const getCsrfToken = (): string => {
+    return (
+        document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('csrftoken='))
+            ?.split('=')[1] || ''
+    );
+};
+
+export const saveFieldToBackend = async (
+    draftId: string,
+    graphSlug: string,
+    attribute_name: string,
+    newValue: AliasedNodeData,
+) => {
+    try {
+        const patchUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId}`;
+
+        const response = await fetch(patchUrl, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(),
+            },
+            body: JSON.stringify({
+                data: {
+                    [attribute_name]: newValue,
+                },
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+        }
+
+        console.log(`Successfully auto-saved: ${attribute_name}`);
+    } catch (error) {
+        console.error(`Failed to auto-save ${attribute_name}:`, error);
+    }
+};

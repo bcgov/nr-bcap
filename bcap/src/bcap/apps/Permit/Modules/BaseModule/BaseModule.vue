@@ -8,11 +8,10 @@ import StepList from 'primevue/steplist';
 import StepPanels from 'primevue/steppanels';
 import ProgressSpinner from 'primevue/progressspinner';
 import StepperNavigation from '@/bcgov_arches_common/components/Stepper/components/StepperNavigation/StepperNavigation.vue';
-
 import Panel from 'primevue/panel';
-
 import type { Ref } from 'vue';
 import type { StepperProps, StepperState } from 'primevue/stepper';
+import { getCsrfToken } from '@/bcap/util.ts';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prelim.vue';
@@ -118,16 +117,6 @@ let lastStep = 1;
 const currentStep = computed(() => {
     return myStepper.value?.d_value;
 });
-
-// Add this simple helper to grab the token from the browser cookie
-const getCsrfToken = () => {
-    return (
-        document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('csrftoken='))
-            ?.split('=')[1] || ''
-    );
-};
 
 onMounted(async () => {
     steps.push(step1, step2, step3, step4, step99);

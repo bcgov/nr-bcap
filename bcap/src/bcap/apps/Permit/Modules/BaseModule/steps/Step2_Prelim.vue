@@ -4,6 +4,7 @@ import GenericWidget from '@/arches_component_lab/generics/GenericWidget/Generic
 import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import { saveFieldToBackend } from '@/bcap/util.ts';
 
 const draftId = inject<Ref<string | null>>('draftId');
 const draftData = inject<Ref<Record<string, unknown>>>('draftData');
@@ -15,58 +16,24 @@ const isValid = () => {
 
 let timeoutId: ReturnType<typeof setTimeout>;
 
-const getCsrfToken = () => {
-    return (
-        document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('csrftoken='))
-            ?.split('=')[1] || ''
-    );
-};
-
-const saveFieldToBackend = async (
-    attribute_name: string,
-    newValue: AliasedNodeData,
-) => {
-    if (!draftId?.value) return;
-
-    try {
-        const patchUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId.value}`;
-
-        const response = await fetch(patchUrl, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken(),
-            },
-            body: JSON.stringify({
-                data: {
-                    [attribute_name]: newValue,
-                },
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
-        }
-
-        console.log(`Successfully auto-saved: ${attribute_name}`);
-    } catch (error) {
-        console.error(`Failed to auto-save ${attribute_name}:`, error);
-    }
-};
-
 const updateValue = (newValue: AliasedNodeData, attribute_name: string) => {
-    // update the local Vue state so the Review page sees it
+    // update local state so the Review page sees it
     if (draftData?.value) {
         draftData.value[attribute_name] = newValue;
     }
 
-    //debounce to save to the backend
     clearTimeout(timeoutId);
 
+    // update the backend
     timeoutId = setTimeout(() => {
-        saveFieldToBackend(attribute_name, newValue);
+        if (draftId?.value) {
+            saveFieldToBackend(
+                draftId.value,
+                graphSlug,
+                attribute_name,
+                newValue,
+            );
+        }
     }, 1000);
 };
 
