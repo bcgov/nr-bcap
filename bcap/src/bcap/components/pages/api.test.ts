@@ -23,7 +23,6 @@ import {
     getResourceData,
     getRelatedResourceData,
     getProcessRequirementData,
-    getRequirementSubmissionData,
     getInternalDashboardData,
 } from './api';
 

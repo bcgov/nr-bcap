@@ -53,20 +53,6 @@ export const getProcessRequirementData = async (
     return await response.json();
 };
 
-export const getRequirementSubmissionData = async (
-    resource_id: string,
-): Promise<RequirementSubmissionSchema> => {
-    const response = await fetch(
-        arches.urls.api_requirement_submission(resource_id),
-    );
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || response.statusText);
-    }
-
-    return await response.json();
-};
-
 export const getInternalDashboardData = async (
     showUnassigned: boolean = false,
     page: number = 1,
