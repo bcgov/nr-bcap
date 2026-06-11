@@ -55,18 +55,6 @@ class Migration(migrations.Migration):
                         name="bcap_resour_user_id_871ff3_idx",
                     )
                 ],
-                "constraints": [
-                    models.UniqueConstraint(
-                        condition=models.Q(("resourceinstanceid__isnull", False)),
-                        fields=("user", "graph_slug", "resourceinstanceid"),
-                        name="unique_draft_per_user_graph_resource",
-                    ),
-                    models.UniqueConstraint(
-                        condition=models.Q(("resourceinstanceid__isnull", True)),
-                        fields=("user", "graph_slug"),
-                        name="unique_new_draft_per_user_graph",
-                    ),
-                ],
             },
         ),
     ]

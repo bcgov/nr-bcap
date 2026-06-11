@@ -1,4 +1,6 @@
-from arches.app.models.models import Node
+from django.core.cache import cache
+
+from arches.app.models.models import GraphModel, Node
 
 from arches_querysets.models import ResourceTileTree, TileTree
 
@@ -6,22 +8,27 @@ from arches_querysets.models import ResourceTileTree, TileTree
 class BaseGraphService:
     """Stateless helpers for reading representation-form node values."""
 
-    # graph_slug -> {alias: (nodeid, nodegroup_id)}, filled once per process.
-    _node_cache = {}
-
     @classmethod
     def _graph_nodes(cls, graph_slug):
-        """Every node of a graph as {alias: (nodeid, nodegroup_id)}, fetched in a
-        single query the first time and cached for the process (node ids are
-        stable for the life of the graph)."""
-        if graph_slug not in cls._node_cache:
-            cls._node_cache[graph_slug] = {
+        """Every node of a graph's published copy as {alias: (nodeid,
+        nodegroup_id)}, cached by publication so a republish or reload is
+        picked up on the next request without a server restart."""
+        publication_id = (
+            GraphModel.objects.filter(slug=graph_slug, source_identifier=None)
+            .values_list("publication_id", flat=True)
+            .first()
+        )
+        cache_key = f"bcap:dashboard:graph_nodes:{graph_slug}:{publication_id}"
+        nodes = cache.get(cache_key)
+        if nodes is None:
+            nodes = {
                 node["alias"]: (str(node["nodeid"]), str(node["nodegroup_id"]))
                 for node in Node.objects.filter(
                     graph__slug=graph_slug, source_identifier=None
                 ).values("alias", "nodeid", "nodegroup_id")
             }
-        return cls._node_cache[graph_slug]
+            cache.set(cache_key, nodes, timeout=None)
+        return nodes
 
     @staticmethod
     def _nodes(graph_slug, aliases):
