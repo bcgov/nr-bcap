@@ -13,7 +13,6 @@ from bcap.views.api import (
     ControlledListHierarchy,
     TranslatableResourceTypesView,
     TranslateToResourceTypeView,
-    RequirementSubmission,
 )
 from bcap.views.dashboard_api import InternalDashboardView, ExternalDashboardView
 from bcap.views.hca_permit_api import HCAPermitListView, HCAPermitView
@@ -45,7 +44,7 @@ PREFIX = (
 
 # Routes included in the OpenAPI schema (passed to SpectacularAPIView).
 documented_api_patterns = [
-    path(f"{PREFIX}user_profile", UserProfile.as_view(), name="user_profile"),
+    path(f"{PREFIX}user_profile", UserProfile.as_view(), name="bcap_user_profile"),
     path(
         f"{PREFIX}api/dashboard/internal",
         InternalDashboardView.as_view(),
@@ -176,11 +175,6 @@ urlpatterns = [
         f"{PREFIX}api/translate-to-resource-type",
         TranslateToResourceTypeView.as_view(),
         name="translate_to_resource_type",
-    ),
-    path(
-        f"{PREFIX}api/requirement_submissions/<uuid:resource_id>",
-        RequirementSubmission.as_view(),
-        name="requirement_submission",
     ),
     path(
         f"{PREFIX}api/translatable-resource-types",

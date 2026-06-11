@@ -14,9 +14,9 @@ from rest_framework import serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-from arches_querysets.rest_framework.permissions import ResourceEditor
-
 from bcap.models.resource_draft import ResourceDraft
+from bcap.permissions.groups import Groups
+from bcap.permissions.route_permissions import any_groups_required
 from bcap.util.graph import get_current_graph
 
 
@@ -40,9 +40,10 @@ class ResourceDraftSerializer(serializers.ModelSerializer):
 class ResourceDraftViewMixin:
     authentication_classes = [SessionAuthentication]
     serializer_class = ResourceDraftSerializer
-    # Drafts are personal scratch data -- every verb (incl. GET) requires the
-    # editor role; owner-scoping below then limits each editor to their own.
-    permission_classes = [ResourceEditor]
+    # Drafts are personal scratch data -- every verb (incl. GET) requires an
+    # external applicant (Submitter) or a staff editor; owner-scoping below then
+    # limits each user to their own.
+    permission_classes = [any_groups_required(Groups.SUBMITTER, Groups.RESOURCE_EDITOR)]
 
     def get_queryset(self):
         # Owner-scoped: a user only sees their own drafts (superusers see all),

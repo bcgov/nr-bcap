@@ -3,11 +3,12 @@ a list of the user's permits and a by-id detail fetch."""
 
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
 
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
+from bcap.permissions.groups import Groups
+from bcap.permissions.route_permissions import any_groups_required
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.mixins import (
     ArchesResourceViewMixin,
@@ -37,7 +38,7 @@ class HCAPermitListView(
     Read-only and owner-scoped: returns only the permits the user created.
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [any_groups_required(Groups.SUBMITTER, Groups.RESOURCE_EDITOR)]
     pagination_class = ArchesLimitOffsetPagination
 
 
@@ -54,4 +55,4 @@ class HCAPermitView(
     created by another user returns 404.
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [any_groups_required(Groups.SUBMITTER, Groups.RESOURCE_EDITOR)]

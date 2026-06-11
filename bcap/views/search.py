@@ -6,6 +6,7 @@ import arches.app.utils.task_management as task_management
 import arches.app.utils.zip as zip_utils
 from arches.app.views.search import export_results as arches_export_results
 
+from bcap.permissions.groups import Groups
 from bcap.search.search_export import BCAPSearchResultsExporter
 import bcap.tasks.tasks as bcap_tasks
 
@@ -13,7 +14,7 @@ import bcap.tasks.tasks as bcap_tasks
 # Overrides arches.app.views.search.export_results (registered first in bcap/urls.py).
 # For tilecsv, uses BCAPSearchResultsExporter (adds UTF-8 BOM) instead of the base class.
 # All other formats fall through to the Arches view unchanged.
-@group_required("Resource Exporter")
+@group_required(Groups.RESOURCE_EXPORTER)
 def export_results(request):
     request.GET = request.GET.copy()
     for key, value in request.POST.items():

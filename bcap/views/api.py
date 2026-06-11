@@ -36,10 +36,12 @@ from arches.app.search.search_engine_factory import SearchEngineInstance
 from arches_querysets.rest_framework.generic_views import ArchesResourceDetailView
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
-from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
 from arches_querysets.rest_framework.serializers import ArchesResourceSerializer
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
+from arches.app.utils.decorators import group_required
 from arches_controlled_lists.models import ListItem, ListItemValue
+
+from bcap.permissions.route_permissions import INTERNAL_GROUPS, Internal
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
 from arches.app.models.resource import Resource
@@ -100,6 +102,7 @@ class BordenNumberBase:
         return JSONResponse(return_bytes, content_type="application/json")
 
 
+@method_decorator(group_required(*INTERNAL_GROUPS), name="dispatch")
 @method_decorator(csrf_exempt, name="dispatch")
 class BordenNumber(APIBase, BordenNumberBase):
     """
@@ -117,6 +120,7 @@ class BordenNumberExternal(ProtectedResourceView, BordenNumberBase):
         return self._post_impl(request)
 
 
+@method_decorator(group_required(*INTERNAL_GROUPS), name="dispatch")
 class ControlledListHierarchy(APIBase):
     def get(self, request, list_item_id):
         try:
@@ -145,16 +149,16 @@ class ControlledListHierarchy(APIBase):
             return JSONResponse({"labels": []})
 
 
+@method_decorator(group_required(*INTERNAL_GROUPS), name="dispatch")
 class LegislativeAct(APIBase):
     def get(self, request, act_id):
         if not Resource.objects.filter(resourceinstanceid=act_id).exists():
-            return JSONResponse(
-                {"error": "Legislative Act not found"}, status=404
-            )
+            return JSONResponse({"error": "Legislative Act not found"}, status=404)
         act = LegislativeActDataProxy().get_authorities(str(act_id))
         return JSONResponse(JSONSerializer().serializeToPython(act))
 
 
+@method_decorator(group_required(*INTERNAL_GROUPS), name="dispatch")
 class MVT(MVTBase):
     def get(self, request, nodeid, zoom, x, y):
         if hasattr(request.user, "userprofile") is not True:
@@ -177,7 +181,9 @@ class ArchesSiteVisitSerializer(ArchesResourceSerializer):
 
 
 class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
-    permission_classes = [ResourceEditor | ReadOnly]
+    # Site visits are internal inventory data; ReadOnly would expose GET to any
+    # logged-in user, so require an internal role for every method.
+    permission_classes = [Internal]
     serializer_class = ArchesResourceSerializer
     parser_classes = [JSONParser, MultiPartJSONParser]
     pagination_class = ArchesLimitOffsetPagination
@@ -260,6 +266,7 @@ class ResourceGraphs(APIBase):
         return JSONResponse({"graphs": graph_list})
 
 
+@method_decorator(group_required(*INTERNAL_GROUPS), name="dispatch")
 class TranslatableResourceTypesView(View):
     def get(self, request):
         resource_types = []
@@ -291,6 +298,7 @@ class TranslatableResourceTypesView(View):
         return JsonResponse({"status": "success", "resource_types": resource_types})
 
 
+@method_decorator(group_required(*INTERNAL_GROUPS), name="dispatch")
 class TranslateToResourceTypeView(View):
     def _create_search_request(self, request: HttpRequest) -> HttpRequest:
         from django.http import QueryDict
@@ -520,6 +528,7 @@ class TranslateToResourceTypeView(View):
         )
 
 
+@method_decorator(group_required(*INTERNAL_GROUPS), name="dispatch")
 class RegisterType(APIBase):
     api = RegisterTypeApi()
 
@@ -538,27 +547,15 @@ class RegisterType(APIBase):
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
 
 
-class RequirementSubmission(APIBase):
-    def get(self, request, resource_id):
-        try:
-            resource = Resource.objects.get(resourceinstanceid=resource_id)
-            serialized_data = resource.serialize()
-            return JSONResponse(serialized_data)
-
-        except Resource.DoesNotExist:
-            return JSONResponse(
-                {"error": "Requirement Submission not found"}, status=404
-            )
-        except Exception as e:
-            logger.exception(f"Unable to fetch Requirement Submission {resource_id}")
-            return JSONResponse({"error": str(e)}, status=500)
-
-
 class BCAPResourceDetailView(ArchesResourceDetailView):
     """Standard arches_querysets resource detail. For graphs declared in
     map_attributes.GRAPH_CONFIG we inject the configured attributes into
     the geojson FeatureCollection node's per-feature properties so the
     map can drive styling from them without a second fetch."""
+
+    # Internal-only: the base's ResourceEditor | ReadOnly would expose GET to any
+    # logged-in user. External callers use the specific permit/hca endpoints.
+    permission_classes = [Internal]
 
     def retrieve(self, request, *args, **kwargs):
         response = super().retrieve(request, *args, **kwargs)

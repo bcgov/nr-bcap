@@ -8,13 +8,18 @@ from django.shortcuts import render
 from django.utils.translation import gettext as _
 from arches.app.models.resource import Resource
 
+from bcap.permissions.groups import Groups
 
-@method_decorator(group_required("Resource Editor"), name="dispatch")
+
+@method_decorator(group_required(Groups.RESOURCE_EDITOR), name="dispatch")
 class ResourceReportView(ResourceReportViewCore):
     def get(self, request, resourceid=None):
         return super().get(request, resourceid)
 
 
+# Gated by the "Resource Editor" group: the arches core ResourceEditLogView
+# decorates dispatch with group_required("Resource Editor"), which this
+# subclass inherits (no override here).
 class ResourceEditLogView(ResourceEditLogViewCore):
     def get(
         self, request, resourceid=None, view_template="views/resource/edit-log.htm"

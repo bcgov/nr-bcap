@@ -1,38 +1,34 @@
-from django.db import connection
-from django.core.management.base import BaseCommand, CommandError
+"""Reset Guardian permissions to the BCAP default-deny baseline.
+
+Clears every group/anonymous nodegroup grant and re-asserts
+INTERNAL_GRAPH_PERMISSION_DEFAULTS, then reindexes the affected resources.
+Under default-deny, anonymous/Guest and any group not in the policy are denied
+implicitly, so no per-instance no_access passes are needed; owner access stays
+intact because it is implicit (resource.principaluser)."""
+
 import logging
-from bcap.util.buisiness_permission_manager import (
-    AdminOnlyPermissionManager,
-    HeritageSitePermissionManager,
-)
+
+from django.core.management.base import BaseCommand
+
 from arches.app.models import models
-from arches.app.utils.index_database import index_resources_by_type
 from arches.app.models.system_settings import settings
+from arches.app.utils.index_database import index_resources_by_type
+
+from bcap.permissions.bcap_arches_permission_framework import (
+    BcapArchesPermissionFramework,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    """
-    Command to refresh materialized views that support the one-row view used by DataBC to create the BCGW layer
-
-    """
-
     def add_arguments(self, parser):
         parser.add_argument(
             "-s",
             "--slugs",
             dest="slugs",
             default=None,
-            help="List of graph slugs to reset",
-        )
-        parser.add_argument(
-            "-c",
-            "--clear-existing",
-            action="store_true",
-            dest="clear_existing",
-            default=False,
-            help="Clear any non-standard permissions",
+            help="Comma-separated graph slugs to reset (default: all policy " "graphs)",
         )
 
     def handle(self, *args, **options):
@@ -41,20 +37,23 @@ class Command(BaseCommand):
             if options["slugs"]
             else None
         )
-        processed_slugs = AdminOnlyPermissionManager().reset_all_permissions(
-            graph_slugs=slugs, clear_all_permissions=options["clear_existing"]
-        )
-        processed_slugs += HeritageSitePermissionManager().reset_all_permissions(
-            graph_slugs=slugs, clear_all_permissions=options["clear_existing"]
-        )
+        graph_ids = None
+        if slugs:
+            graph_ids = [
+                str(graph_id)
+                for graph_id in models.GraphModel.objects.filter(
+                    slug__in=slugs
+                ).values_list("graphid", flat=True)
+            ]
 
-        print("Processed graphs: %s" % processed_slugs)
+        applied = BcapArchesPermissionFramework.apply_permission_defaults(graph_ids)
+        print("Reset permission defaults on %s graphs" % len(applied))
+
         resource_types_uuid = (
-            models.GraphModel.objects.filter(slug__in=processed_slugs)
+            models.GraphModel.objects.filter(graphid__in=applied)
             .exclude(publication=None)
             .values_list("graphid", flat=True)
         )
-
         index_resources_by_type(
             resource_types_uuid,
             clear_index=True,

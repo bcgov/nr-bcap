@@ -1,7 +1,9 @@
+from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from bcap.models.resource_draft import ResourceDraft
+from bcap.permissions.groups import Groups
 from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
@@ -44,6 +46,8 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         # Rolled back with the class transaction.
         ControlledListFixtures.seed()
+        editor, _ = Group.objects.get_or_create(name=Groups.RESOURCE_EDITOR)
+        cls.user.groups.add(editor)
         graph = build_permit_graph()
         cls.permit_id = str(graph.permit.pk)
         cls.ada_id = str(graph.ada.pk)
@@ -132,6 +136,8 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         ControlledListFixtures.seed()
+        editor, _ = Group.objects.get_or_create(name=Groups.RESOURCE_EDITOR)
+        cls.user.groups.add(editor)
         builder = ResourceBuilder()
         contributor_type = builder.reference_value("contributor", "contributor_type")
         holder = builder.make_contributor(

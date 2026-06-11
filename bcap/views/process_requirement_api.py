@@ -4,6 +4,8 @@ from drf_spectacular.utils import extend_schema
 
 from arches_querysets.rest_framework.generic_views import ArchesResourceDetailView
 
+from bcap.permissions.groups import Groups
+from bcap.permissions.route_permissions import any_groups_required
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.mixins import ArchesResourceViewMixin, BCAPResourceSerializer
 
@@ -26,5 +28,15 @@ class ProcessRequirementView(ProcessRequirementViewMixin, ArchesResourceDetailVi
 
     Process Requirements are created internally (cloned from templates by the
     process_requirement service), not via a public POST, so there is no create
-    route here.
+    route here as it's done internally. This is mainly for modifying the templates.
     """
+
+    permission_classes = [
+        any_groups_required(
+            Groups.RESOURCE_EDITOR,
+            Groups.PERMIT_REVIEWER,
+            Groups.PERMIT_DECIDER,
+            Groups.INVENTORY_REVIEWER,
+            Groups.INVENTORY_MANAGER,
+        )
+    ]

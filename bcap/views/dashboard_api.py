@@ -8,8 +8,10 @@ OpenAPI spec that feeds the frontend's generated TypeScript types.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
+
+from bcap.permissions.groups import Groups
+from bcap.permissions.route_permissions import any_groups_required
 
 from bcap.serializers.dashboard_serializers import (
     InternalDashboardPageResponseSerializer,
@@ -29,7 +31,15 @@ class InternalDashboardView(APIView):
     """Returns dashboard cards for the current user based on their role."""
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [
+        any_groups_required(
+            Groups.RESOURCE_EDITOR,
+            Groups.PERMIT_REVIEWER,
+            Groups.PERMIT_DECIDER,
+            Groups.INVENTORY_REVIEWER,
+            Groups.INVENTORY_MANAGER,
+        )
+    ]
 
     @extend_schema(
         tags=["Internal: dashboard"],
@@ -51,7 +61,7 @@ class ExternalDashboardView(APIView):
     created-by."""
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [any_groups_required(Groups.SUBMITTER, Groups.RESOURCE_EDITOR)]
 
     @extend_schema(
         tags=["External: dashboard"],

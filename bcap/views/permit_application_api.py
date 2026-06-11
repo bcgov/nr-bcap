@@ -9,8 +9,8 @@ from arches_querysets.rest_framework.generic_views import (
     ArchesResourceDetailView,
     ArchesModelAPIMixin,
 )
-from arches_querysets.rest_framework.permissions import ResourceEditor
-
+from bcap.permissions.groups import Groups
+from bcap.permissions.route_permissions import any_groups_required
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
@@ -44,6 +44,8 @@ class PermitApplicationView(
     replaces.
     """
 
+    permission_classes = [any_groups_required(Groups.SUBMITTER, Groups.RESOURCE_EDITOR)]
+
 
 @extend_schema(tags=["External: permit_application"])
 class PermitApplicationCreateView(
@@ -55,7 +57,7 @@ class PermitApplicationCreateView(
     list/GET route.
     """
 
-    permission_classes = [ResourceEditor]
+    permission_classes = [any_groups_required(Groups.SUBMITTER, Groups.RESOURCE_EDITOR)]
     parser_classes = [JSONParser]
     http_method_names = ["post", "options"]
 
