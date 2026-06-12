@@ -27,6 +27,12 @@ from bcap.views.permit_application_api import (
     PermitApplicationCreateView,
 )
 from bcap.views.user_api import UserProfile
+from bcap.views.registration_link_api import (
+    RegistrationLinkView,
+    UnlinkedContributorsView,
+    RegistrationClaimView,
+)
+from bcap.views.auth import auth_callback
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
 from bcgov_arches_common.views.map import BCTileserverProxyView
@@ -98,10 +104,24 @@ documented_api_patterns = [
         PermitApplicationView.as_view(),
         name="permit_application",
     ),
+    # Admin - issue a signup link and list invitable Contributors
+    path(
+        f"{PREFIX}api/registration_link",
+        RegistrationLinkView.as_view(),
+        name="registration_link",
+    ),
+    path(
+        f"{PREFIX}api/contributors/unlinked",
+        UnlinkedContributorsView.as_view(),
+        name="unlinked_contributors",
+    ),
 ]
 
 
 urlpatterns = [
+    # Override the library's OAuth callback (before its include below) so an
+    # invited IDIR user's account is created on first sign-in.
+    path(f"{PREFIX}auth/eoauth_cb", auth_callback, name="auth_callback"),
     path(
         f"{PREFIX}files/<uuid:fileid>",
         FileView.as_view(),
@@ -188,6 +208,14 @@ urlpatterns = [
         name="translatable_resource_types",
     ),
     path(f"{PREFIX}search/export_results", export_results, name="export_results"),
+    # Signup-link target: bounces the visitor through IDIR login, where the
+    # token (stashed in the session) is redeemed. Anonymous-reachable, so it is
+    # added to auth_exempt_pages in settings.
+    path(
+        f"{PREFIX}signup/claim",
+        RegistrationClaimView.as_view(),
+        name="registration_claim",
+    ),
     path(
         f"{PREFIX}api/schema",
         SpectacularAPIView.as_view(permission_classes=[IsAdminUser]),

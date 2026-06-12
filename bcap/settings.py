@@ -508,11 +508,17 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/o/token",
                 # "/bcap/api/borden-number",
                 "/bcap/auth/user_profile",
+                # Signup-link target must be reachable while anonymous; it
+                # stashes the token and bounces the visitor into IDIR login.
+                "/bcap/signup/claim",
                 # "/bcap/geojson"
             ],
         },
     }
 }
+
+REGISTRATION_LINK_TTL_DAYS = 7
+REGISTRATION_IDIR_GROUPS = ["Guest"]
 
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"

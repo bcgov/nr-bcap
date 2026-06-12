@@ -1,9 +1,13 @@
+import uuid
 from datetime import date, datetime, timedelta, timezone as dt_timezone
 from unittest import mock
 
 from django.test import TestCase
 
-from bcap.services.dashboard.contributor_service import ContributorService
+from bcap.services.dashboard.contributor_service import (
+    ContributorService,
+    NewContributor,
+)
 from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
@@ -214,4 +218,65 @@ class ContributorServiceTest(TestCase):
         self.assertEqual(
             result,
             {str(viewer.pk), str(starts_today.pk), str(ends_today.pk)},
+        )
+
+    def test_is_invitable(self):
+        # Only an existing, active, unlinked Contributor can be invited.
+        invitable = self.make("Hopper", first_name="Grace")
+        linked = self.make("Turing", first_name="Alan", bcap_username="at")
+        inactive = self.make("Babbage", inactive=True)
+        self.assertTrue(self.service.is_invitable(str(invitable.pk)))
+        self.assertFalse(self.service.is_invitable(str(linked.pk)))
+        self.assertFalse(self.service.is_invitable(str(inactive.pk)))
+        self.assertFalse(self.service.is_invitable(str(uuid.uuid4())))
+
+    def test_set_bcap_username_links_once(self):
+        contributor = self.make("Hopper", first_name="Grace")
+        self.assertTrue(self.service.set_bcap_username(str(contributor.pk), "gh"))
+        self.assertEqual(
+            self.service.username_contributor_id("gh"), str(contributor.pk)
+        )
+        # A second attempt is rejected and leaves the original binding intact.
+        self.assertFalse(self.service.set_bcap_username(str(contributor.pk), "other"))
+        self.assertEqual(
+            self.service.username_contributor_id("gh"), str(contributor.pk)
+        )
+        self.assertIsNone(self.service.username_contributor_id("other"))
+
+    def test_create_contributor_defaults_to_individual(self):
+        # No contributor_type given, so it defaults to the Individual type.
+        new_id = self.service.create_contributor(
+            NewContributor(
+                name="Hopper",
+                first_name="Grace",
+                email="grace@example.com",
+            )
+        )
+        # Created unlinked, and reads back through the invite picker.
+        self.assertTrue(self.service.is_invitable(new_id))
+        self.assertEqual(
+            self.service.invitable_contributors("Hopper"),
+            [
+                {
+                    "id": new_id,
+                    "name": "Grace Hopper",
+                    "email": "grace@example.com",
+                    "type": "Individual",
+                }
+            ],
+        )
+
+    def test_invitable_contributors_filters_and_shapes(self):
+        grace = self.make("Hopper", first_name="Grace")
+        self.make("Turing", first_name="Alan", bcap_username="at")  # linked
+        self.make("Babbage", inactive=True)
+        acme = self.make("Acme Corp")  # org: shown with name only
+        by_id = {o["id"]: o for o in self.service.invitable_contributors()}
+        self.assertEqual(set(by_id), {str(grace.pk), str(acme.pk)})
+        self.assertEqual(by_id[str(grace.pk)]["name"], "Grace Hopper")
+        self.assertEqual(by_id[str(acme.pk)]["name"], "Acme Corp")
+        # Search narrows by name.
+        self.assertEqual(
+            [o["id"] for o in self.service.invitable_contributors("Hopper")],
+            [str(grace.pk)],
         )

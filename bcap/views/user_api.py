@@ -27,5 +27,7 @@ class UserProfile(APIView):
     )
     def get(self, request):
         user_profile = models.User.objects.get(id=request.user.pk)
-        serializer = UserProfileResponseSerializer(user_profile)
+        serializer = UserProfileResponseSerializer(
+            user_profile, context={"request": request}
+        )
         return Response(serializer.data)

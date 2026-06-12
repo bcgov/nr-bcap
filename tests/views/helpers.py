@@ -38,9 +38,12 @@ class AuthTestHelper:
             expires=timezone.now() + timedelta(hours=1),
         )
 
-    def idir_login_simulate(self, user=None):
+    def idir_login_simulate(self, user=None, login_source="IDIR"):
         self.client.force_login(user or self.user)
         session = self.client.session
         expires_at = (timezone.now() + timedelta(hours=1)).timestamp()
-        session["oauth_token"] = {"expires_at": expires_at}
+        session["oauth_token"] = {
+            "expires_at": expires_at,
+            "userinfo": {"loginSource": login_source},
+        }
         session.save()

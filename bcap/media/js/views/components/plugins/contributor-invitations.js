@@ -1,22 +1,22 @@
 import createVueApplication from 'arches/arches/app/media/js/utils/create-vue-application';
 import { createRouter, createWebHistory } from 'vue-router';
-import BCAPPermitApp from '@/bcap/apps/Permit/App.vue';
-import { routes } from '@/bcap/apps/Permit/routes.ts';
-import { BCGovPermitPreset } from '@/bcap/primevue-bcgov-preset.ts';
+import BCAPAdminApp from '@/bcap/apps/Admin/App.vue';
+import { routes } from '@/bcap/apps/Admin/routes.ts';
+import { BCGovPreset } from '@/bcap/primevue-bcgov-preset.ts';
 
 import ko from 'knockout';
-import defaultInitWorkflowTemplate from 'templates/views/components/plugins/external-permit-workflows.htm';
+import contributorInvitationsTemplate from 'templates/views/components/plugins/contributor-invitations.htm';
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
 });
 
-ko.components.register('external-permit-workflows', {
+ko.components.register('contributor-invitations', {
     viewModel: function () {
-        createVueApplication(BCAPPermitApp, {
+        createVueApplication(BCAPAdminApp, {
             theme: {
-                preset: BCGovPermitPreset,
+                preset: BCGovPreset,
                 options: {
                     darkModeSelector: 'system',
                     cssLayer: {
@@ -27,8 +27,8 @@ ko.components.register('external-permit-workflows', {
             },
         }).then((vueApp) => {
             vueApp.use(router);
-            vueApp.mount('#bcap-mounting-point');
+            vueApp.mount('#contributor-invitations-mounting-point');
         });
     },
-    template: defaultInitWorkflowTemplate,
+    template: contributorInvitationsTemplate,
 });

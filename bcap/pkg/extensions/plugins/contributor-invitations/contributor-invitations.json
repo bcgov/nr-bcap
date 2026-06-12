@@ -1,0 +1,10 @@
+{
+    "pluginid": "5a120833-711b-4c2d-9396-1dce3a5cb059",
+    "name": { "en": "Contributor Invitations" },
+    "icon": "fa fa-user-plus",
+    "component": "views/components/plugins/contributor-invitations",
+    "componentname": "contributor-invitations",
+    "config": { "show": true },
+    "slug": "contributor-invitations",
+    "sortorder": 2
+}

@@ -1,4 +1,11 @@
 import arches from 'arches';
+import { z } from 'zod';
+import {
+    zContributorOption,
+    zNewContributor,
+    zRegistrationLinkRequest,
+    zRegistrationLinkResponse,
+} from '@/bcap/client/zod.gen.ts';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     SiteVisitResponse,
@@ -64,6 +71,61 @@ export const getRequirementSubmissionData = async (
         throw new Error(text || response.statusText);
     }
 
+    return await response.json();
+};
+
+export type UnlinkedContributor = z.infer<typeof zContributorOption>;
+export type NewContributorInput = z.infer<typeof zNewContributor>;
+export type RegistrationLinkResult = z.infer<typeof zRegistrationLinkResponse>;
+export type IssueRegistrationLinkBody = z.infer<
+    typeof zRegistrationLinkRequest
+>;
+
+const csrfToken = (): string =>
+    document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('csrftoken='))
+        ?.split('=')[1] || '';
+
+// Surface a DRF { "detail": ... } error message when present, else the raw body.
+const errorMessage = async (response: Response): Promise<string> => {
+    const text = await response.text();
+    try {
+        const parsed = JSON.parse(text);
+        return parsed.detail || text || response.statusText;
+    } catch {
+        return text || response.statusText;
+    }
+};
+
+export const getUnlinkedContributors = async (
+    search?: string,
+): Promise<UnlinkedContributor[]> => {
+    const query = search ? `?search=${encodeURIComponent(search)}` : '';
+    const response = await fetch(
+        `${arches.urls.unlinked_contributors}${query}`,
+    );
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || response.statusText);
+    }
+    return await response.json();
+};
+
+export const issueRegistrationLink = async (
+    body: IssueRegistrationLinkBody,
+): Promise<RegistrationLinkResult> => {
+    const response = await fetch(arches.urls.registration_link, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken(),
+        },
+        body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+        throw new Error(await errorMessage(response));
+    }
     return await response.json();
 };
 
