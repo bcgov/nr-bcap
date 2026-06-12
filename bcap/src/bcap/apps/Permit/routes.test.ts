@@ -14,13 +14,13 @@ describe('Permit routes', () => {
     it('defines a route for each Permit screen', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(routes).toHaveLength(5);
+        expect(routes).toHaveLength(11);
         expect(Object.keys(byName).sort()).toEqual(
             [
                 'Checklist',
                 'CreateChecklist',
                 'internal-root',
-                'newPermit',
+                'baseModule',
                 'root',
             ].sort(),
         );
@@ -33,7 +33,7 @@ describe('Permit routes', () => {
         expect(byName['internal-root'].path).toBe(
             '/plugins/internal-permit-dashboard',
         );
-        expect(byName['newPermit'].path).toBe(
+        expect(byName['baseModule'].path).toBe(
             '/plugins/external-permit-workflows/submit',
         );
         expect(byName['Checklist'].path).toBe(
@@ -57,7 +57,7 @@ describe('Permit routes', () => {
             shouldShowNavigation: true,
             requiresAuthentication: true,
         });
-        expect(byName['newPermit'].meta).toEqual({
+        expect(byName['baseModule'].meta).toEqual({
             shouldShowNavigation: true,
             requiresAuthentication: true,
         });
@@ -68,7 +68,7 @@ describe('Permit routes', () => {
 
     it('maps friendly route-name aliases to the registered names', () => {
         expect(routeNames.home).toBe('root');
-        expect(routeNames.newPermit).toBe('newPermit');
+        expect(routeNames.baseModule).toBe('baseModule');
         expect(routeNames.checklist).toBe('Checklist');
         expect(routeNames.createchecklist).toBe('CreateChecklist');
         expect(routeNames.login).toBe('');
