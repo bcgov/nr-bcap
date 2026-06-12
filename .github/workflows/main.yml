@@ -45,11 +45,6 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
           path: .
 
-      - name: Copy github_settings to bcap settings
-        run: |
-          cp .github/github_settings.py bcap/settings.py
-        shell: bash
-
       - name: Build and test branch
         uses: ./.github/actions/build-and-test-branch
         with:
