@@ -15,9 +15,13 @@ interface ResourceDraft {
     created: string;
     updated: string;
     data: {
-        project_name?: {
-            display_value: string;
-            [key: string]: unknown;
+        application_identification?: {
+            aliased_data?: {
+                project_name?: {
+                    display_value: string;
+                    [key: string]: unknown;
+                };
+            };
         };
         [key: string]: unknown;
     };
@@ -136,7 +140,8 @@ onMounted(async () => {
                     v-for="draft in savedDrafts"
                     :key="draft.id"
                     :label="
-                        draft.data?.project_name?.display_value ||
+                        draft.data?.application_identification?.aliased_data
+                            ?.project_name?.display_value ||
                         'Untitled Application'
                     "
                     description="Permit Application Draft"

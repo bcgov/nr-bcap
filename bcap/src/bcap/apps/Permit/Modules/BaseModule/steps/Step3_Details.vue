@@ -7,7 +7,7 @@ import type {
     AliasedNodeData,
     CardXNodeXWidgetData,
 } from '@/arches_component_lab/types.ts';
-import { saveFieldToBackend } from '@/bcap/util.ts';
+import { updateDraftValue } from '@/bcap/util.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const draftId = inject<Ref<string | null>>('draftId');
@@ -18,64 +18,19 @@ const isValid = () => {
     return true;
 };
 
-let timeoutId: ReturnType<typeof setTimeout>;
-
 const updateValue = (
     newValue: AliasedNodeData,
     attribute_name: string,
     node_group_alias: string | string[],
 ) => {
-    if (!draftData?.value) return;
-
-    const groups = Array.isArray(node_group_alias)
-        ? node_group_alias
-        : [node_group_alias];
-
-    let currentLevel = draftData.value as Record<string, unknown>;
-
-    groups.forEach((group, index) => {
-        const match = group.match(/^(.+)\[(\d+)\]$/);
-
-        if (match) {
-            const name = match[1];
-            const arrIndex = parseInt(match[2], 10);
-
-            if (!currentLevel[name]) currentLevel[name] = [];
-            const arr = currentLevel[name] as Record<string, unknown>[];
-            if (!arr[arrIndex]) arr[arrIndex] = { aliased_data: {} };
-            if (index === groups.length - 1) {
-                const target = arr[arrIndex].aliased_data as Record<
-                    string,
-                    unknown
-                >;
-                target[attribute_name] = newValue;
-            } else {
-                currentLevel = arr[arrIndex].aliased_data as Record<
-                    string,
-                    unknown
-                >;
-            }
-        } else {
-            if (!currentLevel[group])
-                currentLevel[group] = { aliased_data: {} };
-            const node = currentLevel[group] as {
-                aliased_data: Record<string, unknown>;
-            };
-
-            if (index === groups.length - 1) {
-                node.aliased_data[attribute_name] = newValue;
-            } else {
-                currentLevel = node.aliased_data;
-            }
-        }
-    });
-
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-        if (draftId?.value) {
-            saveFieldToBackend(draftId.value, graphSlug, draftData.value);
-        }
-    }, 1000);
+    updateDraftValue(
+        draftData?.value,
+        draftId?.value,
+        graphSlug,
+        newValue,
+        attribute_name,
+        node_group_alias,
+    );
 };
 
 const mapOverrides = {
