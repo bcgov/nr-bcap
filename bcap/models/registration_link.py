@@ -42,7 +42,9 @@ class RegistrationLink(models.Model):
         db_table = "bcap_registration_links"
         verbose_name = "Registration Link"
         verbose_name_plural = "Registration Links"
-        indexes = [models.Index(fields=["contributor_id"])]
+        indexes = [
+            models.Index(fields=["contributor_id"], name="bcap_regis_contrib_idx")
+        ]
 
     @property
     def is_redeemable(self):
