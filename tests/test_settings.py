@@ -18,7 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
 
-from bcap.settings_ci import *
+from bcap.settings import *
 
 PACKAGE_NAME = "bcap"
 

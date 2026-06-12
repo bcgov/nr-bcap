@@ -12,6 +12,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Use CI settings for management commands
+      run: echo "DJANGO_SETTINGS_MODULE=bcap.settings_ci" >> $GITHUB_ENV
+      shell: bash
+
     - name: Install Java, GDAL, and other system dependencies
       run: |
         sudo apt update
