@@ -246,6 +246,11 @@ AUTHENTICATION_BACKENDS = (
     "arches.app.utils.permission_backend.PermissionBackend",
 )
 
+# Default-deny permission framework. Its policy data and applier live in the
+# framework module (bcap/permissions/bcap_arches_permission_framework.py); arches
+# resolves this dotted path lazily after startup.
+PERMISSION_FRAMEWORK = "bcap_arches_permission_framework.BcapArchesPermissionFramework"
+
 
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -417,6 +422,10 @@ AUTHLIB_OAUTH_CLIENTS = {
             "scope": "openid profile email",
             "token_endpoint_auth_method": "client_secret_post",
         },
+        # loginSource values allowed to self-register on first login (matched
+        # case-insensitively against userinfo["loginSource"]). External public
+        # identities only; internal (idir) accounts are pre-provisioned.
+        "allowed_self_register_domains": ["BCSC", "BCEID"],
         "urls": {
             "home_page": "/bcap/",
             "unauthorized_page": "/bcap/unauthorized",
