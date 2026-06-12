@@ -6,7 +6,6 @@ import type {
 } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
-import type { RequirementSubmissionSchema } from '@/bcap/schema/RequirementSubmissionSchema.ts';
 
 export const getResourceData = async (
     graph_slug: string,
