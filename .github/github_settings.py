@@ -431,10 +431,16 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/auth/eoauth_cb",
                 "/bcap/o/token",
                 "/bcap/api/borden-number",
+                # Signup-link target must be reachable while anonymous; it
+                # stashes the token and bounces the visitor into IDIR login.
+                "/bcap/signup/claim",
             ],
         },
     }
 }
+
+REGISTRATION_LINK_TTL_DAYS = 7
+REGISTRATION_IDIR_GROUPS = ["Guest"]
 
 APP_TITLE = "BC Government | BCAP"
 COPYRIGHT_TEXT = "All Rights Reserved."
