@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
 
 export const sanitizeHtml = (html: string | undefined): string => {
     if (!html) return '';
@@ -83,8 +84,7 @@ export const getCsrfToken = (): string => {
 export const saveFieldToBackend = async (
     draftId: string,
     graphSlug: string,
-    attribute_name: string,
-    newValue: AliasedNodeData,
+    fullDraftData: ArchesDraftData,
 ) => {
     try {
         const patchUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId}`;
@@ -96,9 +96,7 @@ export const saveFieldToBackend = async (
                 'X-CSRFToken': getCsrfToken(),
             },
             body: JSON.stringify({
-                data: {
-                    [attribute_name]: newValue,
-                },
+                data: fullDraftData,
             }),
         });
 
@@ -106,8 +104,8 @@ export const saveFieldToBackend = async (
             throw new Error(`Server returned ${response.status}`);
         }
 
-        console.log(`Successfully auto-saved: ${attribute_name}`);
+        console.log('Successfully auto-saved full draft data.');
     } catch (error) {
-        console.error(`Failed to auto-save ${attribute_name}:`, error);
+        console.error('Failed to auto-save draft data:', error);
     }
 };

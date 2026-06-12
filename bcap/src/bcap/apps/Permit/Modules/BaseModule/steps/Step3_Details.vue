@@ -8,9 +8,10 @@ import type {
     CardXNodeXWidgetData,
 } from '@/arches_component_lab/types.ts';
 import { saveFieldToBackend } from '@/bcap/util.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const draftId = inject<Ref<string | null>>('draftId');
-const draftData = inject<Ref<Record<string, unknown>>>('draftData');
+const draftData = inject<Ref<ArchesDraftData>>('draftData');
 const graphSlug = 'permit_application';
 
 const isValid = () => {
@@ -19,23 +20,60 @@ const isValid = () => {
 
 let timeoutId: ReturnType<typeof setTimeout>;
 
-const updateValue = (newValue: AliasedNodeData, attribute_name: string) => {
-    // update local state so the Review page sees it
-    if (draftData?.value) {
-        draftData.value[attribute_name] = newValue;
-    }
+const updateValue = (
+    newValue: AliasedNodeData,
+    attribute_name: string,
+    node_group_alias: string | string[],
+) => {
+    if (!draftData?.value) return;
+
+    const groups = Array.isArray(node_group_alias)
+        ? node_group_alias
+        : [node_group_alias];
+
+    let currentLevel = draftData.value as Record<string, unknown>;
+
+    groups.forEach((group, index) => {
+        const match = group.match(/^(.+)\[(\d+)\]$/);
+
+        if (match) {
+            const name = match[1];
+            const arrIndex = parseInt(match[2], 10);
+
+            if (!currentLevel[name]) currentLevel[name] = [];
+            const arr = currentLevel[name] as Record<string, unknown>[];
+            if (!arr[arrIndex]) arr[arrIndex] = { aliased_data: {} };
+            if (index === groups.length - 1) {
+                const target = arr[arrIndex].aliased_data as Record<
+                    string,
+                    unknown
+                >;
+                target[attribute_name] = newValue;
+            } else {
+                currentLevel = arr[arrIndex].aliased_data as Record<
+                    string,
+                    unknown
+                >;
+            }
+        } else {
+            if (!currentLevel[group])
+                currentLevel[group] = { aliased_data: {} };
+            const node = currentLevel[group] as {
+                aliased_data: Record<string, unknown>;
+            };
+
+            if (index === groups.length - 1) {
+                node.aliased_data[attribute_name] = newValue;
+            } else {
+                currentLevel = node.aliased_data;
+            }
+        }
+    });
 
     clearTimeout(timeoutId);
-
-    // update the backend
     timeoutId = setTimeout(() => {
         if (draftId?.value) {
-            saveFieldToBackend(
-                draftId.value,
-                graphSlug,
-                attribute_name,
-                newValue,
-            );
+            saveFieldToBackend(draftId.value, graphSlug, draftData.value);
         }
     }, 1000);
 };
@@ -55,39 +93,78 @@ defineExpose({ isValid });
     <FieldSet legend="">
         <GenericWidget
             :mode="EDIT"
-            :aliased-node-data="draftData?.assessment_approach"
+            :aliased-node-data="
+                draftData?.archaeological_assessment_plan?.aliased_data
+                    ?.section_1_overview?.aliased_data?.assessment_approach
+            "
             graph-slug="permit_application"
             node-alias="assessment_approach"
-            @update:value="updateValue($event, 'assessment_approach')"
+            @update:value="
+                updateValue($event, 'assessment_approach', [
+                    'archaeological_assessment_plan',
+                    'section_1_overview',
+                ])
+            "
         />
         <GenericWidget
             :mode="EDIT"
-            :aliased-node-data="draftData?.fn_file_numbers"
+            :aliased-node-data="
+                draftData?.first_nation_consultation?.aliased_data
+                    ?.fn_file_numbers
+            "
             graph-slug="permit_application"
             node-alias="fn_file_numbers"
-            @update:value="updateValue($event, 'fn_file_numbers')"
+            @update:value="
+                updateValue(
+                    $event,
+                    'fn_file_numbers',
+                    'first_nation_consultation',
+                )
+            "
         />
         <GenericWidget
             :mode="EDIT"
-            :aliased-node-data="draftData?.project_boundary"
+            :aliased-node-data="
+                draftData?.proposed_project?.aliased_data?.project_boundary
+            "
             :card-x-node-x-widget-data-overrides="mapOverrides"
             graph-slug="permit_application"
             node-alias="project_boundary"
-            @update:value="updateValue($event, 'project_boundary')"
+            @update:value="
+                updateValue($event, 'project_boundary', 'proposed_project')
+            "
         />
         <GenericWidget
             :mode="EDIT"
-            :aliased-node-data="draftData?.industrial_sector"
+            :aliased-node-data="
+                draftData?.proposed_project?.aliased_data
+                    ?.development_project_details?.aliased_data
+                    ?.industrial_sector
+            "
             graph-slug="permit_application"
             node-alias="industrial_sector"
-            @update:value="updateValue($event, 'industrial_sector')"
+            @update:value="
+                updateValue($event, 'industrial_sector', [
+                    'proposed_project',
+                    'development_project_details',
+                ])
+            "
         />
         <GenericWidget
             :mode="EDIT"
-            :aliased-node-data="draftData?.alteration_details"
+            :aliased-node-data="
+                draftData?.proposed_project?.aliased_data
+                    ?.development_project_details?.aliased_data
+                    ?.alteration_details
+            "
             graph-slug="permit_application"
             node-alias="alteration_details"
-            @update:value="updateValue($event, 'alteration_details')"
+            @update:value="
+                updateValue($event, 'alteration_details', [
+                    'proposed_project',
+                    'development_project_details',
+                ])
+            "
         />
     </FieldSet>
     <br />

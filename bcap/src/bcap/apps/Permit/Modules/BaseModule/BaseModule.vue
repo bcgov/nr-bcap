@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, provide, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
@@ -18,6 +18,7 @@ import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prel
 import Step3_Details1 from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_Details.vue';
 import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const submissionErrors = ref([] as ErrorMessage[]);
 const submitted = ref(false);
@@ -26,21 +27,72 @@ const devMode = ref(true);
 const isDataLoaded = ref(false);
 const graphSlug = 'permit_application';
 const draftId = ref<string | null>(null);
-const draftData = ref<Record<string, unknown>>({});
+const draftData = ref<ArchesDraftData>({});
 const route = useRoute();
+const router = useRouter();
 
 provide('draftId', draftId);
 provide('draftData', draftData);
 
-// TODO: Update this later to POST to the final resource endpoint and DELETE the draft
-const submitNewSiteData = async () => {
+const submitNewSiteData = async (): Promise<boolean> => {
     console.log('Submitting final application...');
     submitting.value = true;
     submissionErrors.value = [];
 
-    // Final submission logic goes here later...
+    try {
+        if (!draftId.value) throw new Error('No active draft found.');
+        const submitUrl = `/bcap/api/resource/${graphSlug}`;
+        const cleanPayload = JSON.parse(JSON.stringify(draftData.value));
 
-    submitting.value = false;
+        const postResponse = await fetch(submitUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(),
+            },
+            body: JSON.stringify({
+                draft_id: draftId.value,
+                aliased_data: cleanPayload,
+            }),
+        });
+
+        if (!postResponse.ok) {
+            const errorDetails = await postResponse
+                .json()
+                .catch(() => 'No additional details provided by server.');
+            console.error('Django 400 Error Details:', errorDetails);
+            throw new Error(
+                `Status ${postResponse.status}: ${JSON.stringify(errorDetails)}`,
+            );
+        }
+
+        const finalResource = await postResponse.json();
+        console.log('Final resource created successfully!', finalResource);
+
+        const deleteUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId.value}`;
+        await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': getCsrfToken() },
+        });
+
+        draftId.value = null;
+        return true;
+    } catch (error) {
+        console.error('Submission failed:', error);
+        const errorMessage =
+            error instanceof Error
+                ? error.message
+                : 'An unknown error occurred.';
+
+        submissionErrors.value.push({
+            type: 'Submission Error',
+            error: 'Submission Failed',
+            message: errorMessage,
+        });
+        return false;
+    } finally {
+        submitting.value = false;
+    }
 };
 
 const print = () => {
@@ -51,8 +103,12 @@ const activateNextStep = async () => {
     if (currentStep.value === steps.length) {
         print();
     } else if (currentStep.value === steps.length - 1) {
-        submitNewSiteData();
-        myStepper.value.d_value++;
+        const success = await submitNewSiteData();
+
+        if (success) {
+            console.log('Redirecting to dashboard...');
+            router.push('/bcap/plugins/external-permit-workflows');
+        }
     } else {
         myStepper.value.d_value++;
         setCurrentStepValid(
@@ -229,6 +285,19 @@ const showDebug = ref(false);
                 </div>
                 <div class="bcgov-vertical-step-panels">
                     <h1>Submit Permit Application</h1>
+                    <div
+                        v-if="submissionErrors.length > 0"
+                        class="red"
+                    >
+                        <div
+                            v-for="(err, index) in submissionErrors"
+                            :key="index"
+                            class="red"
+                        >
+                            <strong>{{ err.error }}:</strong>
+                            {{ err.message }}
+                        </div>
+                    </div>
                     <StepPanels>
                         <StepperNavigation
                             :step-number="currentStep"

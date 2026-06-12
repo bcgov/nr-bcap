@@ -4,13 +4,9 @@ import FieldSet from 'primevue/fieldset';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
 import { VIEW } from '@/arches_component_lab/widgets/constants.ts';
 import type { CardXNodeXWidgetData } from '@/arches_component_lab/types.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
 
-interface DraftNode {
-    display_value?: string;
-    [key: string]: unknown;
-}
-
-const draftData = inject<Ref<Record<string, DraftNode>>>('draftData');
+const draftData = inject<Ref<ArchesDraftData>>('draftData');
 
 const isValid = () => {
     return true;
@@ -37,50 +33,85 @@ defineExpose({ isValid });
         <div class="div-grid-cols">
             <dt>Replacement Application</dt>
             <dd>
-                {{ draftData?.is_replacement?.display_value || '' }}
+                {{
+                    draftData?.application_identification?.aliased_data
+                        ?.is_replacement?.display_value || ''
+                }}
             </dd>
 
             <dt>Project Name</dt>
             <dd>
-                {{ draftData?.project_name?.display_value || '' }}
+                {{
+                    draftData?.application_identification?.aliased_data
+                        ?.project_name?.display_value || ''
+                }}
             </dd>
 
             <dt>Application ID</dt>
             <dd>
-                {{ draftData?.application_id?.display_value || '' }}
+                {{
+                    draftData?.application_identification?.aliased_data
+                        ?.application_id?.display_value || ''
+                }}
             </dd>
 
             <dt>Project Type</dt>
             <dd>
-                {{ draftData?.project_type?.display_value || '' }}
+                {{
+                    draftData?.proposed_project?.aliased_data?.project_type
+                        ?.display_value || ''
+                }}
             </dd>
 
             <dt>Project Description</dt>
             <dd
-                v-html="draftData?.project_description?.display_value || ''"
+                v-html="
+                    draftData?.proposed_project?.aliased_data
+                        ?.project_description?.display_value || ''
+                "
             ></dd>
 
             <dt>Scope of Work</dt>
-            <dd v-html="draftData?.scope_of_work?.display_value || ''"></dd>
+            <dd
+                v-html="
+                    draftData?.proposed_project?.aliased_data?.scope_of_work
+                        ?.display_value || ''
+                "
+            ></dd>
 
             <dt>Assessment Approach</dt>
             <dd>
-                {{ draftData?.assessment_approach?.display_value || '' }}
+                {{
+                    draftData?.archaeological_assessment_plan?.aliased_data
+                        ?.section_1_overview?.aliased_data?.assessment_approach
+                        ?.display_value || ''
+                }}
             </dd>
 
             <dt>First Nations File Numbers</dt>
             <dd>
-                {{ draftData?.fn_file_numbers?.display_value || '' }}
+                {{
+                    draftData?.first_nation_consultation?.aliased_data
+                        ?.fn_file_numbers?.display_value || ''
+                }}
             </dd>
 
             <dt>Industrial Sector</dt>
             <dd>
-                {{ draftData?.industrial_sector?.display_value || '' }}
+                {{
+                    draftData?.proposed_project?.aliased_data
+                        ?.development_project_details?.aliased_data
+                        ?.industrial_sector?.display_value || ''
+                }}
             </dd>
 
             <dt>Alteration Details</dt>
             <dd
-                v-html="draftData?.alteration_details?.display_value || ''"
+                v-html="
+                    draftData?.proposed_project?.aliased_data
+                        ?.development_project_details?.aliased_data
+                        ?.alteration_details?.display_value || ''
+                "
             ></dd>
         </div>
 
@@ -88,10 +119,16 @@ defineExpose({ isValid });
             <dt>Project Boundary</dt>
             <dd class="centered-map">
                 <GenericWidget
-                    v-if="draftData?.project_boundary"
+                    v-if="
+                        draftData?.proposed_project?.aliased_data
+                            ?.project_boundary
+                    "
                     :mode="VIEW"
                     :should-show-label="false"
-                    :aliased-node-data="draftData?.project_boundary"
+                    :aliased-node-data="
+                        draftData?.proposed_project?.aliased_data
+                            ?.project_boundary
+                    "
                     :card-x-node-x-widget-data-overrides="mapOverrides"
                     graph-slug="permit_application"
                     node-alias="project_boundary"
