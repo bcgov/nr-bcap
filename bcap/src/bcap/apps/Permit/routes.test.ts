@@ -27,8 +27,7 @@ describe('Permit routes', () => {
             'methodsModule',
             'recordingsModule',
             'root',
-        ]).sort(),
-        );
+        ]);
     });
 
     it('builds each path from the matching plugin slug', () => {
