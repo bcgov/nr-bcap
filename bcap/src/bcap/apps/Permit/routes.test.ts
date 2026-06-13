@@ -15,14 +15,19 @@ describe('Permit routes', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
         expect(routes).toHaveLength(11);
-        expect(Object.keys(byName).sort()).toEqual(
-            [
-                'Checklist',
-                'CreateChecklist',
-                'internal-root',
-                'baseModule',
-                'root',
-            ].sort(),
+        expect(Object.keys(byName).sort()).toEqual([
+            'Checklist',
+            'CreateChecklist',
+            'alterationsModule',
+            'baseModule',
+            'collectionModule',
+            'inspectionModule',
+            'internal-root',
+            'investigationModule',
+            'methodsModule',
+            'recordingsModule',
+            'root',
+        ]).sort(),
         );
     });
 
@@ -34,7 +39,7 @@ describe('Permit routes', () => {
             '/plugins/internal-permit-dashboard',
         );
         expect(byName['baseModule'].path).toBe(
-            '/plugins/external-permit-workflows/submit',
+            '/plugins/external-permit-workflows/baseModule',
         );
         expect(byName['Checklist'].path).toBe(
             '/plugins/internal-permit-dashboard/checklist',
