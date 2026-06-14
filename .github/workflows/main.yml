@@ -6,6 +6,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      python: ${{ steps.filter.outputs.python }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - '**/*.vue'
+              - '**/*.ts'
+              - '**/*.mts'
+              - '**/*.js'
+              - '**/*.css'
+              - '**/package.json'
+              - '**/package-lock.json'
+            python:
+              - '**/*.py'
+
   build_target_branch:
     runs-on: ubuntu-latest
 
@@ -99,7 +121,8 @@ jobs:
 
   check_frontend_coverage:
     runs-on: ubuntu-latest
-    needs: [build_feature_branch, build_target_branch]
+    needs: [changes, build_feature_branch, build_target_branch]
+    if: needs.changes.outputs.frontend == 'true'
     steps:
       - uses: actions/checkout@v4
 
@@ -244,7 +267,8 @@ jobs:
 
   check_python_coverage:
     runs-on: ubuntu-latest
-    needs: [build_feature_branch, build_target_branch]
+    needs: [changes, build_feature_branch, build_target_branch]
+    if: needs.changes.outputs.python == 'true'
     env:
       PYTHON_VERSION: "3.12"
     steps:
