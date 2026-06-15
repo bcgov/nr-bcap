@@ -19,6 +19,7 @@ import Step3_Details1 from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_De
 import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { submitApplication } from '@/bcap/apps/Permit/api.ts';
 
 const submissionErrors = ref([] as ErrorMessage[]);
 const submitted = ref(false);
@@ -41,39 +42,8 @@ const submitNewSiteData = async (): Promise<boolean> => {
 
     try {
         if (!draftId.value) throw new Error('No active draft found.');
-        const submitUrl = `/bcap/api/resource/${graphSlug}`;
-        const cleanPayload = JSON.parse(JSON.stringify(draftData.value));
 
-        const postResponse = await fetch(submitUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken(),
-            },
-            body: JSON.stringify({
-                draft_id: draftId.value,
-                aliased_data: cleanPayload,
-            }),
-        });
-
-        if (!postResponse.ok) {
-            const errorDetails = await postResponse
-                .json()
-                .catch(() => 'No additional details provided by server.');
-            console.error('Django 400 Error Details:', errorDetails);
-            throw new Error(
-                `Status ${postResponse.status}: ${JSON.stringify(errorDetails)}`,
-            );
-        }
-
-        const finalResource = await postResponse.json();
-        console.log('Final resource created successfully!', finalResource);
-
-        const deleteUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId.value}`;
-        await fetch(deleteUrl, {
-            method: 'DELETE',
-            headers: { 'X-CSRFToken': getCsrfToken() },
-        });
+        await submitApplication(draftId.value, draftData.value, graphSlug);
 
         draftId.value = null;
         return true;
@@ -228,7 +198,7 @@ onMounted(async () => {
 
 const nextLabel = computed(() => {
     if (currentStep.value === steps.length) return 'Print';
-    return currentStep.value < steps.length - 1 ? 'Next' : 'Submit';
+    return currentStep.value < steps.length - 1 ? 'Next' : 'Create Application';
 });
 
 const showPrevious = computed(() => {

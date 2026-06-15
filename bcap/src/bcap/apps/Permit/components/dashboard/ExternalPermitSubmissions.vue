@@ -5,6 +5,7 @@ import Fluid from 'primevue/fluid';
 import { useGettext } from 'vue3-gettext';
 import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import SortingBar from './SortingBar.vue';
+import { fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
@@ -57,78 +58,15 @@ const workflowItems = ref([
         class: 'dashboard-card ipa',
         routeName: routeNames.baseModule,
     },
-    {
-        id: 'alterations-module',
-        label: $gettext('Add Alterations Module'),
-        description: $gettext('New Alterations Application'),
-        subtitle: $gettext('Start a new Alterations Application'),
-        icon: 'fa fa-edit',
-        class: 'dashboard-card ipa',
-        routeName: routeNames.alterationsModule,
-    },
-    {
-        id: 'collection-module',
-        label: $gettext('Add Collection Module'),
-        description: $gettext('New Collection Application'),
-        subtitle: $gettext('Start a new Collection Application'),
-        icon: 'fa fa-boxes-stacked',
-        class: 'dashboard-card ipa',
-        routeName: routeNames.collectionModule,
-    },
-    {
-        id: 'inspection-module',
-        label: $gettext('Add Inspection Module'),
-        description: $gettext('New Inspection Application'),
-        subtitle: $gettext('Start a new Inspection Application'),
-        icon: 'fa fa-clipboard-check',
-        class: 'dashboard-card ipa',
-        routeName: routeNames.inspectionModule,
-    },
-    {
-        id: 'investigation-module',
-        label: $gettext('Add Investigation Module'),
-        description: $gettext('New Investigation Application'),
-        subtitle: $gettext('Start a new Investigation Application'),
-        icon: 'fa fa-magnifying-glass',
-        class: 'dashboard-card ipa',
-        routeName: routeNames.investigationModule,
-    },
-    {
-        id: 'methods-module',
-        label: $gettext('Add Methods Module'),
-        description: $gettext('New Methods Application'),
-        subtitle: $gettext('Start a new Methods Application'),
-        icon: 'fa fa-flask',
-        class: 'dashboard-card ipa',
-        routeName: routeNames.methodsModule,
-    },
-    {
-        id: 'recordings-module',
-        label: $gettext('Add Recordings Module'),
-        description: $gettext('New Recordings Application'),
-        subtitle: $gettext('Start a new Recordings Application'),
-        icon: 'fa fa-camera',
-        class: 'dashboard-card ipa',
-        routeName: routeNames.recordingsModule,
-    },
 ]);
 
-const fetchDrafts = async () => {
-    try {
-        const response = await fetch(
-            '/bcap/api/resource_draft/permit_application',
-        );
-        if (response.ok) {
-            savedDrafts.value = await response.json();
-            lastUpdated.value = new Date();
-        }
-    } catch (error) {
-        console.error('Failed to load drafts for dashboard:', error);
-    }
+const loadDrafts = async () => {
+    savedDrafts.value = await fetchDrafts();
+    lastUpdated.value = new Date();
 };
 
 onMounted(() => {
-    fetchDrafts();
+    loadDrafts();
 });
 
 const filteredDrafts = computed(() => {
@@ -176,7 +114,7 @@ const filteredDrafts = computed(() => {
                 :tabs="dashboardTabs"
                 :last-updated="lastUpdated"
                 :sort-options="sortOptions"
-                @refresh="fetchDrafts"
+                @refresh="loadDrafts"
             />
 
             <div class="tab-content-container">
