@@ -55,6 +55,52 @@ defineExpose({ isValid });
                 }}
             </dd>
 
+            <dt>Application Proponent</dt>
+            <dd>
+                {{
+                    draftData?.application_contacts?.aliased_data
+                        ?.application_proponent?.display_value || ''
+                }}
+            </dd>
+
+            <dt>Has Retained Archaeologist</dt>
+            <dd>
+                {{
+                    draftData?.application_contacts?.aliased_data
+                        ?.has_retained_archaeologist?.display_value || ''
+                }}
+            </dd>
+
+            <template
+                v-if="
+                    draftData?.application_contacts?.aliased_data
+                        ?.rationale_for_no_archaeologist?.display_value
+                "
+            >
+                <dt>Rationale For No Archaeologist</dt>
+                <dd
+                    v-html="
+                        draftData?.application_contacts?.aliased_data
+                            ?.rationale_for_no_archaeologist?.display_value
+                    "
+                ></dd>
+            </template>
+
+            <template
+                v-if="
+                    draftData?.application_contacts?.aliased_data
+                        ?.application_archaeologist?.display_value
+                "
+            >
+                <dt>Application Archaeologist</dt>
+                <dd>
+                    {{
+                        draftData?.application_contacts?.aliased_data
+                            ?.application_archaeologist?.display_value || ''
+                    }}
+                </dd>
+            </template>
+
             <dt>Project Type</dt>
             <dd>
                 {{

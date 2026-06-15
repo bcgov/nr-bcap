@@ -15,7 +15,8 @@ import { getCsrfToken } from '@/bcap/util.ts';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prelim.vue';
-import Step3_Details1 from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_Details.vue';
+import Step3_Contacts from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_Contacts.vue';
+import Step4_Details from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step4_Details.vue';
 import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
@@ -132,11 +133,12 @@ const isValid = (step: number) => {
 const stepperProps: Ref<StepperProps | null> = ref(null);
 const stepperState: Ref<StepperState | null> = ref(null);
 const myStepper = ref();
-const step1 = ref();
-const step2 = ref();
-const step3 = ref();
-const step4 = ref();
-const step99 = ref();
+const step1 = ref(); // About
+const step2 = ref(); // Prelimb
+const step3 = ref(); // Contacts
+const step4 = ref(); // Details
+const step5 = ref(); // Review
+const step99 = ref(); // Submitted
 const steps: Ref[] = [];
 let lastStep = 1;
 
@@ -145,7 +147,7 @@ const currentStep = computed(() => {
 });
 
 onMounted(async () => {
-    steps.push(step1, step2, step3, step4, step99);
+    steps.push(step1, step2, step3, step4, step5, step99);
 
     try {
         //Check if the URL has a draftId
@@ -248,9 +250,10 @@ const showDebug = ref(false);
                     <StepList>
                         <Step :value="1">Submission Information</Step>
                         <Step :value="2">Preamble</Step>
-                        <Step :value="3">Details</Step>
-                        <Step :value="4">Review Submission</Step>
-                        <Step :value="5">Submission Complete</Step>
+                        <Step :value="3">Contacts</Step>
+                        <Step :value="4">Details</Step>
+                        <Step :value="5">Review Submission</Step>
+                        <Step :value="6">Submission Complete</Step>
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
@@ -290,34 +293,45 @@ const showDebug = ref(false);
                             ></Step2_Prelim>
                         </StepPanel>
                         <StepPanel :value="3">
-                            <h3 class="heading-margin-bottom">
-                                Project Details
-                            </h3>
-                            <Step3_Details1
+                            <h3 class="heading-margin-bottom">Contacts</h3>
+                            <Step3_Contacts
                                 ref="step3"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 3)
                                 "
-                            ></Step3_Details1>
+                            ></Step3_Contacts>
                         </StepPanel>
 
                         <StepPanel :value="4">
                             <h3 class="heading-margin-bottom">
-                                Review Submission
+                                Project Details
                             </h3>
-                            <Step99_Review
+                            <Step4_Details
                                 ref="step4"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 4)
                                 "
+                            ></Step4_Details>
+                        </StepPanel>
+
+                        <StepPanel :value="5">
+                            <h3 class="heading-margin-bottom">
+                                Review Submission
+                            </h3>
+                            <Step99_Review
+                                ref="step5"
+                                @update:step-is-valid="
+                                    setCurrentStepValid($event, 5)
+                                "
                             ></Step99_Review>
                         </StepPanel>
-                        <StepPanel :value="5">
+
+                        <StepPanel :value="6">
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
                                 ref="step99"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 5)
+                                    setCurrentStepValid($event, 6)
                                 "
                             ></Step99_Review>
                         </StepPanel>
