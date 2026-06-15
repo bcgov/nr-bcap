@@ -5,12 +5,28 @@ import Fluid from 'primevue/fluid';
 import { useGettext } from 'vue3-gettext';
 import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import SortingBar from './SortingBar.vue';
-import { fetchDrafts } from '@/bcap/apps/Permit/api.ts';
-
+import { fetchDrafts, fetchMyProjects } from '@/bcap/apps/Permit/api.ts';
+import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
 const { $gettext } = useGettext();
 const savedDrafts = ref<ResourceDraft[]>([]);
+const submittedProjects = ref<DashboardProject[]>([]);
+
+interface DashboardProject {
+    id: string;
+    is_draft: boolean;
+    status: string;
+    created_by_name: string;
+    created_date: string;
+    project_name: string;
+    application_number: string;
+    industrial_sector: string;
+    permit_id: string | null;
+    permit_number: string;
+    urgency: number;
+    priority_level: string;
+}
 
 // SortingBar State
 const activeTab = ref('drafts');
@@ -60,13 +76,19 @@ const workflowItems = ref([
     },
 ]);
 
-const loadDrafts = async () => {
-    savedDrafts.value = await fetchDrafts();
+const loadDashboardData = async () => {
+    const [draftsData, projectsData] = await Promise.all([
+        fetchDrafts(),
+        fetchMyProjects(),
+    ]);
+
+    savedDrafts.value = draftsData;
+    submittedProjects.value = projectsData;
     lastUpdated.value = new Date();
 };
 
 onMounted(() => {
-    loadDrafts();
+    loadDashboardData();
 });
 
 const filteredDrafts = computed(() => {
@@ -80,6 +102,20 @@ const filteredDrafts = computed(() => {
         return title.toLowerCase().includes(lowerQuery);
     });
 });
+
+const filteredProjects = computed(() => {
+    if (!searchQuery.value) return submittedProjects.value;
+    const lowerQuery = searchQuery.value.toLowerCase();
+
+    return submittedProjects.value.filter((project) => {
+        const title = project.project_name || 'Untitled Application';
+        return title.toLowerCase().includes(lowerQuery);
+    });
+});
+
+const openResourceReport = (resourceId: string) => {
+    window.location.href = `/bcap/resource/${resourceId}`;
+};
 </script>
 
 <template>
@@ -114,12 +150,61 @@ const filteredDrafts = computed(() => {
                 :tabs="dashboardTabs"
                 :last-updated="lastUpdated"
                 :sort-options="sortOptions"
-                @refresh="loadDrafts"
+                @refresh="loadDashboardData"
             />
 
             <div class="tab-content-container">
                 <div v-if="activeTab === 'my_projects'">
-                    <p class="text-muted">No submitted projects found.</p>
+                    <Fluid v-if="filteredProjects.length > 0">
+                        <div class="dashboard-div-flex">
+                            <ProjectCard
+                                v-for="project in filteredProjects"
+                                :key="project.id"
+                                :cap-priority="
+                                    project.priority_level === 'High'
+                                "
+                                :cap-label="project.status || 'Submitted'"
+                                :cap-date="
+                                    project.created_date
+                                        ? new Date(
+                                              project.created_date,
+                                          ).toLocaleDateString()
+                                        : ''
+                                "
+                                icon="fa-solid fa-folder-open"
+                                :body-title="
+                                    project.project_name ||
+                                    'Untitled Application'
+                                "
+                                :body-subtitle1="
+                                    project.application_number || 'No App #'
+                                "
+                                :body-subtitle2="project.industrial_sector"
+                                :body1="
+                                    project.permit_number
+                                        ? `<strong>Permit:</strong> ${project.permit_number}`
+                                        : ''
+                                "
+                                :footer-date="
+                                    project.created_date
+                                        ? new Date(
+                                              project.created_date,
+                                          ).toLocaleDateString()
+                                        : ''
+                                "
+                                :footer-name="project.created_by_name"
+                                :urgency="project.urgency || 0"
+                                :search-query="searchQuery"
+                                @click="openResourceReport(project.id)"
+                            />
+                        </div>
+                    </Fluid>
+                    <p
+                        v-else
+                        class="text-muted"
+                    >
+                        No submitted projects found.
+                    </p>
                 </div>
 
                 <div v-if="activeTab === 'company_projects'">

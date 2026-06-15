@@ -46,17 +46,20 @@ class BaseDashboardService(BaseGraphService):
     def _application_core(self, aliased):
         """The permit-application card fields common to both dashboards, read off
         the loaded resource tree."""
-        identification = aliased.application_identification.aliased_data
-        admin = aliased.application_admin.aliased_data
+        
+        #  helper to safely navigate down to the display_value
+        def get_val(group, field):
+            tile = getattr(aliased, group, None)
+            data = getattr(tile, 'aliased_data', None)
+            return getattr(data, field, {}).get("display_value", "") if data else ""
+        
         return ApplicationCore(
-            project_name=identification.project_name["display_value"],
-            application_number=identification.application_id["display_value"],
-            # industrial_sector is nested two groups deep, so descend with the helper.
+            project_name=get_val("application_identification", "project_name"),
+            application_number=get_val("application_identification", "application_id"),
             industrial_sector=self._node_value(aliased, self.PA.INDUSTRIAL_SECTOR).get(
                 "display_value", ""
             ),
-            priority_level=admin.application_priority_level["display_value"],
-            # related_permit is cardinality-n; take the first.
+            priority_level=get_val("application_admin", "application_priority_level"),
             related_permit_id=self._resource_id(
                 self._node_value(aliased, self.PA.RELATED_PERMIT)
             ),

@@ -25,6 +25,29 @@ export const fetchDrafts = async () => {
     }
 };
 
+export const fetchMyProjects = async () => {
+    try {
+        const response = await fetch(
+            '/bcap/api/dashboard/external?status=CREATED_BY_ME',
+            {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                },
+            },
+        );
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        // Return the array directly, or extract it from a paginated .results object
+        return data.results || data || [];
+    } catch (error) {
+        console.error('Failed to load submitted projects:', error);
+        return [];
+    }
+};
+
 export const submitApplication = async (
     draftId: string,
     payload: ArchesDraftData,
