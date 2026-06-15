@@ -12,9 +12,8 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Copy github_settings to bcap settings
-      run: |
-        cp .github/github_settings.py bcap/settings.py
+    - name: Use test settings for management commands
+      run: echo "DJANGO_SETTINGS_MODULE=tests.test_settings" >> $GITHUB_ENV
       shell: bash
 
     - name: Install Java, GDAL, and other system dependencies

@@ -422,6 +422,10 @@ LOGGING = {
     },
 }
 
+# The file handler can't create its own parent directory (gitignored, so absent
+# on a fresh checkout); make it before logging is configured.
+os.makedirs(os.path.join(APP_ROOT, "logs"), exist_ok=True)
+
 # Rate limit for authentication views
 # See options (including None or python callables):
 # https://django-ratelimit.readthedocs.io/en/stable/rates.html#rates-chapter
