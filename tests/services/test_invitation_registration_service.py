@@ -85,6 +85,32 @@ class InvitationRegistrationServiceTest(TestCase):
         self.assertIsNotNone(link.used)
         self.assertEqual(link.used_by_id, self.user.pk)
 
+    def test_redeem_grants_the_links_selected_groups(self):
+        Group.objects.get_or_create(name="Permit Reviewer")
+        contributor = self.make_contributor()
+        link = self.service.issue_link(
+            self.user,
+            contributor_id=str(contributor.pk),
+            groups=["Permit Reviewer"],
+        )
+        self.service.redeem_link(link.id, self.user)
+        self.assertTrue(self.user.groups.filter(name="Permit Reviewer").exists())
+        # The settings default is not also applied when groups are chosen.
+        self.assertFalse(self.user.groups.filter(name="Guest").exists())
+
+    def test_redeem_drops_non_whitelisted_groups_and_falls_back(self):
+        Group.objects.get_or_create(name="Resource Editor")
+        contributor = self.make_contributor()
+        link = self.service.issue_link(
+            self.user,
+            contributor_id=str(contributor.pk),
+            groups=["Resource Editor"],  # not in SELF_MANAGE_ROLE_GROUPS
+        )
+        self.service.redeem_link(link.id, self.user)
+        self.assertFalse(self.user.groups.filter(name="Resource Editor").exists())
+        # Nothing whitelisted remained, so the default is granted.
+        self.assertTrue(self.user.groups.filter(name="Guest").exists())
+
     def test_redeem_new_contributor_creates_then_binds(self):
         link = self.service.issue_link(
             self.user, new_contributor=self.new_contributor()
@@ -155,7 +181,7 @@ class InvitationRegistrationServiceTest(TestCase):
             str(contributor.pk),
         )
 
-    def test_redeem_pending_only_redeems_for_idir(self):
+    def test_redeem_pending_redeems_for_bceid(self):
         contributor = self.make_contributor()
         link = self.service.issue_link(self.user, contributor_id=str(contributor.pk))
         request = SimpleNamespace(
@@ -166,13 +192,20 @@ class InvitationRegistrationServiceTest(TestCase):
             },
         )
         self.service.redeem_pending(request)
-        # Token left intact for a later IDIR sign-in; nothing redeemed.
-        self.assertIn(PENDING_REGISTRATION_SESSION_KEY, request.session)
-        self.assertIsNone(self.contributors.username_contributor_id(self.user.username))
+        self.assertNotIn(PENDING_REGISTRATION_SESSION_KEY, request.session)
+        self.assertEqual(
+            self.contributors.username_contributor_id(self.user.username),
+            str(contributor.pk),
+        )
 
     def test_redeem_pending_without_pending_token_is_a_noop(self):
         self.service.redeem_pending(self.idir_request())
         self.assertFalse(self.user.groups.filter(name="Guest").exists())
+
+    def redeemable_link(self):
+        return RegistrationLink.objects.create(
+            created_by=self.user, expires=timezone.now() + timedelta(days=1)
+        )
 
     def test_ensure_invited_user_creates_account_for_invited_idir(self):
         token = {
@@ -183,10 +216,28 @@ class InvitationRegistrationServiceTest(TestCase):
                 "family_name": "Person",
             }
         }
-        request = SimpleNamespace(session={PENDING_REGISTRATION_SESSION_KEY: "tok"})
+        session = {PENDING_REGISTRATION_SESSION_KEY: str(self.redeemable_link().id)}
+        request = SimpleNamespace(session=session)
         self.service.ensure_invited_user(request, token)
         created = User.objects.get(username="newperson@idir")
         self.assertEqual((created.first_name, created.last_name), ("New", "Person"))
+
+    def test_ensure_invited_user_ignores_a_bogus_token(self):
+        # A planted/invalid token must not provision an account; otherwise
+        # invite-only access could be bypassed by anyone with a BC gov login.
+        token = {
+            "userinfo": {
+                "loginSource": "IDIR",
+                "preferred_username": "idir\\gatecrasher",
+                "given_name": "Gate",
+                "family_name": "Crasher",
+            }
+        }
+        request = SimpleNamespace(
+            session={PENDING_REGISTRATION_SESSION_KEY: "not-a-real-token"}
+        )
+        self.service.ensure_invited_user(request, token)
+        self.assertFalse(User.objects.filter(username="gatecrasher@idir").exists())
 
     def test_ensure_invited_user_does_nothing_without_an_invite(self):
         token = {
@@ -198,13 +249,32 @@ class InvitationRegistrationServiceTest(TestCase):
         self.service.ensure_invited_user(SimpleNamespace(session={}), token)
         self.assertFalse(User.objects.filter(username="uninvited@idir").exists())
 
-    def test_ensure_invited_user_skips_non_idir(self):
+    def test_ensure_invited_user_creates_account_for_invited_bceid(self):
+        # BCEID logins carry no family_name; last name lands blank.
         token = {
             "userinfo": {
                 "loginSource": "BCEID",
-                "preferred_username": "someone@bceid",
+                "preferred_username": "bceid\\newbiz",
+                "given_name": "New",
             }
         }
-        request = SimpleNamespace(session={PENDING_REGISTRATION_SESSION_KEY: "tok"})
+        session = {PENDING_REGISTRATION_SESSION_KEY: str(self.redeemable_link().id)}
+        request = SimpleNamespace(session=session)
         self.service.ensure_invited_user(request, token)
-        self.assertFalse(User.objects.filter(username="someone@bceid").exists())
+        created = User.objects.get(username="newbiz@bceid")
+        self.assertEqual((created.first_name, created.last_name), ("New", ""))
+
+    def test_ensure_invited_user_does_not_gate_on_login_source(self):
+        # A redeemable invite is the authorization; the login source is not
+        # checked, so any signed-in invitee gets their account.
+        token = {
+            "userinfo": {
+                "preferred_username": "someone@example",
+                "given_name": "Some",
+                "family_name": "One",
+            }
+        }
+        session = {PENDING_REGISTRATION_SESSION_KEY: str(self.redeemable_link().id)}
+        request = SimpleNamespace(session=session)
+        self.service.ensure_invited_user(request, token)
+        self.assertTrue(User.objects.filter(username="someone@example").exists())

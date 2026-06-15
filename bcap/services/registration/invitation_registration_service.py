@@ -2,6 +2,7 @@
 these orchestrate live on the Contributor service."""
 
 import logging
+import uuid
 from dataclasses import asdict
 from datetime import timedelta
 
@@ -29,28 +30,39 @@ class InvitationRegistrationService:
     def __init__(self, contributor_service=None):
         self._contributors = contributor_service or ContributorService()
 
-    def issue_link(self, created_by, contributor_id=None, new_contributor=None):
+    def issue_link(
+        self, created_by, contributor_id=None, new_contributor=None, groups=None
+    ):
         """Create a single-use, expiring link for an existing Contributor or, if
         given new_contributor instead, one created only at redemption (so an
-        unredeemed invite leaves no orphan). Exactly one is given."""
+        unredeemed invite leaves no orphan). Exactly one is given. groups are the
+        Django group names to grant on redemption."""
         link = RegistrationLink.objects.create(
             contributor_id=contributor_id,
             new_contributor=asdict(new_contributor) if new_contributor else None,
+            groups=groups or [],
             created_by=created_by,
             expires=timezone.now()
             + timedelta(days=settings.REGISTRATION_LINK_TTL_DAYS),
         )
         return link
 
+    def _redeemable_link(self, token):
+        """The redeemable link for this token, or None when the token is
+        missing, malformed, expired, or already used."""
+        try:
+            pk = uuid.UUID(str(token))
+        except (ValueError, TypeError):
+            return None
+        return RegistrationLink.objects.filter(
+            pk=pk, used__isnull=True, expires__gt=timezone.now()
+        ).first()
+
     def redeem_link(self, token, user):
         """Bind the link's Contributor to this user and grant the configured
         groups. Returns the link, or None if the token is missing, expired/used,
         or the Contributor is already linked to another account."""
-        if not (
-            link := RegistrationLink.objects.filter(
-                pk=token, used__isnull=True, expires__gt=timezone.now()
-            ).first()
-        ):
+        if not (link := self._redeemable_link(token)):
             logger.warning(
                 "Registration token %s redeemed by user %s is missing, expired, "
                 "or used.",
@@ -77,10 +89,13 @@ class InvitationRegistrationService:
                         user.pk,
                     )
                     return None
-                groups = Group.objects.filter(
-                    name__in=settings.REGISTRATION_IDIR_GROUPS
-                )
-                user.groups.add(*groups)
+                # Enforce the whitelist again here, in case a link was issued
+                # with groups that have since dropped off it.
+                allowed = [
+                    g for g in link.groups if g in settings.SELF_MANAGE_ROLE_GROUPS
+                ]
+                group_names = allowed or settings.REGISTRATION_IDIR_GROUPS
+                user.groups.add(*Group.objects.filter(name__in=group_names))
                 link.used = timezone.now()
                 link.used_by = user
                 link.save()
@@ -91,15 +106,15 @@ class InvitationRegistrationService:
         return link
 
     def ensure_invited_user(self, request, token):
-        """Invite-only IDIR access: on the OAuth callback, create the Django
-        user for a first-time invitee so login can proceed. No account is made
-        without a pending invite, so an uninvited IDIR sign-in still falls
-        through to unauthorized. The callback then calls redeem_pending."""
-        if request.session.get(PENDING_REGISTRATION_SESSION_KEY) is None:
+        """Invite-only access: on the OAuth callback, create the Django user for
+        a first-time invitee so login can proceed. The redeemable invite link is
+        the authorization -- no account is made without one, so an uninvited
+        sign-in still falls through to unauthorized. The callback then calls
+        redeem_pending."""
+        pending = request.session.get(PENDING_REGISTRATION_SESSION_KEY)
+        if not self._redeemable_link(pending):
             return
         userinfo = (token or {}).get("userinfo", {})
-        if userinfo.get("loginSource") != "IDIR":
-            return
         username = _clean_username(userinfo.get("preferred_username"))
         if not username or User.objects.filter(username=username).exists():
             return
@@ -113,13 +128,8 @@ class InvitationRegistrationService:
 
     def redeem_pending(self, request):
         """Redeem an invite stashed before login, for the now-authenticated
-        user. Invites are for BC government staff, so only an IDIR login
-        redeems; the token is left for a later IDIR sign-in otherwise. A no-op
-        when login didn't complete or nothing is pending."""
+        user. A no-op when login didn't complete or nothing is pending."""
         if not request.user.is_authenticated:
-            return
-        oauth_token = request.session.get("oauth_token") or {}
-        if oauth_token.get("userinfo", {}).get("loginSource") != "IDIR":
             return
         if token := request.session.pop(PENDING_REGISTRATION_SESSION_KEY, None):
             self.redeem_link(token, request.user)

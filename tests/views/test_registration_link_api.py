@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -92,6 +93,63 @@ class RegistrationLinkApiTest(AuthTestHelper, TestCase):
         self.assertEqual([o["id"] for o in resp.json()], [str(grace.pk)])
         narrowed = self.client.get(reverse("unlinked_contributors"), {"search": "zzz"})
         self.assertEqual(narrowed.json(), [])
+
+    def test_issue_link_stores_whitelisted_groups(self):
+        contributor = self.make_contributor()
+        self.idir_login_simulate(self.admin)
+        resp = self.client.post(
+            reverse("registration_link"),
+            {
+                "contributor_id": str(contributor.pk),
+                "groups": ["Permit Reviewer"],
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(RegistrationLink.objects.get().groups, ["Permit Reviewer"])
+
+    def test_issue_link_rejects_a_non_whitelisted_group(self):
+        contributor = self.make_contributor()
+        self.idir_login_simulate(self.admin)
+        resp = self.client.post(
+            reverse("registration_link"),
+            {
+                "contributor_id": str(contributor.pk),
+                "groups": ["Resource Editor"],
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 400)
+        self.assertFalse(RegistrationLink.objects.exists())
+
+    def test_issue_link_new_contributor_includes_phone(self):
+        self.idir_login_simulate(self.admin)
+        resp = self.client.post(
+            reverse("registration_link"),
+            {
+                "new_contributor": {
+                    "name": "Hopper",
+                    "first_name": "Grace",
+                    "email": "grace@example.com",
+                    "phone": "250-555-0100",
+                }
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(
+            RegistrationLink.objects.get().new_contributor["phone"], "250-555-0100"
+        )
+
+    def test_assignable_groups_lists_the_whitelist_for_admins(self):
+        self.idir_login_simulate(self.admin)
+        resp = self.client.get(reverse("assignable_groups"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json(), settings.SELF_MANAGE_ROLE_GROUPS)
+
+    def test_assignable_groups_requires_admin(self):
+        self.idir_login_simulate(self.user)
+        self.assertEqual(self.client.get(reverse("assignable_groups")).status_code, 403)
 
     def test_claim_get_stashes_token_and_redirects_to_login(self):
         resp = self.client.get(reverse("registration_claim"), {"token": "abc-123"})

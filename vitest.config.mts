@@ -21,6 +21,8 @@ function generateConfig(): Promise<UserConfig> {
             '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
             '**/build/**',
             '**/staticfiles/**',
+            // Generated Zod schemas (see openapi-ts.config.ts).
+            '**/client/zod.gen.ts',
         ];
 
         const rawData = fs.readFileSync(

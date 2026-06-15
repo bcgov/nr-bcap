@@ -20,6 +20,9 @@ class RegistrationLink(models.Model):
     # is never redeemed leaves no orphan resource. Mutually exclusive with
     # contributor_id.
     new_contributor = models.JSONField(null=True, blank=True)
+    # Django group names to grant the user on redemption. Empty falls back to
+    # the configured default groups.
+    groups = models.JSONField(default=list, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

@@ -26,6 +26,7 @@ class NewContributor:
 
     name: str
     email: str = ""
+    phone: str = ""
     first_name: str = ""  # given name, for a person
     # controlled-list item id; blank defaults to the Individual type at creation.
     contributor_type: str = ""
@@ -187,9 +188,16 @@ class ContributorService(BaseGraphService):
                 ),
                 self.A.CONTRIBUTOR_TYPE: [str(contributor_type)],
                 self.A.CONTACT_EMAIL: builder.localized(new_contributor.email),
+                self.A.CONTACT_PHONE_NUMBER: (
+                    builder.localized(new_contributor.phone)
+                    if new_contributor.phone
+                    else None
+                ),
             },
         )
-        resource.save(**builder.save_kwargs)
+        # Index into Elasticsearch (save_kwargs default to index=False for bulk
+        # seeding) so the new Contributor shows up in search and the dashboards.
+        resource.save(**{**builder.save_kwargs, "index": True})
         return str(resource.pk)
 
     def delete_contributor(self, contributor_id):

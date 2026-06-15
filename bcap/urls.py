@@ -28,6 +28,7 @@ from bcap.views.permit_application_api import (
 )
 from bcap.views.user_api import UserProfile
 from bcap.views.registration_link_api import (
+    AssignableGroupsView,
     RegistrationLinkView,
     UnlinkedContributorsView,
     RegistrationClaimView,
@@ -114,6 +115,11 @@ documented_api_patterns = [
         f"{PREFIX}api/contributors/unlinked",
         UnlinkedContributorsView.as_view(),
         name="unlinked_contributors",
+    ),
+    path(
+        f"{PREFIX}api/assignable_groups",
+        AssignableGroupsView.as_view(),
+        name="assignable_groups",
     ),
 ]
 

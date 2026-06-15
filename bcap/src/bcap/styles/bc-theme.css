@@ -1,0 +1,231 @@
+/* Shared BC-government look for the dashboard and admin pages.
+
+   - Design tokens (:root) and the page header (.title-row / .page-title) are
+     global: import this file and they apply.
+   - Form-widget theming is gated under .bc-form, so a page can import this for
+     the header/tokens alone without restyling its PrimeVue widgets. Add
+     class="bc-form" to a form's root to opt in, and overlay-class="bc-overlay"
+     on teleported Select/MultiSelect panels. */
+
+:root {
+    --bc-navy: #003366;
+    --bc-navy-dark: #00264d;
+    --bc-border: #9ca3af;
+    --bc-muted: #6b7280;
+    --bc-panel: #f3f4f6;
+    --bc-selected: #e6eef5;
+    --bc-text: #222222;
+}
+
+.title-row {
+    border-bottom: 3px solid #333;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.page-title {
+    color: var(--bc-navy);
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* PrimeVue renders in the preset's own font; force the shared one on the form,
+   but keep icon elements on their icon font or the glyphs blank out. */
+.bc-form * {
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+.bc-form .pi {
+    font-family: 'primeicons';
+}
+.bc-form .fa,
+.bc-form .fas,
+.bc-form .far {
+    font-family: 'Font Awesome 6 Free';
+}
+
+.bc-form .p-inputtext,
+.bc-form .p-select,
+.bc-form .p-multiselect,
+.bc-form .p-select.p-focus,
+.bc-form .p-multiselect.p-focus,
+.bc-form .p-select.p-overlay-open,
+.bc-form .p-multiselect.p-overlay-open {
+    width: 100%;
+    border: 1px solid var(--bc-border);
+    border-radius: 6px;
+    background: #ffffff;
+}
+.bc-form .p-inputtext,
+.bc-form .p-select-label,
+.bc-form .p-multiselect-label {
+    font-size: 1.15rem;
+    color: var(--bc-text);
+}
+.bc-form .p-inputtext::placeholder,
+.bc-form .p-select-label.p-placeholder,
+.bc-form .p-multiselect-label.p-placeholder {
+    color: var(--bc-muted);
+}
+.bc-form .p-inputtext:focus,
+.bc-form .p-select.p-focus,
+.bc-form .p-multiselect.p-focus {
+    outline: none;
+    border-color: var(--bc-border);
+    box-shadow: none;
+}
+
+.bc-form .p-selectbutton {
+    display: inline-flex;
+    align-self: flex-start;
+    border: 1px solid var(--bc-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.bc-form .p-togglebutton {
+    background: #ffffff;
+    color: #374151;
+    border: none;
+    border-radius: 0;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+}
+.bc-form .p-togglebutton + .p-togglebutton {
+    border-left: none;
+}
+.bc-form .p-togglebutton-label {
+    background: transparent;
+    color: inherit;
+}
+.bc-form .p-togglebutton.p-togglebutton-checked,
+.bc-form .p-togglebutton.p-togglebutton-checked .p-togglebutton-label {
+    background: var(--bc-navy);
+    color: #ffffff;
+}
+/* Drop the preset's sliding highlight and the inner content box. */
+.bc-form .p-togglebutton::before {
+    display: none;
+}
+.bc-form .p-togglebutton:focus,
+.bc-form .p-togglebutton:focus-visible,
+.bc-form .p-togglebutton-content {
+    outline: none;
+    box-shadow: none;
+}
+.bc-form .p-togglebutton-content {
+    background: transparent;
+    border-radius: 0;
+}
+
+.bc-form .p-multiselect-chip-item {
+    background: var(--bc-navy);
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 1.15rem;
+}
+.bc-form .p-multiselect-chip-icon {
+    color: #ffffff;
+}
+.bc-form .p-multiselect.p-disabled {
+    opacity: 1;
+    background: var(--bc-panel);
+}
+
+/* The preset's checkbox square is black; make it white/navy here and in the
+   teleported overlay. */
+.bc-form .p-checkbox-box,
+.bc-overlay .p-checkbox-box {
+    background: #ffffff;
+    border: 1px solid var(--bc-border);
+}
+.bc-form .p-checkbox-checked .p-checkbox-box,
+.bc-overlay .p-checkbox-checked .p-checkbox-box {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+}
+.bc-form .p-checkbox-icon,
+.bc-overlay .p-checkbox-icon {
+    color: #ffffff;
+}
+
+.bc-form .p-button.cta {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+    color: #ffffff;
+    white-space: nowrap;
+}
+.bc-form .p-button.cta:not(:disabled):hover {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+}
+.bc-form .p-button.cta:disabled {
+    background: var(--bc-muted);
+    border-color: var(--bc-muted);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.bc-form .p-button.copy-btn {
+    background: var(--bc-panel);
+    border: 1px solid var(--bc-border);
+    color: var(--bc-navy);
+}
+.bc-form .p-button.copy-btn:not(:disabled):hover {
+    background: #e5e7eb;
+    border-color: var(--bc-muted);
+}
+
+/* Select/MultiSelect panels are teleported to <body>, so they are themed via
+   their overlay class rather than the .bc-form wrapper. */
+.bc-overlay {
+    background: #ffffff;
+    color: var(--bc-text);
+    border: 1px solid #d1d5db;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+.bc-overlay,
+.bc-overlay * {
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+    font-size: 1.15rem;
+}
+.bc-overlay .pi {
+    font-family: 'primeicons';
+}
+.bc-overlay .p-select-option,
+.bc-overlay .p-multiselect-option {
+    color: var(--bc-text);
+}
+.bc-overlay .p-select-option.p-focus,
+.bc-overlay .p-multiselect-option.p-focus {
+    background: var(--bc-panel);
+}
+.bc-overlay .p-select-option.p-select-option-selected,
+.bc-overlay .p-multiselect-option.p-multiselect-option-selected {
+    background: var(--bc-selected);
+    color: var(--bc-navy);
+}
+.bc-overlay .p-select-filter,
+.bc-overlay .p-multiselect-filter {
+    background: #ffffff;
+    color: var(--bc-text);
+    border: 1px solid var(--bc-border);
+}
+.bc-overlay .p-multiselect-header,
+.bc-overlay .p-select-list-container,
+.bc-overlay .p-select-list,
+.bc-overlay .p-multiselect-list-container,
+.bc-overlay .p-multiselect-list,
+.bc-overlay .p-virtualscroller {
+    background: #ffffff;
+}
+.bc-overlay *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.bc-overlay *::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.bc-overlay *::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 5px;
+}

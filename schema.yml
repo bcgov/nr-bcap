@@ -4,6 +4,23 @@ info:
   version: 2.0.0
   description: BC Archaeology Portal API
 paths:
+  /bcap/api/assignable_groups:
+    get:
+      operationId: api_assignable_groups_retrieve
+      description: Role group names an invited user can be granted.
+      tags:
+      - 'Admin: registration'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+          description: ''
   /bcap/api/contributors/unlinked:
     get:
       operationId: api_contributors_unlinked_list
@@ -1127,6 +1144,9 @@ components:
           type: string
           format: email
           description: Contact email (required).
+        phone:
+          type: string
+          description: Contact phone number.
       required:
       - email
       - name
@@ -3930,6 +3950,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/NewContributor'
           description: Create a new Contributor and invite to it instead.
+        groups:
+          type: array
+          items:
+            type: string
+          description: Django group names to grant the invited user.
     RegistrationLinkResponse:
       type: object
       properties:

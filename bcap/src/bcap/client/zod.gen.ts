@@ -159,6 +159,7 @@ export const zNewContributor = z.object({
     name: z.string(),
     first_name: z.string().optional(),
     email: z.email(),
+    phone: z.string().optional(),
 });
 
 export const zNonLocalizedStringAliasedNodeData = z.object({
@@ -359,6 +360,7 @@ export const zReferenceAliasedNodeData = z.object({
 export const zRegistrationLinkRequest = z.object({
     contributor_id: z.uuid().optional(),
     new_contributor: zNewContributor.optional(),
+    groups: z.array(z.string()).optional(),
 });
 
 export const zRegistrationLinkResponse = z.object({
@@ -2778,6 +2780,8 @@ export const zUserProfileResponseWritable = z.object({
     first_name: z.string(),
     last_name: z.string(),
 });
+
+export const zApiAssignableGroupsRetrieveResponse = z.array(z.string());
 
 export const zApiContributorsUnlinkedListResponse = z.array(zContributorOption);
 

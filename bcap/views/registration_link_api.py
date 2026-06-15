@@ -51,6 +51,7 @@ class RegistrationLinkView(APIView):
             request.user,
             contributor_id=serializer.validated_data.get("contributor_id"),
             new_contributor=new_contributor,
+            groups=serializer.validated_data.get("groups"),
         )
         origin = urlsplit(settings.PUBLIC_SERVER_ADDRESS)
         path = f"{reverse('registration_claim')}?token={link.id}"
@@ -72,6 +73,19 @@ class UnlinkedContributorsView(APIView):
             request.GET.get("search", "")
         )
         return Response(ContributorOptionSerializer(options, many=True).data)
+
+
+@extend_schema(tags=["Admin: registration"])
+class AssignableGroupsView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        description="Role group names an invited user can be granted.",
+        responses={200: {"type": "array", "items": {"type": "string"}}},
+    )
+    def get(self, request):
+        return Response(settings.SELF_MANAGE_ROLE_GROUPS)
 
 
 @extend_schema(tags=["Admin: registration"])

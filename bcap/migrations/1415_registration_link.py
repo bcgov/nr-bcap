@@ -3,11 +3,31 @@ import uuid
 from django.conf import settings
 from django.db import migrations, models
 
+ROLE_GROUPS = [
+    "Permit Reviewer",
+    "Permit Decider",
+    "Inventory Reviewer",
+    "Inventory Manager",
+    "Submitter",
+]
+
+
+def create_role_groups(apps, schema_editor):
+    Group = apps.get_model("auth", "Group")
+    for name in ROLE_GROUPS:
+        Group.objects.get_or_create(name=name)
+
+
+def delete_role_groups(apps, schema_editor):
+    Group = apps.get_model("auth", "Group")
+    Group.objects.filter(name__in=ROLE_GROUPS).delete()
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ("bcap", "1414_add_edit_log_tileinstanceid_index"),
+        ("auth", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -26,6 +46,7 @@ class Migration(migrations.Migration):
                 ),
                 ("contributor_id", models.UUIDField(blank=True, null=True)),
                 ("new_contributor", models.JSONField(blank=True, null=True)),
+                ("groups", models.JSONField(blank=True, default=list)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("expires", models.DateTimeField()),
                 ("used", models.DateTimeField(blank=True, null=True)),
@@ -61,4 +82,5 @@ class Migration(migrations.Migration):
                 ],
             },
         ),
+        migrations.RunPython(create_role_groups, delete_role_groups),
     ]

@@ -8,6 +8,7 @@ from bcap.services.dashboard.contributor_service import (
     ContributorService,
     NewContributor,
 )
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
@@ -265,6 +266,23 @@ class ContributorServiceTest(TestCase):
                 }
             ],
         )
+
+    def test_create_contributor_stores_phone(self):
+        new_id = self.service.create_contributor(
+            NewContributor(
+                name="Hopper",
+                first_name="Grace",
+                email="grace@example.com",
+                phone="250-555-0100",
+            )
+        )
+        resources = self.service._resources(
+            GraphSlugs.CONTRIBUTOR,
+            [new_id],
+            [self.service.A.CONTACT_PHONE_NUMBER],
+        )
+        data = resources[0].aliased_data.contributor.aliased_data
+        self.assertEqual(data.contact_phone_number["display_value"], "250-555-0100")
 
     def test_invitable_contributors_filters_and_shapes(self):
         grace = self.make("Hopper", first_name="Grace")

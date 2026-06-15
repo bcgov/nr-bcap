@@ -87,12 +87,23 @@ const csrfToken = (): string =>
         .find((row) => row.startsWith('csrftoken='))
         ?.split('=')[1] || '';
 
-// Surface a DRF { "detail": ... } error message when present, else the raw body.
+// DRF errors come in varied shapes -- { detail }, { field: [msgs] }, nested
+// { new_contributor: { email: [msg] } }, or a bare list. Collect the leaf
+// strings so the user sees readable text instead of raw JSON.
+const flattenMessages = (value: unknown): string[] => {
+    if (typeof value === 'string') return [value];
+    if (Array.isArray(value)) return value.flatMap(flattenMessages);
+    if (value && typeof value === 'object') {
+        return Object.values(value).flatMap(flattenMessages);
+    }
+    return [];
+};
+
 const errorMessage = async (response: Response): Promise<string> => {
     const text = await response.text();
     try {
-        const parsed = JSON.parse(text);
-        return parsed.detail || text || response.statusText;
+        const messages = flattenMessages(JSON.parse(text));
+        return messages.join(' ') || text || response.statusText;
     } catch {
         return text || response.statusText;
     }
@@ -106,8 +117,15 @@ export const getUnlinkedContributors = async (
         `${arches.urls.unlinked_contributors}${query}`,
     );
     if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || response.statusText);
+        throw new Error(await errorMessage(response));
+    }
+    return await response.json();
+};
+
+export const getAssignableGroups = async (): Promise<string[]> => {
+    const response = await fetch(arches.urls.assignable_groups);
+    if (!response.ok) {
+        throw new Error(await errorMessage(response));
     }
     return await response.json();
 };

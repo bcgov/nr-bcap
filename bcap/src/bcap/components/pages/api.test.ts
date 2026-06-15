@@ -17,6 +17,9 @@ vi.mock('arches', () => ({
             api_requirement_submission: (resource_id: string) =>
                 `/bcap/api/requirement_submissions/${resource_id}/`,
             dashboard: '/bcap/api/dashboard',
+            unlinked_contributors: '/bcap/api/unlinked_contributors',
+            assignable_groups: '/bcap/api/assignable_groups',
+            registration_link: '/bcap/api/registration_link',
         },
     },
 }));
@@ -27,6 +30,9 @@ import {
     getProcessRequirementData,
     getRequirementSubmissionData,
     getInternalDashboardData,
+    getUnlinkedContributors,
+    getAssignableGroups,
+    issueRegistrationLink,
 } from './api';
 
 function mockFetchOk(body: unknown) {
@@ -236,5 +242,80 @@ describe('getInternalDashboardData', () => {
         const result = await getInternalDashboardData();
 
         expect(result).toEqual([]);
+    });
+});
+
+describe('getUnlinkedContributors', () => {
+    it('appends the search query when provided', async () => {
+        vi.stubGlobal('fetch', mockFetchOk([]));
+
+        await getUnlinkedContributors('jane doe');
+
+        expect(fetch).toHaveBeenCalledWith(
+            '/bcap/api/unlinked_contributors?search=jane%20doe',
+        );
+    });
+
+    it('omits the query when no search term', async () => {
+        vi.stubGlobal('fetch', mockFetchOk([]));
+
+        await getUnlinkedContributors();
+
+        expect(fetch).toHaveBeenCalledWith('/bcap/api/unlinked_contributors');
+    });
+});
+
+describe('issueRegistrationLink error flattening', () => {
+    it('surfaces a DRF { detail } message', async () => {
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(
+                400,
+                'Bad Request',
+                JSON.stringify({ detail: 'Already linked.' }),
+            ),
+        );
+
+        await expect(issueRegistrationLink({ groups: [] })).rejects.toThrow(
+            'Already linked.',
+        );
+    });
+
+    it('flattens nested field errors instead of dumping JSON', async () => {
+        vi.stubGlobal(
+            'fetch',
+            mockFetchError(
+                400,
+                'Bad Request',
+                JSON.stringify({
+                    new_contributor: {
+                        email: ['Enter a valid email address.'],
+                    },
+                }),
+            ),
+        );
+
+        await expect(issueRegistrationLink({ groups: [] })).rejects.toThrow(
+            'Enter a valid email address.',
+        );
+    });
+
+    it('falls back to raw text when the body is not JSON', async () => {
+        vi.stubGlobal('fetch', mockFetchError(500, 'Server Error', 'boom'));
+
+        await expect(issueRegistrationLink({ groups: [] })).rejects.toThrow(
+            'boom',
+        );
+    });
+});
+
+describe('getAssignableGroups', () => {
+    it('returns the group list on success', async () => {
+        vi.stubGlobal('fetch', mockFetchOk(['Submitter', 'Permit Decider']));
+
+        const result = await getAssignableGroups();
+
+        expect(fetch).toHaveBeenCalledWith('/bcap/api/assignable_groups');
+        expect(result).toEqual(['Submitter', 'Permit Decider']);
     });
 });

@@ -224,8 +224,8 @@ const saveRequirements = async () => {
             </h2>
             <button
                 class="btn-primary"
-                @click="saveRequirements"
                 :disabled="isSaving || isLoading"
+                @click="saveRequirements"
             >
                 {{ isSaving ? 'Saving...' : 'Save Checklist' }}
             </button>
@@ -249,17 +249,17 @@ const saveRequirements = async () => {
         <div v-else>
             <div class="main-settings">
                 <input
-                    type="text"
                     v-model="requirementTitle"
+                    type="text"
                     class="req-title-input"
                     placeholder="Requirement List Title"
                 />
 
                 <div class="checkbox-group">
                     <input
-                        type="checkbox"
                         id="require-submission"
                         v-model="requiresSubmission"
+                        type="checkbox"
                         class="req-checkbox"
                     />
                     <label for="require-submission">Require a submission</label>
@@ -273,12 +273,12 @@ const saveRequirements = async () => {
                     :key="req.id"
                     class="requirement-item"
                     draggable="true"
+                    :class="{ 'is-dragging': draggedIndex === index }"
                     @dragstart="onDragStart(index, $event)"
                     @dragover.prevent
                     @dragenter.prevent
                     @drop="onDrop(index)"
                     @dragend="onDragEnd"
-                    :class="{ 'is-dragging': draggedIndex === index }"
                 >
                     <div class="req-header">
                         <div
@@ -294,9 +294,9 @@ const saveRequirements = async () => {
                                     Step {{ req.sortOrder }} Title
                                 </label>
                                 <input
-                                    type="text"
                                     :id="'name-' + req.id"
                                     v-model="req.name"
+                                    type="text"
                                     class="req-title-input"
                                     placeholder="E.g. 'Submit Application'"
                                 />
@@ -317,10 +317,10 @@ const saveRequirements = async () => {
                         </div>
 
                         <button
-                            class="btn-delete"
-                            @click="removeRequirement(index)"
-                            title="Remove Step"
                             v-if="requirements.length > 1"
+                            class="btn-delete"
+                            title="Remove Step"
+                            @click="removeRequirement(index)"
                         >
                             &times;
                         </button>

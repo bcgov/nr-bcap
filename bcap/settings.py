@@ -524,6 +524,17 @@ AUTHLIB_OAUTH_CLIENTS = {
 REGISTRATION_LINK_TTL_DAYS = 7
 REGISTRATION_IDIR_GROUPS = ["Guest"]
 
+# Role groups an admin can grant an invited user. External applicants always
+# get just the Submitter group.
+SELF_MANAGE_ROLE_GROUPS = [
+    "Permit Reviewer",
+    "Permit Decider",
+    "Inventory Reviewer",
+    "Inventory Manager",
+    "Submitter",
+]
+EXTERNAL_APPLICANT_GROUP = "Submitter"
+
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
 
