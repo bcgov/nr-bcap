@@ -23,6 +23,8 @@ function generateConfig(): Promise<UserConfig> {
             '**/staticfiles/**',
             // Generated Zod schemas (see openapi-ts.config.ts).
             '**/client/zod.gen.ts',
+            // Theme token data, no logic.
+            '**/primevue-bcgov-preset.ts',
         ];
 
         const rawData = fs.readFileSync(
