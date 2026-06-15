@@ -61,13 +61,26 @@ class InvitationRegistrationService:
     def redeem_link(self, token, user):
         """Bind the link's Contributor to this user and grant the configured
         groups. Returns the link, or None if the token is missing, expired/used,
-        or the Contributor is already linked to another account."""
+        the user already holds a Contributor, or the Contributor is already
+        linked to another account."""
         if not (link := self._redeemable_link(token)):
             logger.warning(
                 "Registration token %s redeemed by user %s is missing, expired, "
                 "or used.",
                 token,
                 user.pk,
+            )
+            return None
+        # One user maps to at most one Contributor; check before creating any,
+        # so a rejected redeem leaves no orphan.
+        existing = self._contributors.username_contributor_id(user.username)
+        if existing is not None:
+            logger.warning(
+                "Registration link %s: user %s already holds Contributor %s; "
+                "a user may hold only one Contributor.",
+                link.id,
+                user.pk,
+                existing,
             )
             return None
         created = link.contributor_id is None

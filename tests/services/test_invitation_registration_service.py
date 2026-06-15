@@ -161,6 +161,27 @@ class InvitationRegistrationServiceTest(TestCase):
         link.refresh_from_db()
         self.assertIsNone(link.used)
 
+    def test_redeem_blocked_when_user_already_holds_a_contributor(self):
+        # One user maps to at most one Contributor.
+        self.make_contributor(name="Existing", bcap_username=self.user.username)
+        other = self.make_contributor(name="Other")
+        link = self.service.issue_link(self.user, contributor_id=str(other.pk))
+        self.assertIsNone(self.service.redeem_link(link.id, self.user))
+        # The second Contributor stays unlinked and the link unused.
+        self.assertTrue(self.contributors.is_invitable(str(other.pk)))
+        link.refresh_from_db()
+        self.assertIsNone(link.used)
+
+    def test_redeem_new_contributor_blocked_leaves_no_orphan(self):
+        # The guard runs before the Contributor is created, so a rejected
+        # new-contributor redemption creates nothing.
+        self.make_contributor(name="Existing", bcap_username=self.user.username)
+        link = self.service.issue_link(
+            self.user, new_contributor=self.new_contributor()
+        )
+        self.assertIsNone(self.service.redeem_link(link.id, self.user))
+        self.assertEqual(self.contributors.invitable_contributors("Hopper"), [])
+
     def idir_request(self, **session):
         return SimpleNamespace(
             user=self.user,
