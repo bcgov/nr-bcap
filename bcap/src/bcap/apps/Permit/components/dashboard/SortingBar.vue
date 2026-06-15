@@ -8,6 +8,14 @@ const props = defineProps({
         type: String,
         default: 'my_projects',
     },
+    tabs: {
+        type: Array as PropType<Array<{ label: string; value: string }>>,
+        default: () => [
+            { label: 'My projects', value: 'my_projects' },
+            { label: 'Unassigned', value: 'unassigned' },
+            { label: 'All', value: 'all' },
+        ],
+    },
     lastUpdated: {
         type: Date,
         default: () => new Date(),
@@ -121,25 +129,13 @@ const activeSortLabel = computed(() => {
 
         <div class="segmented-control">
             <button
+                v-for="tab in props.tabs"
+                :key="tab.value"
                 class="segment-btn"
-                :class="{ active: props.activeTab === 'my_projects' }"
-                @click="selectTab('my_projects')"
+                :class="{ active: props.activeTab === tab.value }"
+                @click="selectTab(tab.value)"
             >
-                My projects
-            </button>
-            <button
-                class="segment-btn"
-                :class="{ active: props.activeTab === 'unassigned' }"
-                @click="selectTab('unassigned')"
-            >
-                Unassigned
-            </button>
-            <button
-                class="segment-btn"
-                :class="{ active: props.activeTab === 'all' }"
-                @click="selectTab('all')"
-            >
-                All
+                {{ tab.label }}
             </button>
         </div>
 

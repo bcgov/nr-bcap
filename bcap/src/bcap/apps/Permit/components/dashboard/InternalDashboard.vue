@@ -93,6 +93,12 @@ const sortOptions = [
     { label: 'Sector', value: 'bodySubtitle2' },
 ];
 
+const internalTabs = [
+    { label: 'My Projects', value: 'my_projects' },
+    { label: 'Unassigned', value: 'unassigned' },
+    { label: 'All', value: 'all' },
+];
+
 const rawProjects = ref<ProjectData[]>([]);
 const isLoading = ref(true);
 const currentFilter = ref('my_projects');
@@ -241,15 +247,13 @@ const navigateToReport = (item: ProjectData) => {
     <Panel class="full-height">
         <Fluid>
             <SortingBar
-                :active-tab="currentFilter"
+                v-model:activeTab="currentFilter"
+                v-model:currentSort="currentSort"
+                v-model:sortOrder="sortOrder"
+                :tabs="internalTabs"
                 :last-updated="lastUpdateDate"
                 :sort-options="sortOptions"
-                :current-sort="currentSort"
-                :sort-order="sortOrder"
-                @update:sort-order="sortOrder = $event"
-                @update:active-tab="currentFilter = $event"
                 @update:search="handleSearch"
-                @update:current-sort="currentSort = $event"
                 @refresh="loadData"
             />
 
