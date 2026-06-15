@@ -28,7 +28,9 @@ import InviteContributor from './InviteContributor.vue';
 const vModelStub = (name: string, tag = 'div') =>
     defineComponent({
         name,
-        props: { modelValue: { type: [String, Array, Boolean], default: null } },
+        props: {
+            modelValue: { type: [String, Array, Boolean], default: null },
+        },
         emits: ['update:modelValue'],
         template: `<${tag}></${tag}>`,
     });
