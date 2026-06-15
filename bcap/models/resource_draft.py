@@ -32,18 +32,6 @@ class ResourceDraft(models.Model):
         verbose_name = "Resource Draft"
         verbose_name_plural = "Resource Drafts"
         indexes = [models.Index(fields=["user", "graph_slug"])]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "graph_slug", "resourceinstanceid"],
-                name="unique_draft_per_user_graph_resource",
-                condition=models.Q(resourceinstanceid__isnull=False),
-            ),
-            models.UniqueConstraint(
-                fields=["user", "graph_slug"],
-                name="unique_new_draft_per_user_graph",
-                condition=models.Q(resourceinstanceid__isnull=True),
-            ),
-        ]
 
     def __str__(self):
         return f"{self.graph_slug} draft for {self.user} ({self.id})"
