@@ -107,14 +107,19 @@
 .bc-form .p-togglebutton::before {
     display: none;
 }
-.bc-form .p-togglebutton:focus,
-.bc-form .p-togglebutton:focus-visible,
-.bc-form .p-togglebutton-content {
-    outline: none;
-    box-shadow: none;
+.bc-form .p-togglebutton,
+.bc-form .p-togglebutton * {
+    outline: none !important;
+    box-shadow: none !important;
+    --p-focus-ring-width: 0 !important;
+    --p-focus-ring-color: transparent !important;
+    --p-focus-ring-offset: 0 !important;
+    --p-focus-ring-shadow: none !important;
 }
-.bc-form .p-togglebutton-content {
-    background: transparent;
+.bc-form .p-togglebutton-content,
+.bc-form .p-togglebutton-checked .p-togglebutton-content,
+.bc-form .p-togglebutton-label {
+    background: transparent !important;
     border-radius: 0;
 }
 
