@@ -1,9 +1,9 @@
 """Admin registration-link API plus the invitee's claim entry point.
 
-Issuing a link and the two lookup lists the invite UI needs are admin-only JSON
-endpoints. Claiming is an anonymous GET that stashes the token in the session and
-bounces the visitor through IDIR login; redemption then happens server-side on
-the user_logged_in signal, so it needs no return URL or follow-up request."""
+Issuing links and the two lookup lists are admin-only JSON endpoints.
+Claiming is an anonymous GET that stashes the token in the session and
+bounces the visitor into login; redemption happens server-side on the
+user_logged_in signal."""
 
 from urllib.parse import urlsplit
 

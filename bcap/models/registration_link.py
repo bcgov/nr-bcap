@@ -11,17 +11,13 @@ class RegistrationLink(models.Model):
     user's username onto the Contributor's bcap_username."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # Existing Contributor ResourceInstance to attach the user to. A bare UUID
-    # (not an FK) to keep this Django model decoupled from the Arches resource
-    # tables, as ResourceDraft.resourceinstanceid does. Null when the invite is
-    # for a not-yet-created Contributor; filled in at redemption.
+    # Existing Contributor to link. Bare UUID, not an FK, to stay decoupled
+    # from the Arches resource tables. Null for a not-yet-created Contributor.
     contributor_id = models.UUIDField(null=True, blank=True)
-    # Details for a Contributor created lazily at redemption, so an invite that
-    # is never redeemed leaves no orphan resource. Mutually exclusive with
-    # contributor_id.
+    # Details for a Contributor created lazily at redemption. Mutually
+    # exclusive with contributor_id.
     new_contributor = models.JSONField(null=True, blank=True)
-    # Django group names to grant the user on redemption. Empty falls back to
-    # the configured default groups.
+    # Django groups to grant on redemption; empty falls back to the default.
     groups = models.JSONField(default=list, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

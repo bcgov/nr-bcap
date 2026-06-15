@@ -39,7 +39,7 @@ class InvitationRegistrationServiceTest(TestCase):
         self.user = get_user_model().objects.create_user(
             username="idir\\jdoe", email="jdoe@example.com"
         )
-        # The configured group granted on redemption (REGISTRATION_IDIR_GROUPS).
+        # Default group granted on redemption when no groups are specified.
         Group.objects.get_or_create(name="Guest")
 
     def make_contributor(self, name="Hopper", first_name="Grace", **kwargs):

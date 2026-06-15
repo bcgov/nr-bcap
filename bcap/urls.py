@@ -126,7 +126,7 @@ documented_api_patterns = [
 
 urlpatterns = [
     # Override the library's OAuth callback (before its include below) so an
-    # invited IDIR user's account is created on first sign-in.
+    # invited user's account is created on first sign-in.
     path(f"{PREFIX}auth/eoauth_cb", auth_callback, name="auth_callback"),
     path(
         f"{PREFIX}files/<uuid:fileid>",
@@ -214,9 +214,9 @@ urlpatterns = [
         name="translatable_resource_types",
     ),
     path(f"{PREFIX}search/export_results", export_results, name="export_results"),
-    # Signup-link target: bounces the visitor through IDIR login, where the
-    # token (stashed in the session) is redeemed. Anonymous-reachable, so it is
-    # added to auth_exempt_pages in settings.
+    # Signup-link target: bounces the visitor through BCSC, BCEID or IDIR
+    # login, where the token (stashed in the session) is redeemed.
+    # Anonymous-reachable, so it is added to auth_exempt_pages in settings.
     path(
         f"{PREFIX}signup/claim",
         RegistrationClaimView.as_view(),

@@ -94,7 +94,7 @@ class InvitationRegistrationService:
                 allowed = [
                     g for g in link.groups if g in settings.SELF_MANAGE_ROLE_GROUPS
                 ]
-                group_names = allowed or settings.REGISTRATION_IDIR_GROUPS
+                group_names = allowed or ["Guest"]
                 user.groups.add(*Group.objects.filter(name__in=group_names))
                 link.used = timezone.now()
                 link.used_by = user

@@ -1,3 +1,4 @@
+/* eslint-disable vue/one-component-per-file -- test stubs live together */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
@@ -27,7 +28,7 @@ import InviteContributor from './InviteContributor.vue';
 const vModelStub = (name: string, tag = 'div') =>
     defineComponent({
         name,
-        props: ['modelValue'],
+        props: { modelValue: { type: [String, Array, Boolean], default: null } },
         emits: ['update:modelValue'],
         template: `<${tag}></${tag}>`,
     });
@@ -35,14 +36,18 @@ const vModelStub = (name: string, tag = 'div') =>
 // Reflects the bound value so readonly result fields can be asserted.
 const InputTextStub = defineComponent({
     name: 'InputText',
-    props: ['modelValue'],
+    props: { modelValue: { type: String, default: '' } },
     emits: ['update:modelValue'],
     template: `<input :value="modelValue" />`,
 });
 
 const ButtonStub = defineComponent({
-    name: 'Button',
-    props: ['disabled', 'label', 'loading'],
+    name: 'PvButton',
+    props: {
+        disabled: { type: Boolean, default: false },
+        label: { type: String, default: '' },
+        loading: { type: Boolean, default: false },
+    },
     emits: ['click'],
     template: `<button :disabled="disabled" @click="$emit('click')">{{ label }}</button>`,
 });

@@ -513,7 +513,7 @@ AUTHLIB_OAUTH_CLIENTS = {
                 # "/bcap/api/borden-number",
                 "/bcap/auth/user_profile",
                 # Signup-link target must be reachable while anonymous; it
-                # stashes the token and bounces the visitor into IDIR login.
+                # stashes the token and bounces the visitor into login.
                 "/bcap/signup/claim",
                 # "/bcap/geojson"
             ],
@@ -522,7 +522,6 @@ AUTHLIB_OAUTH_CLIENTS = {
 }
 
 REGISTRATION_LINK_TTL_DAYS = 7
-REGISTRATION_IDIR_GROUPS = ["Guest"]
 
 # Role groups an admin can grant an invited user. External applicants always
 # get just the Submitter group.
