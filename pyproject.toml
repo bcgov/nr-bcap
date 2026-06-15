@@ -26,6 +26,8 @@ dependencies = [
     "arches-component-lab>=0.0.1a11",
     "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@dev/1.1.x",
     "arches-querysets",
+    "arches-workflow-stepper @ git+https://github.com/bferguso/arches-workflow-stepper@main",
+    "arches-zod-validation @ git+https://github.com/bferguso/arches-zod-validation@main",
     "authlib",
     "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@release/2.1.x",
     "boto3==1.26",
