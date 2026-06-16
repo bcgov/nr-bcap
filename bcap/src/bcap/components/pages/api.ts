@@ -1,4 +1,11 @@
 import arches from 'arches';
+import { z } from 'zod';
+import {
+    zContributorOption,
+    zNewContributor,
+    zRegistrationLinkRequest,
+    zRegistrationLinkResponse,
+} from '@/bcap/client/zod.gen.ts';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
     SiteVisitResponse,
@@ -64,6 +71,79 @@ export const getRequirementSubmissionData = async (
         throw new Error(text || response.statusText);
     }
 
+    return await response.json();
+};
+
+export type UnlinkedContributor = z.infer<typeof zContributorOption>;
+export type NewContributorInput = z.infer<typeof zNewContributor>;
+export type RegistrationLinkResult = z.infer<typeof zRegistrationLinkResponse>;
+export type IssueRegistrationLinkBody = z.infer<
+    typeof zRegistrationLinkRequest
+>;
+
+const csrfToken = (): string =>
+    document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('csrftoken='))
+        ?.split('=')[1] || '';
+
+// DRF errors come in varied shapes -- { detail }, { field: [msgs] }, nested
+// { new_contributor: { email: [msg] } }, or a bare list. Collect the leaf
+// strings so the user sees readable text instead of raw JSON.
+const flattenMessages = (value: unknown): string[] => {
+    if (typeof value === 'string') return [value];
+    if (Array.isArray(value)) return value.flatMap(flattenMessages);
+    if (value && typeof value === 'object') {
+        return Object.values(value).flatMap(flattenMessages);
+    }
+    return [];
+};
+
+const errorMessage = async (response: Response): Promise<string> => {
+    const text = await response.text();
+    try {
+        const messages = flattenMessages(JSON.parse(text));
+        return messages.join(' ') || text || response.statusText;
+    } catch {
+        return text || response.statusText;
+    }
+};
+
+export const getUnlinkedContributors = async (
+    search?: string,
+): Promise<UnlinkedContributor[]> => {
+    const query = search ? `?search=${encodeURIComponent(search)}` : '';
+    const response = await fetch(
+        `${arches.urls.unlinked_contributors}${query}`,
+    );
+    if (!response.ok) {
+        throw new Error(await errorMessage(response));
+    }
+    return await response.json();
+};
+
+export const getAssignableGroups = async (): Promise<string[]> => {
+    const response = await fetch(arches.urls.assignable_groups);
+    if (!response.ok) {
+        throw new Error(await errorMessage(response));
+    }
+    return await response.json();
+};
+
+export const issueRegistrationLink = async (
+    body: IssueRegistrationLinkBody,
+): Promise<RegistrationLinkResult> => {
+    const response = await fetch(arches.urls.registration_link, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken(),
+        },
+        body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+        throw new Error(await errorMessage(response));
+    }
     return await response.json();
 };
 

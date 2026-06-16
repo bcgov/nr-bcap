@@ -7,6 +7,8 @@ import eslintConfigPrettier from "eslint-config-prettier";
 import vueESLintParser from 'vue-eslint-parser';
 
 export default [
+    // Generated Zod schemas -- formatting/escapes we don't control.
+    { ignores: ["**/client/zod.gen.ts"] },
     js.configs.recommended,
     ...pluginVue.configs['flat/recommended'],
     ...tseslint.configs.recommended,

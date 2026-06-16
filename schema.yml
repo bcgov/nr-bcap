@@ -4,6 +4,40 @@ info:
   version: 2.0.0
   description: BC Archaeology Portal API
 paths:
+  /bcap/api/assignable_groups:
+    get:
+      operationId: api_assignable_groups_retrieve
+      description: Role group names an invited user can be granted.
+      tags:
+      - 'Admin: registration'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+          description: ''
+  /bcap/api/contributors/unlinked:
+    get:
+      operationId: api_contributors_unlinked_list
+      description: Contributors not yet linked to a user account.
+      tags:
+      - 'Admin: registration'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContributorOption'
+          description: ''
   /bcap/api/dashboard/external:
     get:
       operationId: api_dashboard_external_retrieve
@@ -85,6 +119,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalDashboardPage'
+          description: ''
+  /bcap/api/registration_link:
+    post:
+      operationId: api_registration_link_create
+      description: Issue a single-use signup link for a Contributor.
+      tags:
+      - 'Admin: registration'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationLinkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegistrationLinkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegistrationLinkRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationLinkResponse'
           description: ''
   /bcap/api/resource/hca_permit/:
     get:
@@ -650,6 +710,22 @@ components:
           readOnly: true
       required:
       - node_value
+    ContributorOption:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        type:
+          type: string
+      required:
+      - email
+      - id
+      - name
+      - type
     DateAliasedNodeData:
       type: object
       properties:
@@ -1052,12 +1128,70 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/InternalDashboardCard'
+    NewContributor:
+      type: object
+      description: |-
+        Details for a Contributor created as part of the invite (for someone who
+        has no Contributor record yet).
+      properties:
+        name:
+          type: string
+          description: Last name (or organization name) (required).
+        first_name:
+          type: string
+          description: Given name, for a person.
+        email:
+          type: string
+          format: email
+          description: Contact email (required).
+        phone:
+          type: string
+          description: Contact phone number.
+      required:
+      - email
+      - name
     NonLocalizedStringAliasedNodeData:
       type: object
       properties:
         node_value:
           type: string
           nullable: true
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
+    NonLocalizedStringAliasedNodeDataMax10:
+      type: object
+      properties:
+        node_value:
+          type: string
+          nullable: true
+          maxLength: 10
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
+    NonLocalizedStringAliasedNodeDataMax9:
+      type: object
+      properties:
+        node_value:
+          type: string
+          nullable: true
+          maxLength: 9
         display_value:
           type: string
           readOnly: true
@@ -1456,6 +1590,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+          description: Enter text
         has_retained_archaeologist:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -1637,6 +1772,155 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Permit_Application_Archaeological_Assessment_Plan_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Permit_Application_Bc_Property_Address_Aliased_Data:
+      type: object
+      properties:
+        address_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Location Description
+          description: Describe the location of sites with no civic address.
+        street_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
+          nullable: true
+        street_number:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax50'
+          nullable: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
+          nullable: true
+        postal_code:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax7'
+          nullable: true
+        bc_property_legal_description:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permit_Application_Bc_Property_Legal_Description_Tile'
+          nullable: true
+    Permit_Application_Bc_Property_Address_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Permit_Application_Bc_Property_Address_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Permit_Application_Bc_Property_Legal_Description_Aliased_Data:
+      type: object
+      properties:
+        pid:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeDataMax9'
+          nullable: true
+          description: E.g., 123456789
+        pin:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeDataMax10'
+          nullable: true
+          description: E.g., 0123456789
+        legal_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax2000'
+          nullable: true
+        legal_address_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Address and Legal Description Remarks
+          description: Enter text
+    Permit_Application_Bc_Property_Legal_Description_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Permit_Application_Bc_Property_Legal_Description_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -2208,6 +2492,11 @@ components:
           nullable: true
           description: Describe the scope of work to be competed as part of the proposed
             project
+        bc_property_address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permit_Application_Bc_Property_Address_Tile'
+          nullable: true
         project_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -3650,6 +3939,35 @@ components:
           readOnly: true
       required:
       - node_value
+    RegistrationLinkRequest:
+      type: object
+      properties:
+        contributor_id:
+          type: string
+          format: uuid
+          description: Existing Contributor to link the invited user to.
+        new_contributor:
+          allOf:
+          - $ref: '#/components/schemas/NewContributor'
+          description: Create a new Contributor and invite to it instead.
+        groups:
+          type: array
+          items:
+            type: string
+          description: Django group names to grant the invited user.
+    RegistrationLinkResponse:
+      type: object
+      properties:
+        signup_url:
+          type: string
+          description: Single-use link to send to the invited user.
+        expires:
+          type: string
+          format: date-time
+          description: When the link stops being redeemable.
+      required:
+      - expires
+      - signup_url
     ResourceDraft:
       type: object
       properties:
@@ -3781,6 +4099,126 @@ components:
                 value:
                   type: string
                   nullable: true
+                direction:
+                  type: string
+                  enum:
+                  - ltr
+                  - rtl
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
+    StringAliasedNodeDataMax2000:
+      type: object
+      properties:
+        node_value:
+          type: object
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                value:
+                  type: string
+                  nullable: true
+                  maxLength: 2000
+                direction:
+                  type: string
+                  enum:
+                  - ltr
+                  - rtl
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
+    StringAliasedNodeDataMax50:
+      type: object
+      properties:
+        node_value:
+          type: object
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                value:
+                  type: string
+                  nullable: true
+                  maxLength: 50
+                direction:
+                  type: string
+                  enum:
+                  - ltr
+                  - rtl
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
+    StringAliasedNodeDataMax7:
+      type: object
+      properties:
+        node_value:
+          type: object
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                value:
+                  type: string
+                  nullable: true
+                  maxLength: 7
+                direction:
+                  type: string
+                  enum:
+                  - ltr
+                  - rtl
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
+    StringAliasedNodeDataMax80:
+      type: object
+      properties:
+        node_value:
+          type: object
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                value:
+                  type: string
+                  nullable: true
+                  maxLength: 80
                 direction:
                   type: string
                   enum:

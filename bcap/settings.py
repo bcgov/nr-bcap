@@ -512,11 +512,27 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/o/token",
                 # "/bcap/api/borden-number",
                 "/bcap/auth/user_profile",
+                # Signup-link target must be reachable while anonymous; it
+                # stashes the token and bounces the visitor into login.
+                "/bcap/signup/claim",
                 # "/bcap/geojson"
             ],
         },
     }
 }
+
+REGISTRATION_LINK_TTL_DAYS = 7
+
+# Role groups an admin can grant an invited user. External applicants always
+# get just the Submitter group.
+SELF_MANAGE_ROLE_GROUPS = [
+    "Permit Reviewer",
+    "Permit Decider",
+    "Inventory Reviewer",
+    "Inventory Manager",
+    "Submitter",
+]
+EXTERNAL_APPLICANT_GROUP = "Submitter"
 
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"

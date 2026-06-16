@@ -1,19 +1,41 @@
+from dataclasses import dataclass
+
+from django.db import transaction
 from django.db.models import Q, TextField, UUIDField, Value
 from django.db.models.fields.json import KeyTextTransform, KeyTransform
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 
-from arches.app.models.models import TileModel
+from arches.app.models.models import Node, TileModel
+
+from arches_controlled_lists.models import ListItemValue
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.contributor import ContributorAliases
 from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.dashboard.resource_builder import ResourceBuilder
 from bcap.util.user import full_name
+
+INVITABLE_LIMIT = 30
+
+
+@dataclass
+class NewContributor:
+    """A Contributor to create as part of an invite, for an invitee who has no
+    record yet."""
+
+    name: str
+    email: str = ""
+    phone: str = ""
+    first_name: str = ""  # given name, for a person
+    # controlled-list item id; blank defaults to the Individual type at creation.
+    contributor_type: str = ""
 
 
 class ContributorService(BaseGraphService):
-    """Reads Contributor resources for the dashboard's assignment filters:
-    user-to-Contributor, company membership, and display names."""
+    """Reads Contributor resources for the dashboard's assignment filters
+    (user-to-Contributor, company membership, display names), and the writes the
+    admin invite flow needs: creating Contributors and binding a user to one."""
 
     A = ContributorAliases
 
@@ -111,3 +133,139 @@ class ContributorService(BaseGraphService):
             last = data.contributor_name["display_value"]
             names[str(c.pk)] = full_name(first, last)
         return names
+
+    def _contributor_tile(self, contributor_id, lock=False):
+        """The single Contributor group tile of a resource, or None. Pass
+        lock=True to select it for update within a transaction."""
+        contributor_ng = self._nodegroup_id(
+            GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME
+        )
+        tiles = TileModel.objects.select_for_update() if lock else TileModel.objects
+        return tiles.filter(
+            resourceinstance_id=contributor_id, nodegroup_id=contributor_ng
+        ).first()
+
+    def is_invitable(self, contributor_id):
+        """True when the Contributor exists, is active, and isn't already linked
+        to a user account."""
+        tile = self._contributor_tile(contributor_id)
+        if tile is None:
+            return False
+        username_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
+        inactive_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
+        return not tile.data.get(inactive_node) and not tile.data.get(username_node)
+
+    def set_bcap_username(self, contributor_id, username):
+        """Stamp the username onto the Contributor's tile, but only if it isn't
+        already linked. False when another account already holds it."""
+        username_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
+        with transaction.atomic():
+            tile = self._contributor_tile(contributor_id, lock=True)
+            if tile is None or tile.data.get(username_node):
+                return False
+            tile.data[username_node] = username
+            tile.save()
+        return True
+
+    def create_contributor(self, new_contributor: NewContributor):
+        """Create a Contributor resource from the invite details and return its
+        id. Created unlinked (no bcap_username) so the invite can bind it."""
+        builder = ResourceBuilder(skip_refresh=False)
+        resource = builder.new_resource(GraphSlugs.CONTRIBUTOR)
+        resource.legacyid = None  # real data, not seed-marked
+        contributor_type = (
+            new_contributor.contributor_type or self._individual_type_id()
+        )
+        builder.append_blank_tile_for_group(
+            resource,
+            "contributor",  # the top-level group tile holding the leaf fields
+            {
+                self.A.CONTRIBUTOR_NAME: builder.localized(new_contributor.name),
+                self.A.FIRST_NAME: (
+                    builder.localized(new_contributor.first_name)
+                    if new_contributor.first_name
+                    else None
+                ),
+                self.A.CONTRIBUTOR_TYPE: [str(contributor_type)],
+                self.A.CONTACT_EMAIL: builder.localized(new_contributor.email),
+                self.A.CONTACT_PHONE_NUMBER: (
+                    builder.localized(new_contributor.phone)
+                    if new_contributor.phone
+                    else None
+                ),
+            },
+        )
+        # Index into Elasticsearch (save_kwargs default to index=False for bulk
+        # seeding) so the new Contributor shows up in search and the dashboards.
+        resource.save(**{**builder.save_kwargs, "index": True})
+        return str(resource.pk)
+
+    def delete_contributor(self, contributor_id):
+        """Remove a Contributor resource, to roll back one created for an
+        invite whose redemption then failed."""
+        TileModel.objects.filter(
+            resourceinstance_id=contributor_id
+        ).first().resourceinstance.delete()
+
+    def invitable_contributors(self, search=""):
+        """Active, unlinked Contributors whose name matches the search, as
+        {id, name, email, type} option dicts for the invite picker."""
+        name_node, contributor_ng = self._node_info(
+            GraphSlugs.CONTRIBUTOR, self.A.CONTRIBUTOR_NAME
+        )
+        username_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
+        inactive_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
+
+        tiles = (
+            TileModel.objects.filter(nodegroup_id=contributor_ng)
+            .exclude(**{f"data__{inactive_node}": True})
+            .annotate(_username=KeyTextTransform(username_node, "data"))
+            .filter(Q(_username__isnull=True) | Q(_username=""))
+        )
+        if search:
+            tiles = tiles.filter(**{f"data__{name_node}__en__value__icontains": search})
+        capped = tiles.values_list("resourceinstance_id", flat=True)[:INVITABLE_LIMIT]
+        ids = [str(pk) for pk in capped]
+        if not ids:
+            return []
+
+        resources = self._resources(
+            GraphSlugs.CONTRIBUTOR,
+            ids,
+            [
+                self.A.FIRST_NAME,
+                self.A.CONTRIBUTOR_NAME,
+                self.A.CONTACT_EMAIL,
+                self.A.CONTRIBUTOR_TYPE,
+            ],
+        )
+
+        def format_data(c):
+            fields = c.aliased_data.contributor.aliased_data
+            return {
+                "id": str(c.pk),
+                "name": full_name(
+                    self._display_text(fields.first_name),
+                    self._display_text(fields.contributor_name),
+                ),
+                "email": self._display_text(fields.contact_email),
+                "type": self._display_text(fields.contributor_type),
+            }
+
+        return [format_data(c) for c in resources]
+
+    def _individual_type_id(self):
+        """The contributor_type list-item id for individuals, the only type the
+        invite flow creates."""
+        node = Node.objects.get(
+            graph__slug=GraphSlugs.CONTRIBUTOR,
+            alias=self.A.CONTRIBUTOR_TYPE,
+            source_identifier=None,
+        )
+        return str(
+            ListItemValue.objects.get(
+                list_item__list_id=node.config.get("controlledList"),
+                valuetype_id="prefLabel",
+                value="Individual",
+            ).list_item_id
+        )

@@ -56,6 +56,11 @@ class BaseGraphService:
         return cls._node_info(graph_slug, alias)[0]
 
     @classmethod
+    def _nodegroup_id(cls, graph_slug, alias):
+        """nodegroup_id as a string for a graph's node alias."""
+        return cls._node_info(graph_slug, alias)[1]
+
+    @classmethod
     def _resources(cls, slug, ids, aliases):
         """Resources of the given graph for the given ids, with the requested
         aliases loaded as representation values."""
