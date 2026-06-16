@@ -528,6 +528,9 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
             },
         )
 
+    def test_node_value_tolerates_a_none_aliased_data(self):
+        self.assertEqual(self.service._node_value(None, "requirement_name"), {})
+
     def test_application_core_handles_missing_groups_and_null_values(self):
         aliased = SimpleNamespace(
             application_identification=_tile(
