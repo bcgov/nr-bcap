@@ -6,11 +6,10 @@ import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
-import { z } from 'zod';
-import { zInternalDashboardCard } from '@/bcap/client/zod.gen.ts';
 import {
     getInternalDashboardData,
     type DashboardStatus,
+    type InternalDashboardCard,
 } from '@/bcap/components/pages/api.ts';
 import arches from 'arches';
 
@@ -38,9 +37,7 @@ interface ProjectData {
     urgency: number;
 }
 
-type GeneratedDashboardCard = z.infer<typeof zInternalDashboardCard>;
-
-const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
+const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
     const safeUrgency = rawItem.urgency ?? 0;
     const isPriority = rawItem.priority_level === 'High' || false;
 
@@ -250,9 +247,9 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     <Panel class="full-height">
         <Fluid>
             <SortingBar
-                v-model:activeTab="state.currentFilter"
-                v-model:currentSort="state.currentSort"
-                v-model:sortOrder="state.sortOrder"
+                v-model:active-tab="state.currentFilter"
+                v-model:current-sort="state.currentSort"
+                v-model:sort-order="state.sortOrder"
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
