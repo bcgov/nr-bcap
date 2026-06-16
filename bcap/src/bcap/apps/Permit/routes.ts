@@ -18,10 +18,72 @@ const routes = [
             import('@/bcap/apps/Permit/components/dashboard/InternalDashboard.vue'),
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/submit'),
-        name: 'newPermit',
+        path: arches.urls.plugin('external-permit-workflows/alterationsModule'),
+        name: 'alterationsModule',
         component: () =>
-            import('@/bcap/apps/Permit/SubmitApplication/SubmitApplication.vue'),
+            import('@/bcap/apps/Permit/Modules/AlterationsModule/AlterationsModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
+        path: arches.urls.plugin('external-permit-workflows/baseModule'),
+        name: 'baseModule',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/BaseModule/BaseModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
+        path: arches.urls.plugin('external-permit-workflows/collectionModule'),
+        name: 'collectionModule',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/CollectionsModule/CollectionsModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
+        path: arches.urls.plugin('external-permit-workflows/inspectionModule'),
+        name: 'inspectionModule',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/InspectionModule/InspectionModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
+        path: arches.urls.plugin(
+            'external-permit-workflows/investigationModule',
+        ),
+        name: 'investigationModule',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/InvestigationModule/InvestigationModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
+        path: arches.urls.plugin('external-permit-workflows/methodsModule'),
+        name: 'methodsModule',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/MethodsModule/MethodsModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
+        path: arches.urls.plugin('external-permit-workflows/recordingsModule'),
+        name: 'recordingsModule',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/RecordingsModule/RecordingsModule.vue'),
         meta: {
             shouldShowNavigation: true,
             requiresAuthentication: true,
@@ -43,17 +105,31 @@ const routes = [
 
 type ExternalPermitRouteNamesType = RouteNamesType & {
     home: string;
-    newPermit: string;
+    //newPermit?: string;
     checklist: string;
     createchecklist: string;
+    alterationsModule: string;
+    baseModule: string;
+    collectionModule: string;
+    inspectionModule: string;
+    investigationModule: string;
+    methodsModule: string;
+    recordingsModule: string;
 };
 
 const routeNames: ExternalPermitRouteNamesType = {
     home: 'root',
-    newPermit: 'newPermit',
+    //newPermit: 'newPermit',
     login: '',
     checklist: 'Checklist',
     createchecklist: 'CreateChecklist',
+    alterationsModule: 'alterationsModule',
+    baseModule: 'baseModule',
+    collectionModule: 'collectionModule',
+    inspectionModule: 'inspectionModule',
+    investigationModule: 'investigationModule',
+    methodsModule: 'methodsModule',
+    recordingsModule: 'recordingsModule',
     // updateSite: 'updateSite',
     // editSite: 'editSite',
     // search: "search",

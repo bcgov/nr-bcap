@@ -6,6 +6,18 @@ import type {
     ReferenceSelectDetails,
 } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
+export type DraftNode = AliasedNodeData & {
+    aliased_data?: Record<string, DraftNode | null>;
+    [index: number]: DraftNode;
+};
+
+export type DraftNodeGroup = {
+    aliased_data?: Record<string, DraftNode | null>;
+    [index: number]: DraftNodeGroup;
+};
+
+export type ArchesDraftData = Record<string, DraftNodeGroup>;
+
 export interface TileReference {
     resourceinstance_id: string;
     tileid: string;
