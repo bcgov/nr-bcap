@@ -21,6 +21,7 @@ import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Re
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import { submitApplication } from '@/bcap/apps/Permit/api.ts';
+import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
 
 const submissionErrors = ref([] as ErrorMessage[]);
 const submitted = ref(false);
@@ -30,11 +31,17 @@ const isDataLoaded = ref(false);
 const graphSlug = 'permit_application';
 const draftId = ref<string | null>(null);
 const draftData = ref<ArchesDraftData>({});
-const finalizedResourceData = ref<unknown>(null);
+const finalizedResourceData = ref<PermitApplicationResponse | null>(null);
 const route = useRoute();
 
 provide('draftId', draftId);
 provide('draftData', draftData);
+
+const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
+    if (!finalizedResourceData.value?.aliased_data) return null;
+    return finalizedResourceData.value
+        .aliased_data as unknown as ArchesDraftData;
+});
 
 const submitNewSiteData = async (): Promise<boolean> => {
     console.log('Submitting final application...');
@@ -44,33 +51,16 @@ const submitNewSiteData = async (): Promise<boolean> => {
     try {
         if (!draftId.value) throw new Error('No active draft found.');
 
+        // Submit the draft
         const response = await submitApplication(
             draftId.value,
             draftData.value,
             graphSlug,
         );
 
-        const newResourceId = response?.id || response?.resourceinstance_id;
-
-        if (newResourceId) {
-            console.log(
-                `Fetching finalized resource data for ${newResourceId}...`,
-            );
-            const resourceResponse = await fetch(
-                `/api/resources/${newResourceId}?format=json`,
-            );
-
-            if (resourceResponse.ok) {
-                finalizedResourceData.value = await resourceResponse.json();
-                console.log('Successfully loaded finalized data!');
-            } else {
-                console.warn(
-                    'Submission succeeded, but failed to fetch the finalized resource view.',
-                );
-            }
+        if (response) {
+            finalizedResourceData.value = response;
         }
-
-        draftId.value = null;
 
         return true;
     } catch (error) {
@@ -359,7 +349,7 @@ const showDebug = ref(false);
                             <Step99_Review
                                 ref="step99"
                                 :is-submitted-view="true"
-                                :resource-data="finalizedResourceData"
+                                :resource-data="finalizedDataForReview"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 6)
                                 "

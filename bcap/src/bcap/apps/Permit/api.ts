@@ -1,6 +1,8 @@
 import arches from 'arches';
 import { getCsrfToken } from '@/bcap/util.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
+import * as z from 'zod';
 
 export async function getBlankPermitApplication(): Promise<unknown> {
     const response = await fetch(
@@ -46,20 +48,13 @@ export const fetchMyProjects = async () => {
     }
 };
 
-// todo: replace with proper type
-export interface SubmitResponse {
-    resourceinstance_id?: string;
-    id?: string;
-    tiles?: unknown[];
-    displayname?: string;
-    [key: string]: unknown;
-}
+export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
 
 export const submitApplication = async (
     draftId: string,
     payload: ArchesDraftData,
     graphSlug: string = 'permit_application',
-): Promise<SubmitResponse> => {
+): Promise<PermitApplicationResponse> => {
     try {
         const submitUrl = arches.urls.api_resource_create(graphSlug);
         const cleanPayload = JSON.parse(JSON.stringify(payload));
