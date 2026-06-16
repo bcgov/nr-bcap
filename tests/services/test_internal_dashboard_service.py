@@ -3,6 +3,8 @@ from types import SimpleNamespace
 
 from django.test import TestCase
 
+from arches_querysets.models import TileTree
+
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
 )
@@ -274,6 +276,12 @@ def build_blank_requirement_permit(builder, name):
     return permit
 
 
+def _tile(**leaves):
+    """A TileTree wrapping the given alias -> representation-value leaves, so
+    _application_core's traversal descends into it like a real group tile."""
+    return TileTree(aliased_data=SimpleNamespace(**leaves))
+
+
 class _DashboardServiceData:
     """Builds the test graph once per class and exposes the resources' ids as
     strings -- the form the service returns -- so the assertions stay readable."""
@@ -449,6 +457,48 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
                 self.grace_id: "Grace Hopper",
                 self.acme_id: "Acme Corp",
             },
+        )
+
+    def test_application_core_handles_missing_groups_and_null_values(self):
+        aliased = SimpleNamespace(
+            application_identification=_tile(
+                project_name={"display_value": "My Project"},
+                # Present node, null display_value -- not the same as absent.
+                application_id={"display_value": None},
+            ),
+            # application_admin group has no tile.
+            application_admin=None,
+            # An unset resource-instance node represents as [], not a dict.
+            related_permit=[],
+        )
+
+        core = self.service._application_core(aliased)
+
+        self.assertEqual(core.project_name, "My Project")
+        # A missing group yields no leaf, so its fields fall back to "".
+        self.assertEqual(core.industrial_sector, "")
+        self.assertEqual(core.priority_level, "")
+        self.assertEqual(core.application_number, "")
+        self.assertIsNone(core.related_permit_id)
+
+    def test_application_core_with_all_groups_none(self):
+        aliased = SimpleNamespace(
+            application_identification=None,
+            application_admin=None,
+            related_permit=None,
+        )
+
+        core = self.service._application_core(aliased)
+
+        self.assertEqual(
+            (
+                core.project_name,
+                core.application_number,
+                core.industrial_sector,
+                core.priority_level,
+                core.related_permit_id,
+            ),
+            ("", "", "", "", None),
         )
 
 

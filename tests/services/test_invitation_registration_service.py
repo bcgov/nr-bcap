@@ -167,8 +167,9 @@ class InvitationRegistrationServiceTest(TestCase):
         other = self.make_contributor(name="Other")
         link = self.service.issue_link(self.user, contributor_id=str(other.pk))
         self.assertIsNone(self.service.redeem_link(link.id, self.user))
-        # The second Contributor stays unlinked and the link unused.
+        # Second Contributor stays unlinked, link unused, no groups granted.
         self.assertTrue(self.contributors.is_invitable(str(other.pk)))
+        self.assertFalse(self.user.groups.filter(name="Guest").exists())
         link.refresh_from_db()
         self.assertIsNone(link.used)
 
