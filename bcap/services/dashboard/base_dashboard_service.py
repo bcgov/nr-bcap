@@ -35,11 +35,14 @@ class BaseDashboardService(BaseGraphService):
 
         hca_permits = {}
         for permit in resources:
-            # permit_identification is a cardinality-1 top-level group.
-            identification = permit.aliased_data.permit_identification.aliased_data
+            data = permit.aliased_data
             hca_permits[str(permit.pk)] = HcaPermit(
-                number=identification.permit_number["display_value"],
-                holder_ids=self._resource_ids(identification.permit_holder),
+                number=self._display_text(
+                    self._node_value(data, HCAPermitAliases.PERMIT_NUMBER)
+                ),
+                holder_ids=self._resource_ids(
+                    self._node_value(data, HCAPermitAliases.PERMIT_HOLDER)
+                ),
             )
         return hca_permits
 

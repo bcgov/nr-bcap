@@ -207,17 +207,20 @@ class InternalDashboardService(BaseDashboardService):
             )
             for requirement in resources:
                 data = requirement.aliased_data
-                identification = data.requirement_identification.aliased_data
-                duration = data.requirement_execution_duration.aliased_data
-                assessment = data.sub_requirement_assessment_n1.aliased_data
-                if assessment.requirement_status["node_value"]:
+                if self._raw_value(data, self.PR.REQUIREMENT_STATUS):
                     continue
                 requirements[str(requirement.pk)] = Requirement(
-                    name=identification.requirement_name["display_value"],
-                    due_date=duration.requirement_process_due_date["display_value"],
+                    name=self._display_text(
+                        self._node_value(data, self.PR.REQUIREMENT_NAME)
+                    ),
+                    due_date=self._display_text(
+                        self._node_value(data, self.PR.REQUIREMENT_PROCESS_DUE_DATE)
+                    ),
                     # The card drills in to the unsatisfied requirement itself.
                     route=str(requirement.pk),
-                    notes=assessment.assessment_notes["display_value"],
+                    notes=self._display_text(
+                        self._node_value(data, self.PR.ASSESSMENT_NOTES)
+                    ),
                 )
 
         chosen = {}

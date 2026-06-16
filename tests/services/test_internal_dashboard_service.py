@@ -12,6 +12,7 @@ from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     InternalDashboardStatus,
 )
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
@@ -276,6 +277,29 @@ def build_blank_requirement_permit(builder, name):
     return permit
 
 
+def build_groupless_requirement_permit(builder, name):
+    """A permit whose active requirement is a process_requirement with no group
+    tiles at all -- unsatisfied (no status), so the card surfaces it. Returns
+    the permit and the requirement id."""
+    requirement = builder.new_resource("process_requirement")
+    requirement.save(**builder.save_kwargs)
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    permit.append_tile("application_admin")
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
+    permit.save(**builder.save_kwargs)
+    return permit, str(requirement.pk)
+
+
 def _tile(**leaves):
     """A TileTree wrapping the given alias -> representation-value leaves, so
     _application_core's traversal descends into it like a real group tile."""
@@ -439,6 +463,51 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         hca = hca_permits[self.hca_permit_id]
         self.assertEqual(hca.number, "HCA-001")
         self.assertEqual(hca.holder_ids, [self.acme_id])
+
+    def test_hca_permits_tolerates_a_missing_identification_group(self):
+        # An HCA Permit whose permit_identification group tile is absent reads as
+        # a blank number and no holders rather than crashing on the missing group.
+        builder = ResourceBuilder()
+        hca = builder.new_resource("hca_permit")
+        hca.save(**builder.save_kwargs)
+        permit = builder.new_resource("permit_application")
+        builder.append_blank_tile_for_group(
+            permit,
+            "related_permit",
+            {"related_permit": hca, "is_related_permit": True},
+        )
+        permit.save(**builder.save_kwargs)
+        permits = self.service._resources(
+            GraphSlugs.PERMIT_APPLICATION, [permit.pk], [self.service.PA.RELATED_PERMIT]
+        )
+
+        hca_permits = self.service._hca_permits(permits)
+
+        result = hca_permits[str(hca.pk)]
+        self.assertEqual(result.number, "")
+        self.assertEqual(result.holder_ids, [])
+
+    def test_choose_requirements_reads_a_requirement_with_missing_groups(self):
+        # A requirement with no group tiles is unsatisfied, so it is surfaced;
+        # its absent groups must read as blank fields rather than crash.
+        permit, requirement_id = build_groupless_requirement_permit(
+            ResourceBuilder(), "Bare"
+        )
+        permit_id = str(permit.pk)
+
+        _, permits = self.service._permits(DashboardFilter())
+        by_permit = self.service._requirement_tiles_by_permit(permits)
+        ids = self.service._referenced_ids(
+            chain.from_iterable(by_permit.values()), self.service.PA.PROCESS_REQUIREMENT
+        )
+        chosen = self.service._choose_requirements(by_permit, ids)
+
+        requirement = chosen[permit_id]
+        self.assertEqual(requirement.route, requirement_id)
+        self.assertEqual(
+            (requirement.name, requirement.due_date, requirement.notes),
+            ("", "", ""),
+        )
 
     def test_contributor_names_resolves_assignees_and_holders(self):
         _, permits = self.service._permits(DashboardFilter())

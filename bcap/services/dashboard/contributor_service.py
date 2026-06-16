@@ -130,9 +130,9 @@ class ContributorService(BaseGraphService):
         )
         names = {}
         for c in resources:
-            data = c.aliased_data.contributor.aliased_data
-            first = data.first_name["display_value"]
-            last = data.contributor_name["display_value"]
+            data = c.aliased_data
+            first = self._display_text(self._node_value(data, self.A.FIRST_NAME))
+            last = self._display_text(self._node_value(data, self.A.CONTRIBUTOR_NAME))
             names[str(c.pk)] = full_name(first, last)
         return names
 
@@ -243,15 +243,19 @@ class ContributorService(BaseGraphService):
         )
 
         def format_data(c):
-            fields = c.aliased_data.contributor.aliased_data
+            data = c.aliased_data
             return {
                 "id": str(c.pk),
                 "name": full_name(
-                    self._display_text(fields.first_name),
-                    self._display_text(fields.contributor_name),
+                    self._display_text(self._node_value(data, self.A.FIRST_NAME)),
+                    self._display_text(self._node_value(data, self.A.CONTRIBUTOR_NAME)),
                 ),
-                "email": self._display_text(fields.contact_email),
-                "type": self._display_text(fields.contributor_type),
+                "email": self._display_text(
+                    self._node_value(data, self.A.CONTACT_EMAIL)
+                ),
+                "type": self._display_text(
+                    self._node_value(data, self.A.CONTRIBUTOR_TYPE)
+                ),
             }
 
         return [format_data(c) for c in resources]
