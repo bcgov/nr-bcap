@@ -1,6 +1,7 @@
 import arches from 'arches';
 import { z } from 'zod';
 import {
+    zApiDashboardInternalRetrieveQuery,
     zContributorOption,
     zNewContributor,
     zRegistrationLinkRequest,
@@ -147,14 +148,19 @@ export const issueRegistrationLink = async (
     return await response.json();
 };
 
+export type DashboardStatus = z.infer<
+    typeof zApiDashboardInternalRetrieveQuery
+>['status'];
+
 export const getInternalDashboardData = async (
-    showUnassigned: boolean = false,
+    status?: DashboardStatus,
     page: number = 1,
     limit: number = 100,
 ) => {
     try {
-        // Will need to update to all
-        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${showUnassigned ? '&status=UNASSIGNED' : ''}`;
+        // no status means all results -- omit the param entirely
+        const statusParam = status ? `&status=${status}` : '';
+        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${statusParam}`;
         const response = await fetch(apiUrl);
 
         if (!response.ok) {

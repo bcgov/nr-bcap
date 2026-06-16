@@ -104,7 +104,11 @@ describe('data loading', () => {
         getInternalDashboardData.mockResolvedValue([]);
         mountDashboard();
         await flushPromises();
-        expect(getInternalDashboardData).toHaveBeenCalledWith(false, 1, 100);
+        expect(getInternalDashboardData).toHaveBeenCalledWith(
+            'ASSIGNED_TO_ME',
+            1,
+            100,
+        );
     });
 
     it('renders one ProjectCard per assigned result once loaded', async () => {
@@ -206,7 +210,7 @@ describe('field mapping (data shows up right)', () => {
 });
 
 describe('default "my_projects" filter', () => {
-    it('hides results assigned to someone other than the current user', async () => {
+    it('renders every card the backend returns (filtering is server-side)', async () => {
         getInternalDashboardData.mockResolvedValue([
             makeCard({ id: 'mine', ministry_assignee_name: 'John Doe' }),
             makeCard({ id: 'theirs', ministry_assignee_name: 'Someone Else' }),
@@ -214,23 +218,23 @@ describe('default "my_projects" filter', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
+        // The ASSIGNED_TO_ME backend filter decides who shows; the component
+        // does not re-filter by assignee on the client.
         const cards = wrapper.findAllComponents(ProjectCardStub);
-        expect(cards).toHaveLength(1);
-        expect(cards[0].props('footerName')).toBe('John Doe');
+        expect(cards).toHaveLength(2);
     });
 
-    it('reports shown-of-total counts in the results summary', async () => {
+    it('counts all returned cards in the results summary', async () => {
         getInternalDashboardData.mockResolvedValue([
-            makeCard({ id: 'mine', ministry_assignee_name: 'John Doe' }),
-            makeCard({ id: 'theirs', ministry_assignee_name: 'Someone Else' }),
+            makeCard({ id: 'mine' }),
+            makeCard({ id: 'theirs' }),
         ]);
         const wrapper = mountDashboard();
         await flushPromises();
 
         const summary = wrapper.find('.results-summary').text();
         expect(summary).toContain('Showing');
-        // 1 shown of 2 total
-        expect(summary).toMatch(/1[\s\S]*of[\s\S]*2/);
+        expect(summary).toMatch(/2[\s\S]*of[\s\S]*2/);
     });
 });
 
@@ -243,10 +247,14 @@ describe('filter switching', () => {
         await flushPromises();
         getInternalDashboardData.mockClear();
 
-        await emitFromToolbar(wrapper, 'update:activeTab', 'unassigned');
+        await emitFromToolbar(wrapper, 'update:activeTab', 'UNASSIGNED');
 
-        // The showUnassigned flag flips to true on the reload
-        expect(getInternalDashboardData).toHaveBeenCalledWith(true, 1, 100);
+        // The status passed to the feed switches to the unassigned filter.
+        expect(getInternalDashboardData).toHaveBeenCalledWith(
+            'UNASSIGNED',
+            1,
+            100,
+        );
         const cards = wrapper.findAllComponents(ProjectCardStub);
         expect(cards).toHaveLength(1);
         expect(cards[0].props('footerName')).toBe('Unassigned');
@@ -258,7 +266,7 @@ describe('filter switching', () => {
         await flushPromises();
         getInternalDashboardData.mockClear();
 
-        await emitFromToolbar(wrapper, 'update:activeTab', 'my_projects');
+        await emitFromToolbar(wrapper, 'update:activeTab', 'ASSIGNED_TO_ME');
 
         expect(getInternalDashboardData).not.toHaveBeenCalled();
     });
@@ -271,7 +279,7 @@ describe('filter switching', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        await emitFromToolbar(wrapper, 'update:activeTab', 'all_projects');
+        await emitFromToolbar(wrapper, 'update:activeTab', 'ALL');
 
         expect(wrapper.findAllComponents(ProjectCardStub)).toHaveLength(2);
     });
@@ -284,7 +292,11 @@ describe('filter switching', () => {
 
         await emitFromToolbar(wrapper, 'refresh');
 
-        expect(getInternalDashboardData).toHaveBeenCalledWith(false, 1, 100);
+        expect(getInternalDashboardData).toHaveBeenCalledWith(
+            'ASSIGNED_TO_ME',
+            1,
+            100,
+        );
     });
 });
 
