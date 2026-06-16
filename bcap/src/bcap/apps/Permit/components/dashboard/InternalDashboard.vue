@@ -38,10 +38,8 @@ interface ProjectData {
     urgency: number;
 }
 
-// Extract the new types directly from the generated Zod backend schema
 type GeneratedDashboardCard = z.infer<typeof zInternalDashboardCard>;
 
-// Maps backend JSON directly to the Dashboard Card
 const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
     const safeUrgency = rawItem.urgency ?? 0;
     const isPriority = rawItem.priority_level === 'High' || false;
@@ -50,18 +48,15 @@ const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
         id: rawItem.id,
         reqId: rawItem.requirement_id || rawItem.id,
 
-        // Cap
         capPriority: isPriority,
         capLabel: rawItem.requirement_name || '',
         capDate: rawItem.requirement_due_date || 'Pending',
 
-        // Title & Subtitles
         icon: 'fa-solid fa-folder-open',
         bodyTitle: rawItem.project_name || 'Unknown Project',
         bodySubtitle1: rawItem.application_number || 'No App #',
         bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-        // Body
         body1: rawItem.permit_number
             ? `Permit: ${rawItem.permit_number}`
             : undefined,
@@ -72,7 +67,6 @@ const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
         body4: undefined,
         body5: undefined,
 
-        // Footer
         footerDate: rawItem.requirement_due_date || 'Not Started',
         footerName: rawItem.ministry_assignee_name || 'Unassigned',
 
@@ -81,7 +75,6 @@ const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
     };
 };
 
-// Sorting options array
 const sortOptions = [
     { label: 'Default (Urgency)', value: 'default' },
     { label: 'Application Number', value: 'bodySubtitle1' },
@@ -135,8 +128,7 @@ const loadData = async () => {
             state.page,
             state.pageLimit,
         );
-        const cards = data as GeneratedDashboardCard[];
-        state.rawProjects = cards.map((item) => mapToDashboardCard(item));
+        state.rawProjects = data.map((item) => mapToDashboardCard(item));
         state.lastUpdateDate = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -237,7 +229,7 @@ const formatBodyLine = (text?: string) => {
     return text;
 };
 
-const navigateToReport = (item: ProjectData) => {
+const navigateToChecklist = (item: ProjectData) => {
     window.open(
         `${arches.urls.plugin('internal-permit-dashboard')}/checklist?id=${item.reqId}`,
         item.reqId,
@@ -250,7 +242,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
         window.open(`/bcap/resource/${item.id}`, '_blank');
         return;
     }
-    navigateToReport(item);
+    navigateToChecklist(item);
 };
 </script>
 

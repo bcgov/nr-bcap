@@ -3,6 +3,8 @@ import { z } from 'zod';
 import {
     zApiDashboardInternalRetrieveQuery,
     zContributorOption,
+    zInternalDashboardCard,
+    zInternalDashboardPage,
     zNewContributor,
     zRegistrationLinkRequest,
     zRegistrationLinkResponse,
@@ -152,11 +154,13 @@ export type DashboardStatus = z.infer<
     typeof zApiDashboardInternalRetrieveQuery
 >['status'];
 
+export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
+
 export const getInternalDashboardData = async (
     status?: DashboardStatus,
     page: number = 1,
     limit: number = 100,
-) => {
+): Promise<InternalDashboardCard[]> => {
     try {
         // no status means all results -- omit the param entirely
         const statusParam = status ? `&status=${status}` : '';
@@ -167,14 +171,8 @@ export const getInternalDashboardData = async (
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log('Raw API response:', data);
-
-        if (data && 'results' in data && Array.isArray(data.results)) {
-            return data.results;
-        }
-
-        return [];
+        const data = zInternalDashboardPage.parse(await response.json());
+        return data.results ?? [];
     } catch (error) {
         console.error('Error fetching projects from backend:', error);
         return [];
