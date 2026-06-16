@@ -530,5 +530,14 @@ describe('navigateToReport', () => {
             '/plugins/internal-permit-dashboard/checklist?id=res-9',
             'res-9',
         );
+
+        const { onCardClick } = wrapper.vm as unknown as {
+            onCardClick: (
+                e: Partial<MouseEvent>,
+                item: { id: string; reqId: string },
+            ) => void;
+        };
+        onCardClick({ ctrlKey: true }, { id: 'res-9', reqId: 'res-9' });
+        expect(openSpy).toHaveBeenCalledWith('/bcap/resource/res-9', '_blank');
     });
 });
