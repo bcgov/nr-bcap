@@ -132,7 +132,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Message Subject",
                         "maxLength": null,
                         "placeholder": {
@@ -160,7 +162,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Response Content",
                         "maxLength": null,
                         "placeholder": {
@@ -204,7 +208,9 @@
                     "card_id": "afd6fa63-eab3-45c3-aed7-fc14afe23373",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Related Source Message",
                         "placeholder": {
                             "en": ""
@@ -229,7 +235,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Message Content",
                         "maxLength": null,
                         "placeholder": {
@@ -251,7 +259,9 @@
                 {
                     "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Message Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -404,7 +414,7 @@
             "graphid": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
             "group_permissions": {},
             "has_unpublished_changes": true,
-            "iconclass": "",
+            "iconclass": "fa fa-envelope",
             "is_active": false,
             "is_copy_immutable": false,
             "isresource": true,
@@ -512,7 +522,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P19_was_intended_use_of",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
+                    "sourcebranchpublication_id": "a474dfeb-6919-45a4-b587-3b7f49faf269"
                 },
                 {
                     "alias": "response_completed",
@@ -520,7 +530,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -543,7 +556,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
+                    "sourcebranchpublication_id": "a474dfeb-6919-45a4-b587-3b7f49faf269"
                 },
                 {
                     "alias": "message_content",
@@ -614,7 +627,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
+                    "sourcebranchpublication_id": "a474dfeb-6919-45a4-b587-3b7f49faf269"
                 },
                 {
                     "alias": "response_author",
@@ -637,7 +650,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
+                    "sourcebranchpublication_id": "a474dfeb-6919-45a4-b587-3b7f49faf269"
                 },
                 {
                     "alias": "message_type",

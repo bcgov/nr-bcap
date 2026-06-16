@@ -113,6 +113,33 @@
                 },
                 {
                     "active": true,
+                    "cardid": "80b2ef2c-42e6-4680-ac7b-2bd1991a07f4",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Process Requirement Messages"
+                    },
+                    "nodegroup_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "c57a5fd8-5fa1-4172-af92-d8782b3cdeda",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": {
@@ -181,7 +208,11 @@
                     "config": {
                         "defaultValue": "0",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Sort Order",
                         "max": "",
                         "min": "",
@@ -218,7 +249,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -262,7 +295,9 @@
                     "card_id": "03f2c98d-a385-4031-8886-dbc6ddb1ed27",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Requirment Submission",
                         "placeholder": {
                             "en": ""
@@ -287,7 +322,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Requirement",
                         "maxLength": null,
                         "placeholder": {
@@ -311,7 +348,11 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Default Target Processing Time (days)",
                         "max": "",
                         "min": "",
@@ -348,7 +389,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Requirement Name",
                         "maxLength": null,
                         "placeholder": {
@@ -413,7 +456,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Requirement Identification",
                         "maxLength": null,
                         "placeholder": {
@@ -441,7 +486,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -506,7 +553,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Description",
                         "maxLength": null,
                         "placeholder": {
@@ -588,6 +637,28 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "80b2ef2c-42e6-4680-ac7b-2bd1991a07f4",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Process Requirement Messages",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "fe7aaff8-af78-488d-a4d1-f9970ccafcb8",
+                    "label": {
+                        "en": "Process Requirement Messages"
+                    },
+                    "node_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 }
             ],
             "color": "#db9a19",
@@ -598,6 +669,16 @@
                 "en": ""
             },
             "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "d02f4b08-3678-42fd-9bb0-31c0041ea848",
+                    "edgeid": "130b50a5-0917-4834-8e32-f7d8df9af6c8",
+                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
+                    "source_identifier_id": null
+                },
                 {
                     "description": null,
                     "domainnode_id": "9e5eff66-1dc8-41de-a544-930e348b3782",
@@ -867,6 +948,13 @@
             "nodegroups": [
                 {
                     "cardinality": "1",
+                    "grouping_node_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
+                    "legacygroupid": null,
+                    "nodegroupid": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
                     "grouping_node_id": "4ae57336-30e2-4d9a-bcfd-e89af0251fbe",
                     "legacygroupid": null,
                     "nodegroupid": "4ae57336-30e2-4d9a-bcfd-e89af0251fbe",
@@ -958,6 +1046,38 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "process_requirement_messages",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                                "name": "BCAP Message"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance-list",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Process Requirement Messages",
+                    "nodegroup_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
+                    "nodeid": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "sub_requirement_sort_order",
                     "config": {},
                     "datatype": "number",
@@ -986,7 +1106,10 @@
                         "falseLabel": {
                             "en": "Optional"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Mandatory"
                         }
@@ -1040,7 +1163,10 @@
                         "falseLabel": {
                             "en": "No Submission Required"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Submission Required"
                         }
@@ -1094,7 +1220,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1125,7 +1254,10 @@
                         "falseLabel": {
                             "en": "Working Document"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Template"
                         }
@@ -1156,7 +1288,10 @@
                         "falseLabel": {
                             "en": "Unsatisfied"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Satisfied"
                         }
@@ -1258,7 +1393,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1355,7 +1493,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "requirement_submission",
+                    "alias": "requirment_submission",
                     "config": {
                         "graphs": [
                             {
@@ -1377,7 +1515,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Requirement Submission",
+                    "name": "Requirment Submission",
                     "nodegroup_id": "cada619a-53cd-4261-8067-74341630f39c",
                     "nodeid": "cada619a-53cd-4261-8067-74341630f39c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
@@ -1506,9 +1644,9 @@
             "publication": {
                 "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
                 "most_recent_edit_id": null,
-                "notes": "Introduce the internal/external requirement concept",
-                "publicationid": "74653947-b51f-43eb-9663-61cdae6591d4",
-                "published_time": "2026-05-19T16:42:37.476"
+                "notes": "Added BCAP Messages node",
+                "publicationid": "c227e27c-a0fa-4fdf-8139-672f927d05e4",
+                "published_time": "2026-06-16T16:17:45.428"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1607,9 +1745,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "d5a4f8fb2c 2026-04-22 06:33:18 -0700",
+        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
+        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
         "os": "Linux",
-        "os version": "6.12.76-linuxkit"
+        "os version": "5.14.0-687.13.1.el9_8.x86_64"
     }
 }
