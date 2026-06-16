@@ -45,10 +45,12 @@ class ContributorService(BaseGraphService):
             GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME
         )
         inactive_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
+        # Containment (data @> {...}) so the tiledata GIN index is used; plain
+        # key equality (data__<node>=...) can't use it and seq-scans the table.
         pk = (
             TileModel.objects.filter(
                 nodegroup_id=contributor_ng,
-                **{f"data__{username_node}": username},
+                data__contains={username_node: username},
             )
             .exclude(**{f"data__{inactive_node}": True})
             .values_list("resourceinstance_id", flat=True)

@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { reactive, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
-import { z } from 'zod';
-import { zInternalDashboardCard } from '@/bcap/client/zod.gen.ts';
-import { getInternalDashboardData } from '@/bcap/components/pages/api.ts';
+import {
+    getInternalDashboardData,
+    type DashboardStatus,
+    type InternalDashboardCard,
+} from '@/bcap/components/pages/api.ts';
 import arches from 'arches';
 
 const currentRoute = useRoute();
@@ -35,11 +37,7 @@ interface ProjectData {
     urgency: number;
 }
 
-// Extract the new types directly from the generated Zod backend schema
-type GeneratedDashboardCard = z.infer<typeof zInternalDashboardCard>;
-
-// Maps backend JSON directly to the Dashboard Card
-const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
+const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
     const safeUrgency = rawItem.urgency ?? 0;
     const isPriority = rawItem.priority_level === 'High' || false;
 
@@ -47,18 +45,15 @@ const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
         id: rawItem.id,
         reqId: rawItem.requirement_id || rawItem.id,
 
-        // Cap
         capPriority: isPriority,
         capLabel: rawItem.requirement_name || '',
         capDate: rawItem.requirement_due_date || 'Pending',
 
-        // Title & Subtitles
         icon: 'fa-solid fa-folder-open',
         bodyTitle: rawItem.project_name || 'Unknown Project',
         bodySubtitle1: rawItem.application_number || 'No App #',
         bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-        // Body
         body1: rawItem.permit_number
             ? `Permit: ${rawItem.permit_number}`
             : undefined,
@@ -69,7 +64,6 @@ const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
         body4: undefined,
         body5: undefined,
 
-        // Footer
         footerDate: rawItem.requirement_due_date || 'Not Started',
         footerName: rawItem.ministry_assignee_name || 'Unassigned',
 
@@ -78,7 +72,6 @@ const mapToDashboardCard = (rawItem: GeneratedDashboardCard): ProjectData => {
     };
 };
 
-// Sorting options array
 const sortOptions = [
     { label: 'Default (Urgency)', value: 'default' },
     { label: 'Application Number', value: 'bodySubtitle1' },
@@ -94,64 +87,62 @@ const sortOptions = [
 ];
 
 const internalTabs = [
-    { label: 'My Projects', value: 'my_projects' },
-    { label: 'Unassigned', value: 'unassigned' },
-    { label: 'All', value: 'all' },
+    { label: 'My Projects', value: 'ASSIGNED_TO_ME' },
+    { label: 'Unassigned', value: 'UNASSIGNED' },
+    { label: 'All', value: 'ALL' },
 ];
 
-const rawProjects = ref<ProjectData[]>([]);
-const isLoading = ref(true);
-const currentFilter = ref('my_projects');
-const currentSearch = ref('');
-const lastUpdateDate = ref(new Date());
-const userName = 'John Doe';
-const currentSort = ref('default');
-const sortOrder = ref<'asc' | 'desc'>('asc');
-const page = ref(1);
-const pageLimit = ref(100);
-const UNASSIGNED = 'unassigned';
+const state = reactive({
+    rawProjects: [] as ProjectData[],
+    isLoading: true,
+    currentFilter: 'ASSIGNED_TO_ME' as DashboardStatus | 'ALL',
+    currentSearch: '',
+    lastUpdateDate: new Date(),
+    currentSort: 'default',
+    sortOrder: 'asc' as 'asc' | 'desc',
+    page: 1,
+    pageLimit: 100,
+});
 
 onMounted(() => {
     loadData();
 });
 
-watch(currentFilter, (value, oldValue) => {
-    if (value !== oldValue) loadData();
-});
+watch(
+    () => state.currentFilter,
+    (value, oldValue) => {
+        if (value !== oldValue) loadData();
+    },
+);
 
 const loadData = async () => {
-    isLoading.value = true;
+    state.isLoading = true;
     try {
+        const status =
+            state.currentFilter === 'ALL' ? undefined : state.currentFilter;
         const data = await getInternalDashboardData(
-            currentFilter.value === UNASSIGNED,
-            page.value,
-            pageLimit.value,
+            status,
+            state.page,
+            state.pageLimit,
         );
-        const cards = data as GeneratedDashboardCard[];
-        rawProjects.value = cards.map((item) => mapToDashboardCard(item));
-        lastUpdateDate.value = new Date();
+        state.rawProjects = data.map((item) => mapToDashboardCard(item));
+        state.lastUpdateDate = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
     } finally {
-        isLoading.value = false;
+        state.isLoading = false;
     }
 };
 
 function handleSearch(searchTerm: string) {
-    currentSearch.value = searchTerm;
+    state.currentSearch = searchTerm;
 }
 
 const displayedProjects = computed(() => {
-    let filtered = rawProjects.value;
+    let filtered = state.rawProjects;
 
-    if (currentFilter.value === 'my_projects') {
-        filtered = filtered.filter((item) => item.footerName === userName);
-    } else if (currentFilter.value === UNASSIGNED) {
-        filtered = filtered.filter((item) => item.footerName === 'Unassigned');
-    }
-
-    if (currentSearch.value) {
-        const query = currentSearch.value.toLowerCase().trim();
+    if (state.currentSearch) {
+        const query = state.currentSearch.toLowerCase().trim();
 
         filtered = filtered.filter((item) => {
             // Special keyword If they search "priority", show all starred cards
@@ -176,7 +167,7 @@ const displayedProjects = computed(() => {
 
     // Apply Dynamic Sorting
     const sorted = filtered.slice().sort((a, b) => {
-        const field = currentSort.value;
+        const field = state.currentSort;
 
         // The complex default sort (Priority -> Urgency -> Date)
         if (field === 'default') {
@@ -221,7 +212,7 @@ const displayedProjects = computed(() => {
         return valA.localeCompare(valB);
     });
 
-    return sortOrder.value === 'desc' ? sorted.reverse() : sorted;
+    return state.sortOrder === 'desc' ? sorted.reverse() : sorted;
 });
 
 // Formats the raw API data into HTML before passing it to the card
@@ -235,11 +226,20 @@ const formatBodyLine = (text?: string) => {
     return text;
 };
 
-const navigateToReport = (item: ProjectData) => {
+const navigateToChecklist = (item: ProjectData) => {
     window.open(
         `${arches.urls.plugin('internal-permit-dashboard')}/checklist?id=${item.reqId}`,
         item.reqId,
     );
+};
+
+const onCardClick = (event: MouseEvent, item: ProjectData) => {
+    // Ctrl/Cmd-click opens the underlying resource instead of the checklist.
+    if (event.ctrlKey || event.metaKey) {
+        window.open(`/bcap/resource/${item.id}`, '_blank');
+        return;
+    }
+    navigateToChecklist(item);
 };
 </script>
 
@@ -247,35 +247,35 @@ const navigateToReport = (item: ProjectData) => {
     <Panel class="full-height">
         <Fluid>
             <SortingBar
-                v-model:activeTab="currentFilter"
-                v-model:currentSort="currentSort"
-                v-model:sortOrder="sortOrder"
+                v-model:active-tab="state.currentFilter"
+                v-model:current-sort="state.currentSort"
+                v-model:sort-order="state.sortOrder"
                 :tabs="internalTabs"
-                :last-updated="lastUpdateDate"
+                :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
                 @update:search="handleSearch"
                 @refresh="loadData"
             />
 
             <div
-                v-if="!isLoading"
+                v-if="!state.isLoading"
                 class="results-summary"
             >
                 Showing
                 <strong>{{ displayedProjects.length }}</strong>
                 of
-                <strong>{{ rawProjects.length }}</strong>
+                <strong>{{ state.rawProjects.length }}</strong>
                 projects
                 <span
-                    v-if="currentSearch"
+                    v-if="state.currentSearch"
                     class="active-search-label"
                 >
-                    (filtered by "{{ currentSearch }}")
+                    (filtered by "{{ state.currentSearch }}")
                 </span>
             </div>
 
             <div
-                v-if="isLoading"
+                v-if="state.isLoading"
                 class="loading-state"
             >
                 <ProgressSpinner
@@ -299,13 +299,13 @@ const navigateToReport = (item: ProjectData) => {
                     :body4="formatBodyLine(item.body4)"
                     :body5="formatBodyLine(item.body5)"
                     :route="{ name: item.route }"
-                    :search-query="currentSearch"
-                    @click.capture.prevent="navigateToReport(item)"
+                    :search-query="state.currentSearch"
+                    @click.capture.prevent="onCardClick($event, item)"
                 />
             </div>
 
             <div
-                v-if="!isLoading && displayedProjects.length === 0"
+                v-if="!state.isLoading && displayedProjects.length === 0"
                 class="empty-state"
             >
                 <p>No projects match your search criteria.</p>
