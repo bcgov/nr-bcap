@@ -23,7 +23,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Requirment Submission"
+                        "en": "Requirement Submission"
                     },
                     "nodegroup_id": "cada619a-53cd-4261-8067-74341630f39c",
                     "sortorder": 3,
@@ -208,11 +208,7 @@
                     "config": {
                         "defaultValue": "0",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Sort Order",
                         "max": "",
                         "min": "",
@@ -249,9 +245,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -295,9 +289,7 @@
                     "card_id": "03f2c98d-a385-4031-8886-dbc6ddb1ed27",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirment Submission",
                         "placeholder": {
                             "en": ""
@@ -322,9 +314,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement",
                         "maxLength": null,
                         "placeholder": {
@@ -348,11 +338,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Default Target Processing Time (days)",
                         "max": "",
                         "min": "",
@@ -389,9 +375,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement Name",
                         "maxLength": null,
                         "placeholder": {
@@ -456,9 +440,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement Identification",
                         "maxLength": null,
                         "placeholder": {
@@ -486,9 +468,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -553,9 +533,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Description",
                         "maxLength": null,
                         "placeholder": {
@@ -642,9 +620,7 @@
                     "card_id": "80b2ef2c-42e6-4680-ac7b-2bd1991a07f4",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Process Requirement Messages",
                         "placeholder": {
                             "en": ""
@@ -1106,10 +1082,7 @@
                         "falseLabel": {
                             "en": "Optional"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Mandatory"
                         }
@@ -1163,10 +1136,7 @@
                         "falseLabel": {
                             "en": "No Submission Required"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Submission Required"
                         }
@@ -1220,10 +1190,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1254,10 +1221,7 @@
                         "falseLabel": {
                             "en": "Working Document"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Template"
                         }
@@ -1288,10 +1252,7 @@
                         "falseLabel": {
                             "en": "Unsatisfied"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Satisfied"
                         }
@@ -1393,10 +1354,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1493,7 +1451,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "requirment_submission",
+                    "alias": "requirement_submission",
                     "config": {
                         "graphs": [
                             {

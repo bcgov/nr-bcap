@@ -132,9 +132,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Message Subject",
                         "maxLength": null,
                         "placeholder": {
@@ -162,9 +160,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Response Content",
                         "maxLength": null,
                         "placeholder": {
@@ -208,9 +204,7 @@
                     "card_id": "afd6fa63-eab3-45c3-aed7-fc14afe23373",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Related Source Message",
                         "placeholder": {
                             "en": ""
@@ -235,9 +229,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Message Content",
                         "maxLength": null,
                         "placeholder": {
@@ -259,9 +251,7 @@
                 {
                     "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Message Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -530,10 +520,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
