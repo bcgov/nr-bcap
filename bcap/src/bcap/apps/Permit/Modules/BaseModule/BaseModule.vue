@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, provide, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
@@ -30,8 +30,8 @@ const isDataLoaded = ref(false);
 const graphSlug = 'permit_application';
 const draftId = ref<string | null>(null);
 const draftData = ref<ArchesDraftData>({});
+const finalizedResourceData = ref<unknown>(null);
 const route = useRoute();
-const router = useRouter();
 
 provide('draftId', draftId);
 provide('draftData', draftData);
@@ -44,9 +44,34 @@ const submitNewSiteData = async (): Promise<boolean> => {
     try {
         if (!draftId.value) throw new Error('No active draft found.');
 
-        await submitApplication(draftId.value, draftData.value, graphSlug);
+        const response = await submitApplication(
+            draftId.value,
+            draftData.value,
+            graphSlug,
+        );
+
+        const newResourceId = response?.id || response?.resourceinstance_id;
+
+        if (newResourceId) {
+            console.log(
+                `Fetching finalized resource data for ${newResourceId}...`,
+            );
+            const resourceResponse = await fetch(
+                `/api/resources/${newResourceId}?format=json`,
+            );
+
+            if (resourceResponse.ok) {
+                finalizedResourceData.value = await resourceResponse.json();
+                console.log('Successfully loaded finalized data!');
+            } else {
+                console.warn(
+                    'Submission succeeded, but failed to fetch the finalized resource view.',
+                );
+            }
+        }
 
         draftId.value = null;
+
         return true;
     } catch (error) {
         console.error('Submission failed:', error);
@@ -77,8 +102,11 @@ const activateNextStep = async () => {
         const success = await submitNewSiteData();
 
         if (success) {
-            console.log('Redirecting to dashboard...');
-            router.push('/bcap/plugins/external-permit-workflows');
+            console.log(
+                'Submission successful. Moving to confirmation step...',
+            );
+            myStepper.value.d_value++;
+            setCurrentStepValid(true, myStepper.value.d_value);
         }
     } else {
         myStepper.value.d_value++;
@@ -330,6 +358,8 @@ const showDebug = ref(false);
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
                                 ref="step99"
+                                :is-submitted-view="true"
+                                :resource-data="finalizedResourceData"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 6)
                                 "

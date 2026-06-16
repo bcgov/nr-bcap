@@ -1,12 +1,24 @@
 <script setup lang="ts">
-import { inject, type Ref } from 'vue';
+import { inject, computed, type Ref } from 'vue';
 import FieldSet from 'primevue/fieldset';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
 import { VIEW } from '@/arches_component_lab/widgets/constants.ts';
 import type { CardXNodeXWidgetData } from '@/arches_component_lab/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
+const props = defineProps<{
+    isSubmittedView?: boolean;
+    resourceData?: ArchesDraftData | null;
+}>();
+
 const draftData = inject<Ref<ArchesDraftData>>('draftData');
+
+const activeData = computed<ArchesDraftData>(() => {
+    if (props.isSubmittedView && props.resourceData) {
+        return props.resourceData;
+    }
+    return draftData?.value || ({} as ArchesDraftData);
+});
 
 const isValid = () => {
     return true;
@@ -24,17 +36,29 @@ defineExpose({ isValid });
 </script>
 
 <template>
-    <p class="mb-4">
+    <p
+        v-if="!isSubmittedView"
+        class="mb-4"
+    >
         Please review the entered information prior to submitting the
         application:
     </p>
+    <div
+        v-else
+        class="mb-4"
+    >
+        <p>
+            Your application has been successfully submitted. Below is a summary
+            of the finalized information.
+        </p>
+    </div>
 
     <FieldSet class="review-fieldset">
         <div class="div-grid-cols">
             <dt>Replacement Application</dt>
             <dd>
                 {{
-                    draftData?.application_identification?.aliased_data
+                    activeData?.application_identification?.aliased_data
                         ?.is_replacement?.display_value || ''
                 }}
             </dd>
@@ -42,7 +66,7 @@ defineExpose({ isValid });
             <dt>Project Name</dt>
             <dd>
                 {{
-                    draftData?.application_identification?.aliased_data
+                    activeData?.application_identification?.aliased_data
                         ?.project_name?.display_value || ''
                 }}
             </dd>
@@ -50,7 +74,7 @@ defineExpose({ isValid });
             <dt>Application ID</dt>
             <dd>
                 {{
-                    draftData?.application_identification?.aliased_data
+                    activeData?.application_identification?.aliased_data
                         ?.application_id?.display_value || ''
                 }}
             </dd>
@@ -58,7 +82,7 @@ defineExpose({ isValid });
             <dt>Application Proponent</dt>
             <dd>
                 {{
-                    draftData?.application_contacts?.aliased_data
+                    activeData?.application_contacts?.aliased_data
                         ?.application_proponent?.display_value || ''
                 }}
             </dd>
@@ -66,36 +90,37 @@ defineExpose({ isValid });
             <dt>Has Retained Archaeologist</dt>
             <dd>
                 {{
-                    draftData?.application_contacts?.aliased_data
+                    activeData?.application_contacts?.aliased_data
                         ?.has_retained_archaeologist?.display_value || ''
                 }}
             </dd>
 
             <template
                 v-if="
-                    draftData?.application_contacts?.aliased_data
+                    activeData?.application_contacts?.aliased_data
                         ?.rationale_for_no_archaeologist?.display_value
                 "
             >
                 <dt>Rationale For No Archaeologist</dt>
-                <dd
-                    v-html="
-                        draftData?.application_contacts?.aliased_data
-                            ?.rationale_for_no_archaeologist?.display_value
-                    "
-                ></dd>
+                <dd>
+                    {{
+                        activeData?.application_contacts?.aliased_data
+                            ?.rationale_for_no_archaeologist?.display_value ||
+                        ''
+                    }}
+                </dd>
             </template>
 
             <template
                 v-if="
-                    draftData?.application_contacts?.aliased_data
+                    activeData?.application_contacts?.aliased_data
                         ?.application_archaeologist?.display_value
                 "
             >
                 <dt>Application Archaeologist</dt>
                 <dd>
                     {{
-                        draftData?.application_contacts?.aliased_data
+                        activeData?.application_contacts?.aliased_data
                             ?.application_archaeologist?.display_value || ''
                     }}
                 </dd>
@@ -104,31 +129,31 @@ defineExpose({ isValid });
             <dt>Project Type</dt>
             <dd>
                 {{
-                    draftData?.proposed_project?.aliased_data?.project_type
+                    activeData?.proposed_project?.aliased_data?.project_type
                         ?.display_value || ''
                 }}
             </dd>
 
             <dt>Project Description</dt>
-            <dd
-                v-html="
-                    draftData?.proposed_project?.aliased_data
+            <dd>
+                {{
+                    activeData?.proposed_project?.aliased_data
                         ?.project_description?.display_value || ''
-                "
-            ></dd>
+                }}
+            </dd>
 
             <dt>Scope of Work</dt>
-            <dd
-                v-html="
-                    draftData?.proposed_project?.aliased_data?.scope_of_work
+            <dd>
+                {{
+                    activeData?.proposed_project?.aliased_data?.scope_of_work
                         ?.display_value || ''
-                "
-            ></dd>
+                }}
+            </dd>
 
             <dt>Assessment Approach</dt>
             <dd>
                 {{
-                    draftData?.archaeological_assessment_plan?.aliased_data
+                    activeData?.archaeological_assessment_plan?.aliased_data
                         ?.section_1_overview?.aliased_data?.assessment_approach
                         ?.display_value || ''
                 }}
@@ -137,7 +162,7 @@ defineExpose({ isValid });
             <dt>First Nations File Numbers</dt>
             <dd>
                 {{
-                    draftData?.first_nation_consultation?.aliased_data
+                    activeData?.first_nation_consultation?.aliased_data
                         ?.fn_file_numbers?.display_value || ''
                 }}
             </dd>
@@ -145,20 +170,20 @@ defineExpose({ isValid });
             <dt>Industrial Sector</dt>
             <dd>
                 {{
-                    draftData?.proposed_project?.aliased_data
+                    activeData?.proposed_project?.aliased_data
                         ?.development_project_details?.aliased_data
                         ?.industrial_sector?.display_value || ''
                 }}
             </dd>
 
             <dt>Alteration Details</dt>
-            <dd
-                v-html="
-                    draftData?.proposed_project?.aliased_data
+            <dd>
+                {{
+                    activeData?.proposed_project?.aliased_data
                         ?.development_project_details?.aliased_data
                         ?.alteration_details?.display_value || ''
-                "
-            ></dd>
+                }}
+            </dd>
         </div>
 
         <div class="map-section">
@@ -166,13 +191,13 @@ defineExpose({ isValid });
             <dd class="centered-map">
                 <GenericWidget
                     v-if="
-                        draftData?.proposed_project?.aliased_data
+                        activeData?.proposed_project?.aliased_data
                             ?.project_boundary
                     "
                     :mode="VIEW"
                     :should-show-label="false"
                     :aliased-node-data="
-                        draftData?.proposed_project?.aliased_data
+                        activeData?.proposed_project?.aliased_data
                             ?.project_boundary
                     "
                     :card-x-node-x-widget-data-overrides="mapOverrides"

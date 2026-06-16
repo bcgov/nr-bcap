@@ -38,9 +38,7 @@ export const fetchMyProjects = async () => {
         );
 
         if (!response.ok) throw new Error('Network response was not ok');
-
         const data = await response.json();
-        // Return the array directly, or extract it from a paginated .results object
         return data.results || data || [];
     } catch (error) {
         console.error('Failed to load submitted projects:', error);
@@ -48,11 +46,20 @@ export const fetchMyProjects = async () => {
     }
 };
 
+// todo: replace with proper type
+export interface SubmitResponse {
+    resourceinstance_id?: string;
+    id?: string;
+    tiles?: unknown[];
+    displayname?: string;
+    [key: string]: unknown;
+}
+
 export const submitApplication = async (
     draftId: string,
     payload: ArchesDraftData,
     graphSlug: string = 'permit_application',
-): Promise<boolean> => {
+): Promise<SubmitResponse> => {
     try {
         const submitUrl = arches.urls.api_resource_create(graphSlug);
         const cleanPayload = JSON.parse(JSON.stringify(payload));
@@ -82,6 +89,7 @@ export const submitApplication = async (
 
         const finalResource = await postResponse.json();
         console.log('Final resource created successfully!', finalResource);
+
         // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
 
@@ -90,7 +98,7 @@ export const submitApplication = async (
             headers: { 'X-CSRFToken': getCsrfToken() },
         });
 
-        return true;
+        return finalResource;
     } catch (error) {
         console.error('Submission API failed:', error);
         throw error;
