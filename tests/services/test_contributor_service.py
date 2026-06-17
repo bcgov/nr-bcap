@@ -85,6 +85,16 @@ class ContributorServiceTest(TestCase):
         )
         self.assertEqual(self.service.names_by_contributor_id([]), {})
 
+    def test_names_by_contributor_id_tolerates_a_missing_contributor_group(self):
+        # A referenced Contributor whose contributor group tile is absent (so the
+        # loaded tree's group is None) reads as a blank name rather than crashing.
+        stub = self.builder.new_resource("contributor")
+        stub.save(**self.builder.save_kwargs)
+        self.assertEqual(
+            self.service.names_by_contributor_id([str(stub.pk)]),
+            {str(stub.pk): ""},
+        )
+
     def test_company_is_the_viewer_and_their_orgs_active_members(self):
         # The viewer and the active members of their org are in; the org itself,
         # inactive, expired, future, and unrelated contributors are out.
