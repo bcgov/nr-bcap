@@ -8,6 +8,7 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationGroupAliases as group_aliases,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA
+from bcap.util.indexing import bulk_index
 
 
 class PermitApplicationService:
@@ -19,7 +20,15 @@ class PermitApplicationService:
         rejected (the two saves can't share one transaction)."""
         requirements = self._inject_requirements_from_templates(data)
         try:
-            return save_application()
+            response = save_application()
+            # The clones save with index=False, so index them now that the save
+            # has linked them: their descriptor embeds the application, and the
+            # resource-instance widget resolves its label by searching the index.
+            # Neither shows in this response, but both show on the next get.
+            for requirement in requirements:
+                requirement.save_descriptors()
+            bulk_index(requirements)
+            return response
         except Exception:
             for requirement in requirements:
                 requirement.delete()
@@ -28,7 +37,11 @@ class PermitApplicationService:
     def _inject_requirements_from_templates(self, data):
         """Clone a working copy of each requirement template, link them to the
         application in flow order, and return the copies."""
-        admin = data[ALIASED_DATA][group_aliases.APPLICATION_ADMIN][ALIASED_DATA]
+        admin = (
+            data[ALIASED_DATA]
+            .setdefault(group_aliases.APPLICATION_ADMIN, {ALIASED_DATA: {}})
+            .setdefault(ALIASED_DATA, {})
+        )
         copies = self._requirements.create_working_copies()
         admin[aliases.PROCESS_REQUIREMENT] = [
             {

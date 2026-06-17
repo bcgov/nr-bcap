@@ -6,11 +6,32 @@ the rest. Installed from the app's ready() so it's set before any tile save."""
 import logging
 
 from django.db import OperationalError, ProgrammingError, connection
+from django.db.models import Exists, OuterRef
+
+from arches.app.models.models import Node, TileModel
 
 from arches_querysets.bulk_operations.tiles import TileTreeOperation
 from arches_querysets.datatypes.geojson import GeojsonFeatureCollectionDataType
 
 logger = logging.getLogger(__name__)
+
+
+def geojson_after_update_all(self, tile=None):
+    """arches_querysets' geojson after_update_all dereferences the tile, but
+    arches' import_business_data (package load) calls after_update_all() with no
+    tile -- crashing the import. Defer to the base datatype's global hook in that
+    case; keep the per-resource fan-out when a tile is given."""
+    if tile is None:
+        return super(GeojsonFeatureCollectionDataType, self).after_update_all()
+    nodes_exist_subquery = Node.objects.filter(
+        nodegroup_id=OuterRef("nodegroup_id"),
+        datatype="geojson-feature-collection",
+    )
+    tiles = TileModel.objects.filter(resourceinstance=tile.resourceinstance_id).filter(
+        Exists(nodes_exist_subquery)
+    )
+    for resource_tile in tiles:
+        super(GeojsonFeatureCollectionDataType, self).after_update_all(resource_tile)
 
 
 def after_update_all(self):
@@ -42,8 +63,7 @@ def disable_jit_on_tile_refresh():
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                "ALTER FUNCTION refresh_tile_geojson_geometries(uuid) "
-                "SET jit = off"
+                "ALTER FUNCTION refresh_tile_geojson_geometries(uuid) " "SET jit = off"
             )
     except (ProgrammingError, OperationalError):
         pass
@@ -51,4 +71,5 @@ def disable_jit_on_tile_refresh():
 
 def temp_performance_fix_patch():
     TileTreeOperation.after_update_all = after_update_all
+    GeojsonFeatureCollectionDataType.after_update_all = geojson_after_update_all
     disable_jit_on_tile_refresh()

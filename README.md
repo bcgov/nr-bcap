@@ -253,8 +253,8 @@ To load sample dashboard data into the current database (permit application, rel
 # Small demo graph (one permit, three short requirements)
 python3 manage.py seed_dashboard_demo
 
-# One permit carrying the full real-world requirement flow
-python3 manage.py seed_permit_application
+# Just the process-requirement templates (no permit application)
+python3 manage.py seed_template_requirements
 
 # Seed several cards at once (each with randomized names and application id)
 python3 manage.py seed_dashboard_demo --count 20

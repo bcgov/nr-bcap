@@ -41,10 +41,10 @@ class ProcessRequirementService:
         source.load_tiles()
         copy = self._copy_resource(source)
         self._clear_template_flag(copy)
-        # One transaction so the deferred parenttile FK tolerates inserting the
-        # copied tiles in any order.
         with transaction.atomic():
-            copy.save(index=False)
+            super(Resource, copy).save()
+            Tile.objects.bulk_create(copy.tiles)
+        copy.save_descriptors()
         return copy
 
     @staticmethod

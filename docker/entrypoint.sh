@@ -145,6 +145,13 @@ run_django_server() {
 	echo ""
 	cd ${APP_FOLDER}
     echo "Running Django"
+	# VSCODE_DEBUG=true makes debugpy listen (host 5690 maps to the container port) for a
+	# VSCode "Remote Attach". Off by default for faster boot. Port defaults to 5678.
+	if [[ "${VSCODE_DEBUG}" == "true" ]]; then
+		VSCODE_DEBUG_PORT=${VSCODE_DEBUG_PORT:-5678}
+		echo "debugpy listening on 0.0.0.0:${VSCODE_DEBUG_PORT}"
+		exec ${PYTHON_EXEC} -W default -m debugpy --listen 0.0.0.0:${VSCODE_DEBUG_PORT} manage.py runserver 0.0.0.0:${DJANGO_PORT}
+	fi
 	exec ${PYTHON_EXEC} -W default manage.py runserver 0.0.0.0:${DJANGO_PORT}
 }
 

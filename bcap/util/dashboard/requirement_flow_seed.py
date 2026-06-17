@@ -1,8 +1,7 @@
-"""Seeds one Permit Application carrying the real-world process-requirement flow
-(Recommend Referral, Recommend Decision, Decision Summary) with full
-sub-requirement checklists, so the dashboard can be exercised against
-production-shaped data. Reuses the demo builder; only the requirement specs
-differ. Temporary developer aid; see the ``seed_permit_application`` command."""
+"""Builds the real-world process-requirement flow (Recommend Referral, Recommend
+Decision, Decision Summary) with full sub-requirement checklists, from the
+reference-data specs. Reuses the demo builder; only the requirement specs
+differ."""
 
 from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
 import os
@@ -18,6 +17,7 @@ class RequirementFlowBuilder(DashboardDemoBuilder):
 
     _SEED_UNASSIGNED_PERMIT = False
     _RANDOMIZE_NAME = False
+    _TAG_AS_SEED = False
     _ROOT_DIR = (
         Path(apps.get_app_config("bcap").path)
         / "pkg"
