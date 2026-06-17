@@ -247,9 +247,9 @@ const navigateToReport = (item: ProjectData) => {
     <Panel class="full-height">
         <Fluid>
             <SortingBar
-                v-model:activeTab="currentFilter"
-                v-model:currentSort="currentSort"
-                v-model:sortOrder="sortOrder"
+                v-model:active-tab="currentFilter"
+                v-model:current-sort="currentSort"
+                v-model:sort-order="sortOrder"
                 :tabs="internalTabs"
                 :last-updated="lastUpdateDate"
                 :sort-options="sortOptions"

@@ -143,10 +143,10 @@ const openResourceReport = (resourceId: string) => {
     <Panel class="full-height">
         <Fluid>
             <SortingBar
-                v-model:activeTab="activeTab"
+                v-model:active-tab="activeTab"
                 v-model:search="searchQuery"
-                v-model:currentSort="currentSort"
-                v-model:sortOrder="sortOrder"
+                v-model:current-sort="currentSort"
+                v-model:sort-order="sortOrder"
                 :tabs="dashboardTabs"
                 :last-updated="lastUpdated"
                 :sort-options="sortOptions"
