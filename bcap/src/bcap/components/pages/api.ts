@@ -1,7 +1,10 @@
 import arches from 'arches';
 import { z } from 'zod';
 import {
+    zApiDashboardInternalRetrieveQuery,
     zContributorOption,
+    zInternalDashboardCard,
+    zInternalDashboardPage,
     zNewContributor,
     zRegistrationLinkRequest,
     zRegistrationLinkResponse,
@@ -147,28 +150,29 @@ export const issueRegistrationLink = async (
     return await response.json();
 };
 
+export type DashboardStatus = z.infer<
+    typeof zApiDashboardInternalRetrieveQuery
+>['status'];
+
+export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
+
 export const getInternalDashboardData = async (
-    showUnassigned: boolean = false,
+    status?: DashboardStatus,
     page: number = 1,
     limit: number = 100,
-) => {
+): Promise<InternalDashboardCard[]> => {
     try {
-        // Will need to update to all
-        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${showUnassigned ? '&status=UNASSIGNED' : ''}`;
+        // no status means all results -- omit the param entirely
+        const statusParam = status ? `&status=${status}` : '';
+        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${statusParam}`;
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log('Raw API response:', data);
-
-        if (data && 'results' in data && Array.isArray(data.results)) {
-            return data.results;
-        }
-
-        return [];
+        const data = zInternalDashboardPage.parse(await response.json());
+        return data.results ?? [];
     } catch (error) {
         console.error('Error fetching projects from backend:', error);
         return [];

@@ -208,7 +208,7 @@ const activeSortLabel = computed(() => {
             @click="$emit('refresh')"
         >
             <i class="fa-solid fa-rotate-right refresh-icon"></i>
-            lastupdated - {{ formattedTime }}
+            Last Updated - {{ formattedTime }}
         </div>
     </div>
 </template>
