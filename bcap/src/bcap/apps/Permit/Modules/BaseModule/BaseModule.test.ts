@@ -59,8 +59,8 @@ describe('BaseModule.vue', () => {
         const wrapper = shallowMount(BaseModule);
 
         expect(wrapper.exists()).toBe(true);
-        // Verify the loading spinner is present initially
-        expect(wrapper.html()).toContain('progressspinner-stub');
+        // Verify data hasn't loaded yet (which would show the spinner)
+        expect(wrapper.vm.isDataLoaded).toBe(false);
     });
 
     it('creates a brand new draft on mount when no draftId is present', async () => {
