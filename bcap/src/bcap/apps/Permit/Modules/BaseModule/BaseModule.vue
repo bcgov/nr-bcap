@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, provide, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
@@ -21,6 +21,7 @@ import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Re
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import { submitApplication } from '@/bcap/apps/Permit/api.ts';
+import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
 
 const submissionErrors = ref([] as ErrorMessage[]);
 const submitted = ref(false);
@@ -30,11 +31,17 @@ const isDataLoaded = ref(false);
 const graphSlug = 'permit_application';
 const draftId = ref<string | null>(null);
 const draftData = ref<ArchesDraftData>({});
+const finalizedResourceData = ref<PermitApplicationResponse | null>(null);
 const route = useRoute();
-const router = useRouter();
 
 provide('draftId', draftId);
 provide('draftData', draftData);
+
+const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
+    if (!finalizedResourceData.value?.aliased_data) return null;
+    return finalizedResourceData.value
+        .aliased_data as unknown as ArchesDraftData;
+});
 
 const submitNewSiteData = async (): Promise<boolean> => {
     console.log('Submitting final application...');
@@ -44,9 +51,17 @@ const submitNewSiteData = async (): Promise<boolean> => {
     try {
         if (!draftId.value) throw new Error('No active draft found.');
 
-        await submitApplication(draftId.value, draftData.value, graphSlug);
+        // Submit the draft
+        const response = await submitApplication(
+            draftId.value,
+            draftData.value,
+            graphSlug,
+        );
 
-        draftId.value = null;
+        if (response) {
+            finalizedResourceData.value = response;
+        }
+
         return true;
     } catch (error) {
         console.error('Submission failed:', error);
@@ -77,8 +92,11 @@ const activateNextStep = async () => {
         const success = await submitNewSiteData();
 
         if (success) {
-            console.log('Redirecting to dashboard...');
-            router.push('/bcap/plugins/external-permit-workflows');
+            console.log(
+                'Submission successful. Moving to confirmation step...',
+            );
+            myStepper.value.d_value++;
+            setCurrentStepValid(true, myStepper.value.d_value);
         }
     } else {
         myStepper.value.d_value++;
@@ -330,6 +348,8 @@ const showDebug = ref(false);
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
                                 ref="step99"
+                                :is-submitted-view="true"
+                                :resource-data="finalizedDataForReview"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 6)
                                 "

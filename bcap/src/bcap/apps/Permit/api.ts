@@ -1,6 +1,8 @@
 import arches from 'arches';
 import { getCsrfToken } from '@/bcap/util.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
+import * as z from 'zod';
 
 export async function getBlankPermitApplication(): Promise<unknown> {
     const response = await fetch(
@@ -38,9 +40,7 @@ export const fetchMyProjects = async () => {
         );
 
         if (!response.ok) throw new Error('Network response was not ok');
-
         const data = await response.json();
-        // Return the array directly, or extract it from a paginated .results object
         return data.results || data || [];
     } catch (error) {
         console.error('Failed to load submitted projects:', error);
@@ -48,11 +48,13 @@ export const fetchMyProjects = async () => {
     }
 };
 
+export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
+
 export const submitApplication = async (
     draftId: string,
     payload: ArchesDraftData,
     graphSlug: string = 'permit_application',
-): Promise<boolean> => {
+): Promise<PermitApplicationResponse> => {
     try {
         const submitUrl = arches.urls.api_resource_create(graphSlug);
         const cleanPayload = JSON.parse(JSON.stringify(payload));
@@ -82,6 +84,7 @@ export const submitApplication = async (
 
         const finalResource = await postResponse.json();
         console.log('Final resource created successfully!', finalResource);
+
         // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
 
@@ -90,7 +93,7 @@ export const submitApplication = async (
             headers: { 'X-CSRFToken': getCsrfToken() },
         });
 
-        return true;
+        return finalResource;
     } catch (error) {
         console.error('Submission API failed:', error);
         throw error;
