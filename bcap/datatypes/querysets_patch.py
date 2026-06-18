@@ -35,15 +35,12 @@ def geojson_after_update_all(self, tile=None):
 
 
 def after_update_all(self):
+    changed = self.to_insert | self.to_update | self.to_delete
     for datatype in self.datatype_factory.datatype_instances.values():
         try:
             if isinstance(datatype, GeojsonFeatureCollectionDataType):
-                changed = self.to_insert | self.to_update | self.to_delete
-                seen_resources = set()
                 for tile in changed:
-                    if tile.resourceinstance_id not in seen_resources:
-                        seen_resources.add(tile.resourceinstance_id)
-                        datatype.after_update_all(tile=tile)
+                    datatype.after_update_all(tile=tile)
             else:
                 datatype.after_update_all()
         except Exception:
