@@ -25,20 +25,20 @@ import * as z from 'zod';
 export const zBooleanAliasedNodeData = z.object({
     node_value: z.boolean().nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zContributorOption = z.object({
     id: z.string(),
     name: z.string(),
     email: z.string(),
-    type: z.string(),
+    type: z.string()
 });
 
 export const zDateAliasedNodeData = z.object({
     node_value: z.iso.datetime().nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zExternalDashboardCard = z.object({
@@ -53,7 +53,7 @@ export const zExternalDashboardCard = z.object({
     permit_id: z.string().nullish(),
     permit_number: z.string().optional(),
     urgency: z.int().optional(),
-    priority_level: z.string().optional(),
+    priority_level: z.string().optional()
 });
 
 /**
@@ -69,48 +69,36 @@ export const zExternalDashboardPage = z.object({
     count: z.int().optional(),
     page: z.int().optional(),
     limit: z.int().optional(),
-    results: z.array(zExternalDashboardCard).optional(),
+    results: z.array(zExternalDashboardCard).optional()
 });
 
 export const zFileListAliasedNodeData = z.object({
-    node_value: z
-        .array(
-            z.object({
-                name: z.string().optional(),
-                size: z.number().optional(),
-                type: z.string().optional(),
-                url: z.string().nullish(),
-                file: z
-                    .object({
-                        objectURL: z.string().nullish(),
-                    })
-                    .optional(),
-                node_id: z.uuid().optional(),
-            }),
-        )
-        .nullable(),
+    node_value: z.array(z.object({
+        name: z.string().optional(),
+        size: z.number().optional(),
+        type: z.string().optional(),
+        url: z.string().nullish(),
+        file: z.object({
+            objectURL: z.string().nullish()
+        }).optional(),
+        node_id: z.uuid().optional()
+    })).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zGeojsonFeatureCollectionAliasedNodeData = z.object({
-    node_value: z
-        .object({
+    node_value: z.object({
+        type: z.string().optional(),
+        features: z.array(z.object({
+            id: z.string().optional(),
             type: z.string().optional(),
-            features: z
-                .array(
-                    z.object({
-                        id: z.string().optional(),
-                        type: z.string().optional(),
-                        geometry: z.record(z.string(), z.unknown()).optional(),
-                        properties: z.record(z.string(), z.unknown()).nullish(),
-                    }),
-                )
-                .optional(),
-        })
-        .nullable(),
+            geometry: z.record(z.string(), z.unknown()).optional(),
+            properties: z.record(z.string(), z.unknown()).nullish()
+        })).optional()
+    }).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zInternalDashboardCard = z.object({
@@ -132,7 +120,7 @@ export const zInternalDashboardCard = z.object({
     ministry_assignee_change_date: z.string().optional(),
     requirement_id: z.string().optional(),
     urgency: z.int().optional(),
-    priority_level: z.string().optional(),
+    priority_level: z.string().optional()
 });
 
 /**
@@ -148,7 +136,7 @@ export const zInternalDashboardPage = z.object({
     count: z.int().optional(),
     page: z.int().optional(),
     limit: z.int().optional(),
-    results: z.array(zInternalDashboardCard).optional(),
+    results: z.array(zInternalDashboardCard).optional()
 });
 
 /**
@@ -159,43 +147,43 @@ export const zNewContributor = z.object({
     name: z.string(),
     first_name: z.string().optional(),
     email: z.email(),
-    phone: z.string().optional(),
+    phone: z.string().optional()
 });
 
 export const zNonLocalizedStringAliasedNodeData = z.object({
     node_value: z.string().nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zNonLocalizedStringAliasedNodeDataMax10 = z.object({
     node_value: z.string().max(10).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zNonLocalizedStringAliasedNodeDataMax9 = z.object({
     node_value: z.string().max(9).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zNumberAliasedNodeData = z.object({
     node_value: z.number().nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zNumberAliasedNodeDataMin0 = z.object({
     node_value: z.number().gte(0).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zNumberAliasedNodeDataMin0Max10 = z.object({
     node_value: z.number().gte(0).lte(10).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zPatchedResourceDraft = z.object({
@@ -207,7 +195,7 @@ export const zPatchedResourceDraft = z.object({
     resourceinstanceid: z.uuid().nullish(),
     data: z.unknown().optional(),
     created: z.iso.datetime().readonly().optional(),
-    updated: z.iso.datetime().readonly().optional(),
+    updated: z.iso.datetime().readonly().optional()
 });
 
 export const zPermitApplicationFirstNationsConsultationTile = z.object({
@@ -216,19 +204,14 @@ export const zPermitApplicationFirstNationsConsultationTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationInspectionTile = z.object({
@@ -237,19 +220,14 @@ export const zPermitApplicationInspectionTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationInvestigationTile = z.object({
@@ -258,26 +236,21 @@ export const zPermitApplicationInvestigationTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zProcessRequirementIsTemplateRequirementAliasedData = z.object({
     has_submission_requirement: zBooleanAliasedNodeData.nullable(),
     is_internal_requirement: zBooleanAliasedNodeData.nullable(),
     default_target_processing_time: zNumberAliasedNodeData.nullish(),
-    is_template_requirement: zBooleanAliasedNodeData.nullable(),
+    is_template_requirement: zBooleanAliasedNodeData.nullable()
 });
 
 export const zProcessRequirementIsTemplateRequirementTile = z.object({
@@ -285,87 +258,66 @@ export const zProcessRequirementIsTemplateRequirementTile = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementIsTemplateRequirementAliasedData.optional(),
+    aliased_data: zProcessRequirementIsTemplateRequirementAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zProcessRequirementRequirementExecutionDurationAliasedData =
-    z.object({
-        requirement_process_start_date: zDateAliasedNodeData.nullish(),
-        requirement_process_due_date: zDateAliasedNodeData.nullish(),
-        requirement_process_completion_date: zDateAliasedNodeData.nullish(),
-    });
+export const zProcessRequirementRequirementExecutionDurationAliasedData = z.object({
+    requirement_process_start_date: zDateAliasedNodeData.nullish(),
+    requirement_process_due_date: zDateAliasedNodeData.nullish(),
+    requirement_process_completion_date: zDateAliasedNodeData.nullish()
+});
 
 export const zProcessRequirementRequirementExecutionDurationTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementRequirementExecutionDurationAliasedData.optional(),
+    aliased_data: zProcessRequirementRequirementExecutionDurationAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zReferenceAliasedNodeData = z.object({
-    node_value: z
-        .array(
-            z.object({
-                uri: z.string().optional(),
-                list_id: z.uuid().optional(),
-                labels: z
-                    .array(
-                        z.object({
-                            id: z.uuid().optional(),
-                            value: z.string().optional(),
-                            language_id: z.string().optional(),
-                            list_item_id: z.uuid().optional(),
-                            valuetype_id: z.string().optional(),
-                        }),
-                    )
-                    .optional(),
-            }),
-        )
-        .nullable(),
+    node_value: z.array(z.object({
+        uri: z.string().optional(),
+        list_id: z.uuid().optional(),
+        labels: z.array(z.object({
+            id: z.uuid().optional(),
+            value: z.string().optional(),
+            language_id: z.string().optional(),
+            list_item_id: z.uuid().optional(),
+            valuetype_id: z.string().optional()
+        })).optional()
+    })).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zRegistrationLinkRequest = z.object({
     contributor_id: z.uuid().optional(),
     new_contributor: zNewContributor.optional(),
-    groups: z.array(z.string()).optional(),
+    groups: z.array(z.string()).optional()
 });
 
 export const zRegistrationLinkResponse = z.object({
     signup_url: z.string(),
-    expires: z.iso.datetime(),
+    expires: z.iso.datetime()
 });
 
 export const zResourceDraft = z.object({
@@ -377,7 +329,7 @@ export const zResourceDraft = z.object({
     resourceinstanceid: z.uuid().nullish(),
     data: z.unknown().optional(),
     created: z.iso.datetime().readonly(),
-    updated: z.iso.datetime().readonly(),
+    updated: z.iso.datetime().readonly()
 });
 
 /**
@@ -385,26 +337,24 @@ export const zResourceDraft = z.object({
  */
 export const zResourceInstanceDetail = z.object({
     resource_id: z.uuid().nullable(),
-    display_value: z.string(),
+    display_value: z.string()
 });
 
 export const zResourceInstanceAliasedNodeData = z.object({
-    node_value: z
-        .object({
-            resourceId: z.uuid().optional(),
-            ontologyProperty: z.string().nullish(),
-            resourceXresourceId: z.string().nullish(),
-            inverseOntologyProperty: z.string().nullish(),
-        })
-        .nullable(),
+    node_value: z.object({
+        resourceId: z.uuid().optional(),
+        ontologyProperty: z.string().nullish(),
+        resourceXresourceId: z.string().nullish(),
+        inverseOntologyProperty: z.string().nullish()
+    }).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(zResourceInstanceDetail).readonly().optional(),
+    details: z.array(zResourceInstanceDetail).readonly().optional()
 });
 
 export const zPermitApplicationProcessRequirementAliasedData = z.object({
     ministry_assignee: zResourceInstanceAliasedNodeData.nullish(),
     process_requirement: zResourceInstanceAliasedNodeData.nullish(),
-    process_requirement_order: zNumberAliasedNodeDataMin0.nullable(),
+    process_requirement_order: zNumberAliasedNodeDataMin0.nullable()
 });
 
 export const zPermitApplicationProcessRequirementTile = z.object({
@@ -414,29 +364,22 @@ export const zPermitApplicationProcessRequirementTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationProcessRequirementAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationApplicationAdminAliasedData = z.object({
     application_priority_level: zReferenceAliasedNodeData.nullish(),
     application_submission_date: zDateAliasedNodeData.nullish(),
     permit_duration_years_requested: zNumberAliasedNodeDataMin0Max10.nullish(),
-    process_requirement: z
-        .array(zPermitApplicationProcessRequirementTile)
-        .nullish(),
-    project_officer: zResourceInstanceAliasedNodeData.nullish(),
+    process_requirement: z.array(zPermitApplicationProcessRequirementTile).nullish(),
+    project_officer: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationApplicationAdminTile = z.object({
@@ -446,23 +389,18 @@ export const zPermitApplicationApplicationAdminTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationApplicationAdminAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zProcessRequirementRequirementSubmissionAliasedData = z.object({
-    requirement_submission: zResourceInstanceAliasedNodeData.nullish(),
+    requirement_submission: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zProcessRequirementRequirementSubmissionTile = z.object({
@@ -470,44 +408,34 @@ export const zProcessRequirementRequirementSubmissionTile = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementRequirementSubmissionAliasedData.optional(),
+    aliased_data: zProcessRequirementRequirementSubmissionAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zResourceInstanceListAliasedNodeData = z.object({
-    node_value: z
-        .array(
-            z.object({
-                resourceId: z.uuid().optional(),
-                ontologyProperty: z.string().nullish(),
-                resourceXresourceId: z.string().nullish(),
-                inverseOntologyProperty: z.string().nullish(),
-            }),
-        )
-        .nullable(),
+    node_value: z.array(z.object({
+        resourceId: z.uuid().optional(),
+        ontologyProperty: z.string().nullish(),
+        resourceXresourceId: z.string().nullish(),
+        inverseOntologyProperty: z.string().nullish()
+    })).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(zResourceInstanceDetail).readonly().optional(),
+    details: z.array(zResourceInstanceDetail).readonly().optional()
 });
 
 export const zHcaPermitPermitIdentificationAliasedData = z.object({
     permit_number: zNonLocalizedStringAliasedNodeData.nullish(),
     hca_permit_type: zReferenceAliasedNodeData.nullish(),
     issuing_agency: zReferenceAliasedNodeData.nullish(),
-    permit_holder: zResourceInstanceListAliasedNodeData.nullish(),
+    permit_holder: zResourceInstanceListAliasedNodeData.nullish()
 });
 
 export const zHcaPermitPermitIdentificationTile = z.object({
@@ -517,23 +445,18 @@ export const zHcaPermitPermitIdentificationTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zHcaPermitPermitIdentificationAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zHcaPermitResourceAliasedData = z.object({
-    permit_identification: zHcaPermitPermitIdentificationTile.nullish(),
+    permit_identification: zHcaPermitPermitIdentificationTile.nullish()
 });
 
 export const zHcaPermit = z.object({
@@ -541,53 +464,44 @@ export const zHcaPermit = z.object({
     aliased_data: zHcaPermitResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
     name: z.string().readonly().nullable(),
-    descriptors: z
-        .object({
-            en: z
-                .object({
-                    name: z.string().optional(),
-                    description: z.string().optional(),
-                    map_popup: z.string().optional(),
-                })
-                .optional(),
-        })
-        .readonly()
-        .nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
     createdtime: z.iso.datetime().readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable(),
+    principaluser: z.int().readonly().nullable()
 });
 
 export const zPaginatedHcaPermitList = z.object({
     count: z.int(),
     next: z.url().nullish(),
     previous: z.url().nullish(),
-    results: z.array(zHcaPermit),
+    results: z.array(zHcaPermit)
 });
 
 export const zStringAliasedNodeData = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zPermitApplicationApplicationContactsAliasedData = z.object({
     application_archaeologist: zResourceInstanceAliasedNodeData.nullish(),
     application_proponent: zResourceInstanceAliasedNodeData.nullish(),
     rationale_for_no_archaeologist: zStringAliasedNodeData.nullish(),
-    has_retained_archaeologist: zBooleanAliasedNodeData.nullish(),
+    has_retained_archaeologist: zBooleanAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationApplicationContactsTile = z.object({
@@ -597,19 +511,14 @@ export const zPermitApplicationApplicationContactsTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationApplicationContactsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationApplicationIdentificationAliasedData = z.object({
@@ -617,7 +526,7 @@ export const zPermitApplicationApplicationIdentificationAliasedData = z.object({
     project_name: zStringAliasedNodeData.nullable(),
     map_or_hip: zReferenceAliasedNodeData.nullish(),
     is_replacement: zBooleanAliasedNodeData.nullish(),
-    supplemental_information: zFileListAliasedNodeData.nullish(),
+    supplemental_information: zFileListAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationApplicationIdentificationTile = z.object({
@@ -625,27 +534,21 @@ export const zPermitApplicationApplicationIdentificationTile = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationApplicationIdentificationAliasedData.optional(),
+    aliased_data: zPermitApplicationApplicationIdentificationAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationDevelopmentProjectDetailsAliasedData = z.object({
     industrial_sector: zReferenceAliasedNodeData.nullish(),
-    alteration_details: zStringAliasedNodeData.nullish(),
+    alteration_details: zStringAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationDevelopmentProjectDetailsTile = z.object({
@@ -653,27 +556,21 @@ export const zPermitApplicationDevelopmentProjectDetailsTile = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationDevelopmentProjectDetailsAliasedData.optional(),
+    aliased_data: zPermitApplicationDevelopmentProjectDetailsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationFirstNationConsultationAliasedData = z.object({
     fn_file_numbers: zStringAliasedNodeData.nullish(),
-    has_fn_endorsements: zBooleanAliasedNodeData.nullish(),
+    has_fn_endorsements: zBooleanAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationFirstNationConsultationTile = z.object({
@@ -681,22 +578,16 @@ export const zPermitApplicationFirstNationConsultationTile = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationFirstNationConsultationAliasedData.optional(),
+    aliased_data: zPermitApplicationFirstNationConsultationAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationLegalAndConsentAliasedData = z.object({
@@ -704,9 +595,8 @@ export const zPermitApplicationLegalAndConsentAliasedData = z.object({
     copyright_authorization: zBooleanAliasedNodeData.nullish(),
     grant_of_license_to_ministry: zBooleanAliasedNodeData.nullish(),
     is_consent_given: zBooleanAliasedNodeData.nullish(),
-    responsible_external_archaeologist:
-        zResourceInstanceAliasedNodeData.nullish(),
-    time_of_consent: zDateAliasedNodeData.nullish(),
+    responsible_external_archaeologist: zResourceInstanceAliasedNodeData.nullish(),
+    time_of_consent: zDateAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationLegalAndConsentTile = z.object({
@@ -716,24 +606,19 @@ export const zPermitApplicationLegalAndConsentTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationLegalAndConsentAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationMzaProjectDetailsAliasedData = z.object({
     mza_industrial_sector: zReferenceAliasedNodeData.nullish(),
-    mza_alteration_details: zStringAliasedNodeData.nullish(),
+    mza_alteration_details: zStringAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationMzaProjectDetailsTile = z.object({
@@ -743,19 +628,14 @@ export const zPermitApplicationMzaProjectDetailsTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationMzaProjectDetailsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationProposedProjectN1AliasedData = z.object({
@@ -763,7 +643,7 @@ export const zPermitApplicationProposedProjectN1AliasedData = z.object({
     mza_project_type: zReferenceAliasedNodeData.nullish(),
     mza_scope_of_work: zStringAliasedNodeData.nullish(),
     mza_project_description: zStringAliasedNodeData.nullish(),
-    mza_project_details: zPermitApplicationMzaProjectDetailsTile.nullish(),
+    mza_project_details: zPermitApplicationMzaProjectDetailsTile.nullish()
 });
 
 export const zPermitApplicationProposedProjectN1Tile = z.object({
@@ -773,26 +653,20 @@ export const zPermitApplicationProposedProjectN1Tile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationProposedProjectN1AliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationMultiZoneAreaAdditionAliasedData = z.object({
-    mza_requirement_ministry_asignee:
-        zResourceInstanceAliasedNodeData.nullish(),
+    mza_requirement_ministry_asignee: zResourceInstanceAliasedNodeData.nullish(),
     proposed_project_n1: zPermitApplicationProposedProjectN1Tile.nullish(),
-    mza_requirement: zResourceInstanceAliasedNodeData.nullish(),
+    mza_requirement: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationMultiZoneAreaAdditionTile = z.object({
@@ -802,19 +676,14 @@ export const zPermitApplicationMultiZoneAreaAdditionTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationMultiZoneAreaAdditionAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationRelatedPermitAliasedData = z.object({
@@ -822,7 +691,7 @@ export const zPermitApplicationRelatedPermitAliasedData = z.object({
     has_concurrent_permits: zBooleanAliasedNodeData.nullish(),
     is_related_permit: zBooleanAliasedNodeData.nullish(),
     approach_on_concurrent_permits: zStringAliasedNodeData.nullish(),
-    related_permit: zResourceInstanceAliasedNodeData.nullish(),
+    related_permit: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationRelatedPermitTile = z.object({
@@ -832,19 +701,14 @@ export const zPermitApplicationRelatedPermitTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationRelatedPermitAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection1OverviewAliasedData = z.object({
@@ -857,7 +721,7 @@ export const zPermitApplicationSection1OverviewAliasedData = z.object({
     arch_workplans_and_schedule_a: zFileListAliasedNodeData.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeData.nullish(),
     relevant_arch_studies: zResourceInstanceListAliasedNodeData.nullish(),
-    related_assessments: zStringAliasedNodeData.nullish(),
+    related_assessments: zStringAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationSection1OverviewTile = z.object({
@@ -867,26 +731,21 @@ export const zPermitApplicationSection1OverviewTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationSection1OverviewAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection2PersonnelAliasedData = z.object({
     is_hca_compliant: zBooleanAliasedNodeData.nullish(),
     permit_deliverables: zStringAliasedNodeData.nullish(),
     field_directors: zResourceInstanceListAliasedNodeData.nullish(),
-    overseeing_archaeologist: zResourceInstanceAliasedNodeData.nullish(),
+    overseeing_archaeologist: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationSection2PersonnelTile = z.object({
@@ -896,19 +755,14 @@ export const zPermitApplicationSection2PersonnelTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationSection2PersonnelAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection3MethodsAliasedData = z.object({
@@ -928,7 +782,7 @@ export const zPermitApplicationSection3MethodsAliasedData = z.object({
     winter_assessment_methods: zStringAliasedNodeData.nullish(),
     field_transport_and_lab_methods: zStringAliasedNodeData.nullish(),
     data_analysis_methods: zStringAliasedNodeData.nullish(),
-    other_field_methods: zStringAliasedNodeData.nullish(),
+    other_field_methods: zStringAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationSection3MethodsTile = z.object({
@@ -938,19 +792,14 @@ export const zPermitApplicationSection3MethodsTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationSection3MethodsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection4RecordingsAliasedData = z.object({
@@ -967,7 +816,7 @@ export const zPermitApplicationSection4RecordingsAliasedData = z.object({
     has_wet_sites: zBooleanAliasedNodeData.nullish(),
     is_excavation_approach_compliant: zBooleanAliasedNodeData.nullish(),
     is_rock_art_recording_compliant: zBooleanAliasedNodeData.nullish(),
-    other_recording_approaches: zStringAliasedNodeData.nullish(),
+    other_recording_approaches: zStringAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationSection4RecordingsTile = z.object({
@@ -977,63 +826,47 @@ export const zPermitApplicationSection4RecordingsTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationSection4RecordingsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationSection5MaterialCollectionAliasedData = z.object(
-    {
-        collection_approach: zStringAliasedNodeData.nullish(),
-        collection_approach_details: zStringAliasedNodeData.nullish(),
-        collection_approach_additional_comments:
-            zStringAliasedNodeData.nullish(),
-        details_of_collected_materials: zStringAliasedNodeData.nullish(),
-        details_of_collected_samples: zStringAliasedNodeData.nullish(),
-        additional_collection_and_sampling_details:
-            zStringAliasedNodeData.nullish(),
-    },
-);
+export const zPermitApplicationSection5MaterialCollectionAliasedData = z.object({
+    collection_approach: zStringAliasedNodeData.nullish(),
+    collection_approach_details: zStringAliasedNodeData.nullish(),
+    collection_approach_additional_comments: zStringAliasedNodeData.nullish(),
+    details_of_collected_materials: zStringAliasedNodeData.nullish(),
+    details_of_collected_samples: zStringAliasedNodeData.nullish(),
+    additional_collection_and_sampling_details: zStringAliasedNodeData.nullish()
+});
 
 export const zPermitApplicationSection5MaterialCollectionTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection5MaterialCollectionAliasedData.optional(),
+    aliased_data: zPermitApplicationSection5MaterialCollectionAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection6AncestralRemainsAliasedData = z.object({
     alternate_ancestral_remains_approach: zStringAliasedNodeData.nullish(),
     ancestral_remains_approach_compliant: zBooleanAliasedNodeData.nullish(),
     ancestral_remains_approach_methods: zStringAliasedNodeData.nullish(),
-    ancestral_remains_approach_additional_comments:
-        zStringAliasedNodeData.nullish(),
+    ancestral_remains_approach_additional_comments: zStringAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationSection6AncestralRemainsTile = z.object({
@@ -1041,125 +874,91 @@ export const zPermitApplicationSection6AncestralRemainsTile = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection6AncestralRemainsAliasedData.optional(),
+    aliased_data: zPermitApplicationSection6AncestralRemainsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationSection7RepositoryAndCurationAliasedData =
-    z.object({
-        has_repository_agreement: zBooleanAliasedNodeData.nullish(),
-        has_repository_been_contacted: zBooleanAliasedNodeData.nullish(),
-        is_repository_required: zBooleanAliasedNodeData.nullish(),
-        destination_repository: zResourceInstanceAliasedNodeData.nullish(),
-        additional_repository_and_curation_comments:
-            zStringAliasedNodeData.nullish(),
-    });
+export const zPermitApplicationSection7RepositoryAndCurationAliasedData = z.object({
+    has_repository_agreement: zBooleanAliasedNodeData.nullish(),
+    has_repository_been_contacted: zBooleanAliasedNodeData.nullish(),
+    is_repository_required: zBooleanAliasedNodeData.nullish(),
+    destination_repository: zResourceInstanceAliasedNodeData.nullish(),
+    additional_repository_and_curation_comments: zStringAliasedNodeData.nullish()
+});
 
 export const zPermitApplicationSection7RepositoryAndCurationTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection7RepositoryAndCurationAliasedData.optional(),
+    aliased_data: zPermitApplicationSection7RepositoryAndCurationAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationArchaeologicalAssessmentPlanAliasedData =
-    z.object({
-        section_1_overview: zPermitApplicationSection1OverviewTile.nullish(),
-        section_2_personnel: zPermitApplicationSection2PersonnelTile.nullish(),
-        section_3_methods: zPermitApplicationSection3MethodsTile.nullish(),
-        section_4_recordings:
-            zPermitApplicationSection4RecordingsTile.nullish(),
-        section_5_material_collection:
-            zPermitApplicationSection5MaterialCollectionTile.nullish(),
-        section_6_ancestral_remains:
-            zPermitApplicationSection6AncestralRemainsTile.nullish(),
-        section_7_repository_and_curation:
-            zPermitApplicationSection7RepositoryAndCurationTile.nullish(),
-    });
+export const zPermitApplicationArchaeologicalAssessmentPlanAliasedData = z.object({
+    section_1_overview: zPermitApplicationSection1OverviewTile.nullish(),
+    section_2_personnel: zPermitApplicationSection2PersonnelTile.nullish(),
+    section_3_methods: zPermitApplicationSection3MethodsTile.nullish(),
+    section_4_recordings: zPermitApplicationSection4RecordingsTile.nullish(),
+    section_5_material_collection: zPermitApplicationSection5MaterialCollectionTile.nullish(),
+    section_6_ancestral_remains: zPermitApplicationSection6AncestralRemainsTile.nullish(),
+    section_7_repository_and_curation: zPermitApplicationSection7RepositoryAndCurationTile.nullish()
+});
 
 export const zPermitApplicationArchaeologicalAssessmentPlanTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationArchaeologicalAssessmentPlanAliasedData.optional(),
+    aliased_data: zPermitApplicationArchaeologicalAssessmentPlanAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zProcessRequirementRequirementIdentificationAliasedData = z.object(
-    {
-        requirement_identification: zStringAliasedNodeData.nullable(),
-        requirement_name: zStringAliasedNodeData.nullable(),
-        is_template_requirement:
-            zProcessRequirementIsTemplateRequirementTile.nullish(),
-    },
-);
+export const zProcessRequirementRequirementIdentificationAliasedData = z.object({
+    requirement_identification: zStringAliasedNodeData.nullable(),
+    requirement_name: zStringAliasedNodeData.nullable(),
+    is_template_requirement: zProcessRequirementIsTemplateRequirementTile.nullish()
+});
 
 export const zProcessRequirementRequirementIdentificationTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementRequirementIdentificationAliasedData.optional(),
+    aliased_data: zProcessRequirementRequirementIdentificationAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zProcessRequirementSubRequirementAliasedData = z.object({
@@ -1168,36 +967,29 @@ export const zProcessRequirementSubRequirementAliasedData = z.object({
     sub_requirement_mandatory: zBooleanAliasedNodeData.nullish(),
     sub_requirement_satisfied: zBooleanAliasedNodeData.nullish(),
     sub_requirement_sort_order: zNumberAliasedNodeData.nullable(),
-    sub_requirement_name: zStringAliasedNodeData.nullable(),
+    sub_requirement_name: zStringAliasedNodeData.nullable()
 });
 
-export const zProcessRequirementSubRequirementAssessmentN1AliasedData =
-    z.object({
-        requirement_status: zBooleanAliasedNodeData.nullish(),
-        assessment_notes: zStringAliasedNodeData.nullish(),
-    });
+export const zProcessRequirementSubRequirementAssessmentN1AliasedData = z.object({
+    requirement_status: zBooleanAliasedNodeData.nullish(),
+    assessment_notes: zStringAliasedNodeData.nullish()
+});
 
 export const zProcessRequirementSubRequirementAssessmentN1Tile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementSubRequirementAssessmentN1AliasedData.optional(),
+    aliased_data: zProcessRequirementSubRequirementAssessmentN1AliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zProcessRequirementSubRequirementTile = z.object({
@@ -1207,31 +999,22 @@ export const zProcessRequirementSubRequirementTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zProcessRequirementSubRequirementAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zProcessRequirementResourceAliasedData = z.object({
-    requirement_identification:
-        zProcessRequirementRequirementIdentificationTile.nullish(),
-    requirement_execution_duration:
-        zProcessRequirementRequirementExecutionDurationTile.nullish(),
-    requirement_submission:
-        zProcessRequirementRequirementSubmissionTile.nullish(),
-    sub_requirement_assessment_n1:
-        zProcessRequirementSubRequirementAssessmentN1Tile.nullish(),
-    sub_requirement: z.array(zProcessRequirementSubRequirementTile).nullish(),
+    requirement_identification: zProcessRequirementRequirementIdentificationTile.nullish(),
+    requirement_execution_duration: zProcessRequirementRequirementExecutionDurationTile.nullish(),
+    requirement_submission: zProcessRequirementRequirementSubmissionTile.nullish(),
+    sub_requirement_assessment_n1: zProcessRequirementSubRequirementAssessmentN1Tile.nullish(),
+    sub_requirement: z.array(zProcessRequirementSubRequirementTile).nullish()
 });
 
 export const zPatchedProcessRequirement = z.object({
@@ -1239,24 +1022,19 @@ export const zPatchedProcessRequirement = z.object({
     aliased_data: zProcessRequirementResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly().optional(),
     name: z.string().readonly().nullish(),
-    descriptors: z
-        .object({
-            en: z
-                .object({
-                    name: z.string().optional(),
-                    description: z.string().optional(),
-                    map_popup: z.string().optional(),
-                })
-                .optional(),
-        })
-        .readonly()
-        .nullish(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullish(),
     legacyid: z.string().readonly().nullish(),
     createdtime: z.iso.datetime().readonly().optional(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullish(),
     resource_instance_lifecycle_state: z.uuid().readonly().optional(),
-    principaluser: z.int().readonly().nullish(),
+    principaluser: z.int().readonly().nullish()
 });
 
 export const zProcessRequirement = z.object({
@@ -1264,116 +1042,87 @@ export const zProcessRequirement = z.object({
     aliased_data: zProcessRequirementResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
     name: z.string().readonly().nullable(),
-    descriptors: z
-        .object({
-            en: z
-                .object({
-                    name: z.string().optional(),
-                    description: z.string().optional(),
-                    map_popup: z.string().optional(),
-                })
-                .optional(),
-        })
-        .readonly()
-        .nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
     createdtime: z.iso.datetime().readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable(),
+    principaluser: z.int().readonly().nullable()
 });
 
 export const zStringAliasedNodeDataMax2000 = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(2000).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(2000).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
-export const zPermitApplicationBcPropertyLegalDescriptionAliasedData = z.object(
-    {
-        pid: zNonLocalizedStringAliasedNodeDataMax9.nullish(),
-        pin: zNonLocalizedStringAliasedNodeDataMax10.nullish(),
-        legal_description: zStringAliasedNodeDataMax2000.nullish(),
-        legal_address_remarks: zStringAliasedNodeData.nullish(),
-    },
-);
+export const zPermitApplicationBcPropertyLegalDescriptionAliasedData = z.object({
+    pid: zNonLocalizedStringAliasedNodeDataMax9.nullish(),
+    pin: zNonLocalizedStringAliasedNodeDataMax10.nullish(),
+    legal_description: zStringAliasedNodeDataMax2000.nullish(),
+    legal_address_remarks: zStringAliasedNodeData.nullish()
+});
 
 export const zPermitApplicationBcPropertyLegalDescriptionTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationBcPropertyLegalDescriptionAliasedData.optional(),
+    aliased_data: zPermitApplicationBcPropertyLegalDescriptionAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zStringAliasedNodeDataMax50 = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(50).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(50).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zStringAliasedNodeDataMax7 = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(7).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(7).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zStringAliasedNodeDataMax80 = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(80).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(80).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable(),
     display_value: z.string().readonly().optional(),
-    details: z.array(z.record(z.string(), z.unknown())).readonly().optional(),
+    details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
 export const zPermitApplicationBcPropertyAddressAliasedData = z.object({
@@ -1382,9 +1131,7 @@ export const zPermitApplicationBcPropertyAddressAliasedData = z.object({
     street_number: zStringAliasedNodeDataMax50.nullish(),
     city: zStringAliasedNodeDataMax80.nullish(),
     postal_code: zStringAliasedNodeDataMax7.nullish(),
-    bc_property_legal_description: z
-        .array(zPermitApplicationBcPropertyLegalDescriptionTile)
-        .nullish(),
+    bc_property_legal_description: z.array(zPermitApplicationBcPropertyLegalDescriptionTile).nullish()
 });
 
 export const zPermitApplicationBcPropertyAddressTile = z.object({
@@ -1394,31 +1141,23 @@ export const zPermitApplicationBcPropertyAddressTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationBcPropertyAddressAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationProposedProjectAliasedData = z.object({
     project_boundary: zGeojsonFeatureCollectionAliasedNodeData.nullish(),
     project_type: zReferenceAliasedNodeData.nullish(),
     scope_of_work: zStringAliasedNodeData.nullish(),
-    bc_property_address: z
-        .array(zPermitApplicationBcPropertyAddressTile)
-        .nullish(),
+    bc_property_address: z.array(zPermitApplicationBcPropertyAddressTile).nullish(),
     project_description: zStringAliasedNodeData.nullish(),
-    development_project_details:
-        zPermitApplicationDevelopmentProjectDetailsTile.nullish(),
+    development_project_details: zPermitApplicationDevelopmentProjectDetailsTile.nullish()
 });
 
 export const zPermitApplicationProposedProjectTile = z.object({
@@ -1428,41 +1167,29 @@ export const zPermitApplicationProposedProjectTile = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationProposedProjectAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationResourceAliasedData = z.object({
     application_contacts: zPermitApplicationApplicationContactsTile.nullish(),
-    application_identification:
-        zPermitApplicationApplicationIdentificationTile.nullish(),
+    application_identification: zPermitApplicationApplicationIdentificationTile.nullish(),
     proposed_project: zPermitApplicationProposedProjectTile.nullish(),
-    archaeological_assessment_plan:
-        zPermitApplicationArchaeologicalAssessmentPlanTile.nullish(),
+    archaeological_assessment_plan: zPermitApplicationArchaeologicalAssessmentPlanTile.nullish(),
     inspection: z.array(zPermitApplicationInspectionTile).nullish(),
     investigation: z.array(zPermitApplicationInvestigationTile).nullish(),
-    first_nations_consultation: z
-        .array(zPermitApplicationFirstNationsConsultationTile)
-        .nullish(),
-    multi_zone_area_addition: z
-        .array(zPermitApplicationMultiZoneAreaAdditionTile)
-        .nullish(),
-    first_nation_consultation:
-        zPermitApplicationFirstNationConsultationTile.nullish(),
+    first_nations_consultation: z.array(zPermitApplicationFirstNationsConsultationTile).nullish(),
+    multi_zone_area_addition: z.array(zPermitApplicationMultiZoneAreaAdditionTile).nullish(),
+    first_nation_consultation: zPermitApplicationFirstNationConsultationTile.nullish(),
     legal_and_consent: zPermitApplicationLegalAndConsentTile.nullish(),
     related_permit: z.array(zPermitApplicationRelatedPermitTile).nullish(),
-    application_admin: zPermitApplicationApplicationAdminTile.nullish(),
+    application_admin: zPermitApplicationApplicationAdminTile.nullish()
 });
 
 export const zPatchedPermitApplication = z.object({
@@ -1470,24 +1197,19 @@ export const zPatchedPermitApplication = z.object({
     aliased_data: zPermitApplicationResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly().optional(),
     name: z.string().readonly().nullish(),
-    descriptors: z
-        .object({
-            en: z
-                .object({
-                    name: z.string().optional(),
-                    description: z.string().optional(),
-                    map_popup: z.string().optional(),
-                })
-                .optional(),
-        })
-        .readonly()
-        .nullish(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullish(),
     legacyid: z.string().readonly().nullish(),
     createdtime: z.iso.datetime().readonly().optional(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullish(),
     resource_instance_lifecycle_state: z.uuid().readonly().optional(),
-    principaluser: z.int().readonly().nullish(),
+    principaluser: z.int().readonly().nullish()
 });
 
 export const zPermitApplication = z.object({
@@ -1495,252 +1217,196 @@ export const zPermitApplication = z.object({
     aliased_data: zPermitApplicationResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
     name: z.string().readonly().nullable(),
-    descriptors: z
-        .object({
-            en: z
-                .object({
-                    name: z.string().optional(),
-                    description: z.string().optional(),
-                    map_popup: z.string().optional(),
-                })
-                .optional(),
-        })
-        .readonly()
-        .nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
     createdtime: z.iso.datetime().readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable(),
+    principaluser: z.int().readonly().nullable()
 });
 
 export const zUserProfileResponse = z.object({
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
-    groups: z.array(z.string()).readonly(),
+    groups: z.array(z.string()).readonly()
 });
 
 export const zBooleanAliasedNodeDataWritable = z.object({
-    node_value: z.boolean().nullable(),
+    node_value: z.boolean().nullable()
 });
 
 export const zDateAliasedNodeDataWritable = z.object({
-    node_value: z.iso.datetime().nullable(),
+    node_value: z.iso.datetime().nullable()
 });
 
 export const zFileListAliasedNodeDataWritable = z.object({
-    node_value: z
-        .array(
-            z.object({
-                name: z.string().optional(),
-                size: z.number().optional(),
-                type: z.string().optional(),
-                url: z.string().nullish(),
-                file: z
-                    .object({
-                        objectURL: z.string().nullish(),
-                    })
-                    .optional(),
-                node_id: z.uuid().optional(),
-            }),
-        )
-        .nullable(),
+    node_value: z.array(z.object({
+        name: z.string().optional(),
+        size: z.number().optional(),
+        type: z.string().optional(),
+        url: z.string().nullish(),
+        file: z.object({
+            objectURL: z.string().nullish()
+        }).optional(),
+        node_id: z.uuid().optional()
+    })).nullable()
 });
 
 export const zGeojsonFeatureCollectionAliasedNodeDataWritable = z.object({
-    node_value: z
-        .object({
+    node_value: z.object({
+        type: z.string().optional(),
+        features: z.array(z.object({
+            id: z.string().optional(),
             type: z.string().optional(),
-            features: z
-                .array(
-                    z.object({
-                        id: z.string().optional(),
-                        type: z.string().optional(),
-                        geometry: z.record(z.string(), z.unknown()).optional(),
-                        properties: z.record(z.string(), z.unknown()).nullish(),
-                    }),
-                )
-                .optional(),
-        })
-        .nullable(),
+            geometry: z.record(z.string(), z.unknown()).optional(),
+            properties: z.record(z.string(), z.unknown()).nullish()
+        })).optional()
+    }).nullable()
 });
 
 export const zNonLocalizedStringAliasedNodeDataWritable = z.object({
-    node_value: z.string().nullable(),
+    node_value: z.string().nullable()
 });
 
 export const zNonLocalizedStringAliasedNodeDataMax10Writable = z.object({
-    node_value: z.string().max(10).nullable(),
+    node_value: z.string().max(10).nullable()
 });
 
 export const zNonLocalizedStringAliasedNodeDataMax9Writable = z.object({
-    node_value: z.string().max(9).nullable(),
+    node_value: z.string().max(9).nullable()
 });
 
 export const zNumberAliasedNodeDataWritable = z.object({
-    node_value: z.number().nullable(),
+    node_value: z.number().nullable()
 });
 
 export const zNumberAliasedNodeDataMin0Writable = z.object({
-    node_value: z.number().gte(0).nullable(),
+    node_value: z.number().gte(0).nullable()
 });
 
 export const zNumberAliasedNodeDataMin0Max10Writable = z.object({
-    node_value: z.number().gte(0).lte(10).nullable(),
+    node_value: z.number().gte(0).lte(10).nullable()
 });
 
 export const zPatchedResourceDraftWritable = z.object({
     frontend_version: z.string().max(50).nullish(),
     resourceinstanceid: z.uuid().nullish(),
-    data: z.unknown().optional(),
+    data: z.unknown().optional()
 });
 
-export const zProcessRequirementIsTemplateRequirementAliasedDataWritable =
-    z.object({
-        has_submission_requirement: zBooleanAliasedNodeDataWritable.nullable(),
-        is_internal_requirement: zBooleanAliasedNodeDataWritable.nullable(),
-        default_target_processing_time:
-            zNumberAliasedNodeDataWritable.nullish(),
-        is_template_requirement: zBooleanAliasedNodeDataWritable.nullable(),
-    });
+export const zProcessRequirementIsTemplateRequirementAliasedDataWritable = z.object({
+    has_submission_requirement: zBooleanAliasedNodeDataWritable.nullable(),
+    is_internal_requirement: zBooleanAliasedNodeDataWritable.nullable(),
+    default_target_processing_time: zNumberAliasedNodeDataWritable.nullish(),
+    is_template_requirement: zBooleanAliasedNodeDataWritable.nullable()
+});
 
 export const zProcessRequirementIsTemplateRequirementTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementIsTemplateRequirementAliasedDataWritable.optional(),
+    aliased_data: zProcessRequirementIsTemplateRequirementAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zProcessRequirementRequirementExecutionDurationAliasedDataWritable =
-    z.object({
-        requirement_process_start_date: zDateAliasedNodeDataWritable.nullish(),
-        requirement_process_due_date: zDateAliasedNodeDataWritable.nullish(),
-        requirement_process_completion_date:
-            zDateAliasedNodeDataWritable.nullish(),
-    });
+export const zProcessRequirementRequirementExecutionDurationAliasedDataWritable = z.object({
+    requirement_process_start_date: zDateAliasedNodeDataWritable.nullish(),
+    requirement_process_due_date: zDateAliasedNodeDataWritable.nullish(),
+    requirement_process_completion_date: zDateAliasedNodeDataWritable.nullish()
+});
 
-export const zProcessRequirementRequirementExecutionDurationTileWritable =
-    z.object({
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zProcessRequirementRequirementExecutionDurationAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    });
+export const zProcessRequirementRequirementExecutionDurationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementRequirementExecutionDurationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
 export const zReferenceAliasedNodeDataWritable = z.object({
-    node_value: z
-        .array(
-            z.object({
-                uri: z.string().optional(),
-                list_id: z.uuid().optional(),
-                labels: z
-                    .array(
-                        z.object({
-                            id: z.uuid().optional(),
-                            value: z.string().optional(),
-                            language_id: z.string().optional(),
-                            list_item_id: z.uuid().optional(),
-                            valuetype_id: z.string().optional(),
-                        }),
-                    )
-                    .optional(),
-            }),
-        )
-        .nullable(),
+    node_value: z.array(z.object({
+        uri: z.string().optional(),
+        list_id: z.uuid().optional(),
+        labels: z.array(z.object({
+            id: z.uuid().optional(),
+            value: z.string().optional(),
+            language_id: z.string().optional(),
+            list_item_id: z.uuid().optional(),
+            valuetype_id: z.string().optional()
+        })).optional()
+    })).nullable()
 });
 
 export const zResourceDraftWritable = z.object({
     frontend_version: z.string().max(50).nullish(),
     resourceinstanceid: z.uuid().nullish(),
-    data: z.unknown().optional(),
+    data: z.unknown().optional()
 });
 
 export const zResourceInstanceAliasedNodeDataWritable = z.object({
-    node_value: z
-        .object({
-            resourceId: z.uuid().optional(),
-            ontologyProperty: z.string().nullish(),
-            resourceXresourceId: z.string().nullish(),
-            inverseOntologyProperty: z.string().nullish(),
-        })
-        .nullable(),
+    node_value: z.object({
+        resourceId: z.uuid().optional(),
+        ontologyProperty: z.string().nullish(),
+        resourceXresourceId: z.string().nullish(),
+        inverseOntologyProperty: z.string().nullish()
+    }).nullable()
 });
 
-export const zPermitApplicationProcessRequirementAliasedDataWritable = z.object(
-    {
-        ministry_assignee: zResourceInstanceAliasedNodeDataWritable.nullish(),
-        process_requirement: zResourceInstanceAliasedNodeDataWritable.nullish(),
-        process_requirement_order:
-            zNumberAliasedNodeDataMin0Writable.nullable(),
-    },
-);
+export const zPermitApplicationProcessRequirementAliasedDataWritable = z.object({
+    ministry_assignee: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    process_requirement: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    process_requirement_order: zNumberAliasedNodeDataMin0Writable.nullable()
+});
 
 export const zPermitApplicationProcessRequirementTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationProcessRequirementAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationProcessRequirementAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationApplicationAdminAliasedDataWritable = z.object({
     application_priority_level: zReferenceAliasedNodeDataWritable.nullish(),
     application_submission_date: zDateAliasedNodeDataWritable.nullish(),
-    permit_duration_years_requested:
-        zNumberAliasedNodeDataMin0Max10Writable.nullish(),
-    process_requirement: z
-        .array(zPermitApplicationProcessRequirementTileWritable)
-        .nullish(),
-    project_officer: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    permit_duration_years_requested: zNumberAliasedNodeDataMin0Max10Writable.nullish(),
+    process_requirement: z.array(zPermitApplicationProcessRequirementTileWritable).nullish(),
+    project_officer: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationApplicationAdminTileWritable = z.object({
@@ -1748,71 +1414,53 @@ export const zPermitApplicationApplicationAdminTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationApplicationAdminAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationApplicationAdminAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zProcessRequirementRequirementSubmissionAliasedDataWritable =
-    z.object({
-        requirement_submission:
-            zResourceInstanceAliasedNodeDataWritable.nullish(),
-    });
+export const zProcessRequirementRequirementSubmissionAliasedDataWritable = z.object({
+    requirement_submission: zResourceInstanceAliasedNodeDataWritable.nullish()
+});
 
 export const zProcessRequirementRequirementSubmissionTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementRequirementSubmissionAliasedDataWritable.optional(),
+    aliased_data: zProcessRequirementRequirementSubmissionAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zResourceInstanceListAliasedNodeDataWritable = z.object({
-    node_value: z
-        .array(
-            z.object({
-                resourceId: z.uuid().optional(),
-                ontologyProperty: z.string().nullish(),
-                resourceXresourceId: z.string().nullish(),
-                inverseOntologyProperty: z.string().nullish(),
-            }),
-        )
-        .nullable(),
+    node_value: z.array(z.object({
+        resourceId: z.uuid().optional(),
+        ontologyProperty: z.string().nullish(),
+        resourceXresourceId: z.string().nullish(),
+        inverseOntologyProperty: z.string().nullish()
+    })).nullable()
 });
 
 export const zHcaPermitPermitIdentificationAliasedDataWritable = z.object({
     permit_number: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
     hca_permit_type: zReferenceAliasedNodeDataWritable.nullish(),
     issuing_agency: zReferenceAliasedNodeDataWritable.nullish(),
-    permit_holder: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    permit_holder: zResourceInstanceListAliasedNodeDataWritable.nullish()
 });
 
 export const zHcaPermitPermitIdentificationTileWritable = z.object({
@@ -1822,177 +1470,133 @@ export const zHcaPermitPermitIdentificationTileWritable = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zHcaPermitPermitIdentificationAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zHcaPermitResourceAliasedDataWritable = z.object({
-    permit_identification: zHcaPermitPermitIdentificationTileWritable.nullish(),
+    permit_identification: zHcaPermitPermitIdentificationTileWritable.nullish()
 });
 
 export const zHcaPermitWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zHcaPermitResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish(),
+    graph: z.uuid().nullish()
 });
 
 export const zPaginatedHcaPermitListWritable = z.object({
     count: z.int(),
     next: z.url().nullish(),
     previous: z.url().nullish(),
-    results: z.array(zHcaPermitWritable),
+    results: z.array(zHcaPermitWritable)
 });
 
 export const zStringAliasedNodeDataWritable = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable()
 });
 
-export const zPermitApplicationApplicationContactsAliasedDataWritable =
-    z.object({
-        application_archaeologist:
-            zResourceInstanceAliasedNodeDataWritable.nullish(),
-        application_proponent:
-            zResourceInstanceAliasedNodeDataWritable.nullish(),
-        rationale_for_no_archaeologist:
-            zStringAliasedNodeDataWritable.nullish(),
-        has_retained_archaeologist: zBooleanAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationApplicationContactsAliasedDataWritable = z.object({
+    application_archaeologist: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    application_proponent: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    rationale_for_no_archaeologist: zStringAliasedNodeDataWritable.nullish(),
+    has_retained_archaeologist: zBooleanAliasedNodeDataWritable.nullish()
+});
 
 export const zPermitApplicationApplicationContactsTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationApplicationContactsAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationApplicationContactsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationApplicationIdentificationAliasedDataWritable =
-    z.object({
-        application_id: zStringAliasedNodeDataWritable.nullable(),
-        project_name: zStringAliasedNodeDataWritable.nullable(),
-        map_or_hip: zReferenceAliasedNodeDataWritable.nullish(),
-        is_replacement: zBooleanAliasedNodeDataWritable.nullish(),
-        supplemental_information: zFileListAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationApplicationIdentificationAliasedDataWritable = z.object({
+    application_id: zStringAliasedNodeDataWritable.nullable(),
+    project_name: zStringAliasedNodeDataWritable.nullable(),
+    map_or_hip: zReferenceAliasedNodeDataWritable.nullish(),
+    is_replacement: zBooleanAliasedNodeDataWritable.nullish(),
+    supplemental_information: zFileListAliasedNodeDataWritable.nullish()
+});
 
-export const zPermitApplicationApplicationIdentificationTileWritable = z.object(
-    {
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zPermitApplicationApplicationIdentificationAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    },
-);
+export const zPermitApplicationApplicationIdentificationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationApplicationIdentificationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
-export const zPermitApplicationDevelopmentProjectDetailsAliasedDataWritable =
-    z.object({
-        industrial_sector: zReferenceAliasedNodeDataWritable.nullish(),
-        alteration_details: zStringAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationDevelopmentProjectDetailsAliasedDataWritable = z.object({
+    industrial_sector: zReferenceAliasedNodeDataWritable.nullish(),
+    alteration_details: zStringAliasedNodeDataWritable.nullish()
+});
 
-export const zPermitApplicationDevelopmentProjectDetailsTileWritable = z.object(
-    {
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zPermitApplicationDevelopmentProjectDetailsAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    },
-);
+export const zPermitApplicationDevelopmentProjectDetailsTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationDevelopmentProjectDetailsAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
-export const zPermitApplicationFirstNationConsultationAliasedDataWritable =
-    z.object({
-        fn_file_numbers: zStringAliasedNodeDataWritable.nullish(),
-        has_fn_endorsements: zBooleanAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationFirstNationConsultationAliasedDataWritable = z.object({
+    fn_file_numbers: zStringAliasedNodeDataWritable.nullish(),
+    has_fn_endorsements: zBooleanAliasedNodeDataWritable.nullish()
+});
 
 export const zPermitApplicationFirstNationConsultationTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationFirstNationConsultationAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationFirstNationConsultationAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationLegalAndConsentAliasedDataWritable = z.object({
@@ -2000,9 +1604,8 @@ export const zPermitApplicationLegalAndConsentAliasedDataWritable = z.object({
     copyright_authorization: zBooleanAliasedNodeDataWritable.nullish(),
     grant_of_license_to_ministry: zBooleanAliasedNodeDataWritable.nullish(),
     is_consent_given: zBooleanAliasedNodeDataWritable.nullish(),
-    responsible_external_archaeologist:
-        zResourceInstanceAliasedNodeDataWritable.nullish(),
-    time_of_consent: zDateAliasedNodeDataWritable.nullish(),
+    responsible_external_archaeologist: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    time_of_consent: zDateAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationLegalAndConsentTileWritable = z.object({
@@ -2010,27 +1613,21 @@ export const zPermitApplicationLegalAndConsentTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationLegalAndConsentAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationLegalAndConsentAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationMzaProjectDetailsAliasedDataWritable = z.object({
     mza_industrial_sector: zReferenceAliasedNodeDataWritable.nullish(),
-    mza_alteration_details: zStringAliasedNodeDataWritable.nullish(),
+    mza_alteration_details: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationMzaProjectDetailsTileWritable = z.object({
@@ -2038,32 +1635,24 @@ export const zPermitApplicationMzaProjectDetailsTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationMzaProjectDetailsAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationMzaProjectDetailsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationProposedProjectN1AliasedDataWritable = z.object({
-    mza_project_boundary:
-        zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish(),
+    mza_project_boundary: zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish(),
     mza_project_type: zReferenceAliasedNodeDataWritable.nullish(),
     mza_scope_of_work: zStringAliasedNodeDataWritable.nullish(),
     mza_project_description: zStringAliasedNodeDataWritable.nullish(),
-    mza_project_details:
-        zPermitApplicationMzaProjectDetailsTileWritable.nullish(),
+    mza_project_details: zPermitApplicationMzaProjectDetailsTileWritable.nullish()
 });
 
 export const zPermitApplicationProposedProjectN1TileWritable = z.object({
@@ -2071,63 +1660,47 @@ export const zPermitApplicationProposedProjectN1TileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationProposedProjectN1AliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationProposedProjectN1AliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationMultiZoneAreaAdditionAliasedDataWritable =
-    z.object({
-        mza_requirement_ministry_asignee:
-            zResourceInstanceAliasedNodeDataWritable.nullish(),
-        proposed_project_n1:
-            zPermitApplicationProposedProjectN1TileWritable.nullish(),
-        mza_requirement: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationMultiZoneAreaAdditionAliasedDataWritable = z.object({
+    mza_requirement_ministry_asignee: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    proposed_project_n1: zPermitApplicationProposedProjectN1TileWritable.nullish(),
+    mza_requirement: zResourceInstanceAliasedNodeDataWritable.nullish()
+});
 
 export const zPermitApplicationMultiZoneAreaAdditionTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationMultiZoneAreaAdditionAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationMultiZoneAreaAdditionAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationRelatedPermitAliasedDataWritable = z.object({
-    concurrent_permits_list:
-        zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    concurrent_permits_list: zResourceInstanceListAliasedNodeDataWritable.nullish(),
     has_concurrent_permits: zBooleanAliasedNodeDataWritable.nullish(),
     is_related_permit: zBooleanAliasedNodeDataWritable.nullish(),
     approach_on_concurrent_permits: zStringAliasedNodeDataWritable.nullish(),
-    related_permit: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    related_permit: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationRelatedPermitTileWritable = z.object({
@@ -2137,19 +1710,14 @@ export const zPermitApplicationRelatedPermitTileWritable = z.object({
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationRelatedPermitAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection1OverviewAliasedDataWritable = z.object({
@@ -2158,13 +1726,11 @@ export const zPermitApplicationSection1OverviewAliasedDataWritable = z.object({
     mitigation_measures: zStringAliasedNodeDataWritable.nullish(),
     are_chance_finds_expected: zBooleanAliasedNodeDataWritable.nullish(),
     hip_objectives: zStringAliasedNodeDataWritable.nullish(),
-    are_ancestral_remains_anticipated:
-        zBooleanAliasedNodeDataWritable.nullish(),
+    are_ancestral_remains_anticipated: zBooleanAliasedNodeDataWritable.nullish(),
     arch_workplans_and_schedule_a: zFileListAliasedNodeDataWritable.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeDataWritable.nullish(),
-    relevant_arch_studies:
-        zResourceInstanceListAliasedNodeDataWritable.nullish(),
-    related_assessments: zStringAliasedNodeDataWritable.nullish(),
+    relevant_arch_studies: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    related_assessments: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationSection1OverviewTileWritable = z.object({
@@ -2172,30 +1738,23 @@ export const zPermitApplicationSection1OverviewTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection1OverviewAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationSection1OverviewAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection2PersonnelAliasedDataWritable = z.object({
     is_hca_compliant: zBooleanAliasedNodeDataWritable.nullish(),
     permit_deliverables: zStringAliasedNodeDataWritable.nullish(),
     field_directors: zResourceInstanceListAliasedNodeDataWritable.nullish(),
-    overseeing_archaeologist:
-        zResourceInstanceAliasedNodeDataWritable.nullish(),
+    overseeing_archaeologist: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationSection2PersonnelTileWritable = z.object({
@@ -2203,22 +1762,16 @@ export const zPermitApplicationSection2PersonnelTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection2PersonnelAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationSection2PersonnelAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationSection3MethodsAliasedDataWritable = z.object({
@@ -2232,15 +1785,13 @@ export const zPermitApplicationSection3MethodsAliasedDataWritable = z.object({
     has_subsurface_testing: zBooleanAliasedNodeDataWritable.nullish(),
     subsurface_testing_approach: zStringAliasedNodeDataWritable.nullish(),
     has_machine_assisted_inspection: zBooleanAliasedNodeDataWritable.nullish(),
-    machine_assisted_inspection_methods:
-        zStringAliasedNodeDataWritable.nullish(),
-    machine_assisted_inspection_approach:
-        zStringAliasedNodeDataWritable.nullish(),
+    machine_assisted_inspection_methods: zStringAliasedNodeDataWritable.nullish(),
+    machine_assisted_inspection_approach: zStringAliasedNodeDataWritable.nullish(),
     has_winter_assessments: zBooleanAliasedNodeDataWritable.nullish(),
     winter_assessment_methods: zStringAliasedNodeDataWritable.nullish(),
     field_transport_and_lab_methods: zStringAliasedNodeDataWritable.nullish(),
     data_analysis_methods: zStringAliasedNodeDataWritable.nullish(),
-    other_field_methods: zStringAliasedNodeDataWritable.nullish(),
+    other_field_methods: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationSection3MethodsTileWritable = z.object({
@@ -2248,253 +1799,176 @@ export const zPermitApplicationSection3MethodsTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection3MethodsAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationSection3MethodsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationSection4RecordingsAliasedDataWritable = z.object(
-    {
-        additional_recording_information:
-            zStringAliasedNodeDataWritable.nullish(),
-        alternate_cmt_approach: zStringAliasedNodeDataWritable.nullish(),
-        alternate_excavation_approach: zStringAliasedNodeDataWritable.nullish(),
-        alternate_historical_sites_approach:
-            zStringAliasedNodeDataWritable.nullish(),
-        alternate_rock_art_recording_approach:
-            zStringAliasedNodeDataWritable.nullish(),
-        alternate_site_flagging_approach:
-            zStringAliasedNodeDataWritable.nullish(),
-        alternate_wet_sites_approach: zStringAliasedNodeDataWritable.nullish(),
-        has_cmt_survey: zBooleanAliasedNodeDataWritable.nullish(),
-        has_historical_sites: zBooleanAliasedNodeDataWritable.nullish(),
-        has_site_flagging: zBooleanAliasedNodeDataWritable.nullish(),
-        has_wet_sites: zBooleanAliasedNodeDataWritable.nullish(),
-        is_excavation_approach_compliant:
-            zBooleanAliasedNodeDataWritable.nullish(),
-        is_rock_art_recording_compliant:
-            zBooleanAliasedNodeDataWritable.nullish(),
-        other_recording_approaches: zStringAliasedNodeDataWritable.nullish(),
-    },
-);
+export const zPermitApplicationSection4RecordingsAliasedDataWritable = z.object({
+    additional_recording_information: zStringAliasedNodeDataWritable.nullish(),
+    alternate_cmt_approach: zStringAliasedNodeDataWritable.nullish(),
+    alternate_excavation_approach: zStringAliasedNodeDataWritable.nullish(),
+    alternate_historical_sites_approach: zStringAliasedNodeDataWritable.nullish(),
+    alternate_rock_art_recording_approach: zStringAliasedNodeDataWritable.nullish(),
+    alternate_site_flagging_approach: zStringAliasedNodeDataWritable.nullish(),
+    alternate_wet_sites_approach: zStringAliasedNodeDataWritable.nullish(),
+    has_cmt_survey: zBooleanAliasedNodeDataWritable.nullish(),
+    has_historical_sites: zBooleanAliasedNodeDataWritable.nullish(),
+    has_site_flagging: zBooleanAliasedNodeDataWritable.nullish(),
+    has_wet_sites: zBooleanAliasedNodeDataWritable.nullish(),
+    is_excavation_approach_compliant: zBooleanAliasedNodeDataWritable.nullish(),
+    is_rock_art_recording_compliant: zBooleanAliasedNodeDataWritable.nullish(),
+    other_recording_approaches: zStringAliasedNodeDataWritable.nullish()
+});
 
 export const zPermitApplicationSection4RecordingsTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection4RecordingsAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationSection4RecordingsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationSection5MaterialCollectionAliasedDataWritable =
-    z.object({
-        collection_approach: zStringAliasedNodeDataWritable.nullish(),
-        collection_approach_details: zStringAliasedNodeDataWritable.nullish(),
-        collection_approach_additional_comments:
-            zStringAliasedNodeDataWritable.nullish(),
-        details_of_collected_materials:
-            zStringAliasedNodeDataWritable.nullish(),
-        details_of_collected_samples: zStringAliasedNodeDataWritable.nullish(),
-        additional_collection_and_sampling_details:
-            zStringAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationSection5MaterialCollectionAliasedDataWritable = z.object({
+    collection_approach: zStringAliasedNodeDataWritable.nullish(),
+    collection_approach_details: zStringAliasedNodeDataWritable.nullish(),
+    collection_approach_additional_comments: zStringAliasedNodeDataWritable.nullish(),
+    details_of_collected_materials: zStringAliasedNodeDataWritable.nullish(),
+    details_of_collected_samples: zStringAliasedNodeDataWritable.nullish(),
+    additional_collection_and_sampling_details: zStringAliasedNodeDataWritable.nullish()
+});
 
-export const zPermitApplicationSection5MaterialCollectionTileWritable =
-    z.object({
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zPermitApplicationSection5MaterialCollectionAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    });
+export const zPermitApplicationSection5MaterialCollectionTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationSection5MaterialCollectionAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
-export const zPermitApplicationSection6AncestralRemainsAliasedDataWritable =
-    z.object({
-        alternate_ancestral_remains_approach:
-            zStringAliasedNodeDataWritable.nullish(),
-        ancestral_remains_approach_compliant:
-            zBooleanAliasedNodeDataWritable.nullish(),
-        ancestral_remains_approach_methods:
-            zStringAliasedNodeDataWritable.nullish(),
-        ancestral_remains_approach_additional_comments:
-            zStringAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationSection6AncestralRemainsAliasedDataWritable = z.object({
+    alternate_ancestral_remains_approach: zStringAliasedNodeDataWritable.nullish(),
+    ancestral_remains_approach_compliant: zBooleanAliasedNodeDataWritable.nullish(),
+    ancestral_remains_approach_methods: zStringAliasedNodeDataWritable.nullish(),
+    ancestral_remains_approach_additional_comments: zStringAliasedNodeDataWritable.nullish()
+});
 
 export const zPermitApplicationSection6AncestralRemainsTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationSection6AncestralRemainsAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationSection6AncestralRemainsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
-export const zPermitApplicationSection7RepositoryAndCurationAliasedDataWritable =
-    z.object({
-        has_repository_agreement: zBooleanAliasedNodeDataWritable.nullish(),
-        has_repository_been_contacted:
-            zBooleanAliasedNodeDataWritable.nullish(),
-        is_repository_required: zBooleanAliasedNodeDataWritable.nullish(),
-        destination_repository:
-            zResourceInstanceAliasedNodeDataWritable.nullish(),
-        additional_repository_and_curation_comments:
-            zStringAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationSection7RepositoryAndCurationAliasedDataWritable = z.object({
+    has_repository_agreement: zBooleanAliasedNodeDataWritable.nullish(),
+    has_repository_been_contacted: zBooleanAliasedNodeDataWritable.nullish(),
+    is_repository_required: zBooleanAliasedNodeDataWritable.nullish(),
+    destination_repository: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    additional_repository_and_curation_comments: zStringAliasedNodeDataWritable.nullish()
+});
 
-export const zPermitApplicationSection7RepositoryAndCurationTileWritable =
-    z.object({
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zPermitApplicationSection7RepositoryAndCurationAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    });
+export const zPermitApplicationSection7RepositoryAndCurationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationSection7RepositoryAndCurationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
-export const zPermitApplicationArchaeologicalAssessmentPlanAliasedDataWritable =
-    z.object({
-        section_1_overview:
-            zPermitApplicationSection1OverviewTileWritable.nullish(),
-        section_2_personnel:
-            zPermitApplicationSection2PersonnelTileWritable.nullish(),
-        section_3_methods:
-            zPermitApplicationSection3MethodsTileWritable.nullish(),
-        section_4_recordings:
-            zPermitApplicationSection4RecordingsTileWritable.nullish(),
-        section_5_material_collection:
-            zPermitApplicationSection5MaterialCollectionTileWritable.nullish(),
-        section_6_ancestral_remains:
-            zPermitApplicationSection6AncestralRemainsTileWritable.nullish(),
-        section_7_repository_and_curation:
-            zPermitApplicationSection7RepositoryAndCurationTileWritable.nullish(),
-    });
+export const zPermitApplicationArchaeologicalAssessmentPlanAliasedDataWritable = z.object({
+    section_1_overview: zPermitApplicationSection1OverviewTileWritable.nullish(),
+    section_2_personnel: zPermitApplicationSection2PersonnelTileWritable.nullish(),
+    section_3_methods: zPermitApplicationSection3MethodsTileWritable.nullish(),
+    section_4_recordings: zPermitApplicationSection4RecordingsTileWritable.nullish(),
+    section_5_material_collection: zPermitApplicationSection5MaterialCollectionTileWritable.nullish(),
+    section_6_ancestral_remains: zPermitApplicationSection6AncestralRemainsTileWritable.nullish(),
+    section_7_repository_and_curation: zPermitApplicationSection7RepositoryAndCurationTileWritable.nullish()
+});
 
-export const zPermitApplicationArchaeologicalAssessmentPlanTileWritable =
-    z.object({
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zPermitApplicationArchaeologicalAssessmentPlanAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    });
+export const zPermitApplicationArchaeologicalAssessmentPlanTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationArchaeologicalAssessmentPlanAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
-export const zProcessRequirementRequirementIdentificationAliasedDataWritable =
-    z.object({
-        requirement_identification: zStringAliasedNodeDataWritable.nullable(),
-        requirement_name: zStringAliasedNodeDataWritable.nullable(),
-        is_template_requirement:
-            zProcessRequirementIsTemplateRequirementTileWritable.nullish(),
-    });
+export const zProcessRequirementRequirementIdentificationAliasedDataWritable = z.object({
+    requirement_identification: zStringAliasedNodeDataWritable.nullable(),
+    requirement_name: zStringAliasedNodeDataWritable.nullable(),
+    is_template_requirement: zProcessRequirementIsTemplateRequirementTileWritable.nullish()
+});
 
-export const zProcessRequirementRequirementIdentificationTileWritable =
-    z.object({
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zProcessRequirementRequirementIdentificationAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    });
+export const zProcessRequirementRequirementIdentificationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementRequirementIdentificationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
 export const zProcessRequirementSubRequirementAliasedDataWritable = z.object({
     sub_requirement_assessment_notes: zStringAliasedNodeDataWritable.nullish(),
@@ -2502,170 +1976,126 @@ export const zProcessRequirementSubRequirementAliasedDataWritable = z.object({
     sub_requirement_mandatory: zBooleanAliasedNodeDataWritable.nullish(),
     sub_requirement_satisfied: zBooleanAliasedNodeDataWritable.nullish(),
     sub_requirement_sort_order: zNumberAliasedNodeDataWritable.nullable(),
-    sub_requirement_name: zStringAliasedNodeDataWritable.nullable(),
+    sub_requirement_name: zStringAliasedNodeDataWritable.nullable()
 });
 
-export const zProcessRequirementSubRequirementAssessmentN1AliasedDataWritable =
-    z.object({
-        requirement_status: zBooleanAliasedNodeDataWritable.nullish(),
-        assessment_notes: zStringAliasedNodeDataWritable.nullish(),
-    });
+export const zProcessRequirementSubRequirementAssessmentN1AliasedDataWritable = z.object({
+    requirement_status: zBooleanAliasedNodeDataWritable.nullish(),
+    assessment_notes: zStringAliasedNodeDataWritable.nullish()
+});
 
-export const zProcessRequirementSubRequirementAssessmentN1TileWritable =
-    z.object({
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zProcessRequirementSubRequirementAssessmentN1AliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    });
+export const zProcessRequirementSubRequirementAssessmentN1TileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementSubRequirementAssessmentN1AliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
 export const zProcessRequirementSubRequirementTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zProcessRequirementSubRequirementAliasedDataWritable.optional(),
+    aliased_data: zProcessRequirementSubRequirementAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zProcessRequirementResourceAliasedDataWritable = z.object({
-    requirement_identification:
-        zProcessRequirementRequirementIdentificationTileWritable.nullish(),
-    requirement_execution_duration:
-        zProcessRequirementRequirementExecutionDurationTileWritable.nullish(),
-    requirement_submission:
-        zProcessRequirementRequirementSubmissionTileWritable.nullish(),
-    sub_requirement_assessment_n1:
-        zProcessRequirementSubRequirementAssessmentN1TileWritable.nullish(),
-    sub_requirement: z
-        .array(zProcessRequirementSubRequirementTileWritable)
-        .nullish(),
+    requirement_identification: zProcessRequirementRequirementIdentificationTileWritable.nullish(),
+    requirement_execution_duration: zProcessRequirementRequirementExecutionDurationTileWritable.nullish(),
+    requirement_submission: zProcessRequirementRequirementSubmissionTileWritable.nullish(),
+    sub_requirement_assessment_n1: zProcessRequirementSubRequirementAssessmentN1TileWritable.nullish(),
+    sub_requirement: z.array(zProcessRequirementSubRequirementTileWritable).nullish()
 });
 
 export const zPatchedProcessRequirementWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zProcessRequirementResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish(),
+    graph: z.uuid().nullish()
 });
 
 export const zProcessRequirementWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zProcessRequirementResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish(),
+    graph: z.uuid().nullish()
 });
 
 export const zStringAliasedNodeDataMax2000Writable = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(2000).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(2000).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable()
 });
 
-export const zPermitApplicationBcPropertyLegalDescriptionAliasedDataWritable =
-    z.object({
-        pid: zNonLocalizedStringAliasedNodeDataMax9Writable.nullish(),
-        pin: zNonLocalizedStringAliasedNodeDataMax10Writable.nullish(),
-        legal_description: zStringAliasedNodeDataMax2000Writable.nullish(),
-        legal_address_remarks: zStringAliasedNodeDataWritable.nullish(),
-    });
+export const zPermitApplicationBcPropertyLegalDescriptionAliasedDataWritable = z.object({
+    pid: zNonLocalizedStringAliasedNodeDataMax9Writable.nullish(),
+    pin: zNonLocalizedStringAliasedNodeDataMax10Writable.nullish(),
+    legal_description: zStringAliasedNodeDataMax2000Writable.nullish(),
+    legal_address_remarks: zStringAliasedNodeDataWritable.nullish()
+});
 
-export const zPermitApplicationBcPropertyLegalDescriptionTileWritable =
-    z.object({
-        tileid: z.uuid().nullish(),
-        resourceinstance: z.uuid().nullish(),
-        nodegroup: z.uuid().nullish(),
-        parenttile: z.uuid().nullish(),
-        aliased_data:
-            zPermitApplicationBcPropertyLegalDescriptionAliasedDataWritable.optional(),
-        sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-        provisionaledits: z
-            .record(
-                z.string(),
-                z.object({
-                    value: z.record(z.string(), z.unknown()).optional(),
-                    status: z.string().optional(),
-                    action: z.string().optional(),
-                    reviewer: z.int().nullish(),
-                    timestamp: z.string().nullish(),
-                    reviewtimestamp: z.string().nullish(),
-                }),
-            )
-            .nullish(),
-    });
+export const zPermitApplicationBcPropertyLegalDescriptionTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationBcPropertyLegalDescriptionAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
 
 export const zStringAliasedNodeDataMax50Writable = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(50).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(50).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable()
 });
 
 export const zStringAliasedNodeDataMax7Writable = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(7).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(7).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable()
 });
 
 export const zStringAliasedNodeDataMax80Writable = z.object({
-    node_value: z
-        .object({
-            en: z
-                .object({
-                    value: z.string().max(80).nullish(),
-                    direction: z.enum(['ltr', 'rtl']).optional(),
-                })
-                .optional(),
-        })
-        .nullable(),
+    node_value: z.object({
+        en: z.object({
+            value: z.string().max(80).nullish(),
+            direction: z.enum(['ltr', 'rtl']).optional()
+        }).optional()
+    }).nullable()
 });
 
 export const zPermitApplicationBcPropertyAddressAliasedDataWritable = z.object({
@@ -2674,9 +2104,7 @@ export const zPermitApplicationBcPropertyAddressAliasedDataWritable = z.object({
     street_number: zStringAliasedNodeDataMax50Writable.nullish(),
     city: zStringAliasedNodeDataMax80Writable.nullish(),
     postal_code: zStringAliasedNodeDataMax7Writable.nullish(),
-    bc_property_legal_description: z
-        .array(zPermitApplicationBcPropertyLegalDescriptionTileWritable)
-        .nullish(),
+    bc_property_legal_description: z.array(zPermitApplicationBcPropertyLegalDescriptionTileWritable).nullish()
 });
 
 export const zPermitApplicationBcPropertyAddressTileWritable = z.object({
@@ -2684,35 +2112,25 @@ export const zPermitApplicationBcPropertyAddressTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationBcPropertyAddressAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationBcPropertyAddressAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationProposedProjectAliasedDataWritable = z.object({
-    project_boundary:
-        zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish(),
+    project_boundary: zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish(),
     project_type: zReferenceAliasedNodeDataWritable.nullish(),
     scope_of_work: zStringAliasedNodeDataWritable.nullish(),
-    bc_property_address: z
-        .array(zPermitApplicationBcPropertyAddressTileWritable)
-        .nullish(),
+    bc_property_address: z.array(zPermitApplicationBcPropertyAddressTileWritable).nullish(),
     project_description: zStringAliasedNodeDataWritable.nullish(),
-    development_project_details:
-        zPermitApplicationDevelopmentProjectDetailsTileWritable.nullish(),
+    development_project_details: zPermitApplicationDevelopmentProjectDetailsTileWritable.nullish()
 });
 
 export const zPermitApplicationProposedProjectTileWritable = z.object({
@@ -2720,65 +2138,49 @@ export const zPermitApplicationProposedProjectTileWritable = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data:
-        zPermitApplicationProposedProjectAliasedDataWritable.optional(),
+    aliased_data: zPermitApplicationProposedProjectAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z
-        .record(
-            z.string(),
-            z.object({
-                value: z.record(z.string(), z.unknown()).optional(),
-                status: z.string().optional(),
-                action: z.string().optional(),
-                reviewer: z.int().nullish(),
-                timestamp: z.string().nullish(),
-                reviewtimestamp: z.string().nullish(),
-            }),
-        )
-        .nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPermitApplicationResourceAliasedDataWritable = z.object({
-    application_contacts:
-        zPermitApplicationApplicationContactsTileWritable.nullish(),
-    application_identification:
-        zPermitApplicationApplicationIdentificationTileWritable.nullish(),
+    application_contacts: zPermitApplicationApplicationContactsTileWritable.nullish(),
+    application_identification: zPermitApplicationApplicationIdentificationTileWritable.nullish(),
     proposed_project: zPermitApplicationProposedProjectTileWritable.nullish(),
-    archaeological_assessment_plan:
-        zPermitApplicationArchaeologicalAssessmentPlanTileWritable.nullish(),
+    archaeological_assessment_plan: zPermitApplicationArchaeologicalAssessmentPlanTileWritable.nullish(),
     inspection: z.array(zPermitApplicationInspectionTile).nullish(),
     investigation: z.array(zPermitApplicationInvestigationTile).nullish(),
-    first_nations_consultation: z
-        .array(zPermitApplicationFirstNationsConsultationTile)
-        .nullish(),
-    multi_zone_area_addition: z
-        .array(zPermitApplicationMultiZoneAreaAdditionTileWritable)
-        .nullish(),
-    first_nation_consultation:
-        zPermitApplicationFirstNationConsultationTileWritable.nullish(),
+    first_nations_consultation: z.array(zPermitApplicationFirstNationsConsultationTile).nullish(),
+    multi_zone_area_addition: z.array(zPermitApplicationMultiZoneAreaAdditionTileWritable).nullish(),
+    first_nation_consultation: zPermitApplicationFirstNationConsultationTileWritable.nullish(),
     legal_and_consent: zPermitApplicationLegalAndConsentTileWritable.nullish(),
-    related_permit: z
-        .array(zPermitApplicationRelatedPermitTileWritable)
-        .nullish(),
-    application_admin: zPermitApplicationApplicationAdminTileWritable.nullish(),
+    related_permit: z.array(zPermitApplicationRelatedPermitTileWritable).nullish(),
+    application_admin: zPermitApplicationApplicationAdminTileWritable.nullish()
 });
 
 export const zPatchedPermitApplicationWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zPermitApplicationResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish(),
+    graph: z.uuid().nullish()
 });
 
 export const zPermitApplicationWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zPermitApplicationResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish(),
+    graph: z.uuid().nullish()
 });
 
 export const zUserProfileResponseWritable = z.object({
     username: z.string(),
     first_name: z.string(),
-    last_name: z.string(),
+    last_name: z.string()
 });
 
 export const zApiAssignableGroupsRetrieveResponse = z.array(z.string());
@@ -2788,9 +2190,11 @@ export const zApiContributorsUnlinkedListResponse = z.array(zContributorOption);
 export const zApiDashboardExternalRetrieveQuery = z.object({
     limit: z.int().gte(1).lte(100).optional(),
     page: z.int().gte(1).optional(),
-    status: z
-        .enum(['DRAFTS', 'CREATED_BY_ME', 'CREATED_BY_ASSOCIATED_COMPANIES'])
-        .optional(),
+    status: z.enum([
+        'DRAFTS',
+        'CREATED_BY_ME',
+        'CREATED_BY_ASSOCIATED_COMPANIES'
+    ]).optional()
 });
 
 export const zApiDashboardExternalRetrieveResponse = zExternalDashboardPage;
@@ -2798,7 +2202,7 @@ export const zApiDashboardExternalRetrieveResponse = zExternalDashboardPage;
 export const zApiDashboardInternalRetrieveQuery = z.object({
     limit: z.int().gte(1).lte(100).optional(),
     page: z.int().gte(1).optional(),
-    status: z.enum(['UNASSIGNED', 'ASSIGNED_TO_ME']).optional(),
+    status: z.enum(['UNASSIGNED', 'ASSIGNED_TO_ME']).optional()
 });
 
 export const zApiDashboardInternalRetrieveResponse = zInternalDashboardPage;
@@ -2809,24 +2213,23 @@ export const zApiRegistrationLinkCreateResponse = zRegistrationLinkResponse;
 
 export const zApiResourceHcaPermitListQuery = z.object({
     limit: z.int().optional(),
-    offset: z.int().optional(),
+    offset: z.int().optional()
 });
 
 export const zApiResourceHcaPermitListResponse = zPaginatedHcaPermitList;
 
 export const zApiResourceHcaPermitRetrievePath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 export const zApiResourceHcaPermitRetrieveResponse = zHcaPermit;
 
-export const zApiResourcePermitApplicationCreateBody =
-    zPermitApplicationWritable;
+export const zApiResourcePermitApplicationCreateBody = zPermitApplicationWritable;
 
 export const zApiResourcePermitApplicationCreateResponse = zPermitApplication;
 
 export const zApiResourcePermitApplicationDestroyPath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 /**
@@ -2835,32 +2238,29 @@ export const zApiResourcePermitApplicationDestroyPath = z.object({
 export const zApiResourcePermitApplicationDestroyResponse = z.void();
 
 export const zApiResourcePermitApplicationRetrievePath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 export const zApiResourcePermitApplicationRetrieveResponse = zPermitApplication;
 
-export const zApiResourcePermitApplicationPartialUpdateBody =
-    zPatchedPermitApplicationWritable;
+export const zApiResourcePermitApplicationPartialUpdateBody = zPatchedPermitApplicationWritable;
 
 export const zApiResourcePermitApplicationPartialUpdatePath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
-export const zApiResourcePermitApplicationPartialUpdateResponse =
-    zPermitApplication;
+export const zApiResourcePermitApplicationPartialUpdateResponse = zPermitApplication;
 
-export const zApiResourcePermitApplicationUpdateBody =
-    zPermitApplicationWritable;
+export const zApiResourcePermitApplicationUpdateBody = zPermitApplicationWritable;
 
 export const zApiResourcePermitApplicationUpdatePath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 export const zApiResourcePermitApplicationUpdateResponse = zPermitApplication;
 
 export const zApiResourceProcessRequirementDestroyPath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 /**
@@ -2869,33 +2269,29 @@ export const zApiResourceProcessRequirementDestroyPath = z.object({
 export const zApiResourceProcessRequirementDestroyResponse = z.void();
 
 export const zApiResourceProcessRequirementRetrievePath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
-export const zApiResourceProcessRequirementRetrieveResponse =
-    zProcessRequirement;
+export const zApiResourceProcessRequirementRetrieveResponse = zProcessRequirement;
 
-export const zApiResourceProcessRequirementPartialUpdateBody =
-    zPatchedProcessRequirementWritable;
+export const zApiResourceProcessRequirementPartialUpdateBody = zPatchedProcessRequirementWritable;
 
 export const zApiResourceProcessRequirementPartialUpdatePath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
-export const zApiResourceProcessRequirementPartialUpdateResponse =
-    zProcessRequirement;
+export const zApiResourceProcessRequirementPartialUpdateResponse = zProcessRequirement;
 
-export const zApiResourceProcessRequirementUpdateBody =
-    zProcessRequirementWritable;
+export const zApiResourceProcessRequirementUpdateBody = zProcessRequirementWritable;
 
 export const zApiResourceProcessRequirementUpdatePath = z.object({
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 export const zApiResourceProcessRequirementUpdateResponse = zProcessRequirement;
 
 export const zApiResourceDraftListPath = z.object({
-    graph_slug: z.string(),
+    graph_slug: z.string()
 });
 
 export const zApiResourceDraftListResponse = z.array(zResourceDraft);
@@ -2903,14 +2299,14 @@ export const zApiResourceDraftListResponse = z.array(zResourceDraft);
 export const zApiResourceDraftCreateBody = zResourceDraftWritable;
 
 export const zApiResourceDraftCreatePath = z.object({
-    graph_slug: z.string(),
+    graph_slug: z.string()
 });
 
 export const zApiResourceDraftCreateResponse = zResourceDraft;
 
 export const zApiResourceDraftDestroyPath = z.object({
     graph_slug: z.string(),
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 /**
@@ -2920,7 +2316,7 @@ export const zApiResourceDraftDestroyResponse = z.void();
 
 export const zApiResourceDraftRetrievePath = z.object({
     graph_slug: z.string(),
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 export const zApiResourceDraftRetrieveResponse = zResourceDraft;
@@ -2929,7 +2325,7 @@ export const zApiResourceDraftPartialUpdateBody = zPatchedResourceDraftWritable;
 
 export const zApiResourceDraftPartialUpdatePath = z.object({
     graph_slug: z.string(),
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 export const zApiResourceDraftPartialUpdateResponse = zResourceDraft;
@@ -2938,7 +2334,7 @@ export const zApiResourceDraftUpdateBody = zResourceDraftWritable;
 
 export const zApiResourceDraftUpdatePath = z.object({
     graph_slug: z.string(),
-    id: z.uuid(),
+    id: z.uuid()
 });
 
 export const zApiResourceDraftUpdateResponse = zResourceDraft;
