@@ -10,6 +10,10 @@ from django.urls import reverse
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.services.dashboard.dashboard_types import DashboardFilter
+from bcap.services.dashboard.internal_dashboard_service import (
+    InternalDashboardService,
+)
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
@@ -110,6 +114,20 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertRegex(self._application_id(second), r"^APP-\d+$")
         self.assertNotEqual(self._application_id(first), self._application_id(second))
         self.assertEqual(self._requirements(first), [])
+
+    def test_draft_without_submission_date_is_hidden_from_dashboard(self):
+        pk = self._create()
+        page = InternalDashboardService().get_cards(DashboardFilter())
+        self.assertNotIn(pk, [card.id for card in page.results])
+
+    def test_create_with_submission_date_attaches_requirements(self):
+        payload = create_payload()
+        payload[ALIASED_DATA][group_aliases.APPLICATION_ADMIN] = {
+            ALIASED_DATA: {aliases.APPLICATION_SUBMISSION_DATE: "2026-06-18"}
+        }
+        resp = self._post(payload)
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(len(self._requirements(resp.json()["resourceinstanceid"])), 3)
 
     def test_submission_via_put_attaches_requirements(self):
         pk = self._create()

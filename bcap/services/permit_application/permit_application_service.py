@@ -1,6 +1,6 @@
-"""Submission-time transforms for a permit application: on the update that
-first sets the submission date, assign the application id and attach the
-requirement working copies."""
+"""Create- and submission-time transforms for a permit application: seed the
+application id on create, and attach the requirement working copies whenever a
+create or update sets the submission date."""
 
 from django.db import connection
 
@@ -29,16 +29,23 @@ class PermitApplicationService:
             return f"APP-{cur.fetchone()[0]}"
 
     def create(self, data, save):
-        """Seed the application id when the application is created."""
+        """Seed the application id; if the create body already sets the
+        submission date, attach the requirement working copies too."""
         self._assign_application_id(data)
-        return save()
+        if not self._incoming_submission_date(data):
+            return save()
+        return self._attach_requirements_and_save(data, save)
 
     def submit(self, instance, data, save):
         """Attach the requirement working copies on the first update that sets
-        the submission date, deleting the clones if the save is rejected (the
-        two saves can't share one transaction)."""
+        the submission date."""
         if not self._first_submission(instance, data):
             return save()
+        return self._attach_requirements_and_save(data, save)
+
+    def _attach_requirements_and_save(self, data, save):
+        """Clone and attach the requirements, deleting the clones if the save is
+        rejected (the two saves can't share one transaction)."""
         requirements = self._inject_requirements_from_templates(data)
         try:
             response = save()
@@ -51,13 +58,15 @@ class PermitApplicationService:
 
     def _first_submission(self, instance, data):
         """The submission date is being set now and wasn't already stored."""
-        groups = data.get(ALIASED_DATA, {})
-        admin = groups.get(group_aliases.APPLICATION_ADMIN, {})
-        incoming = admin.get(ALIASED_DATA, {}).get(aliases.APPLICATION_SUBMISSION_DATE)
         stored = instance.aliased_data.application_admin
-        return bool(incoming) and not (
+        return bool(self._incoming_submission_date(data)) and not (
             stored and stored.aliased_data.application_submission_date
         )
+
+    def _incoming_submission_date(self, data):
+        """The submission date carried in the request body, or None."""
+        admin = data.get(ALIASED_DATA, {}).get(group_aliases.APPLICATION_ADMIN, {})
+        return admin.get(ALIASED_DATA, {}).get(aliases.APPLICATION_SUBMISSION_DATE)
 
     def _assign_application_id(self, data):
         """Stamp the sequence-assigned id onto the identification tile."""
