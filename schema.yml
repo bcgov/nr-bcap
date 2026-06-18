@@ -4,7 +4,7 @@ info:
   version: 2.0.0
   description: BC Archaeology Portal API
 paths:
-  /bcap/api/archaeological_site/:
+  /bcap/api/archaeological_site:
     get:
       operationId: api_archaeological_site_list
       description: |-
@@ -78,7 +78,7 @@ paths:
                 items:
                   type: string
           description: ''
-  /bcap/api/contributor/:
+  /bcap/api/contributor:
     get:
       operationId: api_contributor_list
       description: |-
@@ -234,7 +234,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalDashboardPage'
           description: ''
-  /bcap/api/hca_permit/:
+  /bcap/api/hca_permit:
     get:
       operationId: api_hca_permit_list
       description: |-
@@ -348,7 +348,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/HriaDiscontinuedData'
           description: ''
-  /bcap/api/legislative_act/:
+  /bcap/api/legislative_act:
     get:
       operationId: api_legislative_act_list
       description: |-
@@ -405,7 +405,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LegislativeAct'
           description: ''
-  /bcap/api/lg_person/:
+  /bcap/api/lg_person:
     get:
       operationId: api_lg_person_list
       description: |-
@@ -462,7 +462,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LgPerson'
           description: ''
-  /bcap/api/local_government/:
+  /bcap/api/local_government:
     get:
       operationId: api_local_government_list
       description: |-
@@ -519,7 +519,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LocalGovernment'
           description: ''
-  /bcap/api/new_resource_model/:
+  /bcap/api/new_resource_model:
     get:
       operationId: api_new_resource_model_list
       description: |-
@@ -576,7 +576,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/NewResourceModel'
           description: ''
-  /bcap/api/permit_application/:
+  /bcap/api/permit_application:
     get:
       operationId: api_permit_application_list
       description: |-
@@ -633,7 +633,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PermitApplication'
           description: ''
-  /bcap/api/process_requirement/:
+  /bcap/api/process_requirement:
     get:
       operationId: api_process_requirement_list
       description: |-
@@ -690,7 +690,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
-  /bcap/api/project_sandbox/:
+  /bcap/api/project_sandbox:
     get:
       operationId: api_project_sandbox_list
       description: |-
@@ -747,7 +747,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProjectSandbox'
           description: ''
-  /bcap/api/publication/:
+  /bcap/api/publication:
     get:
       operationId: api_publication_list
       description: |-
@@ -830,7 +830,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegistrationLinkResponse'
           description: ''
-  /bcap/api/repository/:
+  /bcap/api/repository:
     get:
       operationId: api_repository_list
       description: |-
@@ -1358,7 +1358,7 @@ paths:
       responses:
         '204':
           description: No response body
-  /bcap/api/site_submission/:
+  /bcap/api/site_submission:
     get:
       operationId: api_site_submission_list
       description: |-
@@ -1415,7 +1415,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteSubmission'
           description: ''
-  /bcap/api/site_visit/:
+  /bcap/api/site_visit:
     get:
       operationId: api_site_visit_list
       description: |-
