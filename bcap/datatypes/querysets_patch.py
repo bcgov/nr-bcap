@@ -39,8 +39,9 @@ def after_update_all(self):
     for datatype in self.datatype_factory.datatype_instances.values():
         try:
             if isinstance(datatype, GeojsonFeatureCollectionDataType):
-                for tile in touched_tiles:
-                    datatype.after_update_all(tile=tile)
+                changed = self.to_insert | self.to_update | self.to_delete
+                if changed:
+                    datatype.after_update_all(tile=next(iter(changed)))
             else:
                 datatype.after_update_all()
         except Exception:
