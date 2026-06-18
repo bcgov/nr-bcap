@@ -4,13 +4,11 @@ from drf_spectacular.utils import extend_schema
 
 from arches_querysets.rest_framework.generic_views import ArchesResourceDetailView
 
-from bcap.util.bcap_aliases import GraphSlugs
-from bcap.views.mixins import ArchesResourceViewMixin, BCAPResourceSerializer
+from bcap.views.mixins import ArchesResourceViewMixin
 
-
-class ProcessRequirementSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = GraphSlugs.PROCESS_REQUIREMENT
+# Reuse the generated serializer so there's a single "ProcessRequirement" OpenAPI
+# component; two same-named serializer classes break the schema (drf-spectacular).
+from bcap.views.generated.process_requirement import ProcessRequirementSerializer
 
 
 class ProcessRequirementViewMixin(ArchesResourceViewMixin):

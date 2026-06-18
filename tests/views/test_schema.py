@@ -1,6 +1,6 @@
 """The drf-spectacular OpenAPI endpoints: the schema document plus the Swagger
 UI and ReDoc viewers. SPECTACULAR_SETTINGS pins SERVE_URLCONF to
-bcap.documented_api_urls, so the served schema documents only the bcap API
+bcap.urls_api_documented, so the served schema documents only the bcap API
 (the dashboard and user-profile endpoints), not all of Arches.
 
 The endpoints sit behind IsAdminUser so these log in as the admin user."""

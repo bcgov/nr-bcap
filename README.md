@@ -242,8 +242,15 @@ Documented DRF views → `schema.yml` (OpenAPI) → Zod schemas in
 serializer, view, route, or resource model:
 
 ```bash
-npm run api:gen   # see scripts/generate_api_contract.sh
+python3 manage.py regenerate_api
 ```
+
+This runs the full pipeline: generated views → OpenAPI spec (drf_spectacular) →
+zod client (openapi-ts) → formatting (black, prettier). Useful flags:
+
+- `--check` — fail if any generated artifact drifts from the git index (CI use)
+- `--skip-zod` — backend-only environments without npm
+- `--skip-views` — use the committed generated views as-is
 
 NOTE: Only the limited documented routes for now; arches-queryset routes later.
 

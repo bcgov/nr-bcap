@@ -10,6 +10,8 @@ ENV COMMON_ROOT=${WEB_ROOT}/bcgov-arches-common
 ENV CONTROLLED_LISTS_ROOT=${WEB_ROOT}/arches-controlled-lists
 ENV COMPONENT_LAB_ROOT=${WEB_ROOT}/arches-component-lab
 ENV QUERYSETS_ROOT=${WEB_ROOT}/arches-querysets
+ENV WORKFLOW_STEPPER_ROOT=${WEB_ROOT}/arches-workflow-stepper
+ENV ZOD_VALIDATION_ROOT=${WEB_ROOT}/arches-zod-validation
 ENV WHEELS=/wheels
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y make software-properties-common
@@ -80,6 +82,14 @@ RUN pip install -e .
 COPY ./arches-querysets ${QUERYSETS_ROOT}
 WORKDIR ${QUERYSETS_ROOT}
 RUN pip install -e .[drf]
+
+COPY ./arches-workflow-stepper ${WORKFLOW_STEPPER_ROOT}
+WORKDIR ${WORKFLOW_STEPPER_ROOT}
+RUN pip install -e .
+
+COPY ./arches-zod-validation ${ZOD_VALIDATION_ROOT}
+WORKDIR ${ZOD_VALIDATION_ROOT}
+RUN pip install -e .
 
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev]

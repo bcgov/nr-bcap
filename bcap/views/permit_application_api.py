@@ -14,17 +14,12 @@ from arches_querysets.rest_framework.permissions import ResourceEditor
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
-from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.mixins import (
     ArchesResourceViewMixin,
-    BCAPResourceSerializer,
     UserOwnedResourceMixin,
 )
 
-
-class PermitApplicationSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = GraphSlugs.PERMIT_APPLICATION
+from bcap.views.generated.permit_application import PermitApplicationSerializer
 
 
 class PermitApplicationViewMixin(ArchesResourceViewMixin):
