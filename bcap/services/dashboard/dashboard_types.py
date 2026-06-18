@@ -157,6 +157,9 @@ class ExternalDashboardCard:
         "draft was created when is_draft.",
         "",
     )
+    submission_date: str = described(
+        "Permit application's submission date; empty for drafts.", ""
+    )
     project_name: str = described("Permit application's project name.", "")
     application_number: str = described(
         "Permit application's human-readable application reference; not a GUID.", ""

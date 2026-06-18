@@ -46,6 +46,7 @@ def build_external_permit(builder, name, owner, lifecycle="Active", hca_permit=N
             "application_priority_level": builder.reference_value(
                 "permit_application", "application_priority_level"
             ),
+            "application_submission_date": "2026-06-18",
         },
     )
     if hca_permit is not None:
@@ -160,6 +161,7 @@ class ExternalDashboardServiceTests(TestCase):
         self.assertFalse(card.is_draft)
         self.assertEqual(card.project_name, "Mine Active")
         self.assertEqual(card.application_number, "Mine Active")
+        self.assertEqual(card.submission_date, "2026-06-18")
         self.assertEqual(card.created_by_name, "me")
         self.assertEqual(card.permit_id, self.hca_id)
         self.assertEqual(card.permit_number, "HCA-001")

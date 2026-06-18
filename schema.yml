@@ -780,6 +780,9 @@ components:
           type: string
           description: ISO timestamp the application was submitted (its createdtime),
             or the draft was created when is_draft.
+        submission_date:
+          type: string
+          description: Permit application's submission date; empty for drafts.
         project_name:
           type: string
           description: Permit application's project name.
