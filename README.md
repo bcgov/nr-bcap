@@ -17,6 +17,8 @@ git clone https://github.com/archesproject/arches-component-lab
 git clone https://github.com/archesproject/arches-controlled-lists
 git clone https://github.com/archesproject/arches-querysets
 git clone https://github.com/bcgov/bcgov-arches-common
+git clone https://github.com/bferguso/arches-workflow-stepper
+git clone https://github.com/bferguso/arches-zod-validation
 git clone https://github.com/bcgov/nr-bcap
 ```
 
@@ -30,6 +32,8 @@ git clone https://github.com/bcgov/nr-bcap
     ├── 📁 arches-querysets/
     ├── 📁 arches-component-lab/
     ├── 📁 arches-controlled-lists/
+    ├── 📁 arches-workflow-stepper/
+    ├── 📁 arches-zod-validation/
     └── 📁 nr-bcap/
 ```
 
