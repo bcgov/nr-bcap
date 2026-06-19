@@ -4,9 +4,10 @@ demo permit application."""
 
 from django.core.management.base import BaseCommand
 
-from arches.app.models.models import Node, TileModel
-
 from bcap.management.commands._dashboard_seed_base import _bulk_index, _resource_url
+from bcap.services.process_requirement.process_requirement_service import (
+    ProcessRequirementService,
+)
 from bcap.util.dashboard.requirement_flow_seed import RequirementFlowBuilder
 
 
@@ -35,16 +36,9 @@ class Command(BaseCommand):
 
     @staticmethod
     def _templates_exist():
-        """Whether the is_template_requirement set has already been seeded."""
-        node = Node.objects.filter(
-            graph__slug="process_requirement",
-            alias="is_template_requirement",
-            source_identifier=None,
-        ).first()
-        return bool(
-            node
-            and TileModel.objects.filter(
-                nodegroup_id=node.nodegroup_id,
-                data__contains={str(node.nodeid): True},
-            ).exists()
-        )
+        """Whether the named templates the application clones from already
+        exist. Other (e.g. demo) templates don't count -- those wouldn't be
+        found by name when cloning working copies."""
+        service = ProcessRequirementService()
+        by_name = service._templates_by_name()
+        return all(name in by_name for name in service._TEMPLATE_NAMES)

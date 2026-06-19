@@ -33,6 +33,10 @@ class ProcessRequirementService:
         templates = self._templates_by_name()
         return [self.clone(templates[name]) for name in self._TEMPLATE_NAMES]
 
+    def clone_by_id(self, template_id):
+        """A working copy of the template with the given resourceinstanceid."""
+        return self.clone(Resource.objects.get(pk=template_id))
+
     def clone(self, template):
         """A working copy of the template: every tile copied with a fresh GUID
         and the template flag cleared, so the copy is a real, editable
@@ -44,6 +48,8 @@ class ProcessRequirementService:
         with transaction.atomic():
             super(Resource, copy).save()
             Tile.objects.bulk_create(copy.tiles)
+        # Baseline descriptor so the copy is never descriptor-less when a
+        # permit compiles its display; the clone hook re-saves it with the link.
         copy.save_descriptors()
         return copy
 
