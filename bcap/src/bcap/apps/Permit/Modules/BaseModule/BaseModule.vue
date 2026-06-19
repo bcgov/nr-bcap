@@ -19,7 +19,7 @@ import Step3_Contacts from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_Co
 import Step4_Details from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step4_Details.vue';
 import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
-import type { ArchesDraftData } from '@/bcap/types.ts';
+import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
 import { submitApplication } from '@/bcap/apps/Permit/api.ts';
 import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
 
@@ -50,6 +50,19 @@ const submitNewSiteData = async (): Promise<boolean> => {
 
     try {
         if (!draftId.value) throw new Error('No active draft found.');
+
+        // Stamp the submission date: this is the actual submission, and the
+        // server treats application_submission_date as the "submitted" signal.
+        // This is temp to get UAT going.
+        draftData.value.application_admin = {
+            ...draftData.value.application_admin,
+            aliased_data: {
+                ...draftData.value.application_admin?.aliased_data,
+                application_submission_date: {
+                    node_value: new Date().toISOString().slice(0, 10),
+                } as DraftNode,
+            },
+        };
 
         // Submit the draft
         const response = await submitApplication(
