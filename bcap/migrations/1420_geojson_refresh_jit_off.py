@@ -13,13 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL(
-            sql=(
-                "ALTER FUNCTION refresh_tile_geojson_geometries(uuid) "
-                "SET jit = off;"
-            ),
-            reverse_sql=(
-                "ALTER FUNCTION refresh_tile_geojson_geometries(uuid) "
-                "RESET jit;"
-            ),
+            sql="ALTER FUNCTION refresh_tile_geojson_geometries(uuid) SET jit = off;",
+            reverse_sql="ALTER FUNCTION refresh_tile_geojson_geometries(uuid) RESET jit;",
         ),
     ]
