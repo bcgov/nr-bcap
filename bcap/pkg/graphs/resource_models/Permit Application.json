@@ -2186,7 +2186,7 @@
                         "placeholder": {
                             "en": "Enter application ID"
                         },
-                        "uneditable": false,
+                        "uneditable": true,
                         "width": "100%"
                     },
                     "id": "99d76e1a-75ad-4e84-a7b5-889cce23fee4",
@@ -4190,6 +4190,26 @@
                     "function_id": "60000000-0000-0000-0000-000000000001",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                     "id": "9a7f5a05-d0a5-46d7-ba9b-ae67ddb608af"
+                },
+                {
+                    "config": {
+                        "triggering_nodegroups": [
+                            "c0b5fc20-bab5-4240-87aa-dcd0c96dfa58"
+                        ]
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000002010",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "id": "b7e64c2a-2010-4c10-9a10-0000000020aa"
+                },
+                {
+                    "config": {
+                        "triggering_nodegroups": [
+                            "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c"
+                        ]
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000002011",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "id": "b7e64c2a-2011-4c10-9a10-0000000020ab"
                 }
             ],
             "graphid": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
@@ -5781,7 +5801,7 @@
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Application ID",

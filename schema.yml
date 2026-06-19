@@ -146,7 +146,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegistrationLinkResponse'
           description: ''
-  /bcap/api/resource/hca_permit/:
+  /bcap/api/resource/hca_permit:
     get:
       operationId: api_resource_hca_permit_list
       description: |-
@@ -203,14 +203,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/HCAPermit'
           description: ''
-  /bcap/api/resource/permit_application/:
+  /bcap/api/resource/permit_application:
     post:
       operationId: api_resource_permit_application_create
       description: |-
-        POST a new Permit Application.
+        POST a new Permit Application, seeding its application id.
 
         Create-only: CreateAPIView exposes just POST (and OPTIONS); there is no
-        list/GET route.
+        list/GET route. The requirements are attached later, on submission (see the
+        detail view).
       tags:
       - 'External: permit_application'
       requestBody:
@@ -235,6 +236,9 @@ paths:
 
         Scoped to the requesting user's own applications: requesting one created by
         another user returns 404.
+
+        The update that first sets the submission date is the submission: it
+        assigns the application id and attaches the requirement working copies.
 
         PATCH applies a partial diff (only the tiles present in the body); PUT
         replaces.
@@ -263,6 +267,9 @@ paths:
 
         Scoped to the requesting user's own applications: requesting one created by
         another user returns 404.
+
+        The update that first sets the submission date is the submission: it
+        assigns the application id and attaches the requirement working copies.
 
         PATCH applies a partial diff (only the tiles present in the body); PUT
         replaces.
@@ -300,6 +307,9 @@ paths:
         Scoped to the requesting user's own applications: requesting one created by
         another user returns 404.
 
+        The update that first sets the submission date is the submission: it
+        assigns the application id and attaches the requirement working copies.
+
         PATCH applies a partial diff (only the tiles present in the body); PUT
         replaces.
       parameters:
@@ -335,6 +345,9 @@ paths:
 
         Scoped to the requesting user's own applications: requesting one created by
         another user returns 404.
+
+        The update that first sets the submission date is the submission: it
+        assigns the application id and attaches the requirement working copies.
 
         PATCH applies a partial diff (only the tiles present in the body); PUT
         replaces.
@@ -767,6 +780,9 @@ components:
           type: string
           description: ISO timestamp the application was submitted (its createdtime),
             or the draft was created when is_draft.
+        submission_date:
+          type: string
+          description: Permit application's submission date; empty for drafts.
         project_name:
           type: string
           description: Permit application's project name.

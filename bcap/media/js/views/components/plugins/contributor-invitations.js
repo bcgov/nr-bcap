@@ -14,11 +14,14 @@ const router = createRouter({
 
 ko.components.register('contributor-invitations', {
     viewModel: function () {
+        // Arches auto-adds the dark class to <html> on OS dark unless a choice is
+        // stored; store "off" so the app stays light-only.
+        localStorage.setItem('arches.bcap-dark', 'false');
         createVueApplication(BCAPAdminApp, {
             theme: {
                 preset: BCGovPreset,
                 options: {
-                    darkModeSelector: 'system',
+                    darkModeSelector: '.bcap-dark',
                     cssLayer: {
                         name: 'primevue',
                         order: 'theme, base, primevue',

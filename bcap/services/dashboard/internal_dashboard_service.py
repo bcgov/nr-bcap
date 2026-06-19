@@ -4,7 +4,7 @@ from itertools import chain
 from django.db.models import (
     Exists,
     F,
-    IntegerField,
+    FloatField,
     Max,
     OuterRef,
     Subquery,
@@ -102,9 +102,26 @@ class InternalDashboardService(BaseDashboardService):
         queryset = queryset.annotate(
             active_assignee=self._active_assignee_subquery(),
         )
-        # No actionable requirement -> no card. Exists() stops at the first
-        # matching tile.
-        return queryset.filter(Exists(self._active_requirement_tiles()))
+        return queryset.filter(
+            Exists(self._submitted_tiles()),
+            Exists(self._active_requirement_tiles()),
+        )
+
+    def _submitted_tiles(self):
+        """Per-permit subquery of its application_admin tile once the submission
+        date is filled in. The text read (->>) excludes a key present with JSON
+        null, which a data__id__isnull check would keep."""
+        date_id, admin_ng = self._node_info(
+            GraphSlugs.PERMIT_APPLICATION, self.PA.APPLICATION_SUBMISSION_DATE
+        )
+        return (
+            TileModel.objects.filter(
+                resourceinstance_id=OuterRef("pk"), nodegroup_id=admin_ng
+            )
+            .annotate(submission_date=KeyTextTransform(date_id, "data"))
+            .exclude(submission_date__isnull=True)
+            .exclude(submission_date="")
+        )
 
     def _permits(self, query, username=""):
         """The query's page of permits and the total count; counting, paging,
@@ -158,7 +175,7 @@ class InternalDashboardService(BaseDashboardService):
             .annotate(
                 requirement=Cast(get_json_resource_id(requirement_id), UUIDField()),
                 assignee=get_json_resource_id(assignee_id),
-                order_value=Cast(KeyTextTransform(order_id, "data"), IntegerField()),
+                order_value=Cast(KeyTextTransform(order_id, "data"), FloatField()),
             )
             .exclude(requirement__in=satisfied_ids)
             .filter(requirement__isnull=False)
@@ -282,7 +299,8 @@ class InternalDashboardService(BaseDashboardService):
         """A card for each permit, assembled from the gathered lookups."""
         cards = []
         for permit in permits:
-            cards.append(self._card_to_json(permit, data))
+            if data.chosen_by_permit.get(str(permit.pk)) is not None:
+                cards.append(self._card_to_json(permit, data))
         return cards
 
     def _card_to_json(self, permit, data: InternalDashboardData):

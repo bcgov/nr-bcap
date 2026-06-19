@@ -2,6 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount, flushPromises } from '@vue/test-utils';
 import BaseModule from './BaseModule.vue';
 
+// Own the submit mock so the date-stamp assertion can read it without a
+// top-level import (which Vite resolves before the mock applies).
+const { submitApplication } = vi.hoisted(() => ({
+    submitApplication: vi.fn(),
+}));
+
 // 1. Mock the missing PrimeVue forms package so Vite doesn't crash during import analysis
 vi.mock('@primevue/forms', () => ({
     FormField: { template: '<div />' },
@@ -34,7 +40,7 @@ vi.mock('@/bcap/util.ts', () => ({
 
 // 5. Mock your API functions
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
-    submitApplication: vi.fn(),
+    submitApplication,
 }));
 
 describe('BaseModule.vue', () => {
@@ -75,6 +81,33 @@ describe('BaseModule.vue', () => {
             expect.objectContaining({
                 method: 'POST',
             }),
+        );
+    });
+
+    it('stamps today as the submission date before submitting', async () => {
+        const wrapper = shallowMount(BaseModule);
+        await flushPromises(); // mount creates the draft, setting draftId
+
+        const submitted = await (
+            wrapper.vm as unknown as {
+                submitNewSiteData: () => Promise<boolean>;
+            }
+        ).submitNewSiteData();
+
+        const today = new Date().toISOString().slice(0, 10);
+        expect(submitted).toBe(true);
+        // The server treats application_submission_date as the "submitted"
+        // signal, so the draft must carry today's date (YYYY-MM-DD) on submit.
+        expect(submitApplication).toHaveBeenCalledWith(
+            'mock-draft-id',
+            expect.objectContaining({
+                application_admin: expect.objectContaining({
+                    aliased_data: expect.objectContaining({
+                        application_submission_date: { node_value: today },
+                    }),
+                }),
+            }),
+            expect.anything(),
         );
     });
 });

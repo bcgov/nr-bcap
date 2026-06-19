@@ -83,7 +83,7 @@ documented_api_patterns = [
     ),
     # External - object level user filtering
     path(
-        f"{PREFIX}api/resource/hca_permit/",
+        f"{PREFIX}api/resource/hca_permit",
         HCAPermitListView.as_view(),
         name="hca_permit_list",
     ),
@@ -95,7 +95,7 @@ documented_api_patterns = [
     ),
     # External - object level user filtering
     path(
-        f"{PREFIX}api/resource/permit_application/",
+        f"{PREFIX}api/resource/permit_application",
         PermitApplicationCreateView.as_view(),
         name="permit_application_create",
     ),
