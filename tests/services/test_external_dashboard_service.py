@@ -160,7 +160,7 @@ class ExternalDashboardServiceTests(TestCase):
         card = next(c for c in page.results if c.id == str(self.mine_active.pk))
         self.assertFalse(card.is_draft)
         self.assertEqual(card.project_name, "Mine Active")
-        self.assertEqual(card.application_number, "Mine Active")
+        self.assertRegex(card.application_number, r"^APP-\d+$")
         self.assertEqual(card.submission_date, "2026-06-18")
         self.assertEqual(card.created_by_name, "me")
         self.assertEqual(card.permit_id, self.hca_id)

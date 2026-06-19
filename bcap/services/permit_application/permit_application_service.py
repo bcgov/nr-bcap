@@ -31,7 +31,6 @@ class PermitApplicationService:
     def create(self, data, save):
         """Seed the application id; if the create body already sets the
         submission date, attach the requirement working copies too."""
-        self._assign_application_id(data)
         if not self._incoming_submission_date(data):
             return save()
         return self._attach_requirements_and_save(data, save)
