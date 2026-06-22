@@ -61,6 +61,7 @@ class ExternalDashboardService(BaseDashboardService):
                     [
                         self.PA.PROJECT_NAME,
                         self.PA.APPLICATION_ID,
+                        self.PA.APPLICATION_SUBMISSION_DATE,
                         self.PA.INDUSTRIAL_SECTOR,
                         self.PA.APPLICATION_PRIORITY_LEVEL,
                         self.PA.RELATED_PERMIT,
@@ -111,6 +112,10 @@ class ExternalDashboardService(BaseDashboardService):
             status=self._status_for(permit),
             created_by_name=display_name(permit.principaluser),
             created_date=to_iso(permit.createdtime),
+            submission_date=self._raw_value(
+                permit.aliased_data, self.PA.APPLICATION_SUBMISSION_DATE
+            )
+            or "",
             project_name=core.project_name,
             application_number=core.application_number,
             industrial_sector=core.industrial_sector,

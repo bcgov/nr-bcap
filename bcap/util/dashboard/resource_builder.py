@@ -53,6 +53,14 @@ class ResourceBuilder:
     Holds the shared save state (lifecycle state, save kwargs, graphid cache) so
     one builder can create several resources."""
 
+    # Tag created resources with the seed legacyid so clear_dashboard_data can
+    # find and delete them.
+    _TAG_AS_SEED = True
+
+    # Tag created resources with the seed legacyid so clear_dashboard_data can
+    # find and delete them.
+    _TAG_AS_SEED = True
+
     def __init__(self, skip_refresh=True, owner=None):
         self.state = ResourceInstanceLifecycleState.objects.first()
         self.save_kwargs = {"force_admin": True, "partial": False, "index": False}
@@ -162,7 +170,9 @@ class ResourceBuilder:
             graph_id=graph.pk,
             resource_instance_lifecycle_state=self.state,
             createdtime=timezone.now(),
-            legacyid=f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}",
+            legacyid=(
+                f"{SEED_LEGACYID_PREFIX}:{uuid.uuid4()}" if self._TAG_AS_SEED else None
+            ),
         )
         resource.aliased_data = AliasedData()
         # Reuse the prefetched graph instead of letting each append_tile/save

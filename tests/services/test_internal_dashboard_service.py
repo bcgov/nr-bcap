@@ -127,6 +127,7 @@ def build_permit_graph():
     permit.append_tile("application_admin")
     admin = permit.aliased_data.application_admin
     admin.aliased_data.project_officer = alan
+    admin.aliased_data.application_submission_date = "2026-01-01"
     # One application_admin child per (requirement, assignee, order). "Site
     # Inspection" (order 3) precedes "Field Assessment" (order 2) in tile order,
     # so the card only surfaces the right row by lowest order, not position.
@@ -188,6 +189,7 @@ def build_minimal_permit(builder, name):
             "application_priority_level": builder.reference_value(
                 "permit_application", "application_priority_level"
             ),
+            "application_submission_date": "2026-01-01",
         },
     )
     child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
@@ -223,6 +225,8 @@ def build_all_satisfied_permit(builder, name):
     child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
     child.aliased_data.process_requirement_order = 1
     child.aliased_data.process_requirement = requirement
+    admin = permit.aliased_data.application_admin
+    admin.aliased_data.application_submission_date = "2026-01-01"
     permit.save(**builder.save_kwargs)
     return permit
 
@@ -253,6 +257,8 @@ def build_unassigned_permit(builder, name):
     child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
     child.aliased_data.process_requirement_order = 1
     child.aliased_data.process_requirement = requirement
+    admin = permit.aliased_data.application_admin
+    admin.aliased_data.application_submission_date = "2026-01-01"
     permit.save(**builder.save_kwargs)
     return permit
 
@@ -273,6 +279,8 @@ def build_blank_requirement_permit(builder, name):
         },
     )
     permit.append_tile("application_admin")
+    admin = permit.aliased_data.application_admin
+    admin.aliased_data.application_submission_date = "2026-01-01"
     permit.save(**builder.save_kwargs)
     return permit
 
@@ -296,8 +304,41 @@ def build_groupless_requirement_permit(builder, name):
     child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
     child.aliased_data.process_requirement_order = 1
     child.aliased_data.process_requirement = requirement
+    admin = permit.aliased_data.application_admin
+    admin.aliased_data.application_submission_date = "2026-01-01"
     permit.save(**builder.save_kwargs)
     return permit, str(requirement.pk)
+
+
+def build_unsubmitted_permit(builder, name):
+    """A permit with an actionable requirement but no submission date -- a draft
+    the dashboard hides until it is submitted. Returns the created resource."""
+    requirement = builder.make_process_requirement(
+        {
+            "id": f"REQ-{name}",
+            "name": "Outstanding",
+            "due": "2026-03-01",
+            "notes": "",
+            "satisfied": False,
+            "sub_requirements": [],
+        }
+    )
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    permit.append_tile("application_admin")
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
+    # deliberately no application_submission_date
+    permit.save(**builder.save_kwargs)
+    return permit
 
 
 def _tile(**leaves):
@@ -341,7 +382,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         card = page.results[0]
         self.assertEqual(card.id, self.permit_id)
         self.assertEqual(card.project_name, "My Project")
-        self.assertEqual(card.application_number, "APP-1")
+        self.assertRegex(card.application_number, r"^APP-\d+$")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
         self.assertEqual(card.requirement_name, "Field Assessment")
         self.assertEqual(card.requirement_due_date, "2026-02-15")
@@ -657,3 +698,23 @@ class DashboardServiceBlankRequirementTests(TestCase):
 
         self.assertEqual(page.count, 0)
         self.assertEqual(page.results, [])
+
+
+class DashboardServiceSubmissionDateTests(TestCase):
+    """Only submitted applications reach the internal dashboard: a permit with
+    an actionable requirement but no submission date is a draft and is hidden,
+    while an otherwise-identical submitted permit appears."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = ResourceBuilder()
+        cls.submitted_id = str(build_minimal_permit(builder, "Submitted").pk)
+        cls.draft_id = str(build_unsubmitted_permit(builder, "Draft").pk)
+        cls.service = InternalDashboardService()
+
+    def test_only_the_submitted_permit_appears(self):
+        page = self.service.get_cards(DashboardFilter())
+
+        self.assertEqual(page.count, 1)
+        self.assertEqual([card.id for card in page.results], [self.submitted_id])

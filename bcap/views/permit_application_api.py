@@ -35,19 +35,32 @@ class PermitApplicationView(
     Scoped to the requesting user's own applications: requesting one created by
     another user returns 404.
 
+    The update that first sets the submission date is the submission: it
+    assigns the application id and attaches the requirement working copies.
+
     PATCH applies a partial diff (only the tiles present in the body); PUT
     replaces.
     """
+
+    def update(self, request, *args, **kwargs):
+        return PermitApplicationService().submit(
+            self.get_object(),
+            request.data,
+            save=lambda: super(PermitApplicationView, self).update(
+                request, *args, **kwargs
+            ),
+        )
 
 
 @extend_schema(tags=["External: permit_application"])
 class PermitApplicationCreateView(
     PermitApplicationViewMixin, ArchesModelAPIMixin, CreateAPIView
 ):
-    """POST a new Permit Application.
+    """POST a new Permit Application, seeding its application id.
 
     Create-only: CreateAPIView exposes just POST (and OPTIONS); there is no
-    list/GET route.
+    list/GET route. The requirements are attached later, on submission (see the
+    detail view).
     """
 
     permission_classes = [ResourceEditor]
@@ -55,9 +68,9 @@ class PermitApplicationCreateView(
     http_method_names = ["post", "options"]
 
     def create(self, request, *args, **kwargs):
-        return PermitApplicationService().create_application(
+        return PermitApplicationService().create(
             request.data,
-            save_application=lambda: super(PermitApplicationCreateView, self).create(
+            save=lambda: super(PermitApplicationCreateView, self).create(
                 request, *args, **kwargs
             ),
         )

@@ -438,6 +438,11 @@ class DashboardDemoBuilder(ResourceBuilder):
         )
         permit.append_tile("application_admin")
         admin = permit.aliased_data.application_admin
+        # Submitted (a past date) so the seeded permit shows on the internal
+        # dashboard, which only surfaces submitted applications.
+        admin.aliased_data.application_submission_date = self.faker.date_between(
+            start_date="-180d", end_date="-1d"
+        ).isoformat()
         admin.aliased_data.project_officer = spec.project_officer
         if spec.priority is not None:
             admin.aliased_data.application_priority_level = self.reference_value(
