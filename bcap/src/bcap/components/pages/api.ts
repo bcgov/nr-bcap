@@ -16,7 +16,6 @@ import type {
 } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
-import type { RequirementSubmissionSchema } from '@/bcap/schema/RequirementSubmissionSchema.ts';
 
 export const getResourceData = async (
     graph_slug: string,
@@ -54,20 +53,6 @@ export const getProcessRequirementData = async (
 ): Promise<PermitRequirementSchema> => {
     const response = await fetch(
         arches.urls.api_process_requirements(resource_id),
-    );
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || response.statusText);
-    }
-
-    return await response.json();
-};
-
-export const getRequirementSubmissionData = async (
-    resource_id: string,
-): Promise<RequirementSubmissionSchema> => {
-    const response = await fetch(
-        arches.urls.api_requirement_submission(resource_id),
     );
     if (!response.ok) {
         const text = await response.text();

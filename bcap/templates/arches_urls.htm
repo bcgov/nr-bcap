@@ -13,8 +13,7 @@
      registration_link="{% url 'registration_link' %}"
      unlinked_contributors="{% url 'unlinked_contributors' %}"
      assignable_groups="{% url 'assignable_groups' %}"
-     api_requirement_submission='(resource_id) => {return "{% url "requirement_submission" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
-     api_process_requirements='(resource_id) => {return "{% url "process_requirement" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     api_process_requirements='(resource_id) => {return "{% url "api_process_requirement" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_resource='(graph_slug, resource_id) => {return "{% url "api-resource" "----p1" "00000000-0000-0000-0000-000000000000"%}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_resource_draft="(graph_slug) => {return `/bcap/api/resource_draft/${graph_slug}`}"
