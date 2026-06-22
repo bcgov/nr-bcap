@@ -22,35 +22,24 @@ from bcap.views.generated import (
     ContributorView,
     HcaPermitListView,
     HcaPermitView,
-    HriaDiscontinuedDataListView,
-    HriaDiscontinuedDataView,
     LegislativeActListView,
     LegislativeActView,
     LgPersonListView,
     LgPersonView,
     LocalGovernmentListView,
     LocalGovernmentView,
-    NewResourceModelListView,
-    NewResourceModelView,
     PermitApplicationListView,
     PermitApplicationView,
     ProcessRequirementListView,
     ProcessRequirementView,
-    ProjectSandboxListView,
-    ProjectSandboxView,
     PublicationListView,
     PublicationView,
-    RepositoryListView,
-    RepositoryView,
     SiteSubmissionListView,
     SiteSubmissionView,
     SiteVisitListView,
     SiteVisitView,
 )
 
-# TODO fix underlying library generator (arches-zod-validation)
-# api/archaeological_site and api/archaeological_site/ are two seperate routes
-# EG. Arches uses api/archaeological_site
 urlpatterns = [
     path(
         "api/archaeological_site",
@@ -83,16 +72,6 @@ urlpatterns = [
         name="api_hca_permit",
     ),
     path(
-        "api/hria_discontinued_data/",
-        HriaDiscontinuedDataListView.as_view(),
-        name="api_hria_discontinued_data_list",
-    ),
-    path(
-        "api/hria_discontinued_data/<uuid:pk>/",
-        HriaDiscontinuedDataView.as_view(),
-        name="api_hria_discontinued_data",
-    ),
-    path(
         "api/legislative_act",
         LegislativeActListView.as_view(),
         name="api_legislative_act_list",
@@ -123,16 +102,6 @@ urlpatterns = [
         name="api_local_government",
     ),
     path(
-        "api/new_resource_model",
-        NewResourceModelListView.as_view(),
-        name="api_new_resource_model_list",
-    ),
-    path(
-        "api/new_resource_model/<uuid:pk>/",
-        NewResourceModelView.as_view(),
-        name="api_new_resource_model",
-    ),
-    path(
         "api/permit_application",
         PermitApplicationListView.as_view(),
         name="api_permit_application_list",
@@ -153,16 +122,6 @@ urlpatterns = [
         name="api_process_requirement",
     ),
     path(
-        "api/project_sandbox",
-        ProjectSandboxListView.as_view(),
-        name="api_project_sandbox_list",
-    ),
-    path(
-        "api/project_sandbox/<uuid:pk>/",
-        ProjectSandboxView.as_view(),
-        name="api_project_sandbox",
-    ),
-    path(
         "api/publication",
         PublicationListView.as_view(),
         name="api_publication_list",
@@ -171,16 +130,6 @@ urlpatterns = [
         "api/publication/<uuid:pk>/",
         PublicationView.as_view(),
         name="api_publication",
-    ),
-    path(
-        "api/repository",
-        RepositoryListView.as_view(),
-        name="api_repository_list",
-    ),
-    path(
-        "api/repository/<uuid:pk>/",
-        RepositoryView.as_view(),
-        name="api_repository",
     ),
     path(
         "api/site_submission",

@@ -14,7 +14,6 @@ from django.urls import include, path
 from django.conf import settings
 
 from bcap.views.dashboard_api import InternalDashboardView, ExternalDashboardView
-from bcap.views.process_requirement_api import ProcessRequirementView
 from bcap.views.resource_draft_api import (
     ResourceDraftListCreateView,
     ResourceDraftDetailView,
@@ -35,14 +34,6 @@ from bcap.views.registration_link_api import (
 # the schema, and in bcap.urls for the served app).
 documented_api_patterns = [
     path("user_profile", UserProfile.as_view(), name="user_profile"),
-    # Internal, PATCH-capable override: the generated process_requirement view
-    # is read-only/owner-scoped, but requirements are updated (marked satisfied)
-    # through this route. Distinct path from the generated one, so both coexist.
-    path(
-        "api/resource/process_requirement/<uuid:pk>",
-        ProcessRequirementView.as_view(),
-        name="process_requirement",
-    ),
     path(
         "api/dashboard/internal",
         InternalDashboardView.as_view(),

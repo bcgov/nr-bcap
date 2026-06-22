@@ -8,9 +8,11 @@ paths:
     get:
       operationId: api_archaeological_site_list
       description: |-
-        GET the requesting user's Archaeological Site resources.
+        Collection endpoint for the requesting user's Archaeological Site resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -39,10 +41,11 @@ paths:
     get:
       operationId: api_archaeological_site_retrieve
       description: |-
-        GET a Archaeological Site resource and its nested tiles.
+        Detail endpoint for a single Archaeological Site resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -82,9 +85,11 @@ paths:
     get:
       operationId: api_contributor_list
       description: |-
-        GET the requesting user's Contributor resources.
+        Collection endpoint for the requesting user's Contributor resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -113,10 +118,11 @@ paths:
     get:
       operationId: api_contributor_retrieve
       description: |-
-        GET a Contributor resource and its nested tiles.
+        Detail endpoint for a single Contributor resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -238,9 +244,11 @@ paths:
     get:
       operationId: api_hca_permit_list
       description: |-
-        GET the requesting user's HCA Permit resources.
+        Collection endpoint for the requesting user's HCA Permit resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -269,10 +277,11 @@ paths:
     get:
       operationId: api_hca_permit_retrieve
       description: |-
-        GET a HCA Permit resource and its nested tiles.
+        Detail endpoint for a single HCA Permit resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -291,70 +300,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/HcaPermit'
           description: ''
-  /bcap/api/hria_discontinued_data/:
-    get:
-      operationId: api_hria_discontinued_data_list
-      description: |-
-        GET the requesting user's HRIA Discontinued Data resources.
-
-        Read-only and owner-scoped: returns only the resources the user created.
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: hria_discontinued_data'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedHriaDiscontinuedDataList'
-          description: ''
-  /bcap/api/hria_discontinued_data/{id}/:
-    get:
-      operationId: api_hria_discontinued_data_retrieve
-      description: |-
-        GET a HRIA Discontinued Data resource and its nested tiles.
-
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: hria_discontinued_data'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HriaDiscontinuedData'
-          description: ''
   /bcap/api/legislative_act:
     get:
       operationId: api_legislative_act_list
       description: |-
-        GET the requesting user's Legislative Act resources.
+        Collection endpoint for the requesting user's Legislative Act resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -383,10 +337,11 @@ paths:
     get:
       operationId: api_legislative_act_retrieve
       description: |-
-        GET a Legislative Act resource and its nested tiles.
+        Detail endpoint for a single Legislative Act resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -409,9 +364,11 @@ paths:
     get:
       operationId: api_lg_person_list
       description: |-
-        GET the requesting user's Government Person resources.
+        Collection endpoint for the requesting user's Government Person resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -440,10 +397,11 @@ paths:
     get:
       operationId: api_lg_person_retrieve
       description: |-
-        GET a Government Person resource and its nested tiles.
+        Detail endpoint for a single Government Person resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -466,9 +424,11 @@ paths:
     get:
       operationId: api_local_government_list
       description: |-
-        GET the requesting user's Government resources.
+        Collection endpoint for the requesting user's Government resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -497,10 +457,11 @@ paths:
     get:
       operationId: api_local_government_retrieve
       description: |-
-        GET a Government resource and its nested tiles.
+        Detail endpoint for a single Government resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -519,70 +480,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/LocalGovernment'
           description: ''
-  /bcap/api/new_resource_model:
-    get:
-      operationId: api_new_resource_model_list
-      description: |-
-        GET the requesting user's Requirement Submission resources.
-
-        Read-only and owner-scoped: returns only the resources the user created.
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: new_resource_model'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedNewResourceModelList'
-          description: ''
-  /bcap/api/new_resource_model/{id}/:
-    get:
-      operationId: api_new_resource_model_retrieve
-      description: |-
-        GET a Requirement Submission resource and its nested tiles.
-
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: new_resource_model'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NewResourceModel'
-          description: ''
   /bcap/api/permit_application:
     get:
       operationId: api_permit_application_list
       description: |-
-        GET the requesting user's Permit Application resources.
+        Collection endpoint for the requesting user's Permit Application resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -607,14 +513,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedPermitApplicationList'
           description: ''
+    post:
+      operationId: api_permit_application_create
+      description: |-
+        Collection endpoint for the requesting user's Permit Application resources.
+
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
+        class serves the collection subset (GET/POST).
+      tags:
+      - 'External: permit_application'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermitApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PermitApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PermitApplication'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermitApplication'
+          description: ''
   /bcap/api/permit_application/{id}/:
     get:
       operationId: api_permit_application_retrieve
       description: |-
-        GET a Permit Application resource and its nested tiles.
+        Detail endpoint for a single Permit Application resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -633,13 +570,111 @@ paths:
               schema:
                 $ref: '#/components/schemas/PermitApplication'
           description: ''
+    put:
+      operationId: api_permit_application_update
+      description: |-
+        Detail endpoint for a single Permit Application resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: permit_application'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermitApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PermitApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PermitApplication'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermitApplication'
+          description: ''
+    patch:
+      operationId: api_permit_application_partial_update
+      description: |-
+        Detail endpoint for a single Permit Application resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: permit_application'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPermitApplication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPermitApplication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPermitApplication'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermitApplication'
+          description: ''
+    delete:
+      operationId: api_permit_application_destroy
+      description: |-
+        Detail endpoint for a single Permit Application resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: permit_application'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /bcap/api/process_requirement:
     get:
       operationId: api_process_requirement_list
       description: |-
-        GET the requesting user's Process Requirement resources.
+        Collection endpoint for the requesting user's Process Requirement resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET, PUT, PATCH, DELETE (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -668,10 +703,11 @@ paths:
     get:
       operationId: api_process_requirement_retrieve
       description: |-
-        GET a Process Requirement resource and its nested tiles.
+        Detail endpoint for a single Process Requirement resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -690,45 +726,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProcessRequirement'
           description: ''
-  /bcap/api/project_sandbox:
-    get:
-      operationId: api_project_sandbox_list
+    put:
+      operationId: api_process_requirement_update
       description: |-
-        GET the requesting user's Sandcastle resources.
+        Detail endpoint for a single Process Requirement resource and its nested tiles.
 
-        Read-only and owner-scoped: returns only the resources the user created.
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: project_sandbox'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedProjectSandboxList'
-          description: ''
-  /bcap/api/project_sandbox/{id}/:
-    get:
-      operationId: api_project_sandbox_retrieve
-      description: |-
-        GET a Sandcastle resource and its nested tiles.
-
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -737,7 +742,18 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: project_sandbox'
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessRequirement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProcessRequirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProcessRequirement'
       security:
       - cookieAuth: []
       responses:
@@ -745,15 +761,76 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectSandbox'
+                $ref: '#/components/schemas/ProcessRequirement'
           description: ''
+    patch:
+      operationId: api_process_requirement_partial_update
+      description: |-
+        Detail endpoint for a single Process Requirement resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProcessRequirement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProcessRequirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProcessRequirement'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessRequirement'
+          description: ''
+    delete:
+      operationId: api_process_requirement_destroy
+      description: |-
+        Detail endpoint for a single Process Requirement resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /bcap/api/publication:
     get:
       operationId: api_publication_list
       description: |-
-        GET the requesting user's Publication resources.
+        Collection endpoint for the requesting user's Publication resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -782,10 +859,11 @@ paths:
     get:
       operationId: api_publication_retrieve
       description: |-
-        GET a Publication resource and its nested tiles.
+        Detail endpoint for a single Publication resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -829,63 +907,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RegistrationLinkResponse'
-          description: ''
-  /bcap/api/repository:
-    get:
-      operationId: api_repository_list
-      description: |-
-        GET the requesting user's Repository resources.
-
-        Read-only and owner-scoped: returns only the resources the user created.
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: repository'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedRepositoryList'
-          description: ''
-  /bcap/api/repository/{id}/:
-    get:
-      operationId: api_repository_retrieve
-      description: |-
-        GET a Repository resource and its nested tiles.
-
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: repository'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Repository'
           description: ''
   /bcap/api/resource/permit_application/:
     post:
@@ -1031,135 +1052,6 @@ paths:
         required: true
       tags:
       - 'External: permit_application'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /bcap/api/resource/process_requirement/{id}:
-    get:
-      operationId: api_resource_process_requirement_retrieve
-      description: |-
-        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces. Either way the serializer saves the nested sub-requirement tiles.
-
-        Process Requirements are created internally (cloned from templates by the
-        process_requirement service), not via a public POST, so there is no create
-        route here.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'Internal: process_requirement'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProcessRequirement'
-          description: ''
-    put:
-      operationId: api_resource_process_requirement_update
-      description: |-
-        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces. Either way the serializer saves the nested sub-requirement tiles.
-
-        Process Requirements are created internally (cloned from templates by the
-        process_requirement service), not via a public POST, so there is no create
-        route here.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'Internal: process_requirement'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProcessRequirement'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/ProcessRequirement'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProcessRequirement'
-          description: ''
-    patch:
-      operationId: api_resource_process_requirement_partial_update
-      description: |-
-        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces. Either way the serializer saves the nested sub-requirement tiles.
-
-        Process Requirements are created internally (cloned from templates by the
-        process_requirement service), not via a public POST, so there is no create
-        route here.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'Internal: process_requirement'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedProcessRequirement'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedProcessRequirement'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProcessRequirement'
-          description: ''
-    delete:
-      operationId: api_resource_process_requirement_destroy
-      description: |-
-        GET/PUT/PATCH/DELETE a Process Requirement and its sub-requirements.
-
-        PATCH applies a partial diff (only the tiles present in the body); PUT
-        replaces. Either way the serializer saves the nested sub-requirement tiles.
-
-        Process Requirements are created internally (cloned from templates by the
-        process_requirement service), not via a public POST, so there is no create
-        route here.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'Internal: process_requirement'
       security:
       - cookieAuth: []
       responses:
@@ -1362,9 +1254,11 @@ paths:
     get:
       operationId: api_site_submission_list
       description: |-
-        GET the requesting user's Archaeological Site Submission resources.
+        Collection endpoint for the requesting user's Archaeological Site Submission resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1393,10 +1287,11 @@ paths:
     get:
       operationId: api_site_submission_retrieve
       description: |-
-        GET a Archaeological Site Submission resource and its nested tiles.
+        Detail endpoint for a single Archaeological Site Submission resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1419,9 +1314,11 @@ paths:
     get:
       operationId: api_site_visit_list
       description: |-
-        GET the requesting user's Site Visit resources.
+        Collection endpoint for the requesting user's Site Visit resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1450,10 +1347,11 @@ paths:
     get:
       operationId: api_site_visit_retrieve
       description: |-
-        GET a Site Visit resource and its nested tiles.
+        Detail endpoint for a single Site Visit resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -4609,788 +4507,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/Hca_Permit_Permit_Identification_Tile'
           nullable: true
-    HriaDiscontinuedData:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-      required:
-      - createdtime
-      - descriptors
-      - graph_has_different_publication
-      - graph_publication
-      - legacyid
-      - name
-      - principaluser
-      - resource_instance_lifecycle_state
-    Hria_Discontinued_Data_Archaeological_Site_Aliased_Data:
-      type: object
-      properties:
-        archaeological_site:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          title: Borden Number
-      required:
-      - archaeological_site
-    Hria_Discontinued_Data_Archaeological_Site_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Archaeological_Site_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hria_Discontinued_Data_Biogeography_Aliased_Data:
-      type: object
-      properties:
-        biogeography_entered_by:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Entered By
-          description: Enter text
-        biogeography_entered_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Entered On
-          description: Enter date
-        biogeography_type:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Type
-          description: Enter text
-        biogeography_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Description
-          description: Enter text
-        biogeography_name:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Name
-          description: Enter text
-    Hria_Discontinued_Data_Biogeography_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Biogeography_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hria_Discontinued_Data_Chronology_Aliased_Data:
-      type: object
-      properties:
-        determination_method:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          title: Method
-          description: Select an option
-        end_year:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: To Date
-          description: Enter date
-        end_year_calendar:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          title: To Date Calendar
-          description: Select an option
-        end_year_qualifier:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          title: To Date Qualifier
-          description: Select an option
-        start_year:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: From Date
-          description: Enter date
-        start_year_calendar:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          title: From Date Calendar
-          description: Select an option
-        information_source:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeDataMax250'
-          nullable: true
-          title: Source
-        start_year_qualifier:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          title: From Date Qualifier
-          description: Select an option
-        chronology_remarks:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeDataMax250'
-          nullable: true
-        rcd_lab_code:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        rcd_unadjusted:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        rcd_unadjusted_var:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: RCD Unadjusted Var (+/-)
-          description: Enter text
-        rcd_adjusted:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        rcd_adjusted_var:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: RCD Adjusted Var (+/-)
-          description: Enter text
-        rcd_lab_number:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        chronology_modified_by:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Entered By
-          description: Enter text
-        chronology_modified_on:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Entered On
-          description: Enter date
-    Hria_Discontinued_Data_Chronology_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Chronology_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hria_Discontinued_Data_Hria_Jursidiction_And_Tenure_Aliased_Data:
-      type: object
-      properties:
-        jurisdiction_entered_by:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Entered By
-          description: Enter text
-        jurisdiction_entered_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Entered On
-          description: Enter date
-        site_jurisdiction:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Jurisdiction
-          description: Enter text
-        tenure_identifier:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Tenure Description
-          description: Enter text
-        tenure_type:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        tenure_remarks:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Hria_Discontinued_Data_Hria_Jursidiction_And_Tenure_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Hria_Jursidiction_And_Tenure_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hria_Discontinued_Data_Other_Maps_Aliased_Data:
-      type: object
-      properties:
-        other_maps_map_name:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Map Name
-          description: Enter text
-        other_maps_map_scale:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Map Scale
-          description: Enter text
-        other_maps_modified_on:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Entered On
-          description: Enter date
-        other_maps_modified_by:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Entered By
-          description: Enter text
-    Hria_Discontinued_Data_Other_Maps_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Other_Maps_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hria_Discontinued_Data_Resource_Aliased_Data:
-      type: object
-      properties:
-        other_maps:
-          allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Other_Maps_Tile'
-          nullable: true
-        unreviewed_adif_record:
-          allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Unreviewed_Adif_Record_Tile'
-          nullable: true
-        site_boundary_annotations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hria_Discontinued_Data_Site_Boundary_Annotations_Tile'
-          nullable: true
-        archaeological_site:
-          allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Archaeological_Site_Tile'
-          nullable: true
-        hria_jursidiction_and_tenure:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hria_Discontinued_Data_Hria_Jursidiction_And_Tenure_Tile'
-          nullable: true
-        biogeography:
-          allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Biogeography_Tile'
-          nullable: true
-        chronology:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hria_Discontinued_Data_Chronology_Tile'
-          nullable: true
-        site_dimensions:
-          allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Site_Dimensions_Tile'
-          nullable: true
-    Hria_Discontinued_Data_Site_Boundary_Annotations_Aliased_Data:
-      type: object
-      properties:
-        source_notes:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        site_boundary_entered_by:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Edited By
-          description: Enter text
-        accuracy_remarks:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        site_boundary_entered_on:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Edited On
-          description: Enter date
-    Hria_Discontinued_Data_Site_Boundary_Annotations_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Site_Boundary_Annotations_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hria_Discontinued_Data_Site_Dimensions_Aliased_Data:
-      type: object
-      properties:
-        dimension_entered_by:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Entered By
-          description: Enter text
-        dimension_entered_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Entered On
-          description: Enter date
-        length:
-          allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeData'
-          nullable: true
-          title: Length (m)
-          description: Enter number
-        length_direction:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        width_direction:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        width:
-          allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeData'
-          nullable: true
-          title: Width (m)
-          description: Enter number
-        site_area:
-          allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeData'
-          nullable: true
-          description: Enter number
-        boundary_type:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Hria_Discontinued_Data_Site_Dimensions_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Site_Dimensions_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hria_Discontinued_Data_Unreviewed_Adif_Record_Aliased_Data:
-      type: object
-      properties:
-        site_entered_by:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Entered By
-          description: Enter text
-        unreviewed_adif_record:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        site_entry_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Entered On
-          description: Enter date
-    Hria_Discontinued_Data_Unreviewed_Adif_Record_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hria_Discontinued_Data_Unreviewed_Adif_Record_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     InternalDashboardCard:
       type: object
       properties:
@@ -6437,393 +5553,6 @@ components:
       required:
       - email
       - name
-    NewResourceModel:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/New_Resource_Model_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-      required:
-      - createdtime
-      - descriptors
-      - graph_has_different_publication
-      - graph_publication
-      - legacyid
-      - name
-      - principaluser
-      - resource_instance_lifecycle_state
-    New_Resource_Model_Report_Submission_Aliased_Data:
-      type: object
-      properties:
-        archaeological_consultant:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          title: Lead Archaeologist Consultant
-        archaological_company:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          title: Archaeology Company
-        consultant_report_number:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeDataMax40'
-          nullable: true
-          description: Enter text
-        report_file:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-          title: Document
-        report_recommendations:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Recommendations
-          description: Enter text
-        report_title:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
-          nullable: true
-          title: Document Title
-          description: Enter the title of the document
-      required:
-      - archaeological_consultant
-      - report_title
-    New_Resource_Model_Report_Submission_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/New_Resource_Model_Report_Submission_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    New_Resource_Model_Requirement_Submission_Process_Aliased_Data:
-      type: object
-      properties:
-        submission_type:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
-          nullable: true
-          description: Select submission type
-        submission_number:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        report_submission:
-          allOf:
-          - $ref: '#/components/schemas/New_Resource_Model_Report_Submission_Tile'
-          nullable: true
-        submission_photographs:
-          allOf:
-          - $ref: '#/components/schemas/New_Resource_Model_Submission_Photographs_Tile'
-          nullable: true
-        submission_assessment:
-          allOf:
-          - $ref: '#/components/schemas/New_Resource_Model_Submission_Assessment_Tile'
-          nullable: true
-      required:
-      - submission_number
-      - submission_type
-    New_Resource_Model_Requirement_Submission_Process_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/New_Resource_Model_Requirement_Submission_Process_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    New_Resource_Model_Resource_Aliased_Data:
-      type: object
-      properties:
-        requirement_submission_process:
-          type: array
-          items:
-            $ref: '#/components/schemas/New_Resource_Model_Requirement_Submission_Process_Tile'
-          nullable: true
-    New_Resource_Model_Submission_Assessment_Aliased_Data:
-      type: object
-      properties:
-        arch_branch_approval_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          title: Approval Date
-          description: Enter date
-        arch_branch_approval_status:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Approval Status
-        arch_branch_determined_level_of_risk:
-          allOf:
-          - $ref: '#/components/schemas/ConceptAliasedNodeData'
-          nullable: true
-          title: Determined Level of Risk
-          description: Select an option
-        arch_branch_internal_notes:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        arch_branch_response:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    New_Resource_Model_Submission_Assessment_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/New_Resource_Model_Submission_Assessment_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    New_Resource_Model_Submission_Photographs_Aliased_Data:
-      type: object
-      properties:
-        photograph_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          description: Enter date
-        photograph_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        photograph_view:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        photographer:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        submission_photographs:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-    New_Resource_Model_Submission_Photographs_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/New_Resource_Model_Submission_Photographs_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     NonLocalizedStringAliasedNodeData:
       type: object
       properties:
@@ -7026,29 +5755,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HcaPermit'
-    PaginatedHriaDiscontinuedDataList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/HriaDiscontinuedData'
     PaginatedLegislativeActList:
       type: object
       required:
@@ -7118,29 +5824,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LocalGovernment'
-    PaginatedNewResourceModelList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/NewResourceModel'
     PaginatedPermitApplicationList:
       type: object
       required:
@@ -7187,29 +5870,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProcessRequirement'
-    PaginatedProjectSandboxList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProjectSandbox'
     PaginatedPublicationList:
       type: object
       required:
@@ -7233,29 +5893,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Publication'
-    PaginatedRepositoryList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Repository'
     PaginatedSiteSubmissionList:
       type: object
       required:
@@ -7684,7 +6321,6 @@ components:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
           nullable: true
       required:
-      - application_id
       - project_name
     Permit_Application_Application_Identification_Tile:
       type: object
@@ -8421,6 +7057,61 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Permit_Application_Permit_Messages_Aliased_Data:
+      type: object
+      properties:
+        permit_messages:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+    Permit_Application_Permit_Messages_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Permit_Application_Permit_Messages_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Permit_Application_Process_Requirement_Aliased_Data:
       type: object
       properties:
@@ -8721,13 +7412,13 @@ components:
     Permit_Application_Resource_Aliased_Data:
       type: object
       properties:
-        application_contacts:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
-          nullable: true
         application_identification:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Identification_Tile'
+          nullable: true
+        application_contacts:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
           nullable: true
         proposed_project:
           allOf:
@@ -8773,6 +7464,10 @@ components:
         application_admin:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Admin_Tile'
+          nullable: true
+        permit_messages:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Permit_Messages_Tile'
           nullable: true
     Permit_Application_Section_1_Overview_Aliased_Data:
       type: object
@@ -9911,213 +8606,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    ProjectSandbox:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Project_Sandbox_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-      required:
-      - createdtime
-      - descriptors
-      - graph_has_different_publication
-      - graph_publication
-      - legacyid
-      - name
-      - principaluser
-      - resource_instance_lifecycle_state
-    Project_Sandbox_Project_Boundary_Aliased_Data:
-      type: object
-      properties:
-        geometry_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        project_boundary:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
-    Project_Sandbox_Project_Boundary_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Project_Sandbox_Project_Boundary_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Project_Sandbox_Resource_Aliased_Data:
-      type: object
-      properties:
-        sandcastle_project:
-          allOf:
-          - $ref: '#/components/schemas/Project_Sandbox_Sandcastle_Project_Tile'
-          nullable: true
-    Project_Sandbox_Sandcastle_Project_Aliased_Data:
-      type: object
-      properties:
-        project_boundary:
-          type: array
-          items:
-            $ref: '#/components/schemas/Project_Sandbox_Project_Boundary_Tile'
-          nullable: true
-        start_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          description: Enter date
-        end_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          description: Enter date
-        project_name:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        project_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Project_Sandbox_Sandcastle_Project_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Project_Sandbox_Sandcastle_Project_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Publication:
       type: object
       properties:
@@ -10801,425 +9289,6 @@ components:
       required:
       - expires
       - signup_url
-    Repository:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Repository_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-      required:
-      - createdtime
-      - descriptors
-      - graph_has_different_publication
-      - graph_publication
-      - legacyid
-      - name
-      - principaluser
-      - resource_instance_lifecycle_state
-    Repository_Alternate_Identifiers_Aliased_Data:
-      type: object
-      properties:
-        alternate_name:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_code:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-    Repository_Alternate_Identifiers_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Repository_Alternate_Identifiers_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Repository_Contact_Information_Aliased_Data:
-      type: object
-      properties:
-        address_line_1:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        address_line_2:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        address_notes:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        physical_location:
-          allOf:
-          - $ref: '#/components/schemas/Repository_Physical_Location_Tile'
-          nullable: true
-        place_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        primary_email:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        province:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          description: Select an option
-        city:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        postal_code:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-      required:
-      - address_line_1
-      - city
-    Repository_Contact_Information_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Repository_Contact_Information_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Repository_Physical_Location_Aliased_Data:
-      type: object
-      properties:
-        physical_location:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
-          title: Spatial Location
-    Repository_Physical_Location_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Repository_Physical_Location_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Repository_Repository_Identifier_Aliased_Data:
-      type: object
-      properties:
-        repository_name:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        repository_location_code:
-          allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
-          nullable: true
-          title: Repository Code
-          description: Enter text
-        alternate_identifiers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Repository_Alternate_Identifiers_Tile'
-          nullable: true
-      required:
-      - repository_name
-    Repository_Repository_Identifier_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Repository_Repository_Identifier_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Repository_Repository_Notes_Aliased_Data:
-      type: object
-      properties:
-        note:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Repository_Repository_Notes_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Repository_Repository_Notes_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Repository_Resource_Aliased_Data:
-      type: object
-      properties:
-        contact_information:
-          allOf:
-          - $ref: '#/components/schemas/Repository_Contact_Information_Tile'
-          nullable: true
-        repository_identifier:
-          allOf:
-          - $ref: '#/components/schemas/Repository_Repository_Identifier_Tile'
-          nullable: true
-        repository_notes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Repository_Repository_Notes_Tile'
-          nullable: true
     ResourceDraft:
       type: object
       properties:

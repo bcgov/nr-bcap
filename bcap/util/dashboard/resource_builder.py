@@ -12,8 +12,11 @@ from dataclasses import dataclass
 
 from django.utils import timezone
 
+from django.contrib.auth import get_user_model
+
 from arches.app.models.models import (
     Node,
+    ResourceInstance,
     ResourceInstanceLifecycleState,
 )
 from arches.app.models.tile import Tile
@@ -50,9 +53,13 @@ class ResourceBuilder:
     Holds the shared save state (lifecycle state, save kwargs, graphid cache) so
     one builder can create several resources."""
 
-    def __init__(self, skip_refresh=True):
+    def __init__(self, skip_refresh=True, owner=None):
         self.state = ResourceInstanceLifecycleState.objects.first()
         self.save_kwargs = {"force_admin": True, "partial": False, "index": False}
+        # The tile-first save path never assigns principaluser (the creating
+        # user), so resources would be unowned and invisible to the owner-scoped
+        # APIs. Claim each one for the admin unless a different owner is given.
+        self.owner = owner or get_user_model().objects.get(username="admin")
         self._graphs = {}
         # save() re-runs the full get_tiles() query afterwards to rehydrate
         # aliased_data -- ~70% of the save cost. Builders only need the saved pk
@@ -142,6 +149,10 @@ class ResourceBuilder:
     def graph_id(self, slug):
         return self.graph(slug).pk
 
+    def claim(self, resource):
+        """Set principaluser (the creating user); the tile-first save skips it."""
+        ResourceInstance.objects.filter(pk=resource.pk).update(principaluser=self.owner)
+
     def new_resource(self, slug):
         """A fresh, unsaved ResourceTileTree. Its resource row is created on the
         first save(), as a side effect of saving its tiles, so callers must add
@@ -189,6 +200,7 @@ class ResourceBuilder:
                 },
             )
         contributor.save(**self.save_kwargs)
+        self.claim(contributor)
         return contributor
 
     def make_process_requirement(self, spec):
@@ -236,4 +248,5 @@ class ResourceBuilder:
                 },
             )
         requirement.save(**self.save_kwargs)
+        self.claim(requirement)
         return requirement

@@ -65,7 +65,7 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         # test DB).
         self.admin = get_user_model().objects.get(username="admin")
         self.idir_login_simulate(self.admin)
-        self.url = reverse("process_requirement", kwargs={"pk": self.resource_id})
+        self.url = reverse("api_process_requirement", kwargs={"pk": self.resource_id})
 
     def _patch(self, payload):
         return self.client.patch(
@@ -91,7 +91,7 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         self.assertEqual(sub["sub_requirement_name"]["display_value"], "Sub-1")
 
     def test_get_unknown_resource_returns_404(self):
-        url = reverse("process_requirement", kwargs={"pk": UNKNOWN_ID})
+        url = reverse("api_process_requirement", kwargs={"pk": UNKNOWN_ID})
         self.assertEqual(self.client.get(url).status_code, 404)
 
     def test_patch_updates_fields(self):
@@ -130,11 +130,11 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         self.assertTrue(sub["sub_requirement_satisfied"]["node_value"])
 
     def test_patch_unknown_resource_returns_404(self):
-        url = reverse("process_requirement", kwargs={"pk": UNKNOWN_ID})
+        url = reverse("api_process_requirement", kwargs={"pk": UNKNOWN_ID})
         resp = self.client.patch(url, data="{}", content_type="application/json")
         self.assertEqual(resp.status_code, 404)
 
-    def test_patch_without_resource_editor_role_is_forbidden(self):
+    def test_patch_by_non_owner_returns_404(self):
         self.idir_login_simulate(self.user)
         resp = self._patch({"aliased_data": {}})
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 404)
