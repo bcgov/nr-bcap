@@ -302,8 +302,10 @@ jobs:
           feature_branch_python_coverage=$(cat feature_branch_python_coverage.json | grep -o '"totals": {[^}]*' | grep -o '"percent_covered": [0-9.]*' | awk -F ': ' '{print $2}')
           target_branch_python_coverage=$(cat target_branch_python_coverage.json | grep -o '"totals": {[^}]*' | grep -o '"percent_covered": [0-9.]*' | awk -F ': ' '{print $2}')
 
+          # Allow a small drop so removing well-tested code doesn't fail the gate.
+          tolerance=0.5
           # Compare feature coverage with target coverage using floating-point comparison
-          if awk -v feature="$feature_branch_python_coverage" -v target="$target_branch_python_coverage" 'BEGIN { exit (feature < target) ? 0 : 1 }'; then
+          if awk -v feature="$feature_branch_python_coverage" -v target="$target_branch_python_coverage" -v tol="$tolerance" 'BEGIN { exit (feature < target - tol) ? 0 : 1 }'; then
             echo "Coverage decreased from $target_branch_python_coverage% to $feature_branch_python_coverage%. Please add or update tests to increase coverage."
             exit 1
           else
