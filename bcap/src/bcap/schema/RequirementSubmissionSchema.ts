@@ -43,21 +43,3 @@ export interface RequirementSubmissionProcessTile extends AliasedTileData {
         submission_assessment?: SubmissionAssessmentTile;
     };
 }
-
-export interface RequirementSubmissionSchema extends AliasedTileData {
-    aliased_data: {
-        requirement_submission_process?: RequirementSubmissionProcessTile[];
-    };
-    graph_has_different_publication: boolean;
-    name: string;
-    descriptors: Record<
-        string,
-        { name: string; map_popup: string; description: string }
-    >;
-    legacyid: string;
-    createdtime: string;
-    graph: string;
-    graph_publication: string;
-    resource_instance_lifecycle_state: string;
-    principaluser: string | null;
-}

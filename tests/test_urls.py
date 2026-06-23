@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.template.loader import render_to_string
 from django.test import SimpleTestCase
 from django.urls import path, resolve, reverse
 
@@ -200,6 +201,12 @@ class UrlReverseTests(SimpleTestCase):
             "api-resource", kwargs={"graph": "archaeological_site", "pk": test_uuid}
         )
         assert url == f"/bcap/api/resource/archaeological_site/{test_uuid}"
+
+
+class ArchesUrlsTemplateTests(SimpleTestCase):
+    def test_arches_urls_template_renders(self):
+        out = render_to_string("arches_urls.htm")
+        assert "api_user_profile" in out
 
 
 class UrlEdgeCaseTests(SimpleTestCase):
