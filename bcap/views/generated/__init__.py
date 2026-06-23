@@ -11,6 +11,13 @@ from .archaeological_site import (
     ArchaeologicalSiteView,
 )
 
+from .bcap_message import (
+    BcapMessageSerializer,
+    BcapMessageViewMixin,
+    BcapMessageListView,
+    BcapMessageView,
+)
+
 from .contributor import (
     ContributorSerializer,
     ContributorViewMixin,
@@ -86,6 +93,10 @@ __all__ = [
     "ArchaeologicalSiteSerializer",
     "ArchaeologicalSiteView",
     "ArchaeologicalSiteViewMixin",
+    "BcapMessageListView",
+    "BcapMessageSerializer",
+    "BcapMessageView",
+    "BcapMessageViewMixin",
     "ContributorListView",
     "ContributorSerializer",
     "ContributorView",

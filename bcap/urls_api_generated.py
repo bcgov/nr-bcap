@@ -18,6 +18,8 @@ from django.urls import path
 from bcap.views.generated import (
     ArchaeologicalSiteListView,
     ArchaeologicalSiteView,
+    BcapMessageListView,
+    BcapMessageView,
     ContributorListView,
     ContributorView,
     HcaPermitListView,
@@ -50,6 +52,16 @@ urlpatterns = [
         "api/archaeological_site/<uuid:pk>/",
         ArchaeologicalSiteView.as_view(),
         name="api_archaeological_site",
+    ),
+    path(
+        "api/bcap_message",
+        BcapMessageListView.as_view(),
+        name="api_bcap_message_list",
+    ),
+    path(
+        "api/bcap_message/<uuid:pk>/",
+        BcapMessageView.as_view(),
+        name="api_bcap_message",
     ),
     path(
         "api/contributor",
