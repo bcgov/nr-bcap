@@ -25,7 +25,7 @@ dependencies = [
     "arches @ git+https://github.com/bcgov/arches@stable/8.1.2_bcgov_12776",
     "arches-component-lab>=0.0.1a11",
     "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@dev/1.1.x",
-    "arches-querysets>=1.2.0",
+    "arches-querysets @ git+https://github.com/bcgov/arches-querysets@performance_fix_geojson",
     "authlib",
     "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@release/2.1.x",
     "boto3==1.26",
