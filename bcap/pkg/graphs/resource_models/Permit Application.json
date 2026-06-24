@@ -5,33 +5,6 @@
             "cards": [
                 {
                     "active": true,
-                    "cardid": "1b01e00a-8f59-4566-af08-34dcd7c50d72",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Investigation"
-                    },
-                    "nodegroup_id": "619791bb-b417-411d-a8cb-2fbff991217b",
-                    "sortorder": 4,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
                     "cardid": "2b134cc5-2689-466c-91d8-d0ac28720f04",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -596,33 +569,6 @@
                     },
                     "nodegroup_id": "85a1433a-62e6-496a-857a-c2470869d928",
                     "sortorder": 4,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
-                    "cardid": "f5ce7695-4b0c-40a9-a697-4a369afbccb7",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Inspection"
-                    },
-                    "nodegroup_id": "ad2a5e1c-5995-44d0-b828-6d500060b6d9",
-                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -3299,16 +3245,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "32d22a38-3ebb-4874-8df5-7f706cc01198",
-                    "edgeid": "541a389b-6fe8-4975-ba4f-2ddf42fb9226",
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
-                    "rangenode_id": "ad2a5e1c-5995-44d0-b828-6d500060b6d9",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "85a1433a-62e6-496a-857a-c2470869d928",
                     "edgeid": "545c2245-b9a8-4dd6-accd-d79441300711",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
@@ -3345,16 +3281,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P104i_applies_to",
                     "rangenode_id": "f3018675-a20c-4086-8a7f-6b867e4bc3d1",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "32d22a38-3ebb-4874-8df5-7f706cc01198",
-                    "edgeid": "5b17c859-c2b4-43bb-875f-e421666e8b13",
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
-                    "rangenode_id": "619791bb-b417-411d-a8cb-2fbff991217b",
                     "source_identifier_id": null
                 },
                 {
@@ -4281,13 +4207,6 @@
                     "parentnodegroup_id": null
                 },
                 {
-                    "cardinality": "n",
-                    "grouping_node_id": "619791bb-b417-411d-a8cb-2fbff991217b",
-                    "legacygroupid": null,
-                    "nodegroupid": "619791bb-b417-411d-a8cb-2fbff991217b",
-                    "parentnodegroup_id": null
-                },
-                {
                     "cardinality": "1",
                     "grouping_node_id": "62417050-3141-4ee1-9f9f-0ce6a3fc5eed",
                     "legacygroupid": null,
@@ -4341,13 +4260,6 @@
                     "grouping_node_id": "935a7a4b-cdd8-422d-bb83-0e6d0dd3ceb4",
                     "legacygroupid": null,
                     "nodegroupid": "935a7a4b-cdd8-422d-bb83-0e6d0dd3ceb4",
-                    "parentnodegroup_id": null
-                },
-                {
-                    "cardinality": "n",
-                    "grouping_node_id": "ad2a5e1c-5995-44d0-b828-6d500060b6d9",
-                    "legacygroupid": null,
-                    "nodegroupid": "ad2a5e1c-5995-44d0-b828-6d500060b6d9",
                     "parentnodegroup_id": null
                 },
                 {
@@ -5745,29 +5657,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "investigation",
-                    "config": {},
-                    "datatype": "semantic",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Investigation",
-                    "nodegroup_id": "619791bb-b417-411d-a8cb-2fbff991217b",
-                    "nodeid": "619791bb-b417-411d-a8cb-2fbff991217b",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
-                    "sortorder": 5,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "section_6_ancestral_remains",
                     "config": {},
                     "datatype": "semantic",
@@ -6639,29 +6528,6 @@
                     "nodeid": "aabddd33-2476-4572-b8b6-50766004772d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 4,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "inspection",
-                    "config": {},
-                    "datatype": "semantic",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Inspection",
-                    "nodegroup_id": "ad2a5e1c-5995-44d0-b828-6d500060b6d9",
-                    "nodeid": "ad2a5e1c-5995-44d0-b828-6d500060b6d9",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
