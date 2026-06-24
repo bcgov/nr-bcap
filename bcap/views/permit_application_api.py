@@ -1,45 +1,32 @@
-"""Permit Application CRUD via arches_querysets' generic resource serializer:
-POST a new application, and GET/PUT/PATCH/DELETE an existing one."""
+"""Permit Application CRUD: the generated owner-scoped views plus the business
+rules that don't belong in codegen -- seed the application id on create, and
+attach the requirement working copies on first submission.
+
+These subclass the generated views and are registered (in
+bcap.urls_api_documented) at the same paths as the generated routes, declared
+first, so they shadow them.
+"""
 
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import CreateAPIView
-from rest_framework.parsers import JSONParser
 
-from arches_querysets.rest_framework.generic_views import (
-    ArchesResourceDetailView,
-    ArchesModelAPIMixin,
-)
 from arches_querysets.rest_framework.permissions import ResourceEditor
 
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
-from bcap.views.mixins import (
-    ArchesResourceViewMixin,
-    UserOwnedResourceMixin,
+from bcap.views.generated.permit_application import (
+    PermitApplicationListView as GeneratedPermitApplicationListView,
+    PermitApplicationView as GeneratedPermitApplicationView,
 )
-
-from bcap.views.generated.permit_application import PermitApplicationSerializer
-
-
-class PermitApplicationViewMixin(ArchesResourceViewMixin):
-    serializer_class = PermitApplicationSerializer
 
 
 @extend_schema(tags=["External: permit_application"])
-class PermitApplicationView(
-    PermitApplicationViewMixin, UserOwnedResourceMixin, ArchesResourceDetailView
-):
+class PermitApplicationView(GeneratedPermitApplicationView):
     """GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
 
-    Scoped to the requesting user's own applications: requesting one created by
-    another user returns 404.
-
-    The update that first sets the submission date is the submission: it
-    assigns the application id and attaches the requirement working copies.
-
-    PATCH applies a partial diff (only the tiles present in the body); PUT
-    replaces.
+    The update that first sets the submission date is the submission: it assigns
+    the application id and attaches the requirement working copies. PATCH applies
+    a partial diff; PUT replaces.
     """
 
     def update(self, request, *args, **kwargs):
@@ -53,18 +40,14 @@ class PermitApplicationView(
 
 
 @extend_schema(tags=["External: permit_application"])
-class PermitApplicationCreateView(
-    PermitApplicationViewMixin, ArchesModelAPIMixin, CreateAPIView
-):
+class PermitApplicationCreateView(GeneratedPermitApplicationListView):
     """POST a new Permit Application, seeding its application id.
 
-    Create-only: CreateAPIView exposes just POST (and OPTIONS); there is no
-    list/GET route. The requirements are attached later, on submission (see the
-    detail view).
+    Create-only (POST); the requirements are attached later, on submission (see
+    the detail view).
     """
 
     permission_classes = [ResourceEditor]
-    parser_classes = [JSONParser]
     http_method_names = ["post", "options"]
 
     def create(self, request, *args, **kwargs):

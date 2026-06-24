@@ -9,11 +9,15 @@ added automatically.
 DB nodes absent from the package graph JSON (drift) are still written to the
 alias file, but reported with a snippet to delete them from the DB.
 
+Existing files are always regenerated; pass --new to also create files for
+graphs that don't have one yet (e.g. newly imported resource models).
+
 Runs standalone (it bootstraps Django itself). Target either the local dev
 database or the runner-created test database (test_<name>, e.g. with --keepdb):
 
-    python3 tools/regen_aliases.py                 # dev DB (default)
-    python3 tools/regen_aliases.py --target test   # test_<name> DB
+    python3 tools/regen_aliases.py                              # dev DB (default)
+    python3 tools/regen_aliases.py --target test               # test_<name> DB
+    python3 tools/regen_aliases.py --new investigation         # add a new graph
 
 Idea given from: Brett Ferguson
 """
@@ -211,6 +215,14 @@ def main():
         default=os.environ.get("DJANGO_SETTINGS_MODULE", "bcap.settings"),
         help="Django settings module (default: bcap.settings)",
     )
+    parser.add_argument(
+        "--new",
+        nargs="+",
+        default=[],
+        metavar="SLUG",
+        help="Also create alias files for these graph slugs (new graphs that "
+        "don't have a file yet)",
+    )
     args = parser.parse_args()
     _bootstrap_django(args.settings, args.target)
 
@@ -218,11 +230,14 @@ def main():
 
     orphan_nodegroups = _orphan_nodegroups(models)
 
-    # Only regenerate alias files that already exist.
+    # Regenerate alias files that already exist, plus any --new slugs.
     existing = sorted(
-        f[:-3]
-        for f in os.listdir(ALIAS_DIR)
-        if f.endswith(".py") and f != "__init__.py"
+        set(
+            f[:-3]
+            for f in os.listdir(ALIAS_DIR)
+            if f.endswith(".py") and f != "__init__.py"
+        )
+        | set(args.new)
     )
     slugs_present = set(
         models.Graph.objects.filter(slug__in=existing).values_list("slug", flat=True)

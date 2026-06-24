@@ -62,13 +62,13 @@ documented_api_patterns = [
     ),
     # Submitter - object level user filtering - override
     path(
-        "api/resource/permit_application",
+        "api/permit_application",
         PermitApplicationCreateView.as_view(),
         name="permit_application_create",
     ),
-    # External - object level user filtering - override - well need this for next PR override PUT / PATCH
+    # External - object level user filtering - override.
     path(
-        "api/resource/permit_application/<uuid:pk>",
+        "api/permit_application/<uuid:pk>/",
         PermitApplicationView.as_view(),
         name="api_permit_application",
     ),

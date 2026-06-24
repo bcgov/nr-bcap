@@ -56,7 +56,7 @@ export const submitApplication = async (
     graphSlug: string = 'permit_application',
 ): Promise<PermitApplicationResponse> => {
     try {
-        const submitUrl = arches.urls.api_resource_create(graphSlug);
+        const submitUrl = arches.urls.permit_application_create;
         const cleanPayload = JSON.parse(JSON.stringify(payload));
 
         // Submit the final resource
