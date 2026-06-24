@@ -5,33 +5,15 @@ import Panel from 'primevue/panel';
 import ReviewSummary, {
     type ReviewField,
 } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
+import { type PermitAliasedData, getBasicInfoFields } from '@/bcap/util.ts';
 import {
-    PermitPayloadSchema,
-    type PermitAliasedData,
-    getBasicInfoFields,
-} from '@/bcap/util.ts';
+    fetchPermitDetails,
+    patchPermitSubmissionDate,
+} from '@/bcap/apps/Permit/api.ts';
 
 const route = useRoute();
 const router = useRouter();
-const permitId = ref(route.params.id);
-
-//  Token helper
-const getCookie = (name: string) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + '=') {
-                cookieValue = decodeURIComponent(
-                    cookie.substring(name.length + 1),
-                );
-                break;
-            }
-        }
-    }
-    return cookieValue;
-};
+const permitId = ref(route.params.id as string);
 
 // TypeScript Interfaces for UI State
 interface PermitHeaderData {
@@ -53,7 +35,6 @@ const permitData = ref<PermitHeaderData>({
     submittedDate: null,
 });
 
-// Holds the raw tile UUID so we can target it in the PATCH
 const adminTileMeta = ref({
     tileid: '',
     nodegroup: '',
@@ -129,34 +110,17 @@ const getModuleStatus = (moduleId: string) => {
     return fetchedModuleData.value[moduleId]?.status || 'unstarted';
 };
 
-// API fetch
 const loadPermitDetails = async () => {
     try {
-        const response = await fetch(
-            `/bcap/api/resource/permit_application/${permitId.value}`,
-            {
-                method: 'GET',
-                headers: { accept: 'application/json' },
-            },
-        );
+        const aliased = await fetchPermitDetails(permitId.value);
+        if (!aliased) return;
 
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const rawJson = await response.json();
-        const parsedData = PermitPayloadSchema.safeParse(rawJson);
-
-        if (!parsedData.success) {
-            console.error('Zod Validation Failed:', parsedData.error.format());
-            throw new Error('API payload did not match expected structure');
-        }
-
-        const rawData = parsedData.data;
-        const aliased = rawData.aliased_data;
         rawPermitData.value = aliased;
-        const appIdent = aliased?.application_identification?.aliased_data;
-        const propProj = aliased?.proposed_project?.aliased_data;
+
+        const appIdent = aliased.application_identification?.aliased_data;
+        const propProj = aliased.proposed_project?.aliased_data;
         const devDetails = propProj?.development_project_details?.aliased_data;
-        const appAdmin = aliased?.application_admin;
+        const appAdmin = aliased.application_admin;
 
         adminTileMeta.value = {
             tileid: appAdmin?.tileid || '',
@@ -184,13 +148,13 @@ const loadPermitDetails = async () => {
             },
             inspection: {
                 status:
-                    (aliased?.inspection?.length ?? 0) > 0
+                    (aliased.inspection?.length ?? 0) > 0
                         ? 'completed'
                         : 'unstarted',
             },
             investigation: {
                 status:
-                    (aliased?.investigation?.length ?? 0) > 0
+                    (aliased.investigation?.length ?? 0) > 0
                         ? 'completed'
                         : 'unstarted',
             },
@@ -239,28 +203,7 @@ const submitPermit = async () => {
             adminPayload.tileid = adminTileMeta.value.tileid;
         }
 
-        const response = await fetch(
-            `/bcap/api/resource/permit_application/${permitId.value}`,
-            {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    accept: 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken') || '',
-                },
-                body: JSON.stringify({
-                    aliased_data: {
-                        application_admin: adminPayload,
-                    },
-                }),
-            },
-        );
-
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error('🚨 DJANGO ERROR:', errorBody);
-            throw new Error(`Failed to submit permit: ${response.statusText}`);
-        }
+        await patchPermitSubmissionDate(permitId.value, adminPayload);
 
         permitData.value.submittedDate = uiDate;
         await loadPermitDetails();

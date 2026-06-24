@@ -3,6 +3,7 @@ import { getCsrfToken } from '@/bcap/util.ts';
 import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
 import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
 import * as z from 'zod';
+import { PermitPayloadSchema, type PermitAliasedData } from '@/bcap/util.ts';
 
 export async function getBlankPermitApplication(): Promise<unknown> {
     const response = await fetch(
@@ -110,5 +111,80 @@ export const submitApplication = async (
     } catch (error) {
         console.error('Submission API failed:', error);
         throw error;
+    }
+};
+
+// token helper
+export const getCookie = (name: string) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + '=') {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1),
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
+
+// Fetch permit data
+export const fetchPermitDetails = async (
+    permitId: string,
+): Promise<PermitAliasedData | null | undefined> => {
+    const response = await fetch(
+        `/bcap/api/resource/permit_application/${permitId}`,
+        {
+            method: 'GET',
+            headers: { accept: 'application/json' },
+        },
+    );
+
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    const rawJson = await response.json();
+    const parsedData = PermitPayloadSchema.safeParse(rawJson);
+
+    if (!parsedData.success) {
+        console.error('Zod Validation Failed:', parsedData.error.format());
+        throw new Error('API payload did not match expected structure');
+    }
+
+    return parsedData.data.aliased_data;
+};
+
+// Submit permit date BROKEN I think it needs a backend fix
+export const patchPermitSubmissionDate = async (
+    permitId: string,
+    adminPayload: {
+        tileid?: string;
+        aliased_data: { application_submission_date: string };
+    },
+): Promise<void> => {
+    const response = await fetch(
+        `/bcap/api/resource/permit_application/${permitId}`,
+        {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                accept: 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') || '',
+            },
+            body: JSON.stringify({
+                aliased_data: {
+                    application_admin: adminPayload,
+                },
+            }),
+        },
+    );
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        console.error('🚨 DJANGO ERROR:', errorBody);
+        throw new Error(`Failed to submit permit: ${response.statusText}`);
     }
 };
