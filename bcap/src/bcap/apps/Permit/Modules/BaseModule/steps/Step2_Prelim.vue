@@ -67,35 +67,17 @@ defineExpose({ isValid });
                 )
             "
         />
-        <div class="row">
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.application_identification?.aliased_data
-                        ?.application_id
-                "
-                graph-slug="permit_application"
-                node-alias="application_id"
-                @update:value="
-                    updateValue(
-                        $event,
-                        'application_id',
-                        'application_identification',
-                    )
-                "
-            />
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.proposed_project?.aliased_data?.project_type
-                "
-                graph-slug="permit_application"
-                node-alias="project_type"
-                @update:value="
-                    updateValue($event, 'project_type', 'proposed_project')
-                "
-            />
-        </div>
+        <GenericWidget
+            :mode="EDIT"
+            :aliased-node-data="
+                draftData?.proposed_project?.aliased_data?.project_type
+            "
+            graph-slug="permit_application"
+            node-alias="project_type"
+            @update:value="
+                updateValue($event, 'project_type', 'proposed_project')
+            "
+        />
         <GenericWidget
             class="description-box"
             :mode="EDIT"

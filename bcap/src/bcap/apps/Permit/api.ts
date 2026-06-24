@@ -1,6 +1,6 @@
 import arches from 'arches';
 import { getCsrfToken } from '@/bcap/util.ts';
-import type { ArchesDraftData } from '@/bcap/types.ts';
+import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
 import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
 import * as z from 'zod';
 
@@ -57,7 +57,20 @@ export const submitApplication = async (
 ): Promise<PermitApplicationResponse> => {
     try {
         const submitUrl = arches.urls.api_resource_create(graphSlug);
-        const cleanPayload = JSON.parse(JSON.stringify(payload));
+        const cleanPayload = JSON.parse(
+            JSON.stringify(payload),
+        ) as ArchesDraftData;
+        // dummy application ID for POST
+        cleanPayload.application_identification ??= {};
+        cleanPayload.application_identification.aliased_data ??= {};
+        cleanPayload.application_identification.aliased_data.application_id = {
+            node_value: {
+                en: {
+                    value: 'DUMMY-APP-0000',
+                    direction: 'ltr',
+                },
+            },
+        } as unknown as DraftNode;
 
         // Submit the final resource
         const postResponse = await fetch(submitUrl, {

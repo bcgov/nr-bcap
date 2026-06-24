@@ -71,13 +71,15 @@ defineExpose({ isValid });
                 }}
             </dd>
 
-            <dt>Application ID</dt>
-            <dd>
-                {{
-                    activeData?.application_identification?.aliased_data
-                        ?.application_id?.display_value || ''
-                }}
-            </dd>
+            <div v-if="isSubmittedView">
+                <dt>Application ID</dt>
+                <dd>
+                    {{
+                        activeData?.application_identification?.aliased_data
+                            ?.application_id?.display_value || ''
+                    }}
+                </dd>
+            </div>
 
             <dt>Application Proponent</dt>
             <dd>
