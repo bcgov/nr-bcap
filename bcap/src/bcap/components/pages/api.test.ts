@@ -14,8 +14,6 @@ vi.mock('arches', () => ({
                 `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
             api_process_requirements: (resource_id: string) =>
                 `/bcap/api/resource/process_requirement/${resource_id}`,
-            api_requirement_submission: (resource_id: string) =>
-                `/bcap/api/requirement_submissions/${resource_id}/`,
             dashboard: '/bcap/api/dashboard',
             unlinked_contributors: '/bcap/api/unlinked_contributors',
             assignable_groups: '/bcap/api/assignable_groups',
@@ -28,7 +26,6 @@ import {
     getResourceData,
     getRelatedResourceData,
     getProcessRequirementData,
-    getRequirementSubmissionData,
     getInternalDashboardData,
     getUnlinkedContributors,
     getAssignableGroups,
@@ -155,42 +152,6 @@ describe('getProcessRequirementData', () => {
         );
 
         await expect(getProcessRequirementData('p1')).rejects.toThrow(
-            'Internal Server Error',
-        );
-    });
-});
-
-describe('getRequirementSubmissionData', () => {
-    it('returns parsed JSON on success', async () => {
-        const data = { submission_id: 's1', status: 'pending' };
-        vi.stubGlobal('fetch', mockFetchOk(data));
-
-        const result = await getRequirementSubmissionData('s1');
-
-        expect(fetch).toHaveBeenCalledWith(
-            '/bcap/api/requirement_submissions/s1/',
-        );
-        expect(result).toEqual(data);
-    });
-
-    it('throws with response text on error', async () => {
-        vi.stubGlobal(
-            'fetch',
-            mockFetchError(404, 'Not Found', 'Submission not found'),
-        );
-
-        await expect(getRequirementSubmissionData('s99')).rejects.toThrow(
-            'Submission not found',
-        );
-    });
-
-    it('throws with statusText when response body is empty', async () => {
-        vi.stubGlobal(
-            'fetch',
-            mockFetchError(500, 'Internal Server Error', ''),
-        );
-
-        await expect(getRequirementSubmissionData('s1')).rejects.toThrow(
             'Internal Server Error',
         );
     });

@@ -20,6 +20,8 @@ services:
       - ../arches-component-lab/:/web_root/arches-component-lab
       - ../arches-controlled-lists/:/web_root/arches-controlled-lists
       - ../arches-querysets/:/web_root/arches-querysets
+      - ../arches-workflow-stepper/:/web_root/arches-workflow-stepper
+      - ../arches-zod-validation/:/web_root/arches-zod-validation
     env_file:
       - ./.env
       - ./docker/docker.dev.env

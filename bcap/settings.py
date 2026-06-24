@@ -45,6 +45,9 @@ DEPLOYMENT_TIMESTAMP = get_env_variable("DEPLOYMENT_TIMESTAMP")
 # PROXY prefix used - NB - cannot have leading "/", and must have trailing "/"
 BCGOV_PROXY_PREFIX = get_env_variable("BCGOV_PROXY_PREFIX")
 
+# Normalised proxy prefix for url patterns: "" or "<prefix>/" (no leading slash).
+URL_PREFIX = BCGOV_PROXY_PREFIX.rstrip("/") + "/" if BCGOV_PROXY_PREFIX else ""
+
 WEBPACK_LOADER = {
     "DEFAULT": {
         "STATS_FILE": os.path.join(APP_ROOT, "..", "webpack/webpack-stats.json"),
@@ -236,6 +239,8 @@ INSTALLED_APPS = (
     "arches_controlled_lists",
     "rest_framework",
     "drf_spectacular",
+    "arches_zod_validation",
+    "arches_workflow_stepper",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += (
@@ -252,14 +257,14 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "BC Archaeology Portal API",
     "VERSION": "2.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
-    "SERVE_URLCONF": "bcap.documented_api_urls",
+    "SERVE_URLCONF": "bcap.urls_api_documented",
     # The arches-querysets tile schemas are introspected from graph nodes whose
     # order isn't deterministic; order all component properties by the graph node
     # sortorder for stable, meaningful diffs. Keep the default enum hook.
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.hooks.postprocess_schema_enums",
-        "bcap.schema.sort_generated_schema_properties",
-        "bcap.schema.type_base_serializer_fields",
+        "arches_zod_validation.schema.sort_generated_schema_properties",
+        "arches_zod_validation.schema.type_base_serializer_fields",
     ],
 }
 

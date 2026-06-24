@@ -43,7 +43,7 @@ class HCAPermitViewTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.admin)
 
     def _detail_url(self, pk):
-        return reverse("hca_permit", kwargs={"pk": pk})
+        return reverse("api_hca_permit", kwargs={"pk": pk})
 
     def test_get_returns_own_permit(self):
         resp = self.client.get(self._detail_url(self.own.pk))
@@ -59,7 +59,7 @@ class HCAPermitViewTests(AuthTestHelper, TestCase):
                 self.assertEqual(self.client.get(self._detail_url(pk)).status_code, 404)
 
     def test_list_returns_only_own_permits(self):
-        resp = self.client.get(reverse("hca_permit_list"))
+        resp = self.client.get(reverse("api_hca_permit_list"))
         self.assertEqual(resp.status_code, 200)
         ids = {row["resourceinstanceid"] for row in resp.json()["results"]}
         self.assertIn(str(self.own.pk), ids)
