@@ -1,6 +1,8 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { z } from 'zod';
+import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
 export const sanitizeHtml = (html: string | undefined): string => {
     if (!html) return '';
@@ -174,4 +176,187 @@ export const updateDraftValue = (
             saveFieldToBackend(draftId, graphSlug, draftDataValue);
         }
     }, 1000);
+};
+
+// For base module review page
+export const ArchesNode = z
+    .object({
+        display_value: z.string().nullish(),
+    })
+    .passthrough();
+
+export const PermitPayloadSchema = z
+    .object({
+        aliased_data: z
+            .object({
+                application_identification: z
+                    .object({
+                        aliased_data: z
+                            .object({
+                                project_name: ArchesNode.nullish(),
+                                application_id: ArchesNode.nullish(),
+                                is_replacement: ArchesNode.nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+                application_contacts: z
+                    .object({
+                        aliased_data: z
+                            .object({
+                                application_proponent: ArchesNode.nullish(),
+                                has_retained_archaeologist:
+                                    ArchesNode.nullish(),
+                                rationale_for_no_archaeologist:
+                                    ArchesNode.nullish(),
+                                application_archaeologist: ArchesNode.nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+                proposed_project: z
+                    .object({
+                        aliased_data: z
+                            .object({
+                                scope_of_work: ArchesNode.nullish(),
+                                project_type: ArchesNode.nullish(),
+                                project_description: ArchesNode.nullish(),
+                                project_boundary: z.unknown().nullish(),
+                                development_project_details: z
+                                    .object({
+                                        aliased_data: z
+                                            .object({
+                                                industrial_sector:
+                                                    ArchesNode.nullish(),
+                                                alteration_details:
+                                                    ArchesNode.nullish(),
+                                            })
+                                            .passthrough()
+                                            .nullish(),
+                                    })
+                                    .passthrough()
+                                    .nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+                archaeological_assessment_plan: z
+                    .object({
+                        aliased_data: z
+                            .object({
+                                section_1_overview: z
+                                    .object({
+                                        aliased_data: z
+                                            .object({
+                                                assessment_approach:
+                                                    ArchesNode.nullish(),
+                                            })
+                                            .passthrough()
+                                            .nullish(),
+                                    })
+                                    .passthrough()
+                                    .nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+                first_nation_consultation: z
+                    .object({
+                        aliased_data: z
+                            .object({
+                                fn_file_numbers: ArchesNode.nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+                application_admin: z
+                    .object({
+                        tileid: z.string().nullish(),
+                        nodegroup: z.string().nullish(),
+                        aliased_data: z
+                            .object({
+                                application_submission_date:
+                                    ArchesNode.nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+                inspection: z.array(z.unknown()).nullish(),
+                investigation: z.array(z.unknown()).nullish(),
+            })
+            .passthrough()
+            .nullish(),
+    })
+    .passthrough();
+
+export type PermitAliasedData = z.infer<
+    typeof PermitPayloadSchema
+>['aliased_data'];
+
+export const getBasicInfoFields = (
+    aliased: PermitAliasedData | null | undefined,
+): ReviewField[] => {
+    if (!aliased) return [];
+
+    const ident = aliased.application_identification?.aliased_data;
+    const contacts = aliased.application_contacts?.aliased_data;
+    const project = aliased.proposed_project?.aliased_data;
+    const devDetails = project?.development_project_details?.aliased_data;
+
+    return [
+        { label: 'Project Name', value: ident?.project_name?.display_value },
+        {
+            label: 'Application ID',
+            value: ident?.application_id?.display_value,
+        },
+        {
+            label: 'Application Proponent',
+            value: contacts?.application_proponent?.display_value,
+        },
+        {
+            label: 'Has Retained Archaeologist',
+            value: contacts?.has_retained_archaeologist?.display_value,
+        },
+        {
+            label: 'Rationale For No Archaeologist',
+            value: contacts?.rationale_for_no_archaeologist?.display_value,
+        },
+        {
+            label: 'Application Archaeologist',
+            value: contacts?.application_archaeologist?.display_value,
+        },
+        { label: 'Project Type', value: project?.project_type?.display_value },
+        {
+            label: 'Project Description',
+            value: project?.project_description?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Scope of Work',
+            value: project?.scope_of_work?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Industrial Sector',
+            value: devDetails?.industrial_sector?.display_value,
+        },
+        {
+            label: 'Project Boundary',
+            value: project?.project_boundary,
+            type: 'map',
+            nodeAlias: 'project_boundary',
+        },
+    ];
 };

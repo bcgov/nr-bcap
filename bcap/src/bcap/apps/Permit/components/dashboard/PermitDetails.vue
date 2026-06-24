@@ -2,10 +2,14 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
-import { z } from 'zod';
 import ReviewSummary, {
     type ReviewField,
 } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
+import {
+    PermitPayloadSchema,
+    type PermitAliasedData,
+    getBasicInfoFields,
+} from '@/bcap/util.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -28,136 +32,6 @@ const getCookie = (name: string) => {
     }
     return cookieValue;
 };
-
-// Zod Schemas for API Validation
-const ArchesNode = z
-    .object({
-        display_value: z.string().nullish(),
-    })
-    .passthrough();
-
-const PermitPayloadSchema = z
-    .object({
-        aliased_data: z
-            .object({
-                application_identification: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                project_name: ArchesNode.nullish(),
-                                application_id: ArchesNode.nullish(),
-                                is_replacement: ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-
-                // NEW: Added application_contacts
-                application_contacts: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                application_proponent: ArchesNode.nullish(),
-                                has_retained_archaeologist:
-                                    ArchesNode.nullish(),
-                                rationale_for_no_archaeologist:
-                                    ArchesNode.nullish(),
-                                application_archaeologist: ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-
-                proposed_project: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                scope_of_work: ArchesNode.nullish(),
-                                project_type: ArchesNode.nullish(),
-                                project_description: ArchesNode.nullish(), // NEW
-                                project_boundary: z.unknown().nullish(), // NEW: For the map widget
-                                development_project_details: z
-                                    .object({
-                                        aliased_data: z
-                                            .object({
-                                                industrial_sector:
-                                                    ArchesNode.nullish(),
-                                                alteration_details:
-                                                    ArchesNode.nullish(),
-                                            })
-                                            .passthrough()
-                                            .nullish(),
-                                    })
-                                    .passthrough()
-                                    .nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-
-                archaeological_assessment_plan: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                section_1_overview: z
-                                    .object({
-                                        aliased_data: z
-                                            .object({
-                                                assessment_approach:
-                                                    ArchesNode.nullish(),
-                                            })
-                                            .passthrough()
-                                            .nullish(),
-                                    })
-                                    .passthrough()
-                                    .nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-
-                first_nation_consultation: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                fn_file_numbers: ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-
-                application_admin: z
-                    .object({
-                        tileid: z.string().nullish(),
-                        nodegroup: z.string().nullish(),
-                        aliased_data: z
-                            .object({
-                                application_submission_date:
-                                    ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-
-                inspection: z.array(z.unknown()).nullish(),
-                investigation: z.array(z.unknown()).nullish(),
-            })
-            .passthrough()
-            .nullish(),
-    })
-    .passthrough();
 
 // TypeScript Interfaces for UI State
 interface PermitHeaderData {
@@ -186,8 +60,6 @@ const adminTileMeta = ref({
 });
 
 const fetchedModuleData = ref<Record<string, ModuleResponse>>({});
-
-type PermitAliasedData = z.infer<typeof PermitPayloadSchema>['aliased_data'];
 const rawPermitData = ref<PermitAliasedData | null>(null);
 
 const permitModules = ref([
@@ -249,80 +121,7 @@ const activeModule = computed(() => {
 });
 
 const basicInfoFields = computed<ReviewField[]>(() => {
-    const aliased = rawPermitData.value;
-    if (!aliased) return [];
-
-    // Look how clean this is now! No more "as Record<string, any>"
-    const ident = aliased.application_identification?.aliased_data;
-    const contacts = aliased.application_contacts?.aliased_data;
-    const project = aliased.proposed_project?.aliased_data;
-    const devDetails = project?.development_project_details?.aliased_data;
-    const archPlan =
-        aliased.archaeological_assessment_plan?.aliased_data?.section_1_overview
-            ?.aliased_data;
-    const fnConsult = aliased.first_nation_consultation?.aliased_data;
-
-    return [
-        {
-            label: 'Replacement Application',
-            value: ident?.is_replacement?.display_value,
-        },
-        { label: 'Project Name', value: ident?.project_name?.display_value },
-        {
-            label: 'Application ID',
-            value: ident?.application_id?.display_value,
-        },
-        {
-            label: 'Application Proponent',
-            value: contacts?.application_proponent?.display_value,
-        },
-        {
-            label: 'Has Retained Archaeologist',
-            value: contacts?.has_retained_archaeologist?.display_value,
-        },
-        {
-            label: 'Rationale For No Archaeologist',
-            value: contacts?.rationale_for_no_archaeologist?.display_value,
-        },
-        {
-            label: 'Application Archaeologist',
-            value: contacts?.application_archaeologist?.display_value,
-        },
-        { label: 'Project Type', value: project?.project_type?.display_value },
-        {
-            label: 'Project Description',
-            value: project?.project_description?.display_value,
-            type: 'html',
-        },
-        {
-            label: 'Scope of Work',
-            value: project?.scope_of_work?.display_value,
-            type: 'html',
-        },
-        {
-            label: 'Assessment Approach',
-            value: archPlan?.assessment_approach?.display_value,
-        },
-        {
-            label: 'First Nations File Numbers',
-            value: fnConsult?.fn_file_numbers?.display_value,
-        },
-        {
-            label: 'Industrial Sector',
-            value: devDetails?.industrial_sector?.display_value,
-        },
-        {
-            label: 'Alteration Details',
-            value: devDetails?.alteration_details?.display_value,
-            type: 'html',
-        },
-        {
-            label: 'Project Boundary',
-            value: project?.project_boundary,
-            type: 'map',
-            nodeAlias: 'project_boundary',
-        },
-    ];
+    return getBasicInfoFields(rawPermitData.value);
 });
 
 // helper functions

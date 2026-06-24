@@ -39,22 +39,6 @@ defineExpose({ isValid });
             :mode="EDIT"
             :aliased-node-data="
                 draftData?.application_identification?.aliased_data
-                    ?.is_replacement
-            "
-            graph-slug="permit_application"
-            node-alias="is_replacement"
-            @update:value="
-                updateValue(
-                    $event,
-                    'is_replacement',
-                    'application_identification',
-                )
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.application_identification?.aliased_data
                     ?.project_name
             "
             graph-slug="permit_application"
