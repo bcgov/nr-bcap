@@ -60,7 +60,7 @@ export const zContributorOption = z.object({
 });
 
 export const zDateAliasedNodeData = z.object({
-    node_value: z.iso.datetime().nullable(),
+    node_value: z.iso.date().nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
@@ -309,8 +309,8 @@ export const zPatchedResourceDraft = z.object({
     frontend_version: z.string().max(50).nullish(),
     resourceinstanceid: z.uuid().nullish(),
     data: z.unknown().optional(),
-    created: z.iso.datetime().readonly().optional(),
-    updated: z.iso.datetime().readonly().optional()
+    created: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
+    updated: z.iso.datetime({ offset: true, local: true }).readonly().optional()
 });
 
 export const zPermitApplicationFirstNationsConsultationTile = z.object({
@@ -350,30 +350,6 @@ export const zPermitApplicationInvestigationTile = z.object({
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProcessRequirementIsTemplateRequirementAliasedData = z.object({
-    has_submission_requirement: zBooleanAliasedNodeData.nullable(),
-    is_internal_requirement: zBooleanAliasedNodeData.nullable(),
-    default_target_processing_time: zNumberAliasedNodeData.nullish(),
-    is_template_requirement: zBooleanAliasedNodeData.nullable()
-});
-
-export const zProcessRequirementIsTemplateRequirementTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementIsTemplateRequirementAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -512,7 +488,7 @@ export const zRegistrationLinkRequest = z.object({
 
 export const zRegistrationLinkResponse = z.object({
     signup_url: z.string(),
-    expires: z.iso.datetime()
+    expires: z.iso.datetime({ offset: true, local: true })
 });
 
 export const zResourceDraft = z.object({
@@ -523,8 +499,8 @@ export const zResourceDraft = z.object({
     frontend_version: z.string().max(50).nullish(),
     resourceinstanceid: z.uuid().nullish(),
     data: z.unknown().optional(),
-    created: z.iso.datetime().readonly(),
-    updated: z.iso.datetime().readonly()
+    created: z.iso.datetime({ offset: true, local: true }).readonly(),
+    updated: z.iso.datetime({ offset: true, local: true }).readonly()
 });
 
 /**
@@ -662,16 +638,37 @@ export const zPermitApplicationApplicationAdminTile = z.object({
     })).nullish()
 });
 
-export const zProcessRequirementRequirementSubmissionAliasedData = z.object({
-    requirement_submission: zResourceInstanceAliasedNodeData.nullish()
+export const zProcessRequirementParentRequirementAliasedData = z.object({
+    parent_requirement: zResourceInstanceAliasedNodeData.nullish()
 });
 
-export const zProcessRequirementRequirementSubmissionTile = z.object({
+export const zProcessRequirementParentRequirementTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementRequirementSubmissionAliasedData.optional(),
+    aliased_data: zProcessRequirementParentRequirementAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zProcessRequirementSubmissionDataAliasedData = z.object({
+    submission_data: zResourceInstanceAliasedNodeData.nullish()
+});
+
+export const zProcessRequirementSubmissionDataTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementSubmissionDataAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -756,7 +753,7 @@ export const zHcaPermit = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -1309,7 +1306,7 @@ export const zBcapMessage = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -1448,7 +1445,7 @@ export const zLocalGovernment = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -1482,7 +1479,7 @@ export const zPatchedBcapMessage = z.object({
         }).optional()
     }).readonly().nullish(),
     legacyid: z.string().readonly().nullish(),
-    createdtime: z.iso.datetime().readonly().optional(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullish(),
     resource_instance_lifecycle_state: z.uuid().readonly().optional(),
@@ -1984,7 +1981,7 @@ export const zPatchedPermitApplication = z.object({
         }).optional()
     }).readonly().nullish(),
     legacyid: z.string().readonly().nullish(),
-    createdtime: z.iso.datetime().readonly().optional(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullish(),
     resource_instance_lifecycle_state: z.uuid().readonly().optional(),
@@ -2004,7 +2001,7 @@ export const zPermitApplication = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -2016,60 +2013,6 @@ export const zPaginatedPermitApplicationList = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zPermitApplication)
-});
-
-export const zProcessRequirementModuleAliasedData = z.object({
-    module: zResourceInstanceAliasedNodeData.nullish(),
-    module_type: zStringAliasedNodeData.nullish()
-});
-
-export const zProcessRequirementModuleTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementModuleAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProcessRequirementRequirementIdentificationAliasedData = z.object({
-    requirement_identification: zStringAliasedNodeData.nullable(),
-    requirement_name: zStringAliasedNodeData.nullable(),
-    is_template_requirement: zProcessRequirementIsTemplateRequirementTile.nullish()
-});
-
-export const zProcessRequirementRequirementIdentificationTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementRequirementIdentificationAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProcessRequirementSubRequirementAliasedData = z.object({
-    sub_requirement_assessment_notes: zStringAliasedNodeData.nullish(),
-    sub_requirement_description: zStringAliasedNodeData.nullish(),
-    sub_requirement_mandatory: zBooleanAliasedNodeData.nullish(),
-    sub_requirement_satisfied: zBooleanAliasedNodeData.nullish(),
-    sub_requirement_sort_order: zNumberAliasedNodeData.nullable(),
-    sub_requirement_name: zStringAliasedNodeData.nullable()
 });
 
 export const zProcessRequirementSubRequirementAssessmentN1AliasedData = z.object({
@@ -2094,12 +2037,21 @@ export const zProcessRequirementSubRequirementAssessmentN1Tile = z.object({
     })).nullish()
 });
 
-export const zProcessRequirementSubRequirementTile = z.object({
+export const zProcessRequirementSubRequirementN1AliasedData = z.object({
+    checklist_item_assessment_notes: zStringAliasedNodeData.nullish(),
+    checklist_item_completed: zBooleanAliasedNodeData.nullish(),
+    checklist_item_description: zStringAliasedNodeData.nullish(),
+    checklist_item_mandatory: zBooleanAliasedNodeData.nullish(),
+    checklist_item_sort_order: zNumberAliasedNodeData.nullable(),
+    checklist_item_name: zStringAliasedNodeData.nullable()
+});
+
+export const zProcessRequirementSubRequirementN1Tile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementSubRequirementAliasedData.optional(),
+    aliased_data: zProcessRequirementSubRequirementN1AliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -2111,61 +2063,26 @@ export const zProcessRequirementSubRequirementTile = z.object({
     })).nullish()
 });
 
-export const zProcessRequirementResourceAliasedData = z.object({
-    module: zProcessRequirementModuleTile.nullish(),
-    requirement_identification: zProcessRequirementRequirementIdentificationTile.nullish(),
-    requirement_execution_duration: zProcessRequirementRequirementExecutionDurationTile.nullish(),
-    requirement_submission: zProcessRequirementRequirementSubmissionTile.nullish(),
-    sub_requirement_assessment_n1: zProcessRequirementSubRequirementAssessmentN1Tile.nullish(),
-    sub_requirement: z.array(zProcessRequirementSubRequirementTile).nullish(),
-    process_requirement_messages: zProcessRequirementProcessRequirementMessagesTile.nullish()
+export const zProcessRequirementRequirementDataAliasedData = z.object({
+    sub_requirement_n1: z.array(zProcessRequirementSubRequirementN1Tile).nullish(),
+    submission_data: zProcessRequirementSubmissionDataTile.nullish()
 });
 
-export const zPatchedProcessRequirement = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zProcessRequirementResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly().optional(),
-    name: z.string().readonly().nullish(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullish(),
-    legacyid: z.string().readonly().nullish(),
-    createdtime: z.iso.datetime().readonly().optional(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullish(),
-    resource_instance_lifecycle_state: z.uuid().readonly().optional(),
-    principaluser: z.int().readonly().nullish()
-});
-
-export const zProcessRequirement = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zProcessRequirementResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly(),
-    name: z.string().readonly().nullable(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullable(),
-    legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullable(),
-    resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable()
-});
-
-export const zPaginatedProcessRequirementList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zProcessRequirement)
+export const zProcessRequirementRequirementDataTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementRequirementDataAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPublicationCopyrightTypeAliasedData = z.object({
@@ -2265,7 +2182,7 @@ export const zPublication = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -2392,7 +2309,7 @@ export const zSiteSubmission = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -3069,7 +2986,7 @@ export const zContributor = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -3295,7 +3212,7 @@ export const zLgPerson = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -3557,7 +3474,7 @@ export const zLegislativeAct = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -3646,7 +3563,7 @@ export const zSiteVisit = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -3778,7 +3695,7 @@ export const zArchaeologicalSite = z.object({
         }).optional()
     }).readonly().nullable(),
     legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime().readonly(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
     graph: z.uuid().nullish(),
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
@@ -3790,6 +3707,110 @@ export const zPaginatedArchaeologicalSiteList = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zArchaeologicalSite)
+});
+
+export const zProcessRequirementIsTemplateRequirementAliasedData = z.object({
+    process_requirment_type: zReferenceAliasedNodeDataRequired.nullable(),
+    is_internal_requirement: zBooleanAliasedNodeData.nullable(),
+    is_template_requirement: zBooleanAliasedNodeData.nullable(),
+    workflow_url: zUrlAliasedNodeData.nullish(),
+    default_target_processing_time: zNumberAliasedNodeData.nullish()
+});
+
+export const zProcessRequirementIsTemplateRequirementTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementIsTemplateRequirementAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zProcessRequirementRequirementIdentificationAliasedData = z.object({
+    requirement_name: zStringAliasedNodeData.nullable(),
+    is_template_requirement: zProcessRequirementIsTemplateRequirementTile.nullish(),
+    requirement_identification: zStringAliasedNodeData.nullable()
+});
+
+export const zProcessRequirementRequirementIdentificationTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementRequirementIdentificationAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zProcessRequirementResourceAliasedData = z.object({
+    parent_requirement: zProcessRequirementParentRequirementTile.nullish(),
+    requirement_identification: zProcessRequirementRequirementIdentificationTile.nullish(),
+    requirement_execution_duration: zProcessRequirementRequirementExecutionDurationTile.nullish(),
+    sub_requirement_assessment_n1: zProcessRequirementSubRequirementAssessmentN1Tile.nullish(),
+    requirement_data: zProcessRequirementRequirementDataTile.nullish(),
+    process_requirement_messages: zProcessRequirementProcessRequirementMessagesTile.nullish()
+});
+
+export const zPatchedProcessRequirement = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zProcessRequirementResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly().optional(),
+    name: z.string().readonly().nullish(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullish(),
+    legacyid: z.string().readonly().nullish(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullish(),
+    resource_instance_lifecycle_state: z.uuid().readonly().optional(),
+    principaluser: z.int().readonly().nullish()
+});
+
+export const zProcessRequirement = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zProcessRequirementResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly(),
+    name: z.string().readonly().nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
+    legacyid: z.string().readonly().nullable(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullable(),
+    resource_instance_lifecycle_state: z.uuid().readonly(),
+    principaluser: z.int().readonly().nullable()
+});
+
+export const zPaginatedProcessRequirementList = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zProcessRequirement)
 });
 
 export const zUserProfileResponse = z.object({
@@ -3812,7 +3833,7 @@ export const zConceptAliasedNodeDataWritable = z.object({
 });
 
 export const zDateAliasedNodeDataWritable = z.object({
-    node_value: z.iso.datetime().nullable()
+    node_value: z.iso.date().nullable()
 });
 
 export const zFileListAliasedNodeDataWritable = z.object({
@@ -3956,30 +3977,6 @@ export const zPatchedResourceDraftWritable = z.object({
     frontend_version: z.string().max(50).nullish(),
     resourceinstanceid: z.uuid().nullish(),
     data: z.unknown().optional()
-});
-
-export const zProcessRequirementIsTemplateRequirementAliasedDataWritable = z.object({
-    has_submission_requirement: zBooleanAliasedNodeDataWritable.nullable(),
-    is_internal_requirement: zBooleanAliasedNodeDataWritable.nullable(),
-    default_target_processing_time: zNumberAliasedNodeDataWritable.nullish(),
-    is_template_requirement: zBooleanAliasedNodeDataWritable.nullable()
-});
-
-export const zProcessRequirementIsTemplateRequirementTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementIsTemplateRequirementAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
 });
 
 export const zProcessRequirementRequirementExecutionDurationAliasedDataWritable = z.object({
@@ -4228,16 +4225,37 @@ export const zPermitApplicationApplicationAdminTileWritable = z.object({
     })).nullish()
 });
 
-export const zProcessRequirementRequirementSubmissionAliasedDataWritable = z.object({
-    requirement_submission: zResourceInstanceAliasedNodeDataWritable.nullish()
+export const zProcessRequirementParentRequirementAliasedDataWritable = z.object({
+    parent_requirement: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
-export const zProcessRequirementRequirementSubmissionTileWritable = z.object({
+export const zProcessRequirementParentRequirementTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementRequirementSubmissionAliasedDataWritable.optional(),
+    aliased_data: zProcessRequirementParentRequirementAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zProcessRequirementSubmissionDataAliasedDataWritable = z.object({
+    submission_data: zResourceInstanceAliasedNodeDataWritable.nullish()
+});
+
+export const zProcessRequirementSubmissionDataTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementSubmissionDataAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -5494,60 +5512,6 @@ export const zPaginatedPermitApplicationListWritable = z.object({
     results: z.array(zPermitApplicationWritable)
 });
 
-export const zProcessRequirementModuleAliasedDataWritable = z.object({
-    module: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    module_type: zStringAliasedNodeDataWritable.nullish()
-});
-
-export const zProcessRequirementModuleTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementModuleAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProcessRequirementRequirementIdentificationAliasedDataWritable = z.object({
-    requirement_identification: zStringAliasedNodeDataWritable.nullable(),
-    requirement_name: zStringAliasedNodeDataWritable.nullable(),
-    is_template_requirement: zProcessRequirementIsTemplateRequirementTileWritable.nullish()
-});
-
-export const zProcessRequirementRequirementIdentificationTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementRequirementIdentificationAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProcessRequirementSubRequirementAliasedDataWritable = z.object({
-    sub_requirement_assessment_notes: zStringAliasedNodeDataWritable.nullish(),
-    sub_requirement_description: zStringAliasedNodeDataWritable.nullish(),
-    sub_requirement_mandatory: zBooleanAliasedNodeDataWritable.nullish(),
-    sub_requirement_satisfied: zBooleanAliasedNodeDataWritable.nullish(),
-    sub_requirement_sort_order: zNumberAliasedNodeDataWritable.nullable(),
-    sub_requirement_name: zStringAliasedNodeDataWritable.nullable()
-});
-
 export const zProcessRequirementSubRequirementAssessmentN1AliasedDataWritable = z.object({
     requirement_status: zBooleanAliasedNodeDataWritable.nullish(),
     assessment_notes: zStringAliasedNodeDataWritable.nullish()
@@ -5570,12 +5534,21 @@ export const zProcessRequirementSubRequirementAssessmentN1TileWritable = z.objec
     })).nullish()
 });
 
-export const zProcessRequirementSubRequirementTileWritable = z.object({
+export const zProcessRequirementSubRequirementN1AliasedDataWritable = z.object({
+    checklist_item_assessment_notes: zStringAliasedNodeDataWritable.nullish(),
+    checklist_item_completed: zBooleanAliasedNodeDataWritable.nullish(),
+    checklist_item_description: zStringAliasedNodeDataWritable.nullish(),
+    checklist_item_mandatory: zBooleanAliasedNodeDataWritable.nullish(),
+    checklist_item_sort_order: zNumberAliasedNodeDataWritable.nullable(),
+    checklist_item_name: zStringAliasedNodeDataWritable.nullable()
+});
+
+export const zProcessRequirementSubRequirementN1TileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zProcessRequirementSubRequirementAliasedDataWritable.optional(),
+    aliased_data: zProcessRequirementSubRequirementN1AliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -5587,33 +5560,26 @@ export const zProcessRequirementSubRequirementTileWritable = z.object({
     })).nullish()
 });
 
-export const zProcessRequirementResourceAliasedDataWritable = z.object({
-    module: zProcessRequirementModuleTileWritable.nullish(),
-    requirement_identification: zProcessRequirementRequirementIdentificationTileWritable.nullish(),
-    requirement_execution_duration: zProcessRequirementRequirementExecutionDurationTileWritable.nullish(),
-    requirement_submission: zProcessRequirementRequirementSubmissionTileWritable.nullish(),
-    sub_requirement_assessment_n1: zProcessRequirementSubRequirementAssessmentN1TileWritable.nullish(),
-    sub_requirement: z.array(zProcessRequirementSubRequirementTileWritable).nullish(),
-    process_requirement_messages: zProcessRequirementProcessRequirementMessagesTileWritable.nullish()
+export const zProcessRequirementRequirementDataAliasedDataWritable = z.object({
+    sub_requirement_n1: z.array(zProcessRequirementSubRequirementN1TileWritable).nullish(),
+    submission_data: zProcessRequirementSubmissionDataTileWritable.nullish()
 });
 
-export const zPatchedProcessRequirementWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zProcessRequirementResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
-export const zProcessRequirementWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zProcessRequirementResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
-export const zPaginatedProcessRequirementListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zProcessRequirementWritable)
+export const zProcessRequirementRequirementDataTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementRequirementDataAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zPublicationCopyrightTypeAliasedDataWritable = z.object({
@@ -7116,6 +7082,82 @@ export const zPaginatedArchaeologicalSiteListWritable = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zArchaeologicalSiteWritable)
+});
+
+export const zProcessRequirementIsTemplateRequirementAliasedDataWritable = z.object({
+    process_requirment_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
+    is_internal_requirement: zBooleanAliasedNodeDataWritable.nullable(),
+    is_template_requirement: zBooleanAliasedNodeDataWritable.nullable(),
+    workflow_url: zUrlAliasedNodeDataWritable.nullish(),
+    default_target_processing_time: zNumberAliasedNodeDataWritable.nullish()
+});
+
+export const zProcessRequirementIsTemplateRequirementTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementIsTemplateRequirementAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zProcessRequirementRequirementIdentificationAliasedDataWritable = z.object({
+    requirement_name: zStringAliasedNodeDataWritable.nullable(),
+    is_template_requirement: zProcessRequirementIsTemplateRequirementTileWritable.nullish(),
+    requirement_identification: zStringAliasedNodeDataWritable.nullable()
+});
+
+export const zProcessRequirementRequirementIdentificationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProcessRequirementRequirementIdentificationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zProcessRequirementResourceAliasedDataWritable = z.object({
+    parent_requirement: zProcessRequirementParentRequirementTileWritable.nullish(),
+    requirement_identification: zProcessRequirementRequirementIdentificationTileWritable.nullish(),
+    requirement_execution_duration: zProcessRequirementRequirementExecutionDurationTileWritable.nullish(),
+    sub_requirement_assessment_n1: zProcessRequirementSubRequirementAssessmentN1TileWritable.nullish(),
+    requirement_data: zProcessRequirementRequirementDataTileWritable.nullish(),
+    process_requirement_messages: zProcessRequirementProcessRequirementMessagesTileWritable.nullish()
+});
+
+export const zPatchedProcessRequirementWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zProcessRequirementResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
+});
+
+export const zProcessRequirementWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zProcessRequirementResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
+});
+
+export const zPaginatedProcessRequirementListWritable = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zProcessRequirementWritable)
 });
 
 export const zUserProfileResponseWritable = z.object({

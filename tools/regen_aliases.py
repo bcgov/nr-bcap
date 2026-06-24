@@ -53,6 +53,30 @@ def _bootstrap_django(settings_module, target):
         print(f"targeting test database: {test_name}")
 
 
+def _orphan_nodegroups(models):
+    """Nodegroups with no nodes and no tiles -- safe to delete.
+
+    A deleted node can orphan its nodegroup, whose cards then break graph
+    imports. One with no nodes may still own tiles (resource data) that deletion
+    would cascade away, so any with tiles are reported but not offered."""
+    orphans = []
+    for ng in models.NodeGroup.objects.all():
+        if models.Node.objects.filter(nodegroup_id=ng.nodegroupid).exists():
+            continue
+        tile_count = models.TileModel.objects.filter(
+            nodegroup_id=ng.nodegroupid
+        ).count()
+        if tile_count:
+            print(
+                f"  ORPHAN nodegroup {ng.nodegroupid}: no nodes but {tile_count} "
+                f"tile(s) -- NOT auto-deleted (would destroy resource data)"
+            )
+            continue
+        print(f"  ORPHAN nodegroup {ng.nodegroupid}: no nodes, no tiles")
+        orphans.append(ng)
+    return orphans
+
+
 def _json_aliases_by_slug():
     """Map each graph slug to the set of node aliases in its package JSON."""
     by_slug = {}
@@ -139,22 +163,35 @@ def _create_alias_file(models, slug, json_aliases):
     return drift_nodes
 
 
-def _print_drift_fix(drift_nodes, settings_module):
-    """Print a self-contained snippet that deletes the drift nodes (review first)."""
-    if not drift_nodes:
+def _print_drift_fix(drift_nodes, orphan_nodegroups, settings_module):
+    """Print a self-contained snippet that deletes the drift nodes and orphan
+    nodegroups (with their dangling cards). Review before running."""
+    if not drift_nodes and not orphan_nodegroups:
         return
     print("\n" + "=" * 72)
-    print(f"DRIFT FIX: {len(drift_nodes)} node(s) in the DB but not in any graph JSON.")
+    print(
+        f"DRIFT FIX: {len(drift_nodes)} node(s) not in any graph JSON, "
+        f"{len(orphan_nodegroups)} nodegroup(s) with no nodes."
+    )
+    print("!!! BACK UP YOUR DATABASE BEFORE RUNNING THESE COMMANDS !!!")
     print("Run this to delete them (review first):\n")
     print("python3 <<'PY'")
     print("import os, django")
     print(f'os.environ.setdefault("DJANGO_SETTINGS_MODULE", "{settings_module}")')
     print("django.setup()")
-    print("from arches.app.models.models import Node")
-    print("Node.objects.filter(pk__in=[")
-    for slug, node in drift_nodes:
-        print(f'    "{node.pk}",  # {slug}.{node.alias}')
-    print("]).delete()")
+    print("from arches.app.models.models import CardModel, Node, NodeGroup")
+    if drift_nodes:
+        print("Node.objects.filter(pk__in=[")
+        for slug, node in drift_nodes:
+            print(f'    "{node.pk}",  # {slug}.{node.alias}')
+        print("]).delete()")
+    if orphan_nodegroups:
+        print("orphan_nodegroups = [")
+        for ng in orphan_nodegroups:
+            print(f'    "{ng.nodegroupid}",')
+        print("]")
+        print("CardModel.objects.filter(nodegroup_id__in=orphan_nodegroups).delete()")
+        print("NodeGroup.objects.filter(nodegroupid__in=orphan_nodegroups).delete()")
     print("PY")
     print("=" * 72)
 
@@ -179,6 +216,8 @@ def main():
 
     from arches.app.models import models
 
+    orphan_nodegroups = _orphan_nodegroups(models)
+
     # Only regenerate alias files that already exist.
     existing = sorted(
         f[:-3]
@@ -196,7 +235,7 @@ def main():
             all_drift.extend((slug, node) for node in drift_nodes)
         else:
             print(f"SKIP {slug}: no graph with that slug in the DB")
-    _print_drift_fix(all_drift, args.settings)
+    _print_drift_fix(all_drift, orphan_nodegroups, args.settings)
 
 
 if __name__ == "__main__":

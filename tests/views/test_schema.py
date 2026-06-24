@@ -280,11 +280,12 @@ class NodeValueFieldExtensionTests(SimpleTestCase):
     def test_node_value_shaped_for_every_resource_model_datatype(self):
         # One row per datatype used across the resource models: navigate from
         # node_value to a representative leaf and pin the schema the API emits.
-        # Scalars (boolean/date/number) derive from the field's base type and are
-        # covered above.
+        # Scalars (boolean/number) derive from the field's base type and are
+        # covered above; date is modeled as a calendar date (not a datetime).
         uuid = {"type": "string", "format": "uuid"}
         cases = {
             "string": ("properties.en.properties.value", {"type": "string"}),
+            "date": ("", {"type": "string", "format": "date"}),
             "non-localized-string": ("", {"type": "string"}),
             "borden-number-datatype": ("", {"type": "string"}),
             "concept": ("", uuid),

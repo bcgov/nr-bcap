@@ -123,7 +123,21 @@ describe('getRelatedResourceData', () => {
 
 describe('getProcessRequirementData', () => {
     it('returns parsed JSON on success', async () => {
-        const data = { permit_id: 'p1', requirements: [] };
+        // The response is validated against zProcessRequirement, so the fixture
+        // must satisfy the resource schema's required fields.
+        const data = {
+            graph_has_different_publication: false,
+            name: 'Test Requirement',
+            descriptors: {
+                en: { name: 'Test', description: '', map_popup: '' },
+            },
+            legacyid: null,
+            createdtime: '2026-01-01T00:00:00Z',
+            graph_publication: null,
+            resource_instance_lifecycle_state:
+                '00000000-0000-0000-0000-000000000000',
+            principaluser: null,
+        };
         vi.stubGlobal('fetch', mockFetchOk(data));
 
         const result = await getProcessRequirementData('p1');
