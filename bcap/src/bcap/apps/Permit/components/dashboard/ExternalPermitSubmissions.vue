@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import { useGettext } from 'vue3-gettext';
@@ -10,6 +11,7 @@ import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
 const { $gettext } = useGettext();
+const router = useRouter();
 const savedDrafts = ref<ResourceDraft[]>([]);
 const submittedProjects = ref<DashboardProject[]>([]);
 
@@ -114,7 +116,10 @@ const filteredProjects = computed(() => {
 });
 
 const openResourceReport = (resourceId: string) => {
-    window.location.href = `/bcap/resource/${resourceId}`;
+    router.push({
+        name: routeNames.permitDetails,
+        params: { id: resourceId },
+    });
 };
 </script>
 
