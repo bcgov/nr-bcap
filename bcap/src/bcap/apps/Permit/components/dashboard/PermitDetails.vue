@@ -3,6 +3,9 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import { z } from 'zod';
+import ReviewSummary, {
+    type ReviewField,
+} from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -51,12 +54,32 @@ const PermitPayloadSchema = z
                     .passthrough()
                     .nullish(),
 
+                // NEW: Added application_contacts
+                application_contacts: z
+                    .object({
+                        aliased_data: z
+                            .object({
+                                application_proponent: ArchesNode.nullish(),
+                                has_retained_archaeologist:
+                                    ArchesNode.nullish(),
+                                rationale_for_no_archaeologist:
+                                    ArchesNode.nullish(),
+                                application_archaeologist: ArchesNode.nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+
                 proposed_project: z
                     .object({
                         aliased_data: z
                             .object({
                                 scope_of_work: ArchesNode.nullish(),
                                 project_type: ArchesNode.nullish(),
+                                project_description: ArchesNode.nullish(), // NEW
+                                project_boundary: z.unknown().nullish(), // NEW: For the map widget
                                 development_project_details: z
                                     .object({
                                         aliased_data: z
@@ -101,6 +124,18 @@ const PermitPayloadSchema = z
                     .passthrough()
                     .nullish(),
 
+                first_nation_consultation: z
+                    .object({
+                        aliased_data: z
+                            .object({
+                                fn_file_numbers: ArchesNode.nullish(),
+                            })
+                            .passthrough()
+                            .nullish(),
+                    })
+                    .passthrough()
+                    .nullish(),
+
                 application_admin: z
                     .object({
                         tileid: z.string().nullish(),
@@ -132,14 +167,8 @@ interface PermitHeaderData {
     submittedDate: string | null;
 }
 
-interface ReviewDataRow {
-    label: string;
-    value: string;
-}
-
 interface ModuleResponse {
     status: 'completed' | 'review' | 'unstarted';
-    reviewData: ReviewDataRow[];
 }
 
 // State Variables
@@ -157,6 +186,9 @@ const adminTileMeta = ref({
 });
 
 const fetchedModuleData = ref<Record<string, ModuleResponse>>({});
+
+type PermitAliasedData = z.infer<typeof PermitPayloadSchema>['aliased_data'];
+const rawPermitData = ref<PermitAliasedData | null>(null);
 
 const permitModules = ref([
     {
@@ -216,19 +248,86 @@ const activeModule = computed(() => {
     return permitModules.value.find((m) => m.id === activeModuleId.value);
 });
 
+const basicInfoFields = computed<ReviewField[]>(() => {
+    const aliased = rawPermitData.value;
+    if (!aliased) return [];
+
+    // Look how clean this is now! No more "as Record<string, any>"
+    const ident = aliased.application_identification?.aliased_data;
+    const contacts = aliased.application_contacts?.aliased_data;
+    const project = aliased.proposed_project?.aliased_data;
+    const devDetails = project?.development_project_details?.aliased_data;
+    const archPlan =
+        aliased.archaeological_assessment_plan?.aliased_data?.section_1_overview
+            ?.aliased_data;
+    const fnConsult = aliased.first_nation_consultation?.aliased_data;
+
+    return [
+        {
+            label: 'Replacement Application',
+            value: ident?.is_replacement?.display_value,
+        },
+        { label: 'Project Name', value: ident?.project_name?.display_value },
+        {
+            label: 'Application ID',
+            value: ident?.application_id?.display_value,
+        },
+        {
+            label: 'Application Proponent',
+            value: contacts?.application_proponent?.display_value,
+        },
+        {
+            label: 'Has Retained Archaeologist',
+            value: contacts?.has_retained_archaeologist?.display_value,
+        },
+        {
+            label: 'Rationale For No Archaeologist',
+            value: contacts?.rationale_for_no_archaeologist?.display_value,
+        },
+        {
+            label: 'Application Archaeologist',
+            value: contacts?.application_archaeologist?.display_value,
+        },
+        { label: 'Project Type', value: project?.project_type?.display_value },
+        {
+            label: 'Project Description',
+            value: project?.project_description?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Scope of Work',
+            value: project?.scope_of_work?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Assessment Approach',
+            value: archPlan?.assessment_approach?.display_value,
+        },
+        {
+            label: 'First Nations File Numbers',
+            value: fnConsult?.fn_file_numbers?.display_value,
+        },
+        {
+            label: 'Industrial Sector',
+            value: devDetails?.industrial_sector?.display_value,
+        },
+        {
+            label: 'Alteration Details',
+            value: devDetails?.alteration_details?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Project Boundary',
+            value: project?.project_boundary,
+            type: 'map',
+            nodeAlias: 'project_boundary',
+        },
+    ];
+});
+
 // helper functions
 const getModuleStatus = (moduleId: string) => {
     return fetchedModuleData.value[moduleId]?.status || 'unstarted';
-};
-
-const getModuleReviewData = (moduleId: string) => {
-    return fetchedModuleData.value[moduleId]?.reviewData || [];
-};
-
-const stripHtml = (html: string) => {
-    if (!html) return '';
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || '';
 };
 
 // API fetch
@@ -254,12 +353,10 @@ const loadPermitDetails = async () => {
 
         const rawData = parsedData.data;
         const aliased = rawData.aliased_data;
+        rawPermitData.value = aliased;
         const appIdent = aliased?.application_identification?.aliased_data;
         const propProj = aliased?.proposed_project?.aliased_data;
         const devDetails = propProj?.development_project_details?.aliased_data;
-        const archPlan =
-            aliased?.archaeological_assessment_plan?.aliased_data
-                ?.section_1_overview?.aliased_data;
         const appAdmin = aliased?.application_admin;
 
         adminTileMeta.value = {
@@ -280,67 +377,26 @@ const loadPermitDetails = async () => {
                     ?.display_value || null,
         };
 
-        const basicInfoReview: ReviewDataRow[] = [
-            {
-                label: 'Project Name',
-                value: appIdent?.project_name?.display_value || '-',
-            },
-            {
-                label: 'Application ID',
-                value: appIdent?.application_id?.display_value || '-',
-            },
-            {
-                label: 'Replacement Application',
-                value: appIdent?.is_replacement?.display_value || 'False',
-            },
-            {
-                label: 'Project Type',
-                value: propProj?.project_type?.display_value || '-',
-            },
-            {
-                label: 'Scope of Work',
-                value:
-                    stripHtml(propProj?.scope_of_work?.display_value || '') ||
-                    '-',
-            },
-            {
-                label: 'Assessment Approach',
-                value: archPlan?.assessment_approach?.display_value || '-',
-            },
-            {
-                label: 'Industrial Sector',
-                value: devDetails?.industrial_sector?.display_value || '-',
-            },
-            {
-                label: 'Alteration Details',
-                value: devDetails?.alteration_details?.display_value || '-',
-            },
-        ];
-
         fetchedModuleData.value = {
             'basic-info': {
                 status: appIdent?.project_name?.display_value
                     ? 'completed'
                     : 'unstarted',
-                reviewData: basicInfoReview,
             },
             inspection: {
                 status:
                     (aliased?.inspection?.length ?? 0) > 0
                         ? 'completed'
                         : 'unstarted',
-                reviewData: [],
             },
             investigation: {
                 status:
                     (aliased?.investigation?.length ?? 0) > 0
                         ? 'completed'
                         : 'unstarted',
-                reviewData: [],
             },
             alteration: {
                 status: 'unstarted',
-                reviewData: [],
             },
         };
     } catch (error) {
@@ -503,21 +559,21 @@ onMounted(() => {
                         )
                     "
                 >
-                    <div class="review-data-container">
-                        <div
-                            v-for="(item, index) in getModuleReviewData(
-                                activeModule.id,
-                            )"
-                            :key="index"
-                            class="review-row"
-                        >
-                            <span class="review-label">{{ item.label }}</span>
-                            <span class="review-value">{{ item.value }}</span>
-                        </div>
+                    <ReviewSummary
+                        v-if="activeModule.id === 'basic-info'"
+                        :fields="basicInfoFields"
+                    />
+
+                    <div
+                        v-else
+                        class="mb-4 text-gray-600 italic"
+                    >
+                        Summary view for {{ activeModule.menuLabel }} is under
+                        construction.
                     </div>
 
                     <button
-                        class="print-btn"
+                        class="print-btn mt-4"
                         @click="printModule"
                     >
                         Print
@@ -717,29 +773,6 @@ onMounted(() => {
     font-size: 1.5rem;
     font-weight: 700;
     color: #000000;
-}
-
-/* Review Data Formatting */
-.review-data-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    margin-bottom: 3rem;
-}
-
-.review-row {
-    font-size: 1rem;
-    line-height: 1.4;
-}
-
-.review-label {
-    font-weight: 700;
-    color: #000000;
-    margin-right: 0.5rem;
-}
-
-.review-value {
-    color: #333333;
 }
 
 /* Buttons */
