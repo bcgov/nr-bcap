@@ -2032,6 +2032,64 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Alteration_Alteration_Identification_Aliased_Data:
+      type: object
+      properties:
+        alteration_identification:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - alteration_identification
+    Alteration_Alteration_Identification_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Alteration_Alteration_Identification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Alteration_Material_Collection_Aliased_Data:
       type: object
       properties:
@@ -2364,6 +2422,10 @@ components:
     Alteration_Resource_Aliased_Data:
       type: object
       properties:
+        alteration_identification:
+          allOf:
+          - $ref: '#/components/schemas/Alteration_Alteration_Identification_Tile'
+          nullable: true
         section_1_overview:
           allOf:
           - $ref: '#/components/schemas/Alteration_Section_1_Overview_Tile'
@@ -6174,6 +6236,64 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Inspection_Inspection_Identification_Aliased_Data:
+      type: object
+      properties:
+        inspection_identification:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - inspection_identification
+    Inspection_Inspection_Identification_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Inspection_Inspection_Identification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Inspection_Material_Collection_Aliased_Data:
       type: object
       properties:
@@ -6506,6 +6626,10 @@ components:
     Inspection_Resource_Aliased_Data:
       type: object
       properties:
+        inspection_identification:
+          allOf:
+          - $ref: '#/components/schemas/Inspection_Inspection_Identification_Tile'
+          nullable: true
         section_1_overview:
           allOf:
           - $ref: '#/components/schemas/Inspection_Section_1_Overview_Tile'
@@ -7005,6 +7129,64 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Investigation_Investigation_Identification_Aliased_Data:
+      type: object
+      properties:
+        investigation_identification:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - investigation_identification
+    Investigation_Investigation_Identification_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Investigation_Investigation_Identification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Investigation_Material_Collection_Aliased_Data:
       type: object
       properties:
@@ -7337,6 +7519,10 @@ components:
     Investigation_Resource_Aliased_Data:
       type: object
       properties:
+        investigation_identification:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Investigation_Identification_Tile'
+          nullable: true
         section_1_overview:
           allOf:
           - $ref: '#/components/schemas/Investigation_Section_1_Overview_Tile'

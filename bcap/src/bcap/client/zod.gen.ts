@@ -976,6 +976,27 @@ export const zStringAliasedNodeData = z.object({
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
+export const zAlterationAlterationIdentificationAliasedData = z.object({
+    alteration_identification: zStringAliasedNodeData.nullable()
+});
+
+export const zAlterationAlterationIdentificationTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zAlterationAlterationIdentificationAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zAlterationMaterialCollectionAliasedData = z.object({
     collection_approach: zStringAliasedNodeData.nullish(),
     collection_approach_details: zStringAliasedNodeData.nullish(),
@@ -1177,6 +1198,7 @@ export const zAlterationSection7RepositoryAndCurationTile = z.object({
 });
 
 export const zAlterationResourceAliasedData = z.object({
+    alteration_identification: zAlterationAlterationIdentificationTile.nullish(),
     section_1_overview: zAlterationSection1OverviewTile.nullish(),
     section_2_personnel: zAlterationSection2PersonnelTile.nullish(),
     methodology: zAlterationMethodologyTile.nullish(),
@@ -1514,6 +1536,27 @@ export const zBcapMessage = z.object({
     principaluser: z.int().readonly().nullable()
 });
 
+export const zInspectionInspectionIdentificationAliasedData = z.object({
+    inspection_identification: zStringAliasedNodeData.nullable()
+});
+
+export const zInspectionInspectionIdentificationTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zInspectionInspectionIdentificationAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zInspectionMaterialCollectionAliasedData = z.object({
     collection_approach: zStringAliasedNodeData.nullish(),
     collection_approach_details: zStringAliasedNodeData.nullish(),
@@ -1715,6 +1758,7 @@ export const zInspectionSection7RepositoryAndCurationTile = z.object({
 });
 
 export const zInspectionResourceAliasedData = z.object({
+    inspection_identification: zInspectionInspectionIdentificationTile.nullish(),
     section_1_overview: zInspectionSection1OverviewTile.nullish(),
     section_2_personnel: zInspectionSection2PersonnelTile.nullish(),
     methodology: zInspectionMethodologyTile.nullish(),
@@ -1742,6 +1786,27 @@ export const zInspection = z.object({
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
     principaluser: z.int().readonly().nullable()
+});
+
+export const zInvestigationInvestigationIdentificationAliasedData = z.object({
+    investigation_identification: zStringAliasedNodeData.nullable()
+});
+
+export const zInvestigationInvestigationIdentificationTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zInvestigationInvestigationIdentificationAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zInvestigationMaterialCollectionAliasedData = z.object({
@@ -1945,6 +2010,7 @@ export const zInvestigationSection7RepositoryAndCurationTile = z.object({
 });
 
 export const zInvestigationResourceAliasedData = z.object({
+    investigation_identification: zInvestigationInvestigationIdentificationTile.nullish(),
     section_1_overview: zInvestigationSection1OverviewTile.nullish(),
     section_2_personnel: zInvestigationSection2PersonnelTile.nullish(),
     methodology: zInvestigationMethodologyTile.nullish(),
@@ -5087,6 +5153,27 @@ export const zStringAliasedNodeDataWritable = z.object({
     }).nullable()
 });
 
+export const zAlterationAlterationIdentificationAliasedDataWritable = z.object({
+    alteration_identification: zStringAliasedNodeDataWritable.nullable()
+});
+
+export const zAlterationAlterationIdentificationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zAlterationAlterationIdentificationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zAlterationMaterialCollectionAliasedDataWritable = z.object({
     collection_approach: zStringAliasedNodeDataWritable.nullish(),
     collection_approach_details: zStringAliasedNodeDataWritable.nullish(),
@@ -5288,6 +5375,7 @@ export const zAlterationSection7RepositoryAndCurationTileWritable = z.object({
 });
 
 export const zAlterationResourceAliasedDataWritable = z.object({
+    alteration_identification: zAlterationAlterationIdentificationTileWritable.nullish(),
     section_1_overview: zAlterationSection1OverviewTileWritable.nullish(),
     section_2_personnel: zAlterationSection2PersonnelTileWritable.nullish(),
     methodology: zAlterationMethodologyTileWritable.nullish(),
@@ -5597,6 +5685,27 @@ export const zBcapMessageWritable = z.object({
     graph: z.uuid().nullish()
 });
 
+export const zInspectionInspectionIdentificationAliasedDataWritable = z.object({
+    inspection_identification: zStringAliasedNodeDataWritable.nullable()
+});
+
+export const zInspectionInspectionIdentificationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zInspectionInspectionIdentificationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zInspectionMaterialCollectionAliasedDataWritable = z.object({
     collection_approach: zStringAliasedNodeDataWritable.nullish(),
     collection_approach_details: zStringAliasedNodeDataWritable.nullish(),
@@ -5798,6 +5907,7 @@ export const zInspectionSection7RepositoryAndCurationTileWritable = z.object({
 });
 
 export const zInspectionResourceAliasedDataWritable = z.object({
+    inspection_identification: zInspectionInspectionIdentificationTileWritable.nullish(),
     section_1_overview: zInspectionSection1OverviewTileWritable.nullish(),
     section_2_personnel: zInspectionSection2PersonnelTileWritable.nullish(),
     methodology: zInspectionMethodologyTileWritable.nullish(),
@@ -5811,6 +5921,27 @@ export const zInspectionWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zInspectionResourceAliasedDataWritable.optional(),
     graph: z.uuid().nullish()
+});
+
+export const zInvestigationInvestigationIdentificationAliasedDataWritable = z.object({
+    investigation_identification: zStringAliasedNodeDataWritable.nullable()
+});
+
+export const zInvestigationInvestigationIdentificationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zInvestigationInvestigationIdentificationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zInvestigationMaterialCollectionAliasedDataWritable = z.object({
@@ -6014,6 +6145,7 @@ export const zInvestigationSection7RepositoryAndCurationTileWritable = z.object(
 });
 
 export const zInvestigationResourceAliasedDataWritable = z.object({
+    investigation_identification: zInvestigationInvestigationIdentificationTileWritable.nullish(),
     section_1_overview: zInvestigationSection1OverviewTileWritable.nullish(),
     section_2_personnel: zInvestigationSection2PersonnelTileWritable.nullish(),
     methodology: zInvestigationMethodologyTileWritable.nullish(),
