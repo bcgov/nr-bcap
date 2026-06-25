@@ -490,27 +490,6 @@ export const zResourceInstanceAliasedNodeData = z.object({
     details: z.array(zResourceInstanceDetail).readonly().optional()
 });
 
-export const zBcapMessageRecipientAliasedData = z.object({
-    recipient: zResourceInstanceAliasedNodeData.nullish()
-});
-
-export const zBcapMessageRecipientTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zBcapMessageRecipientAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zBcapMessageRelatedSourceMessageAliasedData = z.object({
     related_source_message: zResourceInstanceAliasedNodeData.nullish()
 });
@@ -1464,7 +1443,8 @@ export const zBcapMessageMessageContentAliasedData = z.object({
     message_content: zStringAliasedNodeData.nullable(),
     message_creation_date: zDateAliasedNodeData.nullish(),
     message_subject: zStringAliasedNodeData.nullish(),
-    message_type: zReferenceAliasedNodeData.nullish()
+    message_type: zReferenceAliasedNodeData.nullish(),
+    recipient: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zBcapMessageMessageContentTile = z.object({
@@ -1510,7 +1490,6 @@ export const zBcapMessageMessageResponseTile = z.object({
 
 export const zBcapMessageResourceAliasedData = z.object({
     message_content: zBcapMessageMessageContentTile.nullish(),
-    recipient: zBcapMessageRecipientTile.nullish(),
     related_source_message: zBcapMessageRelatedSourceMessageTile.nullish(),
     message_response: zBcapMessageMessageResponseTile.nullish()
 });
@@ -4642,27 +4621,6 @@ export const zResourceInstanceAliasedNodeDataWritable = z.object({
     }).nullable()
 });
 
-export const zBcapMessageRecipientAliasedDataWritable = z.object({
-    recipient: zResourceInstanceAliasedNodeDataWritable.nullish()
-});
-
-export const zBcapMessageRecipientTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zBcapMessageRecipientAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zBcapMessageRelatedSourceMessageAliasedDataWritable = z.object({
     related_source_message: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
@@ -5582,7 +5540,8 @@ export const zBcapMessageMessageContentAliasedDataWritable = z.object({
     message_content: zStringAliasedNodeDataWritable.nullable(),
     message_creation_date: zDateAliasedNodeDataWritable.nullish(),
     message_subject: zStringAliasedNodeDataWritable.nullish(),
-    message_type: zReferenceAliasedNodeDataWritable.nullish()
+    message_type: zReferenceAliasedNodeDataWritable.nullish(),
+    recipient: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
 export const zBcapMessageMessageContentTileWritable = z.object({
@@ -5628,7 +5587,6 @@ export const zBcapMessageMessageResponseTileWritable = z.object({
 
 export const zBcapMessageResourceAliasedDataWritable = z.object({
     message_content: zBcapMessageMessageContentTileWritable.nullish(),
-    recipient: zBcapMessageRecipientTileWritable.nullish(),
     related_source_message: zBcapMessageRelatedSourceMessageTileWritable.nullish(),
     message_response: zBcapMessageMessageResponseTileWritable.nullish()
 });

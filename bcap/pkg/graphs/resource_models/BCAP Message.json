@@ -83,33 +83,6 @@
                     "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
-                },
-                {
-                    "active": true,
-                    "cardid": "dadc3759-325c-4dab-a04e-90e42b265cba",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Recipient"
-                    },
-                    "nodegroup_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
-                    "sortorder": null,
-                    "source_identifier_id": null,
-                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -295,7 +268,7 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
-                    "card_id": "dadc3759-325c-4dab-a04e-90e42b265cba",
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
@@ -464,13 +437,13 @@
                     "source_identifier_id": null
                 },
                 {
-                    "description": null,
-                    "domainnode_id": "dade15d6-a679-4e08-a91a-3913c4b3f7e5",
-                    "edgeid": "c4464d30-976a-4550-aa93-306238ded44f",
+                    "edgeid": "dfafd6cf-5506-4fa9-8e63-12f306715cad",
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "rangenode_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
-                    "rangenode_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "description": null,
                     "source_identifier_id": null
                 }
             ],
@@ -529,13 +502,6 @@
                     "grouping_node_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "legacygroupid": null,
                     "nodegroupid": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
-                    "parentnodegroup_id": null
-                },
-                {
-                    "cardinality": "1",
-                    "grouping_node_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
-                    "legacygroupid": null,
-                    "nodegroupid": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
                     "parentnodegroup_id": null
                 }
             ],
@@ -853,16 +819,16 @@
                     "fieldname": null,
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
                     "hascustomalias": false,
-                    "is_collector": true,
+                    "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Recipient",
-                    "nodegroup_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null

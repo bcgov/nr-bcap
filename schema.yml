@@ -5276,6 +5276,10 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
+        recipient:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
       required:
       - message_content
     Bcap_Message_Message_Content_Tile:
@@ -5399,61 +5403,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Bcap_Message_Recipient_Aliased_Data:
-      type: object
-      properties:
-        recipient:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-    Bcap_Message_Recipient_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Bcap_Message_Recipient_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Bcap_Message_Related_Source_Message_Aliased_Data:
       type: object
       properties:
@@ -5515,10 +5464,6 @@ components:
         message_content:
           allOf:
           - $ref: '#/components/schemas/Bcap_Message_Message_Content_Tile'
-          nullable: true
-        recipient:
-          allOf:
-          - $ref: '#/components/schemas/Bcap_Message_Recipient_Tile'
           nullable: true
         related_source_message:
           allOf:
