@@ -191,6 +191,33 @@
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "dae93211-2733-4377-b5e8-601ae626e658",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "87968032-6faa-481b-a47c-30f9747acd52",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Inspection Identification"
+                    },
+                    "nodegroup_id": "413aa2e1-c3c7-43f1-8486-30a5238c4f54",
+                    "sortorder": -1,
+                    "source_identifier_id": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -1596,6 +1623,34 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "dae93211-2733-4377-b5e8-601ae626e658",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Inspection Identification",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "4b290e75-2e12-4567-80ec-831a21a72115",
+                    "label": {
+                        "en": "Inspection Identification"
+                    },
+                    "node_id": "413aa2e1-c3c7-43f1-8486-30a5238c4f54",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 }
             ],
             "color": "#043bae",
@@ -2285,6 +2340,16 @@
                     "name": null,
                     "description": null,
                     "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "dee98735-1bdc-432c-9c78-dd5d8bf1d994",
+                    "edgeid": "c1b62765-ebf5-402d-a76e-1c75315ae681",
+                    "graph_id": "87968032-6faa-481b-a47c-30f9747acd52",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "413aa2e1-c3c7-43f1-8486-30a5238c4f54",
+                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [],
@@ -2347,6 +2412,13 @@
                     "grouping_node_id": "7eb1d003-b381-4089-9ac3-f2586267f91d",
                     "legacygroupid": null,
                     "nodegroupid": "7eb1d003-b381-4089-9ac3-f2586267f91d",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "413aa2e1-c3c7-43f1-8486-30a5238c4f54",
+                    "legacygroupid": null,
+                    "nodegroupid": "413aa2e1-c3c7-43f1-8486-30a5238c4f54",
                     "parentnodegroup_id": null
                 }
             ],
@@ -4145,6 +4217,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "inspection_identification",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "87968032-6faa-481b-a47c-30f9747acd52",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Inspection Identification",
+                    "nodegroup_id": "413aa2e1-c3c7-43f1-8486-30a5238c4f54",
+                    "nodeid": "413aa2e1-c3c7-43f1-8486-30a5238c4f54",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }

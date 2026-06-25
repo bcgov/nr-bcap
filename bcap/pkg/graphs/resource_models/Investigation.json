@@ -191,6 +191,33 @@
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "b94c3a18-fb47-454b-b4a7-02cdcf2ffcb0",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "febca6ba-2a51-494f-9809-c54e2dd42fc3",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Investigation Identification"
+                    },
+                    "nodegroup_id": "81511e91-757e-487a-9deb-bc25d86c8fa5",
+                    "sortorder": -1,
+                    "source_identifier_id": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -1596,6 +1623,34 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "b94c3a18-fb47-454b-b4a7-02cdcf2ffcb0",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Investigation Identification",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "bbc914c4-cba8-429a-a0dd-bc8360078e4e",
+                    "label": {
+                        "en": "Investigation Identification"
+                    },
+                    "node_id": "81511e91-757e-487a-9deb-bc25d86c8fa5",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 }
             ],
             "color": "#043bae",
@@ -2285,6 +2340,16 @@
                     "name": null,
                     "description": null,
                     "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "1bef7148-4e61-4186-9684-711d963dc82c",
+                    "edgeid": "3fa6f235-82ac-4f4a-a59f-eeac0aa4a7fc",
+                    "graph_id": "febca6ba-2a51-494f-9809-c54e2dd42fc3",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "81511e91-757e-487a-9deb-bc25d86c8fa5",
+                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [],
@@ -2347,6 +2412,13 @@
                     "grouping_node_id": "3e46ed66-4a80-4767-9108-f1090163cff6",
                     "legacygroupid": null,
                     "nodegroupid": "3e46ed66-4a80-4767-9108-f1090163cff6",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "81511e91-757e-487a-9deb-bc25d86c8fa5",
+                    "legacygroupid": null,
+                    "nodegroupid": "81511e91-757e-487a-9deb-bc25d86c8fa5",
                     "parentnodegroup_id": null
                 }
             ],
@@ -4145,6 +4217,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "investigation_identification",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "febca6ba-2a51-494f-9809-c54e2dd42fc3",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Investigation Identification",
+                    "nodegroup_id": "81511e91-757e-487a-9deb-bc25d86c8fa5",
+                    "nodeid": "81511e91-757e-487a-9deb-bc25d86c8fa5",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }

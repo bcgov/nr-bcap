@@ -191,6 +191,33 @@
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "2ef58103-ff3f-4cee-a3f6-b85a07252c39",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "b2901f47-bdfc-47bb-b212-3132b96efb0a",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Alteration Identification"
+                    },
+                    "nodegroup_id": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
+                    "sortorder": -1,
+                    "source_identifier_id": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -1596,6 +1623,34 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2ef58103-ff3f-4cee-a3f6-b85a07252c39",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Alteration Identification",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "4c72e72f-b49d-4e2d-ac0a-52b3ee3f08f5",
+                    "label": {
+                        "en": "Alteration Identification"
+                    },
+                    "node_id": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 }
             ],
             "color": "#043bae",
@@ -2285,6 +2340,16 @@
                     "name": null,
                     "description": null,
                     "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "004193ec-880a-4ce1-9919-f3ca80957dea",
+                    "edgeid": "33a947f6-d20b-4ffb-8ac5-fb5ecdf93bec",
+                    "graph_id": "b2901f47-bdfc-47bb-b212-3132b96efb0a",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
+                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [],
@@ -2347,6 +2412,13 @@
                     "grouping_node_id": "b2dc9a71-5ec9-4f54-ae05-3e4a0d9d83df",
                     "legacygroupid": null,
                     "nodegroupid": "b2dc9a71-5ec9-4f54-ae05-3e4a0d9d83df",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
+                    "legacygroupid": null,
+                    "nodegroupid": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
                     "parentnodegroup_id": null
                 }
             ],
@@ -4145,6 +4217,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "alteration_identification",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "b2901f47-bdfc-47bb-b212-3132b96efb0a",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Alteration Identification",
+                    "nodegroup_id": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
+                    "nodeid": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }
