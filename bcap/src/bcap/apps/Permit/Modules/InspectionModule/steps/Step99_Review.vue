@@ -7,7 +7,7 @@ const isValid = () => {
 defineExpose({ isValid });
 </script>
 <template>
-    <FieldSet legend="Your application has been submitted"></FieldSet>
+    <FieldSet legend="Please review your application"></FieldSet>
 </template>
 
 <style></style>
