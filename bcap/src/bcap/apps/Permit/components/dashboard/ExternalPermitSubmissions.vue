@@ -288,6 +288,12 @@ const openResourceReport = (resourceId: string) => {
     margin-bottom: 4rem !important;
 }
 
+:deep(.bcgov-card-header) {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+}
+
 :deep(.description) {
     font-size: 1.15rem !important;
     font-weight: bold !important;
