@@ -3,7 +3,7 @@ import { getCsrfToken } from '@/bcap/util.ts';
 import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
 import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
 import * as z from 'zod';
-import { PermitPayloadSchema, type PermitAliasedData } from '@/bcap/util.ts';
+import { type PermitAliasedData } from '@/bcap/util.ts';
 
 export async function getBlankPermitApplication(): Promise<unknown> {
     const response = await fetch(
@@ -30,15 +30,14 @@ export const fetchDrafts = async () => {
 
 export const fetchMyProjects = async () => {
     try {
-        const response = await fetch(
-            '/bcap/api/dashboard/external?status=CREATED_BY_ME',
-            {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                },
+        const url = `${arches.urls.bcap_api_dashboard_external}?status=CREATED_BY_ME`;
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
             },
-        );
+        });
 
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
@@ -114,47 +113,27 @@ export const submitApplication = async (
     }
 };
 
-// token helper
-export const getCookie = (name: string) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + '=') {
-                cookieValue = decodeURIComponent(
-                    cookie.substring(name.length + 1),
-                );
-                break;
-            }
-        }
-    }
-    return cookieValue;
-};
-
 // Fetch permit data
 export const fetchPermitDetails = async (
     permitId: string,
 ): Promise<PermitAliasedData | null | undefined> => {
-    const response = await fetch(
-        `/bcap/api/resource/permit_application/${permitId}`,
-        {
-            method: 'GET',
-            headers: { accept: 'application/json' },
-        },
-    );
+    const url = arches.urls.bcap_api_resource('permit_application', permitId);
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: { accept: 'application/json' },
+    });
 
     if (!response.ok) throw new Error('Network response was not ok');
 
     const rawJson = await response.json();
-    const parsedData = PermitPayloadSchema.safeParse(rawJson);
 
-    if (!parsedData.success) {
-        console.error('Zod Validation Failed:', parsedData.error.format());
-        throw new Error('API payload did not match expected structure');
+    if (!rawJson || !rawJson.aliased_data) {
+        console.warn('API payload did not contain aliased_data');
+        return null;
     }
 
-    return parsedData.data.aliased_data;
+    return rawJson.aliased_data as PermitAliasedData;
 };
 
 // Submit permit date BROKEN I think it needs a backend fix
@@ -165,22 +144,21 @@ export const patchPermitSubmissionDate = async (
         aliased_data: { application_submission_date: string };
     },
 ): Promise<void> => {
-    const response = await fetch(
-        `/bcap/api/resource/permit_application/${permitId}`,
-        {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                accept: 'application/json',
-                'X-CSRFToken': getCookie('csrftoken') || '',
-            },
-            body: JSON.stringify({
-                aliased_data: {
-                    application_admin: adminPayload,
-                },
-            }),
+    const url = arches.urls.bcap_api_resource('permit_application', permitId);
+
+    const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            accept: 'application/json',
+            'X-CSRFToken': getCsrfToken(),
         },
-    );
+        body: JSON.stringify({
+            aliased_data: {
+                application_admin: adminPayload,
+            },
+        }),
+    });
 
     if (!response.ok) {
         const errorBody = await response.text();

@@ -17,7 +17,9 @@
      api_resource='(graph_slug, resource_id) => {return "{% url "api-resource" "----p1" "00000000-0000-0000-0000-000000000000"%}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_resource_draft="(graph_slug) => {return `/bcap/api/resource_draft/${graph_slug}`}"
-     api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"
+     api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"     
+     bcap_api_dashboard_external="/bcap/api/dashboard/external"
+     bcap_api_resource="(graph_slug, resource_id) => {return `/bcap/api/resource/${graph_slug}/${resource_id}`}"
      >
 </div>
 

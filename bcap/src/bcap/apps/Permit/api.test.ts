@@ -16,6 +16,9 @@ vi.mock('arches', () => ({
                 `/mock/draft/${graphSlug}`,
             api_resource_create: (graphSlug: string) =>
                 `/mock/create/${graphSlug}`,
+            bcap_api_dashboard_external: '/bcap/api/dashboard/external',
+            bcap_api_resource: (graph: string, pk: string) =>
+                `/bcap/api/resource/${graph}/${pk}`,
         },
     },
 }));
@@ -162,7 +165,21 @@ describe('Permit API', () => {
                     },
                     body: JSON.stringify({
                         draft_id: 'draft-123',
-                        aliased_data: payload,
+                        aliased_data: {
+                            test: 'data',
+                            application_identification: {
+                                aliased_data: {
+                                    application_id: {
+                                        node_value: {
+                                            en: {
+                                                value: 'DUMMY-APP-0000',
+                                                direction: 'ltr',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     }),
                 },
             );
