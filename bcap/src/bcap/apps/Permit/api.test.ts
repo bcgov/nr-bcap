@@ -38,24 +38,31 @@ describe('Permit API', () => {
     });
 
     describe('fetchDrafts', () => {
-        it('returns results array when paginated', async () => {
-            apiFetch.mockResolvedValue(
-                okResponse({ results: [{ id: 'draft-1' }] }),
-            );
+        it('fetches and merges drafts across every draft graph', async () => {
+            apiFetch
+                .mockResolvedValueOnce(
+                    okResponse({ results: [{ id: 'permit-1' }] }),
+                )
+                .mockResolvedValueOnce(okResponse([{ id: 'investigation-1' }]));
+
             const result = await fetchDrafts();
-            expect(result).toEqual([{ id: 'draft-1' }]);
+
+            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/permit_application');
+            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation');
+            expect(result).toEqual([
+                { id: 'permit-1' },
+                { id: 'investigation-1' },
+            ]);
         });
 
-        it('returns raw data when not paginated', async () => {
-            apiFetch.mockResolvedValue(okResponse([{ id: 'draft-2' }]));
-            const result = await fetchDrafts();
-            expect(result).toEqual([{ id: 'draft-2' }]);
-        });
+        it('skips a failing graph but keeps the others', async () => {
+            apiFetch
+                .mockResolvedValueOnce(okResponse([{ id: 'permit-1' }]))
+                .mockRejectedValueOnce(new Error('Server Error'));
 
-        it('returns empty array on error', async () => {
-            apiFetch.mockRejectedValue(new Error('Server Error'));
             const result = await fetchDrafts();
-            expect(result).toEqual([]);
+
+            expect(result).toEqual([{ id: 'permit-1' }]);
             expect(console.error).toHaveBeenCalled();
         });
     });

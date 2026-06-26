@@ -57,6 +57,7 @@ interface ResourceDraft {
     id: string;
     created: string;
     updated: string;
+    graph_slug: string;
     data: {
         application_identification?: {
             aliased_data?: {
@@ -96,6 +97,20 @@ const loadDashboardData = async () => {
 onMounted(() => {
     loadDashboardData();
 });
+
+const DRAFT_WORKFLOWS: Record<string, { label: string; routeName: string }> = {
+    permit_application: {
+        label: 'Permit Application Draft',
+        routeName: routeNames.baseModule,
+    },
+    investigation: {
+        label: 'Investigation Draft',
+        routeName: routeNames.investigationModule,
+    },
+};
+
+const draftWorkflow = (draft: ResourceDraft) =>
+    DRAFT_WORKFLOWS[draft.graph_slug] ?? DRAFT_WORKFLOWS.permit_application;
 
 const filteredDrafts = computed(() => {
     if (!searchQuery.value) return savedDrafts.value;
@@ -232,12 +247,12 @@ const openResourceReport = (resourceId: string) => {
                                         ?.display_value ||
                                     'Untitled Application'
                                 "
-                                description="Permit Application Draft"
+                                :description="draftWorkflow(draft).label"
                                 :subtitle="`Last updated: ${new Date(draft.updated || draft.created).toLocaleDateString()}`"
                                 icon="fa fa-file-pen"
                                 class="dashboard-card ipa"
                                 :route="{
-                                    name: routeNames.baseModule,
+                                    name: draftWorkflow(draft).routeName,
                                     query: { draftId: draft.id },
                                 }"
                             />

@@ -30,17 +30,27 @@ export const createDraft = async (
     return response.json();
 };
 
+// Graphs that have a draft-backed workflow on the external dashboard. Each
+// draft response carries its own graph_slug, so the dashboard can label and
+// resume it into the right module.
+const DRAFT_GRAPHS = ['permit_application', 'investigation'];
+
 export const fetchDrafts = async () => {
-    try {
-        const response = await apiFetch(
-            arches.urls.api_resource_draft('permit_application'),
-        );
-        const data = await response.json();
-        return data.results || data || [];
-    } catch (error) {
-        console.error('Failed to load drafts for dashboard:', error);
-        return [];
-    }
+    const perGraph = await Promise.all(
+        DRAFT_GRAPHS.map(async (graphSlug) => {
+            try {
+                const response = await apiFetch(
+                    arches.urls.api_resource_draft(graphSlug),
+                );
+                const data = await response.json();
+                return data.results || data || [];
+            } catch (error) {
+                console.error(`Failed to load ${graphSlug} drafts:`, error);
+                return [];
+            }
+        }),
+    );
+    return perGraph.flat();
 };
 
 export const fetchMyProjects = async () => {
