@@ -30,7 +30,7 @@ export const fetchDrafts = async () => {
 
 export const fetchMyProjects = async () => {
     try {
-        const url = `${arches.urls.bcap_api_dashboard_external}?status=CREATED_BY_ME`;
+        const url = `${arches.urls.dashboard_external}?status=CREATED_BY_ME`;
 
         const response = await fetch(url, {
             method: 'GET',
@@ -117,7 +117,7 @@ export const submitApplication = async (
 export const fetchPermitDetails = async (
     permitId: string,
 ): Promise<PermitAliasedData | null | undefined> => {
-    const url = arches.urls.bcap_api_resource('permit_application', permitId);
+    const url = arches.urls.api_resource('permit_application', permitId);
 
     const response = await fetch(url, {
         method: 'GET',
@@ -144,7 +144,7 @@ export const patchPermitSubmissionDate = async (
         aliased_data: { application_submission_date: string };
     },
 ): Promise<void> => {
-    const url = arches.urls.bcap_api_resource('permit_application', permitId);
+    const url = arches.urls.api_resource('permit_application', permitId);
 
     const response = await fetch(url, {
         method: 'PATCH',

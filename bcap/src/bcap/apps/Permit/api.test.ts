@@ -16,8 +16,8 @@ vi.mock('arches', () => ({
                 `/mock/draft/${graphSlug}`,
             api_resource_create: (graphSlug: string) =>
                 `/mock/create/${graphSlug}`,
-            bcap_api_dashboard_external: '/bcap/api/dashboard/external',
-            bcap_api_resource: (graph: string, pk: string) =>
+            dashboard_external: '/bcap/api/dashboard/external',
+            api_resource: (graph: string, pk: string) =>
                 `/bcap/api/resource/${graph}/${pk}`,
         },
     },
