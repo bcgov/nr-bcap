@@ -5,6 +5,31 @@ import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
 import * as z from 'zod';
 import { type PermitAliasedData } from '@/bcap/util.ts';
 
+export interface ResourceDraftResponse {
+    id: string;
+    data: ArchesDraftData;
+}
+
+export const fetchDraft = async (
+    graphSlug: string,
+    draftId: string,
+): Promise<ResourceDraftResponse> => {
+    const response = await apiFetch(
+        `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`,
+    );
+    return response.json();
+};
+
+export const createDraft = async (
+    graphSlug: string,
+): Promise<ResourceDraftResponse> => {
+    const response = await apiFetch(arches.urls.api_resource_draft(graphSlug), {
+        method: 'POST',
+        body: { data: {} },
+    });
+    return response.json();
+};
+
 export const fetchDrafts = async () => {
     try {
         const response = await apiFetch(
@@ -75,6 +100,22 @@ export const submitApplication = async (
         console.error('Submission API failed:', error);
         throw error;
     }
+};
+
+// TODO: temporary. Investigation submission posts the raw draft straight to the
+// generated investigation collection endpoint. We still need a real route that
+// builds out our modules and associates them together easily, wiring
+// Permit Application -> process requirements -> Investigation via the process
+// requirement templates.
+export const submitInvestigation = async (
+    draftId: string,
+    payload: ArchesDraftData,
+): Promise<PermitApplicationResponse> => {
+    const response = await apiFetch(arches.urls.api_investigation, {
+        method: 'POST',
+        body: { draft_id: draftId, aliased_data: payload },
+    });
+    return response.json();
 };
 
 export const fetchPermitDetails = async (

@@ -1,0 +1,230 @@
+<script setup lang="ts">
+import { Form } from '@primevue/forms';
+import { zInvestigationRecordingsAliasedData } from '@/bcap/client/zod.gen.ts';
+import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import FieldSet from 'primevue/fieldset';
+import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+
+const emit = defineEmits(['update:step-is-valid']);
+const { draftData, resolver, isValid, updateValue } = useDraftStep(
+    'investigation',
+    zInvestigationRecordingsAliasedData,
+    'recordings',
+    emit,
+);
+defineExpose({ isValid });
+</script>
+<template>
+    <Form
+        :resolver="resolver"
+        :validate-on-blur="true"
+        :validate-on-value-update="true"
+        :validate-on-mount="false"
+    >
+        <FieldSet>
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.alternate_historical_sites_approach
+                "
+                graph-slug="investigation"
+                node-alias="alternate_historical_sites_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'alternate_historical_sites_approach',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data?.has_cmt_survey
+                "
+                graph-slug="investigation"
+                node-alias="has_cmt_survey"
+                @update:value="
+                    updateValue($event, 'has_cmt_survey', 'recordings')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.is_rock_art_recording_compliant
+                "
+                graph-slug="investigation"
+                node-alias="is_rock_art_recording_compliant"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'is_rock_art_recording_compliant',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.alternate_rock_art_recording_approach
+                "
+                graph-slug="investigation"
+                node-alias="alternate_rock_art_recording_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'alternate_rock_art_recording_approach',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.alternate_site_flagging_approach
+                "
+                graph-slug="investigation"
+                node-alias="alternate_site_flagging_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'alternate_site_flagging_approach',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data?.has_wet_sites
+                "
+                graph-slug="investigation"
+                node-alias="has_wet_sites"
+                @update:value="
+                    updateValue($event, 'has_wet_sites', 'recordings')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.is_excavation_approach_compliant
+                "
+                graph-slug="investigation"
+                node-alias="is_excavation_approach_compliant"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'is_excavation_approach_compliant',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.additional_recording_information
+                "
+                graph-slug="investigation"
+                node-alias="additional_recording_information"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'additional_recording_information',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data?.has_historical_sites
+                "
+                graph-slug="investigation"
+                node-alias="has_historical_sites"
+                @update:value="
+                    updateValue($event, 'has_historical_sites', 'recordings')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data?.has_site_flagging
+                "
+                graph-slug="investigation"
+                node-alias="has_site_flagging"
+                @update:value="
+                    updateValue($event, 'has_site_flagging', 'recordings')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.other_recording_approaches
+                "
+                graph-slug="investigation"
+                node-alias="other_recording_approaches"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'other_recording_approaches',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.alternate_wet_sites_approach
+                "
+                graph-slug="investigation"
+                node-alias="alternate_wet_sites_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'alternate_wet_sites_approach',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data
+                        ?.alternate_excavation_approach
+                "
+                graph-slug="investigation"
+                node-alias="alternate_excavation_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'alternate_excavation_approach',
+                        'recordings',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.recordings?.aliased_data?.alternate_cmt_approach
+                "
+                graph-slug="investigation"
+                node-alias="alternate_cmt_approach"
+                @update:value="
+                    updateValue($event, 'alternate_cmt_approach', 'recordings')
+                "
+            />
+        </FieldSet>
+    </Form>
+    <br />
+</template>
+
+<style></style>

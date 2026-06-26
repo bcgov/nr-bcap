@@ -11,14 +11,17 @@ import StepperNavigation from '@/bcgov_arches_common/components/Stepper/componen
 import Panel from 'primevue/panel';
 import type { Ref } from 'vue';
 import type { StepperProps, StepperState } from 'primevue/stepper';
-import { getCsrfToken } from '@/bcap/util.ts';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/InspectionModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/InspectionModule/steps/Step2_Prelim.vue';
 import Step99_Review from '@/bcap/apps/Permit/Modules/InspectionModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
-import { submitApplication } from '@/bcap/apps/Permit/api.ts';
+import {
+    submitApplication,
+    fetchDraft,
+    createDraft,
+} from '@/bcap/apps/Permit/api.ts';
 import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
 
 const submissionErrors = ref([] as ErrorMessage[]);
@@ -177,46 +180,12 @@ onMounted(async () => {
     steps.push(step1, step2, step3, step4);
 
     try {
-        //Check if the URL has a draftId
         const targetDraftId = route.query.draftId;
-
-        if (targetDraftId) {
-            console.log(`Resuming specific draft: ${targetDraftId}`);
-
-            const response = await fetch(
-                `/bcap/api/resource_draft/${graphSlug}/${targetDraftId}`,
-            );
-
-            if (!response.ok)
-                throw new Error(`Failed to fetch draft ${targetDraftId}`);
-
-            const draft = await response.json();
-            draftId.value = draft.id;
-            draftData.value = draft.data || {};
-        } else {
-            console.log('No draftId in URL, creating a brand new draft...');
-
-            const createResponse = await fetch(
-                `/bcap/api/resource_draft/${graphSlug}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCsrfToken(),
-                    },
-                    body: JSON.stringify({ data: {} }),
-                },
-            );
-
-            if (!createResponse.ok)
-                throw new Error(
-                    `Failed to create draft. Status: ${createResponse.status}`,
-                );
-
-            const newDraft = await createResponse.json();
-            draftId.value = newDraft.id;
-            draftData.value = {};
-        }
+        const draft = targetDraftId
+            ? await fetchDraft(graphSlug, targetDraftId as string)
+            : await createDraft(graphSlug);
+        draftId.value = draft.id;
+        draftData.value = draft.data || {};
 
         isDataLoaded.value = true;
     } catch (error) {
@@ -282,7 +251,7 @@ const showDebug = ref(false);
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
-                    <h1>Submit Permit Application</h1>
+                    <h1>Submit Inspection Application</h1>
                     <div
                         v-if="submissionErrors.length > 0"
                         class="red"
