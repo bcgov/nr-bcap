@@ -15,7 +15,6 @@ const route = useRoute();
 const router = useRouter();
 const permitId = ref(route.params.id as string);
 
-// TypeScript Interfaces for UI State
 interface PermitHeaderData {
     projectName: string;
     applicationNumber: string;
@@ -146,18 +145,15 @@ const loadPermitDetails = async () => {
                     ? 'completed'
                     : 'unstarted',
             },
+            // TODO fix in a bit
             inspection: {
-                status:
-                    (aliased.inspection?.length ?? 0) > 0
-                        ? 'completed'
-                        : 'unstarted',
+                status: 'unstarted',
             },
+            // TODO fix in a bit
             investigation: {
-                status:
-                    (aliased.investigation?.length ?? 0) > 0
-                        ? 'completed'
-                        : 'unstarted',
+                status: 'unstarted',
             },
+            // TODO fix in a bit
             alteration: {
                 status: 'unstarted',
             },

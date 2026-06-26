@@ -1,6 +1,8 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { saveDraftFieldToBackend } from '@/bcap/api.ts';
+import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
 import { z } from 'zod';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
@@ -83,35 +85,6 @@ export const getCsrfToken = (): string => {
     );
 };
 
-export const saveFieldToBackend = async (
-    draftId: string,
-    graphSlug: string,
-    fullDraftData: ArchesDraftData,
-) => {
-    try {
-        const patchUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId}`;
-
-        const response = await fetch(patchUrl, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken(),
-            },
-            body: JSON.stringify({
-                data: fullDraftData,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
-        }
-
-        console.log('Successfully auto-saved full draft data.');
-    } catch (error) {
-        console.error('Failed to auto-save draft data:', error);
-    }
-};
-
 let globalTimeoutId: ReturnType<typeof setTimeout>;
 
 export const updateDraftValue = (
@@ -173,137 +146,15 @@ export const updateDraftValue = (
 
     globalTimeoutId = setTimeout(() => {
         if (draftId) {
-            saveFieldToBackend(draftId, graphSlug, draftDataValue);
+            saveDraftFieldToBackend(draftId, graphSlug, draftDataValue);
         }
     }, 1000);
 };
 
-// For base module review page
-export const ArchesNode = z
-    .object({
-        display_value: z.string().nullish(),
-    })
-    .passthrough();
-
-export const PermitPayloadSchema = z
-    .object({
-        aliased_data: z
-            .object({
-                application_identification: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                project_name: ArchesNode.nullish(),
-                                application_id: ArchesNode.nullish(),
-                                is_replacement: ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-                application_contacts: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                application_proponent: ArchesNode.nullish(),
-                                has_retained_archaeologist:
-                                    ArchesNode.nullish(),
-                                rationale_for_no_archaeologist:
-                                    ArchesNode.nullish(),
-                                application_archaeologist: ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-                proposed_project: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                scope_of_work: ArchesNode.nullish(),
-                                project_type: ArchesNode.nullish(),
-                                project_description: ArchesNode.nullish(),
-                                project_boundary: z.unknown().nullish(),
-                                development_project_details: z
-                                    .object({
-                                        aliased_data: z
-                                            .object({
-                                                industrial_sector:
-                                                    ArchesNode.nullish(),
-                                                alteration_details:
-                                                    ArchesNode.nullish(),
-                                            })
-                                            .passthrough()
-                                            .nullish(),
-                                    })
-                                    .passthrough()
-                                    .nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-                archaeological_assessment_plan: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                section_1_overview: z
-                                    .object({
-                                        aliased_data: z
-                                            .object({
-                                                assessment_approach:
-                                                    ArchesNode.nullish(),
-                                            })
-                                            .passthrough()
-                                            .nullish(),
-                                    })
-                                    .passthrough()
-                                    .nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-                first_nation_consultation: z
-                    .object({
-                        aliased_data: z
-                            .object({
-                                fn_file_numbers: ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-                application_admin: z
-                    .object({
-                        tileid: z.string().nullish(),
-                        nodegroup: z.string().nullish(),
-                        aliased_data: z
-                            .object({
-                                application_submission_date:
-                                    ArchesNode.nullish(),
-                            })
-                            .passthrough()
-                            .nullish(),
-                    })
-                    .passthrough()
-                    .nullish(),
-                inspection: z.array(z.unknown()).nullish(),
-                investigation: z.array(z.unknown()).nullish(),
-            })
-            .passthrough()
-            .nullish(),
-    })
-    .passthrough();
-
-export type PermitAliasedData = z.infer<
-    typeof PermitPayloadSchema
->['aliased_data'];
+// Permit application aliased_data, derived from the generated Zod schema.
+export type PermitAliasedData = NonNullable<
+    z.infer<typeof zPermitApplication>['aliased_data']
+>;
 
 export const getBasicInfoFields = (
     aliased: PermitAliasedData | null | undefined,

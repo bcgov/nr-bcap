@@ -1,25 +1,15 @@
 import arches from 'arches';
-import { getCsrfToken } from '@/bcap/util.ts';
+import { apiFetch } from '@/bcap/api.ts';
 import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
 import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
 import * as z from 'zod';
 import { type PermitAliasedData } from '@/bcap/util.ts';
 
-export async function getBlankPermitApplication(): Promise<unknown> {
-    const response = await fetch(
-        arches.urls.api_resource_blank('permit_application') + '?format=json',
-        {},
-    );
-    return await response.json();
-}
-
 export const fetchDrafts = async () => {
     try {
-        const response = await fetch(
+        const response = await apiFetch(
             arches.urls.api_resource_draft('permit_application'),
         );
-        if (!response.ok) throw new Error('Network response was not ok');
-
         const data = await response.json();
         return data.results || data || [];
     } catch (error) {
@@ -32,14 +22,7 @@ export const fetchMyProjects = async () => {
     try {
         const url = `${arches.urls.dashboard_external}?status=CREATED_BY_ME`;
 
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-            },
-        });
-
-        if (!response.ok) throw new Error('Network response was not ok');
+        const response = await apiFetch(url);
         const data = await response.json();
         return data.results || data || [];
     } catch (error) {
@@ -72,39 +55,20 @@ export const submitApplication = async (
             },
         } as unknown as DraftNode;
 
-        // Submit the final resource
-        const postResponse = await fetch(submitUrl, {
+        const postResponse = await apiFetch(submitUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken(),
-            },
-            body: JSON.stringify({
+            body: {
                 draft_id: draftId,
                 aliased_data: cleanPayload,
-            }),
+            },
         });
-
-        if (!postResponse.ok) {
-            const errorDetails = await postResponse
-                .json()
-                .catch(() => 'No additional details provided by server.');
-            console.error('Django 400 Error Details:', errorDetails);
-            throw new Error(
-                `Status ${postResponse.status}: ${JSON.stringify(errorDetails)}`,
-            );
-        }
 
         const finalResource = await postResponse.json();
         console.log('Final resource created successfully!', finalResource);
 
         // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
-
-        await fetch(deleteUrl, {
-            method: 'DELETE',
-            headers: { 'X-CSRFToken': getCsrfToken() },
-        });
+        await apiFetch(deleteUrl, { method: 'DELETE' });
 
         return finalResource;
     } catch (error) {
@@ -113,19 +77,12 @@ export const submitApplication = async (
     }
 };
 
-// Fetch permit data
 export const fetchPermitDetails = async (
     permitId: string,
 ): Promise<PermitAliasedData | null | undefined> => {
     const url = arches.urls.api_resource('permit_application', permitId);
 
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: { accept: 'application/json' },
-    });
-
-    if (!response.ok) throw new Error('Network response was not ok');
-
+    const response = await apiFetch(url);
     const rawJson = await response.json();
 
     if (!rawJson || !rawJson.aliased_data) {
@@ -146,23 +103,8 @@ export const patchPermitSubmissionDate = async (
 ): Promise<void> => {
     const url = arches.urls.api_resource('permit_application', permitId);
 
-    const response = await fetch(url, {
+    await apiFetch(url, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            accept: 'application/json',
-            'X-CSRFToken': getCsrfToken(),
-        },
-        body: JSON.stringify({
-            aliased_data: {
-                application_admin: adminPayload,
-            },
-        }),
+        body: { aliased_data: { application_admin: adminPayload } },
     });
-
-    if (!response.ok) {
-        const errorBody = await response.text();
-        console.error('🚨 DJANGO ERROR:', errorBody);
-        throw new Error(`Failed to submit permit: ${response.statusText}`);
-    }
 };
