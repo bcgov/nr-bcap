@@ -281,11 +281,19 @@ class NodeValueFieldExtensionTests(SimpleTestCase):
         # One row per datatype used across the resource models: navigate from
         # node_value to a representative leaf and pin the schema the API emits.
         # Scalars (boolean/number) derive from the field's base type and are
-        # covered above; date is modeled as a calendar date (not a datetime).
+        # covered above; date accepts either a bare date or a full datetime.
         uuid = {"type": "string", "format": "uuid"}
         cases = {
             "string": ("properties.en.properties.value", {"type": "string"}),
-            "date": ("", {"type": "string", "format": "date"}),
+            "date": (
+                "",
+                {
+                    "anyOf": [
+                        {"type": "string", "format": "date"},
+                        {"type": "string", "format": "date-time"},
+                    ]
+                },
+            ),
             "non-localized-string": ("", {"type": "string"}),
             "borden-number-datatype": ("", {"type": "string"}),
             "concept": ("", uuid),
