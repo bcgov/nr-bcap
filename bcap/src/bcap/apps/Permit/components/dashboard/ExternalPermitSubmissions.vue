@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
@@ -30,8 +30,12 @@ interface DashboardProject {
     priority_level: string;
 }
 
-// SortingBar State
-const activeTab = ref('drafts');
+// SortingBar State -- persist the selected tab across navigation (saved on card click).
+const EXTERNAL_TAB_KEY = 'bcap.externalDashboard.tab';
+const EXTERNAL_TABS = ['my_projects', 'company_projects', 'drafts'];
+const storedTab = localStorage.getItem(EXTERNAL_TAB_KEY) ?? '';
+const activeTab = ref(EXTERNAL_TABS.includes(storedTab) ? storedTab : 'drafts');
+watch(activeTab, (tab) => localStorage.setItem(EXTERNAL_TAB_KEY, tab));
 const searchQuery = ref('');
 const currentSort = ref('default');
 const sortOrder = ref<'asc' | 'desc'>('desc');
