@@ -6,6 +6,7 @@ import {
     zInternalDashboardCard,
     zInternalDashboardPage,
     zNewContributor,
+    zProcessRequirement,
     zRegistrationLinkRequest,
     zRegistrationLinkResponse,
 } from '@/bcap/client/zod.gen.ts';
@@ -15,7 +16,8 @@ import type {
     SiteVisitSchema,
 } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
-import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
+
+export type ProcessRequirement = z.infer<typeof zProcessRequirement>;
 
 export const getResourceData = async (
     graph_slug: string,
@@ -50,7 +52,7 @@ export const getRelatedResourceData = async (
 
 export const getProcessRequirementData = async (
     resource_id: string,
-): Promise<PermitRequirementSchema> => {
+): Promise<ProcessRequirement> => {
     const response = await fetch(
         arches.urls.api_process_requirements(resource_id),
     );
@@ -59,7 +61,7 @@ export const getProcessRequirementData = async (
         throw new Error(text || response.statusText);
     }
 
-    return await response.json();
+    return zProcessRequirement.parse(await response.json());
 };
 
 export type UnlinkedContributor = z.infer<typeof zContributorOption>;

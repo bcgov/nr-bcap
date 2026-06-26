@@ -1,0 +1,961 @@
+{
+    "graph": [
+        {
+            "author": "",
+            "color": "#db9a19",
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": ""
+            },
+            "group_permissions": {},
+            "has_unpublished_changes": true,
+            "iconclass": "fa fa-gavel",
+            "is_active": true,
+            "is_copy_immutable": false,
+            "isresource": false,
+            "jsonldcontext": null,
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "resource_instance_lifecycle": null,
+            "source_identifier_id": null,
+            "spatial_views": [],
+            "subtitle": {
+                "en": ""
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "user_permissions": {},
+            "version": "",
+            "functions_x_graphs": [],
+            "graphid": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+            "name": {
+                "en": "Recordings"
+            },
+            "slug": "recordings",
+            "publication": null,
+            "root": {
+                "alias": "recordings",
+                "config": {},
+                "datatype": "semantic",
+                "description": null,
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                "hascustomalias": false,
+                "is_collector": true,
+                "is_immutable": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "Recordings",
+                "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                "nodeid": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                "parentproperty": "",
+                "sortorder": 3,
+                "source_identifier_id": null,
+                "sourcebranchpublication_id": null
+            },
+            "nodes": [
+                {
+                    "alias": "alternate_historical_sites_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Alternate Historical Sites Approach",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "fb95e98f-596d-45a0-ba23-ff1ef498c7af",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_cmt_survey",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has CMT Survey",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "b04c5515-39fc-4e49-9bbb-3f01da409035",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "is_rock_art_recording_compliant",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Is Rock Art Recording Compliant",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "d6ac71d8-bf30-4aa4-8721-ba5501f27f1d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "alternate_rock_art_recording_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Alternate Rock Art Recording Approach",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "885533aa-cf7f-433c-82e1-5e1ffc0203ee",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "alternate_site_flagging_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Alternate Site Flagging Approach",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "0544bc94-5d17-4212-8990-6d2fc3c67edc",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_wet_sites",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Wet Sites",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "48a35d5e-43ba-46be-8cfa-650a9a8493ba",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "is_excavation_approach_compliant",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Is Excavation Approach Compliant",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "10f63b86-4dfc-49fa-a156-575f33267bcf",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "recordings",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "Recordings",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "parentproperty": "",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "additional_recording_information",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Additional Recording Information",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "974d7d64-93d9-4a79-bf76-9c415f4c05c1",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_historical_sites",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Historical Sites",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "5bc2aa9c-95d6-4014-add6-3ecb29dfa7ff",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_site_flagging",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Site Flagging",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "fb6181c6-26de-49a4-83f4-4917c2c20d06",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "other_recording_approaches",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Other Recording Approaches",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "178cbc2a-b266-4a86-abac-061e1dd8edf1",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "alternate_wet_sites_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Alternate Wet Sites Approach",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "8584bc31-15da-4abd-89ea-3da789b00324",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "alternate_excavation_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Alternate Excavation Approach",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "346dc464-9086-43d8-afab-bcbc8d7a779b",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "alternate_cmt_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Alternate CMT Approach",
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "nodeid": "600f29bc-b8ca-4a0e-a76a-3c0beb831ade",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "nodegroups": [
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "legacygroupid": null,
+                    "nodegroupid": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Recordings"
+                    },
+                    "nodegroup_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true
+                }
+            ],
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "48a35d5e-43ba-46be-8cfa-650a9a8493ba",
+                    "edgeid": "9bb0f2e3-9af0-4199-aa3a-b9600257b763",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "8584bc31-15da-4abd-89ea-3da789b00324",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "5dc27440-fc83-4744-a0e1-db59995067e0",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "974d7d64-93d9-4a79-bf76-9c415f4c05c1",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "10f63b86-4dfc-49fa-a156-575f33267bcf",
+                    "edgeid": "142ae528-b9b4-44a6-8dd7-97f1de189435",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "346dc464-9086-43d8-afab-bcbc8d7a779b",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "81e325c6-daa6-4d9d-bc27-a2b620852548",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "d6ac71d8-bf30-4aa4-8721-ba5501f27f1d",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b04c5515-39fc-4e49-9bbb-3f01da409035",
+                    "edgeid": "fb7efae9-a5ea-4ceb-9d53-f9d16f665fb7",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "600f29bc-b8ca-4a0e-a76a-3c0beb831ade",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "fb6181c6-26de-49a4-83f4-4917c2c20d06",
+                    "edgeid": "f10c10f4-edfd-4471-8b95-58c3ec26d76f",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "0544bc94-5d17-4212-8990-6d2fc3c67edc",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "67a501d2-9546-4ae0-967d-8e62f80aef5a",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "b04c5515-39fc-4e49-9bbb-3f01da409035",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "7d1a4c02-3b10-4284-a21a-26d8b25c33ae",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "48a35d5e-43ba-46be-8cfa-650a9a8493ba",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "d6ac71d8-bf30-4aa4-8721-ba5501f27f1d",
+                    "edgeid": "b9dafd8f-e6a9-4cf7-890c-db0713d93b06",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "885533aa-cf7f-433c-82e1-5e1ffc0203ee",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "efa5248c-cd86-479c-a241-23a98cded1a1",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "10f63b86-4dfc-49fa-a156-575f33267bcf",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "c1934244-0c94-4a5d-8506-de4e3b37c577",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "178cbc2a-b266-4a86-abac-061e1dd8edf1",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "79d2ec84-b089-47a0-81fb-8c24c55a1994",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "fb6181c6-26de-49a4-83f4-4917c2c20d06",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "033e24c0-a4fd-4eb3-86a7-403f1b932517",
+                    "edgeid": "31645c76-6b3a-43f1-bbdc-e23c414e652b",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "5bc2aa9c-95d6-4014-add6-3ecb29dfa7ff",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "5bc2aa9c-95d6-4014-add6-3ecb29dfa7ff",
+                    "edgeid": "37c52250-dad2-419f-b635-d1e8b3689672",
+                    "graph_id": "2b65617c-282b-4fd0-9968-ced0dbc8f119",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "fb95e98f-596d-45a0-ba23-ff1ef498c7af",
+                    "source_identifier_id": null
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Historical Sites"
+                    },
+                    "id": "fea85a5d-15d7-43ac-b961-52cc491c6dc4",
+                    "label": {
+                        "en": "Has Historical Sites"
+                    },
+                    "node_id": "5bc2aa9c-95d6-4014-add6-3ecb29dfa7ff",
+                    "sortorder": 9,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has CMT Survey"
+                    },
+                    "id": "b350e776-5964-4e9d-ba6e-fb6339befe91",
+                    "label": {
+                        "en": "Has CMT Survey"
+                    },
+                    "node_id": "b04c5515-39fc-4e49-9bbb-3f01da409035",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Alternate Rock Art Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "f7a9a089-d849-418b-b9f1-887e9d5570a5",
+                    "label": {
+                        "en": "Alternate Rock Art Approach"
+                    },
+                    "node_id": "885533aa-cf7f-433c-82e1-5e1ffc0203ee",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Site Flagging"
+                    },
+                    "id": "849fdf14-6766-46dc-a478-7eae9b678469",
+                    "label": {
+                        "en": "Has Site Flagging"
+                    },
+                    "node_id": "fb6181c6-26de-49a4-83f4-4917c2c20d06",
+                    "sortorder": 11,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Alternate Wet Sites Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "43d35fdb-800b-4825-b75a-4f68470aed5f",
+                    "label": {
+                        "en": "Alternate Wet Sites Approach"
+                    },
+                    "node_id": "8584bc31-15da-4abd-89ea-3da789b00324",
+                    "sortorder": 8,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Alternate CMT Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "b44e414f-8669-4994-99f3-291f89a55363",
+                    "label": {
+                        "en": "Alternate CMT Approach"
+                    },
+                    "node_id": "600f29bc-b8ca-4a0e-a76a-3c0beb831ade",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Alternate Excavation Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "fb15fc12-72e7-46ed-847e-8156917be27a",
+                    "label": {
+                        "en": "Alternate Excavation Approach"
+                    },
+                    "node_id": "346dc464-9086-43d8-afab-bcbc8d7a779b",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Additional Recording Information",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "fe206c4b-3748-4481-95c6-5b53061a6a90",
+                    "label": {
+                        "en": "Additional Recording Information"
+                    },
+                    "node_id": "974d7d64-93d9-4a79-bf76-9c415f4c05c1",
+                    "sortorder": 13,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Excavation Approach"
+                    },
+                    "id": "e895e6cf-c7ce-462d-8520-cbeff8756486",
+                    "label": {
+                        "en": "Has Excavation Approach"
+                    },
+                    "node_id": "10f63b86-4dfc-49fa-a156-575f33267bcf",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Alternate Historical Sites Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "cc224c03-eb11-4007-91cf-afed15d65152",
+                    "label": {
+                        "en": "Alternate Historical Sites Approach"
+                    },
+                    "node_id": "fb95e98f-596d-45a0-ba23-ff1ef498c7af",
+                    "sortorder": 10,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Wet Sites"
+                    },
+                    "id": "9f6f2931-8a3b-40a4-aef2-f3de986d24bf",
+                    "label": {
+                        "en": "Has Wet Sites"
+                    },
+                    "node_id": "48a35d5e-43ba-46be-8cfa-650a9a8493ba",
+                    "sortorder": 7,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Other Recording Approaches",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "6081b2f7-4cd1-4f48-bcdb-b35606883b79",
+                    "label": {
+                        "en": "Other Recording Approaches"
+                    },
+                    "node_id": "178cbc2a-b266-4a86-abac-061e1dd8edf1",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Rock Art"
+                    },
+                    "id": "502d7ed9-49ee-4d7d-8f27-e490f4b3c2fa",
+                    "label": {
+                        "en": "Has Rock Art"
+                    },
+                    "node_id": "d6ac71d8-bf30-4aa4-8721-ba5501f27f1d",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "3cc92b31-657c-43b3-9937-45964c39bbc8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Alternate Site Flagging Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "3e455997-f29e-4621-809f-ae84a3f1e44f",
+                    "label": {
+                        "en": "Alternate Site Flagging Approach"
+                    },
+                    "node_id": "0544bc94-5d17-4212-8990-6d2fc3c67edc",
+                    "sortorder": 12,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                }
+            ]
+        }
+    ],
+    "metadata": {}
+}

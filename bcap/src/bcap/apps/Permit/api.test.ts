@@ -14,8 +14,7 @@ vi.mock('arches', () => ({
                 `/mock/blank/${graphSlug}`,
             api_resource_draft: (graphSlug: string) =>
                 `/mock/draft/${graphSlug}`,
-            api_resource_create: (graphSlug: string) =>
-                `/mock/create/${graphSlug}`,
+            permit_application_create: '/mock/create/permit_application',
         },
     },
 }));

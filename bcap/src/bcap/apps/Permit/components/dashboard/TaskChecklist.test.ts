@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { ref, nextTick } from 'vue';
-import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
+import type { ProcessRequirement } from '@/bcap/components/pages/api.ts';
 
 // Dynamic route query so individual tests can override the resource ID.
 const mockRouteQuery = ref<Record<string, string | undefined>>({
@@ -55,15 +55,15 @@ const buildSubReq = (
 ) => ({
     tileid: opts.tileid ?? 'sub-req-1',
     aliased_data: {
-        sub_requirement_name: {
+        checklist_item_name: {
             display_value: opts.name ?? 'Step One',
         },
-        sub_requirement_description: {
+        checklist_item_description: {
             display_value:
                 opts.description !== undefined ? opts.description : 'A step',
         },
-        sub_requirement_satisfied: { node_value: opts.satisfied ?? false },
-        sub_requirement_assessment_notes: { node_value: opts.notes ?? null },
+        checklist_item_completed: { node_value: opts.satisfied ?? false },
+        checklist_item_assessment_notes: { node_value: opts.notes ?? null },
     },
 });
 
@@ -85,7 +85,7 @@ const buildRequirement = (
         subRequirements?: ReturnType<typeof buildSubReq>[];
         assessment?: ReturnType<typeof buildAssessment> | null;
     } = {},
-): PermitRequirementSchema => {
+): ProcessRequirement => {
     const hasAssessment = 'assessment' in opts;
     return {
         descriptors: {
@@ -100,7 +100,11 @@ const buildRequirement = (
                 opts.startDate ?? null,
                 opts.completedDate ?? null,
             ),
-            sub_requirement: opts.subRequirements ?? [],
+            requirement_data: {
+                aliased_data: {
+                    sub_requirement_n1: opts.subRequirements ?? [],
+                },
+            },
             ...(hasAssessment
                 ? {
                       sub_requirement_assessment_n1:
@@ -116,7 +120,7 @@ const buildRequirement = (
         graph_publication: '',
         resource_instance_lifecycle_state: '',
         principaluser: null,
-    } as unknown as PermitRequirementSchema;
+    } as unknown as ProcessRequirement;
 };
 
 // Helper: simulate checking/unchecking a native checkbox via v-model.

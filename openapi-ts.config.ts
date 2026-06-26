@@ -31,5 +31,8 @@ export default defineConfig({
             "// Parse responses with zFoo; build request bodies with zFooWritable.",
         ],
     },
-    plugins: ["zod"],
+    // dates.local/offset emit z.iso.datetime({ local: true, offset: true }) so
+    // the backend's naive datetimes (USE_TZ=False, no offset) and any tz-aware
+    // ones both validate, instead of the default strict (Z-required) form.
+    plugins: [{ name: "zod", dates: { local: true, offset: true } }],
 });

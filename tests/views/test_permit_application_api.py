@@ -72,17 +72,17 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def _patch(self, pk, payload):
         return self.client.patch(
-            reverse("permit_application", args=[pk]),
+            reverse("api_permit_application", args=[pk]),
             data=json.dumps(payload),
             content_type="application/json",
         )
 
     def _get(self, pk):
-        return self.client.get(reverse("permit_application", args=[pk])).json()
+        return self.client.get(reverse("api_permit_application", args=[pk])).json()
 
     def _put(self, pk, payload):
         return self.client.put(
-            reverse("permit_application", args=[pk]),
+            reverse("api_permit_application", args=[pk]),
             data=json.dumps(payload),
             content_type="application/json",
         )

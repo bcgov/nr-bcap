@@ -1,0 +1,577 @@
+{
+    "graph": [
+        {
+            "author": "",
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "4193a7c0-100f-40d3-95d9-180980f78f2e",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": {
+                        "groupedCardIds": [],
+                        "sortedWidgetIds": [
+                            "7dd6b9f9-c6fc-4184-96ce-7bb5af6aed61"
+                        ]
+                    },
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": ""
+                    },
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": "Add name, description an assessment status of a simple sub-requirement"
+                    },
+                    "name": {
+                        "en": "Requirement Checklist"
+                    },
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "4193a7c0-100f-40d3-95d9-180980f78f2e",
+                    "config": {
+                        "defaultValue": "0",
+                        "format": "",
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "label": "Sort Order",
+                        "max": "",
+                        "min": "",
+                        "placeholder": {
+                            "en": "Enter number"
+                        },
+                        "precision": "0",
+                        "prefix": {
+                            "en": ""
+                        },
+                        "step": "1",
+                        "suffix": {
+                            "en": ""
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "17165341-0301-404b-96b1-7bf61b09a7b0",
+                    "label": {
+                        "en": "Sort Order"
+                    },
+                    "node_id": "58291210-ef04-493d-b26d-cc4dd0f7c633",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000008"
+                },
+                {
+                    "card_id": "4193a7c0-100f-40d3-95d9-180980f78f2e",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Mandatory"
+                    },
+                    "id": "58dc9ef1-aead-4e0d-9d73-d0404f4a7240",
+                    "label": {
+                        "en": "Mandatory"
+                    },
+                    "node_id": "848bd7ab-669a-417a-82b9-d78938e7586a",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "0346bc9c-d235-4313-adc8-d0e210b2ef25"
+                },
+                {
+                    "card_id": "4193a7c0-100f-40d3-95d9-180980f78f2e",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Assessment Notes",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "739d73ef-1b40-41c2-961d-eeec61b94cda",
+                    "label": {
+                        "en": "Assessment Notes"
+                    },
+                    "node_id": "ea11f682-0519-4319-8f40-fc45e8fca94d",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "4193a7c0-100f-40d3-95d9-180980f78f2e",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Description",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "75fc81ca-bf6e-4e98-a8d9-3f954d0acdc1",
+                    "label": {
+                        "en": "Description"
+                    },
+                    "node_id": "c864390d-220a-4aa2-a890-d1f94a87e647",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "4193a7c0-100f-40d3-95d9-180980f78f2e",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Check Completed"
+                    },
+                    "id": "8570d755-f03b-4858-aa54-5111394fbf81",
+                    "label": {
+                        "en": "Check Completed"
+                    },
+                    "node_id": "c548daf2-b469-4ce0-813e-e3c99baffcbc",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "4193a7c0-100f-40d3-95d9-180980f78f2e",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Requirement",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "be3487fc-a058-4901-a4d6-12324a8fdf28",
+                    "label": {
+                        "en": "Requirement"
+                    },
+                    "node_id": "e3a4a90d-e24e-49c2-9ebd-278e4c5b4d49",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                }
+            ],
+            "color": "#db9a19",
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": ""
+            },
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "e3a4a90d-e24e-49c2-9ebd-278e4c5b4d49",
+                    "edgeid": "04604d52-ba6b-41eb-81a4-7a312d28c753",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
+                    "rangenode_id": "617b80da-666b-455b-8191-7d1095fc8d16",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "617b80da-666b-455b-8191-7d1095fc8d16",
+                    "edgeid": "4c7d9d72-e883-43a0-9286-1c6492a65ac4",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "ea11f682-0519-4319-8f40-fc45e8fca94d",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "617b80da-666b-455b-8191-7d1095fc8d16",
+                    "edgeid": "65ed18f5-0e27-427b-bf76-f4255c6b54ee",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "rangenode_id": "c548daf2-b469-4ce0-813e-e3c99baffcbc",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e3a4a90d-e24e-49c2-9ebd-278e4c5b4d49",
+                    "edgeid": "9a98787e-8b32-4691-865c-3ce3057ea2e9",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "848bd7ab-669a-417a-82b9-d78938e7586a",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e3a4a90d-e24e-49c2-9ebd-278e4c5b4d49",
+                    "edgeid": "9abd876f-bb70-4666-bf5b-28c80784bfe8",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L53_is_not_uniquely_identified_by",
+                    "rangenode_id": "58291210-ef04-493d-b26d-cc4dd0f7c633",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e3a4a90d-e24e-49c2-9ebd-278e4c5b4d49",
+                    "edgeid": "b613991d-50c1-4349-91e5-b4376dea221f",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "c864390d-220a-4aa2-a890-d1f94a87e647",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "edgeid": "e91733e4-e2ba-4e0c-ba51-ec5a186b3b20",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "e3a4a90d-e24e-49c2-9ebd-278e4c5b4d49",
+                    "source_identifier_id": null
+                }
+            ],
+            "functions_x_graphs": [
+                {
+                    "config": {
+                        "class_name": "ProcessRequirementDescriptors",
+                        "descriptor_types": {
+                            "description": {
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [],
+                                "show_name": true,
+                                "type": "description"
+                            },
+                            "map_popup": {
+                                "delimiter": "<br>",
+                                "first_only": false,
+                                "node_ids": [],
+                                "show_name": true,
+                                "type": "map_popup"
+                            },
+                            "name": {
+                                "first_only": true,
+                                "node_ids": [],
+                                "show_name": false,
+                                "type": "name"
+                            }
+                        },
+                        "module": "bcap.functions.process_requirement_descriptors",
+                        "triggering_nodegroups": []
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000001006",
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "id": "c158cd1d-07a2-49aa-a631-f9cd3f17ee7b"
+                }
+            ],
+            "graphid": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+            "group_permissions": {},
+            "has_unpublished_changes": true,
+            "iconclass": "fa fa-gavel",
+            "is_active": true,
+            "is_copy_immutable": false,
+            "isresource": false,
+            "jsonldcontext": null,
+            "name": {
+                "en": "Requirement Checklist"
+            },
+            "nodegroups": [
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "legacygroupid": null,
+                    "nodegroupid": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "nodes": [
+                {
+                    "alias": "sub_requirement",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "This was called a Checklist in APTS",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "Requirement Checklist",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                    "parentproperty": "",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "checklist_item_sort_order",
+                    "config": {},
+                    "datatype": "number",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Checklist Item Sort Order",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "58291210-ef04-493d-b26d-cc4dd0f7c633",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E60_Number",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L53_is_not_uniquely_identified_by",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "checklist_item_assessment",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "{\"en\": \"\"}",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Checklist Item Assessment",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "617b80da-666b-455b-8191-7d1095fc8d16",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "checklist_item_mandatory",
+                    "config": {
+                        "falseLabel": {
+                            "en": "Optional"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Mandatory"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": "Whether the sub-requirement must be satisfied for the Process Requirement to completed.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Checklist Item Mandatory",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "848bd7ab-669a-417a-82b9-d78938e7586a",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "checklist_item_completed",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Checklist Item Completed",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "c548daf2-b469-4ce0-813e-e3c99baffcbc",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "checklist_item_description",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Description of what the sub-requirement is intended to satisfy",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Checklist Item Description",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "c864390d-220a-4aa2-a890-d1f94a87e647",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "checklist_item_name",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Not to be used in conjunction with the Sub requirement reference. Only used if it is a simple requirement",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Checklist Item Name",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "e3a4a90d-e24e-49c2-9ebd-278e4c5b4d49",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "checklist_item_assessment_notes",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Checklist Item Assessment Notes",
+                    "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                    "nodeid": "ea11f682-0519-4319-8f40-fc45e8fca94d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "publication": {
+                "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                "most_recent_edit_id": null,
+                "notes": null,
+                "publicationid": "19e49a49-364c-4fa0-9a2d-234323363db8",
+                "published_time": "2026-06-23T12:31:13.527"
+            },
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "resource_instance_lifecycle": null,
+            "root": {
+                "alias": "sub_requirement",
+                "config": {},
+                "datatype": "semantic",
+                "description": "This was called a Checklist in APTS",
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "5d5d9298-a478-4fe9-adaf-3f3db0b2e102",
+                "hascustomalias": false,
+                "is_collector": true,
+                "is_immutable": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "Requirement Checklist",
+                "nodegroup_id": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                "nodeid": "4fbc6279-f735-436e-a5bd-ab6341df5110",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                "sortorder": 4,
+                "source_identifier_id": null,
+                "sourcebranchpublication_id": null
+            },
+            "slug": "process_requirement_1",
+            "source_identifier_id": null,
+            "spatial_views": [],
+            "subtitle": {
+                "en": ""
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "user_permissions": {},
+            "version": ""
+        }
+    ],
+    "metadata": {
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "os": "Linux",
+        "os version": "6.12.76-linuxkit"
+    }
+}
