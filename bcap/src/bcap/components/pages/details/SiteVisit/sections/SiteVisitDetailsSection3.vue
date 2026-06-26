@@ -149,7 +149,11 @@ const teamColumns = computed(() => [
 const siteVisitDetailsColumns = computed(() => [
     { field: 'site_visit_type', label: 'Site Visit Type' },
     { field: 'last_date_of_site_visit', label: 'Last Date On Site' },
-    { field: 'project_description', label: 'Site Visit Description' },
+    {
+        field: 'project_description',
+        label: 'Site Visit Description',
+        isHtml: true,
+    },
     { field: 'permitted', label: 'Permitted' },
     { field: 'permit_number', label: 'Permit Number' },
     { field: 'permit_type', label: 'Permit Type' },
