@@ -42,7 +42,7 @@ class ProcessRequirementServiceTests(TestCase):
         tree = ResourceTileTree.get_tiles(
             GraphSlugs.PROCESS_REQUIREMENT, resource_ids=[resource.pk]
         ).get()
-        return tree.aliased_data.sub_requirement
+        return tree.aliased_data.requirement_data.aliased_data.sub_requirement_n1
 
     def test_clone_makes_an_editable_non_template_copy(self):
         template = self.templates[0]

@@ -5,12 +5,17 @@ the generic resource serializer (nested aliased_data), no custom service."""
 import json
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from arches_querysets.models import ResourceTileTree
 
-from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.aliases.process_requirement import (
+    ProcessRequirementAliases as aliases,
+    ProcessRequirementGroupAliases as groups,
+)
+from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.util.dashboard.resource_builder import ResourceBuilder
 from tests.views.helpers import AuthTestHelper
 
@@ -49,6 +54,10 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         requirement = make_requirement(ResourceBuilder(), subs=[("Sub-1", False, 1)])
         cls.resource_id = str(requirement.pk)
+        cls.editor = get_user_model().objects.create_user(
+            username="pr-editor", password="pass"
+        )
+        cls.editor.groups.add(Group.objects.get(name="Resource Editor"))
 
         resource = ResourceTileTree.get_tiles(
             GraphSlugs.PROCESS_REQUIREMENT,
@@ -56,7 +65,8 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         ).get()
         ad = resource.aliased_data
         cls.ident_tileid = str(ad.requirement_identification.pk)
-        cls.sub_tileid = str(ad.sub_requirement[0].pk)
+        cls.requirement_data_tileid = str(ad.requirement_data.pk)
+        cls.sub_tileid = str(ad.requirement_data.aliased_data.sub_requirement_n1[0].pk)
 
     def setUp(self):
         super().setUp()
@@ -76,23 +86,36 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         """The current resource's aliased_data, read back via GET."""
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
-        return resp.json()["aliased_data"]
+        return resp.json()[ALIASED_DATA]
 
     def test_get_returns_requirement(self):
         data = self._aliased_data()
-        ident = data["requirement_identification"]["aliased_data"]
-        self.assertEqual(ident["requirement_identification"]["display_value"], "REQ-1")
-        self.assertEqual(ident["requirement_name"]["display_value"], "Review")
-        duration = data["requirement_execution_duration"]["aliased_data"]
+        ident = data[aliases.REQUIREMENT_IDENTIFICATION][ALIASED_DATA]
         self.assertEqual(
-            duration["requirement_process_due_date"]["display_value"], "2026-02-01"
+            ident[aliases.REQUIREMENT_IDENTIFICATION]["display_value"], "REQ-1"
         )
-        sub = data["sub_requirement"][0]["aliased_data"]
-        self.assertEqual(sub["sub_requirement_name"]["display_value"], "Sub-1")
+        self.assertEqual(ident[aliases.REQUIREMENT_NAME]["display_value"], "Review")
+        duration = data[groups.REQUIREMENT_EXECUTION_DURATION][ALIASED_DATA]
+        self.assertEqual(
+            duration[aliases.REQUIREMENT_PROCESS_DUE_DATE]["display_value"],
+            "2026-02-01",
+        )
+        sub = data[groups.REQUIREMENT_DATA][ALIASED_DATA][groups.SUB_REQUIREMENT_N1][0][
+            ALIASED_DATA
+        ]
+        self.assertEqual(sub[aliases.CHECKLIST_ITEM_NAME]["display_value"], "Sub-1")
 
     def test_get_unknown_resource_returns_404(self):
         url = reverse("api_process_requirement", kwargs={"pk": UNKNOWN_ID})
         self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_resource_editor_can_view_requirement_they_do_not_own(self):
+        self.idir_login_simulate(self.editor)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_non_owner_without_editor_role_cannot_view(self):
+        self.idir_login_simulate(self.user)
+        self.assertEqual(self.client.get(self.url).status_code, 404)
 
     def test_patch_updates_fields(self):
         # Cardinality-1 tiles carry their tileid so the serializer updates the
@@ -100,34 +123,45 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         # required nodes (name + sort order) accompany the edited field.
         resp = self._patch(
             {
-                "aliased_data": {
-                    "requirement_identification": {
+                ALIASED_DATA: {
+                    aliases.REQUIREMENT_IDENTIFICATION: {
                         "tileid": self.ident_tileid,
-                        "aliased_data": {
-                            "requirement_identification": "REQ-2",
-                            "requirement_name": "Updated Review",
+                        ALIASED_DATA: {
+                            aliases.REQUIREMENT_IDENTIFICATION: "REQ-2",
+                            aliases.REQUIREMENT_NAME: "Updated Review",
                         },
                     },
-                    "sub_requirement": [
-                        {
-                            "tileid": self.sub_tileid,
-                            "aliased_data": {
-                                "sub_requirement_name": "Sub-1",
-                                "sub_requirement_sort_order": 1,
-                                "sub_requirement_satisfied": True,
-                            },
-                        }
-                    ],
+                    groups.REQUIREMENT_DATA: {
+                        "tileid": self.requirement_data_tileid,
+                        ALIASED_DATA: {
+                            groups.SUB_REQUIREMENT_N1: [
+                                {
+                                    "tileid": self.sub_tileid,
+                                    ALIASED_DATA: {
+                                        aliases.CHECKLIST_ITEM_NAME: "Sub-1",
+                                        aliases.CHECKLIST_ITEM_SORT_ORDER: 1,
+                                        aliases.CHECKLIST_ITEM_COMPLETED: True,
+                                    },
+                                }
+                            ]
+                        },
+                    },
                 }
             }
         )
         self.assertEqual(resp.status_code, 200)
         data = self._aliased_data()
-        ident = data["requirement_identification"]["aliased_data"]
-        self.assertEqual(ident["requirement_identification"]["display_value"], "REQ-2")
-        self.assertEqual(ident["requirement_name"]["display_value"], "Updated Review")
-        sub = data["sub_requirement"][0]["aliased_data"]
-        self.assertTrue(sub["sub_requirement_satisfied"]["node_value"])
+        ident = data[aliases.REQUIREMENT_IDENTIFICATION][ALIASED_DATA]
+        self.assertEqual(
+            ident[aliases.REQUIREMENT_IDENTIFICATION]["display_value"], "REQ-2"
+        )
+        self.assertEqual(
+            ident[aliases.REQUIREMENT_NAME]["display_value"], "Updated Review"
+        )
+        sub = data[groups.REQUIREMENT_DATA][ALIASED_DATA][groups.SUB_REQUIREMENT_N1][0][
+            ALIASED_DATA
+        ]
+        self.assertTrue(sub[aliases.CHECKLIST_ITEM_COMPLETED]["node_value"])
 
     def test_patch_unknown_resource_returns_404(self):
         url = reverse("api_process_requirement", kwargs={"pk": UNKNOWN_ID})
@@ -136,5 +170,5 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
 
     def test_patch_by_non_owner_returns_404(self):
         self.idir_login_simulate(self.user)
-        resp = self._patch({"aliased_data": {}})
+        resp = self._patch({ALIASED_DATA: {}})
         self.assertEqual(resp.status_code, 404)

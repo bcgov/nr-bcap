@@ -22,6 +22,10 @@ from bcap.views.permit_application_api import (
     PermitApplicationView,
     PermitApplicationCreateView,
 )
+from bcap.views.process_requirement_api import (
+    ProcessRequirementListView,
+    ProcessRequirementView,
+)
 from bcap.views.user_api import UserProfile
 from bcap.views.registration_link_api import (
     AssignableGroupsView,
@@ -58,15 +62,15 @@ documented_api_patterns = [
     ),
     # Submitter - object level user filtering - override
     path(
-        "api/resource/permit_application/",  # Remove this slash in next PR
+        "api/permit_application",
         PermitApplicationCreateView.as_view(),
         name="permit_application_create",
     ),
-    # External - object level user filtering - override - well need this for next PR override PUT / PATCH
+    # External - object level user filtering - override.
     path(
-        "api/resource/permit_application/<uuid:pk>",
+        "api/permit_application/<uuid:pk>/",
         PermitApplicationView.as_view(),
-        name="permit_application",
+        name="api_permit_application",
     ),
     # Admin - issue a signup link and list invitable Contributors
     path(
@@ -83,6 +87,19 @@ documented_api_patterns = [
         "api/assignable_groups",
         AssignableGroupsView.as_view(),
         name="assignable_groups",
+    ),
+    # Override the generated owner-scoped process_requirement routes so
+    # superusers and Resource Editors can read any instance. Declared before the
+    # generated include below, so these win for incoming requests.
+    path(
+        "api/process_requirement",
+        ProcessRequirementListView.as_view(),
+        name="api_process_requirement_list",
+    ),
+    path(
+        "api/process_requirement/<uuid:pk>/",
+        ProcessRequirementView.as_view(),
+        name="api_process_requirement",
     ),
 ]
 

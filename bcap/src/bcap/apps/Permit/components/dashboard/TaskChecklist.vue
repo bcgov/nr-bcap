@@ -2,8 +2,11 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import arches from 'arches';
-import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
-import type { PermitRequirementSchema } from '@/bcap/schema/PermitRequirementSchema.ts';
+import {
+    getProcessRequirementData,
+    type ProcessRequirement,
+} from '@/bcap/components/pages/api.ts';
+import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
 
 const route = useRoute();
 const idFromUrl = route.query.id;
@@ -11,14 +14,16 @@ const isLoading = ref(true);
 const isSaving = ref(false);
 const errorMessage = ref('');
 
-const requirementData = ref<PermitRequirementSchema | null>(null);
+const requirementData = ref<ProcessRequirement | null>(null);
 
 const subRequirements = computed(
-    () => requirementData.value?.aliased_data?.sub_requirement || [],
+    () =>
+        requirementData.value?.aliased_data?.requirement_data?.aliased_data
+            ?.sub_requirement_n1 || [],
 );
 
 const requirementName = computed(
-    () => requirementData.value?.descriptors?.en.name ?? '',
+    () => requirementData.value?.descriptors?.en?.name ?? '',
 );
 
 // Requirement-level status + notes (the assessment tile).
@@ -105,31 +110,24 @@ const applyDerivedDates = () => {
     if (!requirementData.value) return;
     const today = new Date().toISOString().split('T')[0];
     const duration =
-        requirementData.value.aliased_data.requirement_execution_duration
-            .aliased_data;
+        requirementData.value.aliased_data?.requirement_execution_duration
+            ?.aliased_data;
+    if (!duration) return;
     const subs = subRequirements.value;
-    const anyChecked = subs.some(
-        (req) => req.aliased_data.sub_requirement_satisfied.node_value,
-    );
-    const allChecked =
-        subs.length > 0 &&
-        subs.every(
-            (req) => req.aliased_data.sub_requirement_satisfied.node_value,
-        );
+    const isChecked = (req: (typeof subs)[number]) =>
+        req.aliased_data?.checklist_item_completed?.node_value;
+    const anyChecked = subs.some(isChecked);
+    const allChecked = subs.length > 0 && subs.every(isChecked);
 
-    if (anyChecked && !duration.requirement_process_start_date.node_value) {
-        duration.requirement_process_start_date.node_value = today;
+    const start = duration.requirement_process_start_date;
+    const completion = duration.requirement_process_completion_date;
+    if (anyChecked && start && !start.node_value) {
+        start.node_value = today;
     }
-    if (
-        allChecked &&
-        !duration.requirement_process_completion_date.node_value
-    ) {
-        duration.requirement_process_completion_date.node_value = today;
-    } else if (
-        !allChecked &&
-        duration.requirement_process_completion_date.node_value
-    ) {
-        duration.requirement_process_completion_date.node_value = null;
+    if (allChecked && completion && !completion.node_value) {
+        completion.node_value = today;
+    } else if (!allChecked && completion && completion.node_value) {
+        completion.node_value = null;
     }
 };
 
@@ -137,6 +135,15 @@ const saveChanges = async () => {
     if (!requirementData.value || isSaving.value) return;
     applyDerivedDates();
     isSaving.value = true;
+    const body = { aliased_data: requirementData.value.aliased_data };
+    // Soft-validate against the writable schema: warn on a mismatch, never block.
+    const validation = zPatchedProcessRequirement.safeParse(body);
+    if (!validation.success) {
+        console.warn(
+            'Process requirement patch body failed validation:',
+            validation.error,
+        );
+    }
     try {
         const response = await fetch(
             arches.urls.api_process_requirements(idFromUrl),
@@ -150,9 +157,7 @@ const saveChanges = async () => {
                             .find((row) => row.startsWith('csrftoken='))
                             ?.split('=')[1] || '',
                 },
-                body: JSON.stringify({
-                    aliased_data: requirementData.value.aliased_data,
-                }),
+                body: JSON.stringify(body),
             },
         );
 
@@ -221,7 +226,7 @@ const saveChanges = async () => {
                     <input
                         :id="'check-' + (req.tileid ?? '')"
                         v-model="
-                            req.aliased_data.sub_requirement_satisfied
+                            req.aliased_data!.checklist_item_completed!
                                 .node_value
                         "
                         type="checkbox"
@@ -233,19 +238,19 @@ const saveChanges = async () => {
                             class="req-name"
                         >
                             {{
-                                req.aliased_data.sub_requirement_name
+                                req.aliased_data?.checklist_item_name
                                     ?.display_value
                             }}
                         </label>
                         <p
                             v-if="
-                                req.aliased_data.sub_requirement_description
+                                req.aliased_data?.checklist_item_description
                                     ?.display_value
                             "
                             class="req-desc"
                         >
                             {{
-                                req.aliased_data.sub_requirement_description
+                                req.aliased_data?.checklist_item_description
                                     ?.display_value
                             }}
                         </p>
@@ -258,7 +263,7 @@ const saveChanges = async () => {
                         :value="
                             readText(
                                 req.aliased_data
-                                    .sub_requirement_assessment_notes,
+                                    ?.checklist_item_assessment_notes,
                             )
                         "
                         class="req-notes-input"
@@ -267,7 +272,7 @@ const saveChanges = async () => {
                         @input="
                             writeText(
                                 req.aliased_data
-                                    .sub_requirement_assessment_notes,
+                                    ?.checklist_item_assessment_notes,
                                 ($event.target as HTMLTextAreaElement).value,
                             )
                         "
@@ -295,7 +300,7 @@ const saveChanges = async () => {
                 <input
                     id="requirement_satisfied"
                     v-model="
-                        assessment.aliased_data.requirement_status.node_value
+                        assessment!.aliased_data!.requirement_status!.node_value
                     "
                     type="checkbox"
                     class="req-checkbox"
@@ -313,13 +318,15 @@ const saveChanges = async () => {
             <div class="req-body">
                 <textarea
                     id="requirement-notes"
-                    :value="readText(assessment.aliased_data.assessment_notes)"
+                    :value="
+                        readText(assessment?.aliased_data?.assessment_notes)
+                    "
                     class="req-notes-input"
                     rows="8"
                     placeholder="Add assessment summary and notes..."
                     @input="
                         writeText(
-                            assessment.aliased_data.assessment_notes,
+                            assessment?.aliased_data?.assessment_notes,
                             ($event.target as HTMLTextAreaElement).value,
                         )
                     "

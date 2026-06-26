@@ -198,6 +198,13 @@ def _scalar_string_node_value(max_length):
     return schema
 
 
+def _date_node_value(max_length):
+    # Arches date datatype: a plain calendar date (YYYY-MM-DD), not a datetime.
+    # Without this it falls through to the base DateTimeField mapping and is
+    # mistyped as format: date-time.
+    return {"type": "string", "format": "date", "nullable": True}
+
+
 def _concept_list_node_value(max_length):
     schema = {
         "type": "array",
@@ -322,6 +329,7 @@ def _geojson_node_value(max_length):
 # the field's base type.
 _NODE_VALUE_BUILDERS = {
     "string": _string_node_value,
+    "date": _date_node_value,
     "non-localized-string": _scalar_string_node_value,
     "borden-number-datatype": _scalar_string_node_value,
     "concept": _concept_node_value,

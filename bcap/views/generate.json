@@ -1,4 +1,7 @@
 {
+  "alteration": [
+    "GET", "PUT", "PATCH", "POST", "DELETE"
+  ],
   "archaeological_site": [
     "GET"
   ],
@@ -10,6 +13,12 @@
   ],
   "hca_permit": [
     "GET"
+  ],
+  "inspection": [
+    "GET", "PUT", "PATCH", "POST", "DELETE"
+  ],
+  "investigation": [
+    "GET", "PUT", "PATCH", "POST", "DELETE"
   ],
   "hria_discontinued_data": [],
   "legislative_act": [

@@ -28,6 +28,11 @@ from arches_querysets.models import (
     ResourceTileTree,
 )
 
+from bcap.util.aliases.process_requirement import (
+    ProcessRequirementAliases as aliases,
+    ProcessRequirementGroupAliases as groups,
+)
+
 # Marker written to legacyid of every resource the seeders create, so the
 # clear command can find and delete only seeded data.
 SEED_LEGACYID_PREFIX = "dashboard-seed"
@@ -219,42 +224,55 @@ class ResourceBuilder:
         # requirement_identification is a grouping node that also holds a required value.
         identification = self.append_blank_tile_for_group(
             requirement,
-            "requirement_identification",
+            aliases.REQUIREMENT_IDENTIFICATION,
             {
-                "requirement_identification": self.localized(spec["id"]),
-                "requirement_name": self.localized(spec["name"]),
+                aliases.REQUIREMENT_IDENTIFICATION: self.localized(spec["id"]),
+                aliases.REQUIREMENT_NAME: self.localized(spec["name"]),
             },
         )
         # is_template_requirement is a cardinality-1 child nodegroup of
         # requirement_identification, auto-created blank with the parent. Set the
         # flag on that child; a top-level append would leave the value on an
-        # orphan tile while the real child kept its node default.
-        identification.aliased_data.is_template_requirement.aliased_data.is_template_requirement = spec.get(
-            "is_template", False
+        # orphan tile while the real child kept its node default. The card also
+        # requires the requirement type; seeded requirements are checklists.
+        template_data = identification.aliased_data.is_template_requirement.aliased_data
+        template_data.is_template_requirement = spec.get("is_template", False)
+        template_data.process_requirment_type = self.reference_value(
+            "process_requirement", aliases.PROCESS_REQUIRMENT_TYPE, label="Checklist"
         )
         self.append_blank_tile_for_group(
             requirement,
-            "requirement_execution_duration",
-            {"requirement_process_due_date": spec["due"]},
+            groups.REQUIREMENT_EXECUTION_DURATION,
+            {aliases.REQUIREMENT_PROCESS_DUE_DATE: spec["due"]},
         )
         self.append_blank_tile_for_group(
             requirement,
-            "sub_requirement_assessment_n1",
+            groups.SUB_REQUIREMENT_ASSESSMENT_N1,
             {
-                "requirement_status": spec["satisfied"],
-                "assessment_notes": self.localized(spec["notes"]),
+                aliases.REQUIREMENT_STATUS: spec["satisfied"],
+                aliases.ASSESSMENT_NOTES: self.localized(spec["notes"]),
             },
         )
+        # Checklist items live on sub_requirement_n1, a cardinality-n child of
+        # the requirement_data grouping, so create that parent tile first. It
+        # auto-creates one blank child row, which would fail the card's required
+        # fields; drop it and add the real items.
+        requirement_data = self.append_blank_tile_for_group(
+            requirement, groups.REQUIREMENT_DATA, {}
+        )
+        requirement_data.aliased_data.sub_requirement_n1 = []
         for sub in spec["sub_requirements"]:
             self.append_blank_tile_for_group(
-                requirement,
-                "sub_requirement",
+                requirement_data,
+                groups.SUB_REQUIREMENT_N1,
                 {
-                    "sub_requirement_name": self.localized(sub["name"]),
-                    "sub_requirement_description": self.localized(sub["description"]),
-                    "sub_requirement_mandatory": sub.get("mandatory", False),
-                    "sub_requirement_satisfied": sub["sub_satisfied"],
-                    "sub_requirement_sort_order": sub["sort_order"],
+                    aliases.CHECKLIST_ITEM_NAME: self.localized(sub["name"]),
+                    aliases.CHECKLIST_ITEM_DESCRIPTION: self.localized(
+                        sub["description"]
+                    ),
+                    aliases.CHECKLIST_ITEM_MANDATORY: sub.get("mandatory", False),
+                    aliases.CHECKLIST_ITEM_COMPLETED: sub["sub_satisfied"],
+                    aliases.CHECKLIST_ITEM_SORT_ORDER: sub["sort_order"],
                 },
             )
         requirement.save(**self.save_kwargs)

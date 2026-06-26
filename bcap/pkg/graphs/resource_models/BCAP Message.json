@@ -266,6 +266,66 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Recipient",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "0f52041b-1f35-48b6-882d-b41478220289",
+                    "label": {
+                        "en": "Recipient"
+                    },
+                    "node_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Message Author",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "52c6de9d-ed8d-47e5-9424-a5565ced58d6",
+                    "label": {
+                        "en": "Message Author"
+                    },
+                    "node_id": "b9909543-8e7b-4298-bcdf-2550e30c458a",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "889500a1-a8ff-47e5-bf6e-8c872d670791",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Response Author",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "73768e1f-b205-43c4-a0f6-6cbbb4899b75",
+                    "label": {
+                        "en": "Response Author"
+                    },
+                    "node_id": "d39ec680-c09c-4df9-a512-51a942765c88",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 }
             ],
             "color": "#06a480",
@@ -374,6 +434,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
                     "rangenode_id": "b9909543-8e7b-4298-bcdf-2550e30c458a",
+                    "source_identifier_id": null
+                },
+                {
+                    "edgeid": "dfafd6cf-5506-4fa9-8e63-12f306715cad",
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "rangenode_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "description": null,
                     "source_identifier_id": null
                 }
             ],
@@ -570,8 +640,17 @@
                 },
                 {
                     "alias": "message_author",
-                    "config": {},
-                    "datatype": "semantic",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -618,8 +697,17 @@
                 },
                 {
                     "alias": "response_author",
-                    "config": {},
-                    "datatype": "semantic",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -709,6 +797,38 @@
                     "nodeid": "e0c6e44b-348f-4a1e-9aff-84352273aefc",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "recipient",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Recipient",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
