@@ -42,9 +42,12 @@ export const buildTileValidation = (tileSchema: z.ZodObject) => {
         Object.fromEntries(
             requiredAliases.map((alias) => [
                 alias,
-                z.custom<AliasedNodeData>((v) => isFilled(v as AliasedNodeData), {
-                    message: 'This field is required.',
-                }),
+                z.custom<AliasedNodeData>(
+                    (v) => isFilled(v as AliasedNodeData),
+                    {
+                        message: 'This field is required.',
+                    },
+                ),
             ]),
         ),
     );

@@ -83,9 +83,9 @@ describe('buildTileValidation', () => {
         const { isComplete } = buildTileValidation(schema);
         expect(isComplete(undefined)).toBe(false);
         expect(isComplete({})).toBe(false);
-        expect(
-            isComplete({ required_field: node({ node_value: 'x' }) }),
-        ).toBe(true);
+        expect(isComplete({ required_field: node({ node_value: 'x' }) })).toBe(
+            true,
+        );
     });
 
     it('ignores optional fields for completeness', () => {
