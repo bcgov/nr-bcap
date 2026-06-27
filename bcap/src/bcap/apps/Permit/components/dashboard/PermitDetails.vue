@@ -280,13 +280,13 @@ onMounted(() => {
             </div>
 
             <div
+                v-if="activeModule"
                 class="content-area"
                 :class="{
                     'white-card': ['completed', 'review'].includes(
                         getModuleStatus(activeModule.id),
                     ),
                 }"
-                v-if="activeModule"
             >
                 <h3 class="content-title">{{ activeModule.title }}</h3>
 
@@ -333,8 +333,8 @@ onMounted(() => {
                     </ul>
 
                     <div
-                        class="action-container"
                         v-if="activeModule.id !== 'basic-info'"
+                        class="action-container"
                     >
                         <button
                             class="add-module-btn"

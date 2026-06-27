@@ -4,7 +4,7 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import { zApiHcaPermitListResponse } from '@/bcap/client/zod.gen.ts';
+import type { zApiHcaPermitListResponseType } from '@/bcap/client/types.ts';
 import { useResourceList } from '@/bcap/composables/useResourceData.ts';
 import {
     useTileEditLog,
@@ -53,12 +53,12 @@ const associatedPermitIds = computed(() => {
 });
 
 const { data: permitData } = useResourceList<
-    Ref<typeof zApiHcaPermitListResponse>
+    Ref<zApiHcaPermitListResponseType>
 >('hca_permit', associatedPermitIds);
 
 const permitDetails = computed(() => {
     return (permitData?.value?.results.map(
-        (permit: AliasedTileData) => permit.aliased_data?.permit_identification,
+        (permit) => permit.aliased_data?.permit_identification,
     ) || []) as AliasedTileData[];
 });
 

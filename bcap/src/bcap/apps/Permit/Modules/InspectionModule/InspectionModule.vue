@@ -213,8 +213,8 @@ const showDebug = ref(false);
         <ProgressSpinner />
     </div>
     <div
-        id="debug-div"
         v-show="showDebug"
+        id="debug-div"
         class="debug-step"
         :class="{ 'show-debug': showDebug }"
     >

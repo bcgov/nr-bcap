@@ -71,8 +71,8 @@ const hasValue = (val: unknown): boolean => {
         :key="'map-' + index"
     >
         <div
-            class="map-section"
             v-if="hasValue(field.value) && field.type === 'map'"
+            class="map-section"
         >
             <dt class="mb-2 font-bold">{{ field.label }}</dt>
 
