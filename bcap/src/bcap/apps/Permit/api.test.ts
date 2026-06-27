@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
+    fetchDraft,
+    createDraft,
     fetchDrafts,
     fetchMyProjects,
     submitApplication,
@@ -73,6 +75,35 @@ describe('Permit API', () => {
 
             expect(result).toEqual([{ id: 'permit-1' }]);
             expect(console.error).toHaveBeenCalled();
+        });
+    });
+
+    describe('fetchDraft', () => {
+        it('GETs the draft by graph and id', async () => {
+            const draft = { id: 'draft-1', data: {} };
+            apiFetch.mockResolvedValue(okResponse(draft));
+
+            const result = await fetchDraft('investigation', 'draft-1');
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/draft/investigation/draft-1',
+            );
+            expect(result).toEqual(draft);
+        });
+    });
+
+    describe('createDraft', () => {
+        it('POSTs an empty draft for the graph', async () => {
+            const draft = { id: 'draft-new', data: {} };
+            apiFetch.mockResolvedValue(okResponse(draft));
+
+            const result = await createDraft('investigation');
+
+            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation', {
+                method: 'POST',
+                body: { data: {} },
+            });
+            expect(result).toEqual(draft);
         });
     });
 
