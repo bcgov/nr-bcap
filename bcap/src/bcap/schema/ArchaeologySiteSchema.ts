@@ -32,7 +32,6 @@ export interface SiteBoundaryTile extends AliasedTileData {
 export interface AuthorityTile extends AliasedTileData {
     aliased_data: {
         authority_start_date?: AliasedNodeData;
-        responsible_government?: AliasedNodeData;
         authority_end_date?: AliasedNodeData;
         legislative_act?: AliasedNodeData;
         authority_description?: AliasedNodeData;

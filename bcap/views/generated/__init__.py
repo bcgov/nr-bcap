@@ -39,6 +39,13 @@ from .hca_permit import (
     HcaPermitView,
 )
 
+from .hria_discontinued_data import (
+    HriaDiscontinuedDataSerializer,
+    HriaDiscontinuedDataViewMixin,
+    HriaDiscontinuedDataListView,
+    HriaDiscontinuedDataView,
+)
+
 from .inspection import (
     InspectionSerializer,
     InspectionViewMixin,
@@ -74,6 +81,13 @@ from .local_government import (
     LocalGovernmentView,
 )
 
+from .new_resource_model import (
+    NewResourceModelSerializer,
+    NewResourceModelViewMixin,
+    NewResourceModelListView,
+    NewResourceModelView,
+)
+
 from .permit_application import (
     PermitApplicationSerializer,
     PermitApplicationViewMixin,
@@ -88,11 +102,25 @@ from .process_requirement import (
     ProcessRequirementView,
 )
 
+from .project_sandbox import (
+    ProjectSandboxSerializer,
+    ProjectSandboxViewMixin,
+    ProjectSandboxListView,
+    ProjectSandboxView,
+)
+
 from .publication import (
     PublicationSerializer,
     PublicationViewMixin,
     PublicationListView,
     PublicationView,
+)
+
+from .repository import (
+    RepositorySerializer,
+    RepositoryViewMixin,
+    RepositoryListView,
+    RepositoryView,
 )
 
 from .site_submission import (
@@ -130,6 +158,10 @@ __all__ = [
     "HcaPermitSerializer",
     "HcaPermitView",
     "HcaPermitViewMixin",
+    "HriaDiscontinuedDataListView",
+    "HriaDiscontinuedDataSerializer",
+    "HriaDiscontinuedDataView",
+    "HriaDiscontinuedDataViewMixin",
     "InspectionListView",
     "InspectionSerializer",
     "InspectionView",
@@ -150,6 +182,10 @@ __all__ = [
     "LocalGovernmentSerializer",
     "LocalGovernmentView",
     "LocalGovernmentViewMixin",
+    "NewResourceModelListView",
+    "NewResourceModelSerializer",
+    "NewResourceModelView",
+    "NewResourceModelViewMixin",
     "PermitApplicationListView",
     "PermitApplicationSerializer",
     "PermitApplicationView",
@@ -158,10 +194,18 @@ __all__ = [
     "ProcessRequirementSerializer",
     "ProcessRequirementView",
     "ProcessRequirementViewMixin",
+    "ProjectSandboxListView",
+    "ProjectSandboxSerializer",
+    "ProjectSandboxView",
+    "ProjectSandboxViewMixin",
     "PublicationListView",
     "PublicationSerializer",
     "PublicationView",
     "PublicationViewMixin",
+    "RepositoryListView",
+    "RepositorySerializer",
+    "RepositoryView",
+    "RepositoryViewMixin",
     "SiteSubmissionListView",
     "SiteSubmissionSerializer",
     "SiteSubmissionView",

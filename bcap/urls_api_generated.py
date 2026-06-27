@@ -26,6 +26,8 @@ from bcap.views.generated import (
     ContributorView,
     HcaPermitListView,
     HcaPermitView,
+    HriaDiscontinuedDataListView,
+    HriaDiscontinuedDataView,
     InspectionListView,
     InspectionView,
     InvestigationListView,
@@ -36,12 +38,18 @@ from bcap.views.generated import (
     LgPersonView,
     LocalGovernmentListView,
     LocalGovernmentView,
+    NewResourceModelListView,
+    NewResourceModelView,
     PermitApplicationListView,
     PermitApplicationView,
     ProcessRequirementListView,
     ProcessRequirementView,
+    ProjectSandboxListView,
+    ProjectSandboxView,
     PublicationListView,
     PublicationView,
+    RepositoryListView,
+    RepositoryView,
     SiteSubmissionListView,
     SiteSubmissionView,
     SiteVisitListView,
@@ -50,7 +58,7 @@ from bcap.views.generated import (
 
 urlpatterns = [
     path(
-        "api/alteration",
+        "api/alteration/",
         AlterationListView.as_view(),
         name="api_alteration_list",
     ),
@@ -60,7 +68,7 @@ urlpatterns = [
         name="api_alteration",
     ),
     path(
-        "api/archaeological_site",
+        "api/archaeological_site/",
         ArchaeologicalSiteListView.as_view(),
         name="api_archaeological_site_list",
     ),
@@ -70,7 +78,7 @@ urlpatterns = [
         name="api_archaeological_site",
     ),
     path(
-        "api/bcap_message",
+        "api/bcap_message/",
         BcapMessageListView.as_view(),
         name="api_bcap_message_list",
     ),
@@ -80,7 +88,7 @@ urlpatterns = [
         name="api_bcap_message",
     ),
     path(
-        "api/contributor",
+        "api/contributor/",
         ContributorListView.as_view(),
         name="api_contributor_list",
     ),
@@ -90,7 +98,7 @@ urlpatterns = [
         name="api_contributor",
     ),
     path(
-        "api/hca_permit",
+        "api/hca_permit/",
         HcaPermitListView.as_view(),
         name="api_hca_permit_list",
     ),
@@ -100,7 +108,17 @@ urlpatterns = [
         name="api_hca_permit",
     ),
     path(
-        "api/inspection",
+        "api/hria_discontinued_data/",
+        HriaDiscontinuedDataListView.as_view(),
+        name="api_hria_discontinued_data_list",
+    ),
+    path(
+        "api/hria_discontinued_data/<uuid:pk>/",
+        HriaDiscontinuedDataView.as_view(),
+        name="api_hria_discontinued_data",
+    ),
+    path(
+        "api/inspection/",
         InspectionListView.as_view(),
         name="api_inspection_list",
     ),
@@ -110,7 +128,7 @@ urlpatterns = [
         name="api_inspection",
     ),
     path(
-        "api/investigation",
+        "api/investigation/",
         InvestigationListView.as_view(),
         name="api_investigation_list",
     ),
@@ -120,7 +138,7 @@ urlpatterns = [
         name="api_investigation",
     ),
     path(
-        "api/legislative_act",
+        "api/legislative_act/",
         LegislativeActListView.as_view(),
         name="api_legislative_act_list",
     ),
@@ -130,7 +148,7 @@ urlpatterns = [
         name="api_legislative_act",
     ),
     path(
-        "api/lg_person",
+        "api/lg_person/",
         LgPersonListView.as_view(),
         name="api_lg_person_list",
     ),
@@ -140,7 +158,7 @@ urlpatterns = [
         name="api_lg_person",
     ),
     path(
-        "api/local_government",
+        "api/local_government/",
         LocalGovernmentListView.as_view(),
         name="api_local_government_list",
     ),
@@ -150,7 +168,17 @@ urlpatterns = [
         name="api_local_government",
     ),
     path(
-        "api/permit_application",
+        "api/new_resource_model/",
+        NewResourceModelListView.as_view(),
+        name="api_new_resource_model_list",
+    ),
+    path(
+        "api/new_resource_model/<uuid:pk>/",
+        NewResourceModelView.as_view(),
+        name="api_new_resource_model",
+    ),
+    path(
+        "api/permit_application/",
         PermitApplicationListView.as_view(),
         name="api_permit_application_list",
     ),
@@ -160,7 +188,7 @@ urlpatterns = [
         name="api_permit_application",
     ),
     path(
-        "api/process_requirement",
+        "api/process_requirement/",
         ProcessRequirementListView.as_view(),
         name="api_process_requirement_list",
     ),
@@ -170,7 +198,17 @@ urlpatterns = [
         name="api_process_requirement",
     ),
     path(
-        "api/publication",
+        "api/project_sandbox/",
+        ProjectSandboxListView.as_view(),
+        name="api_project_sandbox_list",
+    ),
+    path(
+        "api/project_sandbox/<uuid:pk>/",
+        ProjectSandboxView.as_view(),
+        name="api_project_sandbox",
+    ),
+    path(
+        "api/publication/",
         PublicationListView.as_view(),
         name="api_publication_list",
     ),
@@ -180,7 +218,17 @@ urlpatterns = [
         name="api_publication",
     ),
     path(
-        "api/site_submission",
+        "api/repository/",
+        RepositoryListView.as_view(),
+        name="api_repository_list",
+    ),
+    path(
+        "api/repository/<uuid:pk>/",
+        RepositoryView.as_view(),
+        name="api_repository",
+    ),
+    path(
+        "api/site_submission/",
         SiteSubmissionListView.as_view(),
         name="api_site_submission_list",
     ),
@@ -190,7 +238,7 @@ urlpatterns = [
         name="api_site_submission",
     ),
     path(
-        "api/site_visit",
+        "api/site_visit/",
         SiteVisitListView.as_view(),
         name="api_site_visit_list",
     ),
