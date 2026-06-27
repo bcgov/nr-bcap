@@ -143,9 +143,9 @@ describe('Permit API', () => {
             const failure = new Error('POST investigation failed');
             apiFetch.mockRejectedValue(failure);
 
-            await expect(
-                submitInvestigation('draft-7', {}),
-            ).rejects.toThrow('POST investigation failed');
+            await expect(submitInvestigation('draft-7', {})).rejects.toThrow(
+                'POST investigation failed',
+            );
             expect(console.error).toHaveBeenCalledWith(
                 'Investigation submission API failed:',
                 failure,
