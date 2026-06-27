@@ -89,9 +89,10 @@ const siteDecisionColumns = [
 ];
 
 const authorityColumns = computed(() => [
-    { field: 'responsible_government', label: 'Government' },
-    { field: 'authority_legal_instrument', label: 'Legal Instrument' },
-    { field: 'legislative_act', label: 'Act/Section' },
+    {
+        field: 'legislative_act',
+        label: 'Government / Instrument / Act / Section',
+    },
     { field: 'authority_protection_type', label: 'Protection Type' },
     { field: 'reference_number', label: 'Reference #' },
     { field: 'authority_start_date', label: 'Start Date' },
