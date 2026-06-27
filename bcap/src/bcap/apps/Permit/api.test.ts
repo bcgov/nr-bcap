@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fetchDrafts, fetchMyProjects, submitApplication } from './api';
+import {
+    fetchDrafts,
+    fetchMyProjects,
+    submitApplication,
+    submitInvestigation,
+    deleteDraft,
+} from './api';
 
 // 1. Mock the Arches URL generator
 vi.mock('arches', () => ({
@@ -10,6 +16,7 @@ vi.mock('arches', () => ({
             api_resource_draft: (graphSlug: string) =>
                 `/mock/draft/${graphSlug}`,
             permit_application_create: '/mock/create/permit_application',
+            api_investigation: '/mock/create/investigation',
             dashboard_external: '/bcap/api/dashboard/external',
             api_resource: (graph: string, pk: string) =>
                 `/bcap/api/resource/${graph}/${pk}`,
@@ -47,7 +54,9 @@ describe('Permit API', () => {
 
             const result = await fetchDrafts();
 
-            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/permit_application');
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/draft/permit_application',
+            );
             expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation');
             expect(result).toEqual([
                 { id: 'permit-1' },
@@ -89,6 +98,58 @@ describe('Permit API', () => {
             apiFetch.mockRejectedValue(new Error('Forbidden'));
             const result = await fetchMyProjects();
             expect(result).toEqual([]);
+        });
+    });
+
+    describe('deleteDraft', () => {
+        it('DELETEs the draft for its graph', async () => {
+            apiFetch.mockResolvedValue(okResponse(undefined));
+
+            await deleteDraft('investigation', 'draft-9');
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/draft/investigation/draft-9',
+                { method: 'DELETE' },
+            );
+        });
+    });
+
+    describe('submitInvestigation', () => {
+        it('POSTs the investigation then DELETEs its draft', async () => {
+            const finalResource = { resourceinstanceid: 'inv-1' };
+            apiFetch
+                .mockResolvedValueOnce(okResponse(finalResource))
+                .mockResolvedValueOnce(okResponse(undefined));
+
+            const result = await submitInvestigation('draft-7', { a: 1 });
+
+            expect(apiFetch).toHaveBeenNthCalledWith(
+                1,
+                '/mock/create/investigation',
+                {
+                    method: 'POST',
+                    body: { draft_id: 'draft-7', aliased_data: { a: 1 } },
+                },
+            );
+            expect(apiFetch).toHaveBeenNthCalledWith(
+                2,
+                '/mock/draft/investigation/draft-7',
+                { method: 'DELETE' },
+            );
+            expect(result).toEqual(finalResource);
+        });
+
+        it('re-throws and logs when the POST fails', async () => {
+            const failure = new Error('POST investigation failed');
+            apiFetch.mockRejectedValue(failure);
+
+            await expect(
+                submitInvestigation('draft-7', {}),
+            ).rejects.toThrow('POST investigation failed');
+            expect(console.error).toHaveBeenCalledWith(
+                'Investigation submission API failed:',
+                failure,
+            );
         });
     });
 

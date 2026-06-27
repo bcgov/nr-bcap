@@ -53,6 +53,15 @@ export const fetchDrafts = async () => {
     return perGraph.flat();
 };
 
+export const deleteDraft = async (
+    graphSlug: string,
+    draftId: string,
+): Promise<void> => {
+    await apiFetch(`${arches.urls.api_resource_draft(graphSlug)}/${draftId}`, {
+        method: 'DELETE',
+    });
+};
+
 export const fetchMyProjects = async () => {
     try {
         const url = `${arches.urls.dashboard_external}?status=CREATED_BY_ME`;
@@ -121,11 +130,18 @@ export const submitInvestigation = async (
     draftId: string,
     payload: ArchesDraftData,
 ): Promise<PermitApplicationResponse> => {
-    const response = await apiFetch(arches.urls.api_investigation, {
-        method: 'POST',
-        body: { draft_id: draftId, aliased_data: payload },
-    });
-    return response.json();
+    try {
+        const response = await apiFetch(arches.urls.api_investigation, {
+            method: 'POST',
+            body: { draft_id: draftId, aliased_data: payload },
+        });
+        const finalResource = await response.json();
+        await deleteDraft('investigation', draftId);
+        return finalResource;
+    } catch (error) {
+        console.error('Investigation submission API failed:', error);
+        throw error;
+    }
 };
 
 export const fetchPermitDetails = async (
