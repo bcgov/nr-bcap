@@ -1,6 +1,7 @@
 import { ref, watchEffect, type Ref } from 'vue';
 import {
     getResourceData,
+    getResourceList,
     getRelatedResourceData,
 } from '@/bcap/components/pages/api.ts';
 
@@ -35,6 +36,41 @@ export function useResourceData<T>(
             }
         } else {
             current.value = cache.value[id];
+            loading.value = false;
+        }
+    });
+
+    return {
+        data: current,
+        loading,
+        cache,
+    };
+}
+
+export function useResourceList<T>(
+    resourceType: string,
+    resourceIds: Ref<string[] | undefined>,
+) {
+    const cache = ref<Record<string, T | null>>({});
+    const current = ref<T | null>(null);
+    const loading = ref(true);
+
+    watchEffect(async () => {
+        const ids = resourceIds.value;
+        if (!ids || ids.length === 0) {
+            loading.value = false;
+            return;
+        }
+
+        loading.value = true;
+
+        try {
+            const data = await getResourceList(resourceType, ids);
+            current.value = data as T;
+        } catch (error) {
+            console.error(`Failed to fetch ${resourceType}:`, error);
+            current.value = null;
+        } finally {
             loading.value = false;
         }
     });

@@ -15,6 +15,7 @@
      assignable_groups="{% url 'assignable_groups' %}"
      api_process_requirements='(resource_id) => {return "{% url "api_process_requirement" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_resource='(graph_slug, resource_id) => {return "{% url "api-resource" "----p1" "00000000-0000-0000-0000-000000000000"%}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     api_resource_list='(graph_slug) => {return "{% url "arches_querysets:api-resources" "----p1"%}".replace("----p1", graph_slug)}'
      api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_resource_draft="(graph_slug) => {return `/bcap/api/resource_draft/${graph_slug}`}"
      api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"
