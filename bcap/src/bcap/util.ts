@@ -1,6 +1,10 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { saveDraftFieldToBackend } from '@/bcap/api.ts';
+import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
+import { z } from 'zod';
+import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
 export const sanitizeHtml = (html: string | undefined): string => {
     if (!html) return '';
@@ -81,35 +85,6 @@ export const getCsrfToken = (): string => {
     );
 };
 
-export const saveFieldToBackend = async (
-    draftId: string,
-    graphSlug: string,
-    fullDraftData: ArchesDraftData,
-) => {
-    try {
-        const patchUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId}`;
-
-        const response = await fetch(patchUrl, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken(),
-            },
-            body: JSON.stringify({
-                data: fullDraftData,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
-        }
-
-        console.log('Successfully auto-saved full draft data.');
-    } catch (error) {
-        console.error('Failed to auto-save draft data:', error);
-    }
-};
-
 let globalTimeoutId: ReturnType<typeof setTimeout>;
 
 export const updateDraftValue = (
@@ -171,7 +146,68 @@ export const updateDraftValue = (
 
     globalTimeoutId = setTimeout(() => {
         if (draftId) {
-            saveFieldToBackend(draftId, graphSlug, draftDataValue);
+            saveDraftFieldToBackend(draftId, graphSlug, draftDataValue);
         }
     }, 1000);
+};
+
+// Permit application aliased_data, derived from the generated Zod schema.
+export type PermitAliasedData = NonNullable<
+    z.infer<typeof zPermitApplication>['aliased_data']
+>;
+
+export const getBasicInfoFields = (
+    aliased: PermitAliasedData | null | undefined,
+): ReviewField[] => {
+    if (!aliased) return [];
+
+    const ident = aliased.application_identification?.aliased_data;
+    const contacts = aliased.application_contacts?.aliased_data;
+    const project = aliased.proposed_project?.aliased_data;
+    const devDetails = project?.development_project_details?.aliased_data;
+
+    return [
+        { label: 'Project Name', value: ident?.project_name?.display_value },
+        {
+            label: 'Application ID',
+            value: ident?.application_id?.display_value,
+        },
+        {
+            label: 'Application Proponent',
+            value: contacts?.application_proponent?.display_value,
+        },
+        {
+            label: 'Has Retained Archaeologist',
+            value: contacts?.has_retained_archaeologist?.display_value,
+        },
+        {
+            label: 'Rationale For No Archaeologist',
+            value: contacts?.rationale_for_no_archaeologist?.display_value,
+        },
+        {
+            label: 'Application Archaeologist',
+            value: contacts?.application_archaeologist?.display_value,
+        },
+        { label: 'Project Type', value: project?.project_type?.display_value },
+        {
+            label: 'Project Description',
+            value: project?.project_description?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Scope of Work',
+            value: project?.scope_of_work?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Industrial Sector',
+            value: devDetails?.industrial_sector?.display_value,
+        },
+        {
+            label: 'Project Boundary',
+            value: project?.project_boundary,
+            type: 'map',
+            nodeAlias: 'project_boundary',
+        },
+    ];
 };

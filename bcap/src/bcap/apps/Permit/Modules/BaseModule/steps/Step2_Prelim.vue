@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { inject, type Ref } from 'vue';
+import { Form } from '@primevue/forms';
+import { zPermitApplicationApplicationIdentificationAliasedData } from '@/bcap/client/zod.gen.ts';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
 import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import { updateDraftValue } from '@/bcap/util.ts';
+import { buildTileValidation } from '@/bcap/validation.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const draftId = inject<Ref<string | null>>('draftId');
 const draftData = inject<Ref<ArchesDraftData>>('draftData');
 const graphSlug = 'permit_application';
 
-const isValid = () => {
-    return true;
-};
+const emit = defineEmits(['update:step-is-valid']);
+
+const { resolver, isComplete } = buildTileValidation(
+    zPermitApplicationApplicationIdentificationAliasedData,
+);
+
+// use draft not form state, this is different than bcfms/bcrhp
+const isValid = () =>
+    isComplete(draftData?.value?.application_identification?.aliased_data);
 
 const updateValue = (
     newValue: AliasedNodeData,
@@ -28,58 +37,32 @@ const updateValue = (
         attribute_name,
         node_group_alias,
     );
+    emit('update:step-is-valid', isValid());
 };
 
 defineExpose({ isValid });
 </script>
 
 <template>
-    <FieldSet legend="">
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.application_identification?.aliased_data
-                    ?.is_replacement
-            "
-            graph-slug="permit_application"
-            node-alias="is_replacement"
-            @update:value="
-                updateValue(
-                    $event,
-                    'is_replacement',
-                    'application_identification',
-                )
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.application_identification?.aliased_data
-                    ?.project_name
-            "
-            graph-slug="permit_application"
-            node-alias="project_name"
-            @update:value="
-                updateValue(
-                    $event,
-                    'project_name',
-                    'application_identification',
-                )
-            "
-        />
-        <div class="row">
+    <Form
+        :resolver="resolver"
+        :validate-on-blur="true"
+        :validate-on-value-update="true"
+        :validate-on-mount="false"
+    >
+        <FieldSet legend="">
             <GenericWidget
                 :mode="EDIT"
                 :aliased-node-data="
                     draftData?.application_identification?.aliased_data
-                        ?.application_id
+                        ?.project_name
                 "
                 graph-slug="permit_application"
-                node-alias="application_id"
+                node-alias="project_name"
                 @update:value="
                     updateValue(
                         $event,
-                        'application_id',
+                        'project_name',
                         'application_identification',
                     )
                 "
@@ -95,31 +78,36 @@ defineExpose({ isValid });
                     updateValue($event, 'project_type', 'proposed_project')
                 "
             />
-        </div>
-        <GenericWidget
-            class="description-box"
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.proposed_project?.aliased_data?.project_description
-            "
-            graph-slug="permit_application"
-            node-alias="project_description"
-            @update:value="
-                updateValue($event, 'project_description', 'proposed_project')
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.proposed_project?.aliased_data?.scope_of_work
-            "
-            graph-slug="permit_application"
-            node-alias="scope_of_work"
-            @update:value="
-                updateValue($event, 'scope_of_work', 'proposed_project')
-            "
-        />
-    </FieldSet>
+            <GenericWidget
+                class="description-box"
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.proposed_project?.aliased_data
+                        ?.project_description
+                "
+                graph-slug="permit_application"
+                node-alias="project_description"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'project_description',
+                        'proposed_project',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.proposed_project?.aliased_data?.scope_of_work
+                "
+                graph-slug="permit_application"
+                node-alias="scope_of_work"
+                @update:value="
+                    updateValue($event, 'scope_of_work', 'proposed_project')
+                "
+            />
+        </FieldSet>
+    </Form>
     <br />
 </template>
 

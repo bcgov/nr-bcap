@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, /*provide,*/ onMounted } from 'vue';
+import { computed, ref, provide, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
@@ -7,94 +8,82 @@ import StepList from 'primevue/steplist';
 import StepPanels from 'primevue/steppanels';
 import ProgressSpinner from 'primevue/progressspinner';
 import StepperNavigation from '@/bcgov_arches_common/components/Stepper/components/StepperNavigation/StepperNavigation.vue';
-
 import Panel from 'primevue/panel';
-
 import type { Ref } from 'vue';
-import type { StepperProps } from 'primevue/stepper';
-import type { StepperState } from 'primevue/stepper';
+import type { StepperProps, StepperState } from 'primevue/stepper';
 
-import Step1_About from '@/bcap/apps/Permit/SubmitApplication/steps/Step1_About.vue';
-import Step2_Prelim from '@/bcap/apps/Permit/SubmitApplication/steps/Step2_Prelim.vue';
-import Step3_Details1 from '@/bcap/apps/Permit/SubmitApplication/steps/Step3_Details1.vue';
-import Step4_Personnel from '@/bcap/apps/Permit/SubmitApplication/steps/Step4_Personnel.vue';
-import Step5_Methods from '@/bcap/apps/Permit/SubmitApplication/steps/Step5_Methods.vue';
-import Step6_Recordings from '@/bcap/apps/Permit/SubmitApplication/steps/Step6_Recordings.vue';
-import Step7_MaterialCollection from '@/bcap/apps/Permit/SubmitApplication/steps/Step7_MaterialCollection.vue';
-import Step8_Remains from '@/bcap/apps/Permit/SubmitApplication/steps/Step8_Remains.vue';
-import Step9_Repository from '@/bcap/apps/Permit/SubmitApplication/steps/Step9_Repository.vue';
-
-// import {
-//     type HeritageSiteType,
-//     getHeritageSite,
-// } from '@/bcrhp/schemas/heritage_site.ts';
-// import {
-//     submitHeritageSite,
-//     getBlankHeritageSite,
-//     getHeritageSiteById,
-// } from '@/bcrhp/api.ts';
-import Step99_Review from '@/bcap/apps/Permit/SubmitApplication/steps/Step99_Review.vue';
+import Step1_About from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step1_About.vue';
+import Step2_Overview from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step2_Overview.vue';
+import Step3_Personnel from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step3_Personnel.vue';
+import Step4_Methods from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step4_Methods.vue';
+import Step5_Recordings from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step5_Recordings.vue';
+import Step6_Materials from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step6_Materials.vue';
+import Step7_Remains from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step7_Remains.vue';
+import Step8_Repository from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step8_Repository.vue';
+import Step99_Review from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
-// import { getSiteName } from '@/bcrhp/schemas/heritage_site/site_names.ts';
-// import { getStatementOfSignificance } from '@/bcrhp/schemas/heritage_site/bc_statement_of_significance.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
+import {
+    submitInvestigation,
+    fetchDraft,
+    createDraft,
+} from '@/bcap/apps/Permit/api.ts';
+import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
 
 const submissionErrors = ref([] as ErrorMessage[]);
 const submitted = ref(false);
 const submitting = ref(false);
 const devMode = ref(true);
 const isDataLoaded = ref(false);
+const graphSlug = 'investigation';
+const draftId = ref<string | null>(null);
+const draftData = ref<ArchesDraftData>({});
+const finalizedResourceData = ref<PermitApplicationResponse | null>(null);
+const route = useRoute();
 
-//placeholder function for final submission
-// const submitNewSiteData = async () => {
-//     console.log('submit Heritage Site', heritageSite);
-//     submitting.value = true;
-//     submissionErrors.value = [];
-//     submitHeritageSite(heritageSite.value)
-//         .then((updatedHeritageSite) => {
-//             heritageSite.value =
-//                 updatedHeritageSite as Promise<HeritageSiteType>;
-//             myStepper.value.d_value++;
-//             // Didn't throw an exception so the last step is valid.
-//             setCurrentStepValid(true, myStepper.value.d_value);
-//             submissionErrors.value = [];
-//             submitting.value = false;
-//         })
-//         .catch((error) => {
-//             console.log('raw error', error);
-//             submissionErrors.value = parseBackendError(error);
-//             submitting.value = false;
-//         });
-// };
+provide('draftId', draftId);
+provide('draftData', draftData);
 
-// const parseBackendError = (backendError: any): ErrorMessage[] => {
-//     const payload = backendError?.response?.data || backendError;
-//     const type = payload?.type || 'Validation Error';
-//     const messageStr = payload?.message || '';
-//     const errorMatches = [
-//         ...messageStr.matchAll(
-//             /'([^']+)'\s*:\s*\[ErrorDetail\(string=".*?\s*-\s*(.*?)",/g,
-//         ),
-//     ];
-//
-//     if (errorMatches.length > 0) {
-//         return errorMatches.map((match) => ({
-//             type: type,
-//             error: match[1].replace('_', ' ').toUpperCase(),
-//             message: match[2],
-//         }));
-//     }
-//
-//     return [
-//         {
-//             type: type,
-//             error: payload?.error || 'Submission Failed',
-//             message:
-//                 typeof messageStr === 'string'
-//                     ? messageStr
-//                     : 'Please review your inputs.',
-//         },
-//     ];
-// };
+const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
+    if (!finalizedResourceData.value?.aliased_data) return null;
+    return finalizedResourceData.value
+        .aliased_data as unknown as ArchesDraftData;
+});
+
+const submitNewSiteData = async (): Promise<boolean> => {
+    submitting.value = true;
+    submissionErrors.value = [];
+
+    try {
+        if (!draftId.value) throw new Error('No active draft found.');
+
+        const response = await submitInvestigation(
+            draftId.value,
+            draftData.value,
+        );
+
+        if (response) {
+            finalizedResourceData.value = response;
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Submission failed:', error);
+        const errorMessage =
+            error instanceof Error
+                ? error.message
+                : 'An unknown error occurred.';
+
+        submissionErrors.value.push({
+            type: 'Submission Error',
+            error: 'Submission Failed',
+            message: errorMessage,
+        });
+        return false;
+    } finally {
+        submitting.value = false;
+    }
+};
 
 const print = () => {
     window.print();
@@ -103,8 +92,13 @@ const print = () => {
 const activateNextStep = async () => {
     if (currentStep.value === steps.length) {
         print();
-        // } else if (currentStep.value === 11) {
-        //     submitNewSiteData();
+    } else if (currentStep.value === steps.length - 1) {
+        const success = await submitNewSiteData();
+
+        if (success) {
+            myStepper.value.d_value++;
+            setCurrentStepValid(true, myStepper.value.d_value);
+        }
     } else {
         myStepper.value.d_value++;
         setCurrentStepValid(
@@ -155,10 +149,6 @@ const isValid = (step: number) => {
     return stepValid;
 };
 
-// const printDetails = () => {
-//     console.log('printDetails');
-// };
-
 const stepperProps: Ref<StepperProps | null> = ref(null);
 const stepperState: Ref<StepperState | null> = ref(null);
 const myStepper = ref();
@@ -172,23 +162,14 @@ const step7 = ref();
 const step8 = ref();
 const step9 = ref();
 const step10 = ref();
-const step11 = ref();
-const step12 = ref();
-const step13 = ref();
-const step14 = ref();
-const step15 = ref();
-const step99 = ref();
 const steps: Ref[] = [];
 let lastStep = 1;
+
 const currentStep = computed(() => {
     return myStepper.value?.d_value;
 });
-// const heritageSite: Ref<HeritageSiteType> = ref(getHeritageSite());
 
-// provide('heritageSite', heritageSite);
-
-onMounted(() => {
-    console.log(submissionErrors);
+onMounted(async () => {
     steps.push(
         step1,
         step2,
@@ -200,33 +181,26 @@ onMounted(() => {
         step8,
         step9,
         step10,
-        step11,
-        step12,
-        step13,
-        step14,
-        step15,
-        step99,
     );
 
-    // if (siteId) {
-    //     getHeritageSiteById(siteId).then((existingData) => {
-    //         heritageSite.value = existingData as unknown as HeritageSiteType;
-    //
-    //         isDataLoaded.value = true;
-    //         console.log('existing data object', heritageSite.value);
-    //     });
-    // } else {
-    // getBlankHeritageSite().then((response) => {
-    //     heritageSite.value = response as unknown as HeritageSiteType;
-    //     isDataLoaded.value = true;
-    // });
-    // }
-    isDataLoaded.value = true;
+    try {
+        const targetDraftId = route.query.draftId;
+        const draft = targetDraftId
+            ? await fetchDraft(graphSlug, targetDraftId as string)
+            : await createDraft(graphSlug);
+        draftId.value = draft.id;
+        draftData.value = draft.data || {};
+
+        isDataLoaded.value = true;
+    } catch (error) {
+        console.error('Failed to initialize draft:', error);
+        isDataLoaded.value = true;
+    }
 });
 
 const nextLabel = computed(() => {
     if (currentStep.value === steps.length) return 'Print';
-    return currentStep.value < steps.length - 1 ? 'Next' : 'Submit';
+    return currentStep.value < steps.length - 1 ? 'Next' : 'Create Application';
 });
 
 const showPrevious = computed(() => {
@@ -243,8 +217,8 @@ const showDebug = ref(false);
         <ProgressSpinner />
     </div>
     <div
+        v-show="showDebug"
         id="debug-div"
-        :v-show="showDebug"
         class="debug-step"
         :class="{ 'show-debug': showDebug }"
     >
@@ -276,24 +250,31 @@ const showDebug = ref(false);
                     <StepList>
                         <Step :value="1">Submission Information</Step>
                         <Step :value="2">Preamble</Step>
-                        <Step :value="3">Details 1</Step>
-                        <Step :value="4">Personnel</Step>
-                        <Step :value="5">Methods</Step>
-                        <Step :value="6">Recordings and Site Evaluation</Step>
-                        <Step :value="7">Collection of Materials</Step>
-                        <Step :value="8">Ancestral Remains</Step>
-                        <Step :value="9">Repositories and Curation</Step>
-                        <Step :value="10">Permit Deliverables</Step>
-                        <Step :value="11">Reports Expectations</Step>
-                        <Step :value="12">Schedule of Deliverables</Step>
-                        <Step :value="13">References</Step>
-                        <Step :value="14">Sign Off</Step>
-                        <Step :value="15">Review Submission</Step>
-                        <Step :value="16">Submission Complete</Step>
+                        <Step :value="3">Personnel</Step>
+                        <Step :value="4">Methods</Step>
+                        <Step :value="5">Recordings and Site Evaluation</Step>
+                        <Step :value="6">Collection of Materials</Step>
+                        <Step :value="7">Ancestral Remains</Step>
+                        <Step :value="8">Repositories and Curation</Step>
+                        <Step :value="9">Review Submission</Step>
+                        <Step :value="10">Submission Complete</Step>
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
-                    <h1>Submit Permit Application</h1>
+                    <h1>Submit Investigation</h1>
+                    <div
+                        v-if="submissionErrors.length > 0"
+                        class="red"
+                    >
+                        <div
+                            v-for="(err, index) in submissionErrors"
+                            :key="index"
+                            class="red"
+                        >
+                            <strong>{{ err.error }}:</strong>
+                            {{ err.message }}
+                        </div>
+                    </div>
                     <StepPanels>
                         <StepperNavigation
                             :step-number="currentStep"
@@ -308,157 +289,94 @@ const showDebug = ref(false);
                         </StepPanel>
                         <StepPanel :value="2">
                             <h3 class="heading-margin-bottom">Preamble</h3>
-                            <Step2_Prelim
+                            <Step2_Overview
                                 ref="step2"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 2)
                                 "
-                            ></Step2_Prelim>
+                            ></Step2_Overview>
                         </StepPanel>
                         <StepPanel :value="3">
-                            <h3 class="heading-margin-bottom">Details 1</h3>
-                            <Step3_Details1
+                            <h3 class="heading-margin-bottom">Personnel</h3>
+                            <Step3_Personnel
                                 ref="step3"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 3)
                                 "
-                            ></Step3_Details1>
+                            ></Step3_Personnel>
                         </StepPanel>
-
                         <StepPanel :value="4">
-                            <h3 class="heading-margin-bottom">Personnel</h3>
-                            <Step4_Personnel
+                            <h3 class="heading-margin-bottom">Methods</h3>
+                            <Step4_Methods
                                 ref="step4"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 4)
                                 "
-                            ></Step4_Personnel>
+                            ></Step4_Methods>
                         </StepPanel>
-
                         <StepPanel :value="5">
-                            <h3 class="heading-margin-bottom">Methods</h3>
-                            <Step5_Methods
+                            <h3 class="heading-margin-bottom">
+                                Recordings and Site Evaluation
+                            </h3>
+                            <Step5_Recordings
                                 ref="step5"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 5)
                                 "
-                            ></Step5_Methods>
+                            ></Step5_Recordings>
                         </StepPanel>
                         <StepPanel :value="6">
                             <h3 class="heading-margin-bottom">
-                                Recordings and Site Evaluation
+                                Collection of Materials
                             </h3>
-                            <Step6_Recordings
+                            <Step6_Materials
                                 ref="step6"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 6)
                                 "
-                            ></Step6_Recordings>
+                            ></Step6_Materials>
                         </StepPanel>
                         <StepPanel :value="7">
                             <h3 class="heading-margin-bottom">
-                                Collection of Materials
+                                Ancestral Remains
                             </h3>
-                            <Step7_MaterialCollection
+                            <Step7_Remains
                                 ref="step7"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 7)
                                 "
-                            ></Step7_MaterialCollection>
+                            ></Step7_Remains>
                         </StepPanel>
                         <StepPanel :value="8">
                             <h3 class="heading-margin-bottom">
-                                Ancestral Remains
+                                Repositories and Curation
                             </h3>
-                            <Step8_Remains
+                            <Step8_Repository
                                 ref="step8"
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, 8)
                                 "
-                            ></Step8_Remains>
+                            ></Step8_Repository>
                         </StepPanel>
                         <StepPanel :value="9">
-                            <h3 class="heading-margin-bottom">
-                                Repositories and Curation
-                            </h3>
-                            <Step9_Repository
-                                ref="step9"
-                                @update:step-is-valid="
-                                    setCurrentStepValid($event, 9)
-                                "
-                            ></Step9_Repository>
-                        </StepPanel>
-                        <StepPanel :value="10">
-                            <h3 class="heading-margin-bottom">
-                                Permit Deliverables
-                            </h3>
-                            <Step10_Permit_Deliverables
-                                ref="step10"
-                                @update:step-is-valid="
-                                    setCurrentStepValid($event, 10)
-                                "
-                            ></Step10_Permit_Deliverables>
-                        </StepPanel>
-                        <StepPanel :value="11">
-                            <h3 class="heading-margin-bottom">
-                                Reports and Expectations
-                            </h3>
-                            <Step11_Reports_Expectations
-                                ref="step11"
-                                @update:step-is-valid="
-                                    setCurrentStepValid($event, 11)
-                                "
-                            ></Step11_Reports_Expectations>
-                        </StepPanel>
-                        <StepPanel :value="12">
-                            <h3 class="heading-margin-bottom">
-                                Schedule of Deliverables
-                            </h3>
-                            <Step12_Schedule_of_Deliverables
-                                ref="step12"
-                                @update:step-is-valid="
-                                    setCurrentStepValid($event, 12)
-                                "
-                            ></Step12_Schedule_of_Deliverables>
-                        </StepPanel>
-                        <StepPanel :value="13">
-                            <h3 class="heading-margin-bottom">References</h3>
-                            <Step13_References
-                                ref="step13"
-                                @update:step-is-valid="
-                                    setCurrentStepValid($event, 13)
-                                "
-                            ></Step13_References>
-                        </StepPanel>
-                        <StepPanel :value="14">
-                            <h3 class="heading-margin-bottom">
-                                Sign-off and Certification
-                            </h3>
-                            <Step14_SignOff
-                                ref="step14"
-                                @update:step-is-valid="
-                                    setCurrentStepValid($event, 14)
-                                "
-                            ></Step14_SignOff>
-                        </StepPanel>
-
-                        <StepPanel :value="15">
                             <h3 class="heading-margin-bottom">
                                 Review Submission
                             </h3>
                             <Step99_Review
-                                ref="step15"
+                                ref="step9"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 15)
+                                    setCurrentStepValid($event, 9)
                                 "
                             ></Step99_Review>
                         </StepPanel>
-                        <StepPanel :value="16">
+                        <StepPanel :value="10">
                             <h3 class="heading-margin-bottom">Submitted</h3>
                             <Step99_Review
-                                ref="step99"
+                                ref="step10"
+                                :is-submitted-view="true"
+                                :resource-data="finalizedDataForReview"
                                 @update:step-is-valid="
-                                    setCurrentStepValid($event, 16)
+                                    setCurrentStepValid($event, 10)
                                 "
                             ></Step99_Review>
                         </StepPanel>
@@ -475,10 +393,19 @@ const showDebug = ref(false);
             </div>
         </Stepper>
     </Panel>
+    <br />
+    <br />
+    <br />
 </template>
+
 <style>
 @import url('@/bcgov_arches_common/css/arches_common.css');
 .language-selector {
+    display: none;
+}
+/* The shared nav drops an empty block spacer in when Previous is hidden, which
+   pushes Next onto its own line. Hiding it keeps Next on the button row. */
+.stepper-nav-panel > div {
     display: none;
 }
 @media print {
@@ -488,48 +415,6 @@ const showDebug = ref(false);
     .sidenav,
     .debug-toggle {
         display: none !important;
-    }
-
-    html,
-    body {
-        height: auto !important;
-        overflow: visible !important;
-    }
-
-    .main-content-area,
-    .page-wrapper,
-    main {
-        position: static !important;
-        overflow: visible !important;
-        height: auto !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: block !important;
-    }
-
-    .bcgov-stepper,
-    .bcgov-vertical-step-panels {
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        flex: none !important;
-    }
-
-    .p-panel,
-    .p-panel-content,
-    .p-panel-header {
-        padding-top: 0 !important;
-        margin-top: 0 !important;
-        border: none !important;
-    }
-
-    .bcgov-vertical-step-panels h1 {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
     }
 }
 .red {
@@ -550,28 +435,6 @@ const showDebug = ref(false);
     left: 0;
     top: 0;
 }
-.dashboard-card {
-    font-size: 1.1rem;
-    margin: 1rem;
-    max-width: 33%;
-}
-
-.p-card-content {
-    font-size: 1rem;
-}
-
-li {
-    color: var(--p-primary-color);
-}
-
-.step-title {
-    margin-bottom: 1rem;
-    font-size: 21px;
-    font-weight: bold;
-    line-height: inherit;
-    color: #333;
-}
-
 .debug-step {
     max-width: 80%;
     margin-top: 100px;
@@ -581,11 +444,9 @@ li {
     word-wrap: anywhere;
     color: darkgray;
 }
-
 .show-debug {
     display: inline-block !important;
 }
-
 .debug-toggle {
     position: absolute;
     top: 0;

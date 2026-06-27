@@ -61,7 +61,13 @@ export const getProcessRequirementData = async (
         throw new Error(text || response.statusText);
     }
 
-    return zProcessRequirement.parse(await response.json());
+    const json = await response.json();
+    const result = zProcessRequirement.safeParse(json);
+    if (!result.success) {
+        console.warn('ProcessRequirement failed validation:', result.error);
+        return json as ProcessRequirement;
+    }
+    return result.data;
 };
 
 export type UnlinkedContributor = z.infer<typeof zContributorOption>;

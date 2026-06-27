@@ -5869,10 +5869,12 @@ components:
       type: object
       properties:
         node_value:
-          type: string
-          format: date-time
           nullable: true
-          description: Enter date
+          anyOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
         display_value:
           type: string
           readOnly: true

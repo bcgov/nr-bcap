@@ -60,7 +60,10 @@ export const zContributorOption = z.object({
 });
 
 export const zDateAliasedNodeData = z.object({
-    node_value: z.iso.datetime({ offset: true, local: true }).nullable(),
+    node_value: z.union([
+        z.iso.date(),
+        z.iso.datetime({ offset: true, local: true })
+    ]).nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
@@ -4411,7 +4414,10 @@ export const zConceptAliasedNodeDataWritable = z.object({
 });
 
 export const zDateAliasedNodeDataWritable = z.object({
-    node_value: z.iso.datetime({ offset: true, local: true }).nullable()
+    node_value: z.union([
+        z.iso.date(),
+        z.iso.datetime({ offset: true, local: true })
+    ]).nullable()
 });
 
 export const zFileListAliasedNodeDataWritable = z.object({
