@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import GenericReviewSummary from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
-import { getBasicInfoFields, type PermitAliasedData } from '@/bcap/util.ts';
-import type { ArchesDraftData } from '@/bcap/types.ts';
+import { getBasicInfoFields } from '@/bcap/util.ts';
+import type { ArchesDraftData, PermitAliasedData } from '@/bcap/types.ts';
 
 defineProps<{
     isSubmittedView?: boolean;

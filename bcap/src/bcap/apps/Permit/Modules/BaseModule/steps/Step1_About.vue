@@ -7,7 +7,8 @@ const isValid = () => {
 defineExpose({ isValid });
 </script>
 <template>
-    <FieldSet legend="Before you begin">
+    <h3 class="mb-2 font-bold">Before you begin</h3>
+    <FieldSet>
         <div class="mb-2">
             <p>Stuff you need to know</p>
         </div>
@@ -41,14 +42,6 @@ defineExpose({ isValid });
                 </ul>
             </li>
         </ul>
-        <div class="mt-4">
-            <span class="red">*</span>
-            The system does not have a save for later or draft function, so it
-            is important to have all information ready before starting. It is
-            highly recommended to complete the remaining steps if information is
-            available to improve the historic site’s search ability on the
-            register.
-        </div>
     </FieldSet>
 </template>
 

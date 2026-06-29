@@ -12,12 +12,20 @@ across itself (and bcap's FILENAME_GENERATOR needs the tile to build the path)."
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
+from arches.app.models.models import ResourceInstance
+from arches.app.utils.permission_backend import user_can_edit_resource
 from arches_querysets.rest_framework.permissions import ResourceEditor
 
 from bcap.models.resource_draft import ResourceDraft
 from bcap.util.graph import get_current_graph
+
+# Top-level draft key linking a draft to the resource it was started from, so
+# that resource's page can list its own drafts. Not a graph alias; stripped at
+# submit. The user must be able to reach the referenced resource to set it.
+PARENT_RESOURCE_KEY = "parent_resource_id"
 
 
 class ResourceDraftSerializer(serializers.ModelSerializer):
@@ -52,12 +60,31 @@ class ResourceDraftViewMixin:
             return drafts
         return drafts.filter(user=self.request.user)
 
+    def verify_parent_resource_access(self, data):
+        """Block linking a draft to a resource the user can't reach, or the
+        draft could be surfaced against someone else's resource."""
+        parent_id = (data or {}).get(PARENT_RESOURCE_KEY)
+        if not parent_id:
+            return
+        user = self.request.user
+        if user.is_superuser:
+            return
+        parent = ResourceInstance.objects.filter(pk=parent_id).first()
+        if parent is None:
+            raise PermissionDenied("You do not have access to the linked resource.")
+        if parent.principaluser_id == user.id:
+            return
+        if user_can_edit_resource(user, resourceid=parent_id):
+            return
+        raise PermissionDenied("You do not have access to the linked resource.")
+
 
 @extend_schema(tags=["External: resource_draft"])
 class ResourceDraftListCreateView(ResourceDraftViewMixin, ListCreateAPIView):
     """GET the current user's drafts for a graph; POST a new draft."""
 
     def perform_create(self, serializer):
+        self.verify_parent_resource_access(serializer.validated_data.get("data"))
         graph = get_current_graph(self.kwargs["graph_slug"])
         serializer.save(
             user=self.request.user,
@@ -76,6 +103,8 @@ class ResourceDraftDetailView(ResourceDraftViewMixin, RetrieveUpdateDestroyAPIVi
     def perform_update(self, serializer):
         if serializer.partial and "data" in serializer.validated_data:
             merged = {**serializer.instance.data, **serializer.validated_data["data"]}
+            self.verify_parent_resource_access(merged)
             serializer.save(data=merged)
         else:
+            self.verify_parent_resource_access(serializer.validated_data.get("data"))
             serializer.save()

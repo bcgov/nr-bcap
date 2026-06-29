@@ -80,7 +80,7 @@ router.beforeEach(async (to, _from, next) => {
     <main>
         <div style="display: flex; flex: auto; flex-direction: row">
             <div
-                class="bcgov-main-content"
+                class="bcgov-main-content bc-form"
                 style="flex: auto; background-color: #e9e9e9"
             >
                 <RouterView />
@@ -106,8 +106,99 @@ main {
 </style>
 
 <style>
-#bcrhp-mounting-point {
-    //font-size: 0.8rem;
+@import url('@/bcap/styles/bc-theme.css');
+
+/* bc-theme forces BCSans on .bc-form *, and only restores the FA4/5 class names
+   (.fa/.fas/.far). This app uses Font Awesome 6 style classes, so restore those
+   too or the glyphs blank out to boxes. */
+.bc-form .fa-solid,
+.bc-form .fa-regular,
+.bc-form .fa-light,
+.bc-form .fa-thin {
+    font-family: 'Font Awesome 6 Free';
+}
+.bc-form .fa-brands,
+.bc-form .fab {
+    font-family: 'Font Awesome 6 Brands';
+}
+
+/* The base theme sizes plain Select/MultiSelect labels but not tree-backed
+   select labels or the string-widget inputs, so those render off-size. Bring
+   them to the same bcgov form size as the rest of the fields. */
+.bc-form input,
+.bc-form textarea,
+.bc-form .p-treeselect-label {
+    font-size: 1.15rem;
+}
+
+/* Select/TreeSelect/MultiSelect panels teleport to <body>, outside the .bc-form
+   wrapper, so the bcgov option theming can't reach them through that class.
+   Apply it to the overlay panels directly. */
+.p-select-overlay,
+.p-treeselect-overlay,
+.p-multiselect-overlay {
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+    border: 1px solid #d1d5db;
+}
+.p-select-overlay *,
+.p-treeselect-overlay *,
+.p-multiselect-overlay * {
+    font-size: 1.15rem;
+}
+.p-select-option.p-focus,
+.p-treeselect-overlay .p-tree-node-content:hover,
+.p-multiselect-option.p-focus {
+    background: var(--bc-panel);
+}
+.p-select-option.p-select-option-selected,
+.p-treeselect-overlay .p-tree-node-content.p-tree-node-selected,
+.p-multiselect-option.p-multiselect-option-selected {
+    background: var(--bc-selected);
+    color: var(--bc-navy);
+}
+
+/* TreeSelect options render as tree nodes, whose panel class differs from the
+   plain Select overlay. PrimeVue's runtime styles win on load order, so force
+   the size to match the other dropdowns. */
+.p-tree-node-label {
+    font-size: 1.15rem !important;
+}
+
+/* PrimeVue draws a blue focus/selected indicator on the active tree option that
+   shows as two bars across the row. Neutralize it wherever it lives: the node,
+   its row, the selected/selectable states, and their pseudo-elements. */
+.p-tree-node,
+.p-tree-node:focus,
+.p-tree-node:focus-visible,
+.p-tree-node-content,
+.p-tree-node-content.p-focus,
+.p-tree-node-content.p-tree-node-selectable,
+.p-tree-node-content.p-tree-node-selected,
+.p-tree-node-content:focus,
+.p-tree-node-content:focus-visible,
+.p-tree-node-content::before,
+.p-tree-node-content::after {
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+    background-image: none !important;
+    --p-focus-ring-width: 0 !important;
+    --p-focus-ring-shadow: none !important;
+}
+
+/* The base theme mutes placeholder text for plain selects and inputs but not
+   the tree-backed select, so its placeholder reads darker. Match it. */
+.bc-form .p-treeselect-label.p-placeholder {
+    color: var(--bc-muted);
+}
+
+/* The base theme borders plain Select/MultiSelect but not the tree-backed
+   select, so it loses the form's default border. Bring it over. */
+.bc-form .p-treeselect {
+    width: 100%;
+    border: 1px solid var(--bc-border);
+    border-radius: 6px;
+    background: #ffffff;
 }
 
 .bcgov-vertical-steps > .p-steplist {
@@ -129,11 +220,6 @@ main {
     flex-direction: row;
 }
 
-.p-tooltip-text,
-.p-button-label,
-.p-inputtext {
-    //font-size: 0.8rem !important;
-}
 .widget-label {
     margin-top: 1rem;
 }

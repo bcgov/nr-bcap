@@ -1,9 +1,12 @@
 import arches from 'arches';
 import { apiFetch } from '@/bcap/api.ts';
-import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
-import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
-import * as z from 'zod';
-import { type PermitAliasedData } from '@/bcap/util.ts';
+import type {
+    ArchesDraftData,
+    DraftNode,
+    PermitApplicationResponse,
+} from '@/bcap/types.ts';
+import { type PermitAliasedData } from '@/bcap/types.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export interface ResourceDraftResponse {
     id: string;
@@ -20,12 +23,21 @@ export const fetchDraft = async (
     return response.json();
 };
 
+// parentResourceId, when given, is stored as a top-level key in the draft blob
+// (not in aliased_data, which is validated against the graph on submit) so the
+// parent resource's page can filter its own drafts. The backend verifies the
+// user can access that resource before saving. It is stripped at submit time.
 export const createDraft = async (
     graphSlug: string,
+    parentResourceId?: string,
 ): Promise<ResourceDraftResponse> => {
+    const data: { parent_resource_id?: string } = {};
+    if (parentResourceId) {
+        data.parent_resource_id = parentResourceId;
+    }
     const response = await apiFetch(arches.urls.api_resource_draft(graphSlug), {
         method: 'POST',
-        body: { data: {} },
+        body: { data },
     });
     return response.json();
 };
@@ -33,7 +45,12 @@ export const createDraft = async (
 // Graphs that have a draft-backed workflow on the external dashboard. Each
 // draft response carries its own graph_slug, so the dashboard can label and
 // resume it into the right module.
-const DRAFT_GRAPHS = ['permit_application', 'investigation'];
+const DRAFT_GRAPHS = [
+    GraphSlug.PermitApplication,
+    GraphSlug.Investigation,
+    GraphSlug.Inspection,
+    GraphSlug.Alteration,
+];
 
 export const fetchDrafts = async () => {
     const perGraph = await Promise.all(
@@ -74,8 +91,6 @@ export const fetchMyProjects = async () => {
         return [];
     }
 };
-
-export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
 
 export const submitApplication = async (
     draftId: string,
@@ -131,9 +146,13 @@ export const submitInvestigation = async (
     payload: ArchesDraftData,
 ): Promise<PermitApplicationResponse> => {
     try {
+        // parent_resource_id is draft-only bookkeeping, not a graph alias, so
+        // drop it before the create view validates the body against the graph.
+        const aliasedData = { ...payload };
+        delete aliasedData.parent_resource_id;
         const response = await apiFetch(arches.urls.api_investigation, {
             method: 'POST',
-            body: { draft_id: draftId, aliased_data: payload },
+            body: { draft_id: draftId, aliased_data: aliasedData },
         });
         const finalResource = await response.json();
         await deleteDraft('investigation', draftId);
@@ -160,7 +179,6 @@ export const fetchPermitDetails = async (
     return rawJson.aliased_data as PermitAliasedData;
 };
 
-// Submit permit date BROKEN I think it needs a backend fix
 export const patchPermitSubmissionDate = async (
     permitId: string,
     adminPayload: {

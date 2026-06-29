@@ -26,7 +26,6 @@ class GraphSlugs:
     PERMIT_APPLICATION = "permit_application"
     PROCESS_REQUIREMENT = "process_requirement"
     PUBLICATION = "publication"
-    # The Requirement Submission resource model still carries its placeholder slug.
-    REQUIREMENT_SUBMISSION = "new_resource_model"
+    REQUIREMENT_SUBMISSION = "requirement_submission"
     SITE_SUBMISSION = "site_submission"
     SITE_VISIT = "site_visit"

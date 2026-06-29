@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import { zApiHcaPermitListResponse } from '@/bcap/client/zod.gen.ts';
+import {
+    zApiHcaPermitListResponse,
+    zPermitApplication,
+    zResourceDraft,
+    zInvestigationResourceAliasedDataWritable,
+    zPermitApplicationResourceAliasedDataWritable,
+} from '@/bcap/client/zod.gen.ts';
 
 import type {
     ReferenceSelectValue,
@@ -19,6 +25,30 @@ export type DraftNodeGroup = {
 };
 
 export type ArchesDraftData = Record<string, DraftNodeGroup>;
+
+export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
+
+export type PermitAliasedData = NonNullable<
+    z.infer<typeof zPermitApplication>['aliased_data']
+>;
+
+export type ResourceDraft = z.infer<typeof zResourceDraft>;
+
+// A permit application draft narrows the generic draft to the permit resource's
+// writable (POST) aliased data, which carries the graph's required fields.
+export type PermitApplicationDraft = ResourceDraft & {
+    data?: z.infer<typeof zPermitApplicationResourceAliasedDataWritable>;
+};
+
+// An investigation draft narrows the generic draft to the investigation
+// resource's writable (POST) aliased data, which carries the graph's required
+// fields. parent_resource_id is draft-only bookkeeping (the resource it was
+// started from); it is stripped before submit and is not part of the graph.
+export type InvestigationDraft = ResourceDraft & {
+    data?: z.infer<typeof zInvestigationResourceAliasedDataWritable> & {
+        parent_resource_id?: string;
+    };
+};
 
 export interface TileReference {
     resourceinstance_id: string;

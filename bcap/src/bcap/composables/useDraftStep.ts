@@ -1,41 +1,38 @@
-import { inject, type Ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import * as z from 'zod';
-import { updateDraftValue } from '@/bcap/util.ts';
 import { buildTileValidation } from '@/bcap/validation.ts';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import type { ArchesDraftData } from '@/bcap/types.ts';
 
-// Shared wiring for a permit workflow step: draft injection, the inline-error
-// resolver, required-field gating, and the value-update handler. validationTile
-// is the tile whose required fields gate the step.
+// Per-step form glue, kept out of the global draft store because validation is
+// per-step: each step validates its own tile against its own schema. Pairs the
+// shared draft with one step's resolver and required-field gating (omit the
+// schema to skip validation). emit fires step validity after each edit so the
+// stepper can gate navigation.
 export function useDraftStep(
-    graphSlug: string,
-    tileSchema: z.ZodObject,
-    validationTile: string,
-    emit: (event: 'update:step-is-valid', valid: boolean) => void,
+    tileSchema?: z.ZodObject,
+    validationTile?: string,
+    emit?: (event: 'update:step-is-valid', valid: boolean) => void,
 ) {
-    const draftId = inject<Ref<string | null>>('draftId');
-    const draftData = inject<Ref<ArchesDraftData>>('draftData');
-    const { resolver, isComplete } = buildTileValidation(tileSchema);
+    const store = useDraftStore();
+    const { draftData } = storeToRefs(store);
+    const validation = tileSchema ? buildTileValidation(tileSchema) : null;
 
     const isValid = () =>
-        isComplete(draftData?.value?.[validationTile]?.aliased_data);
+        validation && validationTile
+            ? validation.isComplete(
+                  draftData.value?.[validationTile]?.aliased_data,
+              )
+            : true;
 
     const updateValue = (
         newValue: AliasedNodeData,
         attribute_name: string,
         node_group_alias: string | string[],
     ) => {
-        updateDraftValue(
-            draftData?.value,
-            draftId?.value,
-            graphSlug,
-            newValue,
-            attribute_name,
-            node_group_alias,
-        );
-        emit('update:step-is-valid', isValid());
+        store.updateValue(newValue, attribute_name, node_group_alias);
+        emit?.('update:step-is-valid', isValid());
     };
 
-    return { draftData, resolver, isValid, updateValue };
+    return { draftData, resolver: validation?.resolver, isValid, updateValue };
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, provide, onMounted } from 'vue';
+import { computed, reactive, ref, onMounted } from 'vue';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { useRoute } from 'vue-router';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
@@ -23,47 +24,57 @@ import Step8_Repository from '@/bcap/apps/Permit/Modules/InvestigationModule/ste
 import Step99_Review from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
-import {
-    submitInvestigation,
-    fetchDraft,
-    createDraft,
-} from '@/bcap/apps/Permit/api.ts';
-import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
+import { submitInvestigation, fetchDraft } from '@/bcap/apps/Permit/api.ts';
+import type { PermitApplicationResponse } from '@/bcap/types.ts';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
-const submissionErrors = ref([] as ErrorMessage[]);
-const submitted = ref(false);
-const submitting = ref(false);
-const devMode = ref(true);
-const isDataLoaded = ref(false);
 const graphSlug = 'investigation';
-const draftId = ref<string | null>(null);
-const draftData = ref<ArchesDraftData>({});
-const finalizedResourceData = ref<PermitApplicationResponse | null>(null);
 const route = useRoute();
 
-provide('draftId', draftId);
-provide('draftData', draftData);
+const draft = useDraftStore();
+// The permit this investigation was started from. From the URL when starting
+// fresh, or the loaded draft's parent_resource_id when resuming.
+draft.initDraft(graphSlug, (route.query.permitId as string) ?? null);
+
+const state = reactive({
+    submissionErrors: [] as ErrorMessage[],
+    submitted: false,
+    submitting: false,
+    devMode: true,
+    isDataLoaded: false,
+    finalizedResourceData: null as PermitApplicationResponse | null,
+});
+
+const permitBackLink = computed(() =>
+    draft.parentPermitId
+        ? {
+              name: routeNames.permitDetails,
+              params: { id: draft.parentPermitId },
+              query: { module: graphSlug },
+          }
+        : null,
+);
 
 const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
-    if (!finalizedResourceData.value?.aliased_data) return null;
-    return finalizedResourceData.value
+    if (!state.finalizedResourceData?.aliased_data) return null;
+    return state.finalizedResourceData
         .aliased_data as unknown as ArchesDraftData;
 });
 
 const submitNewSiteData = async (): Promise<boolean> => {
-    submitting.value = true;
-    submissionErrors.value = [];
+    state.submitting = true;
+    state.submissionErrors = [];
 
     try {
-        if (!draftId.value) throw new Error('No active draft found.');
+        if (!draft.draftId) throw new Error('No active draft found.');
 
         const response = await submitInvestigation(
-            draftId.value,
-            draftData.value,
+            draft.draftId,
+            draft.draftData,
         );
 
         if (response) {
-            finalizedResourceData.value = response;
+            state.finalizedResourceData = response;
         }
 
         return true;
@@ -74,14 +85,14 @@ const submitNewSiteData = async (): Promise<boolean> => {
                 ? error.message
                 : 'An unknown error occurred.';
 
-        submissionErrors.value.push({
+        state.submissionErrors.push({
             type: 'Submission Error',
             error: 'Submission Failed',
             message: errorMessage,
         });
         return false;
     } finally {
-        submitting.value = false;
+        state.submitting = false;
     }
 };
 
@@ -136,14 +147,14 @@ const setCurrentStepValid = function (isValid: boolean, stepNumber: number) {
 };
 
 const isValid = (step: number) => {
-    if (devMode.value) return true;
+    if (state.devMode) return true;
     let stepValid = true;
 
     if (typeof steps[step - 1]?.value?.isValid === 'function') {
         stepValid = steps[step - 1]?.value?.isValid();
     }
     if (step === steps.length) {
-        submitted.value = true;
+        state.submitted = true;
     }
 
     return stepValid;
@@ -184,17 +195,22 @@ onMounted(async () => {
     );
 
     try {
+        // Only load an existing draft. A new one isn't created until the first
+        // edit (store.ensureDraftId), so an abandoned form leaves no empty draft.
+        // parentPermitId for a fresh draft already came from the URL via initDraft.
         const targetDraftId = route.query.draftId;
-        const draft = targetDraftId
-            ? await fetchDraft(graphSlug, targetDraftId as string)
-            : await createDraft(graphSlug);
-        draftId.value = draft.id;
-        draftData.value = draft.data || {};
+        if (targetDraftId) {
+            const loaded = await fetchDraft(graphSlug, targetDraftId as string);
+            draft.loadDraft(loaded.id, loaded.data || {});
+            draft.parentPermitId =
+                (loaded.data as { parent_resource_id?: string })
+                    ?.parent_resource_id ?? draft.parentPermitId;
+        }
 
-        isDataLoaded.value = true;
+        state.isDataLoaded = true;
     } catch (error) {
         console.error('Failed to initialize draft:', error);
-        isDataLoaded.value = true;
+        state.isDataLoaded = true;
     }
 });
 
@@ -211,7 +227,7 @@ const showDebug = ref(false);
 
 <template>
     <div
-        v-if="submitting"
+        v-if="state.submitting"
         class="submit-overlay"
     >
         <ProgressSpinner />
@@ -230,14 +246,14 @@ const showDebug = ref(false);
     ></i>
     <Panel class="full-height">
         <div
-            v-if="!isDataLoaded"
+            v-if="!state.isDataLoaded"
             style="display: flex; justify-content: center; padding: 3rem"
         >
             <ProgressSpinner />
         </div>
 
         <Stepper
-            v-if="isDataLoaded"
+            v-if="state.isDataLoaded"
             ref="myStepper"
             :state="stepperState"
             :props="stepperProps"
@@ -261,13 +277,21 @@ const showDebug = ref(false);
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
+                    <RouterLink
+                        v-if="permitBackLink && currentStep === 1"
+                        :to="permitBackLink"
+                        class="back-to-permit"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                        Back to permit
+                    </RouterLink>
                     <h1>Submit Investigation</h1>
                     <div
-                        v-if="submissionErrors.length > 0"
+                        v-if="state.submissionErrors.length > 0"
                         class="red"
                     >
                         <div
-                            v-for="(err, index) in submissionErrors"
+                            v-for="(err, index) in state.submissionErrors"
                             :key="index"
                             class="red"
                         >
@@ -379,6 +403,14 @@ const showDebug = ref(false);
                                     setCurrentStepValid($event, 10)
                                 "
                             ></Step99_Review>
+                            <RouterLink
+                                v-if="permitBackLink"
+                                :to="permitBackLink"
+                                class="back-to-permit mt-4"
+                            >
+                                <i class="fa-solid fa-chevron-left"></i>
+                                Back to permit application
+                            </RouterLink>
                         </StepPanel>
                         <StepperNavigation
                             :step-number="currentStep"
@@ -403,8 +435,15 @@ const showDebug = ref(false);
 .language-selector {
     display: none;
 }
-/* The shared nav drops an empty block spacer in when Previous is hidden, which
-   pushes Next onto its own line. Hiding it keeps Next on the button row. */
+/* Keep the nav buttons together on the left with room above and below so they
+   never crowd the step content. Hide the empty spacer the shared nav inserts
+   when Previous is hidden so Next sits at the left on the first step. */
+.stepper-nav-panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
 .stepper-nav-panel > div {
     display: none;
 }
@@ -419,6 +458,24 @@ const showDebug = ref(false);
 }
 .red {
     color: red;
+}
+.back-to-permit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--bc-navy, #003366);
+    text-decoration: none;
+}
+.back-to-permit .fa-chevron-left {
+    font-size: 0.85em;
+    line-height: 1;
+    position: relative;
+    top: 1px;
+}
+.back-to-permit:hover {
+    color: #1a5a96;
+    text-decoration: none;
 }
 </style>
 <style scoped>

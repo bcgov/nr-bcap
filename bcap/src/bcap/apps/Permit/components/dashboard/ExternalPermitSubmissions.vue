@@ -13,12 +13,14 @@ import {
     fetchMyProjects,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import type { PermitApplicationDraft } from '@/bcap/types.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
 const { $gettext } = useGettext();
 const router = useRouter();
-const savedDrafts = ref<ResourceDraft[]>([]);
+const savedDrafts = ref<PermitApplicationDraft[]>([]);
 const submittedProjects = ref<DashboardProject[]>([]);
 
 interface DashboardProject {
@@ -59,24 +61,6 @@ const dashboardTabs = [
     { label: 'Drafts', value: 'drafts' },
 ];
 
-interface ResourceDraft {
-    id: string;
-    created: string;
-    updated: string;
-    graph_slug: string;
-    data: {
-        application_identification?: {
-            aliased_data?: {
-                project_name?: {
-                    display_value: string;
-                    [key: string]: unknown;
-                };
-            };
-        };
-        [key: string]: unknown;
-    };
-}
-
 const workflowItems = ref([
     {
         id: 'base-module',
@@ -115,16 +99,16 @@ const DRAFT_WORKFLOWS: Record<string, { label: string; routeName: string }> = {
     },
 };
 
-const draftWorkflow = (draft: ResourceDraft) =>
+const draftWorkflow = (draft: PermitApplicationDraft) =>
     DRAFT_WORKFLOWS[draft.graph_slug] ?? DRAFT_WORKFLOWS.permit_application;
 
 const deleteState = reactive<{
     visible: boolean;
     busy: boolean;
-    draft: ResourceDraft | null;
+    draft: PermitApplicationDraft | null;
 }>({ visible: false, busy: false, draft: null });
 
-const confirmDelete = (draft: ResourceDraft) => {
+const confirmDelete = (draft: PermitApplicationDraft) => {
     deleteState.draft = draft;
     deleteState.visible = true;
 };
@@ -145,13 +129,18 @@ const performDelete = async () => {
 };
 
 const filteredDrafts = computed(() => {
-    if (!searchQuery.value) return savedDrafts.value;
+    // Only permit application drafts belong here; investigation drafts live on
+    // the permit's detail page.
+    const drafts = savedDrafts.value.filter(
+        (draft) => draft.graph_slug === GraphSlug.PermitApplication,
+    );
+    if (!searchQuery.value) return drafts;
     const lowerQuery = searchQuery.value.toLowerCase();
 
-    return savedDrafts.value.filter((draft) => {
+    return drafts.filter((draft) => {
         const title =
             draft.data?.application_identification?.aliased_data?.project_name
-                ?.display_value || 'Untitled Application';
+                ?.node_value?.en?.value || 'Untitled Application';
         return title.toLowerCase().includes(lowerQuery);
     });
 });
@@ -279,7 +268,7 @@ const openResourceReport = (resourceId: string) => {
                                     :label="
                                         draft.data?.application_identification
                                             ?.aliased_data?.project_name
-                                            ?.display_value ||
+                                            ?.node_value?.en?.value ||
                                         'Untitled Application'
                                     "
                                     :description="draftWorkflow(draft).label"
@@ -434,5 +423,9 @@ const openResourceReport = (resourceId: string) => {
 :deep(.subtitle) {
     color: #1a1a1a !important;
     font-size: 0.95rem !important;
+}
+
+:deep(.bodyTitle) {
+    line-height: 1.3 !important;
 }
 </style>

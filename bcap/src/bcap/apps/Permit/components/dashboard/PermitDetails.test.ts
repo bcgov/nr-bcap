@@ -5,12 +5,13 @@ import {
     fetchPermitDetails,
     patchPermitSubmissionDate,
 } from '@/bcap/apps/Permit/api.ts';
-import type { PermitAliasedData } from '@/bcap/util.ts';
+import type { PermitAliasedData } from '@/bcap/types.ts';
 
 // 1. Mock the API Service
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchPermitDetails: vi.fn(),
     patchPermitSubmissionDate: vi.fn(),
+    fetchDrafts: vi.fn(() => Promise.resolve([])),
 }));
 
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
@@ -22,6 +23,7 @@ const mockPush = vi.fn();
 vi.mock('vue-router', () => ({
     useRoute: () => ({
         params: { id: 'mock-permit-123' },
+        query: {},
     }),
     useRouter: () => ({
         push: mockPush,
@@ -122,8 +124,10 @@ describe('PermitDetails.vue', () => {
         const addBtn = wrapper.find('.add-module-btn');
         await addBtn.trigger('click');
 
+        // menuItems[1] is the Investigation module (an enabled module); Add
+        // navigates to its route with the current permit as the query param.
         expect(mockPush).toHaveBeenCalledWith({
-            name: 'inspectionModule',
+            name: 'investigationModule',
             query: { permitId: 'mock-permit-123' },
         });
     });

@@ -1,12 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ref, defineComponent, h } from 'vue';
-import { mount } from '@vue/test-utils';
 import * as z from 'zod';
-
-const updateDraftValue = vi.fn();
-vi.mock('@/bcap/util.ts', () => ({
-    updateDraftValue: (...args: unknown[]) => updateDraftValue(...args),
-}));
 
 const isComplete = vi.fn();
 vi.mock('@/bcap/validation.ts', () => ({
@@ -14,63 +7,44 @@ vi.mock('@/bcap/validation.ts', () => ({
 }));
 
 import { useDraftStep } from './useDraftStep';
-
-// Mount the composable inside a component so inject() resolves the provided refs.
-function setup(draftId: unknown, draftData: unknown) {
-    const captured: { value?: ReturnType<typeof useDraftStep> } = {};
-    const emit = vi.fn();
-    const Child = defineComponent({
-        setup() {
-            captured.value = useDraftStep(
-                'investigation',
-                z.object({}),
-                'overview',
-                emit,
-            );
-            return () => h('div');
-        },
-    });
-    mount(Child, {
-        global: {
-            provide: { draftId: ref(draftId), draftData: ref(draftData) },
-        },
-    });
-    return { step: captured.value!, emit };
-}
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 
 beforeEach(() => {
-    updateDraftValue.mockReset();
     isComplete.mockReset();
 });
 
 describe('useDraftStep', () => {
-    it('exposes the resolver and injected draft data', () => {
-        const data = { overview: { aliased_data: {} } };
-        const { step } = setup('draft-1', data);
+    it('exposes the resolver and the store draft data', () => {
+        const store = useDraftStore();
+        store.draftData = { overview: { aliased_data: {} } };
+        const step = useDraftStep(z.object({}), 'overview');
         expect(step.resolver).toBe('RESOLVER');
-        expect(step.draftData?.value).toEqual(data);
+        expect(step.draftData.value).toEqual({ overview: { aliased_data: {} } });
     });
 
     it('isValid checks completeness of the validation tile', () => {
         isComplete.mockReturnValue(true);
+        const store = useDraftStore();
         const tile = { foo: 'bar' };
-        const { step } = setup('draft-1', { overview: { aliased_data: tile } });
+        store.draftData = { overview: { aliased_data: tile } };
+        const step = useDraftStep(z.object({}), 'overview');
         expect(step.isValid()).toBe(true);
         expect(isComplete).toHaveBeenCalledWith(tile);
     });
 
-    it('updateValue writes the draft then emits the validity', () => {
+    it('isValid is true when no schema is given', () => {
+        const step = useDraftStep();
+        expect(step.isValid()).toBe(true);
+    });
+
+    it('updateValue writes through the store then emits validity', () => {
         isComplete.mockReturnValue(false);
-        const { step, emit } = setup('draft-7', { overview: {} });
+        const store = useDraftStore();
+        const spy = vi.spyOn(store, 'updateValue').mockImplementation(() => {});
+        const emit = vi.fn();
+        const step = useDraftStep(z.object({}), 'overview', emit);
         step.updateValue({ node_value: 1 } as never, 'attr', 'group');
-        expect(updateDraftValue).toHaveBeenCalledWith(
-            { overview: {} },
-            'draft-7',
-            'investigation',
-            { node_value: 1 },
-            'attr',
-            'group',
-        );
+        expect(spy).toHaveBeenCalledWith({ node_value: 1 }, 'attr', 'group');
         expect(emit).toHaveBeenCalledWith('update:step-is-valid', false);
     });
 });

@@ -1,19 +1,38 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
+import ProgressSpinner from 'primevue/progressspinner';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
 import ReviewSummary, {
     type ReviewField,
 } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
-import { type PermitAliasedData, getBasicInfoFields } from '@/bcap/util.ts';
+import { getBasicInfoFields } from '@/bcap/util.ts';
+import type { PermitAliasedData } from '@/bcap/types.ts';
 import {
     fetchPermitDetails,
     patchPermitSubmissionDate,
+    fetchDrafts,
+    deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import type { InvestigationDraft } from '@/bcap/types.ts';
 
 const route = useRoute();
 const router = useRouter();
-const permitId = ref(route.params.id as string);
+const permitId = computed(() => route.params.id as string);
+
+const draftTitle = (draft: InvestigationDraft) => {
+    const ident =
+        draft.data?.investigation_identification?.aliased_data
+            ?.investigation_identification;
+    const name = ident?.node_value?.en?.value;
+    return name
+        ? `Investigation Identification: ${name}`
+        : 'Untitled Investigation';
+};
 
 interface PermitHeaderData {
     projectName: string;
@@ -26,31 +45,48 @@ interface ModuleResponse {
     status: 'completed' | 'review' | 'unstarted';
 }
 
-// State Variables
-const permitData = ref<PermitHeaderData>({
-    projectName: 'Loading...',
-    applicationNumber: '...',
-    sector: '...',
-    submittedDate: null,
+// Loaded permit view state, grouped so the async loaders update one object.
+const state = reactive({
+    isLoading: true,
+    permitData: {
+        projectName: 'Loading...',
+        applicationNumber: '...',
+        sector: '...',
+        submittedDate: null,
+    } as PermitHeaderData,
+    adminTileMeta: { tileid: '', nodegroup: '' },
+    fetchedModuleData: {} as Record<string, ModuleResponse>,
+    rawPermitData: null as PermitAliasedData | null,
+    investigationDrafts: [] as InvestigationDraft[],
+    // Completed/existing investigations have no endpoint yet; wired in later.
+    completedInvestigations: [] as InvestigationDraft[],
 });
-
-const adminTileMeta = ref({
-    tileid: '',
-    nodegroup: '',
-});
-
-const fetchedModuleData = ref<Record<string, ModuleResponse>>({});
-const rawPermitData = ref<PermitAliasedData | null>(null);
 
 const permitModules = ref([
     {
         id: 'basic-info',
-        menuLabel: 'basic info',
-        title: 'Basic information',
+        menuLabel: 'Project Summary',
+        title: 'Project Summary',
         description:
             'General information regarding the permit application and overall project scope.',
         listItems: ['Project Details', 'Applicant Information'],
         routeName: 'baseModule',
+        disabled: false,
+    },
+    // To the top temporarily
+    {
+        id: 'investigation',
+        menuLabel: 'Investigation',
+        title: 'Investigation module',
+        description:
+            'Details regarding the planned archaeological investigation, survey areas, and expected methodology.',
+        listItems: [
+            'Scope of investigation (para)',
+            'First Nations file number (if known)',
+            'Ancestral remains anticipated (boolean)',
+        ],
+        routeName: 'investigationModule',
+        disabled: false,
     },
     {
         id: 'inspection',
@@ -64,19 +100,7 @@ const permitModules = ref([
             'First Nations file number (if known)',
         ],
         routeName: 'inspectionModule',
-    },
-    {
-        id: 'investigation',
-        menuLabel: 'Investigation',
-        title: 'Investigation module',
-        description:
-            'Details regarding the planned archaeological investigation, survey areas, and expected methodology.',
-        listItems: [
-            'Scope of investigation (para)',
-            'First Nations file number (if known)',
-            'Ancestral remains anticipated (boolean)',
-        ],
-        routeName: 'investigationModule',
+        disabled: true,
     },
     {
         id: 'alteration',
@@ -91,22 +115,29 @@ const permitModules = ref([
             'Is this a research permit (boolean)',
         ],
         routeName: 'alterationsModule',
+        disabled: true,
     },
 ]);
 
-const activeModuleId = ref(permitModules.value[0].id);
+const moduleFromQuery = route.query.module;
+const activeModuleId = ref(
+    typeof moduleFromQuery === 'string' &&
+        permitModules.value.some((m) => m.id === moduleFromQuery)
+        ? moduleFromQuery
+        : permitModules.value[0].id,
+);
 
 const activeModule = computed(() => {
     return permitModules.value.find((m) => m.id === activeModuleId.value);
 });
 
 const basicInfoFields = computed<ReviewField[]>(() => {
-    return getBasicInfoFields(rawPermitData.value);
+    return getBasicInfoFields(state.rawPermitData);
 });
 
 // helper functions
 const getModuleStatus = (moduleId: string) => {
-    return fetchedModuleData.value[moduleId]?.status || 'unstarted';
+    return state.fetchedModuleData[moduleId]?.status || 'unstarted';
 };
 
 const loadPermitDetails = async () => {
@@ -114,19 +145,19 @@ const loadPermitDetails = async () => {
         const aliased = await fetchPermitDetails(permitId.value);
         if (!aliased) return;
 
-        rawPermitData.value = aliased;
+        state.rawPermitData = aliased;
 
         const appIdent = aliased.application_identification?.aliased_data;
         const propProj = aliased.proposed_project?.aliased_data;
         const devDetails = propProj?.development_project_details?.aliased_data;
         const appAdmin = aliased.application_admin;
 
-        adminTileMeta.value = {
+        state.adminTileMeta = {
             tileid: appAdmin?.tileid || '',
             nodegroup: appAdmin?.nodegroup || '',
         };
 
-        permitData.value = {
+        state.permitData = {
             projectName:
                 appIdent?.project_name?.display_value || 'Unnamed Project',
             applicationNumber:
@@ -139,7 +170,7 @@ const loadPermitDetails = async () => {
                     ?.display_value || null,
         };
 
-        fetchedModuleData.value = {
+        state.fetchedModuleData = {
             'basic-info': {
                 status: appIdent?.project_name?.display_value
                     ? 'completed'
@@ -160,11 +191,14 @@ const loadPermitDetails = async () => {
         };
     } catch (error) {
         console.error('Failed to load permit details:', error);
-        permitData.value.projectName = 'Failed to load project data';
+        state.permitData.projectName = 'Failed to load project data';
+    } finally {
+        state.isLoading = false;
     }
 };
 
 const startNewModule = () => {
+    if (activeModule.value?.disabled) return;
     if (activeModule.value && activeModule.value.routeName) {
         router.push({
             name: activeModule.value.routeName,
@@ -195,13 +229,13 @@ const submitPermit = async () => {
             },
         };
 
-        if (adminTileMeta.value.tileid) {
-            adminPayload.tileid = adminTileMeta.value.tileid;
+        if (state.adminTileMeta.tileid) {
+            adminPayload.tileid = state.adminTileMeta.tileid;
         }
 
         await patchPermitSubmissionDate(permitId.value, adminPayload);
 
-        permitData.value.submittedDate = uiDate;
+        state.permitData.submittedDate = uiDate;
         await loadPermitDetails();
     } catch (error) {
         console.error('Error submitting permit:', error);
@@ -211,13 +245,75 @@ const submitPermit = async () => {
     }
 };
 
+const deleteState = reactive<{
+    visible: boolean;
+    busy: boolean;
+    draft: InvestigationDraft | null;
+}>({ visible: false, busy: false, draft: null });
+
+const confirmDelete = (draft: InvestigationDraft) => {
+    deleteState.draft = draft;
+    deleteState.visible = true;
+};
+
+const performDelete = async () => {
+    const draft = deleteState.draft;
+    if (!draft) return;
+    deleteState.busy = true;
+    try {
+        await deleteDraft(GraphSlug.Investigation, draft.id);
+        deleteState.visible = false;
+        await loadInvestigations();
+    } catch (error) {
+        console.error('Failed to delete draft:', error);
+    } finally {
+        deleteState.busy = false;
+    }
+};
+
+const loadInvestigations = async () => {
+    const drafts = await fetchDrafts();
+    state.investigationDrafts = drafts.filter(
+        (d: InvestigationDraft) =>
+            d.graph_slug === GraphSlug.Investigation &&
+            !!d.data?.parent_resource_id &&
+            d.data.parent_resource_id === permitId.value,
+    );
+};
+
 onMounted(() => {
     loadPermitDetails();
+    loadInvestigations();
+});
+
+// The router reuses this component when navigating between permits, so reload
+// when the id in the URL changes.
+watch(permitId, () => {
+    state.isLoading = true;
+    loadPermitDetails();
+    loadInvestigations();
+});
+
+// Opening the Investigation section refetches so a draft created and returned
+// from shows up without a full reload.
+watch(activeModuleId, (id) => {
+    if (id === GraphSlug.Investigation) {
+        loadInvestigations();
+    }
 });
 </script>
 
 <template>
-    <Panel class="full-height">
+    <div
+        v-if="state.isLoading"
+        class="permit-loading"
+    >
+        <ProgressSpinner />
+    </div>
+    <Panel
+        v-else
+        class="full-height"
+    >
         <template #header>
             <div class="permit-header w-full">
                 <div class="permit-icon-area">
@@ -225,20 +321,22 @@ onMounted(() => {
                 </div>
 
                 <div class="permit-info">
-                    <h2 class="project-name">{{ permitData.projectName }}</h2>
+                    <h2 class="project-name">
+                        {{ state.permitData.projectName }}
+                    </h2>
                     <p class="application-number">
-                        {{ permitData.applicationNumber }}
+                        {{ state.permitData.applicationNumber }}
                     </p>
-                    <p class="sector">{{ permitData.sector }}</p>
+                    <p class="sector">{{ state.permitData.sector }}</p>
                 </div>
 
                 <div class="submit-area">
                     <div
-                        v-if="permitData.submittedDate"
+                        v-if="state.permitData.submittedDate"
                         class="submitted-text"
                     >
                         <strong>Submitted:</strong>
-                        {{ permitData.submittedDate }}
+                        {{ state.permitData.submittedDate }}
                     </div>
                     <button
                         v-else
@@ -338,19 +436,121 @@ onMounted(() => {
                     >
                         <button
                             class="add-module-btn"
+                            :disabled="activeModule.disabled"
                             @click="startNewModule"
                         >
                             <i class="fa-solid fa-plus"></i>
-                            Add {{ activeModule.menuLabel }} module
+                            {{
+                                activeModule.disabled
+                                    ? 'Coming soon'
+                                    : `Add ${activeModule.menuLabel} module`
+                            }}
                         </button>
+                    </div>
+
+                    <div
+                        v-if="activeModule.id === 'investigation'"
+                        class="investigation-lists"
+                    >
+                        <h4 class="list-heading">Drafts</h4>
+                        <ul
+                            v-if="state.investigationDrafts.length > 0"
+                            class="resource-list"
+                        >
+                            <li
+                                v-for="draft in state.investigationDrafts"
+                                :key="draft.id"
+                            >
+                                <router-link
+                                    :to="{
+                                        name: routeNames.investigationModule,
+                                        query: { draftId: draft.id },
+                                    }"
+                                >
+                                    {{ draftTitle(draft) }}
+                                </router-link>
+                                <span class="list-meta">
+                                    Last updated:
+                                    {{
+                                        new Date(
+                                            draft.updated || draft.created,
+                                        ).toLocaleDateString()
+                                    }}
+                                </span>
+                                <button
+                                    type="button"
+                                    class="remove-draft-btn"
+                                    title="Remove draft"
+                                    @click="confirmDelete(draft)"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </li>
+                        </ul>
+                        <p
+                            v-else
+                            class="text-muted"
+                        >
+                            No investigation drafts found.
+                        </p>
+
+                        <h4 class="list-heading">Existing investigations</h4>
+                        <ul
+                            v-if="state.completedInvestigations.length > 0"
+                            class="resource-list"
+                        >
+                            <li
+                                v-for="item in state.completedInvestigations"
+                                :key="item.id"
+                            >
+                                {{ draftTitle(item) }}
+                            </li>
+                        </ul>
+                        <p
+                            v-else
+                            class="text-muted"
+                        >
+                            No existing investigations found.
+                        </p>
                     </div>
                 </template>
             </div>
         </div>
     </Panel>
+
+    <Dialog
+        v-model:visible="deleteState.visible"
+        modal
+        :closable="false"
+        header="Remove draft?"
+        :style="{ width: '28rem' }"
+    >
+        <p>This permanently removes the draft. This action cannot be undone.</p>
+        <template #footer>
+            <Button
+                label="Cancel"
+                text
+                :disabled="deleteState.busy"
+                @click="deleteState.visible = false"
+            />
+            <Button
+                label="Remove"
+                severity="danger"
+                :loading="deleteState.busy"
+                @click="performDelete"
+            />
+        </template>
+    </Dialog>
 </template>
 
 <style scoped lang="css">
+.permit-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
 /* Header */
 .permit-header {
     font-family: 'BC Sans', 'Noto Sans', Verdana, Arial, sans-serif;
@@ -440,6 +640,7 @@ onMounted(() => {
     background-color: #ffffff;
     color: #333333;
     border: none;
+    border-radius: 6px;
     padding: 1rem 1.2rem;
     text-align: left;
     font-size: 1rem;
@@ -530,6 +731,12 @@ onMounted(() => {
     background-color: #0056b3;
 }
 
+/* The in-content Print button sits directly under the review fields; give it
+   room so it isn't crowding the last row. */
+.content-area .print-btn {
+    margin-top: 1.5rem;
+}
+
 .content-description {
     margin: 0 0 1.5rem 0;
     font-size: 1.1rem;
@@ -572,6 +779,75 @@ onMounted(() => {
 
 .add-module-btn:hover {
     background-color: #002244;
+}
+
+.add-module-btn:disabled {
+    background-color: var(--bc-muted, #6b7280);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.investigation-lists {
+    margin-top: 2.5rem;
+}
+
+.investigation-lists .list-heading {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #003366;
+}
+
+.resource-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.resource-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.resource-list a {
+    color: #2e51dd;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.resource-list a:hover {
+    text-decoration: underline;
+}
+
+.list-meta {
+    color: #6c757d;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.remove-draft-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.remove-draft-btn:hover {
+    color: #c8102e;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+    padding: 0.5rem 0;
 }
 
 /* Print styling */

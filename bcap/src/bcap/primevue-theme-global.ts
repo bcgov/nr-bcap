@@ -4,6 +4,9 @@ import type { Preset } from '@primeuix/themes/types';
 import type { App } from 'vue';
 
 import PrimeVue from 'primevue/config';
+import { createPinia } from 'pinia';
+
+const pinia = createPinia();
 
 // Make your custom preset (optional; you can also pass Aura directly)
 const BcapPreset = definePreset(Aura, {
@@ -26,6 +29,7 @@ const BcapPreset = definePreset(Aura, {
 
 // Register once with your KO↔Vue bridge so EVERY app gets PrimeVue + the preset.
 window.BCAP?.vueKO?.use?.((app: App) => {
+    app.use(pinia);
     app.use(PrimeVue, {
         theme: {
             preset: BcapPreset, // or Aura / Nora / Lara directly

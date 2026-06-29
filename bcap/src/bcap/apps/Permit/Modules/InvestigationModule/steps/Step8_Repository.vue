@@ -8,7 +8,6 @@ import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
 const emit = defineEmits(['update:step-is-valid']);
 const { draftData, resolver, isValid, updateValue } = useDraftStep(
-    'investigation',
     zInvestigationSection7RepositoryAndCurationAliasedData,
     'section_7_repository_and_curation',
     emit,
