@@ -26,8 +26,6 @@ from bcap.views.generated import (
     ContributorView,
     HcaPermitListView,
     HcaPermitView,
-    HriaDiscontinuedDataListView,
-    HriaDiscontinuedDataView,
     InspectionListView,
     InspectionView,
     InvestigationListView,
@@ -42,12 +40,8 @@ from bcap.views.generated import (
     PermitApplicationView,
     ProcessRequirementListView,
     ProcessRequirementView,
-    ProjectSandboxListView,
-    ProjectSandboxView,
     PublicationListView,
     PublicationView,
-    RepositoryListView,
-    RepositoryView,
     RequirementSubmissionListView,
     RequirementSubmissionView,
     SiteSubmissionListView,
@@ -106,16 +100,6 @@ urlpatterns = [
         "api/hca_permit/<uuid:pk>/",
         HcaPermitView.as_view(),
         name="api_hca_permit",
-    ),
-    path(
-        "api/hria_discontinued_data",
-        HriaDiscontinuedDataListView.as_view(),
-        name="api_hria_discontinued_data_list",
-    ),
-    path(
-        "api/hria_discontinued_data/<uuid:pk>/",
-        HriaDiscontinuedDataView.as_view(),
-        name="api_hria_discontinued_data",
     ),
     path(
         "api/inspection",
@@ -188,16 +172,6 @@ urlpatterns = [
         name="api_process_requirement",
     ),
     path(
-        "api/project_sandbox",
-        ProjectSandboxListView.as_view(),
-        name="api_project_sandbox_list",
-    ),
-    path(
-        "api/project_sandbox/<uuid:pk>/",
-        ProjectSandboxView.as_view(),
-        name="api_project_sandbox",
-    ),
-    path(
         "api/publication",
         PublicationListView.as_view(),
         name="api_publication_list",
@@ -206,16 +180,6 @@ urlpatterns = [
         "api/publication/<uuid:pk>/",
         PublicationView.as_view(),
         name="api_publication",
-    ),
-    path(
-        "api/repository",
-        RepositoryListView.as_view(),
-        name="api_repository_list",
-    ),
-    path(
-        "api/repository/<uuid:pk>/",
-        RepositoryView.as_view(),
-        name="api_repository",
     ),
     path(
         "api/requirement_submission",

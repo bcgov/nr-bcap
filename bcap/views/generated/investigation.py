@@ -1,5 +1,5 @@
 """Investigation API, scoped to the requesting user's own resources: a
-collection endpoint and a by-id detail endpoint. Verbs (GET)
+collection endpoint and a by-id detail endpoint. Verbs (GET, PUT, PATCH, POST, DELETE)
 come from generated/generate.json -- edit that file and regenerate to change
 which methods each endpoint exposes.
 
@@ -8,7 +8,7 @@ Do not edit by hand; re-run the command instead.
 """
 
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
@@ -35,12 +35,12 @@ class InvestigationListView(
     InvestigationViewMixin,
     UserOwnedResourceMixin,
     ArchesModelAPIMixin,
-    ListAPIView,
+    ListCreateAPIView,
 ):
     """Collection endpoint for the requesting user's Investigation resources.
 
     Owner-scoped: only the resources the user created. Declared verbs:
-    GET (from generated/generate.json); the ListAPIView base
+    GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
     class serves the collection subset (GET/POST).
     """
 
@@ -53,13 +53,13 @@ class InvestigationView(
     InvestigationViewMixin,
     UserOwnedResourceMixin,
     ArchesModelAPIMixin,
-    RetrieveAPIView,
+    RetrieveUpdateDestroyAPIView,
 ):
     """Detail endpoint for a single Investigation resource and its nested tiles.
 
     Owner-scoped: requesting one created by another user returns 404. Declared
-    verbs: GET (from generated/generate.json); the
-    RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+    verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
+    RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
     """
 
     permission_classes = [IsAuthenticated]

@@ -39,13 +39,6 @@ from .hca_permit import (
     HcaPermitView,
 )
 
-from .hria_discontinued_data import (
-    HriaDiscontinuedDataSerializer,
-    HriaDiscontinuedDataViewMixin,
-    HriaDiscontinuedDataListView,
-    HriaDiscontinuedDataView,
-)
-
 from .inspection import (
     InspectionSerializer,
     InspectionViewMixin,
@@ -95,25 +88,11 @@ from .process_requirement import (
     ProcessRequirementView,
 )
 
-from .project_sandbox import (
-    ProjectSandboxSerializer,
-    ProjectSandboxViewMixin,
-    ProjectSandboxListView,
-    ProjectSandboxView,
-)
-
 from .publication import (
     PublicationSerializer,
     PublicationViewMixin,
     PublicationListView,
     PublicationView,
-)
-
-from .repository import (
-    RepositorySerializer,
-    RepositoryViewMixin,
-    RepositoryListView,
-    RepositoryView,
 )
 
 from .requirement_submission import (
@@ -158,10 +137,6 @@ __all__ = [
     "HcaPermitSerializer",
     "HcaPermitView",
     "HcaPermitViewMixin",
-    "HriaDiscontinuedDataListView",
-    "HriaDiscontinuedDataSerializer",
-    "HriaDiscontinuedDataView",
-    "HriaDiscontinuedDataViewMixin",
     "InspectionListView",
     "InspectionSerializer",
     "InspectionView",
@@ -190,18 +165,10 @@ __all__ = [
     "ProcessRequirementSerializer",
     "ProcessRequirementView",
     "ProcessRequirementViewMixin",
-    "ProjectSandboxListView",
-    "ProjectSandboxSerializer",
-    "ProjectSandboxView",
-    "ProjectSandboxViewMixin",
     "PublicationListView",
     "PublicationSerializer",
     "PublicationView",
     "PublicationViewMixin",
-    "RepositoryListView",
-    "RepositorySerializer",
-    "RepositoryView",
-    "RepositoryViewMixin",
     "RequirementSubmissionListView",
     "RequirementSubmissionSerializer",
     "RequirementSubmissionView",
