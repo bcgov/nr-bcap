@@ -31,9 +31,18 @@ class PermitApplicationService:
     def create(self, data, save):
         """Seed the application id; if the create body already sets the
         submission date, attach the requirement working copies too."""
+        self._ensure_application_admin(data)
         if not self._incoming_submission_date(data):
             return save()
         return self._attach_requirements_and_save(data, save)
+
+    @staticmethod
+    def _ensure_application_admin(data):
+        """Always create the application_admin tile on POST so later steps (the
+        process-requirement seed route) have a group to attach to."""
+        data.setdefault(ALIASED_DATA, {}).setdefault(
+            group_aliases.APPLICATION_ADMIN, {ALIASED_DATA: {}}
+        )
 
     def submit(self, instance, data, save):
         """Attach the requirement working copies on the first update that sets
