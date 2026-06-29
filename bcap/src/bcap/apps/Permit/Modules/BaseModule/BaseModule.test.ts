@@ -8,12 +8,10 @@ const { submitApplication } = vi.hoisted(() => ({
     submitApplication: vi.fn(),
 }));
 
-// 1. Mock the missing PrimeVue forms package so Vite doesn't crash during import analysis
 vi.mock('@primevue/forms', () => ({
     FormField: { template: '<div />' },
 }));
 
-// 2. Mock the heavy Arches widgets (matching your other test setup)
 vi.mock(
     '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
     () => ({
@@ -26,20 +24,27 @@ vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
     VIEW: 'view',
 }));
 
-// 3. Mock vue-router so useRoute() doesn't crash
 vi.mock('vue-router', () => ({
     useRoute: vi.fn(() => ({
         query: {}, // Simulate an empty query (no draftId)
     })),
 }));
 
-// 4. Mock utility functions
 vi.mock('@/bcap/util.ts', () => ({
     getCsrfToken: vi.fn(() => 'mock-csrf-token'),
 }));
 
-// 5. Mock your API functions
-vi.mock('@/bcap/apps/Permit/api.ts', () => ({
+vi.mock('arches', () => ({
+    default: {
+        urls: {
+            api_resource_draft: (graphSlug: string) =>
+                `/bcap/api/resource_draft/${graphSlug}`,
+        },
+    },
+}));
+
+vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
     submitApplication,
 }));
 

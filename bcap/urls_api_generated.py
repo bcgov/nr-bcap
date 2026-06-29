@@ -42,6 +42,8 @@ from bcap.views.generated import (
     ProcessRequirementView,
     PublicationListView,
     PublicationView,
+    RequirementSubmissionListView,
+    RequirementSubmissionView,
     SiteSubmissionListView,
     SiteSubmissionView,
     SiteVisitListView,
@@ -178,6 +180,16 @@ urlpatterns = [
         "api/publication/<uuid:pk>/",
         PublicationView.as_view(),
         name="api_publication",
+    ),
+    path(
+        "api/requirement_submission",
+        RequirementSubmissionListView.as_view(),
+        name="api_requirement_submission_list",
+    ),
+    path(
+        "api/requirement_submission/<uuid:pk>/",
+        RequirementSubmissionView.as_view(),
+        name="api_requirement_submission",
     ),
     path(
         "api/site_submission",

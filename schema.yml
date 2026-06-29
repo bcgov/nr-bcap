@@ -1636,6 +1636,66 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegistrationLinkResponse'
           description: ''
+  /bcap/api/requirement_submission:
+    get:
+      operationId: api_requirement_submission_list
+      description: |-
+        Collection endpoint for the requesting user's Requirement Submission resources.
+
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - 'External: requirement_submission'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRequirementSubmissionList'
+          description: ''
+  /bcap/api/requirement_submission/{id}/:
+    get:
+      operationId: api_requirement_submission_retrieve
+      description: |-
+        Detail endpoint for a single Requirement Submission resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: requirement_submission'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequirementSubmission'
+          description: ''
   /bcap/api/resource_draft/{graph_slug}:
     get:
       operationId: api_resource_draft_list
@@ -2953,18 +3013,6 @@ components:
           nullable: true
           title: Start Date
           description: Enter date
-        responsible_government:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          title: Government
-          description: Select an option
-        authority_legal_instrument:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
-          nullable: true
-          title: Legal Instrument
-          description: Select an option
         legislative_act:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
@@ -2990,10 +3038,8 @@ components:
           title: Description
           description: Enter text
       required:
-      - authority_legal_instrument
       - authority_protection_type
       - legislative_act
-      - responsible_government
     Archaeological_Site_Authority_Tile:
       type: object
       properties:
@@ -5869,10 +5915,12 @@ components:
       type: object
       properties:
         node_value:
-          type: string
-          format: date-time
           nullable: true
-          description: Enter date
+          anyOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
         display_value:
           type: string
           readOnly: true
@@ -9240,6 +9288,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Publication'
+    PaginatedRequirementSubmissionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequirementSubmission'
     PaginatedSiteSubmissionList:
       type: object
       required:
@@ -12054,6 +12125,393 @@ components:
       required:
       - expires
       - signup_url
+    RequirementSubmission:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Requirement_Submission_Resource_Aliased_Data'
+        graph_has_different_publication:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          nullable: true
+        descriptors:
+          type: object
+          readOnly: true
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+    Requirement_Submission_Report_Submission_Aliased_Data:
+      type: object
+      properties:
+        archaeological_consultant:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          title: Lead Archaeologist Consultant
+        archaological_company:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          title: Archaeology Company
+        consultant_report_number:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax40'
+          nullable: true
+          description: Enter text
+        report_file:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+          title: Document
+        report_recommendations:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Recommendations
+          description: Enter text
+        report_title:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
+          nullable: true
+          title: Document Title
+          description: Enter the title of the document
+      required:
+      - archaeological_consultant
+      - report_title
+    Requirement_Submission_Report_Submission_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Requirement_Submission_Report_Submission_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Requirement_Submission_Requirement_Submission_Process_Aliased_Data:
+      type: object
+      properties:
+        submission_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select submission type
+        submission_number:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        report_submission:
+          allOf:
+          - $ref: '#/components/schemas/Requirement_Submission_Report_Submission_Tile'
+          nullable: true
+        submission_photographs:
+          allOf:
+          - $ref: '#/components/schemas/Requirement_Submission_Submission_Photographs_Tile'
+          nullable: true
+        submission_assessment:
+          allOf:
+          - $ref: '#/components/schemas/Requirement_Submission_Submission_Assessment_Tile'
+          nullable: true
+      required:
+      - submission_number
+      - submission_type
+    Requirement_Submission_Requirement_Submission_Process_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Requirement_Submission_Requirement_Submission_Process_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Requirement_Submission_Resource_Aliased_Data:
+      type: object
+      properties:
+        requirement_submission_process:
+          type: array
+          items:
+            $ref: '#/components/schemas/Requirement_Submission_Requirement_Submission_Process_Tile'
+          nullable: true
+    Requirement_Submission_Submission_Assessment_Aliased_Data:
+      type: object
+      properties:
+        arch_branch_approval_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          title: Approval Date
+          description: Enter date
+        arch_branch_approval_status:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Approval Status
+        arch_branch_determined_level_of_risk:
+          allOf:
+          - $ref: '#/components/schemas/ConceptAliasedNodeData'
+          nullable: true
+          title: Determined Level of Risk
+          description: Select an option
+        arch_branch_internal_notes:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        arch_branch_response:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+    Requirement_Submission_Submission_Assessment_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Requirement_Submission_Submission_Assessment_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Requirement_Submission_Submission_Photographs_Aliased_Data:
+      type: object
+      properties:
+        photograph_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        photograph_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        photograph_view:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        photographer:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        submission_photographs:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+    Requirement_Submission_Submission_Photographs_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Requirement_Submission_Submission_Photographs_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     ResourceDraft:
       type: object
       properties:
@@ -14483,7 +14941,7 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           title: Member Role(s)
-          description: Select an option
+          description: Select Site Visit roles
         team_member:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
@@ -15021,4 +15479,4 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: bcap
+      name: bcap_dev

@@ -49,49 +49,6 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.archaeological_assessment_plan?.aliased_data
-                    ?.section_1_overview?.aliased_data?.assessment_approach
-            "
-            graph-slug="permit_application"
-            node-alias="assessment_approach"
-            @update:value="
-                updateValue($event, 'assessment_approach', [
-                    'archaeological_assessment_plan',
-                    'section_1_overview',
-                ])
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.first_nation_consultation?.aliased_data
-                    ?.fn_file_numbers
-            "
-            graph-slug="permit_application"
-            node-alias="fn_file_numbers"
-            @update:value="
-                updateValue(
-                    $event,
-                    'fn_file_numbers',
-                    'first_nation_consultation',
-                )
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.proposed_project?.aliased_data?.project_boundary
-            "
-            :card-x-node-x-widget-data-overrides="mapOverrides"
-            graph-slug="permit_application"
-            node-alias="project_boundary"
-            @update:value="
-                updateValue($event, 'project_boundary', 'proposed_project')
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
                 draftData?.proposed_project?.aliased_data
                     ?.development_project_details?.aliased_data
                     ?.industrial_sector
@@ -108,17 +65,13 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.proposed_project?.aliased_data
-                    ?.development_project_details?.aliased_data
-                    ?.alteration_details
+                draftData?.proposed_project?.aliased_data?.project_boundary
             "
+            :card-x-node-x-widget-data-overrides="mapOverrides"
             graph-slug="permit_application"
-            node-alias="alteration_details"
+            node-alias="project_boundary"
             @update:value="
-                updateValue($event, 'alteration_details', [
-                    'proposed_project',
-                    'development_project_details',
-                ])
+                updateValue($event, 'project_boundary', 'proposed_project')
             "
         />
     </FieldSet>

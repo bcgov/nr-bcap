@@ -18,6 +18,16 @@ const routes = [
             import('@/bcap/apps/Permit/components/dashboard/InternalDashboard.vue'),
     },
     {
+        path: arches.urls.plugin('external-permit-workflows/permit/:id'),
+        name: 'permitDetails',
+        component: () =>
+            import('@/bcap/apps/Permit/components/dashboard/PermitDetails.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
         path: arches.urls.plugin('external-permit-workflows/alterationsModule'),
         name: 'alterationsModule',
         component: () =>
@@ -105,7 +115,7 @@ const routes = [
 
 type ExternalPermitRouteNamesType = RouteNamesType & {
     home: string;
-    //newPermit?: string;
+    permitDetails: string;
     checklist: string;
     createchecklist: string;
     alterationsModule: string;
@@ -119,8 +129,8 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
 
 const routeNames: ExternalPermitRouteNamesType = {
     home: 'root',
-    //newPermit: 'newPermit',
     login: '',
+    permitDetails: 'permitDetails',
     checklist: 'Checklist',
     createchecklist: 'CreateChecklist',
     alterationsModule: 'alterationsModule',
@@ -130,13 +140,6 @@ const routeNames: ExternalPermitRouteNamesType = {
     investigationModule: 'investigationModule',
     methodsModule: 'methodsModule',
     recordingsModule: 'recordingsModule',
-    // updateSite: 'updateSite',
-    // editSite: 'editSite',
-    // search: "search",
-    // advancedSearch: "advanced-search",
-    // schemes: "schemes",
-    // concept: "concept",
-    // scheme: "scheme",
 };
 export { routes, routeNames };
 export type { ExternalPermitRouteNamesType };

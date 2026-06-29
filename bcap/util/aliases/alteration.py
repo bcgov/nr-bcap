@@ -10,6 +10,7 @@ class AlterationAliases(AbstractAliases):
         "additional_repository_and_curation_comments"
     )
     AFFECTED_SITES = "affected_sites"
+    ALTERATION_IDENTIFICATION = "alteration_identification"
     ALTERNATE_ANCESTRAL_REMAINS_APPROACH = "alternate_ancestral_remains_approach"
     ALTERNATE_CMT_APPROACH = "alternate_cmt_approach"
     ALTERNATE_EXCAVATION_APPROACH = "alternate_excavation_approach"

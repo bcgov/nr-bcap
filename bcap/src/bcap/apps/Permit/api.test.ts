@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
-    getBlankPermitApplication,
+    fetchDraft,
+    createDraft,
     fetchDrafts,
     fetchMyProjects,
     submitApplication,
+    submitInvestigation,
+    deleteDraft,
 } from './api';
 
 // 1. Mock the Arches URL generator
@@ -15,38 +18,26 @@ vi.mock('arches', () => ({
             api_resource_draft: (graphSlug: string) =>
                 `/mock/draft/${graphSlug}`,
             permit_application_create: '/mock/create/permit_application',
+            api_investigation: '/mock/create/investigation',
+            dashboard_external: '/bcap/api/dashboard/external',
+            api_resource: (graph: string, pk: string) =>
+                `/bcap/api/resource/${graph}/${pk}`,
         },
     },
 }));
 
-// 2. Mock CSRF token utility
-vi.mock('@/bcap/util.ts', () => ({
-    getCsrfToken: () => 'mock-csrf-token',
-}));
+// 2. Mock the apiFetch wrapper (its own behavior is covered in api.test.ts)
+const { apiFetch } = vi.hoisted(() => ({ apiFetch: vi.fn() }));
+vi.mock('@/bcap/api.ts', () => ({ apiFetch }));
 
-// Helper functions for basic fetch mocking
-function mockFetchOk(body: unknown) {
-    return vi.fn().mockResolvedValue({
-        ok: true,
-        json: vi.fn().mockResolvedValue(body),
-    });
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mockFetchError(status: number, statusText: string, body: any = null) {
-    return vi.fn().mockResolvedValue({
-        ok: false,
-        status,
-        statusText,
-        json: body
-            ? vi.fn().mockResolvedValue(body)
-            : vi.fn().mockRejectedValue(new Error('JSON parse error')),
-    });
+// Resolve apiFetch to a Response-like object whose json() yields body
+function okResponse(body: unknown) {
+    return { json: vi.fn().mockResolvedValue(body) };
 }
 
 describe('Permit API', () => {
     beforeEach(() => {
-        vi.restoreAllMocks();
+        apiFetch.mockReset();
         // Hide expected console.errors from cluttering test output
         vi.spyOn(console, 'error').mockImplementation(() => {});
     });
@@ -55,78 +46,141 @@ describe('Permit API', () => {
         vi.restoreAllMocks();
     });
 
-    describe('getBlankPermitApplication', () => {
-        it('fetches a blank permit application JSON', async () => {
-            const mockData = { id: 'blank-123' };
-            vi.stubGlobal('fetch', mockFetchOk(mockData));
+    describe('fetchDrafts', () => {
+        it('fetches and merges drafts across every draft graph', async () => {
+            apiFetch
+                .mockResolvedValueOnce(
+                    okResponse({ results: [{ id: 'permit-1' }] }),
+                )
+                .mockResolvedValueOnce(okResponse([{ id: 'investigation-1' }]));
 
-            const result = await getBlankPermitApplication();
+            const result = await fetchDrafts();
 
-            expect(fetch).toHaveBeenCalledWith(
-                '/mock/blank/permit_application?format=json',
-                {},
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/draft/permit_application',
             );
-            expect(result).toEqual(mockData);
+            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation');
+            expect(result).toEqual([
+                { id: 'permit-1' },
+                { id: 'investigation-1' },
+            ]);
+        });
+
+        it('skips a failing graph but keeps the others', async () => {
+            apiFetch
+                .mockResolvedValueOnce(okResponse([{ id: 'permit-1' }]))
+                .mockRejectedValueOnce(new Error('Server Error'));
+
+            const result = await fetchDrafts();
+
+            expect(result).toEqual([{ id: 'permit-1' }]);
+            expect(console.error).toHaveBeenCalled();
         });
     });
 
-    describe('fetchDrafts', () => {
-        it('returns results array when paginated', async () => {
-            vi.stubGlobal(
-                'fetch',
-                mockFetchOk({ results: [{ id: 'draft-1' }] }),
+    describe('fetchDraft', () => {
+        it('GETs the draft by graph and id', async () => {
+            const draft = { id: 'draft-1', data: {} };
+            apiFetch.mockResolvedValue(okResponse(draft));
+
+            const result = await fetchDraft('investigation', 'draft-1');
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/draft/investigation/draft-1',
             );
-            const result = await fetchDrafts();
-            expect(result).toEqual([{ id: 'draft-1' }]);
+            expect(result).toEqual(draft);
         });
+    });
 
-        it('returns raw data when not paginated', async () => {
-            vi.stubGlobal('fetch', mockFetchOk([{ id: 'draft-2' }]));
-            const result = await fetchDrafts();
-            expect(result).toEqual([{ id: 'draft-2' }]);
-        });
+    describe('createDraft', () => {
+        it('POSTs an empty draft for the graph', async () => {
+            const draft = { id: 'draft-new', data: {} };
+            apiFetch.mockResolvedValue(okResponse(draft));
 
-        it('returns empty array on HTTP error', async () => {
-            vi.stubGlobal('fetch', mockFetchError(500, 'Server Error'));
-            const result = await fetchDrafts();
-            expect(result).toEqual([]);
-            expect(console.error).toHaveBeenCalled();
-        });
+            const result = await createDraft('investigation');
 
-        it('returns empty array on network failure', async () => {
-            vi.stubGlobal(
-                'fetch',
-                vi.fn().mockRejectedValue(new Error('Network Down')),
-            );
-            const result = await fetchDrafts();
-            expect(result).toEqual([]);
+            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation', {
+                method: 'POST',
+                body: { data: {} },
+            });
+            expect(result).toEqual(draft);
         });
     });
 
     describe('fetchMyProjects', () => {
         it('returns results array when paginated', async () => {
-            vi.stubGlobal(
-                'fetch',
-                mockFetchOk({ results: [{ id: 'proj-1' }] }),
+            apiFetch.mockResolvedValue(
+                okResponse({ results: [{ id: 'proj-1' }] }),
             );
             const result = await fetchMyProjects();
-            expect(fetch).toHaveBeenCalledWith(
+            expect(apiFetch).toHaveBeenCalledWith(
                 '/bcap/api/dashboard/external?status=CREATED_BY_ME',
-                expect.any(Object),
             );
             expect(result).toEqual([{ id: 'proj-1' }]);
         });
 
         it('returns raw data when not paginated', async () => {
-            vi.stubGlobal('fetch', mockFetchOk([{ id: 'proj-2' }]));
+            apiFetch.mockResolvedValue(okResponse([{ id: 'proj-2' }]));
             const result = await fetchMyProjects();
             expect(result).toEqual([{ id: 'proj-2' }]);
         });
 
-        it('returns empty array on HTTP error', async () => {
-            vi.stubGlobal('fetch', mockFetchError(403, 'Forbidden'));
+        it('returns empty array on error', async () => {
+            apiFetch.mockRejectedValue(new Error('Forbidden'));
             const result = await fetchMyProjects();
             expect(result).toEqual([]);
+        });
+    });
+
+    describe('deleteDraft', () => {
+        it('DELETEs the draft for its graph', async () => {
+            apiFetch.mockResolvedValue(okResponse(undefined));
+
+            await deleteDraft('investigation', 'draft-9');
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/draft/investigation/draft-9',
+                { method: 'DELETE' },
+            );
+        });
+    });
+
+    describe('submitInvestigation', () => {
+        it('POSTs the investigation then DELETEs its draft', async () => {
+            const finalResource = { resourceinstanceid: 'inv-1' };
+            apiFetch
+                .mockResolvedValueOnce(okResponse(finalResource))
+                .mockResolvedValueOnce(okResponse(undefined));
+
+            const result = await submitInvestigation('draft-7', { a: 1 });
+
+            expect(apiFetch).toHaveBeenNthCalledWith(
+                1,
+                '/mock/create/investigation',
+                {
+                    method: 'POST',
+                    body: { draft_id: 'draft-7', aliased_data: { a: 1 } },
+                },
+            );
+            expect(apiFetch).toHaveBeenNthCalledWith(
+                2,
+                '/mock/draft/investigation/draft-7',
+                { method: 'DELETE' },
+            );
+            expect(result).toEqual(finalResource);
+        });
+
+        it('re-throws and logs when the POST fails', async () => {
+            const failure = new Error('POST investigation failed');
+            apiFetch.mockRejectedValue(failure);
+
+            await expect(submitInvestigation('draft-7', {})).rejects.toThrow(
+                'POST investigation failed',
+            );
+            expect(console.error).toHaveBeenCalledWith(
+                'Investigation submission API failed:',
+                failure,
+            );
         });
     });
 
@@ -135,85 +189,57 @@ describe('Permit API', () => {
             const finalResource = { resourceinstanceid: 'final-123' };
             const payload = { test: 'data' };
 
-            // Mock fetch to resolve twice: first for the POST, second for the DELETE
-            const fetchMock = vi
-                .fn()
-                .mockResolvedValueOnce({
-                    ok: true,
-                    json: vi.fn().mockResolvedValue(finalResource),
-                })
-                .mockResolvedValueOnce({
-                    ok: true,
-                });
-            vi.stubGlobal('fetch', fetchMock);
+            apiFetch
+                .mockResolvedValueOnce(okResponse(finalResource))
+                .mockResolvedValueOnce(okResponse(undefined));
 
             const result = await submitApplication('draft-123', payload);
 
-            // Assert POST request
-            expect(fetchMock).toHaveBeenNthCalledWith(
+            expect(apiFetch).toHaveBeenNthCalledWith(
                 1,
                 '/mock/create/permit_application',
                 {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': 'mock-csrf-token',
-                    },
-                    body: JSON.stringify({
+                    body: {
                         draft_id: 'draft-123',
-                        aliased_data: payload,
-                    }),
+                        aliased_data: {
+                            test: 'data',
+                            application_identification: {
+                                aliased_data: {
+                                    application_id: {
+                                        node_value: {
+                                            en: {
+                                                value: 'DUMMY-APP-0000',
+                                                direction: 'ltr',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
             );
 
-            // Assert DELETE request
-            expect(fetchMock).toHaveBeenNthCalledWith(
+            expect(apiFetch).toHaveBeenNthCalledWith(
                 2,
                 '/mock/draft/permit_application/draft-123',
-                {
-                    method: 'DELETE',
-                    headers: { 'X-CSRFToken': 'mock-csrf-token' },
-                },
+                { method: 'DELETE' },
             );
 
             expect(result).toEqual(finalResource);
         });
 
-        it('throws an error with JSON details when POST fails', async () => {
-            const errorDetails = { detail: 'Validation failed' };
-            vi.stubGlobal(
-                'fetch',
-                mockFetchError(400, 'Bad Request', errorDetails),
-            );
+        it('re-throws and logs when a request fails', async () => {
+            const failure = new Error('POST .../create failed (400)');
+            apiFetch.mockRejectedValue(failure);
 
             await expect(submitApplication('draft-123', {})).rejects.toThrow(
-                'Status 400: {"detail":"Validation failed"}',
-            );
-            expect(console.error).toHaveBeenCalledWith(
-                'Django 400 Error Details:',
-                errorDetails,
-            );
-        });
-
-        it('throws a fallback error when POST fails and response is not JSON', async () => {
-            // Mock a 500 error where json() fails to parse
-            vi.stubGlobal('fetch', mockFetchError(500, 'Server Error'));
-
-            await expect(submitApplication('draft-123', {})).rejects.toThrow(
-                'Status 500: "No additional details provided by server."',
-            );
-        });
-
-        it('re-throws network errors', async () => {
-            const networkError = new Error('Network failure');
-            vi.stubGlobal('fetch', vi.fn().mockRejectedValue(networkError));
-
-            await expect(submitApplication('draft-123', {})).rejects.toThrow(
-                'Network failure',
+                'POST .../create failed (400)',
             );
             expect(console.error).toHaveBeenCalledWith(
                 'Submission API failed:',
-                networkError,
+                failure,
             );
         });
     });

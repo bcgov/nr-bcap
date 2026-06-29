@@ -35,6 +35,25 @@ export const getResourceData = async (
     return await response.json();
 };
 
+export const getResourceList = async (
+    graph_slug: string,
+    resource_ids: string[],
+): Promise<
+    ArchaeologySiteSchema | SiteVisitSchema | HriaDiscontinuedDataSchema
+> => {
+    const url: URL = new URL(
+        arches.urls.api_resource_list(graph_slug),
+        window.location.origin,
+    );
+    url.searchParams.append('resource_ids', resource_ids.join(','));
+    const response = await fetch(url);
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || response.statusText);
+    }
+    return await response.json();
+};
+
 export const getRelatedResourceData = async (
     graph_slug: string,
     resource_id: string,
@@ -61,7 +80,13 @@ export const getProcessRequirementData = async (
         throw new Error(text || response.statusText);
     }
 
-    return zProcessRequirement.parse(await response.json());
+    const json = await response.json();
+    const result = zProcessRequirement.safeParse(json);
+    if (!result.success) {
+        console.warn('ProcessRequirement failed validation:', result.error);
+        return json as ProcessRequirement;
+    }
+    return result.data;
 };
 
 export type UnlinkedContributor = z.infer<typeof zContributorOption>;

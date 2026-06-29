@@ -3,6 +3,7 @@ Used by single resource view for SimpleMapView under details.
 """
 
 from django.db import connection
+from bcap.util.queryset import deep_get
 
 # graph_slug -> (geom node uuid, geojson node alias, map attribute aliases)
 # Note: underlying SQL needs to change for site_visit to work.
@@ -24,6 +25,8 @@ GRAPH_CONFIG = {
     ),
 }
 
+from functools import reduce
+
 
 def inject_map_attributes(response_data, resourceinstanceid, graph_slug):
     """Inject the configured attributes into each feature's properties of the
@@ -42,6 +45,7 @@ def inject_map_attributes(response_data, resourceinstanceid, graph_slug):
         attrs = dict(cur.fetchall())
     if not attrs:
         return
-    node = response_data["aliased_data"][alias]["aliased_data"][alias]
-    for f in node["node_value"]["features"]:
-        f.setdefault("properties", {}).update(attrs)
+    node = deep_get(response_data, "aliased_data", alias, "aliased_data", alias)
+    if node:
+        for f in node["node_value"]["features"]:
+            f.setdefault("properties", {}).update(attrs)
