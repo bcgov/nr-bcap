@@ -1,4 +1,6 @@
+import { z } from 'zod';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import { zApiHcaPermitListResponse } from '@/bcap/client/zod.gen.ts';
 
 import type {
     ReferenceSelectValue,
@@ -58,6 +60,10 @@ export type NullableReferenceSelectValue =
           node_value: ReferenceSelectNodeValue[] | null;
           details: ReferenceSelectDetails[] | [];
       });
+
+export type zApiHcaPermitListResponseType = z.infer<
+    typeof zApiHcaPermitListResponse
+>;
 
 export interface BcapURLs {
     add_resource: (graphid: string) => string;
