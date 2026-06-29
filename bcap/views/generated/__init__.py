@@ -81,13 +81,6 @@ from .local_government import (
     LocalGovernmentView,
 )
 
-from .new_resource_model import (
-    NewResourceModelSerializer,
-    NewResourceModelViewMixin,
-    NewResourceModelListView,
-    NewResourceModelView,
-)
-
 from .permit_application import (
     PermitApplicationSerializer,
     PermitApplicationViewMixin,
@@ -121,6 +114,13 @@ from .repository import (
     RepositoryViewMixin,
     RepositoryListView,
     RepositoryView,
+)
+
+from .requirement_submission import (
+    RequirementSubmissionSerializer,
+    RequirementSubmissionViewMixin,
+    RequirementSubmissionListView,
+    RequirementSubmissionView,
 )
 
 from .site_submission import (
@@ -182,10 +182,6 @@ __all__ = [
     "LocalGovernmentSerializer",
     "LocalGovernmentView",
     "LocalGovernmentViewMixin",
-    "NewResourceModelListView",
-    "NewResourceModelSerializer",
-    "NewResourceModelView",
-    "NewResourceModelViewMixin",
     "PermitApplicationListView",
     "PermitApplicationSerializer",
     "PermitApplicationView",
@@ -206,6 +202,10 @@ __all__ = [
     "RepositorySerializer",
     "RepositoryView",
     "RepositoryViewMixin",
+    "RequirementSubmissionListView",
+    "RequirementSubmissionSerializer",
+    "RequirementSubmissionView",
+    "RequirementSubmissionViewMixin",
     "SiteSubmissionListView",
     "SiteSubmissionSerializer",
     "SiteSubmissionView",

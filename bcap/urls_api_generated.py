@@ -38,8 +38,6 @@ from bcap.views.generated import (
     LgPersonView,
     LocalGovernmentListView,
     LocalGovernmentView,
-    NewResourceModelListView,
-    NewResourceModelView,
     PermitApplicationListView,
     PermitApplicationView,
     ProcessRequirementListView,
@@ -50,6 +48,8 @@ from bcap.views.generated import (
     PublicationView,
     RepositoryListView,
     RepositoryView,
+    RequirementSubmissionListView,
+    RequirementSubmissionView,
     SiteSubmissionListView,
     SiteSubmissionView,
     SiteVisitListView,
@@ -168,16 +168,6 @@ urlpatterns = [
         name="api_local_government",
     ),
     path(
-        "api/new_resource_model/",
-        NewResourceModelListView.as_view(),
-        name="api_new_resource_model_list",
-    ),
-    path(
-        "api/new_resource_model/<uuid:pk>/",
-        NewResourceModelView.as_view(),
-        name="api_new_resource_model",
-    ),
-    path(
         "api/permit_application/",
         PermitApplicationListView.as_view(),
         name="api_permit_application_list",
@@ -226,6 +216,16 @@ urlpatterns = [
         "api/repository/<uuid:pk>/",
         RepositoryView.as_view(),
         name="api_repository",
+    ),
+    path(
+        "api/requirement_submission/",
+        RequirementSubmissionListView.as_view(),
+        name="api_requirement_submission_list",
+    ),
+    path(
+        "api/requirement_submission/<uuid:pk>/",
+        RequirementSubmissionView.as_view(),
+        name="api_requirement_submission",
     ),
     path(
         "api/site_submission/",
