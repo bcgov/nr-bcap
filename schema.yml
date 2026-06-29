@@ -4,13 +4,15 @@ info:
   version: 2.0.0
   description: BC Archaeology Portal API
 paths:
-  /bcap/api/alteration/:
+  /bcap/api/alteration:
     get:
       operationId: api_alteration_list
       description: |-
-        GET the requesting user's Alteration resources.
+        Collection endpoint for the requesting user's Alteration resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -39,10 +41,11 @@ paths:
     get:
       operationId: api_alteration_retrieve
       description: |-
-        GET a Alteration resource and its nested tiles.
+        Detail endpoint for a single Alteration resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -61,13 +64,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Alteration'
           description: ''
-  /bcap/api/archaeological_site/:
+  /bcap/api/archaeological_site:
     get:
       operationId: api_archaeological_site_list
       description: |-
-        GET the requesting user's Archaeological Site resources.
+        Collection endpoint for the requesting user's Archaeological Site resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -96,10 +101,11 @@ paths:
     get:
       operationId: api_archaeological_site_retrieve
       description: |-
-        GET a Archaeological Site resource and its nested tiles.
+        Detail endpoint for a single Archaeological Site resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -135,13 +141,15 @@ paths:
                 items:
                   type: string
           description: ''
-  /bcap/api/bcap_message/:
+  /bcap/api/bcap_message:
     get:
       operationId: api_bcap_message_list
       description: |-
-        GET the requesting user's BCAP Message resources.
+        Collection endpoint for the requesting user's BCAP Message resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -170,10 +178,11 @@ paths:
     get:
       operationId: api_bcap_message_retrieve
       description: |-
-        GET a BCAP Message resource and its nested tiles.
+        Detail endpoint for a single BCAP Message resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -192,13 +201,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/BcapMessage'
           description: ''
-  /bcap/api/contributor/:
+  /bcap/api/contributor:
     get:
       operationId: api_contributor_list
       description: |-
-        GET the requesting user's Contributor resources.
+        Collection endpoint for the requesting user's Contributor resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -227,10 +238,11 @@ paths:
     get:
       operationId: api_contributor_retrieve
       description: |-
-        GET a Contributor resource and its nested tiles.
+        Detail endpoint for a single Contributor resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -348,13 +360,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalDashboardPage'
           description: ''
-  /bcap/api/hca_permit/:
+  /bcap/api/hca_permit:
     get:
       operationId: api_hca_permit_list
       description: |-
-        GET the requesting user's HCA Permit resources.
+        Collection endpoint for the requesting user's HCA Permit resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -383,10 +397,11 @@ paths:
     get:
       operationId: api_hca_permit_retrieve
       description: |-
-        GET a HCA Permit resource and its nested tiles.
+        Detail endpoint for a single HCA Permit resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -405,13 +420,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/HcaPermit'
           description: ''
-  /bcap/api/hria_discontinued_data/:
+  /bcap/api/hria_discontinued_data:
     get:
       operationId: api_hria_discontinued_data_list
       description: |-
-        GET the requesting user's HRIA Discontinued Data resources.
+        Collection endpoint for the requesting user's HRIA Discontinued Data resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -440,10 +457,11 @@ paths:
     get:
       operationId: api_hria_discontinued_data_retrieve
       description: |-
-        GET a HRIA Discontinued Data resource and its nested tiles.
+        Detail endpoint for a single HRIA Discontinued Data resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -462,13 +480,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/HriaDiscontinuedData'
           description: ''
-  /bcap/api/inspection/:
+  /bcap/api/inspection:
     get:
       operationId: api_inspection_list
       description: |-
-        GET the requesting user's Inspection resources.
+        Collection endpoint for the requesting user's Inspection resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -497,10 +517,11 @@ paths:
     get:
       operationId: api_inspection_retrieve
       description: |-
-        GET a Inspection resource and its nested tiles.
+        Detail endpoint for a single Inspection resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -519,13 +540,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Inspection'
           description: ''
-  /bcap/api/investigation/:
+  /bcap/api/investigation:
     get:
       operationId: api_investigation_list
       description: |-
-        GET the requesting user's Investigation resources.
+        Collection endpoint for the requesting user's Investigation resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -554,10 +577,11 @@ paths:
     get:
       operationId: api_investigation_retrieve
       description: |-
-        GET a Investigation resource and its nested tiles.
+        Detail endpoint for a single Investigation resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -576,13 +600,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Investigation'
           description: ''
-  /bcap/api/legislative_act/:
+  /bcap/api/legislative_act:
     get:
       operationId: api_legislative_act_list
       description: |-
-        GET the requesting user's Legislative Act resources.
+        Collection endpoint for the requesting user's Legislative Act resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -611,10 +637,11 @@ paths:
     get:
       operationId: api_legislative_act_retrieve
       description: |-
-        GET a Legislative Act resource and its nested tiles.
+        Detail endpoint for a single Legislative Act resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -633,13 +660,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/LegislativeAct'
           description: ''
-  /bcap/api/lg_person/:
+  /bcap/api/lg_person:
     get:
       operationId: api_lg_person_list
       description: |-
-        GET the requesting user's Government Person resources.
+        Collection endpoint for the requesting user's Government Person resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -668,10 +697,11 @@ paths:
     get:
       operationId: api_lg_person_retrieve
       description: |-
-        GET a Government Person resource and its nested tiles.
+        Detail endpoint for a single Government Person resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -690,13 +720,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/LgPerson'
           description: ''
-  /bcap/api/local_government/:
+  /bcap/api/local_government:
     get:
       operationId: api_local_government_list
       description: |-
-        GET the requesting user's Government resources.
+        Collection endpoint for the requesting user's Government resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -725,10 +757,11 @@ paths:
     get:
       operationId: api_local_government_retrieve
       description: |-
-        GET a Government resource and its nested tiles.
+        Detail endpoint for a single Government resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -747,13 +780,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/LocalGovernment'
           description: ''
-  /bcap/api/permit_application/:
+  /bcap/api/permit_application:
     get:
       operationId: api_permit_application_list
       description: |-
-        GET the requesting user's Permit Application resources.
+        Collection endpoint for the requesting user's Permit Application resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -811,37 +846,6 @@ paths:
       description: |-
         Collection endpoint: superusers and Resource Editors see every Process
         Requirement; other users see only the ones they created.
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: process_requirement'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedProcessRequirementList'
-          description: ''
-  /bcap/api/process_requirement/:
-    get:
-      operationId: api_process_requirement_list_2
-      description: |-
-        GET the requesting user's Process Requirement resources.
-
-        Read-only and owner-scoped: returns only the resources the user created.
       parameters:
       - name: limit
         required: false
@@ -977,13 +981,15 @@ paths:
       responses:
         '204':
           description: No response body
-  /bcap/api/project_sandbox/:
+  /bcap/api/project_sandbox:
     get:
       operationId: api_project_sandbox_list
       description: |-
-        GET the requesting user's Sandcastle resources.
+        Collection endpoint for the requesting user's Sandcastle resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1012,10 +1018,11 @@ paths:
     get:
       operationId: api_project_sandbox_retrieve
       description: |-
-        GET a Sandcastle resource and its nested tiles.
+        Detail endpoint for a single Sandcastle resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1034,13 +1041,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProjectSandbox'
           description: ''
-  /bcap/api/publication/:
+  /bcap/api/publication:
     get:
       operationId: api_publication_list
       description: |-
-        GET the requesting user's Publication resources.
+        Collection endpoint for the requesting user's Publication resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1069,10 +1078,11 @@ paths:
     get:
       operationId: api_publication_retrieve
       description: |-
-        GET a Publication resource and its nested tiles.
+        Detail endpoint for a single Publication resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1117,13 +1127,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegistrationLinkResponse'
           description: ''
-  /bcap/api/repository/:
+  /bcap/api/repository:
     get:
       operationId: api_repository_list
       description: |-
-        GET the requesting user's Repository resources.
+        Collection endpoint for the requesting user's Repository resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1152,10 +1164,11 @@ paths:
     get:
       operationId: api_repository_retrieve
       description: |-
-        GET a Repository resource and its nested tiles.
+        Detail endpoint for a single Repository resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1174,13 +1187,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Repository'
           description: ''
-  /bcap/api/requirement_submission/:
+  /bcap/api/requirement_submission:
     get:
       operationId: api_requirement_submission_list
       description: |-
-        GET the requesting user's Requirement Submission resources.
+        Collection endpoint for the requesting user's Requirement Submission resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1209,10 +1224,11 @@ paths:
     get:
       operationId: api_requirement_submission_retrieve
       description: |-
-        GET a Requirement Submission resource and its nested tiles.
+        Detail endpoint for a single Requirement Submission resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1424,13 +1440,15 @@ paths:
       responses:
         '204':
           description: No response body
-  /bcap/api/site_submission/:
+  /bcap/api/site_submission:
     get:
       operationId: api_site_submission_list
       description: |-
-        GET the requesting user's Archaeological Site Submission resources.
+        Collection endpoint for the requesting user's Archaeological Site Submission resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1459,10 +1477,11 @@ paths:
     get:
       operationId: api_site_submission_retrieve
       description: |-
-        GET a Archaeological Site Submission resource and its nested tiles.
+        Detail endpoint for a single Archaeological Site Submission resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1481,13 +1500,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteSubmission'
           description: ''
-  /bcap/api/site_visit/:
+  /bcap/api/site_visit:
     get:
       operationId: api_site_visit_list
       description: |-
-        GET the requesting user's Site Visit resources.
+        Collection endpoint for the requesting user's Site Visit resources.
 
-        Read-only and owner-scoped: returns only the resources the user created.
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST).
       parameters:
       - name: limit
         required: false
@@ -1516,10 +1537,11 @@ paths:
     get:
       operationId: api_site_visit_retrieve
       description: |-
-        GET a Site Visit resource and its nested tiles.
+        Detail endpoint for a single Site Visit resource and its nested tiles.
 
-        Read-only, and scoped to the requesting user's own resources: requesting
-        one created by another user returns 404.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id

@@ -9483,13 +9483,6 @@ export const zApiProcessRequirementListQuery = z.object({
 
 export const zApiProcessRequirementListResponse = zPaginatedProcessRequirementList;
 
-export const zApiProcessRequirementList2Query = z.object({
-    limit: z.int().optional(),
-    offset: z.int().optional()
-});
-
-export const zApiProcessRequirementList2Response = zPaginatedProcessRequirementList;
-
 export const zApiProcessRequirementDestroyPath = z.object({
     id: z.uuid()
 });
