@@ -113,7 +113,12 @@
                 {
                     "card_id": "781da83d-3229-4af3-89fd-9c66f54a223b",
                     "config": {
-                        "label": "End Date"
+                        "defaultValue": "",
+                        "label": "End Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
                     },
                     "id": "511c063d-518b-43e8-9ab4-aeb914634aa4",
                     "label": {
@@ -131,7 +136,7 @@
                         "i18n_properties": ["placeholder"],
                         "label": "Contributor Role",
                         "placeholder": {
-                            "en": "Select an option"
+                            "en": "Select an option for Individuals, leave blank for Organizations"
                         },
                         "url": "/bcap/concepts/dropdown?conceptid=0454aeb7-da1e-4d10-b45b-9ec16a52767b"
                     },
@@ -148,9 +153,12 @@
                 {
                     "card_id": "781da83d-3229-4af3-89fd-9c66f54a223b",
                     "config": {
+                        "defaultValue": "",
                         "label": "Start Date",
                         "maxDate": null,
-                        "minDate": null
+                        "minDate": null,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
                     },
                     "id": "acbd99f9-48dd-45cd-b0ad-69afff11933b",
                     "label": {
@@ -235,17 +243,17 @@
                             }
                         },
                         "i18n_properties": ["placeholder"],
-                        "label": "Organization Name or Last Name",
+                        "label": "Individual's Last Name OR Organization's Full Name",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": "Enter text"
+                            "en": "Enter Individual's last name, or the Organization's full name"
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "c4eca9b4-9dea-11ed-9a7b-5254004d77d3",
                     "label": {
-                        "en": "Organization Name or Last Name"
+                        "en": "Individual's Last Name OR Organization's Full Name"
                     },
                     "node_id": "c4ec9b2c-9dea-11ed-9a7b-5254004d77d3",
                     "sortorder": 2,
@@ -266,7 +274,7 @@
                         "label": "Contributor First Name",
                         "maxLength": "125",
                         "placeholder": {
-                            "en": "Enter text"
+                            "en": "Enter for Individuals only"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -1028,9 +1036,9 @@
             "publication": {
                 "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                 "most_recent_edit_id": null,
-                "notes": "Add in user_id field to contributor to map to Django auth_users table.",
-                "publicationid": "8fab075f-d859-4c6f-add0-390441f897a5",
-                "published_time": "2026-05-25T13:54:36.482"
+                "notes": "Added boilerplate text to clarify first/last/org names.",
+                "publicationid": "7d07a684-ce70-4f55-9245-17b9b8c5cbe1",
+                "published_time": "2026-06-29T16:27:28.488"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1131,9 +1139,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: detected dubious ownership in repository at '/web_root/arches'",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "6.6.114.1-microsoft-standard-WSL2"
+        "os version": "6.12.76-linuxkit"
     }
 }
