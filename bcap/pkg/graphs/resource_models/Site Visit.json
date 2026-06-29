@@ -6042,7 +6042,7 @@
                 {
                     "alias": "latest_edit_type",
                     "config": {
-                        "controlledList": "f02e971f-a22b-59b7-acbb-ad232526e7a2",
+                        "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -6453,9 +6453,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Set default site visit role",
-                "publicationid": "4e59c191-0814-4ed1-9bac-95e9cc39bcbd",
-                "published_time": "2026-06-27T17:38:24.396"
+                "notes": "Fix edit type lookup",
+                "publicationid": "df0a04b9-3820-4b20-95ed-8d07527f34d7",
+                "published_time": "2026-06-29T14:47:19.752"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
