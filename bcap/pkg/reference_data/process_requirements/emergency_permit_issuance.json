@@ -1,0 +1,20 @@
+{
+    "id": "EMER-001",
+    "name": "Emergency Permit Issuance",
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [
+        {
+            "name": "Verify Emergency",
+            "description": "Verify the extent of the emergency qualifies for direct issuance",
+            "sort_order": 1,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Notify Affected Parties",
+            "description": "Notify Affected Parties that Emergency Permit Issuance has happened",
+            "sort_order": 2,
+            "sub_satisfied": false
+        }
+    ]
+}
