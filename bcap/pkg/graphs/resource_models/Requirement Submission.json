@@ -1033,7 +1033,9 @@
                 },
                 {
                     "alias": "arch_branch_determined_level_of_risk",
-                    "config": {},
+                    "config": {
+                        "rdmCollection": null
+                    },
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
@@ -1647,9 +1649,9 @@
             "publication": {
                 "graph_id": "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",
                 "most_recent_edit_id": null,
-                "notes": "First cut of adoption of FMS submission resource model.",
-                "publicationid": "295b2722-cb2a-4130-beb1-94c3a7a9b3db",
-                "published_time": "2026-04-21T16:10:26.876"
+                "notes": null,
+                "publicationid": "715b305a-30df-4e13-8a28-78dfd1ca411a",
+                "published_time": "2026-06-28T21:58:35.223"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1736,7 +1738,7 @@
                 "source_identifier_id": null,
                 "sourcebranchpublication_id": null
             },
-            "slug": "new_resource_model",
+            "slug": "requirement_submission",
             "source_identifier_id": null,
             "spatial_views": [],
             "subtitle": {

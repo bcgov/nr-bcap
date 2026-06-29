@@ -35,6 +35,25 @@ export const getResourceData = async (
     return await response.json();
 };
 
+export const getResourceList = async (
+    graph_slug: string,
+    resource_ids: string[],
+): Promise<
+    ArchaeologySiteSchema | SiteVisitSchema | HriaDiscontinuedDataSchema
+> => {
+    const url: URL = new URL(
+        arches.urls.api_resource_list(graph_slug),
+        window.location.origin,
+    );
+    url.searchParams.append('resource_ids', resource_ids.join(','));
+    const response = await fetch(url);
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || response.statusText);
+    }
+    return await response.json();
+};
+
 export const getRelatedResourceData = async (
     graph_slug: string,
     resource_id: string,

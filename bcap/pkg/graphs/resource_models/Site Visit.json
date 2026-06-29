@@ -758,10 +758,25 @@
                 {
                     "card_id": "a6995f93-272c-4548-83c5-5ba11fbdc364",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "04fbef8f-ccfc-4797-b138-e21db61a2a03",
+                                        "language_id": "en",
+                                        "list_item_id": "5b9cb2a4-d941-5260-bfdf-5e6895e5b212",
+                                        "value": "Site Visit - Other",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "list_id": "dea73106-ad02-561d-8075-4f68ba5318b9",
+                                "uri": "/bcap/plugins/controlled-list-manager/item/5b9cb2a4-d941-5260-bfdf-5e6895e5b212"
+                            }
+                        ],
                         "i18n_properties": ["placeholder"],
                         "label": "Member Role(s)",
                         "placeholder": {
-                            "en": "Select an option"
+                            "en": "Select Site Visit roles"
                         },
                         "uneditable": false
                     },
@@ -6438,9 +6453,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Removed Source Notes",
-                "publicationid": "a9dc173d-0853-421a-a492-fab68c17d880",
-                "published_time": "2026-05-22T15:00:52.277"
+                "notes": "Set default site visit role",
+                "publicationid": "4e59c191-0814-4ed1-9bac-95e9cc39bcbd",
+                "published_time": "2026-06-27T17:38:24.396"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -6542,7 +6557,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "d5a4f8fb2c 2026-04-22 06:33:18 -0700",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }

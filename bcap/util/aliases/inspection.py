@@ -51,6 +51,7 @@ class InspectionAliases(AbstractAliases):
     HAS_WINTER_ASSESSMENTS = "has_winter_assessments"
     HIP_OBJECTIVES = "hip_objectives"
     HIP_STUDY_DETAILS = "hip_study_details"
+    INSPECTION_IDENTIFICATION = "inspection_identification"
     IS_EXCAVATION_APPROACH_COMPLIANT = "is_excavation_approach_compliant"
     IS_HCA_COMPLIANT = "is_hca_compliant"
     IS_REPOSITORY_REQUIRED = "is_repository_required"

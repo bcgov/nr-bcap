@@ -992,27 +992,6 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
-                    "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
-                        "label": "Government",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "034d3442-13f2-11f0-9ff8-0242ac170007",
-                    "label": {
-                        "en": "Government"
-                    },
-                    "node_id": "034d2c18-13f2-11f0-9ff8-0242ac170007",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
-                },
-                {
                     "card_id": "67ab15bd-7377-44c4-a9e2-0ff632b14bd9",
                     "config": {
                         "defaultValue": {
@@ -3032,26 +3011,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000101"
                 },
                 {
-                    "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
-                    "config": {
-                        "i18n_properties": ["placeholder"],
-                        "label": "Legal Instrument",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "e4b21a13-dc73-4e86-b2a7-03a870d857c3",
-                    "label": {
-                        "en": "Legal Instrument"
-                    },
-                    "node_id": "36cad31f-192f-4c93-b24c-6f9c95b83ccf",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
                     "config": {
                         "defaultResourceInstance": [],
@@ -3326,16 +3285,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "rangenode_id": "034d2ef2-13f2-11f0-9ff8-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "edgeid": "034dab16-13f2-11f0-9ff8-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
-                    "rangenode_id": "034d2c18-13f2-11f0-9ff8-0242ac170007",
                     "source_identifier_id": null
                 },
                 {
@@ -4407,16 +4356,6 @@
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "rangenode_id": "f80f115a-1977-11f0-8713-0242ac170008",
                     "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "edgeid": "faaa6541-2533-424e-a4c2-ea0fa709b3b2",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P70i_is_documented_in",
-                    "rangenode_id": "36cad31f-192f-4c93-b24c-6f9c95b83ccf",
-                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [
@@ -4803,42 +4742,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 7,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "responsible_government",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "aacf8bb6-3f6e-46d9-a551-b0749d7efffc",
-                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Government",
-                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
-                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "useOntologyRelationship": false
-                            }
-                        ],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "AU_GOVERN",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Responsible Government",
-                    "nodegroup_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "nodeid": "034d2c18-13f2-11f0-9ff8-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
-                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -5721,32 +5624,6 @@
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D13_Digital_Information_Carrier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P62i_is_depicted_by",
                     "sortorder": 9,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "authority_legal_instrument",
-                    "config": {
-                        "controlledList": "b0248b36-a1ba-51f5-a7c2-ffb79f17bb7b",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "AU_LEG_INS",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Authority Legal Instrument",
-                    "nodegroup_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "nodeid": "36cad31f-192f-4c93-b24c-6f9c95b83ccf",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E32_Authority_Document",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P70i_is_documented_in",
-                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -7799,9 +7676,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "Removed Source Notes",
-                "publicationid": "c61d48e9-6719-4745-9097-53a3d3c6ca80",
-                "published_time": "2026-05-22T15:01:24.592"
+                "notes": "Remove redundant Government and Legal Instrument nodes",
+                "publicationid": "bcddc9ab-dacb-4de6-82f2-b53002c43a51",
+                "published_time": "2026-06-27T17:46:28.243"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -7901,7 +7778,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "d5a4f8fb2c 2026-04-22 06:33:18 -0700",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }

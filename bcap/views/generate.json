@@ -1,58 +1,22 @@
 {
-  "alteration": [
-    "GET", "PUT", "PATCH", "POST", "DELETE"
-  ],
-  "archaeological_site": [
-    "GET"
-  ],
-  "bcap_message": [
-    "GET", "PUT", "PATCH", "POST", "DELETE"
-  ],
-  "contributor": [
-    "GET"
-  ],
-  "hca_permit": [
-    "GET"
-  ],
-  "inspection": [
-    "GET", "PUT", "PATCH", "POST", "DELETE"
-  ],
-  "investigation": [
-    "GET", "PUT", "PATCH", "POST", "DELETE"
-  ],
-  "hria_discontinued_data": [],
-  "legislative_act": [
-    "GET"
-  ],
-  "lg_person": [
-    "GET"
-  ],
-  "local_government": [
-    "GET"
-  ],
-  "new_resource_model": [],
-  "permit_application": [
-    "GET",
-    "PUT",
-    "PATCH",
-    "POST",
-    "DELETE"
-  ],
-  "process_requirement": [
-    "GET",
-    "PUT",
-    "PATCH",
-    "DELETE"
-  ],
-  "project_sandbox": [],
-  "publication": [
-    "GET"
-  ],
-  "repository": [],
-  "site_submission": [
-    "GET"
-  ],
-  "site_visit": [
-    "GET"
-  ]
+    "alteration": ["GET", "PUT", "PATCH", "POST", "DELETE"],
+    "archaeological_site": ["GET"],
+    "bcap_message": ["GET", "PUT", "PATCH", "POST", "DELETE"],
+    "contributor": ["GET"],
+    "hca_permit": ["GET"],
+    "hria_discontinued_data": [],
+    "inspection": ["GET", "PUT", "PATCH", "POST", "DELETE"],
+    "investigation": ["GET", "PUT", "PATCH", "POST", "DELETE"],
+    "legislative_act": ["GET"],
+    "lg_person": ["GET"],
+    "local_government": ["GET"],
+    "new_resource_model": [],
+    "permit_application": ["GET", "PUT", "PATCH", "POST", "DELETE"],
+    "process_requirement": ["GET", "PUT", "PATCH", "DELETE"],
+    "project_sandbox": [],
+    "publication": ["GET"],
+    "repository": [],
+    "requirement_submission": ["GET"],
+    "site_submission": ["GET"],
+    "site_visit": ["GET"]
 }
