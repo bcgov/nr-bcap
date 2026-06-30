@@ -28,6 +28,8 @@ def supported_permit_types():
 def load(permit_type):
     """A permit type's grouping parent spec, with its child requirements nested
     under ``requirements`` in flow order."""
+    if permit_type not in supported_permit_types():
+        raise FileNotFoundError(f"No template spec for permit type '{permit_type}'.")
     return json.loads((_root() / f"{permit_type}.json").read_text())
 
 
