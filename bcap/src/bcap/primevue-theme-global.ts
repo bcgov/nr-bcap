@@ -5,7 +5,6 @@ import type { App } from 'vue';
 
 import PrimeVue from 'primevue/config';
 
-
 // Make your custom preset (optional; you can also pass Aura directly)
 const BcapPreset = definePreset(Aura, {
     // Override only what you need

@@ -30,6 +30,7 @@ from arches_zod_validation.views.mixins import (
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
+from bcap.schema import ArchesTileAutoSchema
 from bcap.services.process_requirement.template_specs import host_graph
 from bcap.util.indexing import bulk_index
 from bcap.util.bcap_aliases import GraphSlugs
@@ -130,6 +131,9 @@ class ProcessRequirementSeedView(APIView):
     The permit type is a path segment; a type with no host resource is a 400."""
 
     permission_classes = [ResourceEditor]
+    # Key each host's aliased_data component name off its graph, so the three
+    # host types get distinct typed schemas instead of one shared, generic one.
+    schema = ArchesTileAutoSchema()
 
     def _host_serializer_class(self, permit_type, pk):
         """The serializer for the module's host resource. 400 when the type has
