@@ -20,17 +20,26 @@ def _root():
     )
 
 
+def _spec_files():
+    """The template files by permit type, keyed by file stem."""
+    return {path.stem: path for path in _root().glob("*.json")}
+
+
 def supported_permit_types():
     """The permit types that have a template file."""
-    return sorted(path.stem for path in _root().glob("*.json"))
+    return sorted(_spec_files())
 
 
 def load(permit_type):
     """A permit type's grouping parent spec, with its child requirements nested
     under ``requirements`` in flow order."""
-    if permit_type not in supported_permit_types():
+    # Resolve to the actual listed file rather than building a path from the
+    # caller's string, so an unknown or crafted permit type cannot escape the
+    # groups directory.
+    path = _spec_files().get(permit_type)
+    if path is None:
         raise FileNotFoundError(f"No template spec for permit type '{permit_type}'.")
-    return json.loads((_root() / f"{permit_type}.json").read_text())
+    return json.loads(path.read_text())
 
 
 def flatten(permit_type):
