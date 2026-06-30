@@ -17,7 +17,9 @@ from bcap.services.registration.invitation_registration_service import (
     PENDING_REGISTRATION_SESSION_KEY,
     InvitationRegistrationService,
 )
-from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.util.controlled_list import reference_value
+from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -30,10 +32,8 @@ class InvitationRegistrationServiceTest(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.builder = ResourceBuilder()
-        self.contributor_type = self.builder.reference_value(
-            "contributor", "contributor_type"
-        )
+        self.builder = FixtureBuilder()
+        self.contributor_type = reference_value("contributor", "contributor_type")
         self.contributors = ContributorService()
         self.service = InvitationRegistrationService(self.contributors)
         self.user = get_user_model().objects.create_user(

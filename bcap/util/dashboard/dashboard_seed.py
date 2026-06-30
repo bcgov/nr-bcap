@@ -14,7 +14,9 @@ from faker import Faker
 from arches.app.models.models import EditLog
 from arches_querysets.models import ResourceTileTree
 
-from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.builders.contributor_builder import ContributorBuilder, ContributorSpec
+from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.util.controlled_list import random_reference_value, reference_value
 
 
 @dataclass
@@ -59,7 +61,7 @@ class PermitSpec:
     priority: str | None = None
 
 
-class DashboardDemoBuilder(ResourceBuilder):
+class DashboardDemoBuilder(ProcessRequirementBuilder, ContributorBuilder):
     """Create the demo graph and return the resources it produced.
 
     Builds a Permit Application with all three process requirements (the first
@@ -155,7 +157,7 @@ class DashboardDemoBuilder(ResourceBuilder):
 
     _REQUIREMENTS = [
         {
-            "id": "REQ-2026-001",
+            "id": "REQ-DEMO-001",
             "name": "Review",
             "due": "2026-01-02",
             "notes": "all sub-requirements complete",
@@ -183,7 +185,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             ],
         },
         {
-            "id": "REQ-2026-002",
+            "id": "REQ-DEMO-002",
             "name": "Field Assessment",
             "due": "2026-02-15",
             "notes": "awaiting site access",
@@ -211,7 +213,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             ],
         },
         {
-            "id": "REQ-2026-003",
+            "id": "REQ-DEMO-003",
             "name": "Final Sign-off",
             "due": "2026-03-30",
             "notes": "pending manager approval",
@@ -297,7 +299,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             {
                 "permit_number": self._random_permit_number(),
                 "permit_holder": holders,
-                "hca_permit_type": self.random_reference_value(
+                "hca_permit_type": random_reference_value(
                     "hca_permit", "hca_permit_type"
                 ),
             },
@@ -310,7 +312,7 @@ class DashboardDemoBuilder(ResourceBuilder):
         contributor and HCA-permit pools and the requirement template set. Call
         once per run and pass the result to ``build`` -- these dominate the
         per-card cost, so sharing them across cards is most of the speedup."""
-        contributor_type = self.reference_value("contributor", "contributor_type")
+        contributor_type = reference_value("contributor", "contributor_type")
 
         # Pools each card draws from, so cards vary without recreating these.
         assignees = [
@@ -433,7 +435,7 @@ class DashboardDemoBuilder(ResourceBuilder):
             {"related_permit": spec.hca_permit, "is_related_permit": True},
         )
         proposed = self.append_blank_tile_for_group(permit, "proposed_project", {})
-        proposed.aliased_data.development_project_details.aliased_data.industrial_sector = self.random_reference_value(
+        proposed.aliased_data.development_project_details.aliased_data.industrial_sector = random_reference_value(
             "permit_application", "industrial_sector"
         )
         permit.append_tile("application_admin")
@@ -445,7 +447,7 @@ class DashboardDemoBuilder(ResourceBuilder):
         ).isoformat()
         admin.aliased_data.project_officer = spec.project_officer
         if spec.priority is not None:
-            admin.aliased_data.application_priority_level = self.reference_value(
+            admin.aliased_data.application_priority_level = reference_value(
                 "permit_application", "application_priority_level", spec.priority
             )
         for i, (requirement, order, assignee) in enumerate(spec.children):

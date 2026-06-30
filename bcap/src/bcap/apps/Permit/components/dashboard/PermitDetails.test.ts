@@ -12,6 +12,7 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchPermitDetails: vi.fn(),
     patchPermitSubmissionDate: vi.fn(),
     fetchDrafts: vi.fn(() => Promise.resolve([])),
+    fetchPermitModules: vi.fn(() => Promise.resolve([])),
 }));
 
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({

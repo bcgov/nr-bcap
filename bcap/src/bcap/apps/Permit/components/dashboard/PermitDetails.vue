@@ -14,6 +14,7 @@ import {
     fetchPermitDetails,
     patchPermitSubmissionDate,
     fetchDrafts,
+    fetchPermitModules,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
@@ -25,10 +26,13 @@ const router = useRouter();
 const permitId = computed(() => route.params.id as string);
 
 const draftTitle = (draft: InvestigationDraft) => {
-    const ident =
-        draft.data?.investigation_identification?.aliased_data
-            ?.investigation_identification;
-    const name = ident?.node_value?.en?.value;
+    // Drafts store the value under node_value; a submitted resource serializes
+    // it directly under the language key, so read either shape.
+    const ident = draft.data?.investigation_identification?.aliased_data
+        ?.investigation_identification as
+        | { node_value?: { en?: { value?: string } }; en?: { value?: string } }
+        | undefined;
+    const name = ident?.node_value?.en?.value ?? ident?.en?.value;
     return name
         ? `Investigation Identification: ${name}`
         : 'Untitled Investigation';
@@ -272,13 +276,17 @@ const performDelete = async () => {
 };
 
 const loadInvestigations = async () => {
-    const drafts = await fetchDrafts();
+    const [drafts, completed] = await Promise.all([
+        fetchDrafts(),
+        fetchPermitModules(permitId.value, GraphSlug.Investigation),
+    ]);
     state.investigationDrafts = drafts.filter(
         (d: InvestigationDraft) =>
             d.graph_slug === GraphSlug.Investigation &&
             !!d.data?.parent_resource_id &&
             d.data.parent_resource_id === permitId.value,
     );
+    state.completedInvestigations = completed;
 };
 
 onMounted(() => {
@@ -503,7 +511,9 @@ watch(activeModuleId, (id) => {
                                 v-for="item in state.completedInvestigations"
                                 :key="item.id"
                             >
-                                {{ draftTitle(item) }}
+                                <a :href="`/bcap/resource/${permitId}`">
+                                    {{ draftTitle(item) }}
+                                </a>
                             </li>
                         </ul>
                         <p

@@ -22,7 +22,7 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationGroupAliases as group_aliases,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.i18n import localized_string
 
 from tests.permit_fixtures import seed_requirement_templates
@@ -57,7 +57,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        seed_requirement_templates(ResourceBuilder())
+        seed_requirement_templates(ProcessRequirementBuilder())
 
     def setUp(self):
         super().setUp()
@@ -192,6 +192,6 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         for body in self._nesting_variants(group):
             with self.subTest(body=body):
                 service = PermitApplicationService()
-                copies = service._inject_requirements_from_templates(body)
+                _parent, copies = service._inject_requirements_from_templates(body)
                 admin = body[ALIASED_DATA][group][ALIASED_DATA]
                 self.assertEqual(len(admin[aliases.PROCESS_REQUIREMENT]), len(copies))

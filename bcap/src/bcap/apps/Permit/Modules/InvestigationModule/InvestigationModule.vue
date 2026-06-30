@@ -24,11 +24,12 @@ import Step8_Repository from '@/bcap/apps/Permit/Modules/InvestigationModule/ste
 import Step99_Review from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
-import { submitInvestigation, fetchDraft } from '@/bcap/apps/Permit/api.ts';
+import { submitModule, fetchDraft } from '@/bcap/apps/Permit/api.ts';
 import type { PermitApplicationResponse } from '@/bcap/types.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
-const graphSlug = 'investigation';
+const graphSlug = GraphSlug.Investigation;
 const route = useRoute();
 
 const draft = useDraftStore();
@@ -67,9 +68,13 @@ const submitNewSiteData = async (): Promise<boolean> => {
 
     try {
         if (!draft.draftId) throw new Error('No active draft found.');
+        if (!draft.parentPermitId)
+            throw new Error('No permit associated with this investigation.');
 
-        const response = await submitInvestigation(
+        const response = await submitModule(
+            draft.parentPermitId,
             draft.draftId,
+            GraphSlug.Investigation,
             draft.draftData,
         );
 

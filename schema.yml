@@ -4,192 +4,6 @@ info:
   version: 2.0.0
   description: BC Archaeology Portal API
 paths:
-  /bcap/api/alteration:
-    get:
-      operationId: api_alteration_list
-      description: |-
-        Collection endpoint for the requesting user's Alteration resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedAlterationList'
-          description: ''
-    post:
-      operationId: api_alteration_create
-      description: |-
-        Collection endpoint for the requesting user's Alteration resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      tags:
-      - 'External: alteration'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-  /bcap/api/alteration/{id}/:
-    get:
-      operationId: api_alteration_retrieve
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-    put:
-      operationId: api_alteration_update
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-    patch:
-      operationId: api_alteration_partial_update
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAlteration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAlteration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAlteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-    delete:
-      operationId: api_alteration_destroy
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/archaeological_site:
     get:
       operationId: api_archaeological_site_list
@@ -672,378 +486,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/HcaPermit'
           description: ''
-  /bcap/api/inspection:
-    get:
-      operationId: api_inspection_list
-      description: |-
-        Collection endpoint for the requesting user's Inspection resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedInspectionList'
-          description: ''
-    post:
-      operationId: api_inspection_create
-      description: |-
-        Collection endpoint for the requesting user's Inspection resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      tags:
-      - 'External: inspection'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-  /bcap/api/inspection/{id}/:
-    get:
-      operationId: api_inspection_retrieve
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-    put:
-      operationId: api_inspection_update
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-    patch:
-      operationId: api_inspection_partial_update
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedInspection'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedInspection'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedInspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-    delete:
-      operationId: api_inspection_destroy
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /bcap/api/investigation:
-    get:
-      operationId: api_investigation_list
-      description: |-
-        Collection endpoint for the requesting user's Investigation resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedInvestigationList'
-          description: ''
-    post:
-      operationId: api_investigation_create
-      description: |-
-        Collection endpoint for the requesting user's Investigation resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      tags:
-      - 'External: investigation'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-  /bcap/api/investigation/{id}/:
-    get:
-      operationId: api_investigation_retrieve
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-    put:
-      operationId: api_investigation_update
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-    patch:
-      operationId: api_investigation_partial_update
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedInvestigation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedInvestigation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedInvestigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-    delete:
-      operationId: api_investigation_destroy
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/legislative_act:
     get:
       operationId: api_legislative_act_list
@@ -1409,6 +851,82 @@ paths:
       responses:
         '204':
           description: No response body
+  /bcap/api/permit_application/{id}/process_requirement/{permit_type}:
+    get:
+      operationId: api_permit_application_process_requirement_list
+      description: The module's host resources attached to the permit application.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: permit_type
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: process_requirement'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModuleHost'
+          description: ''
+    post:
+      operationId: api_permit_application_process_requirement_create
+      description: |-
+        POST: submit a permit module (a group of process requirements). The
+        module's host resource (the child whose resource matches the permit type,
+        e.g. investigation) is created from the request body and validated by its own
+        serializer, the group's process requirements are cloned and attached to the
+        permit, and the host submission requirement is linked to the created host.
+        The created host is returned.
+
+        The permit type is a path segment; a type with no host resource is a 400.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: permit_type
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleHost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModuleHost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModuleHost'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleHost'
+          description: ''
   /bcap/api/process_requirement:
     get:
       operationId: api_process_requirement_list
@@ -2036,7 +1554,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
+          $ref: '#/components/schemas/ResourceAliasedData'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -2092,737 +1610,6 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-    Alteration_Alteration_Identification_Aliased_Data:
-      type: object
-      properties:
-        alteration_identification:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-      required:
-      - alteration_identification
-    Alteration_Alteration_Identification_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Alteration_Identification_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Alteration_Material_Collection_Aliased_Data:
-      type: object
-      properties:
-        collection_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        collection_approach_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        collection_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        details_of_collected_materials:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        details_of_collected_samples:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        additional_collection_and_sampling_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Alteration_Material_Collection_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Material_Collection_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Alteration_Methodology_Aliased_Data:
-      type: object
-      properties:
-        has_pre_field_research:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        methods_alignment:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_survey_coverage:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        survey_coverage_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_arch_potential:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        arch_potential_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        arch_bearing_sediment:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_subsurface_testing:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        subsurface_testing_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_machine_assisted_inspection:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        machine_assisted_inspection_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        machine_assisted_inspection_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_winter_assessments:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        winter_assessment_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        field_transport_and_lab_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        data_analysis_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        other_field_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Alteration_Methodology_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Methodology_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Alteration_Recordings_Aliased_Data:
-      type: object
-      properties:
-        additional_recording_information:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_cmt_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_excavation_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_historical_sites_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_rock_art_recording_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Alternate Rock Art Approach
-          description: Enter text
-        alternate_site_flagging_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_wet_sites_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_cmt_survey:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_historical_sites:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_site_flagging:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_wet_sites:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        is_excavation_approach_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Has Excavation Approach
-        is_rock_art_recording_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Has Rock Art
-        other_recording_approaches:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Alteration_Recordings_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Recordings_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Alteration_Resource_Aliased_Data:
-      type: object
-      properties:
-        alteration_identification:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Alteration_Identification_Tile'
-          nullable: true
-        section_1_overview:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Section_1_Overview_Tile'
-          nullable: true
-        section_2_personnel:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Section_2_Personnel_Tile'
-          nullable: true
-        methodology:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Methodology_Tile'
-          nullable: true
-        recordings:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Recordings_Tile'
-          nullable: true
-        material_collection:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Material_Collection_Tile'
-          nullable: true
-        section_6_ancestral_remains:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Section_6_Ancestral_Remains_Tile'
-          nullable: true
-        section_7_repository_and_curation:
-          allOf:
-          - $ref: '#/components/schemas/Alteration_Section_7_Repository_And_Curation_Tile'
-          nullable: true
-    Alteration_Section_1_Overview_Aliased_Data:
-      type: object
-      properties:
-        hip_study_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Provide details of the HIP study
-        assessment_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the approach to be taken to assess the project
-        mitigation_measures:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe what mitigation measures to be taken
-        are_chance_finds_expected:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        hip_objectives:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the the HIP stduy objectives
-        are_ancestral_remains_anticipated:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        arch_workplans_and_schedule_a:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-        affected_sites:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-          description: Select one or more sites that may be affected by this project
-        relevant_arch_studies:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-          description: List one or more studies that have been completed within the
-            proposed boundary
-        related_assessments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: List any assessments that are related to this project
-    Alteration_Section_1_Overview_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Section_1_Overview_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Alteration_Section_2_Personnel_Aliased_Data:
-      type: object
-      properties:
-        is_hca_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        permit_deliverables:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter a short description of the permit deliverables
-        field_directors:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-        overseeing_archaeologist:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-    Alteration_Section_2_Personnel_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Section_2_Personnel_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Alteration_Section_6_Ancestral_Remains_Aliased_Data:
-      type: object
-      properties:
-        alternate_ancestral_remains_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        ancestral_remains_approach_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Alteration_Section_6_Ancestral_Remains_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Section_6_Ancestral_Remains_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Alteration_Section_7_Repository_And_Curation_Aliased_Data:
-      type: object
-      properties:
-        has_repository_agreement:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_repository_been_contacted:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        is_repository_required:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        destination_repository:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-        additional_repository_and_curation_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Alteration_Section_7_Repository_And_Curation_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Section_7_Repository_And_Curation_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     ArchaeologicalSite:
       type: object
       properties:
@@ -6228,7 +5015,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
+          $ref: '#/components/schemas/ResourceAliasedData'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -6284,737 +5071,6 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-    Inspection_Inspection_Identification_Aliased_Data:
-      type: object
-      properties:
-        inspection_identification:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-      required:
-      - inspection_identification
-    Inspection_Inspection_Identification_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Inspection_Identification_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Inspection_Material_Collection_Aliased_Data:
-      type: object
-      properties:
-        collection_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        collection_approach_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        collection_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        details_of_collected_materials:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        details_of_collected_samples:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        additional_collection_and_sampling_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Inspection_Material_Collection_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Material_Collection_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Inspection_Methodology_Aliased_Data:
-      type: object
-      properties:
-        has_pre_field_research:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        methods_alignment:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_survey_coverage:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        survey_coverage_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_arch_potential:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        arch_potential_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        arch_bearing_sediment:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_subsurface_testing:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        subsurface_testing_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_machine_assisted_inspection:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        machine_assisted_inspection_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        machine_assisted_inspection_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_winter_assessments:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        winter_assessment_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        field_transport_and_lab_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        data_analysis_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        other_field_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Inspection_Methodology_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Methodology_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Inspection_Recordings_Aliased_Data:
-      type: object
-      properties:
-        additional_recording_information:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_cmt_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_excavation_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_historical_sites_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_rock_art_recording_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Alternate Rock Art Approach
-          description: Enter text
-        alternate_site_flagging_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_wet_sites_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_cmt_survey:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_historical_sites:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_site_flagging:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_wet_sites:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        is_excavation_approach_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Has Excavation Approach
-        is_rock_art_recording_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Has Rock Art
-        other_recording_approaches:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Inspection_Recordings_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Recordings_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Inspection_Resource_Aliased_Data:
-      type: object
-      properties:
-        inspection_identification:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Inspection_Identification_Tile'
-          nullable: true
-        section_1_overview:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Section_1_Overview_Tile'
-          nullable: true
-        section_2_personnel:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Section_2_Personnel_Tile'
-          nullable: true
-        methodology:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Methodology_Tile'
-          nullable: true
-        recordings:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Recordings_Tile'
-          nullable: true
-        material_collection:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Material_Collection_Tile'
-          nullable: true
-        section_6_ancestral_remains:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Section_6_Ancestral_Remains_Tile'
-          nullable: true
-        section_7_repository_and_curation:
-          allOf:
-          - $ref: '#/components/schemas/Inspection_Section_7_Repository_And_Curation_Tile'
-          nullable: true
-    Inspection_Section_1_Overview_Aliased_Data:
-      type: object
-      properties:
-        hip_study_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Provide details of the HIP study
-        assessment_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the approach to be taken to assess the project
-        mitigation_measures:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe what mitigation measures to be taken
-        are_chance_finds_expected:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        hip_objectives:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the the HIP stduy objectives
-        are_ancestral_remains_anticipated:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        arch_workplans_and_schedule_a:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-        affected_sites:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-          description: Select one or more sites that may be affected by this project
-        relevant_arch_studies:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-          description: List one or more studies that have been completed within the
-            proposed boundary
-        related_assessments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: List any assessments that are related to this project
-    Inspection_Section_1_Overview_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Section_1_Overview_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Inspection_Section_2_Personnel_Aliased_Data:
-      type: object
-      properties:
-        is_hca_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        permit_deliverables:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter a short description of the permit deliverables
-        field_directors:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-        overseeing_archaeologist:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-    Inspection_Section_2_Personnel_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Section_2_Personnel_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Inspection_Section_6_Ancestral_Remains_Aliased_Data:
-      type: object
-      properties:
-        alternate_ancestral_remains_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        ancestral_remains_approach_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Inspection_Section_6_Ancestral_Remains_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Section_6_Ancestral_Remains_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Inspection_Section_7_Repository_And_Curation_Aliased_Data:
-      type: object
-      properties:
-        has_repository_agreement:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_repository_been_contacted:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        is_repository_required:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        destination_repository:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-        additional_repository_and_curation_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-    Inspection_Section_7_Repository_And_Curation_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Section_7_Repository_And_Curation_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     InternalDashboardCard:
       type: object
       properties:
@@ -7121,7 +5177,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
+          $ref: '#/components/schemas/ResourceAliasedData'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -7177,16 +5233,6 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-    Investigation_Investigation_Identification_Aliased_Data:
-      type: object
-      properties:
-        investigation_identification:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-      required:
-      - investigation_identification
     Investigation_Investigation_Identification_Tile:
       type: object
       properties:
@@ -7207,7 +5253,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Investigation_Identification_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7235,39 +5281,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Investigation_Material_Collection_Aliased_Data:
-      type: object
-      properties:
-        collection_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        collection_approach_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        collection_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        details_of_collected_materials:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        details_of_collected_samples:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        additional_collection_and_sampling_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
     Investigation_Material_Collection_Tile:
       type: object
       properties:
@@ -7288,7 +5301,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Material_Collection_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7316,88 +5329,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Investigation_Methodology_Aliased_Data:
-      type: object
-      properties:
-        has_pre_field_research:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        methods_alignment:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_survey_coverage:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        survey_coverage_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_arch_potential:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        arch_potential_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        arch_bearing_sediment:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_subsurface_testing:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        subsurface_testing_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_machine_assisted_inspection:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        machine_assisted_inspection_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        machine_assisted_inspection_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_winter_assessments:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        winter_assessment_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        field_transport_and_lab_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        data_analysis_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        other_field_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
     Investigation_Methodology_Tile:
       type: object
       properties:
@@ -7418,7 +5349,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Methodology_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7446,76 +5377,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Investigation_Recordings_Aliased_Data:
-      type: object
-      properties:
-        additional_recording_information:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_cmt_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_excavation_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_historical_sites_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_rock_art_recording_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Alternate Rock Art Approach
-          description: Enter text
-        alternate_site_flagging_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        alternate_wet_sites_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_cmt_survey:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_historical_sites:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_site_flagging:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_wet_sites:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        is_excavation_approach_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Has Excavation Approach
-        is_rock_art_recording_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Has Rock Art
-        other_recording_approaches:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
     Investigation_Recordings_Tile:
       type: object
       properties:
@@ -7536,7 +5397,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Recordings_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7564,92 +5425,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Investigation_Resource_Aliased_Data:
-      type: object
-      properties:
-        investigation_identification:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Investigation_Identification_Tile'
-          nullable: true
-        section_1_overview:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Section_1_Overview_Tile'
-          nullable: true
-        section_2_personnel:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Section_2_Personnel_Tile'
-          nullable: true
-        methodology:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Methodology_Tile'
-          nullable: true
-        recordings:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Recordings_Tile'
-          nullable: true
-        material_collection:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Material_Collection_Tile'
-          nullable: true
-        section_6_ancestral_remains:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Section_6_Ancestral_Remains_Tile'
-          nullable: true
-        section_7_repository_and_curation:
-          allOf:
-          - $ref: '#/components/schemas/Investigation_Section_7_Repository_And_Curation_Tile'
-          nullable: true
-    Investigation_Section_1_Overview_Aliased_Data:
-      type: object
-      properties:
-        hip_study_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Provide details of the HIP study
-        assessment_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the approach to be taken to assess the project
-        mitigation_measures:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe what mitigation measures to be taken
-        are_chance_finds_expected:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        hip_objectives:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the the HIP stduy objectives
-        are_ancestral_remains_anticipated:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        arch_workplans_and_schedule_a:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-        affected_sites:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-          description: Select one or more sites that may be affected by this project
-        relevant_arch_studies:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-          description: List one or more studies that have been completed within the
-            proposed boundary
-        related_assessments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: List any assessments that are related to this project
     Investigation_Section_1_Overview_Tile:
       type: object
       properties:
@@ -7670,7 +5445,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Section_1_Overview_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7698,26 +5473,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Investigation_Section_2_Personnel_Aliased_Data:
-      type: object
-      properties:
-        is_hca_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        permit_deliverables:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter a short description of the permit deliverables
-        field_directors:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-        overseeing_archaeologist:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
     Investigation_Section_2_Personnel_Tile:
       type: object
       properties:
@@ -7738,7 +5493,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Section_2_Personnel_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7766,28 +5521,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Investigation_Section_6_Ancestral_Remains_Aliased_Data:
-      type: object
-      properties:
-        alternate_ancestral_remains_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_compliant:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        ancestral_remains_approach_methods:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        ancestral_remains_approach_additional_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
     Investigation_Section_6_Ancestral_Remains_Tile:
       type: object
       properties:
@@ -7808,7 +5541,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Section_6_Ancestral_Remains_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7836,30 +5569,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Investigation_Section_7_Repository_And_Curation_Aliased_Data:
-      type: object
-      properties:
-        has_repository_agreement:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        has_repository_been_contacted:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        is_repository_required:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        destination_repository:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-        additional_repository_and_curation_comments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
     Investigation_Section_7_Repository_And_Curation_Tile:
       type: object
       properties:
@@ -7880,7 +5589,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Investigation_Section_7_Repository_And_Curation_Aliased_Data'
+          $ref: '#/components/schemas/TileAliasedData'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -8834,6 +6543,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/Local_Government_Government_Name_Tile'
           nullable: true
+    ModuleHost:
+      oneOf:
+      - $ref: '#/components/schemas/Investigation'
+      - $ref: '#/components/schemas/Alteration'
+      - $ref: '#/components/schemas/Inspection'
     NewContributor:
       type: object
       description: |-
@@ -8989,29 +6703,6 @@ components:
           readOnly: true
       required:
       - node_value
-    PaginatedAlterationList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Alteration'
     PaginatedArchaeologicalSiteList:
       type: object
       required:
@@ -9104,52 +6795,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HcaPermit'
-    PaginatedInspectionList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Inspection'
-    PaginatedInvestigationList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Investigation'
     PaginatedLegislativeActList:
       type: object
       required:
@@ -9357,61 +7002,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SiteVisit'
-    PatchedAlteration:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
     PatchedBcapMessage:
       type: object
       properties:
@@ -9421,116 +7011,6 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-    PatchedInspection:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-    PatchedInvestigation:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -12512,6 +9992,41 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    ResourceAliasedData:
+      type: object
+      properties:
+        investigation_identification:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Investigation_Identification_Tile'
+          nullable: true
+        section_1_overview:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Section_1_Overview_Tile'
+          nullable: true
+        section_2_personnel:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Section_2_Personnel_Tile'
+          nullable: true
+        methodology:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Methodology_Tile'
+          nullable: true
+        recordings:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Recordings_Tile'
+          nullable: true
+        material_collection:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Material_Collection_Tile'
+          nullable: true
+        section_6_ancestral_remains:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Section_6_Ancestral_Remains_Tile'
+          nullable: true
+        section_7_repository_and_curation:
+          allOf:
+          - $ref: '#/components/schemas/Investigation_Section_7_Repository_And_Curation_Tile'
+          nullable: true
     ResourceDraft:
       type: object
       properties:
@@ -14941,7 +12456,7 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           title: Member Role(s)
-          description: Select Site Visit roles
+          description: Select an option
         team_member:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
@@ -15433,6 +12948,57 @@ components:
           readOnly: true
       required:
       - node_value
+    TileAliasedData:
+      type: object
+      properties:
+        hip_study_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Provide details of the HIP study
+        assessment_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe the approach to be taken to assess the project
+        mitigation_measures:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe what mitigation measures to be taken
+        are_chance_finds_expected:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        hip_objectives:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe the the HIP stduy objectives
+        are_ancestral_remains_anticipated:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        arch_workplans_and_schedule_a:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+        affected_sites:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+          description: Select one or more sites that may be affected by this project
+        relevant_arch_studies:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+          description: List one or more studies that have been completed within the
+            proposed boundary
+        related_assessments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: List any assessments that are related to this project
     UrlAliasedNodeData:
       type: object
       properties:
@@ -15476,7 +13042,10 @@ components:
       - last_name
       - username
   securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
     cookieAuth:
       type: apiKey
       in: cookie
-      name: bcap_dev
+      name: bcap

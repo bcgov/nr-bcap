@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from arches.app.models.models import ResourceInstance
 
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.builders.resource_builder import ResourceBuilder
 from tests.views.helpers import AuthTestHelper
 
 UNKNOWN_ID = "00000000-0000-0000-0000-000000000000"

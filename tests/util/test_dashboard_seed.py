@@ -6,6 +6,7 @@ from arches_controlled_lists.models import ListItem
 from arches_querysets.models import ResourceTileTree
 
 from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.controlled_list import reference_value
 from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
 
 from tests.controlled_list_fixtures import SeedControlledListsMixin
@@ -23,9 +24,7 @@ class ReferenceValueTests(SeedControlledListsMixin, TestCase):
     """reference_value resolves a node's controlled list to a single item id."""
 
     def test_returns_item_matching_label(self):
-        result = DashboardDemoBuilder.reference_value(
-            "hca_permit", "hca_permit_type", "Investigation"
-        )
+        result = reference_value("hca_permit", "hca_permit_type", "Investigation")
 
         self.assertEqual(len(result), 1)
         item = ListItem.objects.get(pk=result[0])
@@ -42,15 +41,13 @@ class ReferenceValueTests(SeedControlledListsMixin, TestCase):
             ListItem.objects.filter(list_id=list_id).order_by("sortorder").first()
         )
 
-        result = DashboardDemoBuilder.reference_value("contributor", "contributor_type")
+        result = reference_value("contributor", "contributor_type")
 
         self.assertEqual(result, [str(expected.pk)])
 
     def test_raises_when_list_has_no_matching_item(self):
         with self.assertRaises(RuntimeError):
-            DashboardDemoBuilder.reference_value(
-                "contributor", "contributor_type", "Nope"
-            )
+            reference_value("contributor", "contributor_type", "Nope")
 
 
 class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):

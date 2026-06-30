@@ -6,7 +6,9 @@ from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
 )
-from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.util.controlled_list import reference_value
+from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.test_internal_dashboard_service import build_permit_graph
 from tests.services.test_external_dashboard_service import (
@@ -132,8 +134,8 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         ControlledListFixtures.seed()
-        builder = ResourceBuilder()
-        contributor_type = builder.reference_value("contributor", "contributor_type")
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
         holder = builder.make_contributor(
             ContributorSpec(contributor_type, None, "Acme Corp")
         )

@@ -4,7 +4,7 @@ from django.test import TestCase
 from arches.app.models.models import ResourceInstance
 
 from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
-from bcap.util.dashboard.resource_builder import SEED_LEGACYID_PREFIX
+from bcap.builders.resource_builder import SEED_LEGACYID_PREFIX
 
 from tests.controlled_list_fixtures import SeedControlledListsMixin
 

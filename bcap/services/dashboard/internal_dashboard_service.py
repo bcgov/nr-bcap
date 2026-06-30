@@ -156,8 +156,8 @@ class InternalDashboardService(BaseDashboardService):
         makes a permit appear with no card."""
         app, req = GraphSlugs.PERMIT_APPLICATION, GraphSlugs.PROCESS_REQUIREMENT
         order_id, child_ng = self._node_info(app, self.PA.PROCESS_REQUIREMENT_ORDER)
-        assignee_id = self._node_id(app, self.PA.MINISTRY_ASSIGNEE)
-        requirement_id = self._node_id(app, self.PA.PROCESS_REQUIREMENT)
+        assignee_id = self.node_id(app, self.PA.MINISTRY_ASSIGNEE)
+        requirement_id = self.node_id(app, self.PA.PROCESS_REQUIREMENT)
         status_id, status_ng = self._node_info(req, self.PR.REQUIREMENT_STATUS)
 
         def get_json_resource_id(node_id):
@@ -270,9 +270,7 @@ class InternalDashboardService(BaseDashboardService):
         if not tile_ids:
             return {}
 
-        node_id = self._node_id(
-            GraphSlugs.PERMIT_APPLICATION, self.PA.MINISTRY_ASSIGNEE
-        )
+        node_id = self.node_id(GraphSlugs.PERMIT_APPLICATION, self.PA.MINISTRY_ASSIGNEE)
 
         # NULL-coalesced so an initial assignment (key absent in oldvalue)
         # registers as a change rather than NULL == NULL.

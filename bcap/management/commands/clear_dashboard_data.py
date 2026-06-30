@@ -10,7 +10,7 @@ from arches.app.search.search_engine_factory import SearchEngineFactory
 
 from django.core.management.base import BaseCommand
 
-from bcap.util.dashboard.resource_builder import SEED_LEGACYID_PREFIX
+from bcap.builders.resource_builder import SEED_LEGACYID_PREFIX
 
 
 class Command(BaseCommand):

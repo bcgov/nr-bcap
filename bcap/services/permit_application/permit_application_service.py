@@ -43,15 +43,16 @@ class PermitApplicationService:
         return self._attach_requirements_and_save(data, save)
 
     def _attach_requirements_and_save(self, data, save):
-        """Clone and attach the requirements, deleting the clones if the save is
-        rejected (the two saves can't share one transaction)."""
-        requirements = self._inject_requirements_from_templates(data)
+        """Clone and attach the requirements, deleting every clone (the grouping
+        parent included) if the save is rejected (the two saves can't share one
+        transaction)."""
+        parent, requirements = self._inject_requirements_from_templates(data)
         try:
             response = save()
             self._index_requirements(requirements)
             return response
         except Exception:
-            for requirement in requirements:
+            for requirement in [parent, *requirements]:
                 requirement.delete()
             raise
 
@@ -84,14 +85,15 @@ class PermitApplicationService:
         bulk_index(requirements)
 
     def _inject_requirements_from_templates(self, data):
-        """Clone a working copy of each requirement template, link them to the
-        application in flow order, and return the copies."""
+        """Clone a working copy of each requirement template, link the children
+        to the application in flow order, and return every created resource (the
+        grouping parent included) so a rejected save can delete them all."""
         admin = (
             data.setdefault(ALIASED_DATA, {})
             .setdefault(group_aliases.APPLICATION_ADMIN, {ALIASED_DATA: {}})
             .setdefault(ALIASED_DATA, {})
         )
-        copies = self._requirements.create_working_copies()
+        parent, copies = self._requirements.create_working_copies()
         admin[aliases.PROCESS_REQUIREMENT] = [
             {
                 ALIASED_DATA: {
@@ -101,4 +103,4 @@ class PermitApplicationService:
             }
             for order, copy in enumerate(copies, start=1)
         ]
-        return copies
+        return parent, copies

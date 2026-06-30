@@ -19,7 +19,9 @@ describe('useDraftStep', () => {
         store.draftData = { overview: { aliased_data: {} } };
         const step = useDraftStep(z.object({}), 'overview');
         expect(step.resolver).toBe('RESOLVER');
-        expect(step.draftData.value).toEqual({ overview: { aliased_data: {} } });
+        expect(step.draftData.value).toEqual({
+            overview: { aliased_data: {} },
+        });
     });
 
     it('isValid checks completeness of the validation tile', () => {

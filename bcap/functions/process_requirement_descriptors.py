@@ -47,7 +47,7 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
     # For Name part of descriptor
     graph_slug = "process_requirement"
 
-    _empty_permit_value = "(Unknown)"
+    _empty_name_value = "(Unknown)"
     _nodes = {}
     _datatypes = {}
 
@@ -222,12 +222,16 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
         ):
             display_value += " (Template)"
         else:
-            try:
-                permit = models.ResourceXResource.objects.filter(
-                    to_resource=resource
-                ).first()
-                display_value = f"{permit.from_resource.descriptors['en']['name']} - {display_value}"
-            except:
-                display_value = f"{self._empty_permit_value} - {display_value}"
+            # The permit that references this requirement -- not a child that
+            # references it as its grouping parent. A grouping parent has no
+            # permit reference, so it shows just its name.
+            permit = models.ResourceXResource.objects.filter(
+                to_resource=resource,
+                from_resource__graph__slug="permit_application",
+            ).first()
+            descriptors = permit.from_resource.descriptors if permit else None
+            name = (descriptors or {}).get("en", {}).get("name")
+            if name:
+                display_value = f"{name} - {display_value}"
 
         return display_value if display_value else self._empty_name_value

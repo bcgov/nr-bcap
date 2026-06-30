@@ -11,9 +11,12 @@ from arches.app.models.models import Node, TileModel
 from arches_controlled_lists.models import ListItemValue
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.util.aliases.contributor import ContributorAliases
+from bcap.util.aliases.contributor import (
+    ContributorAliases,
+    ContributorGroupAliases,
+)
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.builders.resource_builder import ResourceBuilder
 from bcap.util.user import full_name
 
 INVITABLE_LIMIT = 30
@@ -38,13 +41,14 @@ class ContributorService(BaseGraphService):
     admin invite flow needs: creating Contributors and binding a user to one."""
 
     A = ContributorAliases
+    G = ContributorGroupAliases
 
     def username_contributor_id(self, username):
         """Id of the active Contributor with this bcap_username, or None."""
         username_node, contributor_ng = self._node_info(
             GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME
         )
-        inactive_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
+        inactive_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
         # Containment (data @> {...}) so the tiledata GIN index is used; plain
         # key equality (data__<node>=...) can't use it and seq-scans the table.
         pk = (
@@ -67,9 +71,9 @@ class ContributorService(BaseGraphService):
         if not my_contributor_id:
             return set()
 
-        org_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.ASSOCIATED_ORGANIZATION)
-        start_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.START_DATE)
-        end_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.END_DATE)
+        org_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.ASSOCIATED_ORGANIZATION)
+        start_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.START_DATE)
+        end_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.END_DATE)
         inactive_node, contributor_ng = self._node_info(
             GraphSlugs.CONTRIBUTOR, self.A.INACTIVE
         )
@@ -153,14 +157,14 @@ class ContributorService(BaseGraphService):
         tile = self._contributor_tile(contributor_id)
         if tile is None:
             return False
-        username_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
-        inactive_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
+        username_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
+        inactive_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
         return not tile.data.get(inactive_node) and not tile.data.get(username_node)
 
     def set_bcap_username(self, contributor_id, username):
         """Stamp the username onto the Contributor's tile, but only if it isn't
         already linked. False when another account already holds it."""
-        username_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
+        username_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
         with transaction.atomic():
             tile = self._contributor_tile(contributor_id, lock=True)
             if tile is None or tile.data.get(username_node):
@@ -180,7 +184,7 @@ class ContributorService(BaseGraphService):
         )
         builder.append_blank_tile_for_group(
             resource,
-            "contributor",  # the top-level group tile holding the leaf fields
+            self.G.CONTRIBUTOR,  # the top-level group tile holding the leaf fields
             {
                 self.A.CONTRIBUTOR_NAME: builder.localized(new_contributor.name),
                 self.A.FIRST_NAME: (
@@ -215,8 +219,8 @@ class ContributorService(BaseGraphService):
         name_node, contributor_ng = self._node_info(
             GraphSlugs.CONTRIBUTOR, self.A.CONTRIBUTOR_NAME
         )
-        username_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
-        inactive_node = self._node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
+        username_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME)
+        inactive_node = self.node_id(GraphSlugs.CONTRIBUTOR, self.A.INACTIVE)
 
         tiles = (
             TileModel.objects.filter(nodegroup_id=contributor_ng)

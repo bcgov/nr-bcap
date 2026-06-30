@@ -1,8 +1,8 @@
 """Shared fixtures for the permit-application / process-requirement tests."""
 
-from bcap.services.process_requirement.process_requirement_service import (
-    ProcessRequirementService,
-)
+# Distinct test template names; ids are derived from the full name so they never
+# collide (unlike a truncated prefix).
+_TEMPLATE_NAMES = ("Recommend Referral", "Recommend Decision", "Decision Summary")
 
 
 def make_template(builder, name, subs=(("Sub-1", False, 1),)):
@@ -10,7 +10,7 @@ def make_template(builder, name, subs=(("Sub-1", False, 1),)):
     ``name``, with the given (sub_name, satisfied, sort_order) sub-requirements."""
     return builder.make_process_requirement(
         {
-            "id": f"REQ-{name[:4].upper()}",
+            "id": f"REQ-{name.upper().replace(' ', '-')}",
             "name": name,
             "due": "2026-02-01",
             "notes": "",
@@ -31,8 +31,5 @@ def make_template(builder, name, subs=(("Sub-1", False, 1),)):
 
 
 def seed_requirement_templates(builder):
-    """One template per name the service expects, in flow order."""
-    return [
-        make_template(builder, name)
-        for name in ProcessRequirementService._TEMPLATE_NAMES
-    ]
+    """One template per test name, in flow order."""
+    return [make_template(builder, name) for name in _TEMPLATE_NAMES]

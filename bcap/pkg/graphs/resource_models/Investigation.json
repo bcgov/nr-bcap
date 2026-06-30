@@ -2352,7 +2352,30 @@
                     "source_identifier_id": null
                 }
             ],
-            "functions_x_graphs": [],
+            "functions_x_graphs": [
+                {
+                    "id": "c9316c01-3e1a-494f-914a-6f6721753905",
+                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "graph_id": "febca6ba-2a51-494f-9809-c54e2dd42fc3",
+                    "config": {
+                        "descriptor_types": {
+                            "name": {
+                                "nodegroup_id": "81511e91-757e-487a-9deb-bc25d86c8fa5",
+                                "string_template": "<Investigation Identification>"
+                            },
+                            "map_popup": {
+                                "nodegroup_id": "",
+                                "string_template": ""
+                            },
+                            "description": {
+                                "nodegroup_id": "",
+                                "string_template": ""
+                            }
+                        },
+                        "triggering_nodegroups": []
+                    }
+                }
+            ],
             "graphid": "febca6ba-2a51-494f-9809-c54e2dd42fc3",
             "group_permissions": {},
             "has_unpublished_changes": false,

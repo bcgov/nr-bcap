@@ -5,9 +5,10 @@ import {
     fetchDrafts,
     fetchMyProjects,
     submitApplication,
-    submitInvestigation,
+    submitModule,
     deleteDraft,
 } from './api';
+import { GraphSlug } from './graphSlug.ts';
 
 // 1. Mock the Arches URL generator
 vi.mock('arches', () => ({
@@ -18,7 +19,8 @@ vi.mock('arches', () => ({
             api_resource_draft: (graphSlug: string) =>
                 `/mock/draft/${graphSlug}`,
             permit_application_create: '/mock/create/permit_application',
-            api_investigation: '/mock/create/investigation',
+            seed_process_requirements: (permitId: string, slug: string) =>
+                `/mock/seed/${permitId}/${slug}`,
             dashboard_external: '/bcap/api/dashboard/external',
             api_resource: (graph: string, pk: string) =>
                 `/bcap/api/resource/${graph}/${pk}`,
@@ -145,21 +147,26 @@ describe('Permit API', () => {
         });
     });
 
-    describe('submitInvestigation', () => {
-        it('POSTs the investigation then DELETEs its draft', async () => {
+    describe('submitModule', () => {
+        it('POSTs the module host then DELETEs its draft', async () => {
             const finalResource = { resourceinstanceid: 'inv-1' };
             apiFetch
                 .mockResolvedValueOnce(okResponse(finalResource))
                 .mockResolvedValueOnce(okResponse(undefined));
 
-            const result = await submitInvestigation('draft-7', { a: 1 });
+            const result = await submitModule(
+                'permit-1',
+                'draft-7',
+                GraphSlug.Investigation,
+                { a: 1 } as never,
+            );
 
             expect(apiFetch).toHaveBeenNthCalledWith(
                 1,
-                '/mock/create/investigation',
+                '/mock/seed/permit-1/investigation',
                 {
                     method: 'POST',
-                    body: { draft_id: 'draft-7', aliased_data: { a: 1 } },
+                    body: { aliased_data: { a: 1 } },
                 },
             );
             expect(apiFetch).toHaveBeenNthCalledWith(
@@ -174,11 +181,16 @@ describe('Permit API', () => {
             const failure = new Error('POST investigation failed');
             apiFetch.mockRejectedValue(failure);
 
-            await expect(submitInvestigation('draft-7', {})).rejects.toThrow(
-                'POST investigation failed',
-            );
+            await expect(
+                submitModule(
+                    'permit-1',
+                    'draft-7',
+                    GraphSlug.Investigation,
+                    {} as never,
+                ),
+            ).rejects.toThrow('POST investigation failed');
             expect(console.error).toHaveBeenCalledWith(
-                'Investigation submission API failed:',
+                'Module submission API failed:',
                 failure,
             );
         });
