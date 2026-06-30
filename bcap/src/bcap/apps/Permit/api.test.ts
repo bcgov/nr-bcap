@@ -6,6 +6,7 @@ import {
     fetchMyProjects,
     submitApplication,
     submitModule,
+    fetchPermitModules,
     deleteDraft,
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
@@ -177,6 +178,23 @@ describe('Permit API', () => {
             expect(result).toEqual(finalResource);
         });
 
+        it('strips draft-only parent_resource_id from the posted body', async () => {
+            apiFetch
+                .mockResolvedValueOnce(okResponse({ resourceinstanceid: 'i' }))
+                .mockResolvedValueOnce(okResponse(undefined));
+
+            await submitModule('permit-1', 'draft-7', GraphSlug.Investigation, {
+                parent_resource_id: 'permit-1',
+                a: 1,
+            } as never);
+
+            expect(apiFetch).toHaveBeenNthCalledWith(
+                1,
+                '/mock/seed/permit-1/investigation',
+                { method: 'POST', body: { aliased_data: { a: 1 } } },
+            );
+        });
+
         it('re-throws and logs when the POST fails', async () => {
             const failure = new Error('POST investigation failed');
             apiFetch.mockRejectedValue(failure);
@@ -191,6 +209,62 @@ describe('Permit API', () => {
             ).rejects.toThrow('POST investigation failed');
             expect(console.error).toHaveBeenCalledWith(
                 'Module submission API failed:',
+                failure,
+            );
+        });
+    });
+
+    describe('fetchPermitModules', () => {
+        it('GETs the seed route and reshapes hosts like drafts', async () => {
+            apiFetch.mockResolvedValue(
+                okResponse([
+                    {
+                        resourceinstanceid: 'inv-1',
+                        aliased_data: { investigation_identification: {} },
+                    },
+                ]),
+            );
+
+            const result = await fetchPermitModules(
+                'permit-1',
+                GraphSlug.Investigation,
+            );
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/seed/permit-1/investigation',
+            );
+            expect(result).toEqual([
+                {
+                    id: 'inv-1',
+                    graph_slug: GraphSlug.Investigation,
+                    data: { investigation_identification: {} },
+                },
+            ]);
+        });
+
+        it('returns an empty array on a null body', async () => {
+            apiFetch.mockResolvedValue(okResponse(null));
+
+            const result = await fetchPermitModules(
+                'permit-1',
+                GraphSlug.Investigation,
+            );
+
+            expect(result).toEqual([]);
+        });
+
+        it('returns an empty array and logs when the request fails', async () => {
+            const failure = new Error('boom');
+            apiFetch.mockRejectedValue(failure);
+
+            const result = await fetchPermitModules(
+                'permit-1',
+                GraphSlug.Investigation,
+            );
+
+            expect(result).toEqual([]);
+            expect(console.error).toHaveBeenCalledWith(
+                'Failed to load permit module hosts:',
                 failure,
             );
         });

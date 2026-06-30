@@ -4,7 +4,10 @@ import PermitDetails from './PermitDetails.vue';
 import {
     fetchPermitDetails,
     patchPermitSubmissionDate,
+    fetchDrafts,
+    fetchPermitModules,
 } from '@/bcap/apps/Permit/api.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 
 // 1. Mock the API Service
@@ -77,6 +80,10 @@ describe('PermitDetails.vue', () => {
         vi.mocked(fetchPermitDetails).mockResolvedValue(
             mockPermitData as unknown as PermitAliasedData,
         );
+        // Default to no investigations; tests that need them override per-case.
+        // clearAllMocks resets calls but keeps implementations, so reset here.
+        vi.mocked(fetchDrafts).mockResolvedValue([]);
+        vi.mocked(fetchPermitModules).mockResolvedValue([]);
     });
 
     it('loads permit details on mount and renders header info', async () => {
@@ -131,5 +138,119 @@ describe('PermitDetails.vue', () => {
             name: 'investigationModule',
             query: { permitId: 'mock-permit-123' },
         });
+    });
+
+    it('fetches drafts and completed modules on mount', async () => {
+        vi.mocked(fetchDrafts).mockResolvedValue([
+            // This permit's investigation draft -- kept.
+            {
+                id: 'd1',
+                graph_slug: GraphSlug.Investigation,
+                data: { parent_resource_id: 'mock-permit-123' },
+            },
+            // Another permit's draft -- filtered out.
+            {
+                id: 'd2',
+                graph_slug: GraphSlug.Investigation,
+                data: { parent_resource_id: 'other-permit' },
+            },
+        ] as never);
+        vi.mocked(fetchPermitModules).mockResolvedValue([
+            { id: 'c1', graph_slug: GraphSlug.Investigation, data: {} },
+        ] as never);
+
+        const wrapper = mount(PermitDetails, globalMountOptions);
+        await flushPromises();
+
+        expect(fetchDrafts).toHaveBeenCalled();
+        expect(fetchPermitModules).toHaveBeenCalledWith(
+            'mock-permit-123',
+            GraphSlug.Investigation,
+        );
+
+        const vm = wrapper.vm as unknown as {
+            state: {
+                investigationDrafts: unknown[];
+                completedInvestigations: unknown[];
+            };
+        };
+        // Only the draft belonging to this permit survives the filter.
+        expect(vm.state.investigationDrafts).toHaveLength(1);
+        expect(vm.state.completedInvestigations).toHaveLength(1);
+    });
+
+    it('switches the content when a different module is selected', async () => {
+        const wrapper = mount(PermitDetails, globalMountOptions);
+        await flushPromises();
+
+        const menuItems = wrapper.findAll('.menu-item');
+        // menuItems[2] is Inspection, a "coming soon" (disabled) module.
+        await menuItems[2].trigger('click');
+
+        expect(wrapper.find('.content-title').text()).toBe('Inspection module');
+        const addBtn = wrapper.find('.add-module-btn');
+        expect(addBtn.attributes('disabled')).toBeDefined();
+        expect(addBtn.text()).toContain('Coming soon');
+    });
+
+    it('shows empty-state messages when the permit has no investigations', async () => {
+        const wrapper = mount(PermitDetails, globalMountOptions);
+        await flushPromises();
+
+        // Select the Investigation module to reveal its draft/completed lists.
+        await wrapper.findAll('.menu-item')[1].trigger('click');
+
+        const text = wrapper.find('.investigation-lists').text();
+        expect(text).toContain('No investigation drafts found.');
+        expect(text).toContain('No existing investigations found.');
+    });
+
+    it('lists this permit drafts and completed investigations', async () => {
+        vi.mocked(fetchDrafts).mockResolvedValue([
+            {
+                id: 'd1',
+                graph_slug: GraphSlug.Investigation,
+                data: {
+                    parent_resource_id: 'mock-permit-123',
+                    investigation_identification: {
+                        aliased_data: {
+                            investigation_identification: {
+                                node_value: { en: { value: 'My Inv' } },
+                            },
+                        },
+                    },
+                },
+            },
+        ] as never);
+        vi.mocked(fetchPermitModules).mockResolvedValue([
+            {
+                id: 'c1',
+                graph_slug: GraphSlug.Investigation,
+                data: {
+                    investigation_identification: {
+                        aliased_data: {
+                            investigation_identification: {
+                                en: { value: 'Done Inv' },
+                            },
+                        },
+                    },
+                },
+            },
+        ] as never);
+
+        const wrapper = mount(PermitDetails, globalMountOptions);
+        await flushPromises();
+        await wrapper.findAll('.menu-item')[1].trigger('click');
+
+        const lists = wrapper.findAll('.investigation-lists .resource-list');
+        expect(lists).toHaveLength(2);
+        expect(wrapper.find('.investigation-lists').text()).toContain(
+            'Investigation Identification: My Inv',
+        );
+        // Completed investigations link back to the permit resource.
+        const completedLink = wrapper.find(
+            '.investigation-lists a[href="/bcap/resource/mock-permit-123"]',
+        );
+        expect(completedLink.text()).toContain('Done Inv');
     });
 });
