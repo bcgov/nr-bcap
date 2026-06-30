@@ -2352,7 +2352,30 @@
                     "source_identifier_id": null
                 }
             ],
-            "functions_x_graphs": [],
+            "functions_x_graphs": [
+                {
+                    "id": "d3feed0d-8f0e-4218-b983-7fc244bdd6bd",
+                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "graph_id": "b2901f47-bdfc-47bb-b212-3132b96efb0a",
+                    "config": {
+                        "descriptor_types": {
+                            "name": {
+                                "nodegroup_id": "0e14d77c-2c1b-49e6-9e2f-319ef7bcd344",
+                                "string_template": "<Alteration Identification>"
+                            },
+                            "map_popup": {
+                                "nodegroup_id": "",
+                                "string_template": ""
+                            },
+                            "description": {
+                                "nodegroup_id": "",
+                                "string_template": ""
+                            }
+                        },
+                        "triggering_nodegroups": []
+                    }
+                }
+            ],
             "graphid": "b2901f47-bdfc-47bb-b212-3132b96efb0a",
             "group_permissions": {},
             "has_unpublished_changes": false,

@@ -13,7 +13,9 @@ from bcap.services.dashboard.dashboard_types import (
     InternalDashboardStatus,
 )
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.util.controlled_list import reference_value
+from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -25,8 +27,8 @@ def build_permit_graph():
     and outstanding "Site Inspection" (order 3). The card surfaces the
     lowest-order outstanding requirement, "Field Assessment". Returns the
     created resources."""
-    builder = ResourceBuilder()
-    contributor_type = builder.reference_value("contributor", "contributor_type")
+    builder = FixtureBuilder()
+    contributor_type = reference_value("contributor", "contributor_type")
 
     ada = builder.make_contributor(ContributorSpec(contributor_type, "Ada", "Lovelace"))
     acme = builder.make_contributor(
@@ -52,7 +54,7 @@ def build_permit_graph():
         {
             "permit_number": "HCA-001",
             "permit_holder": [acme],
-            "hca_permit_type": builder.reference_value(
+            "hca_permit_type": reference_value(
                 "hca_permit", "hca_permit_type", "Investigation"
             ),
         },
@@ -186,7 +188,7 @@ def build_minimal_permit(builder, name):
         permit,
         "application_admin",
         {
-            "application_priority_level": builder.reference_value(
+            "application_priority_level": reference_value(
                 "permit_application", "application_priority_level"
             ),
             "application_submission_date": "2026-01-01",
@@ -431,7 +433,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         # The graph permit's active requirement ("Field Assessment") is assigned
         # to Grace, so it is excluded; add a permit whose active requirement has
         # no assignee, which is the only UNASSIGNED match.
-        unassigned_id = str(build_unassigned_permit(ResourceBuilder(), "Orphan").pk)
+        unassigned_id = str(build_unassigned_permit(FixtureBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(
             DashboardFilter(status=InternalDashboardStatus.UNASSIGNED)
@@ -442,7 +444,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
     def test_no_status_returns_all_actionable_permits_regardless_of_assignee(self):
         # No status means the assignment filter is not applied: both the
         # assigned graph permit and an unassigned one are returned.
-        unassigned_id = str(build_unassigned_permit(ResourceBuilder(), "Orphan").pk)
+        unassigned_id = str(build_unassigned_permit(FixtureBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(DashboardFilter())
 
@@ -508,7 +510,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
     def test_hca_permits_tolerates_a_missing_identification_group(self):
         # An HCA Permit whose permit_identification group tile is absent reads as
         # a blank number and no holders rather than crashing on the missing group.
-        builder = ResourceBuilder()
+        builder = FixtureBuilder()
         hca = builder.new_resource("hca_permit")
         hca.save(**builder.save_kwargs)
         permit = builder.new_resource("permit_application")
@@ -532,7 +534,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         # A requirement with no group tiles is unsatisfied, so it is surfaced;
         # its absent groups must read as blank fields rather than crash.
         permit, requirement_id = build_groupless_requirement_permit(
-            ResourceBuilder(), "Bare"
+            FixtureBuilder(), "Bare"
         )
         permit_id = str(permit.pk)
 
@@ -621,7 +623,7 @@ class DashboardServicePaginationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         ControlledListFixtures.seed()
-        builder = ResourceBuilder()
+        builder = FixtureBuilder()
         # Three bare permits are enough to observe limit capping and paging.
         permits = [build_minimal_permit(builder, f"Permit {i}") for i in range(3)]
         cls.permit_ids = {str(p.pk) for p in permits}
@@ -668,7 +670,7 @@ class DashboardServiceAllSatisfiedTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         ControlledListFixtures.seed()
-        builder = ResourceBuilder()
+        builder = FixtureBuilder()
         cls.permit_id = str(build_all_satisfied_permit(builder, "Done").pk)
         cls.service = InternalDashboardService()
 
@@ -689,7 +691,7 @@ class DashboardServiceBlankRequirementTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         ControlledListFixtures.seed()
-        builder = ResourceBuilder()
+        builder = FixtureBuilder()
         cls.permit_id = str(build_blank_requirement_permit(builder, "Blank").pk)
         cls.service = InternalDashboardService()
 
@@ -708,7 +710,7 @@ class DashboardServiceSubmissionDateTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         ControlledListFixtures.seed()
-        builder = ResourceBuilder()
+        builder = FixtureBuilder()
         cls.submitted_id = str(build_minimal_permit(builder, "Submitted").pk)
         cls.draft_id = str(build_unsubmitted_permit(builder, "Draft").pk)
         cls.service = InternalDashboardService()

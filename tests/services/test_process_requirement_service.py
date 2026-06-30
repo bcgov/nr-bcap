@@ -10,7 +10,8 @@ from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.services.process_requirement.template_specs import load
 from bcap.util.i18n import localized_string
 
 from tests.permit_fixtures import seed_requirement_templates
@@ -19,7 +20,7 @@ from tests.permit_fixtures import seed_requirement_templates
 class ProcessRequirementServiceTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.templates = seed_requirement_templates(ResourceBuilder())
+        cls.templates = seed_requirement_templates(ProcessRequirementBuilder())
         cls.template_pks = {template.pk for template in cls.templates}
 
     def setUp(self):
@@ -46,7 +47,7 @@ class ProcessRequirementServiceTests(TestCase):
 
     def test_clone_makes_an_editable_non_template_copy(self):
         template = self.templates[0]
-        copy = self.service.clone(template)
+        copy = self.service.builder.clone_requirement(template.pk)
 
         self.assertNotIn(copy.pk, self.template_pks)
         self.assertFalse(self._is_template(copy))
@@ -54,13 +55,24 @@ class ProcessRequirementServiceTests(TestCase):
         # The source template is left intact for the next clone.
         self.assertTrue(self._is_template(template))
 
-    def test_create_working_copies_copies_every_template_in_flow_order(self):
-        copies = self.service.create_working_copies()
+    def test_clone_module_links_submission_hosts(self):
+        # A module with resource-bearing children (investigation) links each
+        # child's submission without failing on the clone's existing
+        # requirement_data tile.
+        host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
+        _parent, children = self.service._clone_module("investigation", host)
 
-        self.assertEqual(
-            [self._name(copy) for copy in copies],
-            ProcessRequirementService._TEMPLATE_NAMES,
-        )
-        self.assertTrue({copy.pk for copy in copies}.isdisjoint(self.template_pks))
+        expected = load("investigation")["requirements"]
+        self.assertEqual(len(children), len(expected))
+        for child in children:
+            self.assertFalse(self._is_template(child))
+
+    def test_create_working_copies_copies_every_template_in_flow_order(self):
+        _parent, copies = self.service.create_working_copies()
+
+        # The default module's child requirements, in flow order (seeded by
+        # migration, so independent of this test's fixture templates).
+        expected = [child["name"] for child in load("permit")["requirements"]]
+        self.assertEqual([self._name(copy) for copy in copies], expected)
         for copy in copies:
             self.assertFalse(self._is_template(copy))

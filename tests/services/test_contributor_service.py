@@ -9,7 +9,9 @@ from bcap.services.dashboard.contributor_service import (
     NewContributor,
 )
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.util.controlled_list import reference_value
+from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -34,10 +36,8 @@ class ContributorServiceTest(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.builder = ResourceBuilder()
-        self.contributor_type = self.builder.reference_value(
-            "contributor", "contributor_type"
-        )
+        self.builder = FixtureBuilder()
+        self.contributor_type = reference_value("contributor", "contributor_type")
         self.service = ContributorService()
 
     def make(self, name, first_name=None, **kwargs):

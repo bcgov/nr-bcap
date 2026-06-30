@@ -2180,32 +2180,17 @@ export const zLocalGovernment = z.object({
     principaluser: z.int().readonly().nullable()
 });
 
-export const zPaginatedAlterationList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zAlteration)
-});
+export const zModuleHost = z.union([
+    zInvestigation,
+    zAlteration,
+    zInspection
+]);
 
 export const zPaginatedBcapMessageList = z.object({
     count: z.int(),
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zBcapMessage)
-});
-
-export const zPaginatedInspectionList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zInspection)
-});
-
-export const zPaginatedInvestigationList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zInvestigation)
 });
 
 export const zPaginatedLocalGovernmentList = z.object({
@@ -2215,69 +2200,9 @@ export const zPaginatedLocalGovernmentList = z.object({
     results: z.array(zLocalGovernment)
 });
 
-export const zPatchedAlteration = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zAlterationResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly().optional(),
-    name: z.string().readonly().nullish(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullish(),
-    legacyid: z.string().readonly().nullish(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullish(),
-    resource_instance_lifecycle_state: z.uuid().readonly().optional(),
-    principaluser: z.int().readonly().nullish()
-});
-
 export const zPatchedBcapMessage = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly().optional(),
-    name: z.string().readonly().nullish(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullish(),
-    legacyid: z.string().readonly().nullish(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullish(),
-    resource_instance_lifecycle_state: z.uuid().readonly().optional(),
-    principaluser: z.int().readonly().nullish()
-});
-
-export const zPatchedInspection = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zInspectionResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly().optional(),
-    name: z.string().readonly().nullish(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullish(),
-    legacyid: z.string().readonly().nullish(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullish(),
-    resource_instance_lifecycle_state: z.uuid().readonly().optional(),
-    principaluser: z.int().readonly().nullish()
-});
-
-export const zPatchedInvestigation = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zInvestigationResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly().optional(),
     name: z.string().readonly().nullish(),
     descriptors: z.object({
@@ -6420,32 +6345,17 @@ export const zLocalGovernmentWritable = z.object({
     graph: z.uuid().nullish()
 });
 
-export const zPaginatedAlterationListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zAlterationWritable)
-});
+export const zModuleHostWritable = z.union([
+    zInvestigationWritable,
+    zAlterationWritable,
+    zInspectionWritable
+]);
 
 export const zPaginatedBcapMessageListWritable = z.object({
     count: z.int(),
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zBcapMessageWritable)
-});
-
-export const zPaginatedInspectionListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zInspectionWritable)
-});
-
-export const zPaginatedInvestigationListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zInvestigationWritable)
 });
 
 export const zPaginatedLocalGovernmentListWritable = z.object({
@@ -6455,27 +6365,9 @@ export const zPaginatedLocalGovernmentListWritable = z.object({
     results: z.array(zLocalGovernmentWritable)
 });
 
-export const zPatchedAlterationWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zAlterationResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
 export const zPatchedBcapMessageWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
-export const zPatchedInspectionWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zInspectionResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
-export const zPatchedInvestigationWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zInvestigationResourceAliasedDataWritable.optional(),
     graph: z.uuid().nullish()
 });
 
@@ -8522,48 +8414,6 @@ export const zUserProfileResponseWritable = z.object({
     last_name: z.string()
 });
 
-export const zApiAlterationListQuery = z.object({
-    limit: z.int().optional(),
-    offset: z.int().optional()
-});
-
-export const zApiAlterationListResponse = zPaginatedAlterationList;
-
-export const zApiAlterationCreateBody = zAlterationWritable;
-
-export const zApiAlterationCreateResponse = zAlteration;
-
-export const zApiAlterationDestroyPath = z.object({
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiAlterationDestroyResponse = z.void();
-
-export const zApiAlterationRetrievePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiAlterationRetrieveResponse = zAlteration;
-
-export const zApiAlterationPartialUpdateBody = zPatchedAlterationWritable;
-
-export const zApiAlterationPartialUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiAlterationPartialUpdateResponse = zAlteration;
-
-export const zApiAlterationUpdateBody = zAlterationWritable;
-
-export const zApiAlterationUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiAlterationUpdateResponse = zAlteration;
-
 export const zApiArchaeologicalSiteListQuery = z.object({
     limit: z.int().optional(),
     offset: z.int().optional()
@@ -8669,90 +8519,6 @@ export const zApiHcaPermitRetrievePath = z.object({
 
 export const zApiHcaPermitRetrieveResponse = zHcaPermit;
 
-export const zApiInspectionListQuery = z.object({
-    limit: z.int().optional(),
-    offset: z.int().optional()
-});
-
-export const zApiInspectionListResponse = zPaginatedInspectionList;
-
-export const zApiInspectionCreateBody = zInspectionWritable;
-
-export const zApiInspectionCreateResponse = zInspection;
-
-export const zApiInspectionDestroyPath = z.object({
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiInspectionDestroyResponse = z.void();
-
-export const zApiInspectionRetrievePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiInspectionRetrieveResponse = zInspection;
-
-export const zApiInspectionPartialUpdateBody = zPatchedInspectionWritable;
-
-export const zApiInspectionPartialUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiInspectionPartialUpdateResponse = zInspection;
-
-export const zApiInspectionUpdateBody = zInspectionWritable;
-
-export const zApiInspectionUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiInspectionUpdateResponse = zInspection;
-
-export const zApiInvestigationListQuery = z.object({
-    limit: z.int().optional(),
-    offset: z.int().optional()
-});
-
-export const zApiInvestigationListResponse = zPaginatedInvestigationList;
-
-export const zApiInvestigationCreateBody = zInvestigationWritable;
-
-export const zApiInvestigationCreateResponse = zInvestigation;
-
-export const zApiInvestigationDestroyPath = z.object({
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiInvestigationDestroyResponse = z.void();
-
-export const zApiInvestigationRetrievePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiInvestigationRetrieveResponse = zInvestigation;
-
-export const zApiInvestigationPartialUpdateBody = zPatchedInvestigationWritable;
-
-export const zApiInvestigationPartialUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiInvestigationPartialUpdateResponse = zInvestigation;
-
-export const zApiInvestigationUpdateBody = zInvestigationWritable;
-
-export const zApiInvestigationUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiInvestigationUpdateResponse = zInvestigation;
-
 export const zApiLegislativeActListQuery = z.object({
     limit: z.int().optional(),
     offset: z.int().optional()
@@ -8833,6 +8599,22 @@ export const zApiPermitApplicationUpdatePath = z.object({
 });
 
 export const zApiPermitApplicationUpdateResponse = zPermitApplication;
+
+export const zApiPermitApplicationProcessRequirementListPath = z.object({
+    id: z.uuid(),
+    permit_type: z.string()
+});
+
+export const zApiPermitApplicationProcessRequirementListResponse = z.array(zModuleHost);
+
+export const zApiPermitApplicationProcessRequirementCreateBody = zModuleHostWritable;
+
+export const zApiPermitApplicationProcessRequirementCreatePath = z.object({
+    id: z.uuid(),
+    permit_type: z.string()
+});
+
+export const zApiPermitApplicationProcessRequirementCreateResponse = zModuleHost;
 
 export const zApiProcessRequirementListQuery = z.object({
     limit: z.int().optional(),

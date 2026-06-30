@@ -16,7 +16,7 @@ from bcap.util.aliases.process_requirement import (
     ProcessRequirementGroupAliases as groups,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from tests.views.helpers import AuthTestHelper
 
 
@@ -52,7 +52,9 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        requirement = make_requirement(ResourceBuilder(), subs=[("Sub-1", False, 1)])
+        requirement = make_requirement(
+            ProcessRequirementBuilder(), subs=[("Sub-1", False, 1)]
+        )
         cls.resource_id = str(requirement.pk)
         cls.editor = get_user_model().objects.create_user(
             username="pr-editor", password="pass"

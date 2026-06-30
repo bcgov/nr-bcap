@@ -22,7 +22,7 @@ import {
     fetchDraft,
     createDraft,
 } from '@/bcap/apps/Permit/api.ts';
-import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
+import type { PermitApplicationResponse } from '@/bcap/types.ts';
 
 const submissionErrors = ref([] as ErrorMessage[]);
 const submitted = ref(false);

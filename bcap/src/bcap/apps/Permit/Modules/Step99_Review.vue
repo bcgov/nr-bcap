@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { inject, computed, type Ref } from 'vue';
+import { computed } from 'vue';
 import FieldSet from 'primevue/fieldset';
 import GenericReviewSummary, {
     type ReviewField,
 } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
 
 const props = defineProps<{
@@ -11,12 +12,12 @@ const props = defineProps<{
     resourceData?: ArchesDraftData | null;
 }>();
 
-const draftData = inject<Ref<ArchesDraftData>>('draftData');
+const draft = useDraftStore();
 
 const activeData = computed<ArchesDraftData>(() =>
     props.isSubmittedView && props.resourceData
         ? props.resourceData
-        : draftData?.value || ({} as ArchesDraftData),
+        : (draft.draftData as ArchesDraftData) || ({} as ArchesDraftData),
 );
 
 const humanize = (alias: string) =>

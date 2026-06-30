@@ -1,5 +1,6 @@
 import createVueApplication from 'arches/arches/app/media/js/utils/create-vue-application';
 import { createRouter, createWebHistory } from 'vue-router';
+import { createPinia } from 'pinia';
 import BCAPPermitApp from '@/bcap/apps/Permit/App.vue';
 import { routes } from '@/bcap/apps/Permit/routes.ts';
 import { BCGovPermitPreset } from '@/bcap/primevue-bcgov-preset.ts';
@@ -29,6 +30,7 @@ ko.components.register('internal-permit-dashboard', {
                 },
             },
         }).then((vueApp) => {
+            vueApp.use(createPinia());
             vueApp.use(router);
             vueApp.mount('#internal-dashboard-mounting-point');
         });

@@ -45,8 +45,8 @@ describe('InvestigationModule steps', () => {
         it(`${name} renders and exposes isValid()`, () => {
             const wrapper = shallowMount(component);
             expect(wrapper.html()).toBeTruthy();
-            // Every step exposes isValid() for the stepper navigation. With no
-            // draft injected it just returns a boolean without throwing.
+            // Every step exposes isValid() for the stepper navigation. With an
+            // empty draft store it just returns a boolean without throwing.
             expect(
                 typeof (wrapper.vm as { isValid: () => boolean }).isValid(),
             ).toBe('boolean');

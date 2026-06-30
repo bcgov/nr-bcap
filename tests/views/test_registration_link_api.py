@@ -5,7 +5,9 @@ from django.urls import reverse
 
 from bcap.models import RegistrationLink
 from bcap.services.dashboard.contributor_service import ContributorService
-from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.util.controlled_list import reference_value
+from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.views.helpers import AuthTestHelper
@@ -26,10 +28,8 @@ class RegistrationLinkApiTest(AuthTestHelper, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.builder = ResourceBuilder()
-        self.contributor_type = self.builder.reference_value(
-            "contributor", "contributor_type"
-        )
+        self.builder = FixtureBuilder()
+        self.contributor_type = reference_value("contributor", "contributor_type")
         self.contributors = ContributorService()
 
     def make_contributor(self, name="Hopper", first_name="Grace", **kwargs):

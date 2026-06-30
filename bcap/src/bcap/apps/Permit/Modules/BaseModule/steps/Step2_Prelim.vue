@@ -1,44 +1,19 @@
 <script setup lang="ts">
-import { inject, type Ref } from 'vue';
 import { Form } from '@primevue/forms';
 import { zPermitApplicationApplicationIdentificationAliasedData } from '@/bcap/client/zod.gen.ts';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
 import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import { updateDraftValue } from '@/bcap/util.ts';
-import { buildTileValidation } from '@/bcap/validation.ts';
-import type { ArchesDraftData } from '@/bcap/types.ts';
-
-const draftId = inject<Ref<string | null>>('draftId');
-const draftData = inject<Ref<ArchesDraftData>>('draftData');
-const graphSlug = 'permit_application';
+import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
 const emit = defineEmits(['update:step-is-valid']);
 
-const { resolver, isComplete } = buildTileValidation(
-    zPermitApplicationApplicationIdentificationAliasedData,
-);
-
 // use draft not form state, this is different than bcfms/bcrhp
-const isValid = () =>
-    isComplete(draftData?.value?.application_identification?.aliased_data);
-
-const updateValue = (
-    newValue: AliasedNodeData,
-    attribute_name: string,
-    node_group_alias: string | string[],
-) => {
-    updateDraftValue(
-        draftData?.value,
-        draftId?.value,
-        graphSlug,
-        newValue,
-        attribute_name,
-        node_group_alias,
-    );
-    emit('update:step-is-valid', isValid());
-};
+const { draftData, resolver, isValid, updateValue } = useDraftStep(
+    zPermitApplicationApplicationIdentificationAliasedData,
+    'application_identification',
+    emit,
+);
 
 defineExpose({ isValid });
 </script>

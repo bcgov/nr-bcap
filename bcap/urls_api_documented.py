@@ -24,6 +24,7 @@ from bcap.views.permit_application_api import (
 )
 from bcap.views.process_requirement_api import (
     ProcessRequirementListView,
+    ProcessRequirementSeedView,
     ProcessRequirementView,
 )
 from bcap.views.user_api import UserProfile
@@ -100,6 +101,13 @@ documented_api_patterns = [
         "api/process_requirement/<uuid:pk>/",
         ProcessRequirementView.as_view(),
         name="api_process_requirement",
+    ),
+    # Seed the per-type process requirements onto a permit application; the
+    # permit type (inspection / investigation / alteration) is a path segment.
+    path(
+        "api/permit_application/<uuid:pk>/process_requirement/<slug:permit_type>",
+        ProcessRequirementSeedView.as_view(),
+        name="seed_process_requirements",
     ),
 ]
 

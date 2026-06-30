@@ -11,7 +11,9 @@ from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     ExternalDashboardStatus,
 )
-from bcap.util.dashboard.resource_builder import ContributorSpec, ResourceBuilder
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.util.controlled_list import reference_value
+from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -43,7 +45,7 @@ def build_external_permit(builder, name, owner, lifecycle="Active", hca_permit=N
         permit,
         "application_admin",
         {
-            "application_priority_level": builder.reference_value(
+            "application_priority_level": reference_value(
                 "permit_application", "application_priority_level"
             ),
             "application_submission_date": "2026-06-18",
@@ -72,7 +74,7 @@ def build_hca_permit(builder, number, holder):
         {
             "permit_number": number,
             "permit_holder": [holder],
-            "hca_permit_type": builder.reference_value(
+            "hca_permit_type": reference_value(
                 "hca_permit", "hca_permit_type", "Investigation"
             ),
         },
@@ -89,8 +91,8 @@ class ExternalDashboardServiceTests(TestCase):
     def setUpTestData(cls):
         ControlledListFixtures.seed()
         cls.service = ExternalDashboardService()
-        builder = ResourceBuilder()
-        contributor_type = builder.reference_value("contributor", "contributor_type")
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
 
         # Grace (user "me") and Alan (user "colleague") both belong to Acme, so
         # the associated-companies scope spans both their applications.
@@ -177,7 +179,7 @@ class ExternalDashboardServiceTests(TestCase):
         self.assertEqual(status_by_id[str(self.mine_draft_state.pk)], "Under Review")
 
     def test_retired_lifecycle_has_no_mapped_status(self):
-        builder = ResourceBuilder()
+        builder = FixtureBuilder()
         retired = build_external_permit(builder, "Retired App", self.me, "Retired")
 
         page = self.service.get_cards(DashboardFilter(), self.me)
@@ -329,7 +331,7 @@ class ExternalDashboardPaginationTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = ExternalDashboardService()
         cls.user = make_user("pager")
-        builder = ResourceBuilder()
+        builder = FixtureBuilder()
         permits = [
             build_external_permit(builder, f"App {i}", cls.user, "Active")
             for i in range(3)

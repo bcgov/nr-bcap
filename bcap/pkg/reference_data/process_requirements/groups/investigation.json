@@ -1,0 +1,96 @@
+{
+    "id": "REQ-INV-TEMPLATE-000",
+    "name": "Investigation Requirements",
+    "type": "Grouping",
+    "internal": true,
+    "resource": null,
+    "due": null,
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [],
+    "requirements": [
+        {
+            "id": "REQ-INV-TEMPLATE-001",
+            "name": "Submit Investigation Approach",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "investigation",
+            "url": "plugins/external-permit-workflows/investigationModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-INV-TEMPLATE-002",
+            "name": "Review Investigation Approach",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Methodology appropriate",
+                    "description": "Does the excavation and survey approach match the site's sensitivity?",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Study area confirmed",
+                    "description": "Mapped boundary cross-checked against the parcel and known site extents",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Personnel qualified",
+                    "description": "Field director holds a current permit and relevant regional experience",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                }
+            ]
+        },
+        {
+            "id": "REQ-INV-TEMPLATE-003",
+            "name": "Submit Investigation Outcome",
+            "type": "Document Submission",
+            "internal": false,
+            "resource": "requirement_submission",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-INV-TEMPLATE-004",
+            "name": "Review Investigation Outcome",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Final report received",
+                    "description": "Report includes stratigraphy, artifact catalogue, and recommendations",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Site data complete",
+                    "description": "All site forms, field photos, and spatial data are accounted for",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Conditions satisfied",
+                    "description": "Each permit condition has supporting evidence in the submission",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                }
+            ]
+        }
+    ]
+}

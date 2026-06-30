@@ -27,7 +27,7 @@ from bcap.schema import (
     type_base_serializer_fields,
 )
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from tests.views.helpers import AuthTestHelper
 from tests.views.test_process_requirement_api import make_requirement
 
@@ -324,7 +324,7 @@ class NodeValueEnvelopeContractTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        requirement = make_requirement(ResourceBuilder())
+        requirement = make_requirement(ProcessRequirementBuilder())
         cls.resource = ResourceTileTree.get_tiles(
             GraphSlugs.PROCESS_REQUIREMENT,
             resource_ids=[requirement.pk],

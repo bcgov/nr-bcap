@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, provide, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { useRoute } from 'vue-router';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
@@ -9,6 +10,7 @@ import StepPanels from 'primevue/steppanels';
 import ProgressSpinner from 'primevue/progressspinner';
 import StepperNavigation from '@/bcgov_arches_common/components/Stepper/components/StepperNavigation/StepperNavigation.vue';
 import Panel from 'primevue/panel';
+import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import type { Ref } from 'vue';
 import type { StepperProps, StepperState } from 'primevue/stepper';
 
@@ -19,12 +21,10 @@ import Step4_Details from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step4_Det
 import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData, DraftNode } from '@/bcap/types.ts';
-import {
-    submitApplication,
-    fetchDraft,
-    createDraft,
-} from '@/bcap/apps/Permit/api.ts';
-import type { PermitApplicationResponse } from '@/bcap/apps/Permit/api.ts';
+import { submitApplication, fetchDraft } from '@/bcap/apps/Permit/api.ts';
+import type { PermitApplicationResponse } from '@/bcap/types.ts';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import type { RouteLocationRaw } from 'vue-router';
 
 const submissionErrors = ref([] as ErrorMessage[]);
 const submitted = ref(false);
@@ -32,18 +32,48 @@ const submitting = ref(false);
 const devMode = ref(true);
 const isDataLoaded = ref(false);
 const graphSlug = 'permit_application';
-const draftId = ref<string | null>(null);
-const draftData = ref<ArchesDraftData>({});
 const finalizedResourceData = ref<PermitApplicationResponse | null>(null);
 const route = useRoute();
 
-provide('draftId', draftId);
-provide('draftData', draftData);
+const draft = useDraftStore();
+draft.initDraft(graphSlug);
 
 const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
     if (!finalizedResourceData.value?.aliased_data) return null;
     return finalizedResourceData.value
         .aliased_data as unknown as ArchesDraftData;
+});
+
+// Related submissions offered on the completion step. Each opens the new
+// permit's detail page with that module pre-selected.
+const relatedModules = [
+    {
+        id: 'investigation',
+        label: 'Investigation',
+        subtitle: 'Start an investigation for this permit',
+        icon: 'fa fa-magnifying-glass',
+        disabled: false,
+    },
+    {
+        id: 'inspection',
+        label: 'Inspection',
+        subtitle: 'Coming soon',
+        icon: 'fa fa-clipboard-check',
+        disabled: true,
+    },
+    {
+        id: 'alteration',
+        label: 'Alteration',
+        subtitle: 'Coming soon',
+        icon: 'fa fa-screwdriver-wrench',
+        disabled: true,
+    },
+];
+
+const relatedModuleLink = (moduleId: string): RouteLocationRaw => ({
+    name: routeNames.permitDetails,
+    params: { id: finalizedResourceData.value?.resourceinstanceid ?? '' },
+    query: { module: moduleId },
 });
 
 const submitNewSiteData = async (): Promise<boolean> => {
@@ -52,25 +82,24 @@ const submitNewSiteData = async (): Promise<boolean> => {
     submissionErrors.value = [];
 
     try {
-        if (!draftId.value) throw new Error('No active draft found.');
+        if (!draft.draftId) throw new Error('No active draft found.');
 
         // Stamp the submission date: this is the actual submission, and the
         // server treats application_submission_date as the "submitted" signal.
         // This is temp to get UAT going.
-        draftData.value.application_admin = {
-            ...draftData.value.application_admin,
+        draft.draftData.application_admin = {
+            ...draft.draftData.application_admin,
             aliased_data: {
-                ...draftData.value.application_admin?.aliased_data,
+                ...draft.draftData.application_admin?.aliased_data,
                 application_submission_date: {
                     node_value: new Date().toISOString().slice(0, 10),
                 } as DraftNode,
             },
         };
 
-        // Submit the draft
         const response = await submitApplication(
-            draftId.value,
-            draftData.value,
+            draft.draftId,
+            draft.draftData,
             graphSlug,
         );
 
@@ -106,11 +135,7 @@ const activateNextStep = async () => {
         print();
     } else if (currentStep.value === steps.length - 1) {
         const success = await submitNewSiteData();
-
         if (success) {
-            console.log(
-                'Submission successful. Moving to confirmation step...',
-            );
             myStepper.value.d_value++;
             setCurrentStepValid(true, myStepper.value.d_value);
         }
@@ -184,12 +209,13 @@ onMounted(async () => {
     steps.push(step1, step2, step3, step4, step5, step99);
 
     try {
+        // Only load an existing draft. A new one isn't created until the first
+        // edit (store.ensureDraftId), so an abandoned form leaves no empty draft.
         const targetDraftId = route.query.draftId;
-        const draft = targetDraftId
-            ? await fetchDraft(graphSlug, targetDraftId as string)
-            : await createDraft(graphSlug);
-        draftId.value = draft.id;
-        draftData.value = draft.data || {};
+        if (targetDraftId) {
+            const loaded = await fetchDraft(graphSlug, targetDraftId as string);
+            draft.loadDraft(loaded.id, loaded.data || {});
+        }
 
         isDataLoaded.value = true;
     } catch (error) {
@@ -336,6 +362,36 @@ const showDebug = ref(false);
                                     setCurrentStepValid($event, 6)
                                 "
                             ></Step99_Review>
+
+                            <div
+                                v-if="finalizedResourceData?.resourceinstanceid"
+                                class="related-submissions"
+                            >
+                                <h3 class="mb-2 font-bold">
+                                    Would you like to create an Investigation,
+                                    Inspection, or Alteration for this permit?
+                                </h3>
+                                <div class="related-submissions-tiles">
+                                    <Card
+                                        v-for="mod in relatedModules"
+                                        :key="mod.id"
+                                        :label="mod.label"
+                                        :description="mod.label"
+                                        :subtitle="mod.subtitle"
+                                        :icon="mod.icon"
+                                        :class="
+                                            mod.disabled
+                                                ? 'related-tile related-tile--disabled'
+                                                : 'related-tile'
+                                        "
+                                        :route="
+                                            mod.disabled
+                                                ? {}
+                                                : relatedModuleLink(mod.id)
+                                        "
+                                    />
+                                </div>
+                            </div>
                         </StepPanel>
                         <StepperNavigation
                             :step-number="currentStep"
@@ -358,6 +414,18 @@ const showDebug = ref(false);
 <style>
 @import url('@/bcgov_arches_common/css/arches_common.css');
 .language-selector {
+    display: none;
+}
+/* Keep the nav buttons together on the left with room above and below so they
+   never crowd the step content. Hide the empty spacer the shared nav inserts
+   when Previous is hidden so Next sits at the left on the first step. */
+.stepper-nav-panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+.stepper-nav-panel > div {
     display: none;
 }
 @media print {
@@ -416,6 +484,49 @@ const showDebug = ref(false);
 }
 </style>
 <style scoped>
+.related-submissions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #d1d5db;
+}
+
+.related-submissions-tiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.related-tile {
+    width: 225px !important;
+    aspect-ratio: 1 / 1;
+}
+
+.related-tile--disabled {
+    pointer-events: none;
+    opacity: 0.55;
+}
+
+.related-tile :deep(.bcgov-custom-card) {
+    height: 100%;
+}
+
+.related-tile :deep(.stack-icon) {
+    font-size: 3.5rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.related-tile :deep(.description) {
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    color: #3b3bff !important;
+}
+
+.related-tile :deep(.subtitle) {
+    color: #1a1a1a !important;
+    font-size: 0.9rem !important;
+}
+
 .submit-overlay {
     display: flex;
     justify-content: center;
