@@ -4,192 +4,6 @@ info:
   version: 2.0.0
   description: BC Archaeology Portal API
 paths:
-  /bcap/api/alteration:
-    get:
-      operationId: api_alteration_list
-      description: |-
-        Collection endpoint for the requesting user's Alteration resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedAlterationList'
-          description: ''
-    post:
-      operationId: api_alteration_create
-      description: |-
-        Collection endpoint for the requesting user's Alteration resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      tags:
-      - 'External: alteration'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-  /bcap/api/alteration/{id}/:
-    get:
-      operationId: api_alteration_retrieve
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-    put:
-      operationId: api_alteration_update
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-    patch:
-      operationId: api_alteration_partial_update
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAlteration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAlteration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAlteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Alteration'
-          description: ''
-    delete:
-      operationId: api_alteration_destroy
-      description: |-
-        Detail endpoint for a single Alteration resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: alteration'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/archaeological_site:
     get:
       operationId: api_archaeological_site_list
@@ -672,378 +486,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/HcaPermit'
           description: ''
-  /bcap/api/inspection:
-    get:
-      operationId: api_inspection_list
-      description: |-
-        Collection endpoint for the requesting user's Inspection resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedInspectionList'
-          description: ''
-    post:
-      operationId: api_inspection_create
-      description: |-
-        Collection endpoint for the requesting user's Inspection resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      tags:
-      - 'External: inspection'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-  /bcap/api/inspection/{id}/:
-    get:
-      operationId: api_inspection_retrieve
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-    put:
-      operationId: api_inspection_update
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-    patch:
-      operationId: api_inspection_partial_update
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedInspection'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedInspection'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedInspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Inspection'
-          description: ''
-    delete:
-      operationId: api_inspection_destroy
-      description: |-
-        Detail endpoint for a single Inspection resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: inspection'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /bcap/api/investigation:
-    get:
-      operationId: api_investigation_list
-      description: |-
-        Collection endpoint for the requesting user's Investigation resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedInvestigationList'
-          description: ''
-    post:
-      operationId: api_investigation_create
-      description: |-
-        Collection endpoint for the requesting user's Investigation resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      tags:
-      - 'External: investigation'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-  /bcap/api/investigation/{id}/:
-    get:
-      operationId: api_investigation_retrieve
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-    put:
-      operationId: api_investigation_update
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-    patch:
-      operationId: api_investigation_partial_update
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedInvestigation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedInvestigation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedInvestigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Investigation'
-          description: ''
-    delete:
-      operationId: api_investigation_destroy
-      description: |-
-        Detail endpoint for a single Investigation resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: investigation'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/legislative_act:
     get:
       operationId: api_legislative_act_list
@@ -1409,6 +851,82 @@ paths:
       responses:
         '204':
           description: No response body
+  /bcap/api/permit_application/{id}/process_requirement/{permit_type}:
+    get:
+      operationId: api_permit_application_process_requirement_list
+      description: The module's host resources attached to the permit application.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: permit_type
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: process_requirement'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModuleHost'
+          description: ''
+    post:
+      operationId: api_permit_application_process_requirement_create
+      description: |-
+        POST: submit a permit module (a group of process requirements). The
+        module's host resource (the child whose resource matches the permit type,
+        e.g. investigation) is created from the request body and validated by its own
+        serializer, the group's process requirements are cloned and attached to the
+        permit, and the host submission requirement is linked to the created host.
+        The created host is returned.
+
+        The permit type is a path segment; a type with no host resource is a 400.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: permit_type
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleHost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModuleHost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModuleHost'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleHost'
+          description: ''
   /bcap/api/process_requirement:
     get:
       operationId: api_process_requirement_list
@@ -8834,6 +8352,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/Local_Government_Government_Name_Tile'
           nullable: true
+    ModuleHost:
+      oneOf:
+      - $ref: '#/components/schemas/Investigation'
+      - $ref: '#/components/schemas/Alteration'
+      - $ref: '#/components/schemas/Inspection'
     NewContributor:
       type: object
       description: |-
@@ -8989,29 +8512,6 @@ components:
           readOnly: true
       required:
       - node_value
-    PaginatedAlterationList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Alteration'
     PaginatedArchaeologicalSiteList:
       type: object
       required:
@@ -9104,52 +8604,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HcaPermit'
-    PaginatedInspectionList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Inspection'
-    PaginatedInvestigationList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Investigation'
     PaginatedLegislativeActList:
       type: object
       required:
@@ -9357,61 +8811,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SiteVisit'
-    PatchedAlteration:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
     PatchedBcapMessage:
       type: object
       properties:
@@ -9421,116 +8820,6 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-    PatchedInspection:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-    PatchedInvestigation:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -14941,7 +14230,7 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           title: Member Role(s)
-          description: Select Site Visit roles
+          description: Select an option
         team_member:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
@@ -15476,7 +14765,10 @@ components:
       - last_name
       - username
   securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
     cookieAuth:
       type: apiKey
       in: cookie
-      name: bcap_dev
+      name: bcap

@@ -16,8 +16,6 @@ These routes are what the drf_spectacular OpenAPI generator introspects.
 from django.urls import path
 
 from bcap.views.generated import (
-    AlterationListView,
-    AlterationView,
     ArchaeologicalSiteListView,
     ArchaeologicalSiteView,
     BcapMessageListView,
@@ -26,10 +24,6 @@ from bcap.views.generated import (
     ContributorView,
     HcaPermitListView,
     HcaPermitView,
-    InspectionListView,
-    InspectionView,
-    InvestigationListView,
-    InvestigationView,
     LegislativeActListView,
     LegislativeActView,
     LgPersonListView,
@@ -51,16 +45,6 @@ from bcap.views.generated import (
 )
 
 urlpatterns = [
-    path(
-        "api/alteration",
-        AlterationListView.as_view(),
-        name="api_alteration_list",
-    ),
-    path(
-        "api/alteration/<uuid:pk>/",
-        AlterationView.as_view(),
-        name="api_alteration",
-    ),
     path(
         "api/archaeological_site",
         ArchaeologicalSiteListView.as_view(),
@@ -100,26 +84,6 @@ urlpatterns = [
         "api/hca_permit/<uuid:pk>/",
         HcaPermitView.as_view(),
         name="api_hca_permit",
-    ),
-    path(
-        "api/inspection",
-        InspectionListView.as_view(),
-        name="api_inspection_list",
-    ),
-    path(
-        "api/inspection/<uuid:pk>/",
-        InspectionView.as_view(),
-        name="api_inspection",
-    ),
-    path(
-        "api/investigation",
-        InvestigationListView.as_view(),
-        name="api_investigation_list",
-    ),
-    path(
-        "api/investigation/<uuid:pk>/",
-        InvestigationView.as_view(),
-        name="api_investigation",
     ),
     path(
         "api/legislative_act",

@@ -11,6 +11,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from arches.app.models.models import ResourceInstance
+
 from bcap.models.resource_draft import ResourceDraft
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import get_current_graph
@@ -53,6 +55,12 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
 
     def _create_draft(self, **fields):
         return ResourceDraft.objects.create(user=self.editor, graph_slug=SLUG, **fields)
+
+    def _make_resource(self, owner):
+        """A bare resource of the draft's graph, owned by ``owner``."""
+        resource = ResourceInstance.objects.create(graph_id=get_current_graph(SLUG).pk)
+        ResourceInstance.objects.filter(pk=resource.pk).update(principaluser=owner)
+        return resource
 
     def test_post_creates_draft_and_stamps_graph_publication(self):
         resp = self._post({"data": {"step1": {"x": 1}}, "frontend_version": "2.1.0"})
@@ -141,6 +149,42 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
         resp = self.client.delete(self._detail_url(draft.pk))
         self.assertEqual(resp.status_code, 204)
         self.assertFalse(ResourceDraft.objects.filter(pk=draft.pk).exists())
+
+    def test_post_with_owned_parent_resource_succeeds(self):
+        parent = self._make_resource(self.editor)
+        resp = self._post({"data": {"parent_resource_id": str(parent.pk)}})
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.json()["data"]["parent_resource_id"], str(parent.pk))
+
+    def test_resource_editor_may_reference_another_users_resource(self):
+        # A resource editor can edit any unrestricted resource, so the "or
+        # resource editor" rule lets them link to one they don't own.
+        parent = self._make_resource(self.other_editor)
+        resp = self._post({"data": {"parent_resource_id": str(parent.pk)}})
+        self.assertEqual(resp.status_code, 201)
+
+    def test_post_with_unknown_parent_resource_is_forbidden(self):
+        before = ResourceDraft.objects.count()
+        resp = self._post({"data": {"parent_resource_id": str(uuid.uuid4())}})
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(ResourceDraft.objects.count(), before)  # nothing saved
+
+    def test_superuser_can_reference_any_parent_resource(self):
+        parent = self._make_resource(self.other_editor)
+        self.idir_login_simulate(self.admin)
+        resp = self._post({"data": {"parent_resource_id": str(parent.pk)}})
+        self.assertEqual(resp.status_code, 201)
+
+    def test_patch_to_unknown_parent_resource_is_forbidden(self):
+        draft = self._create_draft(data={"step1": {"x": 1}})
+        resp = self.client.patch(
+            self._detail_url(draft.pk),
+            data=json.dumps({"data": {"parent_resource_id": str(uuid.uuid4())}}),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 403)
+        draft.refresh_from_db()
+        self.assertNotIn("parent_resource_id", draft.data)  # untouched
 
     def test_without_resource_editor_role_is_forbidden(self):
         # Drafts are editor-only on every verb, reads included.

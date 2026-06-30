@@ -13,7 +13,7 @@ from bcap.functions.clone_process_requirement_templates import (
 )
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.dashboard.resource_builder import ResourceBuilder
+from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.graph import get_node
 
 from tests.permit_fixtures import seed_requirement_templates
@@ -30,7 +30,7 @@ def relationship(resource_id):
 class CloneProcessRequirementTemplatesTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.template = seed_requirement_templates(ResourceBuilder())[0]
+        cls.template = seed_requirement_templates(ProcessRequirementBuilder())[0]
         cls.node_id = str(
             get_node(
                 GraphSlugs.PERMIT_APPLICATION,

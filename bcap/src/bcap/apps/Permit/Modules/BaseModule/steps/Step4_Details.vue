@@ -1,37 +1,11 @@
 <script setup lang="ts">
-import { inject, type Ref } from 'vue';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
 import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
-import type {
-    AliasedNodeData,
-    CardXNodeXWidgetData,
-} from '@/arches_component_lab/types.ts';
-import { updateDraftValue } from '@/bcap/util.ts';
-import type { ArchesDraftData } from '@/bcap/types.ts';
+import type { CardXNodeXWidgetData } from '@/arches_component_lab/types.ts';
+import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
-const draftId = inject<Ref<string | null>>('draftId');
-const draftData = inject<Ref<ArchesDraftData>>('draftData');
-const graphSlug = 'permit_application';
-
-const isValid = () => {
-    return true;
-};
-
-const updateValue = (
-    newValue: AliasedNodeData,
-    attribute_name: string,
-    node_group_alias: string | string[],
-) => {
-    updateDraftValue(
-        draftData?.value,
-        draftId?.value,
-        graphSlug,
-        newValue,
-        attribute_name,
-        node_group_alias,
-    );
-};
+const { draftData, isValid, updateValue } = useDraftStep();
 
 const mapOverrides = {
     widget: {

@@ -8,7 +8,16 @@ from bcap.management.commands._dashboard_seed_base import _bulk_index, _resource
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
+from bcap.services.process_requirement.template_specs import (
+    flatten,
+    supported_permit_types,
+)
 from bcap.util.dashboard.requirement_flow_seed import RequirementFlowBuilder
+
+
+def _all_specs():
+    """Every module's grouping parent and child requirements, flattened."""
+    return [spec for module in supported_permit_types() for spec in flatten(module)]
 
 
 class Command(BaseCommand):
@@ -24,7 +33,7 @@ class Command(BaseCommand):
 
         builder = RequirementFlowBuilder()
         with builder.deferred_descriptors():
-            templates = builder.make_requirement_templates(builder._requirement_specs())
+            templates = builder.make_requirement_templates(_all_specs())
 
         _bulk_index(templates)
 
@@ -36,9 +45,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def _templates_exist():
-        """Whether the named templates the application clones from already
-        exist. Other (e.g. demo) templates don't count -- those wouldn't be
-        found by name when cloning working copies."""
-        service = ProcessRequirementService()
-        by_name = service._templates_by_name()
-        return all(name in by_name for name in service._TEMPLATE_NAMES)
+        """Whether every module's templates the application clones from already
+        exist. Other (e.g. demo) templates don't count -- those wouldn't be found
+        by id when cloning working copies."""
+        by_id = ProcessRequirementService()._templates_by_id()
+        return all(spec["id"] in by_id for spec in _all_specs())

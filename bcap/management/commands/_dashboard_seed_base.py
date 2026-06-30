@@ -5,20 +5,15 @@ as a runnable command."""
 
 from arches.app.models.resource import Resource
 
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from bcap.util.indexing import bulk_index as _bulk_index
+from bcap.util.links import app_url
 
 
 def _resource_url(pk):
-    """Resource editor URL, honouring the app's origin and sub-path mount
-    (eg http://localhost:82/bcap/resource/<id>)."""
-    origin = (settings.PUBLIC_SERVER_ADDRESS or "").rstrip("/")
-    # The app is mounted under /bcap (see VITE_BASE etc.); FORCE_SCRIPT_NAME
-    # overrides that when set.
-    prefix = (settings.FORCE_SCRIPT_NAME or "/bcap/").strip("/")
-    return f"{origin}/{prefix}/resource/{pk}"
+    """Resource editor URL (eg http://localhost:82/bcap/resource/<id>)."""
+    return app_url(f"resource/{pk}")
 
 
 class DashboardSeedCommand(BaseCommand):

@@ -303,7 +303,7 @@ class TestGetProcessRequirementName(TestCase):
         }
 
     @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_no_name_tile_no_permit_returns_unknown_prefix(self, mock_models):
+    def test_no_name_tile_no_permit_returns_empty_name_value(self, mock_models):
         mock_models.TileModel.objects.filter.return_value.first.return_value = None
         mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
             None
@@ -311,8 +311,8 @@ class TestGetProcessRequirementName(TestCase):
 
         result = self.fn._get_process_requirement_name(MagicMock())
 
-        # display_value stays "" → else branch → except (None.from_resource) → "(Unknown) - "
-        assert result == "(Unknown) - "
+        # No name and no permit: nothing to show, fall back to the placeholder.
+        assert result == "(Unknown)"
 
     @patch("bcap.functions.process_requirement_descriptors.models")
     def test_template_resource_appends_template_suffix(self, mock_models):
@@ -346,7 +346,7 @@ class TestGetProcessRequirementName(TestCase):
         assert result == "Permit ABC - My Requirement"
 
     @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_non_template_no_permit_uses_empty_permit_value_prefix(self, mock_models):
+    def test_non_template_no_permit_shows_name_only(self, mock_models):
         self.name_datatype.get_display_value.return_value = "My Requirement"
         name_tile = _make_tile()
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: False})
@@ -354,13 +354,13 @@ class TestGetProcessRequirementName(TestCase):
             name_tile,
             tmpl_tile,
         ]
-        # None.from_resource raises AttributeError → bare except fires
+        # A grouping parent has no permit reference, so no permit prefix.
         mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
             None
         )
 
         result = self.fn._get_process_requirement_name(MagicMock())
-        assert result == "(Unknown) - My Requirement"
+        assert result == "My Requirement"
 
 
 # ── Tests: initialize ─────────────────────────────────────────────────────────

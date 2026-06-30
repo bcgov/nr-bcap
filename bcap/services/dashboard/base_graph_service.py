@@ -1,34 +1,12 @@
-from django.core.cache import cache
-
-from arches.app.models.models import GraphModel, Node
+from arches.app.models.models import Node
 
 from arches_querysets.models import ResourceTileTree, TileTree
+
+from bcap.util import graph
 
 
 class BaseGraphService:
     """Stateless helpers for reading representation-form node values."""
-
-    @classmethod
-    def _graph_nodes(cls, graph_slug):
-        """Every node of a graph's published copy as {alias: (nodeid,
-        nodegroup_id)}, cached by publication so a republish or reload is
-        picked up on the next request without a server restart."""
-        publication_id = (
-            GraphModel.objects.filter(slug=graph_slug, source_identifier=None)
-            .values_list("publication_id", flat=True)
-            .first()
-        )
-        cache_key = f"bcap:dashboard:graph_nodes:{graph_slug}:{publication_id}"
-        nodes = cache.get(cache_key)
-        if nodes is None:
-            nodes = {
-                node["alias"]: (str(node["nodeid"]), str(node["nodegroup_id"]))
-                for node in Node.objects.filter(
-                    graph__slug=graph_slug, source_identifier=None
-                ).values("alias", "nodeid", "nodegroup_id")
-            }
-            cache.set(cache_key, nodes, timeout=None)
-        return nodes
 
     @staticmethod
     def _nodes(graph_slug, aliases):
@@ -45,20 +23,20 @@ class BaseGraphService:
             .select_related("nodegroup__parentnodegroup")
         )
 
-    @classmethod
-    def _node_info(cls, graph_slug, alias):
+    @staticmethod
+    def _node_info(graph_slug, alias):
         """(nodeid, nodegroup_id) as strings for a graph's node alias."""
-        return cls._graph_nodes(graph_slug)[alias]
+        return graph.node_info(graph_slug, alias)
 
-    @classmethod
-    def _node_id(cls, graph_slug, alias):
+    @staticmethod
+    def node_id(graph_slug, alias):
         """nodeid as a string for a graph's node alias."""
-        return cls._node_info(graph_slug, alias)[0]
+        return graph.node_id(graph_slug, alias)
 
-    @classmethod
-    def _nodegroup_id(cls, graph_slug, alias):
+    @staticmethod
+    def _nodegroup_id(graph_slug, alias):
         """nodegroup_id as a string for a graph's node alias."""
-        return cls._node_info(graph_slug, alias)[1]
+        return graph.nodegroup_id(graph_slug, alias)
 
     @classmethod
     def _resources(cls, slug, ids, aliases):

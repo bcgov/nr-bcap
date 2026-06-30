@@ -1,9 +1,6 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import type { ArchesDraftData } from '@/bcap/types.ts';
-import { saveDraftFieldToBackend } from '@/bcap/api.ts';
-import { zPermitApplication } from '@/bcap/client/zod.gen.ts';
-import { z } from 'zod';
+import type { PermitAliasedData } from '@/bcap/types.ts';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
 export const sanitizeHtml = (html: string | undefined): string => {
@@ -84,77 +81,6 @@ export const getCsrfToken = (): string => {
             ?.split('=')[1] || ''
     );
 };
-
-let globalTimeoutId: ReturnType<typeof setTimeout>;
-
-export const updateDraftValue = (
-    draftDataValue: ArchesDraftData | undefined,
-    draftId: string | null | undefined,
-    graphSlug: string,
-    newValue: AliasedNodeData,
-    attribute_name: string,
-    node_group_alias: string | string[],
-) => {
-    if (!draftDataValue) return;
-
-    const groups = Array.isArray(node_group_alias)
-        ? node_group_alias
-        : [node_group_alias];
-
-    let currentLevel = draftDataValue as Record<string, unknown>;
-
-    groups.forEach((group, index) => {
-        const match = group.match(/^(.+)\[(\d+)\]$/);
-
-        if (match) {
-            const name = match[1];
-            const arrIndex = parseInt(match[2], 10);
-
-            if (!currentLevel[name]) currentLevel[name] = [];
-            const arr = currentLevel[name] as Record<string, unknown>[];
-
-            if (!arr[arrIndex]) arr[arrIndex] = { aliased_data: {} };
-
-            if (index === groups.length - 1) {
-                const target = arr[arrIndex].aliased_data as Record<
-                    string,
-                    unknown
-                >;
-                target[attribute_name] = newValue;
-            } else {
-                currentLevel = arr[arrIndex].aliased_data as Record<
-                    string,
-                    unknown
-                >;
-            }
-        } else {
-            if (!currentLevel[group])
-                currentLevel[group] = { aliased_data: {} };
-            const node = currentLevel[group] as {
-                aliased_data: Record<string, unknown>;
-            };
-
-            if (index === groups.length - 1) {
-                node.aliased_data[attribute_name] = newValue;
-            } else {
-                currentLevel = node.aliased_data;
-            }
-        }
-    });
-
-    clearTimeout(globalTimeoutId);
-
-    globalTimeoutId = setTimeout(() => {
-        if (draftId) {
-            saveDraftFieldToBackend(draftId, graphSlug, draftDataValue);
-        }
-    }, 1000);
-};
-
-// Permit application aliased_data, derived from the generated Zod schema.
-export type PermitAliasedData = NonNullable<
-    z.infer<typeof zPermitApplication>['aliased_data']
->;
 
 export const getBasicInfoFields = (
     aliased: PermitAliasedData | null | undefined,
