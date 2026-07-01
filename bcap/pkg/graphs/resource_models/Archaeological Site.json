@@ -3559,6 +3559,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
+                    "edgeid": "2cb9dea4-0952-45fe-9724-edfe8d4e87b1",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "e1f8bec7-9d0c-4f04-9dc8-718d05444105",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "2cf67136-01bf-11f0-97f7-0242ac170007",
                     "edgeid": "2e67d4da-217e-4a65-baed-81b3d5b28379",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -3715,6 +3725,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "85d39c80-b92d-449f-834d-5d9b2ab3d1e8",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e1f8bec7-9d0c-4f04-9dc8-718d05444105",
+                    "edgeid": "5e421e5f-684a-401f-bd91-e0ed80032bab",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "56c7c419-e31c-4e7d-a99a-8aea3f370e52",
                     "source_identifier_id": null
                 },
                 {
@@ -6026,6 +6046,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "other_unprotected_area_type",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Other Unprotected Area Type",
+                    "nodegroup_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
+                    "nodeid": "56c7c419-e31c-4e7d-a99a-8aea3f370e52",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
@@ -7389,6 +7432,32 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "unprotected_area_type",
+                    "config": {
+                        "controlledList": "e5691a39-41d1-417d-ae33-b0ca630f02ae",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Unprotected Area Type",
+                    "nodegroup_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
+                    "nodeid": "e1f8bec7-9d0c-4f04-9dc8-718d05444105",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "typology_remark",
                     "config": {
                         "en": ""
@@ -7676,9 +7745,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "Remove redundant Government and Legal Instrument nodes",
-                "publicationid": "bcddc9ab-dacb-4de6-82f2-b53002c43a51",
-                "published_time": "2026-06-27T17:46:28.243"
+                "notes": "Added unprotected area type",
+                "publicationid": "8e3ead35-75fb-418a-b188-b54dcd1c26b0",
+                "published_time": "2026-06-30T23:23:20.286"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -7778,7 +7847,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }
