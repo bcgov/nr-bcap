@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bcap"
-version = "2.0.0a16"
+version = "2.0.0a17"
 readme = "README.md"
 requires-python = ">=3.12"
 authors = []
