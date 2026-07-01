@@ -43,8 +43,7 @@ const teamMembers = computed(
 );
 const siteFormAuthorsField = computed(() => {
     return details.value?.aliased_data?.site_form_authors as
-        | AliasedNodeData
-        | undefined;
+        AliasedNodeData | undefined;
 });
 
 const associatedPermitIds = computed(() => {

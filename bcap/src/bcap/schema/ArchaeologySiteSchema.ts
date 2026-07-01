@@ -293,8 +293,7 @@ export interface OtherMapsTile extends AliasedTileData {
 export interface RelatedDocumentsTile extends AliasedTileData {
     publication_reference?: PublicationReferenceTile[];
     related_site_documents?:
-        | RelatedSiteDocumentsTile[]
-        | RelatedSiteDocumentsTile;
+        RelatedSiteDocumentsTile[] | RelatedSiteDocumentsTile;
     site_images?: SiteImagesTile[];
     other_maps?: OtherMapsTile[];
 }

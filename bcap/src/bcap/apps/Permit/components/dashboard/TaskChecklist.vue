@@ -38,10 +38,7 @@ type LocalizedString = { en?: { value?: string } };
 
 const readText = (node?: { node_value?: unknown } | null): string => {
     const value = node?.node_value as
-        | LocalizedString
-        | string
-        | null
-        | undefined;
+        LocalizedString | string | null | undefined;
     if (value == null) return '';
     return typeof value === 'string' ? value : (value.en?.value ?? '');
 };

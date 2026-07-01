@@ -271,8 +271,7 @@ export interface SiteVisitSiteImagesTile extends AliasedTileData {
 export interface SiteVisitRelatedDocumentsTile extends AliasedTileData {
     publication_reference?: SiteVisitPublicationReferenceTile[];
     related_site_documents?:
-        | SiteVisitRelatedSiteDocumentsTile[]
-        | SiteVisitRelatedSiteDocumentsTile;
+        SiteVisitRelatedSiteDocumentsTile[] | SiteVisitRelatedSiteDocumentsTile;
     site_images?: SiteVisitSiteImagesTile[];
 }
 

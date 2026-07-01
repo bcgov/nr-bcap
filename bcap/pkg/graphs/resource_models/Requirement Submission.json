@@ -1056,9 +1056,7 @@
                 },
                 {
                     "alias": "arch_branch_determined_level_of_risk",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,

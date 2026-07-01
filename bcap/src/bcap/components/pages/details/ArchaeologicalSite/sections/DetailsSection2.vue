@@ -46,8 +46,7 @@ const props = withDefaults(
 const currentData = computed<IdentificationAndRegistrationTile | undefined>(
     (): AliasedTileData | undefined => {
         return props.data?.aliased_data as
-            | IdentificationAndRegistrationTile
-            | undefined;
+            IdentificationAndRegistrationTile | undefined;
     },
 );
 

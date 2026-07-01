@@ -153,8 +153,7 @@ const biogeographyColumns = [
                                     null,
                                     2,
                                 )
-                            }}</pre
-                        >
+                            }}</pre>
                     </div>
                     <EmptyState
                         v-else
