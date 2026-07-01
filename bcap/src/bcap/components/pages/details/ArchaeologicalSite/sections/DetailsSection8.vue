@@ -49,8 +49,7 @@ const props = withDefaults(
 const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
     (): RemarksAndRestrictedInformationTile | undefined => {
         return props.data?.aliased_data as
-            | RemarksAndRestrictedInformationTile
-            | undefined;
+            RemarksAndRestrictedInformationTile | undefined;
     },
 );
 
