@@ -128,7 +128,9 @@ def seed_org(apps, schema_editor):
 
     contributors = ContributorService()
     linked = []
-    for user in Group.objects.get(name=GROUP_NAME).user_set.all():
+    group = Group.objects.filter(name=GROUP_NAME).first()
+    members = group.user_set.all() if group else ()
+    for user in members:
         contributor_id = contributors.username_contributor_id(user.username)
         if contributor_id:
             member = _link_member(contributor_id, org)
