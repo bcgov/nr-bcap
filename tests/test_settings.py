@@ -87,3 +87,13 @@ CELERY_BROKER_URL = ""
 
 # Do not use on prod, just for unit test performance.
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# Tests write and delete uploaded files locally. The prod default is the S3
+# backend, whose post_delete signal reaches the object store (and fails outright
+# when S3_BUCKET is unset, as in CI), so keep file storage on the filesystem.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+    },
+}
