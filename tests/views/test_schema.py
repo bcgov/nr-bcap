@@ -281,17 +281,19 @@ class NodeValueFieldExtensionTests(SimpleTestCase):
         # One row per datatype used across the resource models: navigate from
         # node_value to a representative leaf and pin the schema the API emits.
         # Scalars (boolean/number) derive from the field's base type and are
-        # covered above; date accepts either a bare date or a full datetime.
+        # covered above; date is a pattern accepting a bare date or a space/T
+        # datetime, so the generated Zod is a regex, not strict z.iso.datetime.
         uuid = {"type": "string", "format": "uuid"}
         cases = {
             "string": ("properties.en.properties.value", {"type": "string"}),
             "date": (
                 "",
                 {
-                    "anyOf": [
-                        {"type": "string", "format": "date"},
-                        {"type": "string", "format": "date-time"},
-                    ]
+                    "type": "string",
+                    "pattern": (
+                        r"^\d{4}-\d{2}-\d{2}"
+                        r"([ T]\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)?)?$"
+                    ),
                 },
             ),
             "non-localized-string": ("", {"type": "string"}),
@@ -299,7 +301,7 @@ class NodeValueFieldExtensionTests(SimpleTestCase):
             "concept": ("", uuid),
             "concept-list": ("items", uuid),
             "reference": ("items.properties.labels", {"type": "array"}),
-            "resource-instance": ("properties.resourceId", uuid),
+            "resource-instance": ("items.properties.resourceId", uuid),
             "resource-instance-list": ("items.properties.resourceId", uuid),
             "file-list": ("items.properties.node_id", uuid),
             "url": ("properties.url_label", {"type": "string"}),

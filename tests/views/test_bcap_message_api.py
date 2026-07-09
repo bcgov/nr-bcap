@@ -1,0 +1,273 @@
+"""BCAP Message API endpoints end to end: the thread-roots and thread views
+enforce the same internal/external visibility gate as the service, over a real
+authenticated session; the create endpoint refuses a message whose
+resource_context points at a resource the caller cannot edit."""
+
+import json
+from datetime import datetime
+from unittest.mock import patch
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
+from django.urls import reverse
+
+from arches.app.models.models import File
+
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.services.message.bcap_message_service import MESSAGE_GRAPH_SLUG
+from bcap.util.aliases.bcap_message import BcapMessageAliases
+from bcap.util.controlled_list import reference_value
+from bcap.util.graph import node_id
+from tests.builders import FixtureBuilder
+from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.services.test_bcap_message_service import make_message
+from tests.views.helpers import AuthTestHelper
+
+
+@override_settings(ROOT_URLCONF="tests.test_urls")
+class BcapMessageApiTests(AuthTestHelper, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        ControlledListFixtures.seed()
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
+
+        # cls.user (from AuthTestHelper) is the external applicant; a second
+        # user is ministry staff.
+        cls.staff = get_user_model().objects.create_user(
+            username="staff", password="pass"
+        )
+        cls.staff.groups.add(Group.objects.get(name="Resource Editor"))
+
+        applicant_contrib = builder.make_contributor(
+            ContributorSpec(
+                contributor_type, "Amy", "Applicant", bcap_username="testuser"
+            )
+        )
+        cls.applicant_contrib = applicant_contrib
+        staff_contrib = builder.make_contributor(
+            ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="staff")
+        )
+
+        cls.permit = builder.make_resource("permit_application")
+        cls.permit_id = str(cls.permit.pk)
+
+        cls.public_root = make_message(
+            builder,
+            context=cls.permit,
+            author=applicant_contrib,
+            recipient=staff_contrib,
+            subject="Public",
+        )
+        make_message(
+            builder,
+            context=cls.permit,
+            author=staff_contrib,
+            recipient=applicant_contrib,
+            subject="Reply",
+            root=cls.public_root,
+        )
+        cls.internal_root = make_message(
+            builder,
+            context=cls.permit,
+            author=staff_contrib,
+            recipient=staff_contrib,
+            is_internal=True,
+            subject="Internal",
+        )
+
+    def _thread_roots(self, user):
+        self.idir_login_simulate(user)
+        url = reverse(
+            "bcap_message_resource_threads", kwargs={"resource_id": self.permit_id}
+        )
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        return {r["resourceinstanceid"] for r in resp.json()["results"]}
+
+    def test_staff_sees_both_threads_including_internal(self):
+        ids = self._thread_roots(self.staff)
+        self.assertEqual(ids, {str(self.public_root.pk), str(self.internal_root.pk)})
+
+    def test_applicant_sees_only_the_thread_they_are_party_to(self):
+        ids = self._thread_roots(self.user)
+        self.assertEqual(ids, {str(self.public_root.pk)})
+
+    def test_thread_messages_paginate_with_limit_offset(self):
+        # Standard DRF limit/offset envelope: full count, one page of results,
+        # and a link to the next page.
+        self.idir_login_simulate(self.staff)
+        url = reverse(
+            "bcap_message_thread_messages",
+            kwargs={"thread_id": str(self.public_root.pk)},
+        )
+        resp = self.client.get(url, {"limit": 1, "offset": 0})
+        self.assertEqual(resp.status_code, 200)
+        body = resp.json()
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(len(body["results"]), 1)
+        self.assertIsNotNone(body["next"])
+
+    def test_applicant_gets_empty_internal_thread(self):
+        self.idir_login_simulate(self.user)
+        url = reverse(
+            "bcap_message_thread_messages",
+            kwargs={"thread_id": str(self.internal_root.pk)},
+        )
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["count"], 0)
+
+    def _post_message(self):
+        payload = {
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "resource_context": {
+                            "node_value": [{"resourceId": self.permit_id}]
+                        },
+                        "message_content": {
+                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
+                        },
+                    }
+                }
+            }
+        }
+        return self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+
+    def test_create_denied_when_caller_cannot_edit_resource_context(self):
+        # The create endpoint gates on edit access to the resource the message's
+        # resource_context points at; when that check fails, the POST is refused
+        # before any write.
+        self.idir_login_simulate(self.user)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=False
+        ):
+            resp = self._post_message()
+        self.assertEqual(resp.status_code, 403)
+
+    def test_create_allowed_when_caller_can_edit_resource_context(self):
+        self.idir_login_simulate(self.user)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self._post_message()
+        self.assertEqual(resp.status_code, 201)
+
+    def test_create_stamps_the_posting_user_as_author(self):
+        # The poster's Contributor (resolved from their username) is written as
+        # the message author, even though the payload never sets it.
+        self.idir_login_simulate(self.user)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self._post_message()
+        self.assertEqual(resp.status_code, 201)
+        author = resp.json()["aliased_data"]["message_content"]["aliased_data"][
+            "message_author"
+        ]
+        ids = [rel["resourceId"] for rel in (author["node_value"] or [])]
+        self.assertEqual(ids, [str(self.applicant_contrib.pk)])
+
+    def test_create_keeps_the_offset_bearing_creation_datetime(self):
+        # A creation datetime with a UTC offset survives the write path: the
+        # custom serializer field keeps the offset DRF would otherwise strip
+        # under USE_TZ off, so the value passes validation and indexing (rather
+        # than 400ing) and reads back as the same instant, time-of-day intact.
+        payload = {
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "resource_context": {
+                            "node_value": [{"resourceId": self.permit_id}]
+                        },
+                        "message_content": {
+                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
+                        },
+                        "message_creation_date": {
+                            "node_value": "2026-07-09T17:36:33.000Z"
+                        },
+                    }
+                }
+            }
+        }
+        self.idir_login_simulate(self.user)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self.client.post(
+                reverse("bcap_message_list_create"),
+                data=json.dumps(payload),
+                content_type="application/json",
+            )
+        self.assertEqual(resp.status_code, 201)
+        stored = resp.json()["aliased_data"]["message_content"]["aliased_data"][
+            "message_creation_date"
+        ]["node_value"]
+        # Kept its UTC offset and reads back as the same instant that was posted.
+        # Arches returns it space-separated, which the generated Zod date schema
+        # now accepts; fromisoformat parses either separator.
+        self.assertEqual(
+            datetime.fromisoformat(stored.replace(" ", "T")),
+            datetime.fromisoformat("2026-07-09T17:36:33+00:00"),
+        )
+
+    def test_create_with_a_multipart_attachment_stores_the_file(self):
+        # A message can carry a file: the collection endpoint accepts multipart
+        # (a "json" part plus the file), and arches links the upload to the
+        # attachments file-list node by matching its name.
+        attachments_node = node_id(MESSAGE_GRAPH_SLUG, BcapMessageAliases.ATTACHMENTS)
+        payload = {
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "resource_context": {
+                            "node_value": [{"resourceId": self.permit_id}]
+                        },
+                        "message_content": {
+                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
+                        },
+                        "attachments": {
+                            "node_value": [{"name": "note.txt", "url": None}]
+                        },
+                    }
+                }
+            }
+        }
+        upload = SimpleUploadedFile(
+            "note.txt", b"hello world", content_type="text/plain"
+        )
+        before = File.objects.count()
+        self.idir_login_simulate(self.user)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self.client.post(
+                reverse("bcap_message_list_create"),
+                data={
+                    "json": json.dumps(payload),
+                    f"file-list_{attachments_node}": upload,
+                },
+            )
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(File.objects.count(), before + 1)
+
+    def test_create_rejected_when_poster_has_no_contributor(self):
+        # A user with no linked Contributor cannot author a message, so the
+        # create is refused before any write.
+        no_contrib = get_user_model().objects.create_user(
+            username="stranger", password="pass"
+        )
+        self.idir_login_simulate(no_contrib)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self._post_message()
+        self.assertEqual(resp.status_code, 400)

@@ -2,6 +2,8 @@
 application id on create, and attach the requirement working copies whenever a
 create or update sets the submission date."""
 
+from itertools import chain
+
 from django.db import connection
 
 from bcap.services.process_requirement.process_requirement_service import (
@@ -20,6 +22,27 @@ class PermitApplicationService:
 
     def __init__(self, requirement_service=None):
         self._requirements = requirement_service or ProcessRequirementService()
+
+    def submission_context_ids_for_permits(self, permits, requirements_by_permit=None):
+        """Map each permit to the resource ids its unread counts span (the permit
+        and its requirements' submission hosts); pass known requirement ids to
+        skip a query."""
+        permit_ids = [str(permit.pk) for permit in permits]
+        contexts = {pk: {pk} for pk in permit_ids}
+
+        if requirements_by_permit is None:
+            requirements_by_permit = self._requirements.requirement_ids_by_permit(
+                permit_ids
+            )
+        all_requirement_ids = set(chain.from_iterable(requirements_by_permit.values()))
+        hosts_by_requirement = self._requirements.host_ids_by_requirement(
+            all_requirement_ids
+        )
+        for permit_id, requirement_ids in requirements_by_permit.items():
+            for requirement_id in requirement_ids:
+                hosts = hosts_by_requirement.get(requirement_id, ())
+                contexts[permit_id].update(hosts)
+        return contexts
 
     @staticmethod
     def allocate_permit_application_id():

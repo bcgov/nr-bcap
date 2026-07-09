@@ -17,6 +17,23 @@
 
 
 class Roles:
-    PERMITTING_ARCHAEOLOGIST = "Permitting Archaeologist"
-    SENIOR_ARCHAEOLOGIST = "Senior Archaeologist"
-    PERMITTING_MANAGER = "Permitting Manager"
+    ARCHAEOLOGY_BRANCH = "Archaeology Branch"
+    RESOURCE_EDITOR = "Resource Editor"
+
+
+# Ministry staff roles. A user without any of these (and not a superuser) is an
+# external applicant. Extend this set if more internal groups are added.
+INTERNAL_ROLES = {
+    Roles.ARCHAEOLOGY_BRANCH,
+    Roles.RESOURCE_EDITOR,
+}
+
+
+def is_internal_user(user):
+    """True if the user is ministry staff (a superuser or holds an internal
+    role); everyone else is treated as an external applicant."""
+    if not getattr(user, "is_authenticated", False):
+        return False
+    if getattr(user, "is_superuser", False):
+        return True
+    return user.groups.filter(name__in=INTERNAL_ROLES).exists()

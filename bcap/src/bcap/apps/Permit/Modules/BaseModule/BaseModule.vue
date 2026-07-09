@@ -68,6 +68,13 @@ const relatedModules = [
         icon: 'fa fa-screwdriver-wrench',
         disabled: true,
     },
+    {
+        id: 'site-visit',
+        label: 'Site Visit',
+        subtitle: 'Coming soon',
+        icon: 'fa fa-location-dot',
+        disabled: true,
+    },
 ];
 
 const relatedModuleLink = (moduleId: string): RouteLocationRaw => ({
@@ -369,7 +376,8 @@ const showDebug = ref(false);
                             >
                                 <h3 class="mb-2 font-bold">
                                     Would you like to create an Investigation,
-                                    Inspection, or Alteration for this permit?
+                                    Inspection, Alteration, or Site Visit for
+                                    this permit?
                                 </h3>
                                 <div class="related-submissions-tiles">
                                     <Card

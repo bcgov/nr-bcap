@@ -7,6 +7,7 @@ from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 
 from arches.app.models.models import Node, TileModel
+from arches.app.models.resource import Resource
 
 from arches_controlled_lists.models import ListItemValue
 
@@ -61,6 +62,21 @@ class ContributorService(BaseGraphService):
             .first()
         )
         return str(pk) if pk else None
+
+    def contributor_username(self, contributor_id):
+        """The bcap_username linked to a Contributor, or None when it is unset
+        or the Contributor has no tile."""
+        username_node, contributor_ng = self._node_info(
+            GraphSlugs.CONTRIBUTOR, self.A.BCAP_USERNAME
+        )
+        username = (
+            TileModel.objects.filter(
+                nodegroup_id=contributor_ng, resourceinstance_id=contributor_id
+            )
+            .values_list(f"data__{username_node}", flat=True)
+            .first()
+        )
+        return username or None
 
     def company_contributor_ids(self, username):
         """The viewer plus the active members of every org the viewer actively
@@ -171,6 +187,7 @@ class ContributorService(BaseGraphService):
                 return False
             tile.data[username_node] = username
             tile.save()
+        Resource.objects.get(pk=contributor_id).index()
         return True
 
     def create_contributor(self, new_contributor: NewContributor):

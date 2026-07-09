@@ -12,10 +12,14 @@ from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     InternalDashboardStatus,
 )
+from bcap.services.permit_application.permit_application_service import (
+    PermitApplicationService,
+)
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
+from tests.services.test_bcap_message_service import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -199,6 +203,48 @@ def build_minimal_permit(builder, name):
     child.aliased_data.process_requirement = requirement
     permit.save(**builder.save_kwargs)
     return permit
+
+
+def build_permit_with_investigation(builder, name, host_graph=GraphSlugs.INVESTIGATION):
+    """A dashboard-visible permit whose outstanding requirement's
+    submission_data points at an Investigation host -- the linkage the
+    unread-message roll-up follows. Returns the permit and the host resource."""
+    host = builder.make_resource(host_graph)
+    requirement = builder.make_process_requirement(
+        {
+            "id": f"REQ-{name}",
+            "name": "Outstanding",
+            "due": "2026-03-01",
+            "notes": "",
+            "satisfied": False,
+            "sub_requirements": [],
+        }
+    )
+    builder.link_submission(str(requirement.pk), host)
+    permit = builder.new_resource("permit_application")
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_identification",
+        {
+            "project_name": builder.localized(name),
+            "application_id": builder.localized(name),
+        },
+    )
+    builder.append_blank_tile_for_group(
+        permit,
+        "application_admin",
+        {
+            "application_priority_level": reference_value(
+                "permit_application", "application_priority_level"
+            ),
+            "application_submission_date": "2026-01-01",
+        },
+    )
+    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
+    child.aliased_data.process_requirement_order = 1
+    child.aliased_data.process_requirement = requirement
+    permit.save(**builder.save_kwargs)
+    return permit, host
 
 
 def build_all_satisfied_permit(builder, name):
@@ -720,3 +766,52 @@ class DashboardServiceSubmissionDateTests(TestCase):
 
         self.assertEqual(page.count, 1)
         self.assertEqual([card.id for card in page.results], [self.submitted_id])
+
+
+class DashboardUnreadRollupTests(TestCase):
+    """The unread-message roll-up: a permit's card count spans messages on the
+    permit and on the host resources its process requirements' submission_data
+    points at (its related investigation/alteration/inspection)."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = InternalDashboardService()
+        builder = FixtureBuilder()
+        cls.permit, cls.host = build_permit_with_investigation(builder, "Roll")
+        cls.permit_id = str(cls.permit.pk)
+        cls.host_id = str(cls.host.pk)
+
+    def test_context_ids_include_the_permit_and_its_submission_host(self):
+        contexts = PermitApplicationService().submission_context_ids_for_permits(
+            [self.permit]
+        )
+        self.assertEqual(contexts, {self.permit_id: {self.permit_id, self.host_id}})
+
+    def test_a_permit_with_no_submission_maps_to_only_itself(self):
+        bare = build_minimal_permit(FixtureBuilder(), "Bare")
+        contexts = PermitApplicationService().submission_context_ids_for_permits([bare])
+        self.assertEqual(contexts, {str(bare.pk): {str(bare.pk)}})
+
+    def test_card_count_rolls_up_messages_on_the_permit_and_the_host(self):
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
+        reader = builder.make_contributor(
+            ContributorSpec(contributor_type, "Ray", "Reader", bcap_username="roller")
+        )
+        # One unread on the permit, one on its submission host, and one already
+        # read that must not count.
+        make_message(builder, context=self.permit, recipient=reader, subject="p")
+        make_message(builder, context=self.host, recipient=reader, subject="h")
+        make_message(
+            builder,
+            context=self.host,
+            recipient=reader,
+            read_date="2026-02-01",
+            subject="read",
+        )
+
+        page = self.service.get_cards(DashboardFilter(), "roller")
+
+        card = next(c for c in page.results if c.id == self.permit_id)
+        self.assertEqual(card.unread_messages, 2)

@@ -1,12 +1,12 @@
 from django.apps import AppConfig
 
+from bcap.util.serializer_fields import register_offset_preserving_date_field
+
 
 class BcapConfig(AppConfig):
     name = "bcap"
     is_arches_application = True
 
     def ready(self):
-        # Install the OpenAPI date-node override at startup. The documented views
-        # don't import bcap.schema, so this is what guarantees the override is in
-        # place before drf-spectacular generates the schema.
-        from bcap import schema  # noqa: F401
+        # Temporary needs to be fixed in arches-queryset up stream
+        register_offset_preserving_date_field()

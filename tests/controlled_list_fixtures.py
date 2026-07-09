@@ -16,10 +16,6 @@ class ControlledListFixtures:
     """Seed the minimal controlled-list items ``ResourceBuilder`` needs."""
 
     _ITEMS = [
-        ("contributor", "contributor_type", "Archaeologist", 1),
-        ("contributor", "contributor_type", "Consultant", 2),
-        # The default type the invite flow assigns to a new Contributor.
-        ("contributor", "contributor_type", "Individual", 3),
         ("hca_permit", "hca_permit_type", "Investigation", 1),
     ]
 

@@ -193,13 +193,46 @@ describe('PermitDetails.vue', () => {
         expect(addBtn.text()).toContain('Coming soon');
     });
 
+    it('offers Site Visit as a disabled "coming soon" module', async () => {
+        const wrapper = mount(PermitDetails, globalMountOptions);
+        await flushPromises();
+
+        const menuItems = wrapper.findAll('.menu-item');
+        await menuItems[menuItems.length - 1].trigger('click');
+
+        expect(wrapper.find('.content-title').text()).toBe('Site Visit module');
+        const addBtn = wrapper.find('.add-module-btn');
+        expect(addBtn.attributes('disabled')).toBeDefined();
+        expect(addBtn.text()).toContain('Coming soon');
+    });
+
+    it('refetches investigations when returning to Project Summary', async () => {
+        const wrapper = mount(PermitDetails, globalMountOptions);
+        await flushPromises();
+
+        vi.mocked(fetchDrafts).mockClear();
+        vi.mocked(fetchPermitModules).mockClear();
+
+        const menuItems = wrapper.findAll('.menu-item');
+        await menuItems[1].trigger('click');
+        expect(fetchDrafts).not.toHaveBeenCalled();
+
+        await menuItems[0].trigger('click');
+        await flushPromises();
+
+        expect(fetchDrafts).toHaveBeenCalled();
+        expect(fetchPermitModules).toHaveBeenCalledWith(
+            'mock-permit-123',
+            GraphSlug.Investigation,
+        );
+    });
+
     it('shows empty-state messages when the permit has no investigations', async () => {
         const wrapper = mount(PermitDetails, globalMountOptions);
         await flushPromises();
 
-        // Select the Investigation module to reveal its draft/completed lists.
-        await wrapper.findAll('.menu-item')[1].trigger('click');
-
+        // The draft/completed lists live under Project Summary (basic-info),
+        // which is the default active module on mount.
         const text = wrapper.find('.investigation-lists').text();
         expect(text).toContain('No investigation drafts found.');
         expect(text).toContain('No existing investigations found.');
@@ -240,8 +273,8 @@ describe('PermitDetails.vue', () => {
 
         const wrapper = mount(PermitDetails, globalMountOptions);
         await flushPromises();
-        await wrapper.findAll('.menu-item')[1].trigger('click');
 
+        // Lists render under Project Summary (basic-info), the default module.
         const lists = wrapper.findAll('.investigation-lists .resource-list');
         expect(lists).toHaveLength(2);
         expect(wrapper.find('.investigation-lists').text()).toContain(

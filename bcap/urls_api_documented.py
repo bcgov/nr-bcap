@@ -27,6 +27,11 @@ from bcap.views.process_requirement_api import (
     ProcessRequirementSeedView,
     ProcessRequirementView,
 )
+from bcap.views.bcap_message_api import (
+    BcapMessageCreateView,
+    BcapMessageThreadsView,
+    BcapMessageThreadView,
+)
 from bcap.views.user_api import UserProfile
 from bcap.views.registration_link_api import (
     AssignableGroupsView,
@@ -108,6 +113,22 @@ documented_api_patterns = [
         "api/permit_application/<uuid:pk>/process_requirement/<slug:permit_type>",
         ProcessRequirementSeedView.as_view(),
         name="seed_process_requirements",
+    ),
+    path(
+        "api/bcap_message/resource/<uuid:resource_id>/threads",
+        BcapMessageThreadsView.as_view(),
+        name="bcap_message_resource_threads",
+    ),
+    path(
+        "api/bcap_message/thread/<uuid:thread_id>/messages",
+        BcapMessageThreadView.as_view(),
+        name="bcap_message_thread_messages",
+    ),
+    # Override so we can link/verify.
+    path(
+        "api/bcap_message",
+        BcapMessageCreateView.as_view(),
+        name="bcap_message_list_create",
     ),
 ]
 

@@ -5,6 +5,8 @@ into editable working copies and attaching them to a permit in flow order. The
 graph mechanics (build, clone, submission and parent linking) live in
 ProcessRequirementBuilder; this layer decides what to clone and where it goes."""
 
+from collections import defaultdict
+
 from arches.app.models.models import TileModel
 
 from arches_querysets.models import ResourceTileTree
@@ -22,30 +24,35 @@ from bcap.services.process_requirement.template_specs import host_graph, load
 
 
 class ProcessRequirementService:
-    """Clone the seeded templates into independent is_template_requirement=False
-    working copies and attach them to a permit; the frontend fills in their
-    values afterward by PATCH/PUT-ing the copy directly."""
+    """Clone the seeded templates into independent working copies and attach them
+    to a permit; the frontend fills in their values afterward."""
 
     # The default module every permit application gets (the grouping parent plus
     # Recommend Referral, Recommend Decision, Decision Summary).
     _DEFAULT_MODULE = "permit"
 
     def __init__(self, user=None):
-        self.builder = ProcessRequirementBuilder(
-            skip_refresh=True, owner=user, tag_as_seed=False
-        )
+        self._user = user
+        self._builder = None
+
+    @property
+    def builder(self):
+        """Built lazily so the read-only reference lookups skip the builder's
+        setup queries (lifecycle state and the admin user)."""
+        if self._builder is None:
+            self._builder = ProcessRequirementBuilder(
+                skip_refresh=True, owner=self._user, tag_as_seed=False
+            )
+        return self._builder
 
     def create_working_copies(self):
-        """The default module's grouping parent and its child working copies, in
-        flow order. The caller attaches the children and, on a rejected save,
-        deletes the parent too (it is created standalone, not attached)."""
+        """The default module's grouping parent and child working copies, in flow
+        order; the caller attaches the children and cleans them up on a rejection."""
         return self._clone_module(self._DEFAULT_MODULE)
 
     def attach_requirements(self, permit_id, permit_type, host=None):
         """Clone the permit type's module and attach its requirements (not the
-        grouping parent) to the permit in flow order. The module's host resource,
-        if any, is the payload-populated resource its submission child links to.
-        Returns the child working copies."""
+        grouping parent) to the permit in flow order; returns the child copies."""
         parent, requirements = self._clone_module(permit_type, host)
         self._attach_to_permit(permit_id, requirements)
         created = [parent, *requirements]
@@ -57,48 +64,53 @@ class ProcessRequirementService:
         return requirements
 
     def permit_module_hosts(self, permit_id, permit_type):
-        """The host resources of the permit type's module attached to the permit.
-        Read straight from tile data (permit -> process_requirement ->
-        submission_data -> host): rendering the permit as representation would be
-        much slower and would fail on any linked resource with a null descriptor."""
+        """The host resources of the permit type's module attached to the permit,
+        read straight from tile data (faster and null-descriptor safe)."""
         host_slug = host_graph(permit_type)
         if not host_slug:
             return []
-        requirement_ids = self._referenced_ids(
-            [permit_id],
-            node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT),
+        requirement_ids = self.requirement_ids_by_permit([permit_id]).get(
+            str(permit_id), set()
         )
-        host_ids = self._referenced_ids(
-            requirement_ids,
-            node_id(GraphSlugs.PROCESS_REQUIREMENT, prq.SUBMISSION_DATA),
-        )
+        host_ids = set().union(*self.host_ids_by_requirement(requirement_ids).values())
         if not host_ids:
             return []
         # Loading by the host graph drops any submission ids of other graphs.
         return ResourceTileTree.get_tiles(host_slug, resource_ids=list(host_ids))
 
-    @staticmethod
-    def _referenced_ids(resource_ids, nodeid):
-        """The resource ids a resource-instance node references across the given
-        resources, read from raw tile data."""
-        if not resource_ids:
-            return set()
-        tiles = TileModel.objects.filter(
-            resourceinstance_id__in=resource_ids, data__has_key=nodeid
+    def requirement_ids_by_permit(self, permit_ids):
+        """Each permit id mapped to the process requirement ids attached to it."""
+        return self._references_by_source(
+            permit_ids, node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
         )
-        return {
-            ref.get("resourceId")
-            for tile in tiles
-            for ref in tile.data.get(nodeid) or []
-            if ref.get("resourceId")
-        }
+
+    def host_ids_by_requirement(self, requirement_ids):
+        """Each requirement id mapped to the submission host resource ids its
+        submission child references."""
+        return self._references_by_source(
+            requirement_ids,
+            node_id(GraphSlugs.PROCESS_REQUIREMENT, prq.SUBMISSION_DATA),
+        )
+
+    @staticmethod
+    def _references_by_source(source_ids, nodeid):
+        """Map each source resource id to the resource ids it references through a
+        resource-instance node, read from raw tile data."""
+        grouped = defaultdict(set)
+        tiles = TileModel.objects.filter(
+            resourceinstance_id__in=list(source_ids), data__has_key=nodeid
+        )
+        for tile in tiles:
+            references = tile.data.get(nodeid) or []
+            resource_ids = (
+                ref["resourceId"] for ref in references if ref.get("resourceId")
+            )
+            grouped[str(tile.resourceinstance_id)].update(resource_ids)
+        return grouped
 
     def _clone_module(self, permit_type, host=None):
-        """Clone the module's standalone grouping parent and its child
-        requirements, link each child to the parent and any child that names a
-        resource to its submission resource. Return (parent, children) in flow
-        order. A child whose resource matches the module slug links the host; any
-        other mints a fresh resource of its named graph."""
+        """Clone the module's grouping parent and child requirements, linking each
+        child to the parent and to its submission resource (the host or a fresh one)."""
         parent_spec = load(permit_type)
         templates = self.builder.templates_by_id()
         parent = self.builder.clone_requirement(templates[parent_spec["id"]].pk)

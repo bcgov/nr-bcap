@@ -1,6 +1,12 @@
+from itertools import chain
+
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.dashboard.contributor_service import ContributorService
 from bcap.services.dashboard.dashboard_types import ApplicationCore, HcaPermit
+from bcap.services.message.bcap_message_service import BcapMessageService
+from bcap.services.permit_application.permit_application_service import (
+    PermitApplicationService,
+)
 from bcap.util.aliases.hca_permit import HCAPermitAliases
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.bcap_aliases import GraphSlugs
@@ -67,3 +73,19 @@ class BaseDashboardService(BaseGraphService):
     def _related_hca(related_permit_id, hca_permits):
         """The HcaPermit a permit application relates to, or an empty one."""
         return hca_permits.get(related_permit_id) or HcaPermit()
+
+    def _unread_counts_by_permit(self, permits, username, requirements_by_permit=None):
+        """Unread message counts keyed by permit id, each rolled up across the
+        permit's submission contexts (itself plus its requirements' hosts) in a
+        single grouped query. When the caller already knows each permit's
+        requirement ids, passing them skips re-reading them from the DB."""
+        contexts = PermitApplicationService().submission_context_ids_for_permits(
+            permits, requirements_by_permit
+        )
+        counts = BcapMessageService().unread_counts_by_context(
+            set(chain.from_iterable(contexts.values())), username
+        )
+        return {
+            permit_id: sum(counts.get(cid, 0) for cid in context_ids)
+            for permit_id, context_ids in contexts.items()
+        }

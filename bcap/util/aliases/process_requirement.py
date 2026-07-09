@@ -13,7 +13,6 @@ class ProcessRequirementAliases(AbstractAliases):
     IS_INTERNAL_REQUIREMENT = "is_internal_requirement"
     IS_TEMPLATE_REQUIREMENT = "is_template_requirement"
     PARENT_REQUIREMENT = "parent_requirement"
-    PROCESS_REQUIREMENT_MESSAGES = "process_requirement_messages"
     PROCESS_REQUIRMENT_TYPE = "process_requirment_type"
     REQUIREMENT_IDENTIFICATION = "requirement_identification"
     REQUIREMENT_NAME = "requirement_name"

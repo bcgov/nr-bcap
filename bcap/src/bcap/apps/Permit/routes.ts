@@ -111,6 +111,16 @@ const routes = [
         component: () =>
             import('@/bcap/apps/Permit/components/dashboard/CreateChecklist.vue'),
     },
+    {
+        path: arches.urls.plugin('external-permit-workflows/message-demo'),
+        name: 'messageDemo',
+        component: () =>
+            import('@/bcap/apps/Permit/components/MessageDemo.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
 ];
 
 type ExternalPermitRouteNamesType = RouteNamesType & {

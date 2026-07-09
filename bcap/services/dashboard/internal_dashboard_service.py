@@ -64,6 +64,11 @@ class InternalDashboardService(BaseDashboardService):
             contributor_names=self._contributor_names(
                 referenced[self.PA.MINISTRY_ASSIGNEE] | officer_ids, hca_permits
             ),
+            unread_counts=self._unread_counts_by_permit(
+                permits,
+                username,
+                self._requirement_ids_by_permit(requirements_by_permit),
+            ),
         )
         return InternalDashboardPage(
             count=count,
@@ -195,6 +200,15 @@ class InternalDashboardService(BaseDashboardService):
             )
         return requirements_by_permit
 
+    def _requirement_ids_by_permit(self, requirements_by_permit):
+        """Map permit id -> the set of process_requirement resource ids its tiles
+        reference, read off the already-loaded tree so the unread-count roll-up
+        needs no extra query."""
+        return {
+            permit_id: self._referenced_ids(tiles, self.PA.PROCESS_REQUIREMENT)
+            for permit_id, tiles in requirements_by_permit.items()
+        }
+
     def _contributor_names(self, assignee_ids, hca_permits):
         """Map id -> display name for every Contributor a card references: each
         tile's ministry_assignee plus each HCA Permit's permit_holder(s)."""
@@ -319,6 +333,7 @@ class InternalDashboardService(BaseDashboardService):
 
         officer_id = self._resource_id(self._node_value(aliased, PA.PROJECT_OFFICER))
         officer_name = data.contributor_names.get(officer_id, "")
+        unread_messages = data.unread_counts.get(str(permit.pk), 0)
 
         return InternalDashboardCard(
             id=str(permit.pk),
@@ -340,4 +355,5 @@ class InternalDashboardService(BaseDashboardService):
             requirement_id=requirement.route,
             urgency=0,
             priority_level=core.priority_level,
+            unread_messages=unread_messages,
         )

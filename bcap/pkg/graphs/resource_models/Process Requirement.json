@@ -118,33 +118,6 @@
                 },
                 {
                     "active": true,
-                    "cardid": "80b2ef2c-42e6-4680-ac7b-2bd1991a07f4",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Process Requirement Messages"
-                    },
-                    "nodegroup_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
-                    "sortorder": 6,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
                     "cardid": "a83928c0-68a6-4e0f-800d-4b7654623faf",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -696,26 +669,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
-                },
-                {
-                    "card_id": "80b2ef2c-42e6-4680-ac7b-2bd1991a07f4",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
-                        "label": "Process Requirement Messages",
-                        "placeholder": {
-                            "en": ""
-                        }
-                    },
-                    "id": "fe7aaff8-af78-488d-a4d1-f9970ccafcb8",
-                    "label": {
-                        "en": "Process Requirement Messages"
-                    },
-                    "node_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 }
             ],
             "color": "#db9a19",
@@ -726,16 +679,6 @@
                 "en": ""
             },
             "edges": [
-                {
-                    "description": null,
-                    "domainnode_id": "d02f4b08-3678-42fd-9bb0-31c0041ea848",
-                    "edgeid": "130b50a5-0917-4834-8e32-f7d8df9af6c8",
-                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "rangenode_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
-                    "source_identifier_id": null
-                },
                 {
                     "description": null,
                     "domainnode_id": "cba5d5c2-4b1c-4864-8e49-270ecdaff310",
@@ -1042,13 +985,6 @@
                 },
                 {
                     "cardinality": "1",
-                    "grouping_node_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
-                    "legacygroupid": null,
-                    "nodegroupid": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
-                    "parentnodegroup_id": null
-                },
-                {
-                    "cardinality": "1",
                     "grouping_node_id": "4ae57336-30e2-4d9a-bcfd-e89af0251fbe",
                     "legacygroupid": null,
                     "nodegroupid": "4ae57336-30e2-4d9a-bcfd-e89af0251fbe",
@@ -1267,38 +1203,6 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": "19e49a49-364c-4fa0-9a2d-234323363db8"
-                },
-                {
-                    "alias": "process_requirement_messages",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
-                                "name": "BCAP Message"
-                            }
-                        ],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance-list",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Process Requirement Messages",
-                    "nodegroup_id": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
-                    "nodeid": "28f951fd-391a-44c1-bcae-f48e694f4a9d",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 7,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "checklist_item_mandatory",

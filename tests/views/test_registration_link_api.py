@@ -86,11 +86,13 @@ class RegistrationLinkApiTest(AuthTestHelper, TestCase):
 
     def test_unlinked_contributors_list_and_search(self):
         grace = self.make_contributor()
-        self.make_contributor("Turing", first_name="Alan", bcap_username="at")
+        alan = self.make_contributor("Turing", first_name="Alan", bcap_username="at")
         self.idir_login_simulate(self.admin)
         resp = self.client.get(reverse("unlinked_contributors"))
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual([o["id"] for o in resp.json()], [str(grace.pk)])
+        ids = [o["id"] for o in resp.json()]
+        self.assertIn(str(grace.pk), ids)
+        self.assertNotIn(str(alan.pk), ids)
         narrowed = self.client.get(reverse("unlinked_contributors"), {"search": "zzz"})
         self.assertEqual(narrowed.json(), [])
 
