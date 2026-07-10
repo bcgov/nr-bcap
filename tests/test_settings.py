@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os
+import tempfile
 
 from bcap.settings import *
 
@@ -61,9 +62,15 @@ CACHES = {
 
 LOGGING["loggers"]["arches"]["level"] = "ERROR"
 
+# Silence the per-file DEBUG chatter from the storage filename generator.
+LOGGING["loggers"]["bcap.util.storage_filename_generator"] = {
+    "level": "INFO",
+    "propagate": True,
+}
+
 ELASTICSEARCH_PREFIX = "test"
 
-TEST_RUNNER = "arches.test.runner.ArchesTestRunner"
+TEST_RUNNER = "tests.runner.BcapTestRunner"
 
 SILENCED_SYSTEM_CHECKS.append(
     # Cache backend does not support rate-limiting
@@ -73,3 +80,24 @@ SILENCED_SYSTEM_CHECKS.append(
 ELASTICSEARCH_HOSTS = [
     {"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
 ]
+
+# No broker in tests. Empty short-circuits check_if_celery_available() so every
+# resource save indexes inline instead of probing the dead broker (~6s backoff
+# per save). Same inline-index result the fallback already produces.
+CELERY_BROKER_URL = ""
+
+# Do not use on prod, just for unit test performance.
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# Tests write and delete uploaded files locally. The prod default is the S3
+# backend, whose post_delete signal reaches the object store (and fails outright
+# when S3_BUCKET is unset, as in CI), so keep file storage on the filesystem.
+# Point it at a temp dir, not MEDIA_ROOT, so test uploads don't land in the
+# tracked fixtures directory.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {"location": os.path.join(tempfile.gettempdir(), "bcap_test_media")},
+    },
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}

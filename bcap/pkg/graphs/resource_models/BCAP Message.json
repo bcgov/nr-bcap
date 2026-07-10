@@ -1,0 +1,929 @@
+{
+    "graph": [
+        {
+            "author": "Brett Ferguson",
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Message Content"
+                    },
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "afd6fa63-eab3-45c3-aed7-fc14afe23373",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Related Source Message"
+                    },
+                    "nodegroup_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
+                        "defaultValue": "",
+                        "label": "Message Read Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "52677aeb-2ae5-43e9-a245-e1425a8cca30",
+                    "label": {
+                        "en": "Message Read Date"
+                    },
+                    "node_id": "901d4737-496b-4a27-a30e-c5d7f121e8be",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "acceptedFiles": "",
+                        "defaultValue": [],
+                        "label": "Attachments",
+                        "maxFilesize": "200",
+                        "rerender": true
+                    },
+                    "id": "e5c21e80-2b0b-40b3-892b-732839c4df06",
+                    "label": {
+                        "en": "Attachments"
+                    },
+                    "node_id": "3bd0d706-dcc7-4a94-a344-42631018d878",
+                    "sortorder": 7,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000019"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Message Subject",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "207a71d1-28c1-45a6-9abc-8c7fa87cde5d",
+                    "label": {
+                        "en": "Message Subject"
+                    },
+                    "node_id": "677e0e55-d77d-4267-9ff8-de920a374e8c",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
+                        "defaultValue": "",
+                        "label": "Message Creation Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "68f5a089-4006-494b-8736-11aef9d118b4",
+                    "label": {
+                        "en": "Message Creation Date"
+                    },
+                    "node_id": "e0c6e44b-348f-4a1e-9aff-84352273aefc",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Message Content",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "795b0e45-32e9-4e1d-a708-5c09b0a3d402",
+                    "label": {
+                        "en": "Message Content"
+                    },
+                    "node_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Message Type",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "bbed088f-61d3-49b9-b42e-f02db19fddde",
+                    "label": {
+                        "en": "Message Type"
+                    },
+                    "node_id": "d42fbcef-fe94-407a-b1f6-bceaef08f87b",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Recipient",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "0f52041b-1f35-48b6-882d-b41478220289",
+                    "label": {
+                        "en": "Recipient"
+                    },
+                    "node_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Message Author",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "52c6de9d-ed8d-47e5-9424-a5565ced58d6",
+                    "label": {
+                        "en": "Message Author"
+                    },
+                    "node_id": "b9909543-8e7b-4298-bcdf-2550e30c458a",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Resource Context",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "f8be6cbe-c947-41af-a4bc-c1ed83fd7490",
+                    "label": {
+                        "en": "Resource Context"
+                    },
+                    "node_id": "c236f714-f49e-47ba-934f-52134e119523",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultValue": false,
+                        "label": "Is Internal"
+                    },
+                    "id": "13a330b7-21a1-420b-b4ad-9fff1124bb98",
+                    "label": {
+                        "en": "Is Internal"
+                    },
+                    "node_id": "9652889d-730f-4485-99a8-bca335357009",
+                    "sortorder": 8,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "afd6fa63-eab3-45c3-aed7-fc14afe23373",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Related Source Message",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "75b5db20-f5bd-464a-9219-ad2fa692093f",
+                    "label": {
+                        "en": "Related Source Message"
+                    },
+                    "node_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                }
+            ],
+            "color": "#06a480",
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": "This resource represents a message that is used to communicate between two actors using the BCAP system. It is intended to replace other external communications (email, phone) or to log communication that happened outside of the system."
+            },
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "0cad9647-b233-407c-b697-07015b220c20",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "d42fbcef-fe94-407a-b1f6-bceaef08f87b",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "dade15d6-a679-4e08-a91a-3913c4b3f7e5",
+                    "edgeid": "342e40e8-6add-4b42-a216-b54b3b712ef5",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "47e4f5b0-97a5-4095-b61e-7fc4b32c1051",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "rangenode_id": "e0c6e44b-348f-4a1e-9aff-84352273aefc",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "c10c84b5-0fe3-4370-8b1d-267dd2ff5f43",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "rangenode_id": "901d4737-496b-4a27-a30e-c5d7f121e8be",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "dffbfb3c-dbcb-48bc-b924-2b9aac25acf2",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "rangenode_id": "3bd0d706-dcc7-4a94-a344-42631018d878",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "d897ec7d-f5a1-4d5d-966e-c09eb96c90c5",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "677e0e55-d77d-4267-9ff8-de920a374e8c",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "ec67f381-9ebe-49bd-bb3d-678053ae5402",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
+                    "rangenode_id": "b9909543-8e7b-4298-bcdf-2550e30c458a",
+                    "source_identifier_id": null
+                },
+                {
+                    "edgeid": "dfafd6cf-5506-4fa9-8e63-12f306715cad",
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "rangenode_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "description": null,
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "c9627a6e-27a5-45f6-a3c8-a6b47ed8f672",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "rangenode_id": "c236f714-f49e-47ba-934f-52134e119523",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "86678ced-c5f1-4bad-9441-d3a095c816eb",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "rangenode_id": "9652889d-730f-4485-99a8-bca335357009",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "dade15d6-a679-4e08-a91a-3913c4b3f7e5",
+                    "edgeid": "51f639cc-3ee1-457b-9d6b-5489b828ffe0",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
+                    "rangenode_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "source_identifier_id": null
+                }
+            ],
+            "functions_x_graphs": [
+                {
+                    "config": {
+                        "descriptor_types": {
+                            "description": {
+                                "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                                "string_template": "<Message Author>, <Message Type>, <Message Creation Date>"
+                            },
+                            "map_popup": {
+                                "nodegroup_id": "",
+                                "string_template": ""
+                            },
+                            "name": {
+                                "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                                "string_template": "<Message Type>: <Message Subject>"
+                            }
+                        },
+                        "triggering_nodegroups": []
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "id": "565448de-4658-4e02-aa08-78b0b7bd3c7c"
+                }
+            ],
+            "graphid": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+            "group_permissions": {},
+            "has_unpublished_changes": true,
+            "iconclass": "fa fa-envelope",
+            "is_active": true,
+            "is_copy_immutable": false,
+            "isresource": true,
+            "jsonldcontext": null,
+            "name": {
+                "en": "BCAP Message"
+            },
+            "nodegroups": [
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "legacygroupid": null,
+                    "nodegroupid": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "legacygroupid": null,
+                    "nodegroupid": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "nodes": [
+                {
+                    "alias": "message_subject",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Short summary of the message",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Message Subject",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "677e0e55-d77d-4267-9ff8-de920a374e8c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "message_read_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
+                    },
+                    "datatype": "date",
+                    "description": "When the recipient read the message; empty means unread.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Message Read Date",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "901d4737-496b-4a27-a30e-c5d7f121e8be",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "attachments",
+                    "config": {
+                        "activateMax": false,
+                        "imagesOnly": false,
+                        "maxFileSize": null,
+                        "maxFiles": null
+                    },
+                    "datatype": "file-list",
+                    "description": "Files attached to the message.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Attachments",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "3bd0d706-dcc7-4a94-a344-42631018d878",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "sortorder": 7,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "message_content",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Message Content",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "message_author",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": "/search/resources?advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5%22%3A%7B%22op%22%3A%22not_null%22%2C%22val%22%3A%22%22%7D%7D%5D"
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Message Author",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "b9909543-8e7b-4298-bcdf-2550e30c458a",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "message_type",
+                    "config": {
+                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Message Type",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "d42fbcef-fe94-407a-b1f6-bceaef08f87b",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "new_resource_model",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "BCAP Message",
+                    "nodegroup_id": null,
+                    "nodeid": "dade15d6-a679-4e08-a91a-3913c4b3f7e5",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "message_creation_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
+                    },
+                    "datatype": "date",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Message Creation Date",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "e0c6e44b-348f-4a1e-9aff-84352273aefc",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "recipient",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": "/search/resources?advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5%22%3A%7B%22op%22%3A%22not_null%22%2C%22val%22%3A%22%22%7D%7D%5D"
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Recipient",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "resource_context",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                                "name": "Permit Application"
+                            },
+                            {
+                                "graphid": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                                "name": "Process Requirement"
+                            },
+                            {
+                                "graphid": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                                "name": "Site Visit"
+                            },
+                            {
+                                "graphid": "febca6ba-2a51-494f-9809-c54e2dd42fc3",
+                                "name": "Investigation"
+                            },
+                            {
+                                "graphid": "b2901f47-bdfc-47bb-b212-3132b96efb0a",
+                                "name": "Alteration"
+                            },
+                            {
+                                "graphid": "87968032-6faa-481b-a47c-30f9747acd52",
+                                "name": "Inspection"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "A resource that this message points at.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Resource Context",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "c236f714-f49e-47ba-934f-52134e119523",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "is_internal",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": "Whether this message is internal (staff only) rather than shared with the applicant.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Is Internal",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "9652889d-730f-4485-99a8-bca335357009",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "related_source_message",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                                "name": "BCAP Message"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "Unused. Reserved for future threaded replies.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Related Source Message",
+                    "nodegroup_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "nodeid": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "publication": {
+                "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                "most_recent_edit_id": null,
+                "notes": "Fix alias",
+                "publicationid": "72bbd05c-519c-4b35-8efb-6cf387aef4c3",
+                "published_time": "2026-06-16T13:41:54.450"
+            },
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "resource_instance_lifecycle": {
+                "id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75",
+                "name": {
+                    "en": "Standard"
+                },
+                "resource_instance_lifecycle_states": [
+                    {
+                        "action_label": {
+                            "en": "Revert to Draft"
+                        },
+                        "can_delete_resource_instances": true,
+                        "can_edit_resource_instances": true,
+                        "id": "9375c9a7-dad2-4f14-a5c1-d7e329fdde4f",
+                        "is_initial_state": true,
+                        "name": {
+                            "en": "Draft"
+                        },
+                        "next_resource_instance_lifecycle_states": [
+                            "f75bb034-36e3-4ab4-8167-f520cf0b4c58"
+                        ],
+                        "previous_resource_instance_lifecycle_states": [],
+                        "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
+                    },
+                    {
+                        "action_label": {
+                            "en": "Make Active"
+                        },
+                        "can_delete_resource_instances": false,
+                        "can_edit_resource_instances": true,
+                        "id": "f75bb034-36e3-4ab4-8167-f520cf0b4c58",
+                        "is_initial_state": false,
+                        "name": {
+                            "en": "Active"
+                        },
+                        "next_resource_instance_lifecycle_states": [
+                            "d95d9c0e-0e2c-4450-93a3-d788b91abcc8"
+                        ],
+                        "previous_resource_instance_lifecycle_states": [
+                            "9375c9a7-dad2-4f14-a5c1-d7e329fdde4f"
+                        ],
+                        "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
+                    },
+                    {
+                        "action_label": {
+                            "en": "Retire"
+                        },
+                        "can_delete_resource_instances": false,
+                        "can_edit_resource_instances": false,
+                        "id": "d95d9c0e-0e2c-4450-93a3-d788b91abcc8",
+                        "is_initial_state": false,
+                        "name": {
+                            "en": "Retired"
+                        },
+                        "next_resource_instance_lifecycle_states": [],
+                        "previous_resource_instance_lifecycle_states": [
+                            "f75bb034-36e3-4ab4-8167-f520cf0b4c58"
+                        ],
+                        "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
+                    }
+                ]
+            },
+            "root": {
+                "alias": "new_resource_model",
+                "config": {},
+                "datatype": "semantic",
+                "description": "",
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                "hascustomalias": false,
+                "is_collector": false,
+                "is_immutable": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "BCAP Message",
+                "nodegroup_id": null,
+                "nodeid": "dade15d6-a679-4e08-a91a-3913c4b3f7e5",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                "sortorder": 0,
+                "source_identifier_id": null,
+                "sourcebranchpublication_id": null
+            },
+            "slug": "bcap_message",
+            "source_identifier_id": null,
+            "spatial_views": [],
+            "subtitle": {
+                "en": ""
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "user_permissions": {},
+            "version": ""
+        }
+    ],
+    "metadata": {
+        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
+        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
+        "os": "Linux",
+        "os version": "5.14.0-687.13.1.el9_8.x86_64"
+    }
+}

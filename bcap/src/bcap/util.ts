@@ -1,5 +1,7 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
 export const sanitizeHtml = (html: string | undefined): string => {
     if (!html) return '';
@@ -61,3 +63,77 @@ export function isAliasedNodeData(value: unknown): value is AliasedNodeData {
         'display_value' in maybe && 'node_value' in maybe && 'details' in maybe
     );
 }
+
+export const currentDateValue = function () {
+    const now = new Date().toISOString().split('T')[0];
+    return {
+        display_value: now,
+        node_value: now,
+        details: [] as never[],
+    };
+};
+
+export const getCsrfToken = (): string => {
+    return (
+        document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('csrftoken='))
+            ?.split('=')[1] || ''
+    );
+};
+
+export const getBasicInfoFields = (
+    aliased: PermitAliasedData | null | undefined,
+): ReviewField[] => {
+    if (!aliased) return [];
+
+    const ident = aliased.application_identification?.aliased_data;
+    const contacts = aliased.application_contacts?.aliased_data;
+    const project = aliased.proposed_project?.aliased_data;
+    const devDetails = project?.development_project_details?.aliased_data;
+
+    return [
+        { label: 'Project Name', value: ident?.project_name?.display_value },
+        {
+            label: 'Application ID',
+            value: ident?.application_id?.display_value,
+        },
+        {
+            label: 'Application Proponent',
+            value: contacts?.application_proponent?.display_value,
+        },
+        {
+            label: 'Has Retained Archaeologist',
+            value: contacts?.has_retained_archaeologist?.display_value,
+        },
+        {
+            label: 'Rationale For No Archaeologist',
+            value: contacts?.rationale_for_no_archaeologist?.display_value,
+        },
+        {
+            label: 'Application Archaeologist',
+            value: contacts?.application_archaeologist?.display_value,
+        },
+        { label: 'Project Type', value: project?.project_type?.display_value },
+        {
+            label: 'Project Description',
+            value: project?.project_description?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Scope of Work',
+            value: project?.scope_of_work?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Industrial Sector',
+            value: devDetails?.industrial_sector?.display_value,
+        },
+        {
+            label: 'Project Boundary',
+            value: project?.project_boundary,
+            type: 'map',
+            nodeAlias: 'project_boundary',
+        },
+    ];
+};

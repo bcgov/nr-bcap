@@ -26,12 +26,14 @@ from arches.app.utils.betterJSONSerializer import JSONSerializer
 from bcap.util.borden_number_api import BordenNumberApi, MissingGeometryError
 from bcap.util.register_type_api import RegisterTypeApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
+from bcap.util.map_attributes import inject_map_attributes
 from bcap.util.mvt_tiler import MVTTiler
 from arches.app.models.system_settings import settings
 from arches.app.search.components.base import SearchFilterFactory
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineInstance
 
+from arches_querysets.rest_framework.generic_views import ArchesResourceDetailView
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
@@ -40,6 +42,9 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
+from arches.app.models.resource import Resource
+from arches.app.models.models import Tile
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -186,11 +191,21 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
                     as_representation=True,
                 ).select_related("graph")
 
-                qs = (
-                    qs.filter(parent_site__id__in=resource_ids_string)
-                    if self.graph_slug == "archaeological_site"
-                    else qs.filter(archaeological_site__id__in=resource_ids_string)
-                )
+                if self.graph_slug == "archaeological_site":
+                    qs = qs.filter(parent_site__id__in=resource_ids_string)
+                elif self.graph_slug == "publication":
+                    publication_ids = (
+                        ResourceXResource.objects.filter(
+                            from_resource_id__in=resource_ids_string
+                        )
+                        .values("to_resource_id")
+                        .all()
+                    )
+                    qs = qs.filter(
+                        resourceinstanceid__in=publication_ids
+                    ).select_related("graph")
+                else:
+                    qs = qs.filter(archaeological_site__id__in=resource_ids_string)
 
                 if Version(arches_version) >= Version("8.0"):
                     qs = qs.select_related("resource_instance_lifecycle_state")
@@ -501,26 +516,6 @@ class TranslateToResourceTypeView(View):
         )
 
 
-class UserProfile(APIBase):
-    def get(self, request):
-        user_profile = models.User.objects.get(id=request.user.pk)
-
-        group_names = [
-            group.name for group in models.Group.objects.filter(user=user_profile).all()
-        ]
-
-        return JSONResponse(
-            JSONSerializer().serializeToPython(
-                {
-                    "username": user_profile.username,
-                    "first_name": user_profile.first_name,
-                    "last_name": user_profile.last_name,
-                    "groups": group_names,
-                }
-            )
-        )
-
-
 class RegisterType(APIBase):
     api = RegisterTypeApi()
 
@@ -537,3 +532,31 @@ class RegisterType(APIBase):
                 }
             )
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
+
+
+class RequirementSubmission(APIBase):
+    def get(self, request, resource_id):
+        try:
+            resource = Resource.objects.get(resourceinstanceid=resource_id)
+            serialized_data = resource.serialize()
+            return JSONResponse(serialized_data)
+
+        except Resource.DoesNotExist:
+            return JSONResponse(
+                {"error": "Requirement Submission not found"}, status=404
+            )
+        except Exception as e:
+            logger.exception(f"Unable to fetch Requirement Submission {resource_id}")
+            return JSONResponse({"error": str(e)}, status=500)
+
+
+class BCAPResourceDetailView(ArchesResourceDetailView):
+    """Standard arches_querysets resource detail. For graphs declared in
+    map_attributes.GRAPH_CONFIG we inject the configured attributes into
+    the geojson FeatureCollection node's per-feature properties so the
+    map can drive styling from them without a second fetch."""
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super().retrieve(request, *args, **kwargs)
+        inject_map_attributes(response.data, kwargs["pk"], kwargs.get("graph"))
+        return response

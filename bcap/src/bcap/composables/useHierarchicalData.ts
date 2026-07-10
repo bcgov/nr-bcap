@@ -56,8 +56,7 @@ export function useHierarchicalData(
                             AliasedNodeData | undefined
                         >;
                         const sourceNode = originalData[config.sourceField] as
-                            | AliasedNodeData
-                            | undefined;
+                            AliasedNodeData | undefined;
 
                         if (
                             sourceNode?.node_value &&

@@ -951,9 +951,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Description",
                         "maxLength": null,
                         "placeholder": {
@@ -976,9 +974,7 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Act/Section",
                         "placeholder": {
                             "en": "Select an option"
@@ -996,29 +992,6 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
-                    "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Government",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "034d3442-13f2-11f0-9ff8-0242ac170007",
-                    "label": {
-                        "en": "Government"
-                    },
-                    "node_id": "034d2c18-13f2-11f0-9ff8-0242ac170007",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
-                },
-                {
                     "card_id": "67ab15bd-7377-44c4-a9e2-0ff632b14bd9",
                     "config": {
                         "defaultValue": {
@@ -1027,9 +1000,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Biogeography Description",
                         "maxLength": "125",
                         "placeholder": {
@@ -1057,9 +1028,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "General Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1087,9 +1056,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Street Number",
                         "maxLength": "50",
                         "placeholder": {
@@ -1117,9 +1084,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Ancestral Remains Remarks (Restricted)",
                         "maxLength": "125",
                         "placeholder": {
@@ -1142,9 +1107,7 @@
                     "card_id": "14179b58-64ad-11f0-a4ef-6e5bb479055b",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "placeholder": {
                             "en": "Select a person"
@@ -1214,9 +1177,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Inventory Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1244,9 +1205,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "City",
                         "maxLength": "80",
                         "placeholder": {
@@ -1274,9 +1233,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Street Name",
                         "maxLength": "80",
                         "placeholder": {
@@ -1304,9 +1261,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Postal Code",
                         "maxLength": "7",
                         "placeholder": {
@@ -1334,9 +1289,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Legal Description",
                         "maxLength": "2000",
                         "placeholder": {
@@ -1386,9 +1339,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "NROS File #",
                         "maxLength": "125",
                         "placeholder": {
@@ -1433,9 +1384,7 @@
                     "card_id": "b0ed3390-61a4-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "placeholder": {
                             "en": ""
@@ -1461,9 +1410,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Document Description",
                         "maxLength": "250",
                         "placeholder": {
@@ -1505,9 +1452,7 @@
                 {
                     "card_id": "2ad1641e-50ad-11f0-a6c8-0242ac170006",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Document Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1533,9 +1478,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Tenure Remarks",
                         "maxLength": "125",
                         "placeholder": {
@@ -1563,9 +1506,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Tenure Type",
                         "maxLength": null,
                         "placeholder": {
@@ -1587,9 +1528,7 @@
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Registration Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1609,9 +1548,7 @@
                 {
                     "card_id": "67ab15bd-7377-44c4-a9e2-0ff632b14bd9",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Biogeography Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1637,9 +1574,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "PID",
                         "maxLength": "9",
                         "placeholder": {
@@ -1681,9 +1616,7 @@
                 {
                     "card_id": "068500bc-0d07-11ed-8804-5254008afee6",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "BCAP Submission Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -1729,9 +1662,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "HCA Contraventions",
                         "maxLength": null,
                         "placeholder": {
@@ -1755,11 +1686,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Upper (m asl)",
                         "max": "",
                         "min": "",
@@ -1817,9 +1744,7 @@
                 {
                     "card_id": "a9ce5a20-d085-4fa2-9f5b-2b812223b3d1",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "External URL Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1837,26 +1762,6 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
-                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
-                    "config": {
-                        "acceptedFiles": "",
-                        "defaultValue": [],
-                        "label": "Reference File",
-                        "maxFilesize": "1024",
-                        "rerender": true,
-                        "uneditable": false
-                    },
-                    "id": "5399a358-5ad2-4559-b5a5-c821480908c2",
-                    "label": {
-                        "en": "Reference File"
-                    },
-                    "node_id": "bb15839e-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 5,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000019"
-                },
-                {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
                     "config": {
                         "defaultValue": {
@@ -1865,9 +1770,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Site Boundary Description",
                         "maxLength": null,
                         "placeholder": {
@@ -1889,9 +1792,7 @@
                 {
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Protection Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1966,9 +1867,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Address and Legal Description Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -1991,9 +1890,7 @@
                     "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "PID",
                         "maxLength": "9",
                         "placeholder": {
@@ -2021,9 +1918,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Address",
                         "maxLength": "250",
                         "placeholder": {
@@ -2051,9 +1946,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alert Subject",
                         "maxLength": "125",
                         "placeholder": {
@@ -2081,9 +1974,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Biogeography Name",
                         "maxLength": "125",
                         "placeholder": {
@@ -2133,9 +2024,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Typology Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2178,9 +2067,7 @@
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Entered By",
                         "placeholder": {
                             "en": "Select a person"
@@ -2223,9 +2110,7 @@
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "controlledList": "b9838a3b-731d-5c4b-b6c8-23ed827dbb7e",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Register Type(s)",
                         "multiValue": true,
                         "placeholder": {
@@ -2252,7 +2137,7 @@
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
-                        "uneditable": false,
+                        "uneditable": true,
                         "viewMode": "days"
                     },
                     "id": "86aa4b00-f92f-487b-81ea-74694f6db441",
@@ -2274,9 +2159,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Parcel Owner Type(s)",
                         "maxLength": null,
                         "placeholder": {
@@ -2304,9 +2187,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Inventory Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -2334,9 +2215,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alert Details",
                         "maxLength": null,
                         "placeholder": {
@@ -2380,9 +2259,7 @@
                 {
                     "card_id": "05baee08-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "General Remark Source",
                         "placeholder": {
                             "en": "Select an option"
@@ -2408,9 +2285,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Tenure Description",
                         "maxLength": null,
                         "placeholder": {
@@ -2438,9 +2313,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Restricted Information",
                         "maxLength": null,
                         "placeholder": {
@@ -2468,9 +2341,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Accuracy Remarks",
                         "maxLength": "500",
                         "placeholder": {
@@ -2530,7 +2401,7 @@
                         "pitch": 0,
                         "rerender": true,
                         "uneditable": false,
-                        "zoom": 4.588090556425135
+                        "zoom": 4.0
                     },
                     "id": "b1822a3e-13ef-11f0-8695-0242ac170007",
                     "label": {
@@ -2543,36 +2414,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000007"
                 },
                 {
-                    "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Source Notes",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "b1822aac-13ef-11f0-8695-0242ac170007",
-                    "label": {
-                        "en": "Source Notes"
-                    },
-                    "node_id": "b1822926-13ef-11f0-8695-0242ac170007",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
                     "card_id": "6a2ca199-d3c9-4578-a2fe-3e03415efdd1",
                     "config": {
                         "defaultValue": {
@@ -2581,9 +2422,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Keyword(s)",
                         "maxLength": "500",
                         "placeholder": {
@@ -2603,133 +2442,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
-                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Reference Remarks",
-                        "maxLength": "500",
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "bb15843e-01d8-11f0-850c-0242ac170007",
-                    "label": {
-                        "en": "Reference Remarks"
-                    },
-                    "node_id": "bb15818c-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 4,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
-                    "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Reference Type",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "bb1584f2-01d8-11f0-850c-0242ac170007",
-                    "label": {
-                        "en": "Reference Type"
-                    },
-                    "node_id": "bb157f66-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
-                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
-                    "config": {
-                        "dateFormat": "YYYY",
-                        "defaultValue": "",
-                        "label": "Reference Year",
-                        "maxDate": false,
-                        "minDate": false,
-                        "placeholder": "Enter date",
-                        "uneditable": false,
-                        "viewMode": "days"
-                    },
-                    "id": "bb158574-01d8-11f0-850c-0242ac170007",
-                    "label": {
-                        "en": "Reference Year"
-                    },
-                    "node_id": "bb15809c-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000004"
-                },
-                {
-                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Reference Author(s)",
-                        "placeholder": {
-                            "en": "Select a person"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "bb1585ec-01d8-11f0-850c-0242ac170007",
-                    "label": {
-                        "en": "Reference Author(s)"
-                    },
-                    "node_id": "bb15829a-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 3,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
-                },
-                {
-                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Reference Title",
-                        "maxLength": "500",
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "bb158664-01d8-11f0-850c-0242ac170007",
-                    "label": {
-                        "en": "Reference Title"
-                    },
-                    "node_id": "bb157e3a-01d8-11f0-850c-0242ac170007",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
                     "card_id": "1b623006-0d0f-11ed-98c2-5254008afee6",
                     "config": {
                         "defaultValue": {
@@ -2738,9 +2450,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Location Description",
                         "maxLength": null,
                         "placeholder": {
@@ -2768,9 +2478,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Convictions",
                         "maxLength": null,
                         "placeholder": {
@@ -2798,9 +2506,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Copyright",
                         "maxLength": "80",
                         "placeholder": {
@@ -2822,9 +2528,7 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Image Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -2889,9 +2593,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Image Caption",
                         "maxLength": null,
                         "placeholder": {
@@ -2913,9 +2615,7 @@
                 {
                     "card_id": "c816292c-01d8-11f0-850c-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Image View",
                         "placeholder": {
                             "en": "Select an option"
@@ -2941,9 +2641,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Image Photographer",
                         "maxLength": "80",
                         "placeholder": {
@@ -2971,9 +2669,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Image Feature(s)",
                         "maxLength": "250",
                         "placeholder": {
@@ -3016,9 +2712,7 @@
                     "card_id": "1b622c8c-0d0f-11ed-98c2-5254008afee6",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "PIN",
                         "maxLength": "10",
                         "placeholder": {
@@ -3041,9 +2735,7 @@
                     "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Reference #",
                         "maxLength": "125",
                         "placeholder": {
@@ -3071,9 +2763,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Site Name Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3101,9 +2791,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Site Name",
                         "maxLength": "250",
                         "placeholder": {
@@ -3125,9 +2813,7 @@
                 {
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Site Name Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3148,9 +2834,7 @@
                     "card_id": "d60b1e34-35f4-11f0-afbc-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assigned or Reported By",
                         "placeholder": {
                             "en": "Select a person"
@@ -3193,9 +2877,7 @@
                     "card_id": "034d1e3a-13f2-11f0-9ff8-0242ac170007",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Parent Site",
                         "placeholder": {
                             "en": "Select parent site (if applicable)"
@@ -3215,9 +2897,7 @@
                 {
                     "card_id": "14be7a8e-c87a-4b40-815a-f872d77b0c10",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Typology",
                         "placeholder": {
                             "en": "Select an option"
@@ -3237,9 +2917,7 @@
                 {
                     "card_id": "b182262e-13ef-11f0-8695-0242ac170007",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Edit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3265,9 +2943,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Restricted Remarks (Branch Access Only)",
                         "maxLength": null,
                         "placeholder": {
@@ -3295,9 +2971,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "General Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3337,34 +3011,10 @@
                     "widget_id": "10000000-0000-0000-0000-000000000101"
                 },
                 {
-                    "card_id": "034d20f6-13f2-11f0-9ff8-0242ac170007",
-                    "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Legal Instrument",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "e4b21a13-dc73-4e86-b2a7-03a870d857c3",
-                    "label": {
-                        "en": "Legal Instrument"
-                    },
-                    "node_id": "36cad31f-192f-4c93-b24c-6f9c95b83ccf",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
                     "card_id": "80c8052e-c6b1-48f4-a385-39c312b99fd3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alert Branch Contact",
                         "placeholder": {
                             "en": "Select a person"
@@ -3390,9 +3040,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Elevation Remarks",
                         "maxLength": null,
                         "placeholder": {
@@ -3416,11 +3064,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Lower (m asl)",
                         "max": "",
                         "min": "",
@@ -3474,9 +3118,7 @@
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Decision Maker",
                         "placeholder": {
                             "en": "Select a person"
@@ -3496,9 +3138,7 @@
                 {
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Decision/Criteria",
                         "placeholder": {
                             "en": "Select an option"
@@ -3519,9 +3159,7 @@
                     "card_id": "f80f0aac-1977-11f0-8713-0242ac170008",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Recommended By",
                         "placeholder": {
                             "en": "Select a person"
@@ -3569,9 +3207,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Decision Rationale",
                         "maxLength": null,
                         "placeholder": {
@@ -3649,16 +3285,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "rangenode_id": "034d2ef2-13f2-11f0-9ff8-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "edgeid": "034dab16-13f2-11f0-9ff8-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
-                    "rangenode_id": "034d2c18-13f2-11f0-9ff8-0242ac170007",
                     "source_identifier_id": null
                 },
                 {
@@ -3933,6 +3559,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
+                    "edgeid": "2cb9dea4-0952-45fe-9724-edfe8d4e87b1",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "e1f8bec7-9d0c-4f04-9dc8-718d05444105",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "2cf67136-01bf-11f0-97f7-0242ac170007",
                     "edgeid": "2e67d4da-217e-4a65-baed-81b3d5b28379",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4089,6 +3725,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "85d39c80-b92d-449f-834d-5d9b2ab3d1e8",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e1f8bec7-9d0c-4f04-9dc8-718d05444105",
+                    "edgeid": "5e421e5f-684a-401f-bd91-e0ed80032bab",
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "56c7c419-e31c-4e7d-a99a-8aea3f370e52",
                     "source_identifier_id": null
                 },
                 {
@@ -4343,16 +3989,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "b18223c2-13ef-11f0-8695-0242ac170007",
-                    "edgeid": "b1824168-13ef-11f0-8695-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "b1822926-13ef-11f0-8695-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "00e2b556-1979-11f0-8713-0242ac170008",
                     "edgeid": "b1d5903d-3ab6-4180-b846-930623cc4cca",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
@@ -4389,66 +4025,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "rangenode_id": "7e15332c-1c54-11f0-b5bf-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "edgeid": "bb15ab76-01d8-11f0-850c-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "rangenode_id": "bb157f66-01d8-11f0-850c-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "edgeid": "bb15acc0-01d8-11f0-850c-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
-                    "rangenode_id": "bb157e3a-01d8-11f0-850c-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "edgeid": "bb15adc4-01d8-11f0-850c-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P92i_was_brought_into_existence_by",
-                    "rangenode_id": "bb15809c-01d8-11f0-850c-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "edgeid": "bb15aebe-01d8-11f0-850c-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "rangenode_id": "bb15818c-01d8-11f0-850c-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "edgeid": "bb15afc2-01d8-11f0-850c-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
-                    "rangenode_id": "bb15829a-01d8-11f0-850c-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "edgeid": "bb15b0bc-01d8-11f0-850c-0242ac170007",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
-                    "rangenode_id": "bb15839e-01d8-11f0-850c-0242ac170007",
                     "source_identifier_id": null
                 },
                 {
@@ -4799,16 +4375,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "rangenode_id": "f80f115a-1977-11f0-8713-0242ac170008",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "edgeid": "faaa6541-2533-424e-a4c2-ea0fa709b3b2",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P70i_is_documented_in",
-                    "rangenode_id": "36cad31f-192f-4c93-b24c-6f9c95b83ccf",
                     "source_identifier_id": null
                 }
             ],
@@ -5196,42 +4762,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 7,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "responsible_government",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "aacf8bb6-3f6e-46d9-a551-b0749d7efffc",
-                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Government",
-                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
-                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "useOntologyRelationship": false
-                            }
-                        ],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "AU_GOVERN",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Responsible Government",
-                    "nodegroup_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "nodeid": "034d2c18-13f2-11f0-9ff8-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
-                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6118,32 +5648,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "authority_legal_instrument",
-                    "config": {
-                        "controlledList": "b0248b36-a1ba-51f5-a7c2-ffb79f17bb7b",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "AU_LEG_INS",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Authority Legal Instrument",
-                    "nodegroup_id": "034d1fac-13f2-11f0-9ff8-0242ac170007",
-                    "nodeid": "36cad31f-192f-4c93-b24c-6f9c95b83ccf",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E32_Authority_Document",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P70i_is_documented_in",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "alert_entry_date",
                     "config": {
                         "dateFormat": "YYYY-MM-DD"
@@ -6542,6 +6046,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "other_unprotected_area_type",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Other Unprotected Area Type",
+                    "nodegroup_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
+                    "nodeid": "56c7c419-e31c-4e7d-a99a-8aea3f370e52",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "latest_edit_type",
                     "config": {
                         "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
@@ -6778,8 +6305,8 @@
                     },
                     "datatype": "geojson-feature-collection",
                     "description": "Areas of the overall Site Boundary that are designated non-protected.",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "unprotarea",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -7092,8 +6619,8 @@
                     "alias": "site_boundary",
                     "config": {
                         "addToMap": true,
-                        "advancedStyle": "",
-                        "advancedStyling": false,
+                        "advancedStyle": "[\n  {\n    \"id\": \"resources-fill-b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"type\": \"fill\",\n    \"source\": \"resources-b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"source-layer\": \"b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"layout\": {\n      \"visibility\": \"visible\"\n    },\n    \"paint\": {\n      \"fill-color\": [\n        \"match\",\n        [\n          \"coalesce\",\n          [\n            \"get\",\n            \"registration_status\"\n          ],\n          \"\"\n        ],\n        \"Registered\",\n        \"rgba(255,0,0,0.7)\",\n        \"Registry Candidate\",\n        \"rgba(255,0,0,0.7)\",\n        \"Decision Pending\",\n        \"rgba(255,0,0,0.7)\",\n        \"Federal Jurisdiction\",\n        \"rgba(255,0,0,0.3)\",\n        \"Legacy\",\n        \"rgba(0,0,0,0)\",\n        \"Recorded/Unprotected\",\n        \"rgba(0,0,0,0)\",\n        \"Cancelled Record\",\n        \"rgba(0,0,0,0)\",\n        \"rgba(255,0,0,0.7)\"\n      ]\n    }\n  },\n  {\n    \"id\": \"resources-poly-outline-b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"type\": \"line\",\n    \"source\": \"resources-b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"source-layer\": \"b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"layout\": {\n      \"visibility\": \"visible\"\n    },\n    \"paint\": {\n      \"line-color\": [\n        \"match\",\n        [\n          \"coalesce\",\n          [\n            \"get\",\n            \"registration_status\"\n          ],\n          \"\"\n        ],\n        \"Registered\",\n        \"rgba(255,0,0,1)\",\n        \"Registry Candidate\",\n        \"rgba(255,0,0,1)\",\n        \"Decision Pending\",\n        \"rgba(255,0,0,1)\",\n        \"Federal Jurisdiction\",\n        \"rgba(255,0,0,0.7)\",\n        \"Legacy\",\n        \"rgba(255,0,0,1)\",\n        \"Recorded/Unprotected\",\n        \"rgba(255,0,0,1)\",\n        \"Cancelled Record\",\n        \"rgba(255,0,0,1)\",\n        \"rgba(255,0,0,1)\"\n      ]\n    }\n  },\n  {\n    \"id\": \"site-polygon-pattern-fill-b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"type\": \"fill\",\n    \"source\": \"resources-b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"source-layer\": \"b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"layout\": {\n      \"visibility\": \"visible\"\n    },\n    \"filter\": [\n      \"in\",\n      [\n        \"get\",\n        \"registration_status\"\n      ],\n      [\n        \"literal\",\n        [\n          \"Legacy\",\n          \"Recorded/Unprotected\",\n          \"Cancelled Record\"\n        ]\n      ]\n    ],\n    \"paint\": {\n      \"fill-pattern\": [\n        \"match\",\n        [\n          \"get\",\n          \"registration_status\"\n        ],\n        \"Legacy\",\n        \"pattern-crosshatch-red\",\n        \"Recorded/Unprotected\",\n        \"pattern-vertical-red\",\n        \"Cancelled Record\",\n        \"pattern-horizontal-red\",\n        \"pattern-horizontal-red\"\n      ]\n    }\n  },\n  {\n    \"id\": \"site-polygon-borden-labels\",\n    \"type\": \"symbol\",\n    \"source\": \"resources-b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"source-layer\": \"b18223c2-13ef-11f0-8695-0242ac170007\",\n    \"layout\": {\n      \"visibility\": \"visible\",\n      \"text-field\": [\n        \"coalesce\",\n        [\n          \"get\",\n          \"borden_number\"\n        ],\n        \"\"\n      ],\n      \"text-size\": 12,\n      \"text-font\": [\n        \"Open Sans Bold\",\n        \"Arial Unicode MS Bold\"\n      ],\n      \"text-allow-overlap\": false,\n      \"text-ignore-placement\": false\n    },\n    \"paint\": {\n      \"text-color\": \"#333333\",\n      \"text-halo-color\": \"rgba(255,255,255,0.9)\",\n      \"text-halo-width\": 1.5\n    }\n  },\n  {\n\t\t\"id\": \"resources-cluster-point-halo-b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"type\": \"circle\",\n\t\t\"source\": \"resources-b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"source-layer\": \"b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"layout\": {\n\t\t\t\"visibility\": \"visible\"\n\t\t},\n\t\t\"filter\": [\n\t\t\t\"all\",\n\t\t\t[\n\t\t\t\t\"==\",\n\t\t\t\t\"$type\",\n\t\t\t\t\"Point\"\n\t\t\t],\n\t\t\t[\n\t\t\t\t\">\",\n\t\t\t\t\"total\",\n\t\t\t\t1\n\t\t\t]\n\t\t],\n\t\t\"paint\": {\n\t\t\t\"circle-radius\": {\n\t\t\t\t\"property\": \"total\",\n\t\t\t\t\"stops\": [\n\t\t\t\t\t[\n\t\t\t\t\t\t0,\n\t\t\t\t\t\t22\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t50,\n\t\t\t\t\t\t24\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t100,\n\t\t\t\t\t\t26\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t200,\n\t\t\t\t\t\t28\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t400,\n\t\t\t\t\t\t30\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t800,\n\t\t\t\t\t\t32\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t1200,\n\t\t\t\t\t\t34\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t1600,\n\t\t\t\t\t\t36\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t2000,\n\t\t\t\t\t\t38\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t2500,\n\t\t\t\t\t\t40\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t3000,\n\t\t\t\t\t\t42\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t4000,\n\t\t\t\t\t\t44\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t5000,\n\t\t\t\t\t\t46\n\t\t\t\t\t]\n\t\t\t\t]\n\t\t\t},\n\t\t\t\"circle-color\": \"rgba(255,0,0,0.3)\"\n\t\t}\n\t},\n\t{\n\t\t\"id\": \"resources-cluster-point-b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"type\": \"circle\",\n\t\t\"source\": \"resources-b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"source-layer\": \"b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"layout\": {\n\t\t\t\"visibility\": \"visible\"\n\t\t},\n\t\t\"filter\": [\n\t\t\t\"all\",\n\t\t\t[\n\t\t\t\t\"==\",\n\t\t\t\t\"$type\",\n\t\t\t\t\"Point\"\n\t\t\t],\n\t\t\t[\n\t\t\t\t\">\",\n\t\t\t\t\"total\",\n\t\t\t\t1\n\t\t\t]\n\t\t],\n\t\t\"paint\": {\n\t\t\t\"circle-radius\": {\n\t\t\t\t\"property\": \"total\",\n\t\t\t\t\"type\": \"exponential\",\n\t\t\t\t\"stops\": [\n\t\t\t\t\t[\n\t\t\t\t\t\t0,\n\t\t\t\t\t\t12\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t50,\n\t\t\t\t\t\t14\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t100,\n\t\t\t\t\t\t16\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t200,\n\t\t\t\t\t\t18\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t400,\n\t\t\t\t\t\t20\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t800,\n\t\t\t\t\t\t22\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t1200,\n\t\t\t\t\t\t24\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t1600,\n\t\t\t\t\t\t26\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t2000,\n\t\t\t\t\t\t28\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t2500,\n\t\t\t\t\t\t30\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t3000,\n\t\t\t\t\t\t32\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t4000,\n\t\t\t\t\t\t34\n\t\t\t\t\t],\n\t\t\t\t\t[\n\t\t\t\t\t\t5000,\n\t\t\t\t\t\t36\n\t\t\t\t\t]\n\t\t\t\t]\n\t\t\t},\n\t\t\t\"circle-color\": \"rgba(255,0,0,0.73)\"\n\t\t}\n\t},\n\t{\n\t\t\"id\": \"resources-cluster-count-b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"type\": \"symbol\",\n\t\t\"source\": \"resources-b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"source-layer\": \"b18223c2-13ef-11f0-8695-0242ac170007\",\n\t\t\"layout\": {\n\t\t\t\"text-field\": \"{total}\",\n\t\t\t\"text-size\": 10\n\t\t},\n\t\t\"paint\": {\n\t\t\t\"text-color\": \"#fff\"\n\t\t},\n\t\t\"filter\": [\n\t\t\t\"all\",\n\t\t\t[\n\t\t\t\t\">\",\n\t\t\t\t\"total\",\n\t\t\t\t1\n\t\t\t]\n\t\t]\n\t}\n]",
+                        "advancedStyling": true,
                         "autoManageCache": false,
                         "cacheTiles": false,
                         "clusterDistance": 20,
@@ -7118,8 +6645,8 @@
                     },
                     "datatype": "geojson-feature-collection",
                     "description": "{\"en\": \"\"}",
-                    "exportable": false,
-                    "fieldname": "boundary",
+                    "exportable": true,
+                    "fieldname": "site_bndry",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -7158,31 +6685,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "source_notes",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": "srcnts",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Source Notes",
-                    "nodegroup_id": "b18223c2-13ef-11f0-8695-0242ac170007",
-                    "nodeid": "b1822926-13ef-11f0-8695-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -7262,12 +6764,23 @@
                 {
                     "alias": "publication_reference",
                     "config": {
-                        "en": ""
+                        "graphs": [
+                            {
+                                "graphid": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Publication",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
                     },
-                    "datatype": "semantic",
+                    "datatype": "resource-instance-list",
                     "description": "{\"en\": \"\"}",
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "PUBREF",
                     "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -7280,162 +6793,6 @@
                     "nodeid": "bb157a2a-01d8-11f0-850c-0242ac170007",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "reference_title",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "REF_TITLE",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Reference Title",
-                    "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "nodeid": "bb157e3a-01d8-11f0-850c-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E41_Appellation",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "reference_type",
-                    "config": {
-                        "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": "Need to fix Concept name and values",
-                    "exportable": true,
-                    "fieldname": "REF_TYPE",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Reference Type",
-                    "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "nodeid": "bb157f66-01d8-11f0-850c-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "reference_year",
-                    "config": {
-                        "dateFormat": "YYYY"
-                    },
-                    "datatype": "date",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "REF_YEAR",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Reference Year",
-                    "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "nodeid": "bb15809c-01d8-11f0-850c-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P92i_was_brought_into_existence_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "reference_remarks",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "REF_REMARK",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Reference Remarks",
-                    "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "nodeid": "bb15818c-01d8-11f0-850c-0242ac170007",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "reference_authors",
-                    "config": {
-                        "graphs": [],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance-list",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "REF_AUTHOR",
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Reference Authors",
-                    "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "nodeid": "bb15829a-01d8-11f0-850c-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "reference_file",
-                    "config": {
-                        "activateMax": false,
-                        "imagesOnly": false,
-                        "maxFileSize": null,
-                        "maxFiles": 1
-                    },
-                    "datatype": "file-list",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Reference File",
-                    "nodegroup_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
-                    "nodeid": "bb15839e-01d8-11f0-850c-0242ac170007",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D13_Digital_Information_Carrier",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -7801,10 +7158,7 @@
                         "falseLabel": {
                             "en": "Additional Image"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Primary Image"
                         }
@@ -8052,10 +7406,7 @@
                         "falseLabel": {
                             "en": "Unrestricted"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Restricted"
                         }
@@ -8077,6 +7428,32 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P35_has_identified",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "unprotected_area_type",
+                    "config": {
+                        "controlledList": "e5691a39-41d1-417d-ae33-b0ca630f02ae",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Unprotected Area Type",
+                    "nodegroup_id": "7c8eb1f8-44e2-4239-afaa-9cbf1fadf160",
+                    "nodeid": "e1f8bec7-9d0c-4f04-9dc8-718d05444105",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -8368,9 +7745,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "Reorder Image attributes",
-                "publicationid": "70b9ad0e-a437-4e6d-8685-101c27338aa9",
-                "published_time": "2026-03-09T14:50:44.723"
+                "notes": "Added unprotected area type",
+                "publicationid": "8e3ead35-75fb-418a-b188-b54dcd1c26b0",
+                "published_time": "2026-06-30T23:23:20.286"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -8469,9 +7846,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "a67a23c71 2025-08-14 16:46:56 -0700",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
-        "os version": "6.6.87.2-microsoft-standard-WSL2"
+        "os version": "6.12.76-linuxkit"
     }
 }

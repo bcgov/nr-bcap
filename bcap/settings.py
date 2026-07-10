@@ -14,6 +14,8 @@ from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 
+from bcap.util.dates import to_long
+
 
 def get_env_variable(var_name, is_optional=False):
     msg = "Set the %s environment variable"
@@ -38,9 +40,13 @@ load_dotenv(
 APP_NAME = "bcap"
 APP_VERSION = semantic_version.Version(major=0, minor=0, patch=1)
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+DEPLOYMENT_TIMESTAMP = get_env_variable("DEPLOYMENT_TIMESTAMP")
 
 # PROXY prefix used - NB - cannot have leading "/", and must have trailing "/"
 BCGOV_PROXY_PREFIX = get_env_variable("BCGOV_PROXY_PREFIX")
+
+# Normalised proxy prefix for url patterns: "" or "<prefix>/" (no leading slash).
+URL_PREFIX = BCGOV_PROXY_PREFIX.rstrip("/") + "/" if BCGOV_PROXY_PREFIX else ""
 
 WEBPACK_LOADER = {
     "DEFAULT": {
@@ -97,13 +103,7 @@ ELASTICSEARCH_HOSTS = [
     }
 ]
 
-ELASTICSEARCH_INDEX_SETTINGS = {
-    "settings": {
-        "index": {
-            "max_terms_count": 150000
-        }
-    }
-}
+ELASTICSEARCH_INDEX_SETTINGS = {"settings": {"index": {"max_terms_count": 150000}}}
 
 # Modify this line as needed for your project to connect to elasticsearch with a password that you generate
 # ELASTICSEARCH_CONNECTION_OPTIONS = {"request_timeout": 30, "verify_certs": False, "basic_auth": ("elastic", "E1asticSearchforArche5")}
@@ -238,12 +238,35 @@ INSTALLED_APPS = (
     "arches_component_lab",
     "arches_controlled_lists",
     "rest_framework",
+    "drf_spectacular",
+    "arches_zod_validation",
+    "arches_workflow_stepper",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += (
     "arches.app",
     "django.contrib.admin",
 )
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "BCAP API",
+    "DESCRIPTION": "BC Archaeology Portal API",
+    "VERSION": "2.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_URLCONF": "bcap.urls_api_documented",
+    # The arches-querysets tile schemas are introspected from graph nodes whose
+    # order isn't deterministic; order all component properties by the graph node
+    # sortorder for stable, meaningful diffs. Keep the default enum hook.
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "arches_zod_validation.schema.sort_generated_schema_properties",
+        "arches_zod_validation.schema.type_base_serializer_fields",
+    ],
+}
 
 # toggle Vite injection
 USE_VITE = False
@@ -259,7 +282,7 @@ if USE_VITE:
     DJANGO_VITE = {
         "default": {
             "dev_mode": USE_VITE,
-            "static_url_prefix": "/bcrhp/static",
+            "static_url_prefix": "/bcap/static",
             # "static_url_prefix": "/",
         }
     }
@@ -324,6 +347,7 @@ TEMPLATES = build_templates_config(
 
 # make vite context processor available in templates
 TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "bcap.util.context_processors.deployment_settings",
     "bcap.context_processors.vite",
 ]
 
@@ -403,6 +427,10 @@ LOGGING = {
     },
 }
 
+# The file handler can't create its own parent directory (gitignored, so absent
+# on a fresh checkout); make it before logging is configured.
+os.makedirs(os.path.join(APP_ROOT, "logs"), exist_ok=True)
+
 # Rate limit for authentication views
 # See options (including None or python callables):
 # https://django-ratelimit.readthedocs.io/en/stable/rates.html#rates-chapter
@@ -461,6 +489,7 @@ if MODE == "DEV":
     CSRF_TRUSTED_ORIGINS = ["http://localhost:82"]
     PUBLIC_ORIGIN = "http://localhost:82"
 
+
 AUTHLIB_OAUTH_CLIENTS = {
     "default": {
         "client_id": get_env_variable("OAUTH_CLIENT_ID"),
@@ -487,12 +516,28 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/auth/eoauth_cb",
                 "/bcap/o/token",
                 # "/bcap/api/borden-number",
-                "/bcap/auth/user_profile"
+                "/bcap/auth/user_profile",
+                # Signup-link target must be reachable while anonymous; it
+                # stashes the token and bounces the visitor into login.
+                "/bcap/signup/claim",
                 # "/bcap/geojson"
             ],
         },
     }
 }
+
+REGISTRATION_LINK_TTL_DAYS = 7
+
+# Role groups an admin can grant an invited user. External applicants always
+# get just the Submitter group.
+SELF_MANAGE_ROLE_GROUPS = [
+    "Permit Reviewer",
+    "Permit Decider",
+    "Inventory Reviewer",
+    "Inventory Manager",
+    "Submitter",
+]
+EXTERNAL_APPLICANT_GROUP = "Submitter"
 
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
@@ -600,9 +645,9 @@ RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER = False
 # Dictionary containing any additional context items for customising email templates
 EXTRA_EMAIL_CONTEXT = {
     "salutation": _("Hi"),
-    "expiration": (
+    "expiration": to_long(
         datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)
-    ).strftime("%A, %d %B %Y"),
+    ),
 }
 
 # see https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference
@@ -702,19 +747,19 @@ TILESERVER_URL = "https://openmaps.gov.bc.ca/"
 BC_TILESERVER_URLS = {
     "maps": {
         "url": "https://maps.gov.bc.ca/",
-        "use_outbound_proxy": True  # Use outbound proxy for this source
+        "use_outbound_proxy": True,  # Use outbound proxy for this source
     },
     "openmaps": {
         "url": TILESERVER_URL,
-        "use_outbound_proxy": True  # Don't use outbound proxy for this source
+        "use_outbound_proxy": True,  # Don't use outbound proxy for this source
     },
     "local": {
         "url": get_env_variable("TILESERVER_LOCAL_URL"),
-        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+        "use_outbound_proxy": False,  # Local doesn't need outbound proxy
     },
     "local-feature": {
         "url": get_env_variable("FEATURESERVER_LOCAL_URL"),
-        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+        "use_outbound_proxy": False,  # Local doesn't need outbound proxy
     },
 }
 

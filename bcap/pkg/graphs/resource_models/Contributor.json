@@ -62,15 +62,36 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "BCAP Username",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "1e0bf20f-fbc6-44f8-81bf-f4c9fb71b519",
+                    "label": {
+                        "en": "BCAP Username"
+                    },
+                    "node_id": "a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
+                    "config": {
                         "defaultValue": {
                             "en": {
                                 "direction": "ltr",
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contact Email",
                         "maxLength": "125",
                         "placeholder": {
@@ -92,7 +113,12 @@
                 {
                     "card_id": "781da83d-3229-4af3-89fd-9c66f54a223b",
                     "config": {
-                        "label": "End Date"
+                        "defaultValue": "",
+                        "label": "End Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
                     },
                     "id": "511c063d-518b-43e8-9ab4-aeb914634aa4",
                     "label": {
@@ -107,12 +133,10 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor Role",
                         "placeholder": {
-                            "en": "Select an option"
+                            "en": "Select an option for Individuals, leave blank for Organizations"
                         },
                         "url": "/bcap/concepts/dropdown?conceptid=0454aeb7-da1e-4d10-b45b-9ec16a52767b"
                     },
@@ -129,9 +153,12 @@
                 {
                     "card_id": "781da83d-3229-4af3-89fd-9c66f54a223b",
                     "config": {
+                        "defaultValue": "",
                         "label": "Start Date",
                         "maxDate": null,
-                        "minDate": null
+                        "minDate": null,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
                     },
                     "id": "acbd99f9-48dd-45cd-b0ad-69afff11933b",
                     "label": {
@@ -152,9 +179,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contact Phone Number",
                         "maxLength": "25",
                         "placeholder": {
@@ -184,7 +209,7 @@
                         "en": "Inactive"
                     },
                     "node_id": "99643f1e-9e4e-11ed-b6d5-5254004d77d3",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "0346bc9c-d235-4313-adc8-d0e210b2ef25"
@@ -192,9 +217,7 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -219,20 +242,18 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
-                        "label": "Organization Name or Last Name",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Individual's Last Name OR Organization's Full Name",
                         "maxLength": "250",
                         "placeholder": {
-                            "en": "Enter text"
+                            "en": "Enter Individual's last name, or the Organization's full name"
                         },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "c4eca9b4-9dea-11ed-9a7b-5254004d77d3",
                     "label": {
-                        "en": "Organization Name or Last Name"
+                        "en": "Individual's Last Name OR Organization's Full Name"
                     },
                     "node_id": "c4ec9b2c-9dea-11ed-9a7b-5254004d77d3",
                     "sortorder": 2,
@@ -249,13 +270,11 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor First Name",
                         "maxLength": "125",
                         "placeholder": {
-                            "en": "Enter text"
+                            "en": "Enter for Individuals only"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -274,9 +293,7 @@
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Associated Organization",
                         "placeholder": {
                             "en": "Select Organization Name if applicable"
@@ -429,6 +446,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "rangenode_id": "99643f1e-9e4e-11ed-b6d5-5254004d77d3",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
+                    "edgeid": "e81bd8e3-d827-4013-8992-33c0f8e20cfe",
+                    "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5",
                     "source_identifier_id": null
                 },
                 {
@@ -672,10 +699,7 @@
                         "falseLabel": {
                             "en": "Active"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Inactive"
                         }
@@ -721,6 +745,29 @@
                     "nodeid": "a5b2cd72-c4f4-11ed-a06d-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E51_Contact_Point",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "bcap_username",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": "Example(s): travis@idir / john@bceid / brett@bcsc. This is for a mapping to a BCAP user.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "BCAP Username",
+                    "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
+                    "nodeid": "a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -989,9 +1036,9 @@
             "publication": {
                 "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                 "most_recent_edit_id": null,
-                "notes": "SME configuration updates",
-                "publicationid": "4d29653d-504e-4928-850f-fdc222c7d8a3",
-                "published_time": "2026-02-11T12:45:12.555"
+                "notes": "Added boilerplate text to clarify first/last/org names.",
+                "publicationid": "7d07a684-ce70-4f55-9245-17b9b8c5cbe1",
+                "published_time": "2026-06-29T16:27:28.488"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1092,9 +1139,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
-        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
         "os": "Linux",
-        "os version": "5.14.0-611.20.1.el9_7.x86_64"
+        "os version": "6.12.76-linuxkit"
     }
 }

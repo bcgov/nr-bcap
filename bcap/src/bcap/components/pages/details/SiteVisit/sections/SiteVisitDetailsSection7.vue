@@ -33,8 +33,7 @@ const props = withDefaults(
 
 const currentData = computed<SiteVisitRelatedDocumentsTile | undefined>(() => {
     return props.data?.aliased_data?.related_documents?.aliased_data as
-        | SiteVisitRelatedDocumentsTile
-        | undefined;
+        SiteVisitRelatedDocumentsTile | undefined;
 });
 
 const relatedDocumentsData = computed(() => {

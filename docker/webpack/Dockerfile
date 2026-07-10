@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS base
+FROM ubuntu:24.04 AS base
 USER root
 ENV WEB_ROOT=/web_root
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
@@ -16,17 +16,17 @@ RUN set -ex \
   && apt-get update -y \
   && RUN_DEPS=" \
   build-essential \
-  python3.11-dev \
-  mime-support \
+  python3-dev \
+  media-types \
   libgdal-dev \
-  python3.11 \
-  python3.11-distutils \
-  python3.11-venv \
+  python3 \
+  python3-venv \
   dos2unix \
   git \
   " \
   && apt-get install -y --no-install-recommends curl \
-  && apt-get install -y --no-install-recommends $RUN_DEPS 
+  && apt-get install -y --no-install-recommends $RUN_DEPS \
+  && rm -f /usr/lib/python3.12/EXTERNALLY-MANAGED
 
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py \
   && pip install setuptools python-dotenv django-storages

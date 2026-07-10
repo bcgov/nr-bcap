@@ -4,6 +4,7 @@ import type { Ref } from 'vue';
 import _ from 'underscore';
 import mapPopupProvider from 'utils/map-popup-provider';
 import mapFilterUtils from 'utils/map-filter-utils';
+import { sanitizeHtml } from '@/bcap/util.ts';
 
 import type {
     DescriptorsType,
@@ -205,7 +206,7 @@ onMounted(() => {
                             ? 'scroll'
                             : 'hidden',
                     }"
-                    v-html="currentDisplayValues.map_popup"
+                    v-html="sanitizeHtml(currentDisplayValues.map_popup)"
                 ></div>
 
                 <div

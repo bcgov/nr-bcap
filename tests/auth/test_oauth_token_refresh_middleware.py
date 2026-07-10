@@ -6,7 +6,7 @@ from django.conf import settings
 from django.test import override_settings
 
 
-@override_settings(ROOT_URLCONF="bcap.tests.test_urls")
+@override_settings(ROOT_URLCONF="tests.test_urls")
 class OAuthTokenRefreshMiddlewareTest(TestCase):
     def setUp(self):
         self.protected_url = "/test/protected"  # ✅ Now points to a protected route

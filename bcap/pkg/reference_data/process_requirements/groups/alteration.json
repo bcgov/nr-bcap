@@ -1,0 +1,96 @@
+{
+    "id": "REQ-ALT-TEMPLATE-000",
+    "name": "Alteration Requirements",
+    "type": "Grouping",
+    "internal": true,
+    "resource": null,
+    "due": null,
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [],
+    "requirements": [
+        {
+            "id": "REQ-ALT-TEMPLATE-001",
+            "name": "Submit Alteration Approach",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "alteration",
+            "url": "plugins/external-permit-workflows/alterationModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-ALT-TEMPLATE-002",
+            "name": "Review Alteration Approach",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Alteration justified",
+                    "description": "Is the proposed alteration to the site justified and minimized?",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Mitigation planned",
+                    "description": "Mitigation and recording measures are proportionate to the impact",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Personnel qualified",
+                    "description": "Field director holds a current permit and relevant regional experience",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                }
+            ]
+        },
+        {
+            "id": "REQ-ALT-TEMPLATE-003",
+            "name": "Submit Alteration Outcome",
+            "type": "Document Submission",
+            "internal": false,
+            "resource": "requirement_submission",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-ALT-TEMPLATE-004",
+            "name": "Review Alteration Outcome",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Final report received",
+                    "description": "Report documents the alteration carried out and any recovered material",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Site data complete",
+                    "description": "All site forms, field photos, and spatial data are accounted for",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Conditions satisfied",
+                    "description": "Each permit condition has supporting evidence in the submission",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                }
+            ]
+        }
+    ]
+}

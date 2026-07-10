@@ -48,8 +48,7 @@ const props = withDefaults(
 const siteBoundary = computed<SiteBoundaryTile | undefined>(
     (): SiteBoundaryTile | undefined => {
         return props.data?.aliased_data?.site_boundary as
-            | SiteBoundaryTile
-            | undefined;
+            SiteBoundaryTile | undefined;
     },
 );
 
@@ -73,6 +72,7 @@ const siteBoundaryNode = computed<
         :aliased-node-data="
             siteBoundaryNode as AliasedGeojsonFeatureCollectionNode
         "
+        :use-utm-coords="true"
     ></Map>
     <DetailsSection
         section-title="1. Spatial View"
@@ -102,8 +102,7 @@ const siteBoundaryNode = computed<
                                     null,
                                     2,
                                 )
-                            }}</pre
-                        >
+                            }}</pre>
                     </div>
                     <EmptyState
                         v-else

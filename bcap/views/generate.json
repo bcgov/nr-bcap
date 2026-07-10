@@ -1,0 +1,22 @@
+{
+    "alteration": [],
+    "archaeological_site": ["GET"],
+    "bcap_message": ["POST"],
+    "contributor": ["GET"],
+    "hca_permit": ["GET"],
+    "hria_discontinued_data": [],
+    "inspection": [],
+    "investigation": [],
+    "legislative_act": ["GET"],
+    "lg_person": ["GET"],
+    "local_government": ["GET"],
+    "new_resource_model": [],
+    "permit_application": ["GET", "PUT", "PATCH", "POST", "DELETE"],
+    "process_requirement": ["GET", "PUT", "PATCH", "DELETE"],
+    "project_sandbox": [],
+    "publication": ["GET"],
+    "repository": [],
+    "requirement_submission": ["GET"],
+    "site_submission": ["GET"],
+    "site_visit": ["GET"]
+}

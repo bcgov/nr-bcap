@@ -1,4 +1,3 @@
-# bcap/tests/util/test_borden_number_api.py
 import json
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -41,7 +40,7 @@ class _FakePoint:
         return self._y
 
 
-@override_settings(ROOT_URLCONF="bcap.tests.test_urls")
+@override_settings(ROOT_URLCONF="tests.test_urls")
 class BordenNumberApiTests(TestCase):
     def setUp(self):
         self.api = BordenNumberApi()
@@ -252,6 +251,14 @@ class BordenNumberApiReserveDbTests(TransactionTestCase):
     DB-backed tests for reserve_borden_number using the configured Postgres DB and
     the real table `bcap_borden_number_counters`.
     """
+
+    def _fixture_teardown(self):
+        # TransactionTestCase's default teardown runs `flush`, truncating EVERY
+        # table -- including the package data loaded by the 0002_load_package
+        # migration (GraphModels, nodes, ...). With --keepdb that empty state
+        # persists and breaks subsequent runs with GraphModel.DoesNotExist.
+        with connection.cursor() as cur:
+            cur.execute("TRUNCATE bcap_borden_number_counters")
 
     @classmethod
     def tearDownClass(cls):

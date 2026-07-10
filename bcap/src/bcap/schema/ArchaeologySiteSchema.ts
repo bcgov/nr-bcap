@@ -8,6 +8,7 @@ import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/
 import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
 import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
 import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
+import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
 
 export interface SpatialAccuracyEntry extends AliasedTileData {
     aliased_data: {
@@ -22,7 +23,6 @@ export interface SiteBoundaryTile extends AliasedTileData {
     aliased_data: {
         site_boundary?: AliasedGeojsonFeatureCollectionNode;
         latest_edit_type?: AliasedNodeData;
-        source_notes?: AliasedNodeData;
         accuracy_remarks?: AliasedNodeData;
         spatial_accuracy_history?: SpatialAccuracyEntry[];
         site_boundary_description?: AliasedNodeData;
@@ -32,7 +32,6 @@ export interface SiteBoundaryTile extends AliasedTileData {
 export interface AuthorityTile extends AliasedTileData {
     aliased_data: {
         authority_start_date?: AliasedNodeData;
-        responsible_government?: AliasedNodeData;
         authority_end_date?: AliasedNodeData;
         legislative_act?: AliasedNodeData;
         authority_description?: AliasedNodeData;
@@ -251,6 +250,7 @@ export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
 
 export interface PublicationReferenceTile extends AliasedTileData {
     aliased_data: {
+        publication?: ResourceInstanceListValue;
         reference_type?: AliasedNodeData;
         reference_title?: AliasedNodeData;
         reference_year?: AliasedNodeData;
@@ -293,8 +293,7 @@ export interface OtherMapsTile extends AliasedTileData {
 export interface RelatedDocumentsTile extends AliasedTileData {
     publication_reference?: PublicationReferenceTile[];
     related_site_documents?:
-        | RelatedSiteDocumentsTile[]
-        | RelatedSiteDocumentsTile;
+        RelatedSiteDocumentsTile[] | RelatedSiteDocumentsTile;
     site_images?: SiteImagesTile[];
     other_maps?: OtherMapsTile[];
 }

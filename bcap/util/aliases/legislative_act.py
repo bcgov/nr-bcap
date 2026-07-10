@@ -16,3 +16,11 @@ class LegislativeActAliases(AbstractAliases):
     @staticmethod
     def get_aliases():
         return AbstractAliases.get_dict(LegislativeActAliases)
+
+
+class LegislativeActGroupAliases(AbstractAliases):
+    ACT_STATUS = "act_status"
+
+    @staticmethod
+    def get_aliases():
+        return AbstractAliases.get_dict(LegislativeActGroupAliases)

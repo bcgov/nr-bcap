@@ -12,9 +12,8 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Copy github_settings to bcap settings
-      run: |
-        cp .github/github_settings.py bcap/settings.py
+    - name: Use test settings for management commands
+      run: echo "DJANGO_SETTINGS_MODULE=tests.test_settings" >> $GITHUB_ENV
       shell: bash
 
     - name: Install Java, GDAL, and other system dependencies
@@ -28,6 +27,21 @@ runs:
       uses: ankane/setup-elasticsearch@v1
       with:
         elasticsearch-version: 8
+
+    - name: Configure Elasticsearch field limit
+      run: |
+        curl -X PUT "localhost:9200/_index_template/arches_field_limit" \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "index_patterns": ["*"],
+            "priority": 1,
+            "template": {
+              "settings": {
+                "index.mapping.total_fields.limit": 5000
+              }
+            }
+          }'
+      shell: bash
 
     - name: Install Python packages
       run: |

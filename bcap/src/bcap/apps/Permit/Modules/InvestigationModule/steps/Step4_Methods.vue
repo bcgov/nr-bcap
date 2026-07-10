@@ -1,0 +1,257 @@
+<script setup lang="ts">
+import { Form } from '@primevue/forms';
+import { zInvestigationMethodologyAliasedData } from '@/bcap/client/zod.gen.ts';
+import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import FieldSet from 'primevue/fieldset';
+import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+
+const emit = defineEmits(['update:step-is-valid']);
+const { draftData, resolver, isValid, updateValue } = useDraftStep(
+    zInvestigationMethodologyAliasedData,
+    'methodology',
+    emit,
+);
+defineExpose({ isValid });
+</script>
+<template>
+    <Form
+        :resolver="resolver"
+        :validate-on-blur="true"
+        :validate-on-value-update="true"
+        :validate-on-mount="false"
+    >
+        <FieldSet>
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.has_pre_field_research
+                "
+                graph-slug="investigation"
+                node-alias="has_pre_field_research"
+                @update:value="
+                    updateValue($event, 'has_pre_field_research', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.methods_alignment
+                "
+                graph-slug="investigation"
+                node-alias="methods_alignment"
+                @update:value="
+                    updateValue($event, 'methods_alignment', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.has_survey_coverage
+                "
+                graph-slug="investigation"
+                node-alias="has_survey_coverage"
+                @update:value="
+                    updateValue($event, 'has_survey_coverage', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.survey_coverage_approach
+                "
+                graph-slug="investigation"
+                node-alias="survey_coverage_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'survey_coverage_approach',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.has_arch_potential
+                "
+                graph-slug="investigation"
+                node-alias="has_arch_potential"
+                @update:value="
+                    updateValue($event, 'has_arch_potential', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.arch_potential_approach
+                "
+                graph-slug="investigation"
+                node-alias="arch_potential_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'arch_potential_approach',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.arch_bearing_sediment
+                "
+                graph-slug="investigation"
+                node-alias="arch_bearing_sediment"
+                @update:value="
+                    updateValue($event, 'arch_bearing_sediment', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.has_subsurface_testing
+                "
+                graph-slug="investigation"
+                node-alias="has_subsurface_testing"
+                @update:value="
+                    updateValue($event, 'has_subsurface_testing', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.subsurface_testing_approach
+                "
+                graph-slug="investigation"
+                node-alias="subsurface_testing_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'subsurface_testing_approach',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.has_machine_assisted_inspection
+                "
+                graph-slug="investigation"
+                node-alias="has_machine_assisted_inspection"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'has_machine_assisted_inspection',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.machine_assisted_inspection_methods
+                "
+                graph-slug="investigation"
+                node-alias="machine_assisted_inspection_methods"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'machine_assisted_inspection_methods',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.machine_assisted_inspection_approach
+                "
+                graph-slug="investigation"
+                node-alias="machine_assisted_inspection_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'machine_assisted_inspection_approach',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.has_winter_assessments
+                "
+                graph-slug="investigation"
+                node-alias="has_winter_assessments"
+                @update:value="
+                    updateValue($event, 'has_winter_assessments', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.winter_assessment_methods
+                "
+                graph-slug="investigation"
+                node-alias="winter_assessment_methods"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'winter_assessment_methods',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.field_transport_and_lab_methods
+                "
+                graph-slug="investigation"
+                node-alias="field_transport_and_lab_methods"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'field_transport_and_lab_methods',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.data_analysis_methods
+                "
+                graph-slug="investigation"
+                node-alias="data_analysis_methods"
+                @update:value="
+                    updateValue($event, 'data_analysis_methods', 'methodology')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data?.other_field_methods
+                "
+                graph-slug="investigation"
+                node-alias="other_field_methods"
+                @update:value="
+                    updateValue($event, 'other_field_methods', 'methodology')
+                "
+            />
+        </FieldSet>
+    </Form>
+    <br />
+</template>
+
+<style></style>

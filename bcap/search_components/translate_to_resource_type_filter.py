@@ -1,6 +1,5 @@
 from arches.app.search.components.base import BaseSearchFilter
 
-
 details = {
     "searchcomponentid": "",
     "name": "Translate to Resource Type",

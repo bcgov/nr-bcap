@@ -1,0 +1,196 @@
+<script setup lang="ts">
+import { Form } from '@primevue/forms';
+import { zInvestigationInvestigationIdentificationAliasedData } from '@/bcap/client/zod.gen.ts';
+import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import FieldSet from 'primevue/fieldset';
+import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+
+const emit = defineEmits(['update:step-is-valid']);
+const { draftData, resolver, isValid, updateValue } = useDraftStep(
+    zInvestigationInvestigationIdentificationAliasedData,
+    'investigation_identification',
+    emit,
+);
+defineExpose({ isValid });
+</script>
+<template>
+    <Form
+        :resolver="resolver"
+        :validate-on-blur="true"
+        :validate-on-value-update="true"
+        :validate-on-mount="false"
+    >
+        <FieldSet>
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.investigation_identification?.aliased_data
+                        ?.investigation_identification
+                "
+                graph-slug="investigation"
+                node-alias="investigation_identification"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'investigation_identification',
+                        'investigation_identification',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.hip_study_details
+                "
+                graph-slug="investigation"
+                node-alias="hip_study_details"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'hip_study_details',
+                        'section_1_overview',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.assessment_approach
+                "
+                graph-slug="investigation"
+                node-alias="assessment_approach"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'assessment_approach',
+                        'section_1_overview',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.mitigation_measures
+                "
+                graph-slug="investigation"
+                node-alias="mitigation_measures"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'mitigation_measures',
+                        'section_1_overview',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.are_chance_finds_expected
+                "
+                graph-slug="investigation"
+                node-alias="are_chance_finds_expected"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'are_chance_finds_expected',
+                        'section_1_overview',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data?.hip_objectives
+                "
+                graph-slug="investigation"
+                node-alias="hip_objectives"
+                @update:value="
+                    updateValue($event, 'hip_objectives', 'section_1_overview')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.are_ancestral_remains_anticipated
+                "
+                graph-slug="investigation"
+                node-alias="are_ancestral_remains_anticipated"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'are_ancestral_remains_anticipated',
+                        'section_1_overview',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.arch_workplans_and_schedule_a
+                "
+                graph-slug="investigation"
+                node-alias="arch_workplans_and_schedule_a"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'arch_workplans_and_schedule_a',
+                        'section_1_overview',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data?.affected_sites
+                "
+                graph-slug="investigation"
+                node-alias="affected_sites"
+                @update:value="
+                    updateValue($event, 'affected_sites', 'section_1_overview')
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.relevant_arch_studies
+                "
+                graph-slug="investigation"
+                node-alias="relevant_arch_studies"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'relevant_arch_studies',
+                        'section_1_overview',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.section_1_overview?.aliased_data
+                        ?.related_assessments
+                "
+                graph-slug="investigation"
+                node-alias="related_assessments"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'related_assessments',
+                        'section_1_overview',
+                    )
+                "
+            />
+        </FieldSet>
+    </Form>
+    <br />
+</template>
+
+<style></style>

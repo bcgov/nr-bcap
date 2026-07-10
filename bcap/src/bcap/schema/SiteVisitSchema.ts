@@ -30,7 +30,6 @@ export interface SiteVisitLocationBiogeographyTile extends AliasedTileData {
 // ---------- Site Visit Location ----------
 export interface SiteVisitLocationTile extends AliasedTileData {
     aliased_data: {
-        source_notes: StringValue; // string (i18n)
         accuracy_remarks: StringValue; // string (i18n)
         latest_edit_type: ReferenceSelectValue; // reference
         site_visit_location: GeoJSONFeatureCollectionValue; // geojson-feature-collection
@@ -101,7 +100,7 @@ export interface SiteVisitDetailsTile extends AliasedTileData {
         archaeological_site: ResourceInstanceValue;
         associated_permit: ResourceInstanceValue;
         affiliation: ResourceInstanceValue;
-        nonpermitted_site_visit?: BooleanValue;
+        is_site_visit_permitted?: BooleanValue;
         site_visit_team: SiteVisitTeamTile; // semantic subgroup (child tile)
     };
 }
@@ -272,8 +271,7 @@ export interface SiteVisitSiteImagesTile extends AliasedTileData {
 export interface SiteVisitRelatedDocumentsTile extends AliasedTileData {
     publication_reference?: SiteVisitPublicationReferenceTile[];
     related_site_documents?:
-        | SiteVisitRelatedSiteDocumentsTile[]
-        | SiteVisitRelatedSiteDocumentsTile;
+        SiteVisitRelatedSiteDocumentsTile[] | SiteVisitRelatedSiteDocumentsTile;
     site_images?: SiteVisitSiteImagesTile[];
 }
 

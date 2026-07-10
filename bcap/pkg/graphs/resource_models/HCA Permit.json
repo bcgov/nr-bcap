@@ -35,9 +35,7 @@
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "HCA Permit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -56,9 +54,7 @@
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Issuing Agency",
                         "placeholder": {
                             "en": "Select an option"
@@ -78,9 +74,7 @@
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Permit Number",
                         "maxLength": null,
                         "placeholder": {
