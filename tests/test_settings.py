@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os
+import tempfile
 
 from bcap.settings import *
 
@@ -91,7 +92,12 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 # Tests write and delete uploaded files locally. The prod default is the S3
 # backend, whose post_delete signal reaches the object store (and fails outright
 # when S3_BUCKET is unset, as in CI), so keep file storage on the filesystem.
+# Point it at a temp dir, not MEDIA_ROOT, so test uploads don't land in the
+# tracked fixtures directory.
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {"location": os.path.join(tempfile.gettempdir(), "bcap_test_media")},
+    },
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }

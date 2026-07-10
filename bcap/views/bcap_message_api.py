@@ -7,8 +7,9 @@ BcapMessageService."""
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from arches.app.utils.permission_backend import user_can_edit_resource
@@ -38,7 +39,7 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
 
     def get_queryset(self):
         return BcapMessageService().root_queryset(
-            self.kwargs["resource_id"], self.request
+            self.kwargs["resource_id"], self.request.user
         )
 
 
@@ -52,19 +53,17 @@ class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIVi
 
     def get_queryset(self):
         return BcapMessageService().thread_queryset(
-            self.kwargs["thread_id"], self.request
+            self.kwargs["thread_id"], self.request.user
         )
 
 
+@extend_schema(tags=["External: bcap_message"])
 class BcapMessageCreateView(BcapMessageListView):
     """The generated bcap_message collection endpoint, shadowed so POST first
     checks the caller may edit the resource the new message's resource_context
-    points at. GET (the owner-scoped list) passes straight through."""
+    points at. POST-only: reads go through the threads/messages endpoints."""
 
     parser_classes = [JSONParser, MultiPartJSONParser]
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         service = BcapMessageService()
@@ -88,3 +87,21 @@ class BcapMessageCreateView(BcapMessageListView):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+
+@extend_schema(tags=["External: bcap_message"])
+class BcapMessageUpdateView(BcapMessageViewMixin, ArchesModelAPIMixin, UpdateAPIView):
+    """PATCH a message's read state, gated like create (edit access to the
+    resource_context, not owner-scoped). Only message_read_date is written."""
+
+    permission_classes = [IsAuthenticated]
+    http_method_names = ["patch", "options"]
+
+    def update(self, request, *args, **kwargs):
+        service = BcapMessageService()
+        message_id = self.kwargs["pk"]
+        resource_id = service.message_resource_context_id(message_id)
+        if not user_can_edit_resource(request.user, resourceid=resource_id):
+            raise PermissionDenied("No access to the resource context.")
+        service.set_read_state(message_id, request.data)
+        return Response(self.get_serializer(self.get_object()).data)

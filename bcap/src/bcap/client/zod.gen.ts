@@ -8299,25 +8299,9 @@ export const zApiArchaeologicalSiteRetrieveResponse = zArchaeologicalSite;
 
 export const zApiAssignableGroupsRetrieveResponse = z.array(z.string());
 
-export const zApiBcapMessageListQuery = z.object({
-    limit: z.int().optional(),
-    offset: z.int().optional()
-});
-
-export const zApiBcapMessageListResponse = zPaginatedBcapMessageList;
-
 export const zApiBcapMessageCreateBody = zBcapMessageWritable;
 
 export const zApiBcapMessageCreateResponse = zBcapMessage;
-
-export const zApiBcapMessageDestroyPath = z.object({
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiBcapMessageDestroyResponse = z.void();
 
 export const zApiBcapMessageRetrievePath = z.object({
     id: z.uuid()
@@ -8332,14 +8316,6 @@ export const zApiBcapMessagePartialUpdatePath = z.object({
 });
 
 export const zApiBcapMessagePartialUpdateResponse = zBcapMessage;
-
-export const zApiBcapMessageUpdateBody = zBcapMessageWritable;
-
-export const zApiBcapMessageUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiBcapMessageUpdateResponse = zBcapMessage;
 
 export const zApiBcapMessageResourceThreadsListPath = z.object({
     resource_id: z.uuid()

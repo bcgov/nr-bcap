@@ -11,6 +11,7 @@ from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.dashboard.contributor_service import ContributorService
 from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.util.auth.roles import is_internal_user
+from bcap.util.dates import parse_iso_or_set_value
 
 logger = logging.getLogger(__name__)
 
@@ -46,10 +47,43 @@ class BcapMessageService(BaseGraphService):
         return cls._payload_relation_id(data, cls.A.RESOURCE_CONTEXT)
 
     @classmethod
+    def message_resource_context_id(cls, message_id):
+        """The resource id a stored message's resource_context points at, or None.
+
+        A PATCH strips resource_context from the body, so the edit gate reads the
+        target from the saved message rather than the request."""
+        context_id = (
+            ResourceTileTree.get_tiles(
+                MESSAGE_GRAPH_SLUG,
+                nodes=cls._nodes(MESSAGE_GRAPH_SLUG, [cls.A.RESOURCE_CONTEXT]),
+                resource_ids=[str(message_id)],
+            )
+            .values_list("resource_context__id", flat=True)
+            .first()
+        )
+        return str(context_id) if context_id else None
+
+    def set_read_state(self, message_id, data):
+        """Set (a datetime) or clear (None) a message's read date from a PATCH body."""
+        read_date = self._payload_node_value(data, self.A.MESSAGE_READ_DATE)
+        message = ResourceTileTree.get_tiles(
+            MESSAGE_GRAPH_SLUG, resource_ids=[str(message_id)]
+        ).get()
+        content = message.aliased_data.message_content.aliased_data
+        content.message_read_date = parse_iso_or_set_value(read_date)
+        # Save as a reviewer (admin): provisional edit applies if not?
+        message.save(request=None, force_admin=True, partial=True)
+        return message
+
+    @classmethod
+    def _payload_node_value(cls, data, alias):
+        """The node_value under an alias in the payload's message_content group."""
+        return cls._group_node_value(data, cls.A.MESSAGE_CONTENT, alias)
+
+    @classmethod
     def _payload_relation_id(cls, data, alias):
         """Resource id under the payload's message_content resource node, or None."""
-        node = cls._group_aliased_data(data, cls.A.MESSAGE_CONTENT).get(alias) or {}
-        node_value = node.get("node_value")
+        node_value = cls._payload_node_value(data, alias)
         if isinstance(node_value, list):
             node_value = node_value[0] if node_value else {}
         return (node_value or {}).get("resourceId")
@@ -57,11 +91,7 @@ class BcapMessageService(BaseGraphService):
     @classmethod
     def _is_internal_payload(cls, data):
         """The is_internal flag on the create payload (default False)."""
-        node = (
-            cls._group_aliased_data(data, cls.A.MESSAGE_CONTENT).get(cls.A.IS_INTERNAL)
-            or {}
-        )
-        return bool(node.get("node_value"))
+        return bool(cls._payload_node_value(data, cls.A.IS_INTERNAL))
 
     def prepare_message(self, data, user):
         """Fill in the author and enforce internal-message rules on a create payload."""
@@ -102,7 +132,7 @@ class BcapMessageService(BaseGraphService):
         user = get_user_model().objects.filter(username=username).first()
         return bool(user and is_internal_user(user))
 
-    def root_queryset(self, resource_id, request):
+    def root_queryset(self, resource_id, user):
         """The thread-starting messages on a parent resource, gated for externals."""
         roots = (
             ResourceTileTree.get_tiles(
@@ -115,11 +145,11 @@ class BcapMessageService(BaseGraphService):
             .order_by("-message_creation_date", "-createdtime")
         )
         # Coarse role gate for now; a future groups ticket moves this to Guardian.
-        if not is_internal_user(request.user):
-            roots = self._external_visible(roots, request.user.username)
+        if not is_internal_user(user):
+            roots = self._external_visible(roots, user.username)
         return roots
 
-    def thread_queryset(self, thread_id, request):
+    def thread_queryset(self, thread_id, user):
         """One thread's messages, oldest first, gated for external users."""
         messages = (
             ResourceTileTree.get_tiles(
@@ -130,8 +160,8 @@ class BcapMessageService(BaseGraphService):
             # Oldest first; createdtime breaks ties on a null creation date.
             .order_by("message_creation_date", "createdtime")
         )
-        if not is_internal_user(request.user):
-            messages = self._external_visible(messages, request.user.username)
+        if not is_internal_user(user):
+            messages = self._external_visible(messages, user.username)
         return messages
 
     def unread_count_across(self, context_ids, username):

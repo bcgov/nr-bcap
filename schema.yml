@@ -82,42 +82,12 @@ paths:
                   type: string
           description: ''
   /bcap/api/bcap_message:
-    get:
-      operationId: api_bcap_message_list
-      description: |-
-        The generated bcap_message collection endpoint, shadowed so POST first
-        checks the caller may edit the resource the new message's resource_context
-        points at. GET (the owner-scoped list) passes straight through.
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: bcap_message'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedBcapMessageList'
-          description: ''
     post:
       operationId: api_bcap_message_create
       description: |-
         The generated bcap_message collection endpoint, shadowed so POST first
         checks the caller may edit the resource the new message's resource_context
-        points at. GET (the owner-scoped list) passes straight through.
+        points at. POST-only: reads go through the threads/messages endpoints.
       tags:
       - 'External: bcap_message'
       requestBody:
@@ -144,8 +114,8 @@ paths:
         Detail endpoint for a single BCAP Message resource and its nested tiles.
 
         Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        verbs: POST (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -155,43 +125,6 @@ paths:
         required: true
       tags:
       - 'External: bcap_message'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BcapMessage'
-          description: ''
-    put:
-      operationId: api_bcap_message_update
-      description: |-
-        Detail endpoint for a single BCAP Message resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: bcap_message'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BcapMessage'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/BcapMessage'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/BcapMessage'
       security:
       - cookieAuth: []
       responses:
@@ -204,11 +137,8 @@ paths:
     patch:
       operationId: api_bcap_message_partial_update
       description: |-
-        Detail endpoint for a single BCAP Message resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        PATCH a message's read state, gated like create (edit access to the
+        resource_context, not owner-scoped). Only message_read_date is written.
       parameters:
       - in: path
         name: id
@@ -238,28 +168,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/BcapMessage'
           description: ''
-    delete:
-      operationId: api_bcap_message_destroy
-      description: |-
-        Detail endpoint for a single BCAP Message resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: bcap_message'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/bcap_message/resource/{resource_id}/threads:
     get:
       operationId: api_bcap_message_resource_threads_list

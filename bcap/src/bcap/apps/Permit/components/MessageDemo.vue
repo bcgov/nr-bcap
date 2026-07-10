@@ -33,6 +33,7 @@ interface DemoMessage {
     author: string;
     recipient: string;
     creationDate: string | null;
+    readDate: string | null;
     isRoot: boolean;
 }
 
@@ -87,6 +88,51 @@ const getJson = async <T,>(url: string, schema: z.ZodType<T>): Promise<T> => {
         throw new Error(`${response.status} ${await response.text()}`);
     }
     return schema.parse(await response.json());
+};
+
+const patchJson = async <T,>(
+    url: string,
+    body: unknown,
+    schema: z.ZodType<T>,
+): Promise<T> => {
+    const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+        throw new Error(`${response.status} ${await response.text()}`);
+    }
+    return schema.parse(await response.json());
+};
+
+// Mark a message read (now) or unread (null) via the locked-down PATCH, then
+// reflect the returned read date back into the demo's state.
+const toggleRead = async (message: DemoMessage): Promise<void> => {
+    const nextReadDate = message.readDate ? null : new Date().toISOString();
+    const body: BcapMessageWritable = {
+        aliased_data: {
+            message_content: {
+                aliased_data: {
+                    message_read_date: { node_value: nextReadDate },
+                },
+            },
+        },
+    };
+    try {
+        const updated = await patchJson(
+            arches.urls.bcap_message_update(message.id),
+            body,
+            zBcapMessage,
+        );
+        message.readDate =
+            contentOf(updated)?.message_read_date?.node_value ?? null;
+    } catch (error) {
+        state.error = error instanceof Error ? error.message : String(error);
+    }
 };
 
 // The Contributor the demo addresses its messages to. Looked up by name so the
@@ -227,6 +273,9 @@ const runDemo = async (): Promise<void> => {
                     creationDate:
                         contentOf(message)?.message_creation_date?.node_value ??
                         null,
+                    readDate:
+                        contentOf(message)?.message_read_date?.node_value ??
+                        null,
                     isRoot: message.resourceinstanceid === rootId,
                 })),
             });
@@ -341,6 +390,26 @@ const runDemo = async (): Promise<void> => {
                             </span>
                         </div>
                         <span class="msg-content">{{ message.content }}</span>
+                        <div class="msg-foot">
+                            <span class="msg-read">
+                                {{
+                                    message.readDate
+                                        ? `Read ${formatDateTime(message.readDate)}`
+                                        : 'Unread'
+                                }}
+                            </span>
+                            <button
+                                type="button"
+                                class="read-btn"
+                                @click="toggleRead(message)"
+                            >
+                                {{
+                                    message.readDate
+                                        ? 'Mark unread'
+                                        : 'Mark read'
+                                }}
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </details>
@@ -449,5 +518,21 @@ const runDemo = async (): Promise<void> => {
 .msg-date {
     color: #777;
     white-space: nowrap;
+}
+.msg-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.25rem;
+    font-size: 0.8em;
+}
+.msg-read {
+    color: #777;
+}
+.read-btn {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.85em;
+    cursor: pointer;
 }
 </style>

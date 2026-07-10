@@ -31,6 +31,7 @@ from bcap.views.bcap_message_api import (
     BcapMessageCreateView,
     BcapMessageThreadsView,
     BcapMessageThreadView,
+    BcapMessageUpdateView,
 )
 from bcap.views.user_api import UserProfile
 from bcap.views.registration_link_api import (
@@ -129,6 +130,12 @@ documented_api_patterns = [
         "api/bcap_message",
         BcapMessageCreateView.as_view(),
         name="bcap_message_list_create",
+    ),
+    # Override so we can limit the fields and verify.
+    path(
+        "api/bcap_message/<uuid:pk>/",
+        BcapMessageUpdateView.as_view(),
+        name="bcap_message_update",
     ),
 ]
 

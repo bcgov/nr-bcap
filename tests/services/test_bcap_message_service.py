@@ -4,7 +4,7 @@ Contributor is party to, as author or recipient."""
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.test import RequestFactory, TestCase
+from django.test import TestCase
 
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.services.dashboard.contributor_service import ContributorService
@@ -148,17 +148,12 @@ class BcapMessageVisibilityTests(TestCase):
             subject="Different permit",
         )
 
-    def _request(self, user):
-        request = RequestFactory().get("/")
-        request.user = user
-        return request
-
     def _root_ids(self, user):
-        roots = self.service.root_queryset(self.permit_id, self._request(user))
+        roots = self.service.root_queryset(self.permit_id, user)
         return {str(m.pk) for m in roots}
 
     def _thread_ids(self, root, user):
-        messages = self.service.thread_queryset(str(root.pk), self._request(user))
+        messages = self.service.thread_queryset(str(root.pk), user)
         return [str(m.pk) for m in messages]
 
     def test_roots_exclude_replies_and_other_resources(self):

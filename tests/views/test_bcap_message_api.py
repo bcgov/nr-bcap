@@ -259,6 +259,96 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(File.objects.count(), before + 1)
 
+    def _patch_read_date(self, message_id, node_value):
+        payload = {
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "message_read_date": {"node_value": node_value},
+                    }
+                }
+            }
+        }
+        return self.client.patch(
+            reverse("bcap_message_update", kwargs={"pk": str(message_id)}),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+
+    def test_patch_marks_a_message_read(self):
+        # Staff (the recipient, not the message's creator) marks it read.
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self._patch_read_date(
+                self.public_root.pk, "2026-07-10T14:04:46.334Z"
+            )
+        self.assertEqual(resp.status_code, 200)
+        read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
+            "message_read_date"
+        ]["node_value"]
+        self.assertIsNotNone(read)
+
+    def test_patch_can_mark_unread_by_clearing_the_date(self):
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
+            resp = self._patch_read_date(self.public_root.pk, None)
+        self.assertEqual(resp.status_code, 200)
+        read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
+            "message_read_date"
+        ]["node_value"]
+        self.assertIsNone(read)
+
+    def test_patch_denied_when_caller_cannot_edit_resource_context(self):
+        # Same gate as create: no edit access to the resource_context, no write.
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=False
+        ):
+            resp = self._patch_read_date(
+                self.public_root.pk, "2026-07-10T14:04:46.334Z"
+            )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_patch_ignores_writes_to_non_read_date_fields(self):
+        # The endpoint is locked to the read state: a PATCH that also tries to
+        # rewrite the message content changes only the read date, leaving the
+        # content as it was.
+        payload = {
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "message_read_date": {"node_value": "2026-07-10T14:04:46.334Z"},
+                        "message_content": {
+                            "node_value": {
+                                "en": {"value": "HACKED", "direction": "ltr"}
+                            }
+                        },
+                    }
+                }
+            }
+        }
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self.client.patch(
+                reverse("bcap_message_update", kwargs={"pk": str(self.public_root.pk)}),
+                data=json.dumps(payload),
+                content_type="application/json",
+            )
+        self.assertEqual(resp.status_code, 200)
+        content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
+        self.assertIsNotNone(content["message_read_date"]["node_value"])
+        # The seeded content ("Public") survived; the injected value did not.
+        self.assertEqual(
+            content["message_content"]["node_value"]["en"]["value"], "Public"
+        )
+
     def test_create_rejected_when_poster_has_no_contributor(self):
         # A user with no linked Contributor cannot author a message, so the
         # create is refused before any write.
