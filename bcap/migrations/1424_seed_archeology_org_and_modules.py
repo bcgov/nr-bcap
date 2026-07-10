@@ -37,11 +37,7 @@ logger = logging.getLogger(__name__)
 ORG_NAME = Roles.ARCHAEOLOGY_BRANCH
 GROUP_NAME = ORG_NAME
 
-# The graph's contributor_type reference node points at this controlled list,
-# but nothing creates it: its items live only in the old concept collection of
-# the same id and were never converted to CLM rows. Seed the two canonical
-# items (reusing the collection's ids) so reading a contributor_type value
-# below, and on any fresh database, finds them.
+# This is for testing only, this data will exist in DEV or a real database dump and gets loaded via ETL.
 CONTRIBUTOR_TYPE_LIST_ID = "6a2bcd73-f98f-5d3f-bec5-e2c9566d2d81"
 CONTRIBUTOR_TYPES = [
     # (item id, prefLabel value id, label, sortorder, concept uri)
@@ -63,23 +59,25 @@ CONTRIBUTOR_TYPES = [
 
 
 def seed_contributor_type_list(apps, schema_editor):
-    controlled_list, _ = List.objects.get_or_create(
+    # This is for testing and is loaded in ETL on a real database
+    if List.objects.filter(pk=CONTRIBUTOR_TYPE_LIST_ID).exists():
+        return
+    controlled_list = List.objects.create(
         pk=CONTRIBUTOR_TYPE_LIST_ID,
-        defaults={"name": "Contributor Type", "dynamic": False, "searchable": False},
+        name="Contributor Type",
+        dynamic=False,
+        searchable=False,
     )
     for item_id, value_id, label, sortorder, uri in CONTRIBUTOR_TYPES:
-        item, _ = ListItem.objects.get_or_create(
-            pk=item_id,
-            defaults={"list": controlled_list, "sortorder": sortorder, "uri": uri},
+        item = ListItem.objects.create(
+            pk=item_id, list=controlled_list, sortorder=sortorder, uri=uri
         )
-        ListItemValue.objects.get_or_create(
+        ListItemValue.objects.create(
             pk=value_id,
-            defaults={
-                "list_item": item,
-                "valuetype_id": "prefLabel",
-                "language_id": "en",
-                "value": label,
-            },
+            list_item=item,
+            valuetype_id="prefLabel",
+            language_id="en",
+            value=label,
         )
 
 
@@ -185,6 +183,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Testing only, this exists in the real database ETL or dump
         migrations.RunPython(seed_contributor_type_list, migrations.RunPython.noop),
         migrations.RunPython(seed_org, remove_org),
         migrations.RunPython(seed_modules, remove_module_templates),
