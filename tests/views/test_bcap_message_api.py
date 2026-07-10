@@ -270,10 +270,33 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             }
         }
         return self.client.patch(
-            reverse("bcap_message_update", kwargs={"pk": str(message_id)}),
+            reverse("bcap_message_detail", kwargs={"pk": str(message_id)}),
             data=json.dumps(payload),
             content_type="application/json",
         )
+
+    def test_get_returns_the_message_when_caller_can_edit_context(self):
+        # GET by id is gated like PATCH: edit access to the resource_context,
+        # not owner-scoped, so staff (not the creator) can read it.
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self.client.get(
+                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)})
+            )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["resourceinstanceid"], str(self.public_root.pk))
+
+    def test_get_denied_when_caller_cannot_edit_resource_context(self):
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=False
+        ):
+            resp = self.client.get(
+                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)})
+            )
+        self.assertEqual(resp.status_code, 403)
 
     def test_patch_marks_a_message_read(self):
         # Staff (the recipient, not the message's creator) marks it read.
@@ -337,7 +360,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
         ):
             resp = self.client.patch(
-                reverse("bcap_message_update", kwargs={"pk": str(self.public_root.pk)}),
+                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
                 data=json.dumps(payload),
                 content_type="application/json",
             )

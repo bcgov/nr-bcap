@@ -7,7 +7,7 @@ BcapMessageService."""
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -90,18 +90,26 @@ class BcapMessageCreateView(BcapMessageListView):
 
 
 @extend_schema(tags=["External: bcap_message"])
-class BcapMessageUpdateView(BcapMessageViewMixin, ArchesModelAPIMixin, UpdateAPIView):
-    """PATCH a message's read state, gated like create (edit access to the
-    resource_context, not owner-scoped). Only message_read_date is written."""
+class BcapMessageDetailView(
+    BcapMessageViewMixin, ArchesModelAPIMixin, RetrieveUpdateAPIView
+):
+    """GET or PATCH a single message, both gated like create (edit access to the
+    resource_context, not owner-scoped). PATCH writes only message_read_date."""
 
     permission_classes = [IsAuthenticated]
-    http_method_names = ["patch", "options"]
+    http_method_names = ["get", "patch", "options"]
 
-    def update(self, request, *args, **kwargs):
+    def _require_context_edit(self, request):
         service = BcapMessageService()
-        message_id = self.kwargs["pk"]
-        resource_id = service.message_resource_context_id(message_id)
+        resource_id = service.message_resource_context_id(self.kwargs["pk"])
         if not user_can_edit_resource(request.user, resourceid=resource_id):
             raise PermissionDenied("No access to the resource context.")
-        service.set_read_state(message_id, request.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        self._require_context_edit(request)
+        return Response(self.get_serializer(self.get_object()).data)
+
+    def update(self, request, *args, **kwargs):
+        self._require_context_edit(request)
+        BcapMessageService().set_read_state(self.kwargs["pk"], request.data)
         return Response(self.get_serializer(self.get_object()).data)

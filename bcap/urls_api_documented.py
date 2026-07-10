@@ -29,9 +29,9 @@ from bcap.views.process_requirement_api import (
 )
 from bcap.views.bcap_message_api import (
     BcapMessageCreateView,
+    BcapMessageDetailView,
     BcapMessageThreadsView,
     BcapMessageThreadView,
-    BcapMessageUpdateView,
 )
 from bcap.views.user_api import UserProfile
 from bcap.views.registration_link_api import (
@@ -131,11 +131,12 @@ documented_api_patterns = [
         BcapMessageCreateView.as_view(),
         name="bcap_message_list_create",
     ),
-    # Override so we can limit the fields and verify.
+    # Override the generated detail route: GET + PATCH gated on the
+    # resource_context (not owner-scoped). PATCH is locked to the read state.
     path(
         "api/bcap_message/<uuid:pk>/",
-        BcapMessageUpdateView.as_view(),
-        name="bcap_message_update",
+        BcapMessageDetailView.as_view(),
+        name="bcap_message_detail",
     ),
 ]
 

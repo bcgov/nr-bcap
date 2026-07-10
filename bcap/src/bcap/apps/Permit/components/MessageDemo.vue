@@ -6,6 +6,7 @@ import {
     zApiPermitApplicationCreateResponse,
     zBcapMessage,
     zBcapMessageWritable,
+    zPatchedBcapMessageWritable,
     zPaginatedBcapMessageList,
     zPaginatedContributorList,
 } from '@/bcap/client/zod.gen.ts';
@@ -19,6 +20,7 @@ import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 
 type BcapMessage = z.infer<typeof zBcapMessage>;
 type BcapMessageWritable = z.infer<typeof zBcapMessageWritable>;
+type PatchedBcapMessageWritable = z.infer<typeof zPatchedBcapMessageWritable>;
 
 interface DemoSummary {
     permitId: string;
@@ -113,10 +115,15 @@ const patchJson = async <T,>(
 // reflect the returned read date back into the demo's state.
 const toggleRead = async (message: DemoMessage): Promise<void> => {
     const nextReadDate = message.readDate ? null : new Date().toISOString();
-    const body: BcapMessageWritable = {
+    // The PATCH only changes the read date. message_content and resource_context
+    // are required by the writable type but ignored by the endpoint (it writes
+    // only message_read_date), so send them null.
+    const body: PatchedBcapMessageWritable = {
         aliased_data: {
             message_content: {
                 aliased_data: {
+                    message_content: null,
+                    resource_context: null,
                     message_read_date: { node_value: nextReadDate },
                 },
             },
@@ -124,7 +131,7 @@ const toggleRead = async (message: DemoMessage): Promise<void> => {
     };
     try {
         const updated = await patchJson(
-            arches.urls.bcap_message_update(message.id),
+            arches.urls.bcap_message_detail(message.id),
             body,
             zBcapMessage,
         );
