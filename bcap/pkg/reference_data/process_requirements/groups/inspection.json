@@ -1,0 +1,96 @@
+{
+    "id": "REQ-INS-TEMPLATE-000",
+    "name": "Inspection Requirements",
+    "type": "Grouping",
+    "internal": true,
+    "resource": null,
+    "due": null,
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [],
+    "requirements": [
+        {
+            "id": "REQ-INS-TEMPLATE-001",
+            "name": "Submit Inspection Approach",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "inspection",
+            "url": "plugins/external-permit-workflows/inspectionModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-INS-TEMPLATE-002",
+            "name": "Review Inspection Approach",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Scope appropriate",
+                    "description": "Does the inspection scope match the site's sensitivity and the reported concern?",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Access confirmed",
+                    "description": "Site access and any landowner notifications are arranged",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Personnel qualified",
+                    "description": "Inspector holds a current permit and relevant regional experience",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                }
+            ]
+        },
+        {
+            "id": "REQ-INS-TEMPLATE-003",
+            "name": "Submit Inspection Outcome",
+            "type": "Document Submission",
+            "internal": false,
+            "resource": "requirement_submission",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-INS-TEMPLATE-004",
+            "name": "Review Inspection Outcome",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Inspection report received",
+                    "description": "Report documents observations, conditions, and any findings",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Site data complete",
+                    "description": "All inspection forms, field photos, and spatial data are accounted for",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Conditions satisfied",
+                    "description": "Each permit condition has supporting evidence in the submission",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                }
+            ]
+        }
+    ]
+}

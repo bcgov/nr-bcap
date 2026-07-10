@@ -121,6 +121,17 @@ const permitModules = ref([
         routeName: 'alterationsModule',
         disabled: true,
     },
+    {
+        id: 'site-visit',
+        menuLabel: 'Site Visit',
+        title: 'Site Visit module',
+        description:
+            'Records of site visits conducted under the permit, including observations and follow-up actions.',
+        listItems: [],
+        // No route yet -- coming soon.
+        routeName: '',
+        disabled: true,
+    },
 ]);
 
 const moduleFromQuery = route.query.module;
@@ -302,10 +313,10 @@ watch(permitId, () => {
     loadInvestigations();
 });
 
-// Opening the Investigation section refetches so a draft created and returned
-// from shows up without a full reload.
+// Opening the Project Summary refetches so a draft created and returned from
+// shows up without a full reload.
 watch(activeModuleId, (id) => {
-    if (id === GraphSlug.Investigation) {
+    if (id === 'basic-info') {
         loadInvestigations();
     }
 });
@@ -455,75 +466,75 @@ watch(activeModuleId, (id) => {
                             }}
                         </button>
                     </div>
-
-                    <div
-                        v-if="activeModule.id === 'investigation'"
-                        class="investigation-lists"
-                    >
-                        <h4 class="list-heading">Drafts</h4>
-                        <ul
-                            v-if="state.investigationDrafts.length > 0"
-                            class="resource-list"
-                        >
-                            <li
-                                v-for="draft in state.investigationDrafts"
-                                :key="draft.id"
-                            >
-                                <router-link
-                                    :to="{
-                                        name: routeNames.investigationModule,
-                                        query: { draftId: draft.id },
-                                    }"
-                                >
-                                    {{ draftTitle(draft) }}
-                                </router-link>
-                                <span class="list-meta">
-                                    Last updated:
-                                    {{
-                                        new Date(
-                                            draft.updated || draft.created,
-                                        ).toLocaleDateString()
-                                    }}
-                                </span>
-                                <button
-                                    type="button"
-                                    class="remove-draft-btn"
-                                    title="Remove draft"
-                                    @click="confirmDelete(draft)"
-                                >
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </li>
-                        </ul>
-                        <p
-                            v-else
-                            class="text-muted"
-                        >
-                            No investigation drafts found.
-                        </p>
-
-                        <h4 class="list-heading">Existing investigations</h4>
-                        <ul
-                            v-if="state.completedInvestigations.length > 0"
-                            class="resource-list"
-                        >
-                            <li
-                                v-for="item in state.completedInvestigations"
-                                :key="item.id"
-                            >
-                                <a :href="`/bcap/resource/${permitId}`">
-                                    {{ draftTitle(item) }}
-                                </a>
-                            </li>
-                        </ul>
-                        <p
-                            v-else
-                            class="text-muted"
-                        >
-                            No existing investigations found.
-                        </p>
-                    </div>
                 </template>
+
+                <div
+                    v-if="activeModule.id === 'basic-info'"
+                    class="investigation-lists"
+                >
+                    <h4 class="list-heading">Drafts</h4>
+                    <ul
+                        v-if="state.investigationDrafts.length > 0"
+                        class="resource-list"
+                    >
+                        <li
+                            v-for="draft in state.investigationDrafts"
+                            :key="draft.id"
+                        >
+                            <router-link
+                                :to="{
+                                    name: routeNames.investigationModule,
+                                    query: { draftId: draft.id },
+                                }"
+                            >
+                                {{ draftTitle(draft) }}
+                            </router-link>
+                            <span class="list-meta">
+                                Last updated:
+                                {{
+                                    new Date(
+                                        draft.updated || draft.created,
+                                    ).toLocaleDateString()
+                                }}
+                            </span>
+                            <button
+                                type="button"
+                                class="remove-draft-btn"
+                                title="Remove draft"
+                                @click="confirmDelete(draft)"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <p
+                        v-else
+                        class="text-muted"
+                    >
+                        No investigation drafts found.
+                    </p>
+
+                    <h4 class="list-heading">Existing investigations</h4>
+                    <ul
+                        v-if="state.completedInvestigations.length > 0"
+                        class="resource-list"
+                    >
+                        <li
+                            v-for="item in state.completedInvestigations"
+                            :key="item.id"
+                        >
+                            <a :href="`/bcap/resource/${permitId}`">
+                                {{ draftTitle(item) }}
+                            </a>
+                        </li>
+                    </ul>
+                    <p
+                        v-else
+                        class="text-muted"
+                    >
+                        No existing investigations found.
+                    </p>
+                </div>
             </div>
         </div>
     </Panel>

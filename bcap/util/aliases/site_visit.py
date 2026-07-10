@@ -55,7 +55,6 @@ class SiteVisitAliases(AbstractAliases):
     PRIMARY_IMAGE = "primary_image"
     PROJECT_DESCRIPTION = "project_description"
     PUBLICATION_REFERENCE = "publication_reference"
-    RECOMMENDED_UNPROTECTED_AREAS = "recommended_unprotected_areas"
     RECORDERS_RECOMMENDATION = "recorders_recommendation"
     RELATED_DOCUMENT_DESCRIPTION = "related_document_description"
     RELATED_DOCUMENT_TYPE = "related_document_type"

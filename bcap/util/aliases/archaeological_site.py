@@ -54,6 +54,7 @@ class ArchaeologicalSiteAliases(AbstractAliases):
     NAME_REMARKS = "name_remarks"
     NAME_TYPE = "name_type"
     NROS_FILE_NUMBER = "nros_file_number"
+    OTHER_UNPROTECTED_AREA_TYPE = "other_unprotected_area_type"
     PARCEL_OWNER_TYPE = "parcel_owner_type"
     PARENT_SITE = "parent_site"
     PHOTOGRAPHER = "photographer"
@@ -90,6 +91,7 @@ class ArchaeologicalSiteAliases(AbstractAliases):
     TYPOLOGY_CLASS = "typology_class"
     TYPOLOGY_REMARK = "typology_remark"
     UNPROTECTED_AREAS = "unprotected_areas"
+    UNPROTECTED_AREA_TYPE = "unprotected_area_type"
 
     @staticmethod
     def get_aliases():

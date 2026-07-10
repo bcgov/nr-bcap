@@ -154,3 +154,10 @@ class BaseGraphService:
         group_data = groups.get(group) if isinstance(groups, dict) else None
         inner = aliased(group_data)
         return inner if isinstance(inner, dict) else {}
+
+    @classmethod
+    def _group_node_value(cls, data, group, alias):
+        """The node_value under an alias within a top-level group of a raw
+        aliased_data dict, or None if absent."""
+        node = cls._group_aliased_data(data, group).get(alias) or {}
+        return node.get("node_value")

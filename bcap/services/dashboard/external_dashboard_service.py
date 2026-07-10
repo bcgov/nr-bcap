@@ -49,7 +49,11 @@ class ExternalDashboardService(BaseDashboardService):
         )
         count, permits = self._page(queryset, query)
         hca_permits = self._hca_permits(permits)
-        cards = [self._application_card(permit, hca_permits) for permit in permits]
+        unread = self._unread_counts_by_permit(permits, user.username)
+        cards = []
+        for permit in permits:
+            unread_count = unread.get(str(permit.pk), 0)
+            cards.append(self._application_card(permit, hca_permits, unread_count))
         return count, cards
 
     def _application_queryset(self):
@@ -103,7 +107,7 @@ class ExternalDashboardService(BaseDashboardService):
         ).values_list(f"data__{username_node}", flat=True)
         return {username for username in rows if username}
 
-    def _application_card(self, permit, hca_permits):
+    def _application_card(self, permit, hca_permits, unread_messages=0):
         core = self._application_core(permit.aliased_data)
         hca = self._related_hca(core.related_permit_id, hca_permits)
         return ExternalDashboardCard(
@@ -123,6 +127,7 @@ class ExternalDashboardService(BaseDashboardService):
             permit_number=hca.number,
             urgency=0,
             priority_level=core.priority_level,
+            unread_messages=unread_messages,
         )
 
     def _status_for(self, permit):
@@ -154,4 +159,6 @@ class ExternalDashboardService(BaseDashboardService):
             created_date=to_iso(draft.created),
             project_name=self._display_text(ident.get(self.PA.PROJECT_NAME)),
             application_number=self._display_text(ident.get(self.PA.APPLICATION_ID)),
+            # Not implemented for drafts yet.
+            unread_messages=0,
         )

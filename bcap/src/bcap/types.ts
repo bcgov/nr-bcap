@@ -2,7 +2,10 @@ import { z } from 'zod';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import {
     zApiHcaPermitListResponse,
+    zApiDashboardInternalRetrieveQuery,
+    zInternalDashboardCard,
     zPermitApplication,
+    zProcessRequirement,
     zResourceDraft,
     zInvestigationResourceAliasedDataWritable,
     zPermitApplicationResourceAliasedDataWritable,
@@ -27,6 +30,14 @@ export type DraftNodeGroup = {
 export type ArchesDraftData = Record<string, DraftNodeGroup>;
 
 export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
+
+export type ProcessRequirement = z.infer<typeof zProcessRequirement>;
+
+export type DashboardStatus = z.infer<
+    typeof zApiDashboardInternalRetrieveQuery
+>['status'];
+
+export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
 
 export type PermitAliasedData = NonNullable<
     z.infer<typeof zPermitApplication>['aliased_data']

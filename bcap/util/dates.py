@@ -1,5 +1,15 @@
 """Helpers for date values."""
 
+from datetime import datetime
+
+
+def parse_iso_or_set_value(value):
+    """Normalize an ISO datetime (browser '...Z' or Arches space-separated) to the
+    seconds offset string the date datatype stores; non-strings pass through."""
+    if not isinstance(value, str):
+        return value
+    return datetime.fromisoformat(value).replace(microsecond=0).isoformat(sep=" ")
+
 
 def to_iso(value):
     """A date as 'YYYY-MM-DD', or None for a falsy value."""

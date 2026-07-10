@@ -1,9 +1,7 @@
 import arches from 'arches';
 import { z } from 'zod';
 import {
-    zApiDashboardInternalRetrieveQuery,
     zContributorOption,
-    zInternalDashboardCard,
     zInternalDashboardPage,
     zNewContributor,
     zProcessRequirement,
@@ -17,7 +15,12 @@ import type {
 } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
-export type ProcessRequirement = z.infer<typeof zProcessRequirement>;
+import type {
+    ProcessRequirement,
+    DashboardStatus,
+    InternalDashboardCard,
+} from '@/bcap/types.ts';
+export type { ProcessRequirement, DashboardStatus, InternalDashboardCard };
 
 export const getResourceData = async (
     graph_slug: string,
@@ -161,12 +164,6 @@ export const issueRegistrationLink = async (
     }
     return await response.json();
 };
-
-export type DashboardStatus = z.infer<
-    typeof zApiDashboardInternalRetrieveQuery
->['status'];
-
-export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
 
 export const getInternalDashboardData = async (
     status?: DashboardStatus,

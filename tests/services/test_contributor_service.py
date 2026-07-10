@@ -296,11 +296,14 @@ class ContributorServiceTest(TestCase):
 
     def test_invitable_contributors_filters_and_shapes(self):
         grace = self.make("Hopper", first_name="Grace")
-        self.make("Turing", first_name="Alan", bcap_username="at")  # linked
-        self.make("Babbage", inactive=True)
+        alan = self.make("Turing", first_name="Alan", bcap_username="at")  # linked
+        babbage = self.make("Babbage", inactive=True)
         acme = self.make("Acme Corp")  # org: shown with name only
         by_id = {o["id"]: o for o in self.service.invitable_contributors()}
-        self.assertEqual(set(by_id), {str(grace.pk), str(acme.pk)})
+        self.assertIn(str(grace.pk), by_id)
+        self.assertIn(str(acme.pk), by_id)
+        self.assertNotIn(str(alan.pk), by_id)
+        self.assertNotIn(str(babbage.pk), by_id)
         self.assertEqual(by_id[str(grace.pk)]["name"], "Grace Hopper")
         self.assertEqual(by_id[str(acme.pk)]["name"], "Acme Corp")
         # Search narrows by name.

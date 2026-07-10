@@ -82,54 +82,17 @@ paths:
                   type: string
           description: ''
   /bcap/api/bcap_message:
-    get:
-      operationId: api_bcap_message_list
-      description: |-
-        Collection endpoint for the requesting user's BCAP Message resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
-      parameters:
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      tags:
-      - 'External: bcap_message'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedBcapMessageList'
-          description: ''
     post:
       operationId: api_bcap_message_create
       description: |-
-        Collection endpoint for the requesting user's BCAP Message resources.
-
-        Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
+        The generated bcap_message collection endpoint, shadowed so POST first
+        checks the caller may edit the resource the new message's resource_context
+        points at. POST-only: reads go through the threads/messages endpoints.
       tags:
       - 'External: bcap_message'
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/BcapMessage'
-          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/BcapMessage'
           multipart/form-data:
@@ -151,8 +114,8 @@ paths:
         Detail endpoint for a single BCAP Message resource and its nested tiles.
 
         Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        verbs: POST (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -162,43 +125,6 @@ paths:
         required: true
       tags:
       - 'External: bcap_message'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BcapMessage'
-          description: ''
-    put:
-      operationId: api_bcap_message_update
-      description: |-
-        Detail endpoint for a single BCAP Message resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: bcap_message'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BcapMessage'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/BcapMessage'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/BcapMessage'
       security:
       - cookieAuth: []
       responses:
@@ -211,11 +137,8 @@ paths:
     patch:
       operationId: api_bcap_message_partial_update
       description: |-
-        Detail endpoint for a single BCAP Message resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        PATCH a message's read state, gated like create (edit access to the
+        resource_context, not owner-scoped). Only message_read_date is written.
       parameters:
       - in: path
         name: id
@@ -245,17 +168,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/BcapMessage'
           description: ''
-    delete:
-      operationId: api_bcap_message_destroy
+  /bcap/api/bcap_message/resource/{resource_id}/threads:
+    get:
+      operationId: api_bcap_message_resource_threads_list
       description: |-
-        Detail endpoint for a single BCAP Message resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        GET the threads on a parent resource, one per thread as its root
+        (thread-starting) message, with the standard limit/offset pagination.
       parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - in: path
-        name: id
+        name: resource_id
         schema:
           type: string
           format: uuid
@@ -265,8 +198,48 @@ paths:
       security:
       - cookieAuth: []
       responses:
-        '204':
-          description: No response body
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBcapMessageList'
+          description: ''
+  /bcap/api/bcap_message/thread/{thread_id}/messages:
+    get:
+      operationId: api_bcap_message_thread_messages_list
+      description: |-
+        GET one thread's messages (its root and replies), oldest-first, with the
+        standard limit/offset pagination the rest of the API uses.
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: path
+        name: thread_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: bcap_message'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBcapMessageList'
+          description: ''
   /bcap/api/contributor:
     get:
       operationId: api_contributor_list
@@ -4763,6 +4736,16 @@ components:
           allOf:
           - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
           nullable: true
+        unprotected_area_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+        other_unprotected_area_type:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+      required:
+      - unprotected_area_type
     Archaeological_Site_Unprotected_Areas_Tile:
       type: object
       properties:
@@ -4878,6 +4861,10 @@ components:
     Bcap_Message_Message_Content_Aliased_Data:
       type: object
       properties:
+        is_internal:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
         message_author:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
@@ -4906,8 +4893,22 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
+        resource_context:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        message_read_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        attachments:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
       required:
       - message_content
+      - resource_context
     Bcap_Message_Message_Content_Tile:
       type: object
       properties:
@@ -4929,79 +4930,6 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Bcap_Message_Message_Content_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Bcap_Message_Message_Response_Aliased_Data:
-      type: object
-      properties:
-        response_author:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-        response_completed:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        message_response:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Response Content
-          description: Enter text
-        response_issued_date:
-          allOf:
-          - $ref: '#/components/schemas/DateAliasedNodeData'
-          nullable: true
-          description: Enter date
-      required:
-      - message_response
-      - response_completed
-    Bcap_Message_Message_Response_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Bcap_Message_Message_Response_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -5094,10 +5022,6 @@ components:
         related_source_message:
           allOf:
           - $ref: '#/components/schemas/Bcap_Message_Related_Source_Message_Tile'
-          nullable: true
-        message_response:
-          allOf:
-          - $ref: '#/components/schemas/Bcap_Message_Message_Response_Tile'
           nullable: true
     BooleanAliasedNodeData:
       type: object
@@ -5434,11 +5358,8 @@ components:
       properties:
         node_value:
           nullable: true
-          anyOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
+          pattern: ^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)?)?$
+          type: string
         display_value:
           type: string
           readOnly: true
@@ -5500,6 +5421,10 @@ components:
         priority_level:
           type: string
           description: Permit application's priority level (reference label).
+        unread_messages:
+          type: integer
+          description: Count of the application's BCAP messages not yet read for the
+            user or group.
       required:
       - id
     ExternalDashboardPage:
@@ -6608,6 +6533,10 @@ components:
         priority_level:
           type: string
           description: Permit application's priority level (reference label).
+        unread_messages:
+          type: integer
+          description: Count of the permit's BCAP messages not yet read for the user
+            or group.
       required:
       - id
     InternalDashboardPage:
@@ -10252,61 +10181,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Process_Requirement_Process_Requirement_Messages_Aliased_Data:
-      type: object
-      properties:
-        process_requirement_messages:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
-          nullable: true
-    Process_Requirement_Process_Requirement_Messages_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Process_Requirement_Process_Requirement_Messages_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Process_Requirement_Requirement_Data_Aliased_Data:
       type: object
       properties:
@@ -10523,10 +10397,6 @@ components:
         requirement_data:
           allOf:
           - $ref: '#/components/schemas/Process_Requirement_Requirement_Data_Tile'
-          nullable: true
-        process_requirement_messages:
-          allOf:
-          - $ref: '#/components/schemas/Process_Requirement_Process_Requirement_Messages_Tile'
           nullable: true
     Process_Requirement_Sub_Requirement_Assessment_N1_Aliased_Data:
       type: object
@@ -11849,21 +11719,23 @@ components:
       type: object
       properties:
         node_value:
-          type: object
-          properties:
-            resourceId:
-              type: string
-              format: uuid
-            ontologyProperty:
-              type: string
-              nullable: true
-            resourceXresourceId:
-              type: string
-              nullable: true
-            inverseOntologyProperty:
-              type: string
-              nullable: true
+          type: array
           nullable: true
+          items:
+            type: object
+            properties:
+              resourceId:
+                type: string
+                format: uuid
+              ontologyProperty:
+                type: string
+                nullable: true
+              resourceXresourceId:
+                type: string
+                nullable: true
+              inverseOntologyProperty:
+                type: string
+                nullable: true
         display_value:
           type: string
           readOnly: true
@@ -13465,61 +13337,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Site_Visit_Recommended_Unprotected_Areas_Aliased_Data:
-      type: object
-      properties:
-        recommended_unprotected_areas:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
-    Site_Visit_Recommended_Unprotected_Areas_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Site_Visit_Recommended_Unprotected_Areas_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Site_Visit_Related_Documents_Aliased_Data:
       type: object
       properties:
@@ -14049,10 +13866,6 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax500'
           nullable: true
           description: E.g. Site digitized using...
-        recommended_unprotected_areas:
-          allOf:
-          - $ref: '#/components/schemas/Site_Visit_Recommended_Unprotected_Areas_Tile'
-          nullable: true
         biogeography:
           type: array
           items:
