@@ -10,6 +10,7 @@ from django.db import close_old_connections, connection, connections
 from django.test import TestCase, TransactionTestCase, override_settings
 
 from bcap.util.borden_number_api import (
+    BordenGridServiceError,
     BordenNumberApi,
     MissingGeometryError,
 )
@@ -92,7 +93,8 @@ class BordenNumberApiTests(TestCase):
             ],
         }
         self.mock_http_resp = SimpleNamespace(
-            data=json.dumps(self.wfs_body).encode("utf-8")
+            status=200,
+            data=json.dumps(self.wfs_body).encode("utf-8"),
         )
 
     def _enter_patches(self, stack: ExitStack):
@@ -224,6 +226,45 @@ class BordenNumberApiTests(TestCase):
             # No HTTP calls should be made
             p["pool_mgr_cls"].assert_not_called()
             p["proxy_mgr_cls"].assert_not_called()
+
+    def test__get_borden_grid_for_geometry_raises_on_non_200_response(self):
+        with ExitStack() as stack:
+            p = self._enter_patches(stack)
+            p["geo_utils_cls"].return_value.get_centroid.return_value = self.centroid
+
+            error_resp = SimpleNamespace(status=503, data=b"Service Unavailable")
+            pool = MagicMock()
+            pool.request.return_value = error_resp
+            p["pool_mgr_cls"].return_value = pool
+
+            with self.assertRaises(BordenGridServiceError) as ctx:
+                self.api.get_next_borden_number(
+                    geometry={"type": "Point", "coordinates": [-123.2, 49.2]}
+                )
+
+            self.assertIn("503", str(ctx.exception))
+
+    def test__get_borden_grid_for_geometry_raises_on_empty_features(self):
+        with ExitStack() as stack:
+            p = self._enter_patches(stack)
+            p["geo_utils_cls"].return_value.get_centroid.return_value = self.centroid
+
+            empty_resp = SimpleNamespace(
+                status=200,
+                data=json.dumps({"type": "FeatureCollection", "features": []}).encode(
+                    "utf-8"
+                ),
+            )
+            pool = MagicMock()
+            pool.request.return_value = empty_resp
+            p["pool_mgr_cls"].return_value = pool
+
+            with self.assertRaises(MissingGeometryError) as ctx:
+                self.api.get_next_borden_number(
+                    geometry={"type": "Point", "coordinates": [-123.2, 49.2]}
+                )
+
+            self.assertIn("British Columbia", str(ctx.exception))
 
     @override_settings(TILESERVER_OUTBOUND_PROXY="http://proxy.local:8080")
     def test_uses_proxy_manager_when_proxy_configured(self):

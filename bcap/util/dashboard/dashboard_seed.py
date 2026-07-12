@@ -427,6 +427,9 @@ class DashboardDemoBuilder(ProcessRequirementBuilder, ContributorBuilder):
             {
                 "project_name": self.localized(spec.project_name),
                 "application_id": self.localized(spec.application_id),
+                "filing_type": random_reference_value(
+                    "permit_application", "filing_type"
+                ),
             },
         )
         self.append_blank_tile_for_group(

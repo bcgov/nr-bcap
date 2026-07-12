@@ -703,10 +703,29 @@
                         "en": "Project Name"
                     },
                     "node_id": "47064904-4bf4-49c6-a9ea-61915a5d512b",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Filing Type",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "5edbbbac-39dc-4979-9e0e-1f7810215e46",
+                    "label": {
+                        "en": "Filing Type"
+                    },
+                    "node_id": "c4506124-e2d8-4fc9-8bc5-c6fa564d0bdf",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "79ef3bc7-4c2d-4c30-89f7-f329b324569f",
@@ -767,7 +786,7 @@
                         "en": "Is Replacement"
                     },
                     "node_id": "aabddd33-2476-4572-b8b6-50766004772d",
-                    "sortorder": null,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -786,7 +805,7 @@
                         "en": "MAP or HIP"
                     },
                     "node_id": "9f846e12-abac-48d5-b6c6-b325b9616c8c",
-                    "sortorder": null,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -825,7 +844,7 @@
                         "en": "Supplemental Information"
                     },
                     "node_id": "3794179e-c749-4c12-9060-4a974a710e83",
-                    "sortorder": null,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000019"
@@ -1017,7 +1036,7 @@
                         "en": "Application ID"
                     },
                     "node_id": "6256c464-bc9a-4b37-8b07-993fc213baf3",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1292,6 +1311,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "rangenode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "edgeid": "28527ac9-6c34-40ac-ba6a-531c63ed595b",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "c4506124-e2d8-4fc9-8bc5-c6fa564d0bdf",
                     "source_identifier_id": null
                 },
                 {
@@ -3234,6 +3263,32 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "filing_type",
+                    "config": {
+                        "controlledList": "cfda6f18-56a4-4946-becf-fdf86994f275",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": "This identifies how the proponent is wanting to engage with the Archaeology Branch",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Filing Type",
+                    "nodegroup_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "nodeid": "c4506124-e2d8-4fc9-8bc5-c6fa564d0bdf",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "related_permit",
                     "config": {
                         "graphs": [
@@ -3582,9 +3637,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Added Permit Messages node",
-                "publicationid": "b295a44d-6a22-4a30-bd79-919a8ac6db51",
-                "published_time": "2026-06-16T16:16:11.909"
+                "notes": "Add filing type",
+                "publicationid": "ce370e68-c734-4886-a390-aa04197a414c",
+                "published_time": "2026-07-12T11:21:00.991"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -3683,9 +3738,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2), 64-bit",
-        "git hash": "fatal: not a git repository (or any parent up to mount point /fs)",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
-        "os version": "5.14.0-687.13.1.el9_8.x86_64"
+        "os version": "6.12.76-linuxkit"
     }
 }

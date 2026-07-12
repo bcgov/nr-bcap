@@ -123,6 +123,7 @@ def build_permit_graph():
         {
             "project_name": builder.localized("My Project"),
             "application_id": builder.localized("APP-1"),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     builder.append_blank_tile_for_group(
@@ -186,6 +187,7 @@ def build_minimal_permit(builder, name):
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     builder.append_blank_tile_for_group(
@@ -228,6 +230,7 @@ def build_permit_with_investigation(builder, name, host_graph=GraphSlugs.INVESTI
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     builder.append_blank_tile_for_group(
@@ -267,6 +270,7 @@ def build_all_satisfied_permit(builder, name):
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     permit.append_tile("application_admin")
@@ -299,6 +303,7 @@ def build_unassigned_permit(builder, name):
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     permit.append_tile("application_admin")
@@ -324,6 +329,7 @@ def build_blank_requirement_permit(builder, name):
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     permit.append_tile("application_admin")
@@ -346,6 +352,7 @@ def build_groupless_requirement_permit(builder, name):
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     permit.append_tile("application_admin")
@@ -378,6 +385,7 @@ def build_unsubmitted_permit(builder, name):
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     permit.append_tile("application_admin")

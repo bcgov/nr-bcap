@@ -2184,6 +2184,7 @@ export const zPermitApplicationApplicationContactsTile = z.object({
 
 export const zPermitApplicationApplicationIdentificationAliasedData = z.object({
     application_id: zStringAliasedNodeData.nullish(),
+    filing_type: zReferenceAliasedNodeDataRequired.nullable(),
     project_name: zStringAliasedNodeData.nullable(),
     map_or_hip: zReferenceAliasedNodeData.nullish(),
     is_replacement: zBooleanAliasedNodeData.nullish(),
@@ -3753,7 +3754,7 @@ export const zArchaeologicalSiteRemarkKeywordTile = z.object({
 export const zArchaeologicalSiteSiteBoundaryAliasedData = z.object({
     site_boundary: zGeojsonFeatureCollectionAliasedNodeData.nullable(),
     site_boundary_description: zStringAliasedNodeData.nullish(),
-    unprotected_areas: zArchaeologicalSiteUnprotectedAreasTile.nullish(),
+    unprotected_areas: z.array(zArchaeologicalSiteUnprotectedAreasTile).nullish(),
     latest_edit_type: zReferenceAliasedNodeDataRequired.nullable(),
     accuracy_remarks: zStringAliasedNodeDataMax500.nullable()
 });
@@ -3777,9 +3778,10 @@ export const zArchaeologicalSiteSiteBoundaryTile = z.object({
 
 export const zSiteVisitSiteVisitLocationAliasedData = z.object({
     site_visit_location: zGeojsonFeatureCollectionAliasedNodeData.nullish(),
-    location_and_access: zStringAliasedNodeData.nullish(),
     latest_edit_type: zReferenceAliasedNodeDataRequired.nullable(),
+    location_and_access: zStringAliasedNodeData.nullish(),
     accuracy_remarks: zStringAliasedNodeDataMax500.nullable(),
+    boundary_type: zReferenceAliasedNodeDataRequired.nullable(),
     biogeography: z.array(zSiteVisitBiogeographyTile).nullish()
 });
 
@@ -4114,7 +4116,7 @@ export const zSiteVisitRelatedDocumentsTile = z.object({
 });
 
 export const zSiteVisitResourceAliasedData = z.object({
-    site_visit_location: zSiteVisitSiteVisitLocationTile.nullish(),
+    site_visit_location: z.array(zSiteVisitSiteVisitLocationTile).nullish(),
     identification: zSiteVisitIdentificationTile.nullish(),
     site_visit_details: zSiteVisitSiteVisitDetailsTile.nullish(),
     archaeological_data: zSiteVisitArchaeologicalDataTile.nullish(),
@@ -6269,6 +6271,7 @@ export const zPermitApplicationApplicationContactsTileWritable = z.object({
 
 export const zPermitApplicationApplicationIdentificationAliasedDataWritable = z.object({
     application_id: zStringAliasedNodeDataWritable.nullish(),
+    filing_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     project_name: zStringAliasedNodeDataWritable.nullable(),
     map_or_hip: zReferenceAliasedNodeDataWritable.nullish(),
     is_replacement: zBooleanAliasedNodeDataWritable.nullish(),
@@ -7738,7 +7741,7 @@ export const zArchaeologicalSiteRemarkKeywordTileWritable = z.object({
 export const zArchaeologicalSiteSiteBoundaryAliasedDataWritable = z.object({
     site_boundary: zGeojsonFeatureCollectionAliasedNodeDataWritable.nullable(),
     site_boundary_description: zStringAliasedNodeDataWritable.nullish(),
-    unprotected_areas: zArchaeologicalSiteUnprotectedAreasTileWritable.nullish(),
+    unprotected_areas: z.array(zArchaeologicalSiteUnprotectedAreasTileWritable).nullish(),
     latest_edit_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     accuracy_remarks: zStringAliasedNodeDataMax500Writable.nullable()
 });
@@ -7762,9 +7765,10 @@ export const zArchaeologicalSiteSiteBoundaryTileWritable = z.object({
 
 export const zSiteVisitSiteVisitLocationAliasedDataWritable = z.object({
     site_visit_location: zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish(),
-    location_and_access: zStringAliasedNodeDataWritable.nullish(),
     latest_edit_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
+    location_and_access: zStringAliasedNodeDataWritable.nullish(),
     accuracy_remarks: zStringAliasedNodeDataMax500Writable.nullable(),
+    boundary_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     biogeography: z.array(zSiteVisitBiogeographyTileWritable).nullish()
 });
 
@@ -8067,7 +8071,7 @@ export const zSiteVisitRelatedDocumentsTileWritable = z.object({
 });
 
 export const zSiteVisitResourceAliasedDataWritable = z.object({
-    site_visit_location: zSiteVisitSiteVisitLocationTileWritable.nullish(),
+    site_visit_location: z.array(zSiteVisitSiteVisitLocationTileWritable).nullish(),
     identification: zSiteVisitIdentificationTileWritable.nullish(),
     site_visit_details: zSiteVisitSiteVisitDetailsTileWritable.nullish(),
     archaeological_data: zSiteVisitArchaeologicalDataTileWritable.nullish(),

@@ -290,7 +290,7 @@ const showDebug = ref(false);
                     </StepList>
                 </div>
                 <div class="bcgov-vertical-step-panels">
-                    <h1>Submit Permit Application</h1>
+                    <h1>Submit Filing</h1>
                     <div
                         v-if="submissionErrors.length > 0"
                         class="red"

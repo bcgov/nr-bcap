@@ -5,7 +5,7 @@ from django.db import migrations
 
 def add_plugin_config(apps, schema_editor):
     plugin = Plugin()
-    plugin.name = {"en": "External Permit Submissions"}
+    plugin.name = {"en": "External Submissions"}
     plugin.icon = "fa fa-play-circle"
     plugin.component = "views/components/plugins/external-permit-workflows"
     plugin.componentname = "external-permit-workflows"

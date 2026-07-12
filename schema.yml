@@ -111,11 +111,8 @@ paths:
     get:
       operationId: api_bcap_message_retrieve
       description: |-
-        Detail endpoint for a single BCAP Message resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: POST (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        GET or PATCH a single message, both gated like create (edit access to the
+        resource_context, not owner-scoped). PATCH writes only message_read_date.
       parameters:
       - in: path
         name: id
@@ -137,8 +134,8 @@ paths:
     patch:
       operationId: api_bcap_message_partial_update
       description: |-
-        PATCH a message's read state, gated like create (edit access to the
-        resource_context, not owner-scoped). Only message_read_date is written.
+        GET or PATCH a single message, both gated like create (edit access to the
+        resource_context, not owner-scoped). PATCH writes only message_read_date.
       parameters:
       - in: path
         name: id
@@ -4084,8 +4081,9 @@ components:
           nullable: true
           description: Enter text
         unprotected_areas:
-          allOf:
-          - $ref: '#/components/schemas/Archaeological_Site_Unprotected_Areas_Tile'
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Unprotected_Areas_Tile'
           nullable: true
         latest_edit_type:
           allOf:
@@ -4740,10 +4738,12 @@ components:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
+          description: Select an option
         other_unprotected_area_type:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+          description: Enter text
       required:
       - unprotected_area_type
     Archaeological_Site_Unprotected_Areas_Tile:
@@ -5273,13 +5273,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax250'
           nullable: true
-          title: Organization Name or Last Name
-          description: Enter text
+          title: Individual's Last Name OR Organization's Full Name
+          description: Enter Individual's last name, or the Organization's full name
         contributor_role:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
-          description: Select an option
+          description: Select an option for Individuals, leave blank for Organizations
         contributor_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
@@ -5290,7 +5290,7 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax125'
           nullable: true
           title: Contributor First Name
-          description: Enter text
+          description: Enter for Individuals only
         inactive:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9157,6 +9157,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter application ID
+        filing_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select an option
         project_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9176,6 +9181,7 @@ components:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
           nullable: true
       required:
+      - filing_type
       - project_name
     Permit_Application_Application_Identification_Tile:
       type: object
@@ -13535,8 +13541,9 @@ components:
       type: object
       properties:
         site_visit_location:
-          allOf:
-          - $ref: '#/components/schemas/Site_Visit_Site_Visit_Location_Tile'
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Site_Visit_Location_Tile'
           nullable: true
         identification:
           allOf:
@@ -13850,22 +13857,27 @@ components:
           allOf:
           - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
           nullable: true
-        location_and_access:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
         latest_edit_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           title: Edit Type
           description: Select an option
+        location_and_access:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
         accuracy_remarks:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax500'
           nullable: true
           description: E.g. Site digitized using...
+        boundary_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select an option
         biogeography:
           type: array
           items:
@@ -13873,6 +13885,7 @@ components:
           nullable: true
       required:
       - accuracy_remarks
+      - boundary_type
       - latest_edit_type
     Site_Visit_Site_Visit_Location_Tile:
       type: object
@@ -14043,7 +14056,7 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           title: Member Role(s)
-          description: Select an option
+          description: Select Site Visit roles
         team_member:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
@@ -14584,4 +14597,4 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: bcap
+      name: bcap_dev

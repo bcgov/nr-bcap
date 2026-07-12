@@ -21,12 +21,43 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as aliases,
     PermitApplicationGroupAliases as group_aliases,
 )
+from arches_controlled_lists.models import ListItem
+
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
+from bcap.util.graph import get_node
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.i18n import localized_string
 
 from tests.permit_fixtures import seed_requirement_templates
 from tests.views.helpers import AuthTestHelper
+
+
+def _api_reference_value(slug, alias, label=None):
+    """Build a reference value in the format the REST serializer expects.
+
+    The builder's ``reference_value()`` returns bare UUID strings, which are
+    correct for tile saves but are rejected by the DRF serializer's
+    ``ReferenceDataType.to_python``, which requires dicts with ``uri``,
+    ``labels``, and ``list_id`` keys."""
+    node = get_node(slug, alias)
+    list_id = node.config["controlledList"]
+    qs = ListItem.objects.filter(list_id=list_id)
+    item = (
+        qs.filter(list_item_values__value=label).first()
+        if label
+        else qs.order_by("sortorder").first()
+    )
+    labels = [
+        {
+            "id": str(lv.pk),
+            "value": lv.value,
+            "language_id": lv.language_id,
+            "valuetype_id": lv.valuetype_id,
+            "list_item_id": str(item.pk),
+        }
+        for lv in item.list_item_values.all()
+    ]
+    return [{"uri": item.uri, "labels": labels, "list_id": str(list_id)}]
 
 
 def create_payload():
@@ -35,7 +66,12 @@ def create_payload():
     return {
         ALIASED_DATA: {
             group_aliases.APPLICATION_IDENTIFICATION: {
-                ALIASED_DATA: {aliases.PROJECT_NAME: "Test Project"}
+                ALIASED_DATA: {
+                    aliases.PROJECT_NAME: "Test Project",
+                    "filing_type": _api_reference_value(
+                        "permit_application", "filing_type"
+                    ),
+                }
             }
         }
     }
