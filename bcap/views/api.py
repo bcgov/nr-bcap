@@ -23,7 +23,11 @@ from arches import __version__ as arches_version
 
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONSerializer
-from bcap.util.borden_number_api import BordenGridServiceError, BordenNumberApi, MissingGeometryError
+from bcap.util.borden_number_api import (
+    BordenGridServiceError,
+    BordenNumberApi,
+    MissingGeometryError,
+)
 from bcap.util.register_type_api import RegisterTypeApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
 from bcap.util.map_attributes import inject_map_attributes
