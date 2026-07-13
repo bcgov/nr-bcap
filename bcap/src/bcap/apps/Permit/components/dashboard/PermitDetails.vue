@@ -20,6 +20,7 @@ import {
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import type { InvestigationDraft } from '@/bcap/types.ts';
+import QuestionDialog from './QuestionDialogExternal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -64,6 +65,12 @@ const state = reactive({
     investigationDrafts: [] as InvestigationDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as InvestigationDraft[],
+    existingMessages: [] as Array<{
+        author: string;
+        text: string;
+        date: string;
+    }>,
+    activeThreadId: null as string | null,
 });
 
 const permitModules = ref([
@@ -300,17 +307,164 @@ const loadInvestigations = async () => {
     state.completedInvestigations = completed;
 };
 
+const loadMessages = async () => {
+    try {
+        // 1. Fetch threads
+        const threadsResponse = await fetch(
+            `/bcap/api/bcap_message/resource/${permitId.value}/threads`,
+            {
+                headers: { accept: 'application/json' },
+            },
+        );
+
+        if (!threadsResponse.ok) throw new Error('Failed to fetch threads');
+        const threadsData = await threadsResponse.json();
+        const threads = threadsData.results || threadsData || [];
+
+        if (!threads || threads.length === 0) {
+            state.existingMessages = [];
+            return;
+        }
+
+        const firstThread = threads[0];
+        const threadId =
+            typeof firstThread === 'string'
+                ? firstThread
+                : firstThread?.resourceinstanceid ||
+                  firstThread?.id ||
+                  firstThread?.thread_id;
+
+        if (!threadId) {
+            state.existingMessages = [];
+            state.activeThreadId = null;
+            return;
+        }
+
+        // Save it to state!
+        state.activeThreadId = threadId;
+
+        // 2. Fetch messages
+        const msgsResponse = await fetch(
+            `/bcap/api/bcap_message/thread/${threadId}/messages`,
+            {
+                headers: { accept: 'application/json' },
+            },
+        );
+
+        if (!msgsResponse.ok) throw new Error('Failed to fetch messages');
+        const msgsData = await msgsResponse.json();
+        const rawMessages = msgsData.results || msgsData || [];
+
+        // 3. Define the deep Arches structure including the RESPONSE block
+        interface RawThreadMessage {
+            aliased_data?: {
+                message_content?: {
+                    aliased_data?: {
+                        message_author?: { display_value?: string };
+                        message_content?: {
+                            display_value?: string;
+                            node_value?: { en?: { value?: string } };
+                        };
+                        message_creation_date?: { node_value?: string };
+                    };
+                };
+                message_response?: {
+                    aliased_data?: {
+                        response_author?: { display_value?: string };
+                        message_response?: {
+                            display_value?: string;
+                            node_value?: { en?: { value?: string } };
+                        };
+                        response_issued_date?: { node_value?: string };
+                    };
+                };
+            };
+        }
+
+        const allMessages: Array<{
+            author: string;
+            text: string;
+            date: number;
+        }> = [];
+
+        // 4. Extract BOTH questions and responses, flattening them into one timeline
+        rawMessages.forEach((msg: RawThreadMessage) => {
+            // A. Grab the Question
+            const coreData = msg.aliased_data?.message_content?.aliased_data;
+            if (coreData) {
+                const text =
+                    coreData.message_content?.node_value?.en?.value ||
+                    coreData.message_content?.display_value;
+                if (text) {
+                    allMessages.push({
+                        author:
+                            coreData.message_author?.display_value || 'Unknown',
+                        text: text,
+                        date: new Date(
+                            coreData.message_creation_date?.node_value || 0,
+                        ).getTime(),
+                    });
+                }
+            }
+
+            // B. Grab the Reply (if it exists)
+            const responseData =
+                msg.aliased_data?.message_response?.aliased_data;
+            if (responseData) {
+                const respText =
+                    responseData.message_response?.node_value?.en?.value ||
+                    responseData.message_response?.display_value;
+                if (respText) {
+                    allMessages.push({
+                        author:
+                            responseData.response_author?.display_value ||
+                            'Unknown',
+                        text: respText,
+                        date: new Date(
+                            responseData.response_issued_date?.node_value || 0,
+                        ).getTime(),
+                    });
+                }
+            }
+        });
+
+        // 5. Sort chronologically so you can scroll from oldest (top) to newest (bottom)
+        allMessages.sort((a, b) => a.date - b.date);
+
+        // Strip the raw timestamp so it matches the dialog's expected prop type
+        state.existingMessages = allMessages.map((m) => ({
+            author: m.author,
+            text: m.text,
+            date: new Date(m.date).toLocaleString(undefined, {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+            }),
+        }));
+
+        console.log(
+            'MESSAGES SENT TO DIALOG:',
+            JSON.parse(JSON.stringify(state.existingMessages)),
+        );
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        state.existingMessages = [];
+    }
+};
+
 onMounted(() => {
     loadPermitDetails();
     loadInvestigations();
+    loadMessages();
 });
 
-// The router reuses this component when navigating between permits, so reload
-// when the id in the URL changes.
 watch(permitId, () => {
     state.isLoading = true;
     loadPermitDetails();
     loadInvestigations();
+    loadMessages();
 });
 
 // Opening the Project Summary refetches so a draft created and returned from
@@ -350,6 +504,14 @@ watch(activeModuleId, (id) => {
                 </div>
 
                 <div class="submit-area">
+                    <QuestionDialog
+                        :applicationId="state.permitData.applicationNumber"
+                        :permitResourceId="permitId"
+                        :existingMessages="state.existingMessages"
+                        :threadId="state.activeThreadId"
+                        @message-sent="loadMessages"
+                    />
+
                     <div
                         v-if="state.permitData.submittedDate"
                         class="submitted-text"
@@ -361,6 +523,7 @@ watch(activeModuleId, (id) => {
                         v-else
                         class="print-btn"
                         @click="submitPermit"
+                        style="margin-left: 1.5rem"
                     >
                         Submit Permit
                     </button>
@@ -638,6 +801,7 @@ watch(activeModuleId, (id) => {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     border: 1px solid #d1d5db;
+    margin-left: 1.5rem; /* Restored the margin space so it doesn't bunch against the dialog button */
 }
 
 /* Layout */

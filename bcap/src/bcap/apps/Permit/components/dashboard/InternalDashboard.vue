@@ -17,7 +17,10 @@ const currentRoute = useRoute();
 
 interface ProjectData {
     id: string;
+    realId: string; // Keep track of the true resource ID for routing
+    permitId?: string; // Store permit ID for the new route
     reqId?: string;
+    isMessageCard?: boolean; // Flag to identify our duplicate cards
     capPriority: boolean;
     capLabel: string;
     capDate: string;
@@ -43,7 +46,10 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
     return {
         id: rawItem.id,
+        realId: rawItem.id,
+        permitId: rawItem.permit_id ?? undefined,
         reqId: rawItem.requirement_id || rawItem.id,
+        isMessageCard: false,
 
         capPriority: isPriority,
         capLabel: rawItem.requirement_name || '',
@@ -120,12 +126,40 @@ const loadData = async () => {
     try {
         const status =
             state.currentFilter === 'ALL' ? undefined : state.currentFilter;
-        const data = await getInternalDashboardData(
+
+        const response = (await getInternalDashboardData(
             status,
             state.page,
             state.pageLimit,
-        );
-        state.rawProjects = data.map((item) => mapToDashboardCard(item));
+        )) as unknown as
+            { results?: InternalDashboardCard[] } | InternalDashboardCard[];
+
+        const items: InternalDashboardCard[] =
+            'results' in response && response.results
+                ? response.results
+                : (response as InternalDashboardCard[]);
+
+        const processedCards: ProjectData[] = [];
+
+        items.forEach((rawItem: InternalDashboardCard) => {
+            const standardCard = mapToDashboardCard(rawItem);
+            processedCards.push(standardCard);
+
+            if (rawItem.unread_messages && rawItem.unread_messages > 0) {
+                processedCards.push({
+                    ...standardCard,
+                    id: `${standardCard.id}-msg`,
+                    isMessageCard: true,
+                    capLabel: 'New Message',
+                    capDate: 'New', // <-- Hardcoded to "New" for now
+                    icon: 'fa-solid fa-envelope',
+                    capPriority: false,
+                    urgency: 999,
+                });
+            }
+        });
+
+        state.rawProjects = processedCards;
         state.lastUpdateDate = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -145,7 +179,6 @@ const displayedProjects = computed(() => {
         const query = state.currentSearch.toLowerCase().trim();
 
         filtered = filtered.filter((item) => {
-            // Special keyword If they search "priority", show all starred cards
             if (query === 'priority' && item.capPriority) {
                 return true;
             }
@@ -169,20 +202,15 @@ const displayedProjects = computed(() => {
     const sorted = filtered.slice().sort((a, b) => {
         const field = state.currentSort;
 
-        // The complex default sort (Priority -> Urgency -> Date)
         if (field === 'default') {
             if (a.capPriority !== b.capPriority) return a.capPriority ? -1 : 1;
-
-            // Primary sort urgency level
             if (b.urgency !== a.urgency) return b.urgency - a.urgency;
 
-            // Secondary sort cap date
             const dateA = new Date(a.capDate).getTime();
             const dateB = new Date(b.capDate).getTime();
             return (isNaN(dateA) ? 0 : dateA) - (isNaN(dateB) ? 0 : dateB);
         }
 
-        // Date sorting (Due Date & Created Date)
         if (field === 'capDate' || field === 'footerDate') {
             const valA = a[field as 'capDate' | 'footerDate'];
             const valB = b[field as 'capDate' | 'footerDate'];
@@ -193,15 +221,13 @@ const displayedProjects = computed(() => {
             if (isNaN(dateA) && isNaN(dateB)) return 0;
             if (isNaN(dateA)) return 1;
             if (isNaN(dateB)) return -1;
-            return dateA - dateB; // Ascending (oldest first)
+            return dateA - dateB;
         }
 
-        // Boolean sorting (Priority)
         if (field === 'capPriority') {
             return a.capPriority === b.capPriority ? 0 : a.capPriority ? -1 : 1;
         }
 
-        // String sorting for everything else (Alphabetical Ascending)
         const valA = (a[field as keyof typeof a] || '')
             .toString()
             .toLowerCase();
@@ -215,7 +241,6 @@ const displayedProjects = computed(() => {
     return state.sortOrder === 'desc' ? sorted.reverse() : sorted;
 });
 
-// Formats the raw API data into HTML before passing it to the card
 const formatBodyLine = (text?: string) => {
     if (!text) return '';
     const parts = text.split(':');
@@ -234,9 +259,20 @@ const navigateToChecklist = (item: ProjectData) => {
 };
 
 const onCardClick = (event: MouseEvent, item: ProjectData) => {
-    // Ctrl/Cmd-click opens the underlying resource instead of the checklist.
+    // 1. Intercept clicks on our duplicate "New Message" cards
+    if (item.isMessageCard) {
+        // Use permitId if available, fallback to realId
+        const targetId = item.permitId || item.realId;
+        window.open(
+            `/bcap/plugins/external-permit-workflows/permit/${targetId}`,
+            '_blank',
+        );
+        return;
+    }
+
+    // 2. Standard behavior for normal cards
     if (event.ctrlKey || event.metaKey) {
-        window.open(`/bcap/resource/${item.id}`, '_blank');
+        window.open(`/bcap/resource/${item.realId}`, '_blank');
         return;
     }
     navigateToChecklist(item);
@@ -265,7 +301,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 <strong>{{ displayedProjects.length }}</strong>
                 of
                 <strong>{{ state.rawProjects.length }}</strong>
-                projects
+                cards
                 <span
                     v-if="state.currentSearch"
                     class="active-search-label"

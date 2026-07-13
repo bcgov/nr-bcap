@@ -221,3 +221,153 @@ export const patchPermitSubmissionDate = async (
         body: { aliased_data: { application_admin: adminPayload } },
     });
 };
+
+// Helper to get CSRF token
+export const getCsrfToken = (): string => {
+    let csrfToken = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+                csrfToken = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
+    }
+    return csrfToken || '';
+};
+
+// The shared message POST function
+// 1. Update the interface to include message_creation_date
+interface BcapMessagePayload {
+    aliased_data: {
+        message_content: {
+            aliased_data: {
+                message_content: {
+                    node_value: { en: { value: string; direction: string } };
+                };
+                message_subject: {
+                    node_value: { en: { value: string; direction: string } };
+                };
+                message_creation_date: { node_value: string }; // <-- ADD THIS
+                resource_context: {
+                    node_value: {
+                        resourceId: string;
+                        ontologyProperty: string;
+                        resourceXresourceId: string;
+                        inverseOntologyProperty: string;
+                    };
+                };
+                recipient?: {
+                    node_value: {
+                        resourceId: string;
+                        ontologyProperty: string;
+                        resourceXresourceId: string;
+                        inverseOntologyProperty: string;
+                    };
+                };
+            };
+        };
+        related_source_message?: {
+            aliased_data: {
+                related_source_message: {
+                    node_value: {
+                        resourceId: string;
+                        ontologyProperty: string;
+                        resourceXresourceId: string;
+                        inverseOntologyProperty: string;
+                    };
+                };
+            };
+        };
+    };
+}
+
+export const createBcapMessage = async (
+    messageText: string,
+    recipientId: string,
+    applicationId: string,
+    permitResourceId: string,
+    threadId?: string,
+) => {
+    const payload: BcapMessagePayload = {
+        aliased_data: {
+            message_content: {
+                aliased_data: {
+                    message_content: {
+                        node_value: {
+                            en: { value: messageText, direction: 'ltr' },
+                        },
+                    },
+                    message_subject: {
+                        node_value: {
+                            en: {
+                                value: `Comment regarding Application ${applicationId}`,
+                                direction: 'ltr',
+                            },
+                        },
+                    },
+                    // 2. Inject the current timestamp right here!
+                    message_creation_date: {
+                        node_value: new Date().toISOString(),
+                    },
+                    resource_context: {
+                        node_value: {
+                            resourceId: permitResourceId,
+                            ontologyProperty: '',
+                            resourceXresourceId: '',
+                            inverseOntologyProperty: '',
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    // Add recipient if we have one
+    if (recipientId) {
+        payload.aliased_data.message_content.aliased_data.recipient = {
+            node_value: {
+                resourceId: recipientId,
+                ontologyProperty: '',
+                resourceXresourceId: '',
+                inverseOntologyProperty: '',
+            },
+        };
+    }
+
+    // If we are replying, link it to the parent thread
+    if (threadId) {
+        payload.aliased_data.related_source_message = {
+            aliased_data: {
+                related_source_message: {
+                    node_value: {
+                        resourceId: threadId,
+                        ontologyProperty: '',
+                        resourceXresourceId: '',
+                        inverseOntologyProperty: '',
+                    },
+                },
+            },
+        };
+    }
+
+    const response = await fetch('/bcap/api/bcap_message', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFTOKEN': getCsrfToken(),
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Arches API Error:', errorData);
+        throw new Error(`Failed to post message: ${response.statusText}`);
+    }
+
+    return await response.json();
+};
