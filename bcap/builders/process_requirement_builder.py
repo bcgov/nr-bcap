@@ -44,9 +44,9 @@ class ProcessRequirementBuilder(ResourceBuilder):
         template_data = identification.aliased_data.is_template_requirement.aliased_data
         template_data.is_template_requirement = spec.get("is_template", False)
         template_data.is_internal_requirement = spec.get("internal", True)
-        template_data.process_requirment_type = reference_value(
+        template_data.process_requirement_type = reference_value(
             GraphSlugs.PROCESS_REQUIREMENT,
-            aliases.PROCESS_REQUIRMENT_TYPE,
+            aliases.PROCESS_REQUIREMENT_TYPE,
             label=spec.get("type", "Checklist"),
         )
         # TODO: Clean url up stuff later

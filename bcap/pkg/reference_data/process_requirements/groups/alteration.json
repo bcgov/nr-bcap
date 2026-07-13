@@ -1,7 +1,7 @@
 {
     "id": "REQ-ALT-TEMPLATE-000",
     "name": "Alteration Requirements",
-    "type": "Grouping",
+    "type": "Module",
     "internal": true,
     "resource": null,
     "due": null,

@@ -9,7 +9,7 @@ details = {
     "name": "BCAP Process Requirement Descriptors",
     "type": "primarydescriptors",
     "modulename": "process_requirement_descriptors.py",
-    "description": "Function that provides the primary descriptors for Process Requirments",
+    "description": "Function that provides the primary descriptors for Process Requirements",
     "defaultconfig": {
         "module": "bcap.functions.process_requirement_descriptors",
         "class_name": "ProcessRequirementDescriptors",

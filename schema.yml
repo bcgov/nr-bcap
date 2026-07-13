@@ -10057,7 +10057,7 @@ components:
     Process_Requirement_Is_Template_Requirement_Aliased_Data:
       type: object
       properties:
-        process_requirment_type:
+        process_requirement_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
@@ -10083,7 +10083,7 @@ components:
       required:
       - is_internal_requirement
       - is_template_requirement
-      - process_requirment_type
+      - process_requirement_type
     Process_Requirement_Is_Template_Requirement_Tile:
       type: object
       properties:
