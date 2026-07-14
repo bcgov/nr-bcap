@@ -499,45 +499,46 @@ describe('sorting', () => {
     });
 });
 
-describe('navigateToReport', () => {
-    it('opens the checklist for the clicked card in a named window', async () => {
-        const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
-        getInternalDashboardData.mockResolvedValue([
-            makeCard({ id: 'res-1', requirement_id: 'req-1' }),
-        ]);
+describe('onCardClick', () => {
+    const originalLocation = window.location;
+
+    beforeEach(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: { href: '' },
+        });
+    });
+
+    afterEach(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: originalLocation,
+        });
+        vi.restoreAllMocks();
+    });
+
+    it('navigates to the external permit workflow in the current window on a standard click', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-1' })]);
         const wrapper = mountDashboard();
         await flushPromises();
-
         await wrapper.findComponent(ProjectCardStub).trigger('click');
 
-        expect(openSpy).toHaveBeenCalledWith(
-            '/plugins/internal-permit-dashboard/checklist?id=req-1',
-            'req-1',
+        expect(window.location.href).toBe(
+            '/bcap/plugins/external-permit-workflows/permit/res-1',
         );
     });
 
-    it('falls back to the resource id when no requirement id is present', async () => {
+    it('opens the resource graph in a new tab when clicked with the Ctrl key', async () => {
         const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
-        getInternalDashboardData.mockResolvedValue([
-            makeCard({ id: 'res-9', requirement_id: undefined }),
-        ]);
+        getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-9' })]);
         const wrapper = mountDashboard();
         await flushPromises();
 
-        await wrapper.findComponent(ProjectCardStub).trigger('click');
+        await wrapper.findComponent(ProjectCardStub).trigger('click', {
+            ctrlKey: true,
+        });
 
-        expect(openSpy).toHaveBeenCalledWith(
-            '/plugins/internal-permit-dashboard/checklist?id=res-9',
-            'res-9',
-        );
-
-        const { onCardClick } = wrapper.vm as unknown as {
-            onCardClick: (
-                e: Partial<MouseEvent>,
-                item: { id: string; reqId: string },
-            ) => void;
-        };
-        onCardClick({ ctrlKey: true }, { id: 'res-9', reqId: 'res-9' });
         expect(openSpy).toHaveBeenCalledWith('/bcap/resource/res-9', '_blank');
+        expect(window.location.href).toBe('');
     });
 });
