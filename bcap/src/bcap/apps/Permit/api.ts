@@ -222,7 +222,6 @@ export const patchPermitSubmissionDate = async (
     });
 };
 
-// Helper to get CSRF token
 export const getCsrfToken = (): string => {
     let csrfToken = null;
     if (document.cookie && document.cookie !== '') {
@@ -238,8 +237,6 @@ export const getCsrfToken = (): string => {
     return csrfToken || '';
 };
 
-// The shared message POST function
-// 1. Update the interface to include message_creation_date
 interface BcapMessagePayload {
     aliased_data: {
         message_content: {
@@ -250,7 +247,7 @@ interface BcapMessagePayload {
                 message_subject: {
                     node_value: { en: { value: string; direction: string } };
                 };
-                message_creation_date: { node_value: string }; // <-- ADD THIS
+                message_creation_date: { node_value: string };
                 resource_context: {
                     node_value: {
                         resourceId: string;
@@ -308,7 +305,6 @@ export const createBcapMessage = async (
                             },
                         },
                     },
-                    // 2. Inject the current timestamp right here!
                     message_creation_date: {
                         node_value: new Date().toISOString(),
                     },
@@ -325,7 +321,6 @@ export const createBcapMessage = async (
         },
     };
 
-    // Add recipient if we have one
     if (recipientId) {
         payload.aliased_data.message_content.aliased_data.recipient = {
             node_value: {
@@ -337,7 +332,6 @@ export const createBcapMessage = async (
         };
     }
 
-    // If we are replying, link it to the parent thread
     if (threadId) {
         payload.aliased_data.related_source_message = {
             aliased_data: {
@@ -353,7 +347,7 @@ export const createBcapMessage = async (
         };
     }
 
-    const response = await fetch('/bcap/api/bcap_message', {
+    const response = await fetch(arches.urls.bcap_message_list_create, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -370,4 +364,132 @@ export const createBcapMessage = async (
     }
 
     return await response.json();
+};
+
+export interface FormattedMessage {
+    author: string;
+    text: string;
+    date: string;
+}
+
+interface RawThreadMessage {
+    aliased_data?: {
+        message_content?: {
+            aliased_data?: {
+                message_author?: { display_value?: string };
+                message_content?: {
+                    display_value?: string;
+                    node_value?: { en?: { value?: string } };
+                };
+                message_creation_date?: { node_value?: string };
+            };
+        };
+        message_response?: {
+            aliased_data?: {
+                response_author?: { display_value?: string };
+                message_response?: {
+                    display_value?: string;
+                    node_value?: { en?: { value?: string } };
+                };
+                response_issued_date?: { node_value?: string };
+            };
+        };
+    };
+}
+
+export const getMessagesForPermit = async (
+    permitId: string,
+): Promise<{ messages: FormattedMessage[]; threadId: string | null }> => {
+    // Fetch threads
+    const threadsResponse = await fetch(
+        arches.urls.bcap_message_resource_threads(permitId),
+        { headers: { accept: 'application/json' } },
+    );
+
+    if (!threadsResponse.ok) throw new Error('Failed to fetch threads');
+    const threadsData = await threadsResponse.json();
+    const threads = threadsData.results || threadsData || [];
+
+    if (!threads || threads.length === 0) {
+        return { messages: [], threadId: null };
+    }
+
+    const firstThread = threads[0];
+    const threadId =
+        typeof firstThread === 'string'
+            ? firstThread
+            : firstThread?.resourceinstanceid ||
+              firstThread?.id ||
+              firstThread?.thread_id;
+
+    if (!threadId) {
+        return { messages: [], threadId: null };
+    }
+
+    // Fetch messages
+    const msgsResponse = await fetch(
+        arches.urls.bcap_message_thread_messages(threadId),
+        { headers: { accept: 'application/json' } },
+    );
+
+    if (!msgsResponse.ok) throw new Error('Failed to fetch messages');
+    const msgsData = await msgsResponse.json();
+    const rawMessages = msgsData.results || msgsData || [];
+
+    const allMessages: Array<{ author: string; text: string; date: number }> =
+        [];
+
+    rawMessages.forEach((msg: RawThreadMessage) => {
+        const coreData = msg.aliased_data?.message_content?.aliased_data;
+        if (coreData) {
+            const text =
+                coreData.message_content?.node_value?.en?.value ||
+                coreData.message_content?.display_value;
+            if (text) {
+                allMessages.push({
+                    author: coreData.message_author?.display_value || 'Unknown',
+                    text: text,
+                    date: new Date(
+                        coreData.message_creation_date?.node_value || 0,
+                    ).getTime(),
+                });
+            }
+        }
+
+        // Grab the Reply (if it exists)
+        const responseData = msg.aliased_data?.message_response?.aliased_data;
+        if (responseData) {
+            const respText =
+                responseData.message_response?.node_value?.en?.value ||
+                responseData.message_response?.display_value;
+            if (respText) {
+                allMessages.push({
+                    author:
+                        responseData.response_author?.display_value ||
+                        'Unknown',
+                    text: respText,
+                    date: new Date(
+                        responseData.response_issued_date?.node_value || 0,
+                    ).getTime(),
+                });
+            }
+        }
+    });
+
+    allMessages.sort((a, b) => a.date - b.date);
+
+    // Format dates for the UI
+    const formattedMessages = allMessages.map((m) => ({
+        author: m.author,
+        text: m.text,
+        date: new Date(m.date).toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        }),
+    }));
+
+    return { messages: formattedMessages, threadId };
 };

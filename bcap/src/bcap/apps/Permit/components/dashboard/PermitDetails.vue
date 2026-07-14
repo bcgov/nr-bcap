@@ -16,6 +16,7 @@ import {
     fetchDrafts,
     fetchPermitModules,
     deleteDraft,
+    getMessagesForPermit,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
@@ -27,8 +28,6 @@ const router = useRouter();
 const permitId = computed(() => route.params.id as string);
 
 const draftTitle = (draft: InvestigationDraft) => {
-    // Drafts store the value under node_value; a submitted resource serializes
-    // it directly under the language key, so read either shape.
     const ident = draft.data?.investigation_identification?.aliased_data
         ?.investigation_identification as
         | { node_value?: { en?: { value?: string } }; en?: { value?: string } }
@@ -308,141 +307,14 @@ const loadInvestigations = async () => {
 };
 
 const loadMessages = async () => {
+    if (!permitId.value) return;
+
     try {
-        // 1. Fetch threads
-        const threadsResponse = await fetch(
-            `/bcap/api/bcap_message/resource/${permitId.value}/threads`,
-            {
-                headers: { accept: 'application/json' },
-            },
+        const { messages, threadId } = await getMessagesForPermit(
+            permitId.value,
         );
-
-        if (!threadsResponse.ok) throw new Error('Failed to fetch threads');
-        const threadsData = await threadsResponse.json();
-        const threads = threadsData.results || threadsData || [];
-
-        if (!threads || threads.length === 0) {
-            state.existingMessages = [];
-            return;
-        }
-
-        const firstThread = threads[0];
-        const threadId =
-            typeof firstThread === 'string'
-                ? firstThread
-                : firstThread?.resourceinstanceid ||
-                  firstThread?.id ||
-                  firstThread?.thread_id;
-
-        if (!threadId) {
-            state.existingMessages = [];
-            state.activeThreadId = null;
-            return;
-        }
-
-        // Save it to state!
+        state.existingMessages = messages;
         state.activeThreadId = threadId;
-
-        // 2. Fetch messages
-        const msgsResponse = await fetch(
-            `/bcap/api/bcap_message/thread/${threadId}/messages`,
-            {
-                headers: { accept: 'application/json' },
-            },
-        );
-
-        if (!msgsResponse.ok) throw new Error('Failed to fetch messages');
-        const msgsData = await msgsResponse.json();
-        const rawMessages = msgsData.results || msgsData || [];
-
-        // 3. Define the deep Arches structure including the RESPONSE block
-        interface RawThreadMessage {
-            aliased_data?: {
-                message_content?: {
-                    aliased_data?: {
-                        message_author?: { display_value?: string };
-                        message_content?: {
-                            display_value?: string;
-                            node_value?: { en?: { value?: string } };
-                        };
-                        message_creation_date?: { node_value?: string };
-                    };
-                };
-                message_response?: {
-                    aliased_data?: {
-                        response_author?: { display_value?: string };
-                        message_response?: {
-                            display_value?: string;
-                            node_value?: { en?: { value?: string } };
-                        };
-                        response_issued_date?: { node_value?: string };
-                    };
-                };
-            };
-        }
-
-        const allMessages: Array<{
-            author: string;
-            text: string;
-            date: number;
-        }> = [];
-
-        // 4. Extract BOTH questions and responses, flattening them into one timeline
-        rawMessages.forEach((msg: RawThreadMessage) => {
-            // A. Grab the Question
-            const coreData = msg.aliased_data?.message_content?.aliased_data;
-            if (coreData) {
-                const text =
-                    coreData.message_content?.node_value?.en?.value ||
-                    coreData.message_content?.display_value;
-                if (text) {
-                    allMessages.push({
-                        author:
-                            coreData.message_author?.display_value || 'Unknown',
-                        text: text,
-                        date: new Date(
-                            coreData.message_creation_date?.node_value || 0,
-                        ).getTime(),
-                    });
-                }
-            }
-
-            // B. Grab the Reply (if it exists)
-            const responseData =
-                msg.aliased_data?.message_response?.aliased_data;
-            if (responseData) {
-                const respText =
-                    responseData.message_response?.node_value?.en?.value ||
-                    responseData.message_response?.display_value;
-                if (respText) {
-                    allMessages.push({
-                        author:
-                            responseData.response_author?.display_value ||
-                            'Unknown',
-                        text: respText,
-                        date: new Date(
-                            responseData.response_issued_date?.node_value || 0,
-                        ).getTime(),
-                    });
-                }
-            }
-        });
-
-        // 5. Sort chronologically so you can scroll from oldest (top) to newest (bottom)
-        allMessages.sort((a, b) => a.date - b.date);
-
-        // Strip the raw timestamp so it matches the dialog's expected prop type
-        state.existingMessages = allMessages.map((m) => ({
-            author: m.author,
-            text: m.text,
-            date: new Date(m.date).toLocaleString(undefined, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-            }),
-        }));
 
         console.log(
             'MESSAGES SENT TO DIALOG:',
@@ -451,6 +323,7 @@ const loadMessages = async () => {
     } catch (error) {
         console.error('Error loading messages:', error);
         state.existingMessages = [];
+        state.activeThreadId = null;
     }
 };
 
@@ -467,8 +340,6 @@ watch(permitId, () => {
     loadMessages();
 });
 
-// Opening the Project Summary refetches so a draft created and returned from
-// shows up without a full reload.
 watch(activeModuleId, (id) => {
     if (id === 'basic-info') {
         loadInvestigations();
