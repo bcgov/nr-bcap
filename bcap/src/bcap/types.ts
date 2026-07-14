@@ -61,6 +61,148 @@ export type InvestigationDraft = ResourceDraft & {
     };
 };
 
+// --- BCAP Message Schemas & Types ---
+
+export const FormattedMessageSchema = z.object({
+    author: z.string(),
+    text: z.string(),
+    date: z.string(),
+});
+export type FormattedMessage = z.infer<typeof FormattedMessageSchema>;
+
+export const RawThreadMessageSchema = z.object({
+    aliased_data: z
+        .object({
+            message_content: z
+                .object({
+                    aliased_data: z
+                        .object({
+                            message_author: z
+                                .object({
+                                    display_value: z.string().optional(),
+                                })
+                                .optional(),
+                            message_content: z
+                                .object({
+                                    display_value: z.string().optional(),
+                                    node_value: z
+                                        .object({
+                                            en: z
+                                                .object({
+                                                    value: z
+                                                        .string()
+                                                        .optional(),
+                                                })
+                                                .optional(),
+                                        })
+                                        .optional(),
+                                })
+                                .optional(),
+                            message_creation_date: z
+                                .object({ node_value: z.string().optional() })
+                                .optional(),
+                        })
+                        .optional(),
+                })
+                .optional(),
+            message_response: z
+                .object({
+                    aliased_data: z
+                        .object({
+                            response_author: z
+                                .object({
+                                    display_value: z.string().optional(),
+                                })
+                                .optional(),
+                            message_response: z
+                                .object({
+                                    display_value: z.string().optional(),
+                                    node_value: z
+                                        .object({
+                                            en: z
+                                                .object({
+                                                    value: z
+                                                        .string()
+                                                        .optional(),
+                                                })
+                                                .optional(),
+                                        })
+                                        .optional(),
+                                })
+                                .optional(),
+                            response_issued_date: z
+                                .object({ node_value: z.string().optional() })
+                                .optional(),
+                        })
+                        .optional(),
+                })
+                .optional(),
+        })
+        .optional(),
+});
+export type RawThreadMessage = z.infer<typeof RawThreadMessageSchema>;
+
+export const BcapMessagePayloadSchema = z.object({
+    aliased_data: z.object({
+        message_content: z.object({
+            aliased_data: z.object({
+                message_content: z.object({
+                    node_value: z.object({
+                        en: z.object({
+                            value: z.string(),
+                            direction: z.string(),
+                        }),
+                    }),
+                }),
+                message_subject: z.object({
+                    node_value: z.object({
+                        en: z.object({
+                            value: z.string(),
+                            direction: z.string(),
+                        }),
+                    }),
+                }),
+                message_creation_date: z.object({ node_value: z.string() }),
+                resource_context: z.object({
+                    node_value: z.object({
+                        resourceId: z.string(),
+                        ontologyProperty: z.string(),
+                        resourceXresourceId: z.string(),
+                        inverseOntologyProperty: z.string(),
+                    }),
+                }),
+                recipient: z
+                    .object({
+                        node_value: z.object({
+                            resourceId: z.string(),
+                            ontologyProperty: z.string(),
+                            resourceXresourceId: z.string(),
+                            inverseOntologyProperty: z.string(),
+                        }),
+                    })
+                    .optional(),
+            }),
+        }),
+        related_source_message: z
+            .object({
+                aliased_data: z.object({
+                    related_source_message: z.object({
+                        node_value: z.object({
+                            resourceId: z.string(),
+                            ontologyProperty: z.string(),
+                            resourceXresourceId: z.string(),
+                            inverseOntologyProperty: z.string(),
+                        }),
+                    }),
+                }),
+            })
+            .optional(),
+    }),
+});
+export type BcapMessagePayload = z.infer<typeof BcapMessagePayloadSchema>;
+
+// ------------------------------------
+
 export interface TileReference {
     resourceinstance_id: string;
     tileid: string;

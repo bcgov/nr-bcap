@@ -1,12 +1,16 @@
 import arches from 'arches';
 import { apiFetch } from '@/bcap/api.ts';
+import { getCsrfToken } from '@/bcap/util.ts';
 import type {
     ArchesDraftData,
     DraftNode,
     InvestigationDraft,
     PermitApplicationResponse,
+    PermitAliasedData,
+    FormattedMessage,
+    RawThreadMessage,
+    BcapMessagePayload,
 } from '@/bcap/types.ts';
-import { type PermitAliasedData } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export interface ResourceDraftResponse {
@@ -222,65 +226,6 @@ export const patchPermitSubmissionDate = async (
     });
 };
 
-export const getCsrfToken = (): string => {
-    let csrfToken = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, 10) === 'csrftoken=') {
-                csrfToken = decodeURIComponent(cookie.substring(10));
-                break;
-            }
-        }
-    }
-    return csrfToken || '';
-};
-
-interface BcapMessagePayload {
-    aliased_data: {
-        message_content: {
-            aliased_data: {
-                message_content: {
-                    node_value: { en: { value: string; direction: string } };
-                };
-                message_subject: {
-                    node_value: { en: { value: string; direction: string } };
-                };
-                message_creation_date: { node_value: string };
-                resource_context: {
-                    node_value: {
-                        resourceId: string;
-                        ontologyProperty: string;
-                        resourceXresourceId: string;
-                        inverseOntologyProperty: string;
-                    };
-                };
-                recipient?: {
-                    node_value: {
-                        resourceId: string;
-                        ontologyProperty: string;
-                        resourceXresourceId: string;
-                        inverseOntologyProperty: string;
-                    };
-                };
-            };
-        };
-        related_source_message?: {
-            aliased_data: {
-                related_source_message: {
-                    node_value: {
-                        resourceId: string;
-                        ontologyProperty: string;
-                        resourceXresourceId: string;
-                        inverseOntologyProperty: string;
-                    };
-                };
-            };
-        };
-    };
-}
-
 export const createBcapMessage = async (
     messageText: string,
     recipientId: string,
@@ -365,37 +310,6 @@ export const createBcapMessage = async (
 
     return await response.json();
 };
-
-export interface FormattedMessage {
-    author: string;
-    text: string;
-    date: string;
-}
-
-interface RawThreadMessage {
-    aliased_data?: {
-        message_content?: {
-            aliased_data?: {
-                message_author?: { display_value?: string };
-                message_content?: {
-                    display_value?: string;
-                    node_value?: { en?: { value?: string } };
-                };
-                message_creation_date?: { node_value?: string };
-            };
-        };
-        message_response?: {
-            aliased_data?: {
-                response_author?: { display_value?: string };
-                message_response?: {
-                    display_value?: string;
-                    node_value?: { en?: { value?: string } };
-                };
-                response_issued_date?: { node_value?: string };
-            };
-        };
-    };
-}
 
 export const getMessagesForPermit = async (
     permitId: string,
