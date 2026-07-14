@@ -4,8 +4,7 @@ import { useRoute } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
-//import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
-import ProjectCard from './ProjectCard.vue';
+import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
 import {
     getInternalDashboardData,
