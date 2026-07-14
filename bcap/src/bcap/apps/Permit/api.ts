@@ -1,20 +1,21 @@
 import arches from 'arches';
 import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
+import { localized } from '@/bcap/util.ts';
 import type {
     ArchesDraftData,
+    BcapMessagePayload,
+    ChecklistStep,
     DraftNode,
+    FormattedMessage,
     InvestigationDraft,
     PatchedPermitApplication,
+    PermitAliasedData,
     PermitApplicationAdminTileWritable,
     PermitApplicationResponse,
     PermitProcessModuleTileWritable,
+    ProcessRequirement,
+    RawThreadMessage,
 } from '@/bcap/types.ts';
-import {
-    type ChecklistStep,
-    type PermitAliasedData,
-    type ProcessRequirement,
-} from '@/bcap/types.ts';
-import { localized } from '@/bcap/util.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export interface ResourceDraftResponse {
@@ -362,4 +363,129 @@ export const saveChecklist = async (
         method: HttpMethod.Patch,
         body: { name, steps },
     });
+};
+
+export const createBcapMessage = async (
+    messageText: string,
+    recipientId: string,
+    applicationId: string,
+    permitResourceId: string,
+    threadId?: string,
+) => {
+    const aliasedData: NonNullable<BcapMessagePayload['aliased_data']> = {
+        message_content: {
+            aliased_data: {
+                message_content: {
+                    node_value: {
+                        en: { value: messageText, direction: 'ltr' },
+                    },
+                },
+                message_subject: {
+                    node_value: {
+                        en: {
+                            value: `Comment regarding Application ${applicationId}`,
+                            direction: 'ltr',
+                        },
+                    },
+                },
+                // Applied server-side after save (the REST date field would
+                // otherwise drop the UTC offset).
+                message_creation_date: { node_value: new Date().toISOString() },
+                resource_context: {
+                    node_value: [{ resourceId: permitResourceId }],
+                },
+            },
+        },
+    };
+
+    // The recipient is optional; a reply inherits its thread's recipient.
+    if (recipientId) {
+        aliasedData.message_content!.aliased_data!.recipient = {
+            node_value: [{ resourceId: recipientId }],
+        };
+    }
+
+    // A reply points back at its thread's root message.
+    if (threadId) {
+        aliasedData.related_source_message = {
+            aliased_data: {
+                related_source_message: {
+                    node_value: [{ resourceId: threadId }],
+                },
+            },
+        };
+    }
+
+    return apiFetchJson<RawThreadMessage>(
+        arches.urls.bcap_message_list_create,
+        {
+            method: HttpMethod.Post,
+            body: { aliased_data: aliasedData },
+        },
+    );
+};
+
+const formatMessageDate = (isoDate: string | null | undefined): string =>
+    new Date(isoDate ?? 0).toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+export const getMessagesForPermit = async (
+    permitId: string,
+): Promise<{ messages: FormattedMessage[]; threadId: string | null }> => {
+    const threads = await apiFetchJson<{ results: RawThreadMessage[] }>(
+        arches.urls.bcap_message_resource_threads(permitId),
+    );
+    const threadId = threads.results?.[0]?.resourceinstanceid ?? null;
+    if (!threadId) {
+        return { messages: [], threadId: null };
+    }
+
+    // The thread endpoint returns the root and its replies as separate messages.
+    const thread = await apiFetchJson<{ results: RawThreadMessage[] }>(
+        arches.urls.bcap_message_thread_messages(threadId),
+    );
+
+    const messages = (thread.results ?? [])
+        .map((message) => {
+            const content = message.aliased_data?.message_content?.aliased_data;
+            return {
+                author: content?.message_author?.display_value || 'Unknown',
+                text:
+                    content?.message_content?.node_value?.en?.value ||
+                    content?.message_content?.display_value ||
+                    '',
+                date: content?.message_creation_date?.node_value ?? null,
+            };
+        })
+        .filter((message) => message.text)
+        .sort(
+            (a, b) =>
+                new Date(a.date ?? 0).getTime() -
+                new Date(b.date ?? 0).getTime(),
+        )
+        .map((message) => ({
+            author: message.author,
+            text: message.text,
+            date: formatMessageDate(message.date),
+        }));
+
+    return { messages, threadId };
+};
+
+export const getContributors = async (): Promise<
+    Array<{ label: string; value: string }>
+> => {
+    const data = await apiFetchJson<{
+        results?: Array<{ name?: string; resourceinstanceid: string }>;
+    }>(arches.urls.api_contributor);
+
+    return (data.results ?? []).map((item) => ({
+        label: item.name || 'Unknown Contributor',
+        value: item.resourceinstanceid,
+    }));
 };

@@ -3,6 +3,8 @@ import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import {
     zApiHcaPermitListResponse,
     zApiDashboardInternalRetrieveQuery,
+    zBcapMessage,
+    zBcapMessageWritable,
     zChecklistStep,
     zInternalDashboardCard,
     zPermitApplication,
@@ -84,6 +86,16 @@ export type InvestigationDraft = ResourceDraft & {
     };
 };
 
+export type RawThreadMessage = z.infer<typeof zBcapMessage>;
+export type BcapMessagePayload = z.infer<typeof zBcapMessageWritable>;
+
+// A message flattened and date-formatted for the permit message thread UI.
+export interface FormattedMessage {
+    author: string;
+    text: string;
+    date: string;
+}
+
 export interface TileReference {
     resourceinstance_id: string;
     tileid: string;
@@ -145,6 +157,7 @@ export interface BcapURLs {
         nodegroup_alias: string,
     ) => string;
     api_concepts_tree: (graph_slug: string, node_alias: string) => string;
+    api_contributor: string;
     api_get_frontend_i18n_data: string;
     api_get_nodegroup_tree: string;
     api_instance_permissions: string;

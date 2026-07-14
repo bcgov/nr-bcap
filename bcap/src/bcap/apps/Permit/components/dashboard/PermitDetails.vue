@@ -20,10 +20,12 @@ import {
     patchPermitSubmissionDate,
     fetchDrafts,
     deleteDraft,
+    getMessagesForPermit,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import type { InvestigationDraft } from '@/bcap/types.ts';
+import QuestionDialog from './QuestionDialogExternal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -36,8 +38,6 @@ const isStaff = computed(
 );
 
 const draftTitle = (draft: InvestigationDraft) => {
-    // Drafts store the value under node_value; a submitted resource serializes
-    // it directly under the language key, so read either shape.
     const ident = draft.data?.investigation_identification?.aliased_data
         ?.investigation_identification as
         | { node_value?: { en?: { value?: string } }; en?: { value?: string } }
@@ -70,6 +70,14 @@ const state = reactive({
     fetchedModuleData: {} as Record<string, ModuleResponse>,
     rawPermitData: null as PermitAliasedData | null,
     investigationDrafts: [] as InvestigationDraft[],
+    // Completed/existing investigations have no endpoint yet; wired in later.
+    completedInvestigations: [] as InvestigationDraft[],
+    existingMessages: [] as Array<{
+        author: string;
+        text: string;
+        date: string;
+    }>,
+    activeThreadId: null as string | null,
 });
 
 const permitModules = ref([
@@ -323,21 +331,40 @@ const loadInvestigations = async () => {
     );
 };
 
+const loadMessages = async () => {
+    if (!permitId.value) return;
+
+    try {
+        const { messages, threadId } = await getMessagesForPermit(
+            permitId.value,
+        );
+        state.existingMessages = messages;
+        state.activeThreadId = threadId;
+
+        console.log(
+            'MESSAGES SENT TO DIALOG:',
+            JSON.parse(JSON.stringify(state.existingMessages)),
+        );
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        state.existingMessages = [];
+        state.activeThreadId = null;
+    }
+};
+
 onMounted(() => {
     loadPermitDetails();
     loadInvestigations();
+    loadMessages();
 });
 
-// The router reuses this component when navigating between permits, so reload
-// when the id in the URL changes.
 watch(permitId, () => {
     state.isLoading = true;
     loadPermitDetails();
     loadInvestigations();
+    loadMessages();
 });
 
-// Opening the Project Summary refetches so a draft created and returned from
-// shows up without a full reload.
 watch(activeModuleId, (id) => {
     if (id === 'basic-info') {
         loadInvestigations();
@@ -373,6 +400,14 @@ watch(activeModuleId, (id) => {
                 </div>
 
                 <div class="submit-area">
+                    <QuestionDialog
+                        :application-id="state.permitData.applicationNumber"
+                        :permit-resource-id="permitId"
+                        :existing-messages="state.existingMessages"
+                        :thread-id="state.activeThreadId"
+                        @message-sent="loadMessages"
+                    />
+
                     <div
                         v-if="state.permitData.submittedDate"
                         class="submitted-text"
@@ -383,6 +418,7 @@ watch(activeModuleId, (id) => {
                     <button
                         v-else
                         class="print-btn"
+                        style="margin-left: 1.5rem"
                         @click="submitPermit"
                     >
                         Submit Permit
@@ -673,6 +709,7 @@ watch(activeModuleId, (id) => {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     border: 1px solid #d1d5db;
+    margin-left: 1.5rem; /* Restored the margin space so it doesn't bunch against the dialog button */
 }
 
 /* Layout */

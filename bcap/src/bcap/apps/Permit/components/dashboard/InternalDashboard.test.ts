@@ -508,11 +508,27 @@ describe('sorting', () => {
 });
 
 describe('onCardClick', () => {
-    it('routes a plain click to the permit details view in staff mode', async () => {
+    const originalLocation = window.location;
+
+    beforeEach(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: { href: '' },
+        });
+    });
+
+    afterEach(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: originalLocation,
+        });
+        vi.restoreAllMocks();
+    });
+
+    it('routes to the permit details view on a standard click', async () => {
         getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-1' })]);
         const wrapper = mountDashboard();
         await flushPromises();
-
         await wrapper.findComponent(ProjectCardStub).trigger('click');
 
         expect(push).toHaveBeenCalledWith({
@@ -522,16 +538,15 @@ describe('onCardClick', () => {
         });
     });
 
-    it('ctrl-click opens the underlying resource instead of routing', async () => {
+    it('opens the resource graph in a new tab when clicked with the Ctrl key', async () => {
         const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
         getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-9' })]);
         const wrapper = mountDashboard();
         await flushPromises();
 
-        const { onCardClick } = wrapper.vm as unknown as {
-            onCardClick: (e: Partial<MouseEvent>, item: { id: string }) => void;
-        };
-        onCardClick({ ctrlKey: true }, { id: 'res-9' });
+        await wrapper.findComponent(ProjectCardStub).trigger('click', {
+            ctrlKey: true,
+        });
 
         expect(openSpy).toHaveBeenCalledWith('/bcap/resource/res-9', '_blank');
         expect(push).not.toHaveBeenCalled();

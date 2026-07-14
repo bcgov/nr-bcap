@@ -18,7 +18,10 @@ const router = useRouter();
 
 interface ProjectData {
     id: string;
+    realId: string; // Keep track of the true resource ID for routing
+    permitId?: string;
     reqId?: string;
+    unreadMessages: number;
     capPriority: boolean;
     capLabel: string;
     capDate: string;
@@ -44,7 +47,10 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
     return {
         id: rawItem.id,
+        realId: rawItem.id,
+        permitId: rawItem.permit_id ?? undefined,
         reqId: rawItem.requirement_id || rawItem.id,
+        unreadMessages: rawItem.unread_messages || 0,
 
         capPriority: isPriority,
         capLabel: rawItem.requirement_name || '',
@@ -121,12 +127,14 @@ const loadData = async () => {
     try {
         const status =
             state.currentFilter === 'ALL' ? undefined : state.currentFilter;
-        const data = await getInternalDashboardData(
+
+        const response = await getInternalDashboardData(
             status,
             state.page,
             state.pageLimit,
         );
-        state.rawProjects = data.map((item) => mapToDashboardCard(item));
+
+        state.rawProjects = response.map(mapToDashboardCard);
         state.lastUpdateDate = new Date();
     } catch (error) {
         console.error('Error fetching projects:', error);
@@ -146,7 +154,6 @@ const displayedProjects = computed(() => {
         const query = state.currentSearch.toLowerCase().trim();
 
         filtered = filtered.filter((item) => {
-            // Special keyword If they search "priority", show all starred cards
             if (query === 'priority' && item.capPriority) {
                 return true;
             }
@@ -170,20 +177,15 @@ const displayedProjects = computed(() => {
     const sorted = filtered.slice().sort((a, b) => {
         const field = state.currentSort;
 
-        // The complex default sort (Priority -> Urgency -> Date)
         if (field === 'default') {
             if (a.capPriority !== b.capPriority) return a.capPriority ? -1 : 1;
-
-            // Primary sort urgency level
             if (b.urgency !== a.urgency) return b.urgency - a.urgency;
 
-            // Secondary sort cap date
             const dateA = new Date(a.capDate).getTime();
             const dateB = new Date(b.capDate).getTime();
             return (isNaN(dateA) ? 0 : dateA) - (isNaN(dateB) ? 0 : dateB);
         }
 
-        // Date sorting (Due Date & Created Date)
         if (field === 'capDate' || field === 'footerDate') {
             const valA = a[field as 'capDate' | 'footerDate'];
             const valB = b[field as 'capDate' | 'footerDate'];
@@ -194,15 +196,13 @@ const displayedProjects = computed(() => {
             if (isNaN(dateA) && isNaN(dateB)) return 0;
             if (isNaN(dateA)) return 1;
             if (isNaN(dateB)) return -1;
-            return dateA - dateB; // Ascending (oldest first)
+            return dateA - dateB;
         }
 
-        // Boolean sorting (Priority)
         if (field === 'capPriority') {
             return a.capPriority === b.capPriority ? 0 : a.capPriority ? -1 : 1;
         }
 
-        // String sorting for everything else (Alphabetical Ascending)
         const valA = (a[field as keyof typeof a] || '')
             .toString()
             .toLowerCase();
@@ -216,7 +216,6 @@ const displayedProjects = computed(() => {
     return state.sortOrder === 'desc' ? sorted.reverse() : sorted;
 });
 
-// Formats the raw API data into HTML before passing it to the card
 const formatBodyLine = (text?: string) => {
     if (!text) return '';
     const parts = text.split(':');
@@ -264,7 +263,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 <strong>{{ displayedProjects.length }}</strong>
                 of
                 <strong>{{ state.rawProjects.length }}</strong>
-                projects
+                cards
                 <span
                     v-if="state.currentSearch"
                     class="active-search-label"
@@ -292,6 +291,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                     v-for="item in displayedProjects"
                     :key="item.id"
                     v-bind="item"
+                    :unread-messages="item.unreadMessages"
                     :body1="formatBodyLine(item.body1)"
                     :body2="formatBodyLine(item.body2)"
                     :body3="formatBodyLine(item.body3)"
@@ -329,6 +329,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     gap: 1.5rem;
     margin-bottom: 1rem;
 }
+
 .loading-state,
 .empty-state {
     display: flex;
