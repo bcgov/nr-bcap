@@ -4,7 +4,7 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { createBcapMessage } from '@/bcap/apps/Permit/api.ts';
+import { createBcapMessage, getContributors } from '@/bcap/apps/Permit/api.ts';
 
 const props = defineProps<{
     applicationId: string;
@@ -30,28 +30,8 @@ const isReplyMode = computed(() => {
 const loadRecipients = async () => {
     isLoadingRecipients.value = true;
     try {
-        const response = await fetch('/bcap/api/contributor', {
-            headers: {
-                accept: 'application/json',
-            },
-        });
-
-        if (!response.ok) throw new Error('Failed to fetch contributors');
-        const data = await response.json();
-
-        interface ContributorItem {
-            name?: string;
-            resourceinstanceid: string;
-        }
-
-        if (data.results && Array.isArray(data.results)) {
-            recipients.value = data.results.map((item: ContributorItem) => ({
-                label: item.name || 'Unknown Contributor',
-                value: item.resourceinstanceid,
-            }));
-        } else {
-            recipients.value = [];
-        }
+        const fetchedRecipients = await getContributors();
+        recipients.value = fetchedRecipients;
 
         if (recipients.value.length > 0) {
             selectedRecipient.value = recipients.value[0].value;

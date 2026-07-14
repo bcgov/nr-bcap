@@ -126,17 +126,16 @@ const loadData = async () => {
         const status =
             state.currentFilter === 'ALL' ? undefined : state.currentFilter;
 
-        const response = (await getInternalDashboardData(
+        const response = await getInternalDashboardData(
             status,
             state.page,
             state.pageLimit,
-        )) as unknown as
-            { results?: InternalDashboardCard[] } | InternalDashboardCard[];
+        );
 
-        const items: InternalDashboardCard[] =
-            'results' in response && response.results
-                ? response.results
-                : (response as InternalDashboardCard[]);
+        const items: InternalDashboardCard[] = Array.isArray(response)
+            ? response
+            : ((response as { results?: InternalDashboardCard[] })?.results ??
+              []);
 
         const processedCards: ProjectData[] = [];
 

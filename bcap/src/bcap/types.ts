@@ -264,6 +264,7 @@ export interface BcapURLs {
         nodegroup_alias: string,
     ) => string;
     api_concepts_tree: (graph_slug: string, node_alias: string) => string;
+    api_contributor: string;
     api_get_frontend_i18n_data: string;
     api_get_nodegroup_tree: string;
     api_instance_permissions: string;

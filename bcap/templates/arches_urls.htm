@@ -1,31 +1,30 @@
 {% extends "arches_urls.htm" %}
-
 {% load static %}
 {% load l10n %}
 {% load i18n %}
 
 {% block arches_urls %}
-{{ block.super }}
-<div class="arches-urls"
-     api_user_profile="{% url 'user_profile' %}"
-     dashboard="{% url 'dashboard_internal' %}"
-     dashboard_external="{% url 'dashboard_external' %}"
-     registration_link="{% url 'registration_link' %}"
-     unlinked_contributors="{% url 'unlinked_contributors' %}"
-     assignable_groups="{% url 'assignable_groups' %}"
-     api_process_requirements='(resource_id) => {return "{% url "api_process_requirement" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
-     api_resource='(graph_slug, resource_id) => {return "{% url "api-resource" "----p1" "00000000-0000-0000-0000-000000000000"%}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
-     api_resource_list='(graph_slug) => {return "{% url "arches_querysets:api-resources" "----p1"%}".replace("----p1", graph_slug)}'
-     api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
-     api_resource_draft="(graph_slug) => {return `/bcap/api/resource_draft/${graph_slug}`}"
-     api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"
-     permit_application_create="{% url 'permit_application_create' %}"
-     seed_process_requirements='(permit_id, permit_type) => {return "{% url "seed_process_requirements" "00000000-0000-0000-0000-000000000000" "----p1" %}".replace("00000000-0000-0000-0000-000000000000", permit_id).replace("----p1", permit_type)}'
-     bcap_message_list_create="{% url 'bcap_message_list_create' %}"
-     bcap_message_resource_threads='(resource_id) => {return "{% url "bcap_message_resource_threads" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
-     bcap_message_thread_messages='(thread_id) => {return "{% url "bcap_message_thread_messages" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", thread_id)}'
-     bcap_message_detail='(message_id) => {return "{% url "bcap_message_detail" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", message_id)}'
-     >
-</div>
-
+    {{ block.super }}
+    <div
+        class="arches-urls"
+        api_user_profile="{% url 'user_profile' %}"
+        api_contributor="/bcap/api/contributor"
+        dashboard="{% url 'dashboard_internal' %}"
+        dashboard_external="{% url 'dashboard_external' %}"
+        registration_link="{% url 'registration_link' %}"
+        unlinked_contributors="{% url 'unlinked_contributors' %}"
+        assignable_groups="{% url 'assignable_groups' %}"
+        api_process_requirements='(resource_id) => {return "{% url "api_process_requirement" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+        api_resource='(graph_slug, resource_id) => {return "{% url "api-resource" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+        api_resource_list='(graph_slug) => {return "{% url "arches_querysets:api-resources" "----p1" %}".replace("----p1", graph_slug)}'
+        api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+        api_resource_draft="(graph_slug) => {return `/bcap/api/resource_draft/${graph_slug}`}"
+        api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"
+        permit_application_create="{% url 'permit_application_create' %}"
+        seed_process_requirements='(permit_id, permit_type) => {return "{% url "seed_process_requirements" "00000000-0000-0000-0000-000000000000" "----p1" %}".replace("00000000-0000-0000-0000-000000000000", permit_id).replace("----p1", permit_type)}'
+        bcap_message_list_create="{% url 'bcap_message_list_create' %}"
+        bcap_message_resource_threads='(resource_id) => {return "{% url "bcap_message_resource_threads" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+        bcap_message_thread_messages='(thread_id) => {return "{% url "bcap_message_thread_messages" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", thread_id)}'
+        bcap_message_detail='(message_id) => {return "{% url "bcap_message_detail" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", message_id)}'
+    ></div>
 {% endblock arches_urls %}

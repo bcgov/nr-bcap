@@ -407,3 +407,25 @@ export const getMessagesForPermit = async (
 
     return { messages: formattedMessages, threadId };
 };
+
+export const getContributors = async (): Promise<
+    Array<{ label: string; value: string }>
+> => {
+    const response = await fetch(arches.urls.api_contributor, {
+        headers: {
+            accept: 'application/json',
+        },
+    });
+
+    if (!response.ok) throw new Error('Failed to fetch contributors');
+
+    const data = await response.json();
+    const results = data.results || data || [];
+
+    return results.map(
+        (item: { name?: string; resourceinstanceid: string }) => ({
+            label: item.name || 'Unknown Contributor',
+            value: item.resourceinstanceid,
+        }),
+    );
+};
