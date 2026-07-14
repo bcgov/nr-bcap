@@ -4,23 +4,23 @@ import { useRoute } from 'vue-router';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
-import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
+//import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
+import ProjectCard from './ProjectCard.vue';
 import SortingBar from './SortingBar.vue';
 import {
     getInternalDashboardData,
     type DashboardStatus,
     type InternalDashboardCard,
 } from '@/bcap/components/pages/api.ts';
-import arches from 'arches';
 
 const currentRoute = useRoute();
 
 interface ProjectData {
     id: string;
     realId: string; // Keep track of the true resource ID for routing
-    permitId?: string; // Store permit ID for the new route
+    permitId?: string;
     reqId?: string;
-    isMessageCard?: boolean; // Flag to identify our duplicate cards
+    unreadMessages: number;
     capPriority: boolean;
     capLabel: string;
     capDate: string;
@@ -49,7 +49,7 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
         realId: rawItem.id,
         permitId: rawItem.permit_id ?? undefined,
         reqId: rawItem.requirement_id || rawItem.id,
-        isMessageCard: false,
+        unreadMessages: rawItem.unread_messages || 0,
 
         capPriority: isPriority,
         capLabel: rawItem.requirement_name || '',
@@ -142,21 +142,7 @@ const loadData = async () => {
         const processedCards: ProjectData[] = [];
 
         items.forEach((rawItem: InternalDashboardCard) => {
-            const standardCard = mapToDashboardCard(rawItem);
-            processedCards.push(standardCard);
-
-            if (rawItem.unread_messages && rawItem.unread_messages > 0) {
-                processedCards.push({
-                    ...standardCard,
-                    id: `${standardCard.id}-msg`,
-                    isMessageCard: true,
-                    capLabel: 'New Message',
-                    capDate: 'New', // <-- Hardcoded to "New" for now
-                    icon: 'fa-solid fa-envelope',
-                    capPriority: false,
-                    urgency: 999,
-                });
-            }
+            processedCards.push(mapToDashboardCard(rawItem));
         });
 
         state.rawProjects = processedCards;
@@ -251,31 +237,17 @@ const formatBodyLine = (text?: string) => {
     return text;
 };
 
-const navigateToChecklist = (item: ProjectData) => {
-    window.open(
-        `${arches.urls.plugin('internal-permit-dashboard')}/checklist?id=${item.reqId}`,
-        item.reqId,
-    );
-};
-
 const onCardClick = (event: MouseEvent, item: ProjectData) => {
-    // 1. Intercept clicks on our duplicate "New Message" cards
-    if (item.isMessageCard) {
-        // Use permitId if available, fallback to realId
-        const targetId = item.permitId || item.realId;
-        window.open(
-            `/bcap/plugins/external-permit-workflows/permit/${targetId}`,
-            '_blank',
-        );
-        return;
-    }
+    const targetId = item.permitId || item.realId;
+    const targetUrl = `/bcap/plugins/external-permit-workflows/permit/${targetId}`;
 
-    // 2. Standard behavior for normal cards
+    // Open in a new tab if the user holds Ctrl or Cmd, otherwise open in the current window
     if (event.ctrlKey || event.metaKey) {
-        window.open(`/bcap/resource/${item.realId}`, '_blank');
+        window.open(`/bcap/resource/${item.id}`, '_blank');
         return;
+    } else {
+        window.location.href = targetUrl;
     }
-    navigateToChecklist(item);
 };
 </script>
 
@@ -329,6 +301,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                     v-for="item in displayedProjects"
                     :key="item.id"
                     v-bind="item"
+                    :unread-messages="item.unreadMessages"
                     :body1="formatBodyLine(item.body1)"
                     :body2="formatBodyLine(item.body2)"
                     :body3="formatBodyLine(item.body3)"
@@ -366,6 +339,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     gap: 1.5rem;
     margin-bottom: 1rem;
 }
+
 .loading-state,
 .empty-state {
     display: flex;
