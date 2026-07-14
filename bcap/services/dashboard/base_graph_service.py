@@ -9,7 +9,7 @@ class BaseGraphService:
     """Stateless helpers for reading representation-form node values."""
 
     @staticmethod
-    def _nodes(graph_slug, aliases):
+    def nodes(graph_slug, aliases):
         """Node queryset for the given aliases, shaped to pass as the nodes
         argument to get_tiles."""
         return (
@@ -45,7 +45,7 @@ class BaseGraphService:
         return ResourceTileTree.get_tiles(
             slug,
             resource_ids=ids,
-            nodes=cls._nodes(slug, aliases),
+            nodes=cls.nodes(slug, aliases),
             as_representation=True,
         )
 

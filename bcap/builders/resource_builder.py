@@ -17,6 +17,8 @@ from arches.app.models.models import (
 from arches.app.models.resource import Resource
 from arches.app.models.tile import Tile
 
+from bcap.util.i18n import localized
+
 from arches_querysets.models import (
     AliasedData,
     GraphWithPrefetching,
@@ -64,10 +66,7 @@ class ResourceBuilder:
             Tile._Tile__preSave = pre_save
             Tile._Tile__postSave = post_save
 
-    @staticmethod
-    def localized(value):
-        """A localized string value."""
-        return {"en": {"value": value, "direction": "ltr"}}
+    localized = staticmethod(localized)
 
     @staticmethod
     def append_blank_tile_for_group(container, grouping_alias, values):
@@ -79,6 +78,20 @@ class ResourceBuilder:
         for alias, value in values.items():
             setattr(tile.aliased_data, alias, value)
         return tile
+
+    @staticmethod
+    def prune_blank_tiles(container, grouping_alias, marker_alias=None):
+        """Drop the blank tile arches auto-creates for a group when its parent
+        tile is appended. With a marker alias, keep the tiles whose marker node
+        has a value; without one, drop them all (the caller appends the real
+        tiles next)."""
+        tiles = getattr(container.aliased_data, grouping_alias) or []
+        kept = (
+            [t for t in tiles if getattr(t.aliased_data, marker_alias)]
+            if marker_alias is not None
+            else []
+        )
+        setattr(container.aliased_data, grouping_alias, kept)
 
     def graph(self, slug):
         """Cache slug -> a graph with nodes/nodegroups/cards/widgets prefetched.

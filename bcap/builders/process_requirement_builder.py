@@ -5,11 +5,13 @@ requirement from a spec, cloning a template into an editable working copy, and
 linking a Document Submission requirement to a submission resource. The service
 layer decides what to link where; the seed builders inherit these."""
 
+from functools import cached_property
 from urllib.parse import urlparse
 
 from django.db import transaction
 from django.utils import timezone
 
+from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.models.resource import Resource
 from arches.app.models.tile import Tile
 
@@ -22,13 +24,19 @@ from bcap.util.aliases.process_requirement import (
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.resource_builder import ResourceBuilder
 from bcap.util.controlled_list import reference_value
-from bcap.util.graph import node_id
+from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.util.graph import node_id, nodegroup_id
 from bcap.util.i18n import localized_string
 from bcap.util.links import app_url
 
 
 class ProcessRequirementBuilder(ResourceBuilder):
     """Construct and clone process_requirement resources."""
+
+    def make_blank_checklist_requirement(self, name):
+        """A minimal, editable checklist requirement (no sub-requirements) for a
+        staff member to flesh out afterward."""
+        return self.make_process_requirement({"id": name, "name": name})
 
     def make_process_requirement(self, spec):
         """Create and return a process requirement resource."""
@@ -63,14 +71,14 @@ class ProcessRequirementBuilder(ResourceBuilder):
         self.append_blank_tile_for_group(
             requirement,
             groups.REQUIREMENT_EXECUTION_DURATION,
-            {aliases.REQUIREMENT_PROCESS_DUE_DATE: spec["due"]},
+            {aliases.REQUIREMENT_PROCESS_DUE_DATE: spec.get("due")},
         )
         self.append_blank_tile_for_group(
             requirement,
             groups.SUB_REQUIREMENT_ASSESSMENT_N1,
             {
-                aliases.REQUIREMENT_STATUS: spec["satisfied"],
-                aliases.ASSESSMENT_NOTES: self.localized(spec["notes"]),
+                aliases.REQUIREMENT_STATUS: spec.get("satisfied", False),
+                aliases.ASSESSMENT_NOTES: self.localized(spec.get("notes", "")),
             },
         )
         # Drop requirement_data's auto-created blank row and add the real items.
@@ -78,7 +86,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
             requirement, groups.REQUIREMENT_DATA, {}
         )
         requirement_data.aliased_data.sub_requirement_n1 = []
-        for sub in spec["sub_requirements"]:
+        for sub in spec.get("sub_requirements", []):
             self.append_blank_tile_for_group(
                 requirement_data,
                 groups.SUB_REQUIREMENT_N1,
@@ -96,60 +104,182 @@ class ProcessRequirementBuilder(ResourceBuilder):
         self.claim(requirement)
         return requirement
 
-    def clone_requirement(self, template_id):
+    def update_checklist(self, requirement_id, name, steps):
+        """Set a requirement's name and reconcile its ordered checklist steps
+        (dicts of an optional tile id, name, and description): steps matched by
+        tile id are updated, new ones appended, the rest deleted.
+
+        A partial save, so only the name and step tiles are touched and the rest
+        of the requirement is left alone rather than reset by a full-tree
+        replace. Partial saves ignore omitted child tiles, so removed steps are
+        deleted explicitly."""
+        requirement = self._get_requirement_by_id(requirement_id)
+        identification = (
+            requirement.aliased_data.requirement_identification.aliased_data
+        )
+        identification.requirement_name = self.localized(name)
+        data = requirement.aliased_data.requirement_data
+        if data is None:
+            data = self.append_blank_tile_for_group(
+                requirement, groups.REQUIREMENT_DATA, {}
+            )
+        existing = {
+            str(tile.tileid): tile
+            for tile in (data.aliased_data.sub_requirement_n1 or [])
+        }
+        reconciled = []
+        for order, step in enumerate(steps, start=1):
+            tile = existing.get(str(step.get("tileid")))
+            if tile is None:
+                tile = self.append_blank_tile_for_group(
+                    data, groups.SUB_REQUIREMENT_N1, {}
+                )
+            sub = tile.aliased_data
+            sub.checklist_item_name = self.localized(step.get("name", ""))
+            sub.checklist_item_description = self.localized(step.get("description", ""))
+            sub.checklist_item_sort_order = order
+            reconciled.append(tile)
+        kept = {str(tile.tileid) for tile in reconciled}
+        removed = [tile for tileid, tile in existing.items() if tileid not in kept]
+        data.aliased_data.sub_requirement_n1 = reconciled
+        requirement.save(force_admin=True, partial=True, index=False)
+        for tile in removed:
+            Tile.objects.get(pk=tile.tileid).delete()
+        return requirement
+
+    def clone_requirement(self, template_id, parent=None, submission=None):
         """A working copy of the requirement template with the given pk: every
         tile copied with a fresh GUID and the template flag cleared, so the copy
-        is a real, editable requirement rather than another template. The caller
-        links any submission resource afterward."""
+        is a real, editable requirement rather than another template.
+
+        The grouping parent and submission host are linked in the same write, so
+        a cloned-and-attached requirement costs one insert rather than a clone
+        followed by a full re-save."""
         source = Resource.objects.get(pk=template_id)
         source.load_tiles()
         copy = self.copy_resource(source)
         self._clear_template_flag(copy)
+        reference_tiles = self._write_link_references(copy, parent, submission)
         with transaction.atomic():
             super(Resource, copy).save()
             Tile.objects.bulk_create(copy.tiles)
+            # bulk_create skips the datatype hooks, so run the resource-instance
+            for tile, reference_node in reference_tiles:
+                self._reference_datatype.post_tile_save(tile, reference_node, None)
         # Baseline descriptor so the copy is never descriptor-less when a
         # permit compiles its display; the clone hook re-saves it with the link.
         copy.save_descriptors()
         return copy
 
+    @cached_property
+    def _reference_datatype(self):
+        return DataTypeFactory().get_instance("resource-instance")
+
+    @staticmethod
+    def _resource_reference(resource_id):
+        """Tile data for a resource-instance node pointing at one resource, in the
+        shape arches stores it. post_tile_save fills in the relationship id."""
+        return [
+            {
+                "resourceId": str(resource_id),
+                "ontologyProperty": "",
+                "inverseOntologyProperty": "",
+            }
+        ]
+
+    def _write_link_references(self, copy, parent, submission):
+        """Set the grouping-parent and submission references directly in a cloned
+        copy's tiles before it is persisted. parent_module lives on the existing
+        is_template_requirement tile; the submission gets a fresh submission_data
+        tile under requirement_data. Returns the (tile, node id) pairs whose
+        resource_x_resource rows still need creating after the insert."""
+        reference_tiles = []
+        if parent is not None:
+            parent_node = node_id(GraphSlugs.PROCESS_REQUIREMENT, aliases.PARENT_MODULE)
+            parent_group = nodegroup_id(
+                GraphSlugs.PROCESS_REQUIREMENT, aliases.PARENT_MODULE
+            )
+            tile = self._tile_for_nodegroup(copy, parent_group)
+            tile.data[parent_node] = self._resource_reference(parent.pk)
+            reference_tiles.append((tile, parent_node))
+        if submission is not None:
+            # submission_data is its own single-node group, so the node id doubles
+            # as the nodegroup id and the tile-data key.
+            submission_node = node_id(
+                GraphSlugs.PROCESS_REQUIREMENT, aliases.SUBMISSION_DATA
+            )
+            submission_tile = self._existing_tile(copy, submission_node)
+            if submission_tile is None:
+                data_group = nodegroup_id(
+                    GraphSlugs.PROCESS_REQUIREMENT, groups.REQUIREMENT_DATA
+                )
+                submission_tile = Tile(
+                    nodegroup_id=submission_node,
+                    parenttile=self._tile_for_nodegroup(copy, data_group),
+                    resourceinstance=copy,
+                    sortorder=0,
+                )
+                submission_tile.tiles = []
+                copy.tiles.append(submission_tile)
+            submission_tile.data[submission_node] = self._resource_reference(
+                submission.pk
+            )
+            reference_tiles.append((submission_tile, submission_node))
+        return reference_tiles
+
+    @staticmethod
+    def _existing_tile(resource, nodegroup):
+        """The cloned copy's tile for a nodegroup id, or None if it has none."""
+        return next(
+            (t for t in resource.tiles if str(t.nodegroup_id) == nodegroup), None
+        )
+
+    def _tile_for_nodegroup(self, resource, nodegroup):
+        """The cloned copy's tile for a nodegroup id, which the template always
+        carries."""
+        return self._existing_tile(resource, nodegroup)
+
     def templates_by_id(self):
         """The is_template_requirement templates, keyed by their requirement id."""
-        templates = self._requirements().filter(is_template_requirement=True)
+        templates = self._requirements(id_only=True).filter(
+            is_template_requirement=True
+        )
         return {self._requirement_identification(t): t for t in templates}
 
-    def link_parent(self, requirement_id, parent):
-        """Point the requirement's parent_requirement tile at the grouping
-        parent."""
+    def link(self, requirement_id, parent=None, submission=None):
+        """Link a cloned requirement to its grouping parent and/or submission host
+        in one fetch and save."""
         requirement = self._get_requirement_by_id(requirement_id)
-        self.append_blank_tile_for_group(
-            requirement,
-            aliases.PARENT_REQUIREMENT,
-            {aliases.PARENT_REQUIREMENT: parent},
-        )
+        self._apply_link(requirement, parent, submission)
         requirement.save(**self.save_kwargs)
+
+    def _apply_link(self, requirement, parent, submission):
+        """Set the grouping parent and submission host on an already-fetched
+        requirement, without saving. parent_module lives on the
+        is_template_requirement tile; the submission reuses the cardinality-1
+        requirement_data tile, adding its submission_data sub-tile only when
+        missing."""
+        if parent is not None:
+            identification = (
+                requirement.aliased_data.requirement_identification.aliased_data
+            )
+            identification.is_template_requirement.aliased_data.parent_module = parent
+        if submission is not None:
+            data = requirement.aliased_data.requirement_data
+            if data is None:
+                data = self.append_blank_tile_for_group(
+                    requirement, groups.REQUIREMENT_DATA, {}
+                )
+            if data.aliased_data.submission_data is None:
+                self.append_blank_tile_for_group(data, aliases.SUBMISSION_DATA, {})
+            submission_tile = data.aliased_data.submission_data.aliased_data
+            submission_tile.submission_data = submission
 
     def _clear_template_flag(self, resource):
         nodeid = node_id(
             GraphSlugs.PROCESS_REQUIREMENT, aliases.IS_TEMPLATE_REQUIREMENT
         )
         self.set_node_value(resource, nodeid, False)
-
-    def link_submission(self, requirement_id, submission):
-        """Point the requirement's submission tile at the given resource. The
-        clone already carries the cardinality-1 requirement_data tile, so reuse
-        it (appending a second would fail) and only add the submission_data
-        sub-tile when the clone lacks one."""
-        requirement = self._get_requirement_by_id(requirement_id)
-        data = requirement.aliased_data.requirement_data
-        if data is None:
-            data = self.append_blank_tile_for_group(
-                requirement, groups.REQUIREMENT_DATA, {}
-            )
-        if data.aliased_data.submission_data is None:
-            self.append_blank_tile_for_group(data, aliases.SUBMISSION_DATA, {})
-        data.aliased_data.submission_data.aliased_data.submission_data = submission
-        requirement.save(**self.save_kwargs)
 
     def make_resource(self, graph_slug):
         """An empty resource of the given graph, owned by the caller."""
@@ -165,13 +295,22 @@ class ProcessRequirementBuilder(ResourceBuilder):
         resource.save_descriptors()
         return resource
 
-    def _requirements(self):
-        """The aliased process_requirement tile-tree queryset."""
-        return ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT)
+    def _requirements(self, id_only=False):
+        """The aliased process_requirement tile-tree queryset. With id_only,
+        hydrate just the identification and template-flag nodes, enough to key or
+        filter templates without loading (and dereferencing) the rest of each
+        requirement's tree."""
+        nodes = None
+        if id_only:
+            nodes = BaseGraphService.nodes(
+                GraphSlugs.PROCESS_REQUIREMENT,
+                [aliases.REQUIREMENT_IDENTIFICATION, aliases.IS_TEMPLATE_REQUIREMENT],
+            )
+        return ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT, nodes=nodes)
 
     def _get_requirement_by_id(self, pk):
         """The requirement as an aliased tile tree, fetched by pk, for editing."""
-        return self._requirements().get(pk=pk)
+        return self._requirements(id_only=True).get(pk=pk)
 
     def _requirement_identification(self, requirement):
         """The requirement's business identification (the REQ- string on its

@@ -6,14 +6,14 @@ import { routes } from '@/bcap/apps/Permit/routes.ts';
 import { BCGovPermitPreset } from '@/bcap/primevue-bcgov-preset.ts';
 
 import ko from 'knockout';
-import defaultInitWorkflowTemplate from 'templates/views/components/plugins/external-permit-workflows.htm';
+import defaultInitWorkflowTemplate from 'templates/views/components/plugins/submissions.htm';
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
 });
 
-ko.components.register('external-permit-workflows', {
+ko.components.register('submissions', {
     viewModel: function () {
         // Arches auto-adds the dark class to <html> on OS dark unless a choice is
         // stored; store "off" so the app stays light-only.

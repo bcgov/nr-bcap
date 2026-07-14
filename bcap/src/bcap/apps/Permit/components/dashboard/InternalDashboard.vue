@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import ProgressSpinner from 'primevue/progressspinner';
@@ -11,9 +12,9 @@ import {
     type DashboardStatus,
     type InternalDashboardCard,
 } from '@/bcap/components/pages/api.ts';
-import arches from 'arches';
 
 const currentRoute = useRoute();
+const router = useRouter();
 
 interface ProjectData {
     id: string;
@@ -226,20 +227,18 @@ const formatBodyLine = (text?: string) => {
     return text;
 };
 
-const navigateToChecklist = (item: ProjectData) => {
-    window.open(
-        `${arches.urls.plugin('internal-permit-dashboard')}/checklist?id=${item.reqId}`,
-        item.reqId,
-    );
-};
-
 const onCardClick = (event: MouseEvent, item: ProjectData) => {
-    // Ctrl/Cmd-click opens the underlying resource instead of the checklist.
+    // Ctrl/Cmd-click opens the underlying resource instead of the permit view.
     if (event.ctrlKey || event.metaKey) {
         window.open(`/bcap/resource/${item.id}`, '_blank');
         return;
     }
-    navigateToChecklist(item);
+    // Staff open the permit view; isStaff enables the module edit controls.
+    router.push({
+        name: routeNames.permitDetails,
+        params: { id: item.id },
+        query: { staff: 'true' },
+    });
 };
 </script>
 

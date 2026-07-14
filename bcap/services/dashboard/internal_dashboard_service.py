@@ -85,7 +85,7 @@ class InternalDashboardService(BaseDashboardService):
         queryset = (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PERMIT_APPLICATION,
-                nodes=self._nodes(
+                nodes=self.nodes(
                     GraphSlugs.PERMIT_APPLICATION,
                     [
                         self.PA.PROJECT_NAME,
@@ -93,6 +93,7 @@ class InternalDashboardService(BaseDashboardService):
                         self.PA.INDUSTRIAL_SECTOR,
                         self.PA.APPLICATION_PRIORITY_LEVEL,
                         self.PA.RELATED_PERMIT,
+                        self.PA.MODULE_ORDER,
                         self.PA.PROCESS_REQUIREMENT,
                         self.PA.PROCESS_REQUIREMENT_ORDER,
                         self.PA.MINISTRY_ASSIGNEE,
@@ -155,14 +156,14 @@ class InternalDashboardService(BaseDashboardService):
         return Subquery(self._active_requirement_tiles().values("assignee")[:1])
 
     def _active_requirement_tiles(self):
-        """Per-permit subquery of its unsatisfied process_requirement tiles that
-        reference a real requirement, lowest order first. The non-null guard
-        keeps this in lockstep with _choose_requirements, so a blank tile never
-        makes a permit appear with no card."""
+        """Per-permit subquery of its unsatisfied process_requirement tiles,
+        ordered by module then requirement order (the first unsatisfied wins).
+        The non-null guard stays in lockstep with _choose_requirements."""
         app, req = GraphSlugs.PERMIT_APPLICATION, GraphSlugs.PROCESS_REQUIREMENT
         order_id, child_ng = self._node_info(app, self.PA.PROCESS_REQUIREMENT_ORDER)
         assignee_id = self.node_id(app, self.PA.MINISTRY_ASSIGNEE)
         requirement_id = self.node_id(app, self.PA.PROCESS_REQUIREMENT)
+        module_order_id = self.node_id(app, self.PA.MODULE_ORDER)
         status_id, status_ng = self._node_info(req, self.PR.REQUIREMENT_STATUS)
 
         def get_json_resource_id(node_id):
@@ -170,6 +171,13 @@ class InternalDashboardService(BaseDashboardService):
                 "resourceId", KeyTransform("0", KeyTransform(node_id, "data"))
             )
 
+        module_order = Subquery(
+            TileModel.objects.filter(tileid=OuterRef("parenttile_id"))
+            .annotate(
+                value=Cast(KeyTextTransform(module_order_id, "data"), FloatField())
+            )
+            .values("value")[:1]
+        )
         satisfied_ids = TileModel.objects.filter(
             nodegroup_id=status_ng, **{f"data__{status_id}": True}
         ).values_list("resourceinstance_id", flat=True)
@@ -180,24 +188,33 @@ class InternalDashboardService(BaseDashboardService):
             .annotate(
                 requirement=Cast(get_json_resource_id(requirement_id), UUIDField()),
                 assignee=get_json_resource_id(assignee_id),
+                module_order_value=module_order,
                 order_value=Cast(KeyTextTransform(order_id, "data"), FloatField()),
             )
             .exclude(requirement__in=satisfied_ids)
             .filter(requirement__isnull=False)
-            .order_by("order_value")
+            .order_by("module_order_value", "order_value")
         )
 
     def _requirement_tiles_by_permit(self, permits):
-        """Map permit id -> its process_requirement tiles, sorted by order. Read
-        from the already-loaded tree (see _base_permit_queryset), so no query."""
+        """Map permit id -> its process_requirement tiles, sorted by the parent
+        module's order then the requirement's own order. Read from the
+        already-loaded tree (see _base_permit_queryset), so no query."""
         requirements_by_permit = {}
         for permit in permits:
-            tiles = []
+            ordered = []
             for admin in self._nested_tiles(permit.aliased_data.application_admin):
-                tiles += self._nested_tiles(admin.aliased_data.process_requirement)
-            requirements_by_permit[str(permit.pk)] = sorted(
-                tiles, key=self._requirement_order
-            )
+                for module in self._nested_tiles(admin.aliased_data.process_module):
+                    module_order = self._order_value(module.aliased_data.module_order)
+                    for tile in self._nested_tiles(
+                        module.aliased_data.process_requirement
+                    ):
+                        requirement_order = self._order_value(
+                            tile.aliased_data.process_requirement_order
+                        )
+                        ordered.append((module_order, requirement_order, tile))
+            ordered.sort(key=lambda row: (row[0], row[1]))
+            requirements_by_permit[str(permit.pk)] = [row[2] for row in ordered]
         return requirements_by_permit
 
     def _requirement_ids_by_permit(self, requirements_by_permit):
@@ -269,10 +286,10 @@ class InternalDashboardService(BaseDashboardService):
                     break
         return chosen
 
-    def _requirement_order(self, tile):
-        """A tile's process_requirement_order as a sort key; tiles with no order
-        value sort last (infinity) so a tile that has one always wins."""
-        value = tile.aliased_data.process_requirement_order
+    @staticmethod
+    def _order_value(value):
+        """An order node's value as a sort key; a missing order sorts last
+        (infinity) so a tile that has one always wins."""
         return value["node_value"] if value else float("inf")
 
     def _assignee_change_dates(self, chosen_by_permit):

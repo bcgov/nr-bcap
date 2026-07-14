@@ -821,6 +821,150 @@ paths:
       responses:
         '204':
           description: No response body
+  /bcap/api/permit_application/{id}/module/{module_tileid}:
+    delete:
+      operationId: api_permit_application_module_destroy
+      description: |-
+        DELETE a submitted module from a permit application by its process_module
+        tile id: the tile is dropped and the requirement working copies it created
+        (grouping parent, child requirements, submission hosts) are deleted.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: module_tileid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /bcap/api/permit_application/{id}/module/{module_tileid}/requirement/{requirement_id}:
+    delete:
+      operationId: api_permit_application_module_requirement_destroy
+      description: |-
+        DELETE: remove one process requirement from a module by its resource id
+        (the child tile, the requirement resource, and its submission host).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: module_tileid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /bcap/api/permit_application/{id}/module/{module_tileid}/requirements:
+    post:
+      operationId: api_permit_application_module_requirements_create
+      description: |-
+        A module's process requirements: PATCH reorders them (an order list of
+        resource ids), POST adds a blank one.
+
+        Reorder is its own endpoint, not the generic permit PATCH, so the client sends
+        just the id order rather than rebuilding and resending the whole module tree to
+        keep a partial write from deleting the omitted tiles.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: module_tileid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddRequirement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AddRequirement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddRequirement'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          description: No response body
+    patch:
+      operationId: api_permit_application_module_requirements_partial_update
+      description: |-
+        A module's process requirements: PATCH reorders them (an order list of
+        resource ids), POST adds a blank one.
+
+        Reorder is its own endpoint, not the generic permit PATCH, so the client sends
+        just the id order rather than rebuilding and resending the whole module tree to
+        keep a partial write from deleting the omitted tiles.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: module_tileid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReorderRequirements'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReorderRequirements'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReorderRequirements'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
   /bcap/api/permit_application/{id}/process_requirement/{permit_type}:
     get:
       operationId: api_permit_application_process_requirement_list
@@ -1035,6 +1179,40 @@ paths:
       - 'External: process_requirement'
       security:
       - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /bcap/api/process_requirement/{requirement_id}/checklist:
+    patch:
+      operationId: api_process_requirement_checklist_partial_update
+      description: |-
+        PATCH: save a process requirement's checklist, its name and full ordered
+        step list, reconciled server-side against the sent list. A step is
+        {tileid?, name, description}; omit tileid to create one, and a persisted step
+        left out of the list is deleted.
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChecklistPatch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChecklistPatch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChecklistPatch'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -1516,6 +1694,14 @@ paths:
           description: ''
 components:
   schemas:
+    AddRequirement:
+      type: object
+      description: |-
+        The add-requirement POST body: an optional name for the blank
+        requirement, defaulted server-side when absent.
+      properties:
+        name:
+          type: string
     Alteration:
       type: object
       properties:
@@ -5058,6 +5244,19 @@ components:
           readOnly: true
       required:
       - node_value
+    ChecklistStep:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+      required:
+      - description
+      - name
     ConceptAliasedNodeData:
       type: object
       properties:
@@ -8795,6 +8994,18 @@ components:
           type: integer
           readOnly: true
           nullable: true
+    PatchedChecklistPatch:
+      type: object
+      description: |-
+        The checklist PATCH body: a requirement's name and its full ordered step
+        list. Declared as a serializer so the shape reaches the generated client.
+      properties:
+        name:
+          type: string
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChecklistStep'
     PatchedPermitApplication:
       type: object
       properties:
@@ -8905,6 +9116,17 @@ components:
           type: integer
           readOnly: true
           nullable: true
+    PatchedReorderRequirements:
+      type: object
+      description: |-
+        The reorder PATCH body: the module's requirement resource ids in the new
+        order.
+      properties:
+        order:
+          type: array
+          items:
+            type: string
+            format: uuid
     PatchedResourceDraft:
       type: object
       properties:
@@ -9025,10 +9247,10 @@ components:
           nullable: true
           title: Permit Duration Requested
           description: Enter number of years requested
-        process_requirement:
+        process_module:
           type: array
           items:
-            $ref: '#/components/schemas/Permit_Application_Process_Requirement_Tile'
+            $ref: '#/components/schemas/Permit_Application_Process_Module_Tile'
           nullable: true
         project_officer:
           allOf:
@@ -9653,6 +9875,88 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Permit_Application_Process_Module_Aliased_Data:
+      type: object
+      properties:
+        is_module_completed:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        module_completed_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        module_id:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Module ID if a copy of a Module Template
+        module_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter name of the Process Module
+        module_order:
+          allOf:
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
+          nullable: true
+          description: Enter number
+        process_requirement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permit_Application_Process_Requirement_Tile'
+          nullable: true
+      required:
+      - module_name
+    Permit_Application_Process_Module_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Permit_Application_Process_Module_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Permit_Application_Process_Requirement_Aliased_Data:
       type: object
       properties:
@@ -9660,16 +9964,16 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        process_requirement:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          title: Application Requirement
         process_requirement_order:
           allOf:
           - $ref: '#/components/schemas/NumberAliasedNodeDataMin0'
           nullable: true
           description: Enter number
+        process_requirement:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          title: Application Requirement
       required:
       - process_requirement_order
     Permit_Application_Process_Requirement_Tile:
@@ -10057,6 +10361,10 @@ components:
     Process_Requirement_Is_Template_Requirement_Aliased_Data:
       type: object
       properties:
+        parent_module:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
         process_requirement_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
@@ -14597,4 +14905,4 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: bcap_dev
+      name: bcap

@@ -3,12 +3,17 @@ import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import {
     zApiHcaPermitListResponse,
     zApiDashboardInternalRetrieveQuery,
+    zChecklistStep,
     zInternalDashboardCard,
     zPermitApplication,
+    zPermitApplicationProcessModuleTile,
     zProcessRequirement,
     zResourceDraft,
     zInvestigationResourceAliasedDataWritable,
     zPermitApplicationResourceAliasedDataWritable,
+    zPatchedPermitApplicationWritable,
+    zPermitApplicationProcessModuleTileWritable,
+    zPermitApplicationApplicationAdminTileWritable,
 } from '@/bcap/client/zod.gen.ts';
 
 import type {
@@ -33,6 +38,8 @@ export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
 
 export type ProcessRequirement = z.infer<typeof zProcessRequirement>;
 
+export type ChecklistStep = z.infer<typeof zChecklistStep>;
+
 export type DashboardStatus = z.infer<
     typeof zApiDashboardInternalRetrieveQuery
 >['status'];
@@ -41,6 +48,22 @@ export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
 
 export type PermitAliasedData = NonNullable<
     z.infer<typeof zPermitApplication>['aliased_data']
+>;
+
+export type PermitProcessModuleTile = z.infer<
+    typeof zPermitApplicationProcessModuleTile
+>;
+
+export type PatchedPermitApplication = z.infer<
+    typeof zPatchedPermitApplicationWritable
+>;
+
+export type PermitProcessModuleTileWritable = z.infer<
+    typeof zPermitApplicationProcessModuleTileWritable
+>;
+
+export type PermitApplicationAdminTileWritable = z.infer<
+    typeof zPermitApplicationApplicationAdminTileWritable
 >;
 
 export type ResourceDraft = z.infer<typeof zResourceDraft>;

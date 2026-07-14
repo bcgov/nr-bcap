@@ -1,6 +1,6 @@
 {
     "id": "REQ-INS-TEMPLATE-000",
-    "name": "Inspection Requirements",
+    "name": "Inspection",
     "type": "Module",
     "internal": true,
     "resource": null,
@@ -15,7 +15,7 @@
             "type": "Workflow",
             "internal": false,
             "resource": "inspection",
-            "url": "plugins/external-permit-workflows/inspectionModule",
+            "url": "plugins/submissions/inspectionModule",
             "due": null,
             "notes": "",
             "satisfied": false,

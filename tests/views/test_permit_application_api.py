@@ -17,14 +17,19 @@ from bcap.services.dashboard.internal_dashboard_service import (
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
+from bcap.services.process_requirement.process_requirement_service import (
+    ProcessRequirementService,
+)
 from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as aliases,
     PermitApplicationGroupAliases as group_aliases,
 )
 from arches_controlled_lists.models import ListItem
 
+from arches.app.models.models import TileModel
+
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
-from bcap.util.graph import get_node
+from bcap.util.graph import get_node, node_id
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.i18n import localized_string
 
@@ -135,7 +140,13 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def _requirements(self, pk):
         admin = self._permit(pk).aliased_data.application_admin
-        return admin.aliased_data.process_requirement if admin else []
+        if not admin:
+            return []
+        return [
+            requirement
+            for module in (admin.aliased_data.process_module or [])
+            for requirement in (module.aliased_data.process_requirement or [])
+        ]
 
     def _application_id(self, pk):
         ident = self._permit(pk).aliased_data.application_identification
@@ -176,6 +187,138 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._put(pk, body).status_code, 200)
         self.assertEqual(len(self._requirements(pk)), 3)
 
+    def test_submission_stamps_module_and_requirement_ids(self):
+        # The assign-module-ids hook mints the module id on save and stamps each
+        # requirement id from it in post_save.
+        pk = self._create()
+        self._patch(pk, submission_payload())
+
+        admin = self._permit(pk).aliased_data.application_admin
+        module = (admin.aliased_data.process_module or [])[0]
+        module_id = module.aliased_data.module_id
+        self.assertRegex(module_id, r"^PERMIT-APPLICATION-\d+$")
+
+        identifications = [
+            localized_string(
+                requirement.aliased_data.requirement_identification.aliased_data.requirement_identification
+            )
+            for requirement in ResourceTileTree.get_tiles(
+                GraphSlugs.PROCESS_REQUIREMENT
+            ).filter(is_template_requirement=False)
+        ]
+        derived = [i for i in identifications if i.startswith(f"{module_id}-")]
+        self.assertEqual(len(derived), 3)
+        for identification in derived:
+            self.assertRegex(identification, r"-\d{3}$")
+
+    def _non_template_requirement_count(self):
+        return (
+            ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT)
+            .filter(is_template_requirement=False)
+            .count()
+        )
+
+    def test_remove_module_deletes_tile_and_working_copies(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module = (
+            self._permit(pk).aliased_data.application_admin.aliased_data.process_module
+            or []
+        )[0]
+        # The default module's grouping parent plus its three requirements.
+        self.assertEqual(self._non_template_requirement_count(), 4)
+
+        ProcessRequirementService(
+            user=get_user_model().objects.get(username="admin")
+        ).remove_module(pk, module.tileid)
+
+        admin = self._permit(pk).aliased_data.application_admin
+        self.assertEqual(admin.aliased_data.process_module or [], [])
+        self.assertEqual(self._non_template_requirement_count(), 0)
+
+    def test_remove_module_ignores_a_tile_from_another_permit(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        other = self._create()
+        self._patch(other, submission_payload())
+        module = (
+            self._permit(
+                other
+            ).aliased_data.application_admin.aliased_data.process_module
+            or []
+        )[0]
+
+        # The module tile belongs to `other`, so removing it against `pk` is a
+        # no-op: neither permit's module is touched.
+        ProcessRequirementService().remove_module(pk, module.tileid)
+
+        self.assertEqual(len(self._requirements(pk)), 3)
+        self.assertEqual(len(self._requirements(other)), 3)
+
+    def _module_tileid(self, pk):
+        admin = self._permit(pk).aliased_data.application_admin
+        return (admin.aliased_data.process_module or [])[0].tileid
+
+    def _ordered_requirement_ids(self, module_tileid):
+        ref = node_id(GraphSlugs.PERMIT_APPLICATION, aliases.PROCESS_REQUIREMENT)
+        order = node_id(
+            GraphSlugs.PERMIT_APPLICATION, aliases.PROCESS_REQUIREMENT_ORDER
+        )
+        rows = []
+        for child in TileModel.objects.filter(parenttile_id=module_tileid):
+            references = child.data.get(ref) or []
+            if references:
+                rows.append(
+                    (int(child.data.get(order) or 0), references[0]["resourceId"])
+                )
+        return [rid for _, rid in sorted(rows)]
+
+    def test_reorder_requirements_renumbers_children(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        ids = self._ordered_requirement_ids(module_tileid)
+        self.assertEqual(len(ids), 3)
+
+        reversed_ids = list(reversed(ids))
+        ProcessRequirementService().reorder_requirements(
+            pk, module_tileid, reversed_ids
+        )
+        self.assertEqual(self._ordered_requirement_ids(module_tileid), reversed_ids)
+
+    def test_remove_requirement_deletes_child_and_resource_only(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        target = self._ordered_requirement_ids(module_tileid)[0]
+
+        ProcessRequirementService().remove_requirement(pk, module_tileid, target)
+
+        remaining = self._ordered_requirement_ids(module_tileid)
+        self.assertEqual(len(remaining), 2)
+        self.assertNotIn(target, remaining)
+        self.assertFalse(ResourceTileTree.objects.filter(pk=target).exists())
+        # Grouping parent stays (shared): parent + 2 remaining = 3 non-templates.
+        self.assertEqual(self._non_template_requirement_count(), 3)
+
+    def test_add_blank_requirement_appends_to_module(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        before = self._ordered_requirement_ids(module_tileid)
+        self.assertEqual(len(before), 3)
+
+        ProcessRequirementService().add_blank_requirement(
+            pk, module_tileid, "Custom step"
+        )
+
+        after = self._ordered_requirement_ids(module_tileid)
+        self.assertEqual(len(after), 4)
+        new_ids = set(after) - set(before)
+        self.assertEqual(len(new_ids), 1)
+        # Appended last, after the existing requirements.
+        self.assertEqual(after[-1], next(iter(new_ids)))
+
     def test_resubmission_does_not_reattach_requirements(self):
         pk = self._create()
         self._patch(pk, submission_payload())
@@ -215,14 +358,6 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             {ALIASED_DATA: {group: {ALIASED_DATA: {}}}},
         ]
 
-    def test_assign_id_builds_every_identification_nesting(self):
-        group = group_aliases.APPLICATION_IDENTIFICATION
-        for body in self._nesting_variants(group):
-            with self.subTest(body=body):
-                PermitApplicationService()._assign_application_id(body)
-                ident = body[ALIASED_DATA][group][ALIASED_DATA]
-                self.assertRegex(ident[aliases.APPLICATION_ID], r"^APP-\d+$")
-
     def test_inject_requirements_builds_every_admin_nesting(self):
         group = group_aliases.APPLICATION_ADMIN
         for body in self._nesting_variants(group):
@@ -230,4 +365,5 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
                 service = PermitApplicationService()
                 _parent, copies = service._inject_requirements_from_templates(body)
                 admin = body[ALIASED_DATA][group][ALIASED_DATA]
-                self.assertEqual(len(admin[aliases.PROCESS_REQUIREMENT]), len(copies))
+                module = admin[group_aliases.PROCESS_MODULE][0][ALIASED_DATA]
+                self.assertEqual(len(module[aliases.PROCESS_REQUIREMENT]), len(copies))

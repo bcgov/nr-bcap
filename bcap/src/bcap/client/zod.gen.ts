@@ -22,6 +22,14 @@
 
 import * as z from 'zod';
 
+/**
+ * The add-requirement POST body: an optional name for the blank
+ * requirement, defaulted server-side when absent.
+ */
+export const zAddRequirement = z.object({
+    name: z.string().optional()
+});
+
 export const zBooleanAliasedNodeData = z.object({
     node_value: z.boolean().nullable(),
     display_value: z.string().readonly().optional(),
@@ -32,6 +40,12 @@ export const zBordenNumberDatatypeAliasedNodeDataMax13 = z.object({
     node_value: z.string().max(13).nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
+});
+
+export const zChecklistStep = z.object({
+    tileid: z.uuid().optional(),
+    name: z.string(),
+    description: z.string()
 });
 
 /**
@@ -280,6 +294,23 @@ export const zNumberAliasedNodeDataMin0Max10 = z.object({
     node_value: z.number().gte(0).lte(10).nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
+});
+
+/**
+ * The checklist PATCH body: a requirement's name and its full ordered step
+ * list. Declared as a serializer so the shape reaches the generated client.
+ */
+export const zPatchedChecklistPatch = z.object({
+    name: z.string().optional(),
+    steps: z.array(zChecklistStep).optional()
+});
+
+/**
+ * The reorder PATCH body: the module's requirement resource ids in the new
+ * order.
+ */
+export const zPatchedReorderRequirements = z.object({
+    order: z.array(z.uuid()).optional()
 });
 
 export const zPatchedResourceDraft = z.object({
@@ -541,8 +572,8 @@ export const zLegislativeActActStatusTile = z.object({
 
 export const zPermitApplicationProcessRequirementAliasedData = z.object({
     ministry_assignee: zResourceInstanceAliasedNodeData.nullish(),
-    process_requirement: zResourceInstanceAliasedNodeData.nullish(),
-    process_requirement_order: zNumberAliasedNodeDataMin0.nullable()
+    process_requirement_order: zNumberAliasedNodeDataMin0.nullable(),
+    process_requirement: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationProcessRequirementTile = z.object({
@@ -551,31 +582,6 @@ export const zPermitApplicationProcessRequirementTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationProcessRequirementAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPermitApplicationApplicationAdminAliasedData = z.object({
-    application_priority_level: zReferenceAliasedNodeData.nullish(),
-    application_submission_date: zDateAliasedNodeData.nullish(),
-    permit_duration_years_requested: zNumberAliasedNodeDataMin0Max10.nullish(),
-    process_requirement: z.array(zPermitApplicationProcessRequirementTile).nullish(),
-    project_officer: zResourceInstanceAliasedNodeData.nullish()
-});
-
-export const zPermitApplicationApplicationAdminTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPermitApplicationApplicationAdminAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -2289,6 +2295,57 @@ export const zPermitApplicationMzaProjectDetailsTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationMzaProjectDetailsAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zPermitApplicationProcessModuleAliasedData = z.object({
+    is_module_completed: zBooleanAliasedNodeData.nullish(),
+    module_completed_date: zDateAliasedNodeData.nullish(),
+    module_id: zNonLocalizedStringAliasedNodeData.nullish(),
+    module_name: zStringAliasedNodeData.nullable(),
+    module_order: zNumberAliasedNodeData.nullish(),
+    process_requirement: z.array(zPermitApplicationProcessRequirementTile).nullish()
+});
+
+export const zPermitApplicationProcessModuleTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationProcessModuleAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zPermitApplicationApplicationAdminAliasedData = z.object({
+    application_priority_level: zReferenceAliasedNodeData.nullish(),
+    application_submission_date: zDateAliasedNodeData.nullish(),
+    permit_duration_years_requested: zNumberAliasedNodeDataMin0Max10.nullish(),
+    process_module: z.array(zPermitApplicationProcessModuleTile).nullish(),
+    project_officer: zResourceInstanceAliasedNodeData.nullish()
+});
+
+export const zPermitApplicationApplicationAdminTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationApplicationAdminAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -4285,7 +4342,8 @@ export const zPaginatedArchaeologicalSiteList = z.object({
 });
 
 export const zProcessRequirementIsTemplateRequirementAliasedData = z.object({
-    process_requirment_type: zReferenceAliasedNodeDataRequired.nullable(),
+    parent_module: zResourceInstanceAliasedNodeData.nullish(),
+    process_requirement_type: zReferenceAliasedNodeDataRequired.nullable(),
     is_internal_requirement: zBooleanAliasedNodeData.nullable(),
     is_template_requirement: zBooleanAliasedNodeData.nullable(),
     workflow_url: zUrlAliasedNodeData.nullish(),
@@ -4732,8 +4790,8 @@ export const zLegislativeActActStatusTileWritable = z.object({
 
 export const zPermitApplicationProcessRequirementAliasedDataWritable = z.object({
     ministry_assignee: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    process_requirement: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    process_requirement_order: zNumberAliasedNodeDataMin0Writable.nullable()
+    process_requirement_order: zNumberAliasedNodeDataMin0Writable.nullable(),
+    process_requirement: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationProcessRequirementTileWritable = z.object({
@@ -4742,31 +4800,6 @@ export const zPermitApplicationProcessRequirementTileWritable = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationProcessRequirementAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPermitApplicationApplicationAdminAliasedDataWritable = z.object({
-    application_priority_level: zReferenceAliasedNodeDataWritable.nullish(),
-    application_submission_date: zDateAliasedNodeDataWritable.nullish(),
-    permit_duration_years_requested: zNumberAliasedNodeDataMin0Max10Writable.nullish(),
-    process_requirement: z.array(zPermitApplicationProcessRequirementTileWritable).nullish(),
-    project_officer: zResourceInstanceAliasedNodeDataWritable.nullish()
-});
-
-export const zPermitApplicationApplicationAdminTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPermitApplicationApplicationAdminAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -6376,6 +6409,57 @@ export const zPermitApplicationMzaProjectDetailsTileWritable = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zPermitApplicationMzaProjectDetailsAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zPermitApplicationProcessModuleAliasedDataWritable = z.object({
+    is_module_completed: zBooleanAliasedNodeDataWritable.nullish(),
+    module_completed_date: zDateAliasedNodeDataWritable.nullish(),
+    module_id: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
+    module_name: zStringAliasedNodeDataWritable.nullable(),
+    module_order: zNumberAliasedNodeDataWritable.nullish(),
+    process_requirement: z.array(zPermitApplicationProcessRequirementTileWritable).nullish()
+});
+
+export const zPermitApplicationProcessModuleTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationProcessModuleAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zPermitApplicationApplicationAdminAliasedDataWritable = z.object({
+    application_priority_level: zReferenceAliasedNodeDataWritable.nullish(),
+    application_submission_date: zDateAliasedNodeDataWritable.nullish(),
+    permit_duration_years_requested: zNumberAliasedNodeDataMin0Max10Writable.nullish(),
+    process_module: z.array(zPermitApplicationProcessModuleTileWritable).nullish(),
+    project_officer: zResourceInstanceAliasedNodeDataWritable.nullish()
+});
+
+export const zPermitApplicationApplicationAdminTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zPermitApplicationApplicationAdminAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -8208,7 +8292,8 @@ export const zPaginatedArchaeologicalSiteListWritable = z.object({
 });
 
 export const zProcessRequirementIsTemplateRequirementAliasedDataWritable = z.object({
-    process_requirment_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
+    parent_module: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    process_requirement_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     is_internal_requirement: zBooleanAliasedNodeDataWritable.nullable(),
     is_template_requirement: zBooleanAliasedNodeDataWritable.nullable(),
     workflow_url: zUrlAliasedNodeDataWritable.nullish(),
@@ -8472,6 +8557,46 @@ export const zApiPermitApplicationUpdatePath = z.object({
 
 export const zApiPermitApplicationUpdateResponse = zPermitApplication;
 
+export const zApiPermitApplicationModuleDestroyPath = z.object({
+    id: z.uuid(),
+    module_tileid: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiPermitApplicationModuleDestroyResponse = z.void();
+
+export const zApiPermitApplicationModuleRequirementDestroyPath = z.object({
+    id: z.uuid(),
+    module_tileid: z.uuid(),
+    requirement_id: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiPermitApplicationModuleRequirementDestroyResponse = z.void();
+
+export const zApiPermitApplicationModuleRequirementsPartialUpdateBody = zPatchedReorderRequirements;
+
+export const zApiPermitApplicationModuleRequirementsPartialUpdatePath = z.object({
+    id: z.uuid(),
+    module_tileid: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiPermitApplicationModuleRequirementsPartialUpdateResponse = z.void();
+
+export const zApiPermitApplicationModuleRequirementsCreateBody = zAddRequirement;
+
+export const zApiPermitApplicationModuleRequirementsCreatePath = z.object({
+    id: z.uuid(),
+    module_tileid: z.uuid()
+});
+
 export const zApiPermitApplicationProcessRequirementListPath = z.object({
     id: z.uuid(),
     permit_type: z.string()
@@ -8525,6 +8650,17 @@ export const zApiProcessRequirementUpdatePath = z.object({
 });
 
 export const zApiProcessRequirementUpdateResponse = zProcessRequirement;
+
+export const zApiProcessRequirementChecklistPartialUpdateBody = zPatchedChecklistPatch;
+
+export const zApiProcessRequirementChecklistPartialUpdatePath = z.object({
+    requirement_id: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiProcessRequirementChecklistPartialUpdateResponse = z.void();
 
 export const zApiPublicationListQuery = z.object({
     limit: z.int().optional(),

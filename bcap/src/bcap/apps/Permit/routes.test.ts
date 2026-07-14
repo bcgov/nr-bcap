@@ -17,7 +17,7 @@ describe('Permit routes', () => {
         expect(routes).toHaveLength(13);
         expect(Object.keys(byName).sort()).toEqual([
             'Checklist',
-            'CreateChecklist',
+            'EditChecklist',
             'alterationsModule',
             'baseModule',
             'collectionModule',
@@ -35,18 +35,18 @@ describe('Permit routes', () => {
     it('builds each path from the matching plugin slug', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(byName['root'].path).toBe('/plugins/external-permit-workflows');
+        expect(byName['root'].path).toBe('/plugins/submissions');
         expect(byName['internal-root'].path).toBe(
             '/plugins/internal-permit-dashboard',
         );
         expect(byName['baseModule'].path).toBe(
-            '/plugins/external-permit-workflows/baseModule',
+            '/plugins/submissions/baseModule',
         );
         expect(byName['Checklist'].path).toBe(
             '/plugins/internal-permit-dashboard/checklist',
         );
-        expect(byName['CreateChecklist'].path).toBe(
-            '/plugins/internal-permit-dashboard/CreateChecklist',
+        expect(byName['EditChecklist'].path).toBe(
+            '/plugins/internal-permit-dashboard/EditChecklist',
         );
     });
 
@@ -76,7 +76,7 @@ describe('Permit routes', () => {
         expect(routeNames.home).toBe('root');
         expect(routeNames.baseModule).toBe('baseModule');
         expect(routeNames.checklist).toBe('Checklist');
-        expect(routeNames.createchecklist).toBe('CreateChecklist');
+        expect(routeNames.editchecklist).toBe('EditChecklist');
         expect(routeNames.login).toBe('');
     });
 });

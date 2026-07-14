@@ -1,5 +1,7 @@
+from dataclasses import dataclass
 from itertools import chain
 from types import SimpleNamespace
+from uuid import uuid4
 
 from django.test import TestCase
 
@@ -15,6 +17,10 @@ from bcap.services.dashboard.dashboard_types import (
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
+from bcap.util.aliases.permit_application import (
+    PermitApplicationAliases as pa,
+    PermitApplicationGroupAliases as pa_groups,
+)
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
@@ -22,6 +28,42 @@ from tests.builders import FixtureBuilder
 from tests.services.test_bcap_message_service import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
+
+
+@dataclass
+class RequirementRow:
+    """A process_requirement child to nest under a module: the requirement
+    resource (None for a blank child), its order, and its ministry assignee."""
+
+    requirement: object = None
+    order: int = 1
+    assignee: object = None
+
+
+def _attach_module(builder, admin, rows, name="Permit Review", order=1):
+    """Attach a process_module tile under the admin group, nesting one
+    process_requirement child per RequirementRow."""
+    builder.prune_blank_tiles(admin, pa_groups.PROCESS_MODULE, pa.MODULE_NAME)
+    module = builder.append_blank_tile_for_group(
+        admin,
+        pa_groups.PROCESS_MODULE,
+        {
+            pa.MODULE_NAME: builder.localized(name),
+            pa.MODULE_ID: str(uuid4()),
+            pa.MODULE_ORDER: order,
+        },
+    )
+    builder.prune_blank_tiles(module, pa.PROCESS_REQUIREMENT)
+    for row in rows:
+        values = {pa.PROCESS_REQUIREMENT_ORDER: row.order}
+        if row.requirement is not None:
+            values[pa.PROCESS_REQUIREMENT] = row.requirement
+        child = builder.append_blank_tile_for_group(
+            module, pa.PROCESS_REQUIREMENT, values
+        )
+        if row.assignee is not None:
+            child.aliased_data.ministry_assignee = row.assignee
+    return module
 
 
 def build_permit_graph():
@@ -135,21 +177,19 @@ def build_permit_graph():
     admin = permit.aliased_data.application_admin
     admin.aliased_data.project_officer = alan
     admin.aliased_data.application_submission_date = "2026-01-01"
-    # One application_admin child per (requirement, assignee, order). "Site
-    # Inspection" (order 3) precedes "Field Assessment" (order 2) in tile order,
-    # so the card only surfaces the right row by lowest order, not position.
-    children = [
-        (review, ada, 1),
-        (site, ada, 3),
-        (assessment, grace, 2),
-    ]
-    for i, (requirement, assignee, order) in enumerate(children):
-        if i > 0:
-            admin.append_tile("process_requirement")
-        child = admin.aliased_data.process_requirement[i]
-        child.aliased_data.process_requirement_order = order
-        child.aliased_data.process_requirement = requirement
-        child.aliased_data.ministry_assignee = assignee
+    # One process_requirement per (requirement, order, assignee), all under a
+    # single module. "Site Inspection" (order 3) precedes "Field Assessment"
+    # (order 2) in tile order, so the card surfaces the right row by lowest
+    # order, not position.
+    _attach_module(
+        builder,
+        admin,
+        [
+            RequirementRow(review, 1, ada),
+            RequirementRow(site, 3, ada),
+            RequirementRow(assessment, 2, grace),
+        ],
+    )
     permit.save(**builder.save_kwargs)
 
     return SimpleNamespace(
@@ -200,9 +240,11 @@ def build_minimal_permit(builder, name):
             "application_submission_date": "2026-01-01",
         },
     )
-    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
-    child.aliased_data.process_requirement_order = 1
-    child.aliased_data.process_requirement = requirement
+    _attach_module(
+        builder,
+        permit.aliased_data.application_admin,
+        [RequirementRow(requirement, 1)],
+    )
     permit.save(**builder.save_kwargs)
     return permit
 
@@ -222,7 +264,7 @@ def build_permit_with_investigation(builder, name, host_graph=GraphSlugs.INVESTI
             "sub_requirements": [],
         }
     )
-    builder.link_submission(str(requirement.pk), host)
+    builder.link(str(requirement.pk), submission=host)
     permit = builder.new_resource("permit_application")
     builder.append_blank_tile_for_group(
         permit,
@@ -243,9 +285,11 @@ def build_permit_with_investigation(builder, name, host_graph=GraphSlugs.INVESTI
             "application_submission_date": "2026-01-01",
         },
     )
-    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
-    child.aliased_data.process_requirement_order = 1
-    child.aliased_data.process_requirement = requirement
+    _attach_module(
+        builder,
+        permit.aliased_data.application_admin,
+        [RequirementRow(requirement, 1)],
+    )
     permit.save(**builder.save_kwargs)
     return permit, host
 
@@ -274,9 +318,11 @@ def build_all_satisfied_permit(builder, name):
         },
     )
     permit.append_tile("application_admin")
-    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
-    child.aliased_data.process_requirement_order = 1
-    child.aliased_data.process_requirement = requirement
+    _attach_module(
+        builder,
+        permit.aliased_data.application_admin,
+        [RequirementRow(requirement, 1)],
+    )
     admin = permit.aliased_data.application_admin
     admin.aliased_data.application_submission_date = "2026-01-01"
     permit.save(**builder.save_kwargs)
@@ -307,9 +353,11 @@ def build_unassigned_permit(builder, name):
         },
     )
     permit.append_tile("application_admin")
-    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
-    child.aliased_data.process_requirement_order = 1
-    child.aliased_data.process_requirement = requirement
+    _attach_module(
+        builder,
+        permit.aliased_data.application_admin,
+        [RequirementRow(requirement, 1)],
+    )
     admin = permit.aliased_data.application_admin
     admin.aliased_data.application_submission_date = "2026-01-01"
     permit.save(**builder.save_kwargs)
@@ -317,11 +365,11 @@ def build_unassigned_permit(builder, name):
 
 
 def build_blank_requirement_permit(builder, name):
-    """A permit_application whose application_admin holds only the blank
-    process_requirement child auto-created with the group -- no requirement
-    assigned (the shape an externally-created application has before any
-    requirement is added). It has nothing actionable, so the dashboard must hide
-    it rather than surface a card with no requirement. Returns the resource."""
+    """A permit_application whose module holds only a blank process_requirement
+    child -- no requirement assigned (the shape an externally-created application
+    has before any requirement is added). It has nothing actionable, so the
+    dashboard must hide it rather than surface a card with no requirement.
+    Returns the resource."""
     permit = builder.new_resource("permit_application")
     builder.append_blank_tile_for_group(
         permit,
@@ -335,6 +383,7 @@ def build_blank_requirement_permit(builder, name):
     permit.append_tile("application_admin")
     admin = permit.aliased_data.application_admin
     admin.aliased_data.application_submission_date = "2026-01-01"
+    _attach_module(builder, admin, [RequirementRow(order=1)])
     permit.save(**builder.save_kwargs)
     return permit
 
@@ -356,9 +405,11 @@ def build_groupless_requirement_permit(builder, name):
         },
     )
     permit.append_tile("application_admin")
-    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
-    child.aliased_data.process_requirement_order = 1
-    child.aliased_data.process_requirement = requirement
+    _attach_module(
+        builder,
+        permit.aliased_data.application_admin,
+        [RequirementRow(requirement, 1)],
+    )
     admin = permit.aliased_data.application_admin
     admin.aliased_data.application_submission_date = "2026-01-01"
     permit.save(**builder.save_kwargs)
@@ -389,9 +440,11 @@ def build_unsubmitted_permit(builder, name):
         },
     )
     permit.append_tile("application_admin")
-    child = permit.aliased_data.application_admin.aliased_data.process_requirement[0]
-    child.aliased_data.process_requirement_order = 1
-    child.aliased_data.process_requirement = requirement
+    _attach_module(
+        builder,
+        permit.aliased_data.application_admin,
+        [RequirementRow(requirement, 1)],
+    )
     # deliberately no application_submission_date
     permit.save(**builder.save_kwargs)
     return permit

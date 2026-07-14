@@ -1,6 +1,6 @@
 {
     "id": "REQ-INV-TEMPLATE-000",
-    "name": "Investigation Requirements",
+    "name": "Investigation",
     "type": "Module",
     "internal": true,
     "resource": null,
@@ -15,7 +15,7 @@
             "type": "Workflow",
             "internal": false,
             "resource": "investigation",
-            "url": "plugins/external-permit-workflows/investigationModule",
+            "url": "plugins/submissions/investigationModule",
             "due": null,
             "notes": "",
             "satisfied": false,
