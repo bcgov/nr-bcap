@@ -51,7 +51,6 @@ const permitBackLink = computed(() =>
         ? {
               name: routeNames.permitDetails,
               params: { id: draft.parentPermitId },
-              query: { module: graphSlug },
           }
         : null,
 );

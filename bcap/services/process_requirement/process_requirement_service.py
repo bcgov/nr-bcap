@@ -212,7 +212,7 @@ class ProcessRequirementService:
         for resource in Resource.objects.filter(pk__in=list(resource_ids)):
             resource.delete()
 
-    def permit_module_hosts(self, permit_id, permit_type):
+    def permit_module_tiles(self, permit_id, permit_type):
         """The host resources of the permit type's module attached to the permit,
         read straight from tile data (faster and null-descriptor safe)."""
         host_slug = host_graph(permit_type)

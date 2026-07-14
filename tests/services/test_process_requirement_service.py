@@ -57,6 +57,17 @@ class ProcessRequirementServiceTests(TestCase):
         # The source template is left intact for the next clone.
         self.assertTrue(self._is_template(template))
 
+    def test_clone_by_id_makes_a_non_template_copy(self):
+        copy = self.service.clone_by_id(self.templates[0].pk)
+        self.assertNotIn(copy.pk, self.template_pks)
+        self.assertFalse(self._is_template(copy))
+
+    def test_templates_by_id_maps_the_seeded_templates(self):
+        # Keyed by requirement identification; the values are the templates.
+        by_id = self.service._templates_by_id()
+        value_pks = {str(template.pk) for template in by_id.values()}
+        self.assertIn(str(self.templates[0].pk), value_pks)
+
     def test_clone_module_links_submission_hosts(self):
         # A module with resource-bearing children (investigation) links each
         # child's submission without failing on the clone's existing

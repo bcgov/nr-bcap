@@ -124,7 +124,7 @@ class ProcessRequirementSeedView(APIView):
     def get(self, request, pk, permit_type):
         """The module's host resources attached to the permit application."""
         serializer_class = self._host_serializer_class(permit_type, pk)
-        hosts = ProcessRequirementService(user=request.user).permit_module_hosts(
+        hosts = ProcessRequirementService(user=request.user).permit_module_tiles(
             pk, permit_type
         )
         return Response(

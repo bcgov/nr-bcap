@@ -29,9 +29,24 @@ vi.mock('arches', () => ({
     },
 }));
 
-// 2. Mock the apiFetch wrapper (its own behavior is covered in api.test.ts)
-const { apiFetch } = vi.hoisted(() => ({ apiFetch: vi.fn() }));
-vi.mock('@/bcap/api.ts', () => ({ apiFetch }));
+// 2. Mock the api layer. apiFetch returns a Response-like object (callers read
+// .json() themselves); apiFetchJson returns the parsed body directly. HttpMethod
+// mirrors the real string enum so method assertions stay readable.
+const { apiFetch, apiFetchJson } = vi.hoisted(() => ({
+    apiFetch: vi.fn(),
+    apiFetchJson: vi.fn(),
+}));
+vi.mock('@/bcap/api.ts', () => ({
+    apiFetch,
+    apiFetchJson,
+    HttpMethod: {
+        Get: 'GET',
+        Post: 'POST',
+        Patch: 'PATCH',
+        Put: 'PUT',
+        Delete: 'DELETE',
+    },
+}));
 
 // Resolve apiFetch to a Response-like object whose json() yields body
 function okResponse(body: unknown) {
@@ -41,6 +56,7 @@ function okResponse(body: unknown) {
 describe('Permit API', () => {
     beforeEach(() => {
         apiFetch.mockReset();
+        apiFetchJson.mockReset();
         // Hide expected console.errors from cluttering test output
         vi.spyOn(console, 'error').mockImplementation(() => {});
     });
@@ -84,11 +100,11 @@ describe('Permit API', () => {
     describe('fetchDraft', () => {
         it('GETs the draft by graph and id', async () => {
             const draft = { id: 'draft-1', data: {} };
-            apiFetch.mockResolvedValue(okResponse(draft));
+            apiFetchJson.mockResolvedValue(draft);
 
             const result = await fetchDraft('investigation', 'draft-1');
 
-            expect(apiFetch).toHaveBeenCalledWith(
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/mock/draft/investigation/draft-1',
             );
             expect(result).toEqual(draft);
@@ -98,15 +114,32 @@ describe('Permit API', () => {
     describe('createDraft', () => {
         it('POSTs an empty draft for the graph', async () => {
             const draft = { id: 'draft-new', data: {} };
-            apiFetch.mockResolvedValue(okResponse(draft));
+            apiFetchJson.mockResolvedValue(draft);
 
             const result = await createDraft('investigation');
 
-            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation', {
-                method: 'POST',
-                body: { data: {} },
-            });
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/draft/investigation',
+                {
+                    method: 'POST',
+                    body: { data: {} },
+                },
+            );
             expect(result).toEqual(draft);
+        });
+
+        it('stores the parent resource id in the draft blob when given', async () => {
+            apiFetchJson.mockResolvedValue({ id: 'draft-new', data: {} });
+
+            await createDraft('investigation', 'permit-1');
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/draft/investigation',
+                {
+                    method: 'POST',
+                    body: { data: { parent_resource_id: 'permit-1' } },
+                },
+            );
         });
     });
 
@@ -151,9 +184,8 @@ describe('Permit API', () => {
     describe('submitModule', () => {
         it('POSTs the module host then DELETEs its draft', async () => {
             const finalResource = { resourceinstanceid: 'inv-1' };
-            apiFetch
-                .mockResolvedValueOnce(okResponse(finalResource))
-                .mockResolvedValueOnce(okResponse(undefined));
+            apiFetchJson.mockResolvedValue(finalResource);
+            apiFetch.mockResolvedValue(okResponse(undefined));
 
             const result = await submitModule(
                 'permit-1',
@@ -162,16 +194,14 @@ describe('Permit API', () => {
                 { a: 1 } as never,
             );
 
-            expect(apiFetch).toHaveBeenNthCalledWith(
-                1,
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/mock/seed/permit-1/investigation',
                 {
                     method: 'POST',
                     body: { aliased_data: { a: 1 } },
                 },
             );
-            expect(apiFetch).toHaveBeenNthCalledWith(
-                2,
+            expect(apiFetch).toHaveBeenCalledWith(
                 '/mock/draft/investigation/draft-7',
                 { method: 'DELETE' },
             );
@@ -179,25 +209,34 @@ describe('Permit API', () => {
         });
 
         it('strips draft-only parent_resource_id from the posted body', async () => {
-            apiFetch
-                .mockResolvedValueOnce(okResponse({ resourceinstanceid: 'i' }))
-                .mockResolvedValueOnce(okResponse(undefined));
+            apiFetchJson.mockResolvedValue({ resourceinstanceid: 'i' });
+            apiFetch.mockResolvedValue(okResponse(undefined));
 
             await submitModule('permit-1', 'draft-7', GraphSlug.Investigation, {
                 parent_resource_id: 'permit-1',
                 a: 1,
             } as never);
 
-            expect(apiFetch).toHaveBeenNthCalledWith(
-                1,
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/mock/seed/permit-1/investigation',
                 { method: 'POST', body: { aliased_data: { a: 1 } } },
             );
         });
 
+        it('skips the draft delete for a staff quick-add (no draft id)', async () => {
+            apiFetchJson.mockResolvedValue({ resourceinstanceid: 'inv-1' });
+
+            await submitModule('permit-1', undefined, GraphSlug.Investigation, {
+                a: 1,
+            } as never);
+
+            expect(apiFetchJson).toHaveBeenCalledOnce();
+            expect(apiFetch).not.toHaveBeenCalled();
+        });
+
         it('re-throws and logs when the POST fails', async () => {
             const failure = new Error('POST investigation failed');
-            apiFetch.mockRejectedValue(failure);
+            apiFetchJson.mockRejectedValue(failure);
 
             await expect(
                 submitModule(
@@ -275,14 +314,12 @@ describe('Permit API', () => {
             const finalResource = { resourceinstanceid: 'final-123' };
             const payload = { test: 'data' };
 
-            apiFetch
-                .mockResolvedValueOnce(okResponse(finalResource))
-                .mockResolvedValueOnce(okResponse(undefined));
+            apiFetchJson.mockResolvedValue(finalResource);
+            apiFetch.mockResolvedValue(okResponse(undefined));
 
             const result = await submitApplication('draft-123', payload);
 
-            expect(apiFetch).toHaveBeenNthCalledWith(
-                1,
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/mock/create/permit_application',
                 {
                     method: 'POST',
@@ -307,8 +344,7 @@ describe('Permit API', () => {
                 },
             );
 
-            expect(apiFetch).toHaveBeenNthCalledWith(
-                2,
+            expect(apiFetch).toHaveBeenCalledWith(
                 '/mock/draft/permit_application/draft-123',
                 { method: 'DELETE' },
             );
@@ -318,7 +354,7 @@ describe('Permit API', () => {
 
         it('re-throws and logs when a request fails', async () => {
             const failure = new Error('POST .../create failed (400)');
-            apiFetch.mockRejectedValue(failure);
+            apiFetchJson.mockRejectedValue(failure);
 
             await expect(submitApplication('draft-123', {})).rejects.toThrow(
                 'POST .../create failed (400)',

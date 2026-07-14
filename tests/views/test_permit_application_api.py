@@ -367,3 +367,251 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
                 admin = body[ALIASED_DATA][group][ALIASED_DATA]
                 module = admin[group_aliases.PROCESS_MODULE][0][ALIASED_DATA]
                 self.assertEqual(len(module[aliases.PROCESS_REQUIREMENT]), len(copies))
+
+    # HTTP-level coverage for the module and checklist endpoints. The tests above
+    # drive the service directly; these go through the DRF views and the request
+    # serializers so the serializers and view wiring are exercised too.
+    def _reorder(self, pk, module_tileid, order):
+        return self.client.patch(
+            reverse("module_requirements", args=[pk, module_tileid]),
+            data=json.dumps({"order": order}),
+            content_type="application/json",
+        )
+
+    def _add_requirement(self, pk, module_tileid, name=None):
+        return self.client.post(
+            reverse("module_requirements", args=[pk, module_tileid]),
+            data=json.dumps({} if name is None else {"name": name}),
+            content_type="application/json",
+        )
+
+    def _delete_requirement(self, pk, module_tileid, requirement_id):
+        return self.client.delete(
+            reverse("module_requirement", args=[pk, module_tileid, requirement_id])
+        )
+
+    def _delete_module(self, pk, module_tileid):
+        return self.client.delete(reverse("permit_module", args=[pk, module_tileid]))
+
+    def _patch_checklist(self, requirement_id, body):
+        return self.client.patch(
+            reverse("requirement_checklist", args=[requirement_id]),
+            data=json.dumps(body),
+            content_type="application/json",
+        )
+
+    def test_reorder_endpoint_renumbers_children(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        reversed_ids = list(reversed(self._ordered_requirement_ids(module_tileid)))
+
+        resp = self._reorder(pk, module_tileid, reversed_ids)
+
+        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(self._ordered_requirement_ids(module_tileid), reversed_ids)
+
+    def test_reorder_endpoint_rejects_a_non_uuid_order_entry(self):
+        # The reorder serializer requires the order entries to be UUIDs.
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+
+        resp = self._reorder(pk, module_tileid, ["not-a-uuid"])
+
+        self.assertEqual(resp.status_code, 400)
+
+    def test_add_requirement_endpoint_appends_named_requirement(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        before = self._ordered_requirement_ids(module_tileid)
+
+        resp = self._add_requirement(pk, module_tileid, "Custom step")
+
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(
+            len(self._ordered_requirement_ids(module_tileid)), len(before) + 1
+        )
+
+    def test_add_requirement_endpoint_defaults_the_name(self):
+        # The add serializer makes name optional; the view supplies a default.
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+
+        resp = self._add_requirement(pk, module_tileid)
+
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(len(self._ordered_requirement_ids(module_tileid)), 4)
+
+    def test_delete_requirement_endpoint_removes_child(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        target = self._ordered_requirement_ids(module_tileid)[0]
+
+        resp = self._delete_requirement(pk, module_tileid, target)
+
+        self.assertEqual(resp.status_code, 204)
+        self.assertNotIn(target, self._ordered_requirement_ids(module_tileid))
+
+    def test_delete_module_endpoint_removes_the_tile(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+
+        resp = self._delete_module(pk, module_tileid)
+
+        self.assertEqual(resp.status_code, 204)
+        admin = self._permit(pk).aliased_data.application_admin
+        self.assertEqual(admin.aliased_data.process_module or [], [])
+
+    def test_checklist_endpoint_saves_name_and_steps(self):
+        requirement = ProcessRequirementBuilder().make_blank_checklist_requirement(
+            "Draft"
+        )
+
+        resp = self._patch_checklist(
+            str(requirement.pk),
+            {
+                "name": "Checklist",
+                "steps": [
+                    {"name": "First", "description": "one"},
+                    {"name": "Second", "description": "two"},
+                ],
+            },
+        )
+
+        self.assertEqual(resp.status_code, 204)
+
+    def test_checklist_endpoint_unknown_requirement_returns_404(self):
+        resp = self._patch_checklist(
+            "00000000-0000-0000-0000-000000000000",
+            {"name": "x", "steps": []},
+        )
+        self.assertEqual(resp.status_code, 404)
+
+    def test_module_host_endpoint_unknown_type_returns_400(self):
+        # A permit type with no host graph is rejected before the serializer.
+        pk = self._create()
+        resp = self.client.get(
+            reverse("seed_process_requirements", args=[pk, "not_a_module"])
+        )
+        self.assertEqual(resp.status_code, 400)
+
+    def test_module_host_endpoint_unknown_permit_returns_404(self):
+        resp = self.client.get(
+            reverse(
+                "seed_process_requirements",
+                args=["00000000-0000-0000-0000-000000000000", "investigation"],
+            )
+        )
+        self.assertEqual(resp.status_code, 404)
+
+    def _attach_investigation(self, pk):
+        """Attach an investigation module (with a host resource) to the permit,
+        the way the module-host submission does."""
+        host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
+        service = ProcessRequirementService(
+            user=get_user_model().objects.get(username="admin")
+        )
+        requirements = service.attach_requirements(pk, "investigation", host)
+        return host, requirements
+
+    def test_attach_requirements_adds_investigation_module(self):
+        pk = self._create()
+        _host, requirements = self._attach_investigation(pk)
+
+        self.assertTrue(requirements)
+        admin = self._permit(pk).aliased_data.application_admin
+        names = [
+            localized_string(module.aliased_data.module_name)
+            for module in (admin.aliased_data.process_module or [])
+        ]
+        self.assertIn("Investigation", names)
+
+    def test_permit_module_tiles_lists_the_attached_host(self):
+        pk = self._create()
+        host, _requirements = self._attach_investigation(pk)
+
+        service = ProcessRequirementService(
+            user=get_user_model().objects.get(username="admin")
+        )
+        hosts = service.permit_module_tiles(pk, "investigation")
+
+        self.assertIn(str(host.pk), [str(h.pk) for h in hosts])
+
+    def test_permit_module_tiles_is_empty_for_a_typeless_module(self):
+        # A permit type with no host graph has no hosts to list.
+        service = ProcessRequirementService()
+        self.assertEqual(service.permit_module_tiles(self._create(), "permit"), [])
+
+    def test_module_host_endpoint_lists_attached_hosts(self):
+        pk = self._create()
+        host, _requirements = self._attach_investigation(pk)
+
+        resp = self.client.get(
+            reverse("seed_process_requirements", args=[pk, "investigation"])
+        )
+
+        self.assertEqual(resp.status_code, 200)
+        ids = [host.get("resourceinstanceid") for host in resp.json()]
+        self.assertIn(str(host.pk), ids)
+
+    def test_permit_module_tiles_empty_when_module_has_no_hosts(self):
+        # The default module has requirements but no host resources, so an
+        # investigation-host lookup finds no hosts.
+        pk = self._create()
+        self._patch(pk, submission_payload())
+
+        service = ProcessRequirementService()
+        self.assertEqual(service.permit_module_tiles(pk, "investigation"), [])
+
+    def test_reorder_ignores_a_module_from_another_permit(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        other = self._create()
+        self._patch(other, submission_payload())
+        other_module = self._module_tileid(other)
+        before = self._ordered_requirement_ids(other_module)
+
+        # Reordering `other`'s module against `pk` is rejected as a no-op.
+        ProcessRequirementService().reorder_requirements(
+            pk, other_module, list(reversed(before))
+        )
+
+        self.assertEqual(self._ordered_requirement_ids(other_module), before)
+
+    def test_reorder_with_empty_order_leaves_children_untouched(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        before = self._ordered_requirement_ids(module_tileid)
+
+        # No id maps to a position, so every child is skipped.
+        ProcessRequirementService().reorder_requirements(pk, module_tileid, [])
+
+        self.assertEqual(self._ordered_requirement_ids(module_tileid), before)
+
+    def test_remove_requirement_unknown_id_is_a_noop(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        before = len(self._ordered_requirement_ids(module_tileid))
+
+        ProcessRequirementService().remove_requirement(
+            pk, module_tileid, "00000000-0000-0000-0000-000000000000"
+        )
+
+        self.assertEqual(len(self._ordered_requirement_ids(module_tileid)), before)
+
+    def test_add_blank_requirement_unknown_module_returns_none(self):
+        pk = self._create()
+        self._patch(pk, submission_payload())
+
+        result = ProcessRequirementService().add_blank_requirement(
+            pk, "00000000-0000-0000-0000-000000000000", "x"
+        )
+
+        self.assertIsNone(result)

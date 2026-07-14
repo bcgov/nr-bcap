@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, type UnwrapRef } from 'vue';
 
 // Confirm-then-run flow for a destructive action: opening records the target and
 // shows the dialog, confirming runs the action and closes it.
@@ -10,7 +10,7 @@ export function useConfirmAction<T>(action: (target: T) => Promise<void>) {
     });
 
     const open = (target: T) => {
-        state.target = target as T;
+        state.target = target as UnwrapRef<T>;
         state.visible = true;
     };
 
