@@ -1,7 +1,7 @@
 {
     "id": "REQ-ALT-TEMPLATE-000",
-    "name": "Alteration Requirements",
-    "type": "Grouping",
+    "name": "Alteration",
+    "type": "Module",
     "internal": true,
     "resource": null,
     "due": null,
@@ -15,7 +15,7 @@
             "type": "Workflow",
             "internal": false,
             "resource": "alteration",
-            "url": "plugins/external-permit-workflows/alterationModule",
+            "url": "plugins/submissions/alterationModule",
             "due": null,
             "notes": "",
             "satisfied": false,

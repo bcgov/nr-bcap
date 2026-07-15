@@ -91,15 +91,6 @@ class PermitApplicationService:
         admin = data.get(ALIASED_DATA, {}).get(group_aliases.APPLICATION_ADMIN, {})
         return admin.get(ALIASED_DATA, {}).get(aliases.APPLICATION_SUBMISSION_DATE)
 
-    def _assign_application_id(self, data):
-        """Stamp the sequence-assigned id onto the identification tile."""
-        ident = data.setdefault(ALIASED_DATA, {}).setdefault(
-            group_aliases.APPLICATION_IDENTIFICATION, {ALIASED_DATA: {}}
-        )
-        ident.setdefault(ALIASED_DATA, {})[
-            aliases.APPLICATION_ID
-        ] = self.allocate_permit_application_id()
-
     def _index_requirements(self, requirements):
         """Index the clones once save has linked them to the application (the
         descriptor embeds it)."""
@@ -110,20 +101,31 @@ class PermitApplicationService:
     def _inject_requirements_from_templates(self, data):
         """Clone a working copy of each requirement template, link the children
         to the application in flow order, and return every created resource (the
-        grouping parent included) so a rejected save can delete them all."""
+        grouping parent included) so a rejected save can delete them all. The
+        module id and requirement ids are filled in by the assign-module-ids
+        save hook."""
         admin = (
             data.setdefault(ALIASED_DATA, {})
             .setdefault(group_aliases.APPLICATION_ADMIN, {ALIASED_DATA: {}})
             .setdefault(ALIASED_DATA, {})
         )
-        parent, copies = self._requirements.create_working_copies()
-        admin[aliases.PROCESS_REQUIREMENT] = [
+        cloned = self._requirements.create_working_copies()
+        modules = admin.setdefault(group_aliases.PROCESS_MODULE, [])
+        modules.append(
             {
                 ALIASED_DATA: {
-                    aliases.PROCESS_REQUIREMENT: str(copy.pk),
-                    aliases.PROCESS_REQUIREMENT_ORDER: order,
+                    aliases.MODULE_NAME: cloned.name,
+                    aliases.MODULE_ORDER: len(modules) + 1,
+                    aliases.PROCESS_REQUIREMENT: [
+                        {
+                            ALIASED_DATA: {
+                                aliases.PROCESS_REQUIREMENT: str(copy.pk),
+                                aliases.PROCESS_REQUIREMENT_ORDER: order,
+                            }
+                        }
+                        for order, copy in enumerate(cloned.requirements, start=1)
+                    ],
                 }
             }
-            for order, copy in enumerate(copies, start=1)
-        ]
-        return parent, copies
+        )
+        return cloned.parent, cloned.requirements

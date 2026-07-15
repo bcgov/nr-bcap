@@ -334,9 +334,12 @@ class TestGetProcessRequirementName(TestCase):
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: False})
         permit = MagicMock()
         permit.from_resource.descriptors = {"en": {"name": "Permit ABC"}}
+        # name tile, template tile, then the module-id lookup finds no
+        # process_module tile referencing this requirement (no module prefix).
         mock_models.TileModel.objects.filter.return_value.first.side_effect = [
             name_tile,
             tmpl_tile,
+            None,
         ]
         mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
             permit
@@ -346,13 +349,40 @@ class TestGetProcessRequirementName(TestCase):
         assert result == "Permit ABC - My Requirement"
 
     @patch("bcap.functions.process_requirement_descriptors.models")
+    def test_non_template_with_permit_and_module_prefixes_both(self, mock_models):
+        self.name_datatype.get_display_value.return_value = "My Requirement"
+        name_tile = _make_tile()
+        tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: False})
+        permit = MagicMock()
+        permit.from_resource.descriptors = {"en": {"name": "APP-107"}}
+        # The module-id lookup: a process_module child tile references this
+        # requirement; its parent module tile carries the module id.
+        child_tile = MagicMock(parenttile_id="parent-1")
+        parent_tile = MagicMock()
+        parent_tile.data.get.return_value = "PERMIT-APPLICATION-1"
+        mock_models.TileModel.objects.filter.return_value.first.side_effect = [
+            name_tile,
+            tmpl_tile,
+            child_tile,
+            parent_tile,
+        ]
+        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
+            permit
+        )
+
+        result = self.fn._get_process_requirement_name(MagicMock())
+        assert result == "APP-107 - PERMIT-APPLICATION-1 - My Requirement"
+
+    @patch("bcap.functions.process_requirement_descriptors.models")
     def test_non_template_no_permit_shows_name_only(self, mock_models):
         self.name_datatype.get_display_value.return_value = "My Requirement"
         name_tile = _make_tile()
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: False})
+        # name tile, template tile, then no process_module tile for the module id.
         mock_models.TileModel.objects.filter.return_value.first.side_effect = [
             name_tile,
             tmpl_tile,
+            None,
         ]
         # A grouping parent has no permit reference, so no permit prefix.
         mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (

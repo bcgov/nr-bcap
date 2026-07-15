@@ -137,3 +137,17 @@ export const getBasicInfoFields = (
         },
     ];
 };
+
+export const localized = (value: string) => ({
+    en: { value, direction: 'ltr' as const },
+});
+
+// The raw editable value of a string node (its node_value), for populating edit
+// forms; falls back to display_value, then ''.
+export const readString = (node: unknown): string => {
+    const value = node as {
+        node_value?: { en?: { value?: string | null } } | null;
+        display_value?: string | null;
+    } | null;
+    return value?.node_value?.en?.value ?? value?.display_value ?? '';
+};

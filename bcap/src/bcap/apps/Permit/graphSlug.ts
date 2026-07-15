@@ -3,4 +3,5 @@ export enum GraphSlug {
     Investigation = 'investigation',
     Inspection = 'inspection',
     Alteration = 'alteration',
+    ProcessRequirement = 'process_requirement',
 }

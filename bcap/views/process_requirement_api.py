@@ -8,7 +8,7 @@ generated serializer so the response shape stays in lockstep with the graph.
 
 from django.http import Http404
 
-from drf_spectacular.utils import extend_schema, PolymorphicProxySerializer
+from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -22,11 +22,15 @@ from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPaginati
 from arches_querysets.rest_framework.permissions import ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
-from arches_zod_validation.views.mixins import (
-    BCAPResourceSerializer,
-    UserOwnedResourceMixin,
-)
+from arches_zod_validation.views.mixins import UserOwnedResourceMixin
 
+from bcap.serializers.process_requirement_serializers import (
+    AddRequirementSerializer,
+    ChecklistPatchSerializer,
+    HOST_SERIALIZERS,
+    ReorderRequirementsSerializer,
+    module_host_schema,
+)
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
@@ -34,49 +38,16 @@ from bcap.schema import ArchesTileAutoSchema
 from bcap.services.process_requirement.template_specs import host_graph
 from bcap.util.indexing import bulk_index
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.views.generated.process_requirement import ProcessRequirementViewMixin
+from bcap.views.generated.process_requirement import (
+    ProcessRequirementSerializer,
+    ProcessRequirementViewMixin,
+)
 
 RESOURCE_EDITOR_GROUP = "Resource Editor"
 
-
-# Module host serializers. These graphs expose no generated routes of their own
-# (their verbs are [] in generate.json); a host is only ever created through this
-# view's POST, so the serializers live here rather than in the generated package.
-class InvestigationSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "investigation"
-
-
-class AlterationSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "alteration"
-
-
-class InspectionSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "inspection"
-
-
-# The serializer that validates and creates a module's host resource, by host
-# graph slug. A module names its host via the child whose resource matches the
-# module slug (see template_specs.host_graph); a slug with no group file or no
-# host child is rejected before the serializer is reached.
-HOST_SERIALIZERS = {
-    "investigation": InvestigationSerializer,
-    "alteration": AlterationSerializer,
-    "inspection": InspectionSerializer,
-}
-
-
-def _module_host_schema(many):
-    """OpenAPI schema for a module host: any one of the registered host types
-    (the concrete type depends on the permit_type path segment)."""
-    return PolymorphicProxySerializer(
-        component_name="ModuleHost",
-        serializers=list(HOST_SERIALIZERS.values()),
-        resource_type_field_name=None,
-        many=many,
-    )
+# TODO(roles): ResourceEditor is a placeholder; gate these staff module-editing
+# routes on the proper role/group once roles + permissions land.
+STAFF_MODULE_PERMISSIONS = [ResourceEditor]
 
 
 class SuperuserOrEditorReadsAnyMixin(UserOwnedResourceMixin):
@@ -149,11 +120,11 @@ class ProcessRequirementSeedView(APIView):
             raise Http404("No permit application matches the given id.")
         return serializer_class
 
-    @extend_schema(responses=_module_host_schema(many=True))
+    @extend_schema(responses=module_host_schema(many=True))
     def get(self, request, pk, permit_type):
         """The module's host resources attached to the permit application."""
         serializer_class = self._host_serializer_class(permit_type, pk)
-        hosts = ProcessRequirementService(user=request.user).permit_module_hosts(
+        hosts = ProcessRequirementService(user=request.user).permit_module_tiles(
             pk, permit_type
         )
         return Response(
@@ -161,8 +132,8 @@ class ProcessRequirementSeedView(APIView):
         )
 
     @extend_schema(
-        request=_module_host_schema(many=False),
-        responses=_module_host_schema(many=False),
+        request=module_host_schema(many=False),
+        responses=module_host_schema(many=False),
     )
     def post(self, request, pk, permit_type):
         serializer_class = self._host_serializer_class(permit_type, pk)
@@ -181,3 +152,93 @@ class ProcessRequirementSeedView(APIView):
             host_graph(permit_type), resource_ids=[host.pk], as_representation=True
         ).get()
         return Response(serializer_class(fresh, request=request).data, status=201)
+
+
+@extend_schema(tags=["External: process_requirement"], responses={204: None})
+class PermitModuleView(APIView):
+    """DELETE a submitted module from a permit application by its process_module
+    tile id: the tile is dropped and the requirement working copies it created
+    (grouping parent, child requirements, submission hosts) are deleted."""
+
+    permission_classes = STAFF_MODULE_PERMISSIONS
+
+    def delete(self, request, pk, module_tileid):
+        if not ResourceTileTree.objects.filter(
+            pk=pk, graph__slug=GraphSlugs.PERMIT_APPLICATION
+        ).exists():
+            raise Http404("No permit application matches the given id.")
+        ProcessRequirementService(user=request.user).remove_module(pk, module_tileid)
+        return Response(status=204)
+
+
+@extend_schema(tags=["External: process_requirement"])
+class ModuleRequirementsView(APIView):
+    """A module's process requirements: PATCH reorders them (an order list of
+    resource ids), POST adds a blank one.
+
+    Reorder is its own endpoint, not the generic permit PATCH, so the client sends
+    just the id order rather than rebuilding and resending the whole module tree to
+    keep a partial write from deleting the omitted tiles."""
+
+    permission_classes = STAFF_MODULE_PERMISSIONS
+
+    @extend_schema(request=ReorderRequirementsSerializer, responses={204: None})
+    def patch(self, request, pk, module_tileid):
+        body = ReorderRequirementsSerializer(data=request.data)
+        body.is_valid(raise_exception=True)
+        ProcessRequirementService(user=request.user).reorder_requirements(
+            pk, module_tileid, body.validated_data["order"]
+        )
+        return Response(status=204)
+
+    @extend_schema(request=AddRequirementSerializer, responses={201: None})
+    def post(self, request, pk, module_tileid):
+        body = AddRequirementSerializer(data=request.data)
+        body.is_valid(raise_exception=True)
+        name = body.validated_data.get("name") or "New requirement"
+        ProcessRequirementService(user=request.user).add_blank_requirement(
+            pk, module_tileid, name
+        )
+        return Response(status=201)
+
+
+@extend_schema(tags=["External: process_requirement"], responses={204: None})
+class ModuleRequirementView(APIView):
+    """DELETE: remove one process requirement from a module by its resource id
+    (the child tile, the requirement resource, and its submission host)."""
+
+    permission_classes = STAFF_MODULE_PERMISSIONS
+
+    def delete(self, request, pk, module_tileid, requirement_id):
+        ProcessRequirementService(user=request.user).remove_requirement(
+            pk, module_tileid, requirement_id
+        )
+        return Response(status=204)
+
+
+@extend_schema(
+    tags=["External: process_requirement"],
+    request=ChecklistPatchSerializer,
+    responses={204: None},
+)
+class RequirementChecklistView(APIView):
+    """PATCH: save a process requirement's checklist, its name and full ordered
+    step list, reconciled server-side against the sent list. A step is
+    {tileid?, name, description}; omit tileid to create one, and a persisted step
+    left out of the list is deleted."""
+
+    permission_classes = STAFF_MODULE_PERMISSIONS
+
+    def patch(self, request, requirement_id):
+        if not ResourceTileTree.objects.filter(
+            pk=requirement_id, graph__slug=GraphSlugs.PROCESS_REQUIREMENT
+        ).exists():
+            raise Http404("No process requirement matches the given id.")
+        body = ChecklistPatchSerializer(data=request.data)
+        body.is_valid(raise_exception=True)
+        ProcessRequirementService(user=request.user).save_checklist(
+            requirement_id,
+            body.validated_data["name"],
+            body.validated_data["steps"],
+        )
+        return Response(status=204)

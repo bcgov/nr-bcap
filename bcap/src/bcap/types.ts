@@ -3,12 +3,19 @@ import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import {
     zApiHcaPermitListResponse,
     zApiDashboardInternalRetrieveQuery,
+    zBcapMessage,
+    zBcapMessageWritable,
+    zChecklistStep,
     zInternalDashboardCard,
     zPermitApplication,
+    zPermitApplicationProcessModuleTile,
     zProcessRequirement,
     zResourceDraft,
     zInvestigationResourceAliasedDataWritable,
     zPermitApplicationResourceAliasedDataWritable,
+    zPatchedPermitApplicationWritable,
+    zPermitApplicationProcessModuleTileWritable,
+    zPermitApplicationApplicationAdminTileWritable,
 } from '@/bcap/client/zod.gen.ts';
 
 import type {
@@ -33,6 +40,8 @@ export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
 
 export type ProcessRequirement = z.infer<typeof zProcessRequirement>;
 
+export type ChecklistStep = z.infer<typeof zChecklistStep>;
+
 export type DashboardStatus = z.infer<
     typeof zApiDashboardInternalRetrieveQuery
 >['status'];
@@ -41,6 +50,22 @@ export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
 
 export type PermitAliasedData = NonNullable<
     z.infer<typeof zPermitApplication>['aliased_data']
+>;
+
+export type PermitProcessModuleTile = z.infer<
+    typeof zPermitApplicationProcessModuleTile
+>;
+
+export type PatchedPermitApplication = z.infer<
+    typeof zPatchedPermitApplicationWritable
+>;
+
+export type PermitProcessModuleTileWritable = z.infer<
+    typeof zPermitApplicationProcessModuleTileWritable
+>;
+
+export type PermitApplicationAdminTileWritable = z.infer<
+    typeof zPermitApplicationApplicationAdminTileWritable
 >;
 
 export type ResourceDraft = z.infer<typeof zResourceDraft>;
@@ -60,6 +85,16 @@ export type InvestigationDraft = ResourceDraft & {
         parent_resource_id?: string;
     };
 };
+
+export type RawThreadMessage = z.infer<typeof zBcapMessage>;
+export type BcapMessagePayload = z.infer<typeof zBcapMessageWritable>;
+
+// A message flattened and date-formatted for the permit message thread UI.
+export interface FormattedMessage {
+    author: string;
+    text: string;
+    date: string;
+}
 
 export interface TileReference {
     resourceinstance_id: string;
@@ -122,6 +157,7 @@ export interface BcapURLs {
         nodegroup_alias: string,
     ) => string;
     api_concepts_tree: (graph_slug: string, node_alias: string) => string;
+    api_contributor: string;
     api_get_frontend_i18n_data: string;
     api_get_nodegroup_tree: string;
     api_instance_permissions: string;

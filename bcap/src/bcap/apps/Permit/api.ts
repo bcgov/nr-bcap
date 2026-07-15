@@ -1,12 +1,21 @@
 import arches from 'arches';
-import { apiFetch } from '@/bcap/api.ts';
+import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
+import { localized } from '@/bcap/util.ts';
 import type {
     ArchesDraftData,
+    BcapMessagePayload,
+    ChecklistStep,
     DraftNode,
+    FormattedMessage,
     InvestigationDraft,
+    PatchedPermitApplication,
+    PermitAliasedData,
+    PermitApplicationAdminTileWritable,
     PermitApplicationResponse,
+    PermitProcessModuleTileWritable,
+    ProcessRequirement,
+    RawThreadMessage,
 } from '@/bcap/types.ts';
-import { type PermitAliasedData } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export interface ResourceDraftResponse {
@@ -18,10 +27,9 @@ export const fetchDraft = async (
     graphSlug: string,
     draftId: string,
 ): Promise<ResourceDraftResponse> => {
-    const response = await apiFetch(
+    return apiFetchJson<ResourceDraftResponse>(
         `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`,
     );
-    return response.json();
 };
 
 // parentResourceId, when given, is stored as a top-level key in the draft blob
@@ -36,11 +44,13 @@ export const createDraft = async (
     if (parentResourceId) {
         data.parent_resource_id = parentResourceId;
     }
-    const response = await apiFetch(arches.urls.api_resource_draft(graphSlug), {
-        method: 'POST',
-        body: { data },
-    });
-    return response.json();
+    return apiFetchJson<ResourceDraftResponse>(
+        arches.urls.api_resource_draft(graphSlug),
+        {
+            method: HttpMethod.Post,
+            body: { data },
+        },
+    );
 };
 
 // Graphs that have a draft-backed workflow on the external dashboard. Each
@@ -76,7 +86,7 @@ export const deleteDraft = async (
     draftId: string,
 ): Promise<void> => {
     await apiFetch(`${arches.urls.api_resource_draft(graphSlug)}/${draftId}`, {
-        method: 'DELETE',
+        method: HttpMethod.Delete,
     });
 };
 
@@ -115,20 +125,21 @@ export const submitApplication = async (
             },
         } as unknown as DraftNode;
 
-        const postResponse = await apiFetch(submitUrl, {
-            method: 'POST',
-            body: {
-                draft_id: draftId,
-                aliased_data: cleanPayload,
+        const finalResource = await apiFetchJson<PermitApplicationResponse>(
+            submitUrl,
+            {
+                method: HttpMethod.Post,
+                body: {
+                    draft_id: draftId,
+                    aliased_data: cleanPayload,
+                },
             },
-        });
-
-        const finalResource = await postResponse.json();
+        );
         console.log('Final resource created successfully!', finalResource);
 
         // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
-        await apiFetch(deleteUrl, { method: 'DELETE' });
+        await apiFetch(deleteUrl, { method: HttpMethod.Delete });
 
         return finalResource;
     } catch (error) {
@@ -139,10 +150,12 @@ export const submitApplication = async (
 
 // Submit a permit module: the route creates the module's host resource from the
 // payload, clones the module's process requirements onto the permit, links the
-// workflow requirement to the host, and returns the created host resource.
+// workflow requirement to the host, and returns the created host resource. Pass
+// a draftId to submit from a draft (deleted after); omit it for a staff
+// quick-add that sends a placeholder payload directly.
 export const submitModule = async (
     permitId: string,
-    draftId: string,
+    draftId: string | undefined,
     moduleSlug: GraphSlug,
     payload: ArchesDraftData,
 ): Promise<PermitApplicationResponse> => {
@@ -152,12 +165,13 @@ export const submitModule = async (
         const aliasedData = { ...payload };
         delete aliasedData.parent_resource_id;
         const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
-        const response = await apiFetch(url, {
-            method: 'POST',
+        const result = await apiFetchJson<PermitApplicationResponse>(url, {
+            method: HttpMethod.Post,
             body: { aliased_data: aliasedData },
         });
-        const result = await response.json();
-        await deleteDraft(moduleSlug, draftId);
+        if (draftId) {
+            await deleteDraft(moduleSlug, draftId);
+        }
         return result;
     } catch (error) {
         console.error('Module submission API failed:', error);
@@ -191,13 +205,33 @@ export const fetchPermitModules = async (
     }
 };
 
+export const fetchRequirementDetails = async (
+    ids: string[],
+): Promise<Record<string, ProcessRequirement>> => {
+    const entries = await Promise.all(
+        ids.map(async (id): Promise<[string, ProcessRequirement] | null> => {
+            try {
+                const url = arches.urls.api_resource(
+                    GraphSlug.ProcessRequirement,
+                    id,
+                );
+                const json = await apiFetchJson<ProcessRequirement>(url);
+                return [id, json];
+            } catch (error) {
+                console.error('Failed to load requirement detail:', error);
+                return null;
+            }
+        }),
+    );
+    return Object.fromEntries(entries.filter((entry) => entry !== null));
+};
+
 export const fetchPermitDetails = async (
     permitId: string,
 ): Promise<PermitAliasedData | null | undefined> => {
     const url = arches.urls.api_resource(GraphSlug.PermitApplication, permitId);
 
-    const response = await apiFetch(url);
-    const rawJson = await response.json();
+    const rawJson = await apiFetchJson<PermitApplicationResponse>(url);
 
     if (!rawJson || !rawJson.aliased_data) {
         console.warn('API payload did not contain aliased_data');
@@ -217,7 +251,241 @@ export const patchPermitSubmissionDate = async (
     const url = arches.urls.api_resource(GraphSlug.PermitApplication, permitId);
 
     await apiFetch(url, {
-        method: 'PATCH',
+        method: HttpMethod.Patch,
         body: { aliased_data: { application_admin: adminPayload } },
     });
+};
+
+export interface ModuleOrderPatch {
+    tileid: string;
+    order: number;
+    name: string;
+    moduleId: string;
+}
+
+// Persist a drag-reordered module list: patch each tile's module_order and a
+// matching sortorder (arches' native row order) under application_admin. Send
+// module_name and module_id too so the partial write keeps them, else the tile
+// fails card validation or the save hook mints a fresh id.
+export const patchModuleOrder = async (
+    permitId: string,
+    adminTileId: string,
+    modules: ModuleOrderPatch[],
+): Promise<void> => {
+    const url = arches.urls.api_resource(GraphSlug.PermitApplication, permitId);
+
+    const toModuleTile = (
+        module: ModuleOrderPatch,
+    ): PermitProcessModuleTileWritable => {
+        const aliasedData: NonNullable<
+            PermitProcessModuleTileWritable['aliased_data']
+        > = {
+            module_order: { node_value: module.order },
+            module_name: { node_value: localized(module.name) },
+        };
+        // A blank tile has no id yet; send it only when present so the save hook
+        // does not mint a fresh one.
+        if (module.moduleId) {
+            aliasedData.module_id = { node_value: module.moduleId };
+        }
+        return {
+            tileid: module.tileid,
+            sortorder: module.order,
+            aliased_data: aliasedData,
+        };
+    };
+
+    const applicationAdmin: PermitApplicationAdminTileWritable = {
+        aliased_data: { process_module: modules.map(toModuleTile) },
+    };
+    if (adminTileId) {
+        applicationAdmin.tileid = adminTileId;
+    }
+
+    const body: PatchedPermitApplication = {
+        aliased_data: { application_admin: applicationAdmin },
+    };
+
+    await apiFetch(url, { method: HttpMethod.Patch, body });
+};
+
+export const removeModuleAndRequirements = async (
+    permitId: string,
+    moduleTileId: string,
+): Promise<void> => {
+    await apiFetch(arches.urls.permit_module(permitId, moduleTileId), {
+        method: HttpMethod.Delete,
+    });
+};
+
+export const reorderModuleRequirements = async (
+    permitId: string,
+    moduleTileId: string,
+    requirementIds: string[],
+): Promise<void> => {
+    await apiFetch(arches.urls.module_requirements(permitId, moduleTileId), {
+        method: HttpMethod.Patch,
+        body: { order: requirementIds },
+    });
+};
+
+export const addBlankRequirement = async (
+    permitId: string,
+    moduleTileId: string,
+    name?: string,
+): Promise<void> => {
+    await apiFetch(arches.urls.module_requirements(permitId, moduleTileId), {
+        method: HttpMethod.Post,
+        body: name ? { name } : {},
+    });
+};
+
+export const removeRequirement = async (
+    permitId: string,
+    moduleTileId: string,
+    requirementId: string,
+): Promise<void> => {
+    await apiFetch(
+        arches.urls.module_requirement(permitId, moduleTileId, requirementId),
+        { method: HttpMethod.Delete },
+    );
+};
+
+// Save a requirement's checklist: its name and the full ordered step list. The
+// backend reconciles creates, edits, deletes, and reorders, so just send the
+// current steps.
+export const saveChecklist = async (
+    requirementId: string,
+    name: string,
+    steps: ChecklistStep[],
+): Promise<void> => {
+    await apiFetch(arches.urls.requirement_checklist(requirementId), {
+        method: HttpMethod.Patch,
+        body: { name, steps },
+    });
+};
+
+export const createBcapMessage = async (
+    messageText: string,
+    recipientId: string,
+    applicationId: string,
+    permitResourceId: string,
+    threadId?: string,
+) => {
+    const aliasedData: NonNullable<BcapMessagePayload['aliased_data']> = {
+        message_content: {
+            aliased_data: {
+                message_content: {
+                    node_value: {
+                        en: { value: messageText, direction: 'ltr' },
+                    },
+                },
+                message_subject: {
+                    node_value: {
+                        en: {
+                            value: `Comment regarding Application ${applicationId}`,
+                            direction: 'ltr',
+                        },
+                    },
+                },
+                // Applied server-side after save (the REST date field would
+                // otherwise drop the UTC offset).
+                message_creation_date: { node_value: new Date().toISOString() },
+                resource_context: {
+                    node_value: [{ resourceId: permitResourceId }],
+                },
+            },
+        },
+    };
+
+    // The recipient is optional; a reply inherits its thread's recipient.
+    if (recipientId) {
+        aliasedData.message_content!.aliased_data!.recipient = {
+            node_value: [{ resourceId: recipientId }],
+        };
+    }
+
+    // A reply points back at its thread's root message.
+    if (threadId) {
+        aliasedData.related_source_message = {
+            aliased_data: {
+                related_source_message: {
+                    node_value: [{ resourceId: threadId }],
+                },
+            },
+        };
+    }
+
+    return apiFetchJson<RawThreadMessage>(
+        arches.urls.bcap_message_list_create,
+        {
+            method: HttpMethod.Post,
+            body: { aliased_data: aliasedData },
+        },
+    );
+};
+
+const formatMessageDate = (isoDate: string | null | undefined): string =>
+    new Date(isoDate ?? 0).toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+export const getMessagesForPermit = async (
+    permitId: string,
+): Promise<{ messages: FormattedMessage[]; threadId: string | null }> => {
+    const threads = await apiFetchJson<{ results: RawThreadMessage[] }>(
+        arches.urls.bcap_message_resource_threads(permitId),
+    );
+    const threadId = threads.results?.[0]?.resourceinstanceid ?? null;
+    if (!threadId) {
+        return { messages: [], threadId: null };
+    }
+
+    // The thread endpoint returns the root and its replies as separate messages.
+    const thread = await apiFetchJson<{ results: RawThreadMessage[] }>(
+        arches.urls.bcap_message_thread_messages(threadId),
+    );
+
+    const messages = (thread.results ?? [])
+        .map((message) => {
+            const content = message.aliased_data?.message_content?.aliased_data;
+            return {
+                author: content?.message_author?.display_value || 'Unknown',
+                text:
+                    content?.message_content?.node_value?.en?.value ||
+                    content?.message_content?.display_value ||
+                    '',
+                date: content?.message_creation_date?.node_value ?? null,
+            };
+        })
+        .filter((message) => message.text)
+        .sort(
+            (a, b) =>
+                new Date(a.date ?? 0).getTime() -
+                new Date(b.date ?? 0).getTime(),
+        )
+        .map((message) => ({
+            author: message.author,
+            text: message.text,
+            date: formatMessageDate(message.date),
+        }));
+
+    return { messages, threadId };
+};
+
+export const getContributors = async (): Promise<
+    Array<{ label: string; value: string }>
+> => {
+    const data = await apiFetchJson<{
+        results?: Array<{ name?: string; resourceinstanceid: string }>;
+    }>(arches.urls.api_contributor);
+
+    return (data.results ?? []).map((item) => ({
+        label: item.name || 'Unknown Contributor',
+        value: item.resourceinstanceid,
+    }));
 };
