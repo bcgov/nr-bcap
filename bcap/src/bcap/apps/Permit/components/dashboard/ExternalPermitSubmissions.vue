@@ -36,6 +36,7 @@ interface DashboardProject {
     permit_number: string;
     urgency: number;
     priority_level: string;
+    unread_messages: number;
 }
 
 // SortingBar State -- persist the selected tab across navigation (saved on card click).
@@ -239,6 +240,7 @@ const openResourceReport = (resourceId: string) => {
                                 "
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
+                                :unread-messages="project.unread_messages || 0"
                                 :search-query="searchQuery"
                                 @click="openResourceReport(project.id)"
                             />

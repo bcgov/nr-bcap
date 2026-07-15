@@ -6,6 +6,7 @@ and built through arches-querysets (via ``ResourceBuilder``) so it stays in sync
 with how the service reads.
 """
 
+import uuid
 from dataclasses import dataclass
 from datetime import timezone as dt_timezone
 
@@ -16,6 +17,11 @@ from arches_querysets.models import ResourceTileTree
 
 from bcap.builders.contributor_builder import ContributorBuilder, ContributorSpec
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.util.aliases.permit_application import (
+    PermitApplicationAliases as pa,
+    PermitApplicationGroupAliases as pa_groups,
+)
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import random_reference_value, reference_value
 
 
@@ -420,25 +426,30 @@ class DashboardDemoBuilder(ProcessRequirementBuilder, ContributorBuilder):
     def _make_permit(self, spec: PermitSpec):
         """Create a permit_application from a PermitSpec: linked to its HCA
         Permit, with one application_admin child per requirement."""
-        permit = self.new_resource("permit_application")
+        permit = self.new_resource(GraphSlugs.PERMIT_APPLICATION)
         self.append_blank_tile_for_group(
             permit,
-            "application_identification",
+            pa_groups.APPLICATION_IDENTIFICATION,
             {
-                "project_name": self.localized(spec.project_name),
-                "application_id": self.localized(spec.application_id),
+                pa.PROJECT_NAME: self.localized(spec.project_name),
+                pa.APPLICATION_ID: self.localized(spec.application_id),
+                pa.FILING_TYPE: random_reference_value(
+                    GraphSlugs.PERMIT_APPLICATION, pa.FILING_TYPE
+                ),
             },
         )
         self.append_blank_tile_for_group(
             permit,
-            "related_permit",
-            {"related_permit": spec.hca_permit, "is_related_permit": True},
+            pa.RELATED_PERMIT,
+            {pa.RELATED_PERMIT: spec.hca_permit, pa.IS_RELATED_PERMIT: True},
         )
-        proposed = self.append_blank_tile_for_group(permit, "proposed_project", {})
+        proposed = self.append_blank_tile_for_group(
+            permit, pa_groups.PROPOSED_PROJECT, {}
+        )
         proposed.aliased_data.development_project_details.aliased_data.industrial_sector = random_reference_value(
-            "permit_application", "industrial_sector"
+            GraphSlugs.PERMIT_APPLICATION, pa.INDUSTRIAL_SECTOR
         )
-        permit.append_tile("application_admin")
+        permit.append_tile(pa_groups.APPLICATION_ADMIN)
         admin = permit.aliased_data.application_admin
         # Submitted (a past date) so the seeded permit shows on the internal
         # dashboard, which only surfaces submitted applications.
@@ -448,14 +459,30 @@ class DashboardDemoBuilder(ProcessRequirementBuilder, ContributorBuilder):
         admin.aliased_data.project_officer = spec.project_officer
         if spec.priority is not None:
             admin.aliased_data.application_priority_level = reference_value(
-                "permit_application", "application_priority_level", spec.priority
+                GraphSlugs.PERMIT_APPLICATION,
+                pa.APPLICATION_PRIORITY_LEVEL,
+                spec.priority,
             )
-        for i, (requirement, order, assignee) in enumerate(spec.children):
-            if i > 0:
-                admin.append_tile("process_requirement")
-            child = admin.aliased_data.process_requirement[i]
-            child.aliased_data.process_requirement_order = order
-            child.aliased_data.process_requirement = requirement
+        self.prune_blank_tiles(admin, pa_groups.PROCESS_MODULE, pa.MODULE_NAME)
+        module = self.append_blank_tile_for_group(
+            admin,
+            pa_groups.PROCESS_MODULE,
+            {
+                pa.MODULE_NAME: self.localized("Permit Review"),
+                pa.MODULE_ID: str(uuid.uuid4()),
+                pa.MODULE_ORDER: 1,
+            },
+        )
+        self.prune_blank_tiles(module, pa.PROCESS_REQUIREMENT)
+        for requirement, order, assignee in spec.children:
+            child = self.append_blank_tile_for_group(
+                module,
+                pa.PROCESS_REQUIREMENT,
+                {
+                    pa.PROCESS_REQUIREMENT_ORDER: order,
+                    pa.PROCESS_REQUIREMENT: requirement,
+                },
+            )
             if assignee is not None:
                 child.aliased_data.ministry_assignee = assignee
         permit.save(**self.save_kwargs)

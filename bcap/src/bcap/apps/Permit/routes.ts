@@ -2,7 +2,7 @@ import arches from 'arches';
 import type { RouteNamesType } from '@/bcgov_arches_common/routes.ts';
 const routes = [
     {
-        path: arches.urls.plugin('external-permit-workflows'),
+        path: arches.urls.plugin('submissions'),
         name: 'root',
         component: () =>
             import('@/bcap/apps/Permit/components/dashboard/ExternalPermitSubmissions.vue'),
@@ -18,7 +18,7 @@ const routes = [
             import('@/bcap/apps/Permit/components/dashboard/InternalDashboard.vue'),
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/permit/:id'),
+        path: arches.urls.plugin('submissions/permit/:id'),
         name: 'permitDetails',
         component: () =>
             import('@/bcap/apps/Permit/components/dashboard/PermitDetails.vue'),
@@ -28,7 +28,7 @@ const routes = [
         },
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/alterationsModule'),
+        path: arches.urls.plugin('submissions/alterationsModule'),
         name: 'alterationsModule',
         component: () =>
             import('@/bcap/apps/Permit/Modules/AlterationsModule/AlterationsModule.vue'),
@@ -38,7 +38,7 @@ const routes = [
         },
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/baseModule'),
+        path: arches.urls.plugin('submissions/baseModule'),
         name: 'baseModule',
         component: () =>
             import('@/bcap/apps/Permit/Modules/BaseModule/BaseModule.vue'),
@@ -48,7 +48,7 @@ const routes = [
         },
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/collectionModule'),
+        path: arches.urls.plugin('submissions/collectionModule'),
         name: 'collectionModule',
         component: () =>
             import('@/bcap/apps/Permit/Modules/CollectionsModule/CollectionsModule.vue'),
@@ -58,7 +58,7 @@ const routes = [
         },
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/inspectionModule'),
+        path: arches.urls.plugin('submissions/inspectionModule'),
         name: 'inspectionModule',
         component: () =>
             import('@/bcap/apps/Permit/Modules/InspectionModule/InspectionModule.vue'),
@@ -68,9 +68,7 @@ const routes = [
         },
     },
     {
-        path: arches.urls.plugin(
-            'external-permit-workflows/investigationModule',
-        ),
+        path: arches.urls.plugin('submissions/investigationModule'),
         name: 'investigationModule',
         component: () =>
             import('@/bcap/apps/Permit/Modules/InvestigationModule/InvestigationModule.vue'),
@@ -80,7 +78,7 @@ const routes = [
         },
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/methodsModule'),
+        path: arches.urls.plugin('submissions/methodsModule'),
         name: 'methodsModule',
         component: () =>
             import('@/bcap/apps/Permit/Modules/MethodsModule/MethodsModule.vue'),
@@ -90,7 +88,7 @@ const routes = [
         },
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/recordingsModule'),
+        path: arches.urls.plugin('submissions/recordingsModule'),
         name: 'recordingsModule',
         component: () =>
             import('@/bcap/apps/Permit/Modules/RecordingsModule/RecordingsModule.vue'),
@@ -106,13 +104,13 @@ const routes = [
             import('@/bcap/apps/Permit/components/dashboard/TaskChecklist.vue'),
     },
     {
-        path: arches.urls.plugin('internal-permit-dashboard/CreateChecklist'),
-        name: 'CreateChecklist',
+        path: arches.urls.plugin('internal-permit-dashboard/EditChecklist'),
+        name: 'EditChecklist',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/CreateChecklist.vue'),
+            import('@/bcap/apps/Permit/components/dashboard/EditChecklist.vue'),
     },
     {
-        path: arches.urls.plugin('external-permit-workflows/message-demo'),
+        path: arches.urls.plugin('submissions/message-demo'),
         name: 'messageDemo',
         component: () =>
             import('@/bcap/apps/Permit/components/MessageDemo.vue'),
@@ -127,7 +125,7 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
     home: string;
     permitDetails: string;
     checklist: string;
-    createchecklist: string;
+    editchecklist: string;
     alterationsModule: string;
     baseModule: string;
     collectionModule: string;
@@ -142,7 +140,7 @@ const routeNames: ExternalPermitRouteNamesType = {
     login: '',
     permitDetails: 'permitDetails',
     checklist: 'Checklist',
-    createchecklist: 'CreateChecklist',
+    editchecklist: 'EditChecklist',
     alterationsModule: 'alterationsModule',
     baseModule: 'baseModule',
     collectionModule: 'collectionModule',

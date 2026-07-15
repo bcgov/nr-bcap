@@ -23,6 +23,10 @@ from bcap.views.permit_application_api import (
     PermitApplicationCreateView,
 )
 from bcap.views.process_requirement_api import (
+    ModuleRequirementsView,
+    ModuleRequirementView,
+    RequirementChecklistView,
+    PermitModuleView,
     ProcessRequirementListView,
     ProcessRequirementSeedView,
     ProcessRequirementView,
@@ -114,6 +118,31 @@ documented_api_patterns = [
         "api/permit_application/<uuid:pk>/process_requirement/<slug:permit_type>",
         ProcessRequirementSeedView.as_view(),
         name="seed_process_requirements",
+    ),
+    # Remove a submitted module (its process_module tile) from a permit.
+    path(
+        "api/permit_application/<uuid:pk>/module/<uuid:module_tileid>",
+        PermitModuleView.as_view(),
+        name="permit_module",
+    ),
+    # Reorder a module's process requirements.
+    path(
+        "api/permit_application/<uuid:pk>/module/<uuid:module_tileid>/requirements",
+        ModuleRequirementsView.as_view(),
+        name="module_requirements",
+    ),
+    # Remove one process requirement from a module.
+    path(
+        "api/permit_application/<uuid:pk>/module/<uuid:module_tileid>"
+        "/requirement/<uuid:requirement_id>",
+        ModuleRequirementView.as_view(),
+        name="module_requirement",
+    ),
+    # Save a process requirement's checklist (name + ordered steps).
+    path(
+        "api/process_requirement/<uuid:requirement_id>/checklist",
+        RequirementChecklistView.as_view(),
+        name="requirement_checklist",
     ),
     path(
         "api/bcap_message/resource/<uuid:resource_id>/threads",

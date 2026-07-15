@@ -60,7 +60,7 @@ class ExternalDashboardService(BaseDashboardService):
         return (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PERMIT_APPLICATION,
-                nodes=self._nodes(
+                nodes=self.nodes(
                     GraphSlugs.PERMIT_APPLICATION,
                     [
                         self.PA.PROJECT_NAME,

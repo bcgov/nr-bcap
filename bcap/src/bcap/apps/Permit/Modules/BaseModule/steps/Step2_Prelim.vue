@@ -30,6 +30,22 @@ defineExpose({ isValid });
                 :mode="EDIT"
                 :aliased-node-data="
                     draftData?.application_identification?.aliased_data
+                        ?.filing_type
+                "
+                graph-slug="permit_application"
+                node-alias="filing_type"
+                @update:value="
+                    updateValue(
+                        $event,
+                        'filing_type',
+                        'application_identification',
+                    )
+                "
+            />
+            <GenericWidget
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.application_identification?.aliased_data
                         ?.project_name
                 "
                 graph-slug="permit_application"
@@ -40,17 +56,6 @@ defineExpose({ isValid });
                         'project_name',
                         'application_identification',
                     )
-                "
-            />
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.proposed_project?.aliased_data?.project_type
-                "
-                graph-slug="permit_application"
-                node-alias="project_type"
-                @update:value="
-                    updateValue($event, 'project_type', 'proposed_project')
                 "
             />
             <GenericWidget

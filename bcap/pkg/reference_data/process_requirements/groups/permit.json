@@ -1,7 +1,7 @@
 {
     "id": "REQ-PERMIT-TEMPLATE-000",
-    "name": "Permit Application Requirements",
-    "type": "Grouping",
+    "name": "Permit Application",
+    "type": "Module",
     "internal": true,
     "resource": null,
     "due": null,

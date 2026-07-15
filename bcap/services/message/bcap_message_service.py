@@ -55,7 +55,7 @@ class BcapMessageService(BaseGraphService):
         context_id = (
             ResourceTileTree.get_tiles(
                 MESSAGE_GRAPH_SLUG,
-                nodes=cls._nodes(MESSAGE_GRAPH_SLUG, [cls.A.RESOURCE_CONTEXT]),
+                nodes=cls.nodes(MESSAGE_GRAPH_SLUG, [cls.A.RESOURCE_CONTEXT]),
                 resource_ids=[str(message_id)],
             )
             .values_list("resource_context__id", flat=True)
@@ -184,7 +184,7 @@ class BcapMessageService(BaseGraphService):
                 MESSAGE_GRAPH_SLUG,
                 # Annotate only the nodes filtered on, not the whole message
                 # graph, so the count query stays cheap.
-                nodes=self._nodes(
+                nodes=self.nodes(
                     MESSAGE_GRAPH_SLUG,
                     [
                         self.A.RECIPIENT,

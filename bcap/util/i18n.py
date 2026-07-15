@@ -8,3 +8,8 @@ def localized_string(value):
     if not value:
         return ""
     return next(iter(value.values()))["value"]
+
+
+def localized(value):
+    """An i18n node value wrapping the given string."""
+    return {"en": {"value": value, "direction": "ltr"}}

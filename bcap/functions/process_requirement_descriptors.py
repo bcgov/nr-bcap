@@ -1,15 +1,18 @@
 from arches.app.functions.primary_descriptors import AbstractPrimaryDescriptorsFunction
 from arches.app.models import models
 from arches.app.datatypes.datatypes import DataTypeFactory
+from bcap.util.aliases.permit_application import PermitApplicationAliases as pa
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as aliases
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import get_hierarchy_for_list_item
+from bcap.util.graph import node_id
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001006",
     "name": "BCAP Process Requirement Descriptors",
     "type": "primarydescriptors",
     "modulename": "process_requirement_descriptors.py",
-    "description": "Function that provides the primary descriptors for Process Requirments",
+    "description": "Function that provides the primary descriptors for Process Requirements",
     "defaultconfig": {
         "module": "bcap.functions.process_requirement_descriptors",
         "class_name": "ProcessRequirementDescriptors",
@@ -229,9 +232,34 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
                 to_resource=resource,
                 from_resource__graph__slug="permit_application",
             ).first()
-            descriptors = permit.from_resource.descriptors if permit else None
-            name = (descriptors or {}).get("en", {}).get("name")
-            if name:
-                display_value = f"{name} - {display_value}"
+            # Only an attached requirement has an app/module prefix; skip the
+            # lookup entirely for a cloned or grouping-parent one (no permit).
+            if permit is not None:
+                descriptors = permit.from_resource.descriptors
+                app_id = (descriptors or {}).get("en", {}).get("name")
+                module_id = self._module_id_for_requirement(
+                    resource.resourceinstanceid, permit.from_resource_id
+                )
+                # app id - module id - name, dropping whichever prefix is missing
+                # so a grouping parent (no module) still reads cleanly.
+                prefix = " - ".join(part for part in (app_id, module_id) if part)
+                if prefix:
+                    display_value = f"{prefix} - {display_value}"
 
         return display_value if display_value else self._empty_name_value
+
+    @staticmethod
+    def _module_id_for_requirement(requirement_id, permit_id):
+        """The module id of the permit's process_module tile that lists this
+        requirement (None for a grouping parent). Scoped to the permit's tiles by
+        the indexed resourceinstance_id, not a whole-table JSONB scan."""
+        reference_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
+        module_id_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.MODULE_ID)
+        child = models.TileModel.objects.filter(
+            resourceinstance_id=permit_id,
+            data__contains={reference_node: [{"resourceId": str(requirement_id)}]},
+        ).first()
+        if not child or not child.parenttile_id:
+            return None
+        parent = models.TileModel.objects.filter(pk=child.parenttile_id).first()
+        return parent.data.get(module_id_node) if parent else None

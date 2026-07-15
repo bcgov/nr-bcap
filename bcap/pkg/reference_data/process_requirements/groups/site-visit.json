@@ -1,0 +1,79 @@
+{
+    "id": "REQ-SV-TEMPLATE-000",
+    "name": "Site Visit",
+    "type": "Module",
+    "internal": true,
+    "resource": null,
+    "due": null,
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [],
+    "requirements": [
+        {
+            "id": "REQ-SV-TEMPLATE-001",
+            "name": "Plan Site Visit",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Purpose confirmed",
+                    "description": "Reason for the visit (monitoring, compliance, follow-up) is recorded",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Access arranged",
+                    "description": "Landowner/First Nation notified and site access confirmed",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Personnel scheduled",
+                    "description": "Attending staff and any required specialists are booked",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                }
+            ]
+        },
+        {
+            "id": "REQ-SV-TEMPLATE-002",
+            "name": "Record Site Visit",
+            "type": "Checklist",
+            "internal": true,
+            "resource": null,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": [
+                {
+                    "name": "Date of visit",
+                    "description": "Actual date the site was visited",
+                    "sort_order": 1,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Observations documented",
+                    "description": "Site conditions, activity, and any concerns are described",
+                    "sort_order": 2,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Photos and spatial data captured",
+                    "description": "Field photos and GPS/mapping data are attached",
+                    "sort_order": 3,
+                    "sub_satisfied": false
+                },
+                {
+                    "name": "Follow-up actions",
+                    "description": "Any required follow-up, notifications, or conditions are noted",
+                    "sort_order": 4,
+                    "sub_satisfied": false
+                }
+            ]
+        }
+    ]
+}

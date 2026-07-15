@@ -12,6 +12,10 @@ from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
 )
 from bcap.builders.contributor_builder import ContributorSpec
+from bcap.util.aliases.permit_application import (
+    PermitApplicationAliases as pa,
+    PermitApplicationGroupAliases as pa_groups,
+)
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
 
@@ -39,6 +43,7 @@ def build_external_permit(builder, name, owner, lifecycle="Active", hca_permit=N
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
+            "filing_type": reference_value("permit_application", "filing_type"),
         },
     )
     builder.append_blank_tile_for_group(
@@ -50,6 +55,12 @@ def build_external_permit(builder, name, owner, lifecycle="Active", hca_permit=N
             ),
             "application_submission_date": "2026-06-18",
         },
+    )
+    # External permits carry no modules; drop the blank one append_tile creates.
+    builder.prune_blank_tiles(
+        permit.aliased_data.application_admin,
+        pa_groups.PROCESS_MODULE,
+        pa.MODULE_NAME,
     )
     if hca_permit is not None:
         builder.append_blank_tile_for_group(

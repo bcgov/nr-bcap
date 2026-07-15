@@ -20,6 +20,10 @@ class MissingGeometryError(Exception):
     pass
 
 
+class BordenGridServiceError(Exception):
+    pass
+
+
 # @todo - How do we handle multiple geometries?
 class BordenNumberApi:
     _datatype_factory = None
@@ -78,7 +82,17 @@ class BordenNumberApi:
             req = urllib3.PoolManager()
 
         response = req.request("GET", url)
+        if response.status != 200:
+            raise BordenGridServiceError(
+                f"The Borden Grid lookup service returned an unexpected error (HTTP {response.status}). "
+                "Please try again or contact system support."
+            )
         body = json.loads(response.data.decode())
+        if not body.get("features"):
+            raise MissingGeometryError(
+                "No Borden Grid was found for the provided location. "
+                "Please ensure the site boundary is within British Columbia."
+            )
         borden_grid = body["features"][0]["properties"]["BORDGRID"]
 
         return borden_grid
