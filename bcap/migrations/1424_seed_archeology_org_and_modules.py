@@ -46,14 +46,14 @@ CONTRIBUTOR_TYPES = [
         "c0b10d00-fbfa-58c3-ba46-3dc39d61a87e",
         "Individual",
         0,
-        "http://bcap/bcap8c4e2933-a97a-5f47-89e7-78d1d8aaad81",
+        "/bcap/plugins/controlled-list-manager/item/8c4e2933-a97a-5f47-89e7-78d1d8aaad81",
     ),
     (
         "fd2053d3-c010-519a-97e5-52f3c7b508e2",
         "891278e4-5d67-571a-a0c4-414896d36d1c",
         "Organization",
         1,
-        "http://bcap/bcapfd2053d3-c010-519a-97e5-52f3c7b508e2",
+        "/bcap/plugins/controlled-list-manager/item/fd2053d3-c010-519a-97e5-52f3c7b508e2",
     ),
 ]
 

@@ -2,59 +2,59 @@
 <rdf:RDF
   xmlns:skos="http://www.w3.org/2004/02/skos/core#"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:arches="http://localhost:82/"
+  xmlns:arches="/bcap/plugins/controlled-list-manager/item/"
   xmlns:dcterms="http://purl.org/dc/terms/"
 >
-  <skos:Concept rdf:about="http://localhost:82/6dad6fc7-9bc4-4f25-9e50-20c4eb2be6ab">
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/6dad6fc7-9bc4-4f25-9e50-20c4eb2be6ab">
     <skos:inScheme>
-      <skos:ConceptScheme rdf:about="http://localhost:82/cfda6f18-56a4-4946-becf-fdf86994f275">
+      <skos:ConceptScheme rdf:about="/bcap/plugins/controlled-list-manager/item/cfda6f18-56a4-4946-becf-fdf86994f275">
         <dcterms:title>Filing Type</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
     <skos:definition xml:lang="en">Submission of a document without a larger context</skos:definition>
     <skos:prefLabel xml:lang="en">Document Submission</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/6dad6fc7-9bc4-4f25-9e50-20c4eb2be6ab</dcterms:identifier>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/6dad6fc7-9bc4-4f25-9e50-20c4eb2be6ab</dcterms:identifier>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/6576fbb7-948a-4064-bc8f-2e5ab788c27c">
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/6576fbb7-948a-4064-bc8f-2e5ab788c27c">
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
     <skos:scopeNote xml:lang="en">Application to do work within the context of an emergency (Flood, Fire, etc)</skos:scopeNote>
-    <skos:inScheme rdf:resource="http://localhost:82/cfda6f18-56a4-4946-becf-fdf86994f275"/>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/6576fbb7-948a-4064-bc8f-2e5ab788c27c</dcterms:identifier>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/6576fbb7-948a-4064-bc8f-2e5ab788c27c</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Permit Application - Emergency</skos:prefLabel>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/7c3b5f74-e68b-49ae-ba6e-2125fc7a4da8">
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/7c3b5f74-e68b-49ae-ba6e-2125fc7a4da8">
     <skos:prefLabel xml:lang="en">Information Request</skos:prefLabel>
     <skos:definition xml:lang="en">Filing to request information from the Arch Branch</skos:definition>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/7c3b5f74-e68b-49ae-ba6e-2125fc7a4da8</dcterms:identifier>
-    <skos:inScheme rdf:resource="http://localhost:82/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/7c3b5f74-e68b-49ae-ba6e-2125fc7a4da8</dcterms:identifier>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/cfda6f18-56a4-4946-becf-fdf86994f275"/>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/69f170e3-6dfd-4af8-a32c-c124d19c3e26">
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/69f170e3-6dfd-4af8-a32c-c124d19c3e26">
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
-    <skos:inScheme rdf:resource="http://localhost:82/cfda6f18-56a4-4946-becf-fdf86994f275"/>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/69f170e3-6dfd-4af8-a32c-c124d19c3e26</dcterms:identifier>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/69f170e3-6dfd-4af8-a32c-c124d19c3e26</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Permit Application - Standard</skos:prefLabel>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/357f2bb7-47cb-4340-9a51-2ce6128bedd4">
-    <skos:inScheme rdf:resource="http://localhost:82/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/357f2bb7-47cb-4340-9a51-2ce6128bedd4">
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/cfda6f18-56a4-4946-becf-fdf86994f275"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
     <skos:prefLabel xml:lang="en">Site Visit</skos:prefLabel>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/357f2bb7-47cb-4340-9a51-2ce6128bedd4</dcterms:identifier>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/357f2bb7-47cb-4340-9a51-2ce6128bedd4</dcterms:identifier>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/f4be651b-cdae-4e05-a109-60192575f385">
-    <skos:inScheme rdf:resource="http://localhost:82/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/f4be651b-cdae-4e05-a109-60192575f385">
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/cfda6f18-56a4-4946-becf-fdf86994f275"/>
     <skos:broader>
-      <skos:Concept rdf:about="http://localhost:82/20f204a6-7a49-432a-8734-eb1fdff2e570">
-        <skos:narrower rdf:resource="http://localhost:82/f4be651b-cdae-4e05-a109-60192575f385"/>
+      <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/20f204a6-7a49-432a-8734-eb1fdff2e570">
+        <skos:narrower rdf:resource="/bcap/plugins/controlled-list-manager/item/f4be651b-cdae-4e05-a109-60192575f385"/>
         <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
         <skos:prefLabel xml:lang="en">Permit Application - Multi Project</skos:prefLabel>
-        <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/20f204a6-7a49-432a-8734-eb1fdff2e570</dcterms:identifier>
-        <skos:inScheme rdf:resource="http://localhost:82/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+        <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/20f204a6-7a49-432a-8734-eb1fdff2e570</dcterms:identifier>
+        <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/cfda6f18-56a4-4946-becf-fdf86994f275"/>
       </skos:Concept>
     </skos:broader>
     <skos:prefLabel xml:lang="en">Zone Addition</skos:prefLabel>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/f4be651b-cdae-4e05-a109-60192575f385</dcterms:identifier>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/f4be651b-cdae-4e05-a109-60192575f385</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
   </skos:Concept>
 </rdf:RDF>

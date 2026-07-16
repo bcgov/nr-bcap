@@ -5,20 +5,20 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:dcterms="http://purl.org/dc/terms/"
 >
-  <skos:Concept rdf:about="https://dlvrapps.nrs.gov.bc.ca87ae8b8f-521d-45d0-b3f8-d4cbbca990e7">
+  <skos:Concept rdf:about="7ae8b8f-521d-45d0-b3f8-d4cbbca990e7">
     <skos:inScheme>
-      <skos:ConceptScheme rdf:about="https://dlvrapps.nrs.gov.bc.ca18dec7b7-d0f6-472f-826a-3b8edf019291">
+      <skos:ConceptScheme rdf:about="8dec7b7-d0f6-472f-826a-3b8edf019291">
         <dcterms:title>Investigation Project Type</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
     <skos:prefLabel xml:lang="en">Resource Management</skos:prefLabel>
-    <dcterms:identifier>https://dlvrapps.nrs.gov.bc.ca//bcap//plugins/controlled-list-manager/item/87ae8b8f-521d-45d0-b3f8-d4cbbca990e7</dcterms:identifier>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/87ae8b8f-521d-45d0-b3f8-d4cbbca990e7</dcterms:identifier>
     <ns1:dlvrapps.nrs.gov.bc.casortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns1:dlvrapps.nrs.gov.bc.casortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="https://dlvrapps.nrs.gov.bc.ca091054f0-1e2e-4446-a6ed-b8dd2f983b80">
+  <skos:Concept rdf:about="91054f0-1e2e-4446-a6ed-b8dd2f983b80">
     <ns1:dlvrapps.nrs.gov.bc.casortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</ns1:dlvrapps.nrs.gov.bc.casortorder>
     <skos:prefLabel xml:lang="en">Research</skos:prefLabel>
-    <dcterms:identifier>https://dlvrapps.nrs.gov.bc.ca//bcap//plugins/controlled-list-manager/item/091054f0-1e2e-4446-a6ed-b8dd2f983b80</dcterms:identifier>
-    <skos:inScheme rdf:resource="https://dlvrapps.nrs.gov.bc.ca18dec7b7-d0f6-472f-826a-3b8edf019291"/>
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/091054f0-1e2e-4446-a6ed-b8dd2f983b80</dcterms:identifier>
+    <skos:inScheme rdf:resource="8dec7b7-d0f6-472f-826a-3b8edf019291"/>
   </skos:Concept>
 </rdf:RDF>

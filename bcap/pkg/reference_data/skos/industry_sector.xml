@@ -1,264 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF
-  xmlns:arches="http://localhost:82/"
+  xmlns:arches="/bcap/plugins/controlled-list-manager/item/"
   xmlns:skos="http://www.w3.org/2004/02/skos/core#"
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
-  <skos:Concept rdf:about="http://localhost:82/6346b280-2f88-4279-aef0-c60abc036f54">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/6346b280-2f88-4279-aef0-c60abc036f54</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/6346b280-2f88-4279-aef0-c60abc036f54">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/6346b280-2f88-4279-aef0-c60abc036f54</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Agriculture</skos:prefLabel>
     <skos:inScheme>
-      <skos:ConceptScheme rdf:about="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5">
+      <skos:ConceptScheme rdf:about="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5">
         <dcterms:title>Industry Sector</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/e5db4448-e64e-44d5-8b68-4ed6fa4d3e6c">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/e5db4448-e64e-44d5-8b68-4ed6fa4d3e6c</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/e5db4448-e64e-44d5-8b68-4ed6fa4d3e6c">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/e5db4448-e64e-44d5-8b68-4ed6fa4d3e6c</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Ancestral Remains</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/9c5f047c-a4f2-4e47-a46c-4b66343f0c68">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/9c5f047c-a4f2-4e47-a46c-4b66343f0c68</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/9c5f047c-a4f2-4e47-a46c-4b66343f0c68">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/9c5f047c-a4f2-4e47-a46c-4b66343f0c68</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Aquaculture</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/58f344eb-fcc2-4254-8f48-ac8149bca867">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/58f344eb-fcc2-4254-8f48-ac8149bca867</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/58f344eb-fcc2-4254-8f48-ac8149bca867">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/58f344eb-fcc2-4254-8f48-ac8149bca867</dcterms:identifier>
     <skos:prefLabel xml:lang="en">BC Buildings Corporation</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/8c3158a8-6ca3-4fa1-9d7f-9192405d1e45">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/8c3158a8-6ca3-4fa1-9d7f-9192405d1e45</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/8c3158a8-6ca3-4fa1-9d7f-9192405d1e45">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/8c3158a8-6ca3-4fa1-9d7f-9192405d1e45</dcterms:identifier>
     <skos:prefLabel xml:lang="en">BC Energy Regulator</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/94b5cd3e-a4cb-4c90-845e-e417854b04bf">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/94b5cd3e-a4cb-4c90-845e-e417854b04bf</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/94b5cd3e-a4cb-4c90-845e-e417854b04bf">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/94b5cd3e-a4cb-4c90-845e-e417854b04bf</dcterms:identifier>
     <skos:prefLabel xml:lang="en">BC Ferries</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/83627498-d721-49a3-8700-05b4c3a5be0b">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/83627498-d721-49a3-8700-05b4c3a5be0b</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/83627498-d721-49a3-8700-05b4c3a5be0b">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/83627498-d721-49a3-8700-05b4c3a5be0b</dcterms:identifier>
     <skos:prefLabel xml:lang="en">BC Hydro</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/d6015134-231e-4ede-afc3-1f6790abe29a">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/d6015134-231e-4ede-afc3-1f6790abe29a</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/d6015134-231e-4ede-afc3-1f6790abe29a">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/d6015134-231e-4ede-afc3-1f6790abe29a</dcterms:identifier>
     <skos:prefLabel xml:lang="en">BC Timber Sales</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/e06cd877-713a-45a3-a12f-3859b4393865">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/e06cd877-713a-45a3-a12f-3859b4393865</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/e06cd877-713a-45a3-a12f-3859b4393865">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/e06cd877-713a-45a3-a12f-3859b4393865</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Canada Energy Regulator</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/63b9a761-aee6-4a21-bc73-d9af50517c4a">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/63b9a761-aee6-4a21-bc73-d9af50517c4a</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/63b9a761-aee6-4a21-bc73-d9af50517c4a">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/63b9a761-aee6-4a21-bc73-d9af50517c4a</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Commercial</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/6e9c5a7c-f303-40fb-9553-6da74d7c57d6">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/6e9c5a7c-f303-40fb-9553-6da74d7c57d6</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/6e9c5a7c-f303-40fb-9553-6da74d7c57d6">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/6e9c5a7c-f303-40fb-9553-6da74d7c57d6</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Emergency Environmental Response</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/3cb84368-32a0-4adf-b2f9-da9ab69053d8">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/3cb84368-32a0-4adf-b2f9-da9ab69053d8</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/3cb84368-32a0-4adf-b2f9-da9ab69053d8">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/3cb84368-32a0-4adf-b2f9-da9ab69053d8</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Federal</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/21db6875-d568-4011-b958-c11bbcd550fc">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/21db6875-d568-4011-b958-c11bbcd550fc</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/21db6875-d568-4011-b958-c11bbcd550fc">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/21db6875-d568-4011-b958-c11bbcd550fc</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Film</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/4c87df66-7f2b-4d5e-85f6-04801d27e9d8">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/4c87df66-7f2b-4d5e-85f6-04801d27e9d8</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/4c87df66-7f2b-4d5e-85f6-04801d27e9d8">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/4c87df66-7f2b-4d5e-85f6-04801d27e9d8</dcterms:identifier>
     <skos:prefLabel xml:lang="en">First Nations</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">13</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/5b942c0a-2abe-4b64-9ee3-fec61253a161">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/5b942c0a-2abe-4b64-9ee3-fec61253a161</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/5b942c0a-2abe-4b64-9ee3-fec61253a161">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/5b942c0a-2abe-4b64-9ee3-fec61253a161</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Forestry</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/a3e4fbf2-0fdb-445c-a973-c4e32b732dd6">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/a3e4fbf2-0fdb-445c-a973-c4e32b732dd6</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/a3e4fbf2-0fdb-445c-a973-c4e32b732dd6">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/a3e4fbf2-0fdb-445c-a973-c4e32b732dd6</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Mining</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/4b24f23b-c377-4740-b67d-4106823363e1">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/4b24f23b-c377-4740-b67d-4106823363e1</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/4b24f23b-c377-4740-b67d-4106823363e1">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/4b24f23b-c377-4740-b67d-4106823363e1</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Ministry of Transportation - Infrastructure</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">16</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/7068d8b0-d109-4620-8b3e-500053f04cb7">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/7068d8b0-d109-4620-8b3e-500053f04cb7</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/7068d8b0-d109-4620-8b3e-500053f04cb7">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/7068d8b0-d109-4620-8b3e-500053f04cb7</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Ministry of Transportation - Major Projects</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">17</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/40389b1c-4255-4f1e-8ea0-530bd28becf6">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/40389b1c-4255-4f1e-8ea0-530bd28becf6</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/40389b1c-4255-4f1e-8ea0-530bd28becf6">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/40389b1c-4255-4f1e-8ea0-530bd28becf6</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Municipal</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">18</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/76d97cbb-a1a2-40d5-a079-ce4474633543">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/76d97cbb-a1a2-40d5-a079-ce4474633543</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/76d97cbb-a1a2-40d5-a079-ce4474633543">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/76d97cbb-a1a2-40d5-a079-ce4474633543</dcterms:identifier>
     <skos:prefLabel xml:lang="en">NEB</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">19</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/575cd34d-bf28-4add-899d-b1504dd3333f">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/575cd34d-bf28-4add-899d-b1504dd3333f</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/575cd34d-bf28-4add-899d-b1504dd3333f">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/575cd34d-bf28-4add-899d-b1504dd3333f</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Oil &amp; Gas (Arch Branch)</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/f66646c0-17b9-4cea-a8e4-a97232c18459">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/f66646c0-17b9-4cea-a8e4-a97232c18459</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/f66646c0-17b9-4cea-a8e4-a97232c18459">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/f66646c0-17b9-4cea-a8e4-a97232c18459</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Park</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">21</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/2023cb04-f70a-49b6-bad6-e9691a83ea99">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/2023cb04-f70a-49b6-bad6-e9691a83ea99</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/2023cb04-f70a-49b6-bad6-e9691a83ea99">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/2023cb04-f70a-49b6-bad6-e9691a83ea99</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Power</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">22</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/8becb0a4-22c1-43ee-8493-5b4ea1100da0">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/8becb0a4-22c1-43ee-8493-5b4ea1100da0</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/8becb0a4-22c1-43ee-8493-5b4ea1100da0">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/8becb0a4-22c1-43ee-8493-5b4ea1100da0</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Province</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">23</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/437f6174-911e-4f8b-adca-72ec5e0e5c28">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/437f6174-911e-4f8b-adca-72ec5e0e5c28</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/437f6174-911e-4f8b-adca-72ec5e0e5c28">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/437f6174-911e-4f8b-adca-72ec5e0e5c28</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Provincial Crown Land</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">24</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/3bc6dea4-fd56-42c9-b5b0-8f5031e4fed0">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/3bc6dea4-fd56-42c9-b5b0-8f5031e4fed0</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/3bc6dea4-fd56-42c9-b5b0-8f5031e4fed0">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/3bc6dea4-fd56-42c9-b5b0-8f5031e4fed0</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Rail</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/31fcb8b8-0eb9-4feb-9561-b08605f905a9">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/31fcb8b8-0eb9-4feb-9561-b08605f905a9</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/31fcb8b8-0eb9-4feb-9561-b08605f905a9">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/31fcb8b8-0eb9-4feb-9561-b08605f905a9</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Rec Sites &amp; Trails</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">26</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/f59621f8-7f95-4759-a584-ac2bf5642842">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/f59621f8-7f95-4759-a584-ac2bf5642842</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/f59621f8-7f95-4759-a584-ac2bf5642842">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/f59621f8-7f95-4759-a584-ac2bf5642842</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Research</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">27</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/2371f15c-4ece-4c70-aa47-66767f9bee67">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/2371f15c-4ece-4c70-aa47-66767f9bee67</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/2371f15c-4ece-4c70-aa47-66767f9bee67">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/2371f15c-4ece-4c70-aa47-66767f9bee67</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">28</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/c6cc0b08-eca8-459e-8fd6-fe85d9a10ccb">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/c6cc0b08-eca8-459e-8fd6-fe85d9a10ccb</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/c6cc0b08-eca8-459e-8fd6-fe85d9a10ccb">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/c6cc0b08-eca8-459e-8fd6-fe85d9a10ccb</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential - Mixed Use</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">29</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/338933c6-91d4-4950-be0b-bad389d5fd8d">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/338933c6-91d4-4950-be0b-bad389d5fd8d</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/338933c6-91d4-4950-be0b-bad389d5fd8d">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/338933c6-91d4-4950-be0b-bad389d5fd8d</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential - No Development</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/fd2bb1ae-47ac-4a30-a527-4f5f0ed3c04e">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/fd2bb1ae-47ac-4a30-a527-4f5f0ed3c04e</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/fd2bb1ae-47ac-4a30-a527-4f5f0ed3c04e">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/fd2bb1ae-47ac-4a30-a527-4f5f0ed3c04e</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential - Single-Family</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">31</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/20d4572e-2b07-49e5-9a84-de2d769b57b7">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/20d4572e-2b07-49e5-9a84-de2d769b57b7</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/20d4572e-2b07-49e5-9a84-de2d769b57b7">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/20d4572e-2b07-49e5-9a84-de2d769b57b7</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential - Sub-Division</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">32</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/4766a531-6fc8-4203-8718-92b18f4954d3">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/4766a531-6fc8-4203-8718-92b18f4954d3</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/4766a531-6fc8-4203-8718-92b18f4954d3">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/4766a531-6fc8-4203-8718-92b18f4954d3</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential Priority - Indigenous Initiative</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">33</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/35e0a3c4-9844-4b15-8480-3e46e0f2efc2">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/35e0a3c4-9844-4b15-8480-3e46e0f2efc2</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/35e0a3c4-9844-4b15-8480-3e46e0f2efc2">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/35e0a3c4-9844-4b15-8480-3e46e0f2efc2</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential Priority - Multi-Unit</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">34</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/a5254008-2ad0-468c-82c1-11d0c48ff037">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/a5254008-2ad0-468c-82c1-11d0c48ff037</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/a5254008-2ad0-468c-82c1-11d0c48ff037">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/a5254008-2ad0-468c-82c1-11d0c48ff037</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Residential Priority - Social Housing</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">35</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/b517798a-de5c-4a6f-a1f5-4e0201ad061f">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/b517798a-de5c-4a6f-a1f5-4e0201ad061f</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/b517798a-de5c-4a6f-a1f5-4e0201ad061f">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/b517798a-de5c-4a6f-a1f5-4e0201ad061f</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Telecommunications</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">36</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/160df93f-12e9-4857-a5ba-4673b4b9b5b3">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/160df93f-12e9-4857-a5ba-4673b4b9b5b3</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/160df93f-12e9-4857-a5ba-4673b4b9b5b3">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/160df93f-12e9-4857-a5ba-4673b4b9b5b3</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Telecommunications - Connectivity</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">37</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/21f4f38d-55b9-4878-a54c-d00ded794f57">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/21f4f38d-55b9-4878-a54c-d00ded794f57</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/21f4f38d-55b9-4878-a54c-d00ded794f57">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/21f4f38d-55b9-4878-a54c-d00ded794f57</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Tourism</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">38</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/76235e9b-1328-4c62-ae2d-65af36d6a8df">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/76235e9b-1328-4c62-ae2d-65af36d6a8df</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/76235e9b-1328-4c62-ae2d-65af36d6a8df">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/76235e9b-1328-4c62-ae2d-65af36d6a8df</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Transportation</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">39</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/fc6c23e2-10e6-4e85-8bae-de930f8b5ec9">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/fc6c23e2-10e6-4e85-8bae-de930f8b5ec9</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/fc6c23e2-10e6-4e85-8bae-de930f8b5ec9">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/fc6c23e2-10e6-4e85-8bae-de930f8b5ec9</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Wildfire</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/fe0294d8-78f4-4176-810f-b5d3677dd789">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/fe0294d8-78f4-4176-810f-b5d3677dd789</dcterms:identifier>
+  <skos:Concept rdf:about="/bcap/plugins/controlled-list-manager/item/fe0294d8-78f4-4176-810f-b5d3677dd789">
+    <dcterms:identifier>/bcap/plugins/controlled-list-manager/item/fe0294d8-78f4-4176-810f-b5d3677dd789</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Wreck</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
+    <skos:inScheme rdf:resource="/bcap/plugins/controlled-list-manager/item/553328cc-16ab-4c84-9a15-35e2a4dc90d5"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">41</arches:sortorder>
   </skos:Concept>
 </rdf:RDF>
