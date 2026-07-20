@@ -1,12 +1,17 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import QuestionDialogExternal from './QuestionDialogExternal.vue';
-import { createBcapMessage, getContributors } from '@/bcap/apps/Permit/api.ts';
+import {
+    createBcapMessage,
+    getContributors,
+    markMessageAsRead,
+} from '@/bcap/apps/Permit/api.ts';
 
 // 1. Mock the API calls
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
     getContributors: vi.fn(),
+    markMessageAsRead: vi.fn(),
 }));
 
 describe('QuestionDialogExternal.vue', () => {
@@ -66,31 +71,39 @@ describe('QuestionDialogExternal.vue', () => {
         expect(wrapper.vm.selectedRecipient).toBe('user-1');
     });
 
-    it('renders the "Ask a question" trigger when in New Question mode', async () => {
-        const wrapper = mountComponent();
+    it('renders the "View Messages" trigger without a badge when there are no unread threads', async () => {
+        const wrapper = mountComponent({ threads: [] });
         await flushPromises();
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];
-        expect(triggerBtn.text()).toContain('Ask a question');
+        expect(triggerBtn.text()).toContain('View Messages');
 
         // Badge should not exist
         const badge = wrapper.find('.message-badge');
         expect(badge.exists()).toBe(false);
     });
 
-    it('renders the "View message" trigger and badge when in Reply mode', async () => {
+    it('renders the badge when threads have unread messages', async () => {
         const wrapper = mountComponent({
-            existingMessages: [{ author: 'System', text: 'Needs more info' }],
+            threads: [
+                {
+                    id: 't1',
+                    topic: 'General Question',
+                    messages: [],
+                    hasUnread: true,
+                    unreadCount: 3,
+                },
+            ],
         });
         await flushPromises();
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];
-        expect(triggerBtn.text()).toContain('View message');
+        expect(triggerBtn.text()).toContain('View Messages');
 
-        // Badge should exist
+        // Badge should exist and sum the unread count
         const badge = wrapper.find('.message-badge');
         expect(badge.exists()).toBe(true);
-        expect(badge.text()).toBe('!');
+        expect(badge.text()).toBe('3');
     });
 
     it('opens the dialog when the trigger button is clicked', async () => {
@@ -104,21 +117,39 @@ describe('QuestionDialogExternal.vue', () => {
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        // Dialog should now be visible
+        // Dialog should now be visible with the new title
         expect(wrapper.find('.mock-dialog').exists()).toBe(true);
-        expect(wrapper.html()).toContain('Comment on Application APP-1234');
+        expect(wrapper.html()).toContain('Comments on Application APP-1234');
     });
 
-    it('displays existing messages in the thread when in Reply mode', async () => {
+    it('displays existing messages in the thread when a sidebar thread is selected (Reply mode)', async () => {
         const wrapper = mountComponent({
-            existingMessages: [
-                { author: 'Jane', text: 'Please fix this', date: 'Oct 1' },
+            threads: [
+                {
+                    id: 'thread-555',
+                    topic: 'General Question',
+                    hasUnread: false,
+                    messages: [
+                        {
+                            id: 'msg-1',
+                            author: 'Jane',
+                            text: 'Please fix this',
+                            date: 'Oct 1',
+                            isUnread: false,
+                        },
+                    ],
+                },
             ],
         });
         await flushPromises();
 
         // Open dialog
         await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        // Click the first sidebar item to select the thread
+        const sidebarItems = wrapper.findAll('.sidebar-item');
+        await sidebarItems[0].trigger('click');
         await flushPromises();
 
         const thread = wrapper.find('.message-thread');
@@ -136,19 +167,17 @@ describe('QuestionDialogExternal.vue', () => {
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        // Click Send without typing anything (second button is the submit footer button)
+        // Click Send without typing anything (index 1 is the Send button in new message view)
         await wrapper.findAll('.mock-button')[1].trigger('click');
 
         expect(createBcapMessage).not.toHaveBeenCalled();
     });
 
-    it('submits a new message successfully and emits event', async () => {
+    it('submits a NEW message successfully and emits event', async () => {
         const mockResponseData = { id: 'msg-123', success: true };
         vi.mocked(createBcapMessage).mockResolvedValue(mockResponseData);
 
-        const wrapper = mountComponent({
-            threadId: 'thread-555',
-        });
+        const wrapper = mountComponent();
         await flushPromises();
 
         // Open dialog
@@ -163,13 +192,14 @@ describe('QuestionDialogExternal.vue', () => {
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
 
-        // Verify API call
+        // Verify API call for a new thread (undefined thread ID, default 'General Question' topic)
         expect(createBcapMessage).toHaveBeenCalledWith(
             'This is my question.',
             'user-1', // Default selected recipient
             'APP-1234',
             'permit-999',
-            'thread-555',
+            undefined,
+            'General Question',
         );
 
         // Verify it emitted the success event with API response
@@ -180,5 +210,41 @@ describe('QuestionDialogExternal.vue', () => {
 
         // Verify dialog closes
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
+    });
+
+    it('marks unread messages as read when an unread thread is selected', async () => {
+        const wrapper = mountComponent({
+            threads: [
+                {
+                    id: 'thread-999',
+                    topic: 'Modification Request',
+                    hasUnread: true,
+                    unreadCount: 1,
+                    messages: [
+                        {
+                            id: 'msg-55',
+                            author: 'Ministry',
+                            text: 'Needs update',
+                            isUnread: true,
+                        },
+                    ],
+                },
+            ],
+        });
+        await flushPromises();
+
+        // Open dialog
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        // Click the sidebar item to select the unread thread
+        const sidebarItems = wrapper.findAll('.sidebar-item');
+        // Index 0 is the thread we just passed in props
+        await sidebarItems[0].trigger('click');
+        await flushPromises();
+
+        // Verify the API was called to mark the specific message as read
+        expect(markMessageAsRead).toHaveBeenCalledWith('msg-55');
+        expect(markMessageAsRead).toHaveBeenCalledTimes(1);
     });
 });
