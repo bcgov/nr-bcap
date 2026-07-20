@@ -27,6 +27,20 @@ import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import type { InvestigationDraft } from '@/bcap/types.ts';
 import QuestionDialog from './QuestionDialogExternal.vue';
 
+export interface AppMessage {
+    author: string;
+    text: string;
+    date?: string;
+}
+
+export interface AppThread {
+    id: string;
+    topic: string;
+    messages: AppMessage[];
+    hasUnread: boolean;
+    isResolved?: boolean;
+}
+
 const route = useRoute();
 const router = useRouter();
 const permitId = computed(() => route.params.id as string);
@@ -72,12 +86,7 @@ const state = reactive({
     investigationDrafts: [] as InvestigationDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as InvestigationDraft[],
-    existingMessages: [] as Array<{
-        author: string;
-        text: string;
-        date: string;
-    }>,
-    activeThreadId: null as string | null,
+    threads: [] as AppThread[],
 });
 
 const permitModules = ref([
@@ -335,21 +344,23 @@ const loadMessages = async () => {
     if (!permitId.value) return;
 
     try {
-        const { messages, threadId } = await getMessagesForPermit(
-            permitId.value,
-        );
-        state.existingMessages = messages;
-        state.activeThreadId = threadId;
+        const { threads } = await getMessagesForPermit(permitId.value);
+        state.threads = threads || [];
 
         console.log(
-            'MESSAGES SENT TO DIALOG:',
-            JSON.parse(JSON.stringify(state.existingMessages)),
+            'THREADS SENT TO DIALOG:',
+            JSON.parse(JSON.stringify(state.threads)),
         );
     } catch (error) {
-        console.error('Error loading messages:', error);
-        state.existingMessages = [];
-        state.activeThreadId = null;
+        console.error('Error loading threads:', error);
+        state.threads = [];
     }
+};
+
+const handleThreadResolved = async (threadId: string) => {
+    console.log(`Thread ${threadId} marked as resolved.`);
+    // TODO: Add your API call here to update the thread status to resolved.
+    await loadMessages();
 };
 
 onMounted(() => {
@@ -403,9 +414,9 @@ watch(activeModuleId, (id) => {
                     <QuestionDialog
                         :application-id="state.permitData.applicationNumber"
                         :permit-resource-id="permitId"
-                        :existing-messages="state.existingMessages"
-                        :thread-id="state.activeThreadId"
+                        :threads="state.threads"
                         @message-sent="loadMessages"
+                        @thread-resolved="handleThreadResolved"
                     />
 
                     <div
@@ -698,7 +709,6 @@ watch(activeModuleId, (id) => {
     align-items: flex-end;
     justify-content: flex-end;
     flex-shrink: 0;
-    /* Nudge in so it lines up with the card's right edge, not the panel edge. */
     margin-right: 1.5rem;
 }
 
@@ -709,7 +719,7 @@ watch(activeModuleId, (id) => {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     border: 1px solid #d1d5db;
-    margin-left: 1.5rem; /* Restored the margin space so it doesn't bunch against the dialog button */
+    margin-left: 1.5rem;
 }
 
 /* Layout */
