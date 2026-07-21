@@ -56,7 +56,7 @@
             "name": "Submit Inspection Outcome",
             "type": "Document Submission",
             "internal": false,
-            "resource": "requirement_submission",
+            "resource": "document_submission",
             "due": null,
             "notes": "",
             "satisfied": false,

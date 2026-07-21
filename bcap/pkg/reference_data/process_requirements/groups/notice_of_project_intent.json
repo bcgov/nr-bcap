@@ -1,0 +1,12 @@
+{
+    "id": "REQ-NOI-TEMPLATE-000",
+    "name": "Notice of Project Intent",
+    "type": "Module",
+    "internal": true,
+    "resource": null,
+    "due": null,
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [],
+    "requirements": []
+}

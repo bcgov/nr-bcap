@@ -1,0 +1,12 @@
+{
+    "id": "REQ-INFO-TEMPLATE-000",
+    "name": "Information Request",
+    "type": "Module",
+    "internal": true,
+    "resource": null,
+    "due": null,
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [],
+    "requirements": []
+}
