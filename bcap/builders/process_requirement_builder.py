@@ -199,7 +199,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
             parent_group = nodegroup_id(
                 GraphSlugs.PROCESS_REQUIREMENT, aliases.PARENT_MODULE
             )
-            tile = self._tile_for_nodegroup(copy, parent_group)
+            tile = self._existing_tile(copy, parent_group)
             tile.data[parent_node] = self._resource_reference(parent.pk)
             reference_tiles.append((tile, parent_node))
         if submission is not None:
@@ -215,7 +215,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
                 )
                 submission_tile = Tile(
                     nodegroup_id=submission_node,
-                    parenttile=self._tile_for_nodegroup(copy, data_group),
+                    parenttile=self._existing_tile(copy, data_group),
                     resourceinstance=copy,
                     sortorder=0,
                 )
@@ -233,11 +233,6 @@ class ProcessRequirementBuilder(ResourceBuilder):
         return next(
             (t for t in resource.tiles if str(t.nodegroup_id) == nodegroup), None
         )
-
-    def _tile_for_nodegroup(self, resource, nodegroup):
-        """The cloned copy's tile for a nodegroup id, which the template always
-        carries."""
-        return self._existing_tile(resource, nodegroup)
 
     def templates_by_id(self):
         """The is_template_requirement templates, keyed by their requirement id."""

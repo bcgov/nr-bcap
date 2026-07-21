@@ -252,8 +252,6 @@ const addableModules = computed(() =>
         .map((mod) => ({
             id: mod.id,
             label: mod.menuLabel,
-            routeName: mod.routeName,
-            disabled: mod.disabled || !mod.routeName,
         })),
 );
 
@@ -340,11 +338,6 @@ const loadMessages = async () => {
         );
         state.existingMessages = messages;
         state.activeThreadId = threadId;
-
-        console.log(
-            'MESSAGES SENT TO DIALOG:',
-            JSON.parse(JSON.stringify(state.existingMessages)),
-        );
     } catch (error) {
         console.error('Error loading messages:', error);
         state.existingMessages = [];
@@ -598,7 +591,6 @@ watch(activeModuleId, (id) => {
                         :modules="processModules"
                         :permit-id="permitId"
                         :admin-tile-id="state.adminTileMeta.tileid"
-                        :submission-date="state.permitData.submittedDate"
                         :is-staff="isStaff"
                         :addable-modules="addableModules"
                         @changed="loadPermitDetails"

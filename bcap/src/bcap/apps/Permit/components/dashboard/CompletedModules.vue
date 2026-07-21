@@ -39,29 +39,18 @@ const editChecklistHref = (id: string): string =>
 interface AddableModule {
     id: string;
     label: string;
-    routeName: string;
-    disabled: boolean;
 }
 
-const {
-    modules,
-    permitId,
-    adminTileId,
-    submissionDate,
-    isStaff,
-    addableModules,
-} = defineProps<{
-    modules: PermitProcessModuleTile[];
-    permitId: string;
-    adminTileId: string;
-    // The permit's submission date, shown as the module date until per-module
-    // completion dates are tracked.
-    submissionDate?: string | null;
-    // Staff view: enables reordering (and the add/remove controls).
-    isStaff?: boolean;
-    // Module types a staff member can add, each routing to its workflow.
-    addableModules?: AddableModule[];
-}>();
+const { modules, permitId, adminTileId, isStaff, addableModules } =
+    defineProps<{
+        modules: PermitProcessModuleTile[];
+        permitId: string;
+        adminTileId: string;
+        // Staff view: enables reordering (and the add/remove controls).
+        isStaff?: boolean;
+        // Module types a staff member can add, each routing to its workflow.
+        addableModules?: AddableModule[];
+    }>();
 
 const emit = defineEmits<{
     // A module was added or removed; the parent should reload the modules.
@@ -98,11 +87,14 @@ const hrefFor = (type: string, id: string): string => {
     return isChecklist(type) ? checklistHref(id) : `/bcap/resource/${id}`;
 };
 
-// resourceId -> type/satisfied, so rows rebuilt after a reorder keep their
-// type/link/status without a fetch-driven flash.
-const typeCache = new Map<string, string>();
-const satisfiedCache = new Map<string, boolean>();
-const internalCache = new Map<string, boolean>();
+// resourceId -> type/satisfied/internal, so rows rebuilt after a reorder keep
+// their type/link/status without a fetch-driven flash.
+interface RequirementMeta {
+    type: string;
+    satisfied: boolean;
+    internal: boolean;
+}
+const detailCache = new Map<string, RequirementMeta>();
 
 const requirementSatisfied = (requirement: ProcessRequirement): boolean =>
     requirement.aliased_data?.sub_requirement_assessment_n1?.aliased_data
@@ -131,32 +123,18 @@ const requirementItems = (tile: PermitProcessModuleTile): RequirementItem[] =>
         .map(({ name, resourceId, ministryAssignee }) => {
             // Seed type/status from the cache so a rebuild (e.g. after reorder)
             // doesn't flash empty while the fetch re-runs.
-            const type = typeCache.get(resourceId) ?? '';
+            const meta = detailCache.get(resourceId);
+            const type = meta?.type ?? '';
             return {
                 name,
                 resourceId,
                 type,
                 ministryAssignee,
-                satisfied: satisfiedCache.has(resourceId)
-                    ? (satisfiedCache.get(resourceId) ?? null)
-                    : null,
-                internal: internalCache.has(resourceId)
-                    ? (internalCache.get(resourceId) ?? null)
-                    : null,
+                satisfied: meta?.satisfied ?? null,
+                internal: meta?.internal ?? null,
                 href: hrefFor(type, resourceId),
             };
         });
-
-// TODO: fake, varied dates for demo until per-module completion dates exist.
-const fakeDate = (order: number): string => {
-    const parsed = submissionDate ? new Date(submissionDate) : null;
-    const base =
-        parsed && !Number.isNaN(parsed.getTime())
-            ? parsed
-            : new Date('2026-07-14');
-    base.setDate(base.getDate() - order * 5);
-    return base.toISOString().slice(0, 10);
-};
 
 const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
     const order = tile.aliased_data?.module_order?.node_value ?? 0;
@@ -169,8 +147,7 @@ const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
             tile.aliased_data?.module_id?.node_value ||
             '',
         completedDate:
-            tile.aliased_data?.module_completed_date?.display_value ||
-            fakeDate(order),
+            tile.aliased_data?.module_completed_date?.display_value || '',
         order,
         requirements: requirementItems(tile),
     };
@@ -188,26 +165,26 @@ const loadRequirementDetails = async () => {
             state.rows
                 .flatMap((row) => row.requirements)
                 .map((requirement) => requirement.resourceId)
-                .filter((id) => id && !typeCache.has(id)),
+                .filter((id) => id && !detailCache.has(id)),
         ),
     ];
     if (!ids.length) return;
     const details = await fetchRequirementDetails(ids);
     for (const [id, detail] of Object.entries(details)) {
-        typeCache.set(id, requirementType(detail));
-        satisfiedCache.set(id, requirementSatisfied(detail));
-        internalCache.set(id, requirementInternal(detail));
+        detailCache.set(id, {
+            type: requirementType(detail),
+            satisfied: requirementSatisfied(detail),
+            internal: requirementInternal(detail),
+        });
     }
     for (const row of state.rows) {
         for (const requirement of row.requirements) {
-            const type = typeCache.get(requirement.resourceId);
-            if (type === undefined) continue;
-            requirement.type = type;
-            requirement.href = hrefFor(type, requirement.resourceId);
-            requirement.satisfied =
-                satisfiedCache.get(requirement.resourceId) ?? null;
-            requirement.internal =
-                internalCache.get(requirement.resourceId) ?? null;
+            const meta = detailCache.get(requirement.resourceId);
+            if (meta === undefined) continue;
+            requirement.type = meta.type;
+            requirement.href = hrefFor(meta.type, requirement.resourceId);
+            requirement.satisfied = meta.satisfied;
+            requirement.internal = meta.internal;
         }
     }
 };

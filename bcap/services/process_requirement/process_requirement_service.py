@@ -137,16 +137,12 @@ class ProcessRequirementService:
         requirement resource and submission host. The module's grouping parent is
         shared by the other requirements, so it is left in place."""
         reference_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
-        # Find the module's child tile that references this requirement.
-        module_children = TileModel.objects.filter(
-            parenttile_id=module_tileid, resourceinstance_id=permit_id
-        )
-        child = None
-        for tile in module_children:
-            referenced = referenced_resource_ids([tile], reference_node)
-            if str(requirement_id) in referenced:
-                child = tile
-                break
+        # The module's child tile that references this requirement.
+        child = TileModel.objects.filter(
+            parenttile_id=module_tileid,
+            resourceinstance_id=permit_id,
+            data__contains={reference_node: [{"resourceId": str(requirement_id)}]},
+        ).first()
         if child is None:
             return
         to_delete = {str(requirement_id)}

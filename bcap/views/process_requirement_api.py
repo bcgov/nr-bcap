@@ -45,6 +45,13 @@ from bcap.views.generated.process_requirement import (
 
 RESOURCE_EDITOR_GROUP = "Resource Editor"
 
+
+def _require_exists(pk, slug, msg):
+    """404 unless a resource of the given graph exists with this pk."""
+    if not ResourceTileTree.objects.filter(pk=pk, graph__slug=slug).exists():
+        raise Http404(msg)
+
+
 # TODO(roles): ResourceEditor is a placeholder; gate these staff module-editing
 # routes on the proper role/group once roles + permissions land.
 STAFF_MODULE_PERMISSIONS = [ResourceEditor]
@@ -114,10 +121,11 @@ class ProcessRequirementSeedView(APIView):
         )
         if serializer_class is None:
             raise ValidationError(f"Module '{permit_type}' has no host resource.")
-        if not ResourceTileTree.objects.filter(
-            pk=pk, graph__slug=GraphSlugs.PERMIT_APPLICATION
-        ).exists():
-            raise Http404("No permit application matches the given id.")
+        _require_exists(
+            pk,
+            GraphSlugs.PERMIT_APPLICATION,
+            "No permit application matches the given id.",
+        )
         return serializer_class
 
     @extend_schema(responses=module_host_schema(many=True))
@@ -163,10 +171,11 @@ class PermitModuleView(APIView):
     permission_classes = STAFF_MODULE_PERMISSIONS
 
     def delete(self, request, pk, module_tileid):
-        if not ResourceTileTree.objects.filter(
-            pk=pk, graph__slug=GraphSlugs.PERMIT_APPLICATION
-        ).exists():
-            raise Http404("No permit application matches the given id.")
+        _require_exists(
+            pk,
+            GraphSlugs.PERMIT_APPLICATION,
+            "No permit application matches the given id.",
+        )
         ProcessRequirementService(user=request.user).remove_module(pk, module_tileid)
         return Response(status=204)
 
@@ -230,10 +239,11 @@ class RequirementChecklistView(APIView):
     permission_classes = STAFF_MODULE_PERMISSIONS
 
     def patch(self, request, requirement_id):
-        if not ResourceTileTree.objects.filter(
-            pk=requirement_id, graph__slug=GraphSlugs.PROCESS_REQUIREMENT
-        ).exists():
-            raise Http404("No process requirement matches the given id.")
+        _require_exists(
+            requirement_id,
+            GraphSlugs.PROCESS_REQUIREMENT,
+            "No process requirement matches the given id.",
+        )
         body = ChecklistPatchSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         ProcessRequirementService(user=request.user).save_checklist(

@@ -135,7 +135,6 @@ export const submitApplication = async (
                 },
             },
         );
-        console.log('Final resource created successfully!', finalResource);
 
         // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
@@ -376,17 +375,12 @@ export const createBcapMessage = async (
         message_content: {
             aliased_data: {
                 message_content: {
-                    node_value: {
-                        en: { value: messageText, direction: 'ltr' },
-                    },
+                    node_value: localized(messageText),
                 },
                 message_subject: {
-                    node_value: {
-                        en: {
-                            value: `Comment regarding Application ${applicationId}`,
-                            direction: 'ltr',
-                        },
-                    },
+                    node_value: localized(
+                        `Comment regarding Application ${applicationId}`,
+                    ),
                 },
                 // Applied server-side after save (the REST date field would
                 // otherwise drop the UTC offset).

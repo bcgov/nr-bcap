@@ -109,16 +109,6 @@ const routes = [
         component: () =>
             import('@/bcap/apps/Permit/components/dashboard/EditChecklist.vue'),
     },
-    {
-        path: arches.urls.plugin('submissions/message-demo'),
-        name: 'messageDemo',
-        component: () =>
-            import('@/bcap/apps/Permit/components/MessageDemo.vue'),
-        meta: {
-            shouldShowNavigation: true,
-            requiresAuthentication: true,
-        },
-    },
 ];
 
 type ExternalPermitRouteNamesType = RouteNamesType & {

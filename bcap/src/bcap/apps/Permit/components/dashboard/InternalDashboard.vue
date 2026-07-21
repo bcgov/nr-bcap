@@ -18,9 +18,6 @@ const router = useRouter();
 
 interface ProjectData {
     id: string;
-    realId: string; // Keep track of the true resource ID for routing
-    permitId?: string;
-    reqId?: string;
     unreadMessages: number;
     capPriority: boolean;
     capLabel: string;
@@ -47,9 +44,6 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
     return {
         id: rawItem.id,
-        realId: rawItem.id,
-        permitId: rawItem.permit_id ?? undefined,
-        reqId: rawItem.requirement_id || rawItem.id,
         unreadMessages: rawItem.unread_messages || 0,
 
         capPriority: isPriority,
