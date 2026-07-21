@@ -99,6 +99,11 @@ RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh &&\
   dos2unix ${WEB_ROOT}/entrypoint.sh
 RUN mkdir /var/log/supervisor
 RUN mkdir /var/log/celery
+
+RUN chown ubuntu:ubuntu ${WEB_ROOT}/entrypoint.sh \
+  && chown -R ubuntu:ubuntu /var/log/supervisor /var/log/celery
+USER ubuntu
+
 # Set default workdir
 WORKDIR ${APP_ROOT}
 #COPY ../common/* ${PROJECT_NAME}/
@@ -110,8 +115,10 @@ EXPOSE 8000
 
 # ---- Jupyter stage ----
 FROM base AS jupyter
+USER root
 COPY ./nr-bcap/pyproject.toml ${APP_ROOT}/pyproject.toml
 RUN pip install --no-cache-dir --group jupyter
+USER ubuntu
 
 WORKDIR ${APP_ROOT}
 
@@ -119,7 +126,6 @@ CMD jupyter server \
      --ip=0.0.0.0 \
      --port=8888 \
      --no-browser \
-     --allow-root \
      ${JUPYTER_TOKEN:+--IdentityProvider.token=${JUPYTER_TOKEN}} \
      --ServerApp.notebook_dir=/web_root/bcap/notebooks
 
