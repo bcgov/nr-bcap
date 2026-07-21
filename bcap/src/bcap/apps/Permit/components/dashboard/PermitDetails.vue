@@ -415,6 +415,7 @@ watch(activeModuleId, (id) => {
                         :application-id="state.permitData.applicationNumber"
                         :permit-resource-id="permitId"
                         :threads="state.threads"
+                        context="Permit Application"
                         @message-sent="loadMessages"
                         @thread-resolved="handleThreadResolved"
                     />
@@ -538,6 +539,14 @@ watch(activeModuleId, (id) => {
                                     : `Add ${activeModule.menuLabel} module`
                             }}
                         </button>
+                        <QuestionDialog
+                            :application-id="state.permitData.applicationNumber"
+                            :permit-resource-id="permitId"
+                            :threads="state.threads"
+                            :context="activeModule.menuLabel"
+                            @message-sent="loadMessages"
+                            @thread-resolved="handleThreadResolved"
+                        />
                     </div>
                 </template>
 
@@ -863,6 +872,8 @@ watch(activeModuleId, (id) => {
     margin-top: 2.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid #d1d5db;
+    display: flex;
+    gap: 1rem;
 }
 
 .add-module-btn {

@@ -26,9 +26,11 @@ const props = withDefaults(
         applicationId: string;
         permitResourceId: string;
         threads?: AppThread[];
+        context?: string;
     }>(),
     {
         threads: () => [],
+        context: 'General',
     },
 );
 
@@ -143,13 +145,15 @@ const submitMessage = async () => {
             ? activeThread.value?.id
             : undefined;
 
+        const formattedTopic = `${props.context} ${selectedTopic.value.toLowerCase()}`;
+
         const responseData = await createBcapMessage(
             messageText.value,
             selectedRecipient.value as string,
             props.applicationId,
             props.permitResourceId,
             targetThreadId,
-            isReplyMode.value ? undefined : selectedTopic.value,
+            isReplyMode.value ? undefined : formattedTopic,
         );
 
         console.log('Message successfully created:', responseData);
@@ -304,6 +308,16 @@ onMounted(() => {
                                 </div>
                             </template>
                         </Dropdown>
+                    </div>
+
+                    <div
+                        class="field-container"
+                        style="margin-bottom: 1rem"
+                    >
+                        <div class="context-display-box">
+                            <span class="context-label">Regarding:</span>
+                            <span class="context-value">{{ context }}</span>
+                        </div>
                     </div>
 
                     <div
@@ -661,5 +675,15 @@ onMounted(() => {
 
 .dropdown-value-template i {
     font-size: 1.3rem;
+}
+
+/* Context Display */
+.context-label {
+    font-weight: 500;
+}
+
+.context-value {
+    font-weight: 600;
+    padding-left: 0.5rem;
 }
 </style>
