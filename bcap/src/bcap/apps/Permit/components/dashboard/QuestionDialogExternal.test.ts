@@ -66,9 +66,9 @@ describe('QuestionDialogExternal.vue', () => {
 
         expect(getContributors).toHaveBeenCalledOnce();
 
-        // Verify internal state (selectedRecipient should default to the first value)
-        expect(wrapper.vm.recipients.length).toBe(2);
-        expect(wrapper.vm.selectedRecipient).toBe('user-1');
+        // Use 'as any' to bypass the <script setup> private instance TypeScript error
+        expect((wrapper.vm as any).recipients.length).toBe(2);
+        expect((wrapper.vm as any).selectedRecipient).toBe('user-1');
     });
 
     it('renders the "View Messages" trigger without a badge when there are no unread threads', async () => {
@@ -199,7 +199,7 @@ describe('QuestionDialogExternal.vue', () => {
             'APP-1234',
             'permit-999',
             undefined,
-            'General Question',
+            'General general question',
         );
 
         // Verify it emitted the success event with API response
@@ -246,5 +246,99 @@ describe('QuestionDialogExternal.vue', () => {
         // Verify the API was called to mark the specific message as read
         expect(markMessageAsRead).toHaveBeenCalledWith('msg-55');
         expect(markMessageAsRead).toHaveBeenCalledTimes(1);
+    });
+
+    // -------------------------------------------------------------------------
+    // NEW TESTS
+    // -------------------------------------------------------------------------
+
+    it('combines custom context and topic when context prop is provided', async () => {
+        vi.mocked(createBcapMessage).mockResolvedValue({
+            id: 'msg-123',
+            success: true,
+        });
+
+        // Pass a custom context instead of relying on the default 'General'
+        const wrapper = mountComponent({ context: 'Alteration Module' });
+        await flushPromises();
+
+        // Open dialog
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        // Type a message
+        await wrapper
+            .find('textarea')
+            .setValue('This is an alteration question.');
+
+        // Click Send
+        await wrapper.findAll('.mock-button')[1].trigger('click');
+        await flushPromises();
+
+        // Verify the topic sent to the API is specifically mapped to the custom context
+        expect(createBcapMessage).toHaveBeenCalledWith(
+            'This is an alteration question.',
+            'user-1',
+            'APP-1234',
+            'permit-999',
+            undefined,
+            'Alteration Module general question', // Custom context + default dropdown topic
+        );
+    });
+
+    it('submits a REPLY to an existing thread successfully', async () => {
+        vi.mocked(createBcapMessage).mockResolvedValue({
+            id: 'msg-reply',
+            success: true,
+        });
+
+        const wrapper = mountComponent({
+            threads: [
+                {
+                    id: 'thread-777',
+                    topic: 'Investigation question',
+                    hasUnread: false,
+                    messages: [
+                        {
+                            id: 'm1',
+                            author: 'Ministry',
+                            text: 'Hi',
+                            isUnread: false,
+                        },
+                    ],
+                },
+            ],
+        });
+        await flushPromises();
+
+        // Open dialog
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        // Select the thread to enter reply mode
+        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await flushPromises();
+
+        // Type a reply
+        await wrapper.find('textarea').setValue('This is my reply.');
+
+        // Find the Send button in the reply area.
+        // We look through all mock buttons and find the one that submits the reply.
+        // It's likely the last or second to last button in the DOM at this point.
+        const allButtons = wrapper.findAll('.mock-button');
+        const sendReplyBtn = allButtons.find((b) => b.text().includes('Send'));
+
+        await sendReplyBtn?.trigger('click');
+        await flushPromises();
+
+        // Verify API call for a reply (includes thread ID, omits formatted topic)
+        expect(createBcapMessage).toHaveBeenCalledWith(
+            'This is my reply.',
+            'user-1', // Default selected recipient
+            'APP-1234',
+            'permit-999',
+            'thread-777', // Target Thread ID is included!
+            undefined, // Topic should be undefined for replies
+        );
     });
 });
