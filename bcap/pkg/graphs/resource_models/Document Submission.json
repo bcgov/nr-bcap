@@ -106,7 +106,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Requirement Submission Details"
+                        "en": "Document Submission Details"
                     },
                     "nodegroup_id": "81300382-4aee-4082-b328-987d97689e94",
                     "sortorder": 3,
@@ -792,7 +792,7 @@
             "isresource": true,
             "jsonldcontext": null,
             "name": {
-                "en": "Requirement Submission"
+                "en": "Document Submission"
             },
             "nodegroups": [
                 {
@@ -1005,7 +1005,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "requirement_submission_process",
+                    "alias": "document_submission_process",
                     "config": {
                         "en": ""
                     },
@@ -1020,7 +1020,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Requirement Submission Details",
+                    "name": "Document Submission Details",
                     "nodegroup_id": "81300382-4aee-4082-b328-987d97689e94",
                     "nodeid": "81300382-4aee-4082-b328-987d97689e94",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
@@ -1313,7 +1313,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": true,
-                    "name": "Requirement Submission",
+                    "name": "Document Submission",
                     "nodegroup_id": null,
                     "nodeid": "9ed3fd06-246c-4faf-b54b-eda13b6de275",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
@@ -1751,7 +1751,7 @@
                 "isrequired": false,
                 "issearchable": true,
                 "istopnode": true,
-                "name": "Requirement Submission",
+                "name": "Document Submission",
                 "nodegroup_id": null,
                 "nodeid": "9ed3fd06-246c-4faf-b54b-eda13b6de275",
                 "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
@@ -1759,7 +1759,7 @@
                 "source_identifier_id": null,
                 "sourcebranchpublication_id": null
             },
-            "slug": "requirement_submission",
+            "slug": "document_submission",
             "source_identifier_id": null,
             "spatial_views": [],
             "subtitle": {
