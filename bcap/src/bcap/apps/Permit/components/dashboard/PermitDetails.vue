@@ -822,8 +822,8 @@ watch(activeModuleId, (id) => {
 .content-area {
     flex-grow: 1;
     width: 100%;
-    /* Long label/value rows strand on wide screens past about this width. */
-    max-width: 1100px;
+    /* Cap only on very wide screens so long rows don't stretch edge to edge. */
+    max-width: 1500px;
     padding: 1rem 2rem;
 }
 
