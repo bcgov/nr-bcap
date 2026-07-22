@@ -2,8 +2,62 @@
     "graph": [
         {
             "author": "Test User",
-            "cards": [],
-            "cards_x_nodes_x_widgets": [],
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "9ff39cef-d4c8-4add-9144-63c476ece100",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "Details of the information being requested"
+                    },
+                    "graph_id": "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Request Details"
+                    },
+                    "nodegroup_id": "41cff828-24b9-4601-bfdc-e750301f0bc0",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "9ff39cef-d4c8-4add-9144-63c476ece100",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Request Details",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "cf0c1438-874f-42aa-afed-b90538a5c163",
+                    "label": {
+                        "en": "Request Details"
+                    },
+                    "node_id": "41cff828-24b9-4601-bfdc-e750301f0bc0",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                }
+            ],
             "color": null,
             "config": {},
             "deploymentdate": null,
@@ -11,7 +65,18 @@
             "description": {
                 "en": ""
             },
-            "edges": [],
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "369a342c-41fc-45d2-b6d8-4d03954fc78c",
+                    "edgeid": "115df1b7-038e-4e2b-aad1-e5af06222938",
+                    "graph_id": "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "41cff828-24b9-4601-bfdc-e750301f0bc0",
+                    "source_identifier_id": null
+                }
+            ],
             "functions_x_graphs": [],
             "graphid": "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d",
             "group_permissions": {},
@@ -24,8 +89,39 @@
             "name": {
                 "en": "Information Request"
             },
-            "nodegroups": [],
+            "nodegroups": [
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "41cff828-24b9-4601-bfdc-e750301f0bc0",
+                    "legacygroupid": null,
+                    "nodegroupid": "41cff828-24b9-4601-bfdc-e750301f0bc0",
+                    "parentnodegroup_id": null
+                }
+            ],
             "nodes": [
+                {
+                    "alias": "request_details",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": "Details of the information being requested",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Request Details",
+                    "nodegroup_id": "41cff828-24b9-4601-bfdc-e750301f0bc0",
+                    "nodeid": "41cff828-24b9-4601-bfdc-e750301f0bc0",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
                 {
                     "alias": "new_resource_model",
                     "config": {},

@@ -172,25 +172,6 @@ export const zGeojsonFeatureCollectionAliasedNodeData = z.object({
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
-export const zInformationRequest = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    graph_has_different_publication: z.boolean().readonly(),
-    name: z.string().readonly().nullable(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullable(),
-    legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullable(),
-    resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable()
-});
-
 export const zLocalGovernmentGovernmentBoundaryAliasedData = z.object({
     government_boundary: zGeojsonFeatureCollectionAliasedNodeData.nullish()
 });
@@ -311,6 +292,51 @@ export const zNonLocalizedStringAliasedNodeData = z.object({
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
+export const zInformationRequestRequestDetailsAliasedData = z.object({
+    request_details: zNonLocalizedStringAliasedNodeData.nullish()
+});
+
+export const zInformationRequestRequestDetailsTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zInformationRequestRequestDetailsAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zInformationRequestResourceAliasedData = z.object({
+    request_details: zInformationRequestRequestDetailsTile.nullish()
+});
+
+export const zInformationRequest = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zInformationRequestResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly(),
+    name: z.string().readonly().nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
+    legacyid: z.string().readonly().nullable(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullable(),
+    resource_instance_lifecycle_state: z.uuid().readonly(),
+    principaluser: z.int().readonly().nullable()
+});
+
 export const zNonLocalizedStringAliasedNodeDataMax10 = z.object({
     node_value: z.string().max(10).nullable(),
     display_value: z.string().readonly().optional(),
@@ -329,8 +355,34 @@ export const zNonLocalizedStringAliasedNodeDataMax9 = z.object({
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
+export const zNoticeOfProjectIntentProjectDescriptionAliasedData = z.object({
+    project_description: zNonLocalizedStringAliasedNodeData.nullish()
+});
+
+export const zNoticeOfProjectIntentProjectDescriptionTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentProjectDescriptionAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentResourceAliasedData = z.object({
+    project_description: zNoticeOfProjectIntentProjectDescriptionTile.nullish()
+});
+
 export const zNoticeOfProjectIntent = z.object({
     resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
     name: z.string().readonly().nullable(),
     descriptors: z.object({
@@ -4598,11 +4650,6 @@ export const zGeojsonFeatureCollectionAliasedNodeDataWritable = z.object({
     }).nullable()
 });
 
-export const zInformationRequestWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    graph: z.uuid().nullish()
-});
-
 export const zLocalGovernmentGovernmentBoundaryAliasedDataWritable = z.object({
     government_boundary: zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish()
 });
@@ -4628,6 +4675,37 @@ export const zNonLocalizedStringAliasedNodeDataWritable = z.object({
     node_value: z.string().nullable()
 });
 
+export const zInformationRequestRequestDetailsAliasedDataWritable = z.object({
+    request_details: zNonLocalizedStringAliasedNodeDataWritable.nullish()
+});
+
+export const zInformationRequestRequestDetailsTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zInformationRequestRequestDetailsAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zInformationRequestResourceAliasedDataWritable = z.object({
+    request_details: zInformationRequestRequestDetailsTileWritable.nullish()
+});
+
+export const zInformationRequestWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zInformationRequestResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
+});
+
 export const zNonLocalizedStringAliasedNodeDataMax10Writable = z.object({
     node_value: z.string().max(10).nullable()
 });
@@ -4640,8 +4718,34 @@ export const zNonLocalizedStringAliasedNodeDataMax9Writable = z.object({
     node_value: z.string().max(9).nullable()
 });
 
+export const zNoticeOfProjectIntentProjectDescriptionAliasedDataWritable = z.object({
+    project_description: zNonLocalizedStringAliasedNodeDataWritable.nullish()
+});
+
+export const zNoticeOfProjectIntentProjectDescriptionTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentProjectDescriptionAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentResourceAliasedDataWritable = z.object({
+    project_description: zNoticeOfProjectIntentProjectDescriptionTileWritable.nullish()
+});
+
 export const zNoticeOfProjectIntentWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentResourceAliasedDataWritable.optional(),
     graph: z.uuid().nullish()
 });
 

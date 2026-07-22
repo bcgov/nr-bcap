@@ -6451,6 +6451,8 @@ components:
           type: string
           format: uuid
           nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -6506,6 +6508,69 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Information_Request_Request_Details_Aliased_Data:
+      type: object
+      properties:
+        request_details:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+    Information_Request_Request_Details_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Information_Request_Request_Details_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Information_Request_Resource_Aliased_Data:
+      type: object
+      properties:
+        request_details:
+          allOf:
+          - $ref: '#/components/schemas/Information_Request_Request_Details_Tile'
+          nullable: true
     Inspection:
       type: object
       properties:
@@ -9251,6 +9316,8 @@ components:
           type: string
           format: uuid
           nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -9306,6 +9373,69 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Notice_Of_Project_Intent_Project_Description_Aliased_Data:
+      type: object
+      properties:
+        project_description:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+    Notice_Of_Project_Intent_Project_Description_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Description_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_Resource_Aliased_Data:
+      type: object
+      properties:
+        project_description:
+          allOf:
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Description_Tile'
+          nullable: true
     NumberAliasedNodeData:
       type: object
       properties:
