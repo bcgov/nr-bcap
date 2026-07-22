@@ -26,20 +26,7 @@ import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import type { InvestigationDraft } from '@/bcap/types.ts';
 import QuestionDialog from './QuestionDialogExternal.vue';
-
-export interface AppMessage {
-    author: string;
-    text: string;
-    date?: string;
-}
-
-export interface AppThread {
-    id: string;
-    topic: string;
-    messages: AppMessage[];
-    hasUnread: boolean;
-    isResolved?: boolean;
-}
+import type { AppThread } from '@/bcap/types.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -608,6 +595,19 @@ watch(activeModuleId, (id) => {
                                             <i class="fa-solid fa-trash"></i>
                                             Remove
                                         </button>
+                                        <QuestionDialog
+                                            :application-id="
+                                                state.permitData
+                                                    .applicationNumber
+                                            "
+                                            :permit-resource-id="draft.id"
+                                            :threads="state.threads"
+                                            :context="draftTitle(draft)"
+                                            @message-sent="loadMessages"
+                                            @thread-resolved="
+                                                handleThreadResolved
+                                            "
+                                        />
                                     </div>
                                 </AccordionContent>
                             </AccordionPanel>
@@ -621,7 +621,11 @@ watch(activeModuleId, (id) => {
                         :submission-date="state.permitData.submittedDate"
                         :is-staff="isStaff"
                         :addable-modules="addableModules"
+                        :application-id="state.permitData.applicationNumber"
+                        :threads="state.threads"
                         @changed="loadPermitDetails"
+                        @message-sent="loadMessages"
+                        @thread-resolved="handleThreadResolved"
                     />
                 </div>
             </div>

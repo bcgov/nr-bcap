@@ -67,8 +67,8 @@ describe('QuestionDialogExternal.vue', () => {
         expect(getContributors).toHaveBeenCalledOnce();
 
         // Use 'as any' to bypass the <script setup> private instance TypeScript error
-        expect((wrapper.vm as any).recipients.length).toBe(2);
-        expect((wrapper.vm as any).selectedRecipient).toBe('user-1');
+        expect((wrapper.vm as unknown).recipients.length).toBe(2);
+        expect((wrapper.vm as unknown).selectedRecipient).toBe('user-1');
     });
 
     it('renders the "View Messages" trigger without a badge when there are no unread threads', async () => {

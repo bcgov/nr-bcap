@@ -23,6 +23,8 @@ import type {
     ProcessRequirement,
     PermitProcessModuleTile,
 } from '@/bcap/types.ts';
+import QuestionDialog from '@/bcap/apps/Permit/components/dashboard/QuestionDialogExternal.vue';
+import type { AppThread } from '@/bcap/types.ts';
 
 const QUICK_ADD_MODULE_TYPES = ['investigation', 'alteration', 'inspection'];
 
@@ -50,6 +52,8 @@ const {
     submissionDate,
     isStaff,
     addableModules,
+    applicationId,
+    threads,
 } = defineProps<{
     modules: PermitProcessModuleTile[];
     permitId: string;
@@ -61,11 +65,17 @@ const {
     isStaff?: boolean;
     // Module types a staff member can add, each routing to its workflow.
     addableModules?: AddableModule[];
+    // Messaging props passed down from the parent Permit view
+    applicationId?: string;
+    threads?: AppThread[];
 }>();
 
 const emit = defineEmits<{
     // A module was added or removed; the parent should reload the modules.
     (event: 'changed'): void;
+    // Messaging events to bubble up to the parent
+    (event: 'message-sent'): void;
+    (event: 'thread-resolved', threadId: string): void;
 }>();
 
 interface RequirementItem {
@@ -564,26 +574,39 @@ const persistOrder = async () => {
                     >
                         No process requirements on this module.
                     </p>
-                    <div
-                        v-if="isStaff"
-                        class="add-req-row"
-                    >
-                        <button
-                            type="button"
-                            class="add-req-btn"
-                            :disabled="ui.addingRequirement === row.tileid"
-                            @click="onAddRequirement(row)"
+
+                    <div class="module-footer-actions">
+                        <QuestionDialog
+                            v-if="applicationId && threads"
+                            :application-id="applicationId"
+                            :permit-resource-id="row.moduleId"
+                            :threads="threads"
+                            :context="row.name"
+                            @message-sent="$emit('message-sent')"
+                            @thread-resolved="$emit('thread-resolved', $event)"
+                        />
+
+                        <div
+                            v-if="isStaff"
+                            class="add-req-row"
                         >
-                            <i
-                                class="fa-solid"
-                                :class="
-                                    ui.addingRequirement === row.tileid
-                                        ? 'fa-circle-notch fa-spin'
-                                        : 'fa-plus'
-                                "
-                            ></i>
-                            Add Checklist
-                        </button>
+                            <button
+                                type="button"
+                                class="add-req-btn"
+                                :disabled="ui.addingRequirement === row.tileid"
+                                @click="onAddRequirement(row)"
+                            >
+                                <i
+                                    class="fa-solid"
+                                    :class="
+                                        ui.addingRequirement === row.tileid
+                                            ? 'fa-circle-notch fa-spin'
+                                            : 'fa-plus'
+                                    "
+                                ></i>
+                                Add Checklist
+                            </button>
+                        </div>
                     </div>
                 </AccordionContent>
             </AccordionPanel>
@@ -989,8 +1012,15 @@ const persistOrder = async () => {
     background-color: #fde8ea;
 }
 
+.module-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
 .add-req-row {
-    margin-top: 0.75rem;
+    margin-top: 0;
 }
 
 .add-req-btn {
