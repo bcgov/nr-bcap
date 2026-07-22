@@ -95,6 +95,7 @@ interface ModuleRow {
     tileid: string;
     name: string;
     moduleId: string;
+    moduleResourceId: string; // NEW: Holds the UUID of the module for the API
     completedDate: string;
     order: number;
     requirements: RequirementItem[];
@@ -170,14 +171,20 @@ const fakeDate = (order: number): string => {
 
 const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
     const order = tile.aliased_data?.module_order?.node_value ?? 0;
+    const nodeVal = tile.aliased_data?.module_id?.node_value;
+    const moduleResourceId = Array.isArray(nodeVal)
+        ? nodeVal[0]?.resourceId || ''
+        : '';
+
     return {
         tileid: tile.tileid ?? '',
         name:
             tile.aliased_data?.module_name?.display_value || 'Untitled module',
         moduleId:
             tile.aliased_data?.module_id?.display_value ||
-            tile.aliased_data?.module_id?.node_value ||
+            (!Array.isArray(nodeVal) ? String(nodeVal || '') : '') ||
             '',
+        moduleResourceId, // Now safely either a UUID or an empty string
         completedDate:
             tile.aliased_data?.module_completed_date?.display_value ||
             fakeDate(order),
@@ -579,7 +586,9 @@ const persistOrder = async () => {
                         <QuestionDialog
                             v-if="applicationId && threads"
                             :application-id="applicationId"
-                            :permit-resource-id="row.moduleId"
+                            :permit-resource-id="
+                                row.moduleResourceId || permitId
+                            "
                             :threads="threads"
                             :context="row.name"
                             @message-sent="$emit('message-sent')"

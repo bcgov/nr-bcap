@@ -20,9 +20,15 @@ import type {
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { getCsrfToken } from '@/bcap/util.ts';
 import { z } from 'zod';
-import { zPatchedBcapMessageWritable } from '@/bcap/client/zod.gen.ts';
+import {
+    zPatchedBcapMessageWritable,
+    zBcapMessage,
+    zPaginatedBcapMessageList,
+} from '@/bcap/client/zod.gen.ts';
 
 type PatchedBcapMessageWritable = z.infer<typeof zPatchedBcapMessageWritable>;
+export type RawThreadMessage = z.infer<typeof zBcapMessage>;
+type PaginatedMessages = z.infer<typeof zPaginatedBcapMessageList>;
 
 export interface ResourceDraftResponse {
     id: string;
@@ -399,7 +405,7 @@ export const createBcapMessage = async (
                 },
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
-                    node_value: { resourceId: permitResourceId },
+                    node_value: [{ resourceId: permitResourceId }],
                 },
             },
         },
@@ -407,7 +413,7 @@ export const createBcapMessage = async (
 
     if (recipientId) {
         aliasedData.message_content!.aliased_data!.recipient = {
-            node_value: { resourceId: recipientId },
+            node_value: [{ resourceId: recipientId }],
         };
     }
 
@@ -415,7 +421,7 @@ export const createBcapMessage = async (
         aliasedData.related_source_message = {
             aliased_data: {
                 related_source_message: {
-                    node_value: { resourceId: threadId },
+                    node_value: [{ resourceId: threadId }],
                 },
             },
         };
@@ -442,8 +448,7 @@ const formatMessageDate = (isoDate: string | null | undefined): string =>
 export const getMessagesForPermit = async (
     permitId: string,
 ): Promise<{ threads: AppThread[] }> => {
-    // root threads for this permit
-    const threadsResponse = await apiFetchJson<{ results: RawThreadMessage[] }>(
+    const threadsResponse = await apiFetchJson<PaginatedMessages>(
         arches.urls.bcap_message_resource_threads(permitId),
     );
 
@@ -454,7 +459,6 @@ export const getMessagesForPermit = async (
     const threadPromises = threadsResponse.results.map(async (rootMessage) => {
         const threadId = rootMessage.resourceinstanceid;
 
-        // Extract the topic
         const contentData =
             rootMessage.aliased_data?.message_content?.aliased_data;
         const rawSubject =
@@ -464,9 +468,9 @@ export const getMessagesForPermit = async (
 
         const topic = rawSubject.split(' - Application')[0] || rawSubject;
 
-        const threadMessagesResponse = await apiFetchJson<{
-            results: RawThreadMessage[];
-        }>(arches.urls.bcap_message_thread_messages(threadId));
+        const threadMessagesResponse = await apiFetchJson<PaginatedMessages>(
+            arches.urls.bcap_message_thread_messages(threadId as string),
+        );
 
         const messages: FormattedMessage[] = (
             threadMessagesResponse.results ?? []
@@ -479,8 +483,7 @@ export const getMessagesForPermit = async (
 
                 return {
                     id: message.resourceinstanceid ?? '',
-
-                    rawResource: message as Record<string, unknown>,
+                    rawResource: message,
                     author: content?.message_author?.display_value || 'Unknown',
                     text:
                         content?.message_content?.node_value?.en?.value ||
@@ -509,7 +512,6 @@ export const getMessagesForPermit = async (
             rootMessage.aliased_data?.message_response?.aliased_data
                 ?.response_completed?.node_value === true;
 
-        // Count how many messages in this thread are missing a read date.
         const unreadCount = messages.filter((msg) => msg.isUnread).length;
         const hasUnread = unreadCount > 0;
 
