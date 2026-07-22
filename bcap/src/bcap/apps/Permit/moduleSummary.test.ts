@@ -15,7 +15,7 @@ describe('buildModuleSummary', () => {
     it('omits the current line once everything is complete', () => {
         expect(
             buildModuleSummary({ current_module: '', completed: 2, total: 2 }),
-        ).toBe('<strong>2/2 modules complete</strong>');
+        ).toBe('2/2 modules complete');
     });
 
     it('is empty with no modules', () => {

@@ -5,7 +5,7 @@ const routes = [
         path: arches.urls.plugin('submissions'),
         name: 'root',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/ExternalPermitSubmissions.vue'),
+            import('@/bcap/apps/Permit/components/dashboard/SubmissionsDashboard.vue'),
         meta: {
             shouldShowNavigation: true,
             requiresAuthentication: true,
