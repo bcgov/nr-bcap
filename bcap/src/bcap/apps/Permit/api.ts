@@ -14,7 +14,6 @@ import type {
     PermitApplicationResponse,
     PermitProcessModuleTileWritable,
     ProcessRequirement,
-    RawThreadMessage,
     AppThread,
 } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
@@ -508,9 +507,19 @@ export const getMessagesForPermit = async (
                 isUnread: message.isUnread,
             }));
 
+        const aliasedData = rootMessage.aliased_data as unknown as {
+            message_response?: {
+                aliased_data?: {
+                    response_completed?: {
+                        node_value?: boolean;
+                    };
+                };
+            };
+        };
+
         const isResolved =
-            rootMessage.aliased_data?.message_response?.aliased_data
-                ?.response_completed?.node_value === true;
+            aliasedData?.message_response?.aliased_data?.response_completed
+                ?.node_value === true;
 
         const unreadCount = messages.filter((msg) => msg.isUnread).length;
         const hasUnread = unreadCount > 0;
