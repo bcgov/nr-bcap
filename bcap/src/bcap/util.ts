@@ -99,6 +99,10 @@ export const getBasicInfoFields = (
             value: ident?.application_id?.display_value,
         },
         {
+            label: 'Submission Type',
+            value: ident?.filing_type?.display_value,
+        },
+        {
             label: 'Application Proponent',
             value: contacts?.application_proponent?.display_value,
         },
