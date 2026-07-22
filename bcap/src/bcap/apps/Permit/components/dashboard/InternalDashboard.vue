@@ -222,17 +222,8 @@ const displayedProjects = computed(() => {
     return state.sortOrder === 'desc' ? sorted.reverse() : sorted;
 });
 
-const formatBodyLine = (text?: string) => {
-    if (!text) return '';
-    const parts = text.split(':');
-    if (parts.length > 1) {
-        const label = parts.shift();
-        return DOMPurify.sanitize(
-            `<strong>${label}:</strong>${parts.join(':')}`,
-        );
-    }
-    return DOMPurify.sanitize(text);
-};
+const formatBodyLine = (text?: string) =>
+    text ? DOMPurify.sanitize(text) : '';
 
 const onCardClick = (event: MouseEvent, item: ProjectData) => {
     // Ctrl/Cmd-click opens the underlying resource instead of the permit view.
@@ -350,13 +341,6 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
    off "g", "y" and friends. */
 .dash-row :deep(.bodyTitle) {
     line-height: 1.35;
-}
-
-/* ProjectCard gives body <strong> a fixed 100px column, which leaves a gap
-   after short labels. */
-.dash-row :deep(.body-lines strong) {
-    width: auto;
-    margin-right: 0.35rem;
 }
 
 .loading-state,
