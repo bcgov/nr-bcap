@@ -186,7 +186,7 @@ describe('CompletedModules rendering', () => {
         expect(wrapper.text()).toContain('Submitted 2026-02-02');
     });
 
-    it('lists requirements sorted by order', () => {
+    it('lists requirements sorted by order', async () => {
         const wrapper = mountModules({
             modules: [
                 moduleTile({
@@ -198,7 +198,13 @@ describe('CompletedModules rendering', () => {
                     ],
                 }),
             ],
+            // Staff so the internal-visibility filter (which hides requirements
+            // until their details load) doesn't suppress the list.
+            isStaff: true,
         });
+        // Let the detail fetch settle so the list renders instead of the
+        // loading note.
+        await flushPromises();
         const names = wrapper.findAll('.requirement-name').map((n) => n.text());
         expect(names).toEqual(['Alpha', 'Beta']);
     });
@@ -235,7 +241,9 @@ describe('CompletedModules requirement detail loading', () => {
         expect(api.fetchRequirementDetails).toHaveBeenCalledWith(['r-1']);
         expect(wrapper.find('.req-type').text()).toBe('Checklist');
         // A checklist type surfaces the fill-out link built from arches.urls.
-        const fill = wrapper.find('a.req-action');
+        // Scoped to the requirement so the summary's "View submission" link
+        // (also a .req-action) isn't picked up first.
+        const fill = wrapper.find('.requirement-item a.req-action');
         expect(fill.attributes('href')).toBe(
             '/plugins/internal-permit-dashboard/checklist?id=r-1',
         );
@@ -324,30 +332,21 @@ describe('CompletedModules staff controls', () => {
         expect(wrapper.find('.add-req-btn').exists()).toBe(false);
     });
 
-    it('renders the add-module bar and only enables quick-add types', () => {
+    it('renders a chip for each addable module', () => {
         const wrapper = mountModules({
             modules: [staffModule()],
             isStaff: true,
             addableModules: [
-                {
-                    id: 'investigation',
-                    label: 'Investigation',
-                    routeName: 'investigationModule',
-                    disabled: false,
-                },
-                {
-                    id: 'permit',
-                    label: 'Permit',
-                    routeName: '',
-                    disabled: true,
-                },
+                { id: 'investigation', label: 'Investigation' },
+                { id: 'permit', label: 'Permit' },
             ],
         });
         const chips = wrapper.findAll('.add-module-chip');
         expect(chips).toHaveLength(2);
+        // Chips are enabled unless a submit is in flight; the parent decides
+        // which modules are offered.
         expect((chips[0].element as HTMLButtonElement).disabled).toBe(false);
-        // A non quick-add type stays disabled.
-        expect((chips[1].element as HTMLButtonElement).disabled).toBe(true);
+        expect((chips[1].element as HTMLButtonElement).disabled).toBe(false);
     });
 
     it('add-module submits a blank host then emits changed', async () => {
@@ -368,18 +367,6 @@ describe('CompletedModules staff controls', () => {
             {},
         );
         expect(wrapper.emitted('changed')).toHaveLength(1);
-    });
-
-    it('ignores add-module for a non quick-add type', async () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            onAddModule: (m: { id: string }) => Promise<void>;
-        };
-        await vm.onAddModule({ id: 'permit' });
-        expect(api.submitModule).not.toHaveBeenCalled();
     });
 
     it('confirming module removal deletes it and emits changed', async () => {
