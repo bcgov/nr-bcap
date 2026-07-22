@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FieldSet from 'primevue/fieldset';
 const isValid = () => {
     return true;
 };
@@ -7,61 +6,49 @@ const isValid = () => {
 defineExpose({ isValid });
 </script>
 <template>
-    <h3 class="mb-2 font-bold">Before you begin</h3>
-    <FieldSet>
-        <div class="mb-2">
-            <p>Stuff you need to know</p>
+    <h2 class="bc-step-heading">Before you begin</h2>
+    <p class="bc-step-lede">
+        Review the requirements below so your submission goes through without
+        delays.
+    </p>
+
+    <div class="bc-callout">
+        <i class="fa-solid fa-circle-info bc-callout-icon"></i>
+        <div>
+            <p class="bc-callout-title">Stuff you need to know</p>
+            <ul>
+                <li>Point 1</li>
+                <li>Point 2</li>
+                <li>Point 3</li>
+            </ul>
         </div>
+    </div>
 
-        <ul class="bullet-list ml-4">
-            <li>Point 1</li>
-            <li>Point 2</li>
-            <li>Point 3</li>
-        </ul>
+    <h2 class="bc-step-heading">Submission Requirements</h2>
 
-        <h3 class="mb-2 font-bold mt-4">Submission Requirements</h3>
-
-        <ul class="bullet-list ml-4">
-            <li>
-                Steps 2-5 and 10 are
-                <i>something</i>
-                to complete the basic data requirements for a notification.
-            </li>
-            <li>
+    <ol class="bc-numbered-list">
+        <li>
+            Steps 2-5 and 10 are
+            <i>required</i>
+            to complete the basic data requirements for a notification.
+        </li>
+        <li>
+            <div>
                 Information required for Steps 2-5:
-                <ul class="bullet-list ml-4 mt-2">
+                <ul class="bc-pill-list">
                     <li>First thing</li>
                     <li>Second thing</li>
-                    <li>
-                        Third things:
-                        <ul class="bullet-list-nested ml-4 mt-1">
-                            <li>One</li>
-                            <li>Two</li>
-                        </ul>
-                    </li>
+                    <li>Third things</li>
                 </ul>
-            </li>
-        </ul>
-    </FieldSet>
+            </div>
+        </li>
+    </ol>
 </template>
 
 <style>
 li {
     color: unset;
     font-size: unset;
-}
-
-.bullet-list {
-    list-style-type: disc;
-    padding-left: 1.5rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.bullet-list-nested {
-    list-style-type: circle;
-    padding-left: 2rem;
-    margin-top: 0.25rem;
 }
 
 .emailLink {
