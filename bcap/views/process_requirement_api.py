@@ -9,6 +9,7 @@ generated serializer so the response shape stays in lockstep with the graph.
 from django.http import Http404
 
 from drf_spectacular.utils import extend_schema
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -108,6 +109,7 @@ class ProcessRequirementSeedView(APIView):
 
     The permit type is a path segment; a type with no host resource is a 400."""
 
+    authentication_classes = [SessionAuthentication]
     permission_classes = [ResourceEditor]
     # Key each host's aliased_data component name off its graph, so the three
     # host types get distinct typed schemas instead of one shared, generic one.
@@ -168,6 +170,7 @@ class PermitModuleView(APIView):
     tile id: the tile is dropped and the requirement working copies it created
     (grouping parent, child requirements, submission hosts) are deleted."""
 
+    authentication_classes = [SessionAuthentication]
     permission_classes = STAFF_MODULE_PERMISSIONS
 
     def delete(self, request, pk, module_tileid):
@@ -189,6 +192,7 @@ class ModuleRequirementsView(APIView):
     just the id order rather than rebuilding and resending the whole module tree to
     keep a partial write from deleting the omitted tiles."""
 
+    authentication_classes = [SessionAuthentication]
     permission_classes = STAFF_MODULE_PERMISSIONS
 
     @extend_schema(request=ReorderRequirementsSerializer, responses={204: None})
@@ -216,6 +220,7 @@ class ModuleRequirementView(APIView):
     """DELETE: remove one process requirement from a module by its resource id
     (the child tile, the requirement resource, and its submission host)."""
 
+    authentication_classes = [SessionAuthentication]
     permission_classes = STAFF_MODULE_PERMISSIONS
 
     def delete(self, request, pk, module_tileid, requirement_id):
@@ -236,6 +241,7 @@ class RequirementChecklistView(APIView):
     {tileid?, name, description}; omit tileid to create one, and a persisted step
     left out of the list is deleted."""
 
+    authentication_classes = [SessionAuthentication]
     permission_classes = STAFF_MODULE_PERMISSIONS
 
     def patch(self, request, requirement_id):

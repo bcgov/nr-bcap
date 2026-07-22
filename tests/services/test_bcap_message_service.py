@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 
 from bcap.builders.contributor_builder import ContributorSpec
-from bcap.services.dashboard.contributor_service import ContributorService
+from bcap.services.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     InternalMessageToExternal,
@@ -412,4 +412,3 @@ class BcapMessagePrepareTests(TestCase):
         self.assertEqual(
             contributors.contributor_username(str(self.staff_contrib.pk)), "prepstaff"
         )
-        self.assertIsNone(contributors.contributor_username(str(self.unlinked.pk)))

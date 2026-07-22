@@ -8,5 +8,17 @@
     "notes": "",
     "satisfied": false,
     "sub_requirements": [],
-    "requirements": []
+    "requirements": [
+        {
+            "id": "REQ-DOC-TEMPLATE-001",
+            "name": "Submit Documents",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "document_submission",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        }
+    ]
 }

@@ -1,8 +1,12 @@
 from itertools import chain
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.dashboard.contributor_service import ContributorService
-from bcap.services.dashboard.dashboard_types import ApplicationCore, HcaPermit
+from bcap.services.contributor_service import ContributorService
+from bcap.services.dashboard.dashboard_types import (
+    ApplicationCore,
+    HcaPermit,
+    ModuleProgress,
+)
 from bcap.services.message.bcap_message_service import BcapMessageService
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
@@ -33,14 +37,14 @@ class BaseDashboardService(BaseGraphService):
         if not ids:
             return {}
 
-        resources = self._resources(
+        tiles = self._tiles(
             GraphSlugs.HCA_PERMIT,
             ids,
             [HCAPermitAliases.PERMIT_NUMBER, HCAPermitAliases.PERMIT_HOLDER],
         )
 
         hca_permits = {}
-        for permit in resources:
+        for permit in tiles:
             data = permit.aliased_data
             hca_permits[str(permit.pk)] = HcaPermit(
                 number=self._display_text(
@@ -89,3 +93,31 @@ class BaseDashboardService(BaseGraphService):
             permit_id: sum(counts.get(cid, 0) for cid in context_ids)
             for permit_id, context_ids in contexts.items()
         }
+
+    def _module_progress(self, permit) -> ModuleProgress:
+        """How many modules are complete, and the lowest-ordered one still
+        outstanding. Read off the loaded tree, so no query."""
+        modules = sorted(
+            (
+                module.aliased_data
+                for admin in self._nested_tiles(permit.aliased_data.application_admin)
+                for module in self._nested_tiles(admin.aliased_data.process_module)
+            ),
+            key=lambda data: self._raw_value(data, self.PA.MODULE_ORDER) or 0,
+        )
+        outstanding = [
+            data
+            for data in modules
+            if not self._raw_value(data, self.PA.IS_MODULE_COMPLETED)
+        ]
+        return ModuleProgress(
+            current_module=(
+                self._display_text(
+                    self._node_value(outstanding[0], self.PA.MODULE_NAME)
+                )
+                if outstanding
+                else ""
+            ),
+            completed=len(modules) - len(outstanding),
+            total=len(modules),
+        )

@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from arches.app.models.models import ResourceInstance
 
-from bcap.models.resource_draft import ResourceDraft
+from bcap.services.draft_service import DraftService
 from bcap.services.dashboard.external_dashboard_service import (
     ExternalDashboardService,
 )
@@ -240,10 +240,10 @@ class ExternalDashboardDraftsTests(TestCase):
         cls.service = ExternalDashboardService()
         cls.user = make_user("drafter")
         cls.other = make_user("other")
-        cls.draft = ResourceDraft.objects.create(
-            user=cls.user,
-            graph_slug="permit_application",
-            data={
+        cls.draft = DraftService().create(
+            cls.user,
+            "permit_application",
+            {
                 "aliased_data": {
                     "application_identification": {
                         "aliased_data": {
@@ -255,8 +255,8 @@ class ExternalDashboardDraftsTests(TestCase):
             },
         )
         # A draft for another graph and another user -- neither should surface.
-        ResourceDraft.objects.create(user=cls.user, graph_slug="hca_permit")
-        ResourceDraft.objects.create(user=cls.other, graph_slug="permit_application")
+        DraftService().create(cls.user, "hca_permit", {})
+        DraftService().create(cls.other, "permit_application", {})
 
     def test_drafts_scope_returns_only_the_users_permit_application_drafts(self):
         page = self.service.get_cards(
@@ -283,11 +283,11 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         cls.user = make_user("messy")
 
     def _draft_card(self, data):
-        # One new draft per user/graph (unique constraint), so clear first.
-        ResourceDraft.objects.filter(user=self.user).delete()
-        ResourceDraft.objects.create(
-            user=self.user, graph_slug="permit_application", data=data
-        )
+        # The dashboard expects one draft, so clear the user's drafts first.
+        ResourceInstance.objects.filter(
+            graph__slug="drafts", principaluser=self.user
+        ).delete()
+        DraftService().create(self.user, "permit_application", data)
         page = self.service.get_cards(
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
         )

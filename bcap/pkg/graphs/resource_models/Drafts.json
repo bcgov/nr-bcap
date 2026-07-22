@@ -63,6 +63,35 @@
                 },
                 {
                     "active": true,
+                    "cardid": "6ed7ea84-bc07-4403-b482-d870ad94e03e",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "ISO timestamp of the draft's last save."
+                    },
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Updated Date"
+                    },
+                    "nodegroup_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "c4cf7e09-b0c0-4bda-814a-f0b47252cb5c",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -125,7 +154,9 @@
                     "card_id": "c4cf7e09-b0c0-4bda-814a-f0b47252cb5c",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Frontend Version",
                         "maxLength": null,
                         "placeholder": {
@@ -148,7 +179,9 @@
                     "card_id": "dba195a7-bce2-44cf-930e-4e3f592105a9",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Graph Slug",
                         "maxLength": null,
                         "placeholder": {
@@ -168,10 +201,32 @@
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
+                    "card_id": "6ed7ea84-bc07-4403-b482-d870ad94e03e",
+                    "config": {
+                        "defaultValue": "",
+                        "label": "Updated Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "be4f78e4-590a-46ed-8fb8-7c51a03cce7d",
+                    "label": {
+                        "en": "Updated Date"
+                    },
+                    "node_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
                     "card_id": "27d16455-ef31-4fba-82ea-2ac9357b83cb",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Graph Publication Id",
                         "maxLength": null,
                         "placeholder": {
@@ -194,7 +249,9 @@
                     "card_id": "68f083b2-c21e-4aee-86ca-5885b4166843",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Draft Data",
                         "maxLength": null,
                         "placeholder": {
@@ -222,6 +279,16 @@
                 "en": ""
             },
             "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "e85bfcaa-72e5-4b01-88b6-0d2259d5379f",
+                    "edgeid": "0bb83bce-ef3a-4195-9852-3f137feea501",
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "source_identifier_id": null
+                },
                 {
                     "description": null,
                     "domainnode_id": "e85bfcaa-72e5-4b01-88b6-0d2259d5379f",
@@ -302,6 +369,13 @@
                     "grouping_node_id": "d37f01cd-e66f-420b-901a-63cc530f6eb2",
                     "legacygroupid": null,
                     "nodegroupid": "d37f01cd-e66f-420b-901a-63cc530f6eb2",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "legacygroupid": null,
+                    "nodegroupid": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
                     "parentnodegroup_id": null
                 }
             ],
@@ -420,15 +494,40 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "updated_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
+                    },
+                    "datatype": "date",
+                    "description": "ISO timestamp of the draft's last save.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "hascustomalias": true,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Updated Date",
+                    "nodegroup_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "nodeid": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": null,
             "publication": {
                 "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
                 "most_recent_edit_id": null,
-                "notes": "Add in draft and fields",
-                "publicationid": "d0befc2d-3669-4617-8432-559bdc0e1c75",
-                "published_time": "2026-07-21T15:34:11.824"
+                "notes": null,
+                "publicationid": "d51eb9c2-0631-4c1c-9f70-193392e43735",
+                "published_time": "2026-07-22T14:10:16.180"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -528,7 +627,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: detected dubious ownership in repository at '/web_root/arches'",
+        "git hash": "97443c076 2026-05-28 13:57:52 -0700",
         "os": "Linux",
         "os version": "6.18.35.2-microsoft-standard-WSL2"
     }

@@ -6,11 +6,13 @@ BcapMessageService."""
 
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from arches.app.utils.permission_backend import user_can_edit_resource
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
@@ -18,6 +20,12 @@ from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPaginati
 from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
+from rest_framework_dataclasses.serializers import DataclassSerializer
+
+from bcap.services.contributor_service import (
+    ContributorSummary,
+    ContributorService,
+)
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     InternalMessageToExternal,
@@ -87,6 +95,30 @@ class BcapMessageCreateView(BcapMessageListView):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+
+class ContributorSummarySerializer(DataclassSerializer):
+    class Meta:
+        dataclass = ContributorSummary
+
+
+@extend_schema(
+    tags=["External: bcap_message"],
+    responses=ContributorSummarySerializer(many=True),
+)
+class BcapMessageContributorsView(APIView):
+    """GET the contributors you can address a message to for a resource: the
+    login-linked contributors referenced on it plus its ministry assignees.
+    Gated on edit access to the resource, like posting a message about it."""
+
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, resource_id):
+        if not user_can_edit_resource(request.user, resourceid=str(resource_id)):
+            raise PermissionDenied("No access to the resource context.")
+        options = ContributorService().contributors_for_resource(str(resource_id))
+        return Response(ContributorSummarySerializer(options, many=True).data)
 
 
 @extend_schema(tags=["External: bcap_message"])

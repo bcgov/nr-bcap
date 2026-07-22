@@ -18,6 +18,7 @@ class SiteVisitAliases(AbstractAliases):
     BIOGEOGRAPHY_DESCRIPTION = "biogeography_description"
     BIOGEOGRAPHY_NAME = "biogeography_name"
     BIOGEOGRAPHY_TYPE = "biogeography_type"
+    BOUNDARY_TYPE = "boundary_type"
     CHRONOLOGY_REMARKS = "chronology_remarks"
     COPYRIGHT = "copyright"
     CULTURAL_MATERIAL_DETAILS = "cultural_material_details"

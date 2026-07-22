@@ -502,10 +502,10 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(card.permit_holder, "Acme Corp")
         self.assertEqual(card.permit_holder_ids, [self.acme_id])
         # The project_officer on the permit's application_admin group.
-        self.assertEqual(card.project_officer, "Alan Turing")
+        self.assertEqual(card.project_officer, "Turing, Alan")
         self.assertEqual(card.project_officer_id, self.alan_id)
         # The assignee on the chosen ("Field Assessment") tile.
-        self.assertEqual(card.ministry_assignee_name, "Grace Hopper")
+        self.assertEqual(card.ministry_assignee_name, "Hopper, Grace")
         self.assertEqual(card.ministry_assignee_id, self.grace_id)
 
     def test_assigned_to_me_status_filters_by_user_bcap_username(self):
@@ -627,7 +627,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
             {"related_permit": hca, "is_related_permit": True},
         )
         permit.save(**builder.save_kwargs)
-        permits = self.service._resources(
+        permits = self.service._tiles(
             GraphSlugs.PERMIT_APPLICATION, [permit.pk], [self.service.PA.RELATED_PERMIT]
         )
 
@@ -672,8 +672,8 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(
             names,
             {
-                self.ada_id: "Ada Lovelace",
-                self.grace_id: "Grace Hopper",
+                self.ada_id: "Lovelace, Ada",
+                self.grace_id: "Hopper, Grace",
                 self.acme_id: "Acme Corp",
             },
         )

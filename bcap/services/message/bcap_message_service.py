@@ -8,9 +8,9 @@ from django.db.models import Count, Q
 from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.dashboard.contributor_service import ContributorService
+from bcap.services.contributor_service import ContributorService
 from bcap.util.aliases.bcap_message import BcapMessageAliases
-from bcap.util.auth.roles import is_internal_user
+from bcap.util.auth.groups import is_internal_user
 from bcap.util.dates import parse_iso_or_set_value
 
 logger = logging.getLogger(__name__)
@@ -121,16 +121,10 @@ class BcapMessageService(BaseGraphService):
         if not self._is_internal_payload(data):
             return
         recipient_id = self._payload_relation_id(data, self.A.RECIPIENT)
-        if recipient_id and not self._recipient_is_internal(recipient_id):
+        if recipient_id and not ContributorService().contributor_is_internal(
+            recipient_id
+        ):
             raise InternalMessageToExternal(recipient_id)
-
-    def _recipient_is_internal(self, contributor_id):
-        """True when the recipient Contributor is linked to a staff user."""
-        username = ContributorService().contributor_username(contributor_id)
-        if not username:
-            return False
-        user = get_user_model().objects.filter(username=username).first()
-        return bool(user and is_internal_user(user))
 
     def root_queryset(self, resource_id, user):
         """The thread-starting messages on a parent resource, gated for externals."""

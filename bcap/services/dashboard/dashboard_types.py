@@ -59,6 +59,21 @@ class DashboardFilter:
 
 
 @dataclass
+class ModuleProgress:
+    """What a dashboard card says about a permit's modules: how far along it is
+    and which module it is waiting on. The per-module list is deliberately not
+    exposed -- a card only ever renders this summary."""
+
+    current_module: str = described(
+        "Name of the lowest-ordered module not yet completed, or empty once "
+        "they are all done.",
+        "",
+    )
+    completed: int = described("How many modules are marked completed.", 0)
+    total: int = described("How many modules the permit has.", 0)
+
+
+@dataclass
 class InternalDashboardCard:
     """Response structure for the internal dashboard, and the single source of
     truth for the card's shape -- the response serializer derives its fields
@@ -130,6 +145,7 @@ class InternalDashboardCard:
         "Count of the permit's BCAP messages not yet read for the user or group.",
         0,
     )
+    module_progress: ModuleProgress = field(default_factory=ModuleProgress)
 
 
 @dataclass
@@ -186,6 +202,7 @@ class ExternalDashboardCard:
         "group.",
         0,
     )
+    module_progress: ModuleProgress = field(default_factory=ModuleProgress)
 
 
 @dataclass

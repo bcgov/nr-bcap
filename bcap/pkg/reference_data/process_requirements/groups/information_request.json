@@ -8,5 +8,17 @@
     "notes": "",
     "satisfied": false,
     "sub_requirements": [],
-    "requirements": []
+    "requirements": [
+        {
+            "id": "REQ-INFO-TEMPLATE-001",
+            "name": "Submit Information Request",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "information_request",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        }
+    ]
 }

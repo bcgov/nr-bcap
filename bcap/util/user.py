@@ -7,6 +7,12 @@ def full_name(*parts):
     return " ".join(part for part in parts if part)
 
 
+def last_first(first, last):
+    """ "Last, First" display name, skipping a blank part (so an org with only a
+    single name reads as just that name)."""
+    return ", ".join(part for part in (last, first) if part)
+
+
 def display_name(user):
     """The user's full name, falling back to username; "" if no user."""
     if not user:

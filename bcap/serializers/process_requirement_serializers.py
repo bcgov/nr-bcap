@@ -27,6 +27,26 @@ class InspectionSerializer(BCAPResourceSerializer):
         graph_slug = "inspection"
 
 
+class SiteVisitSerializer(BCAPResourceSerializer):
+    class Meta(BCAPResourceSerializer.Meta):
+        graph_slug = "site_visit"
+
+
+class DocumentSubmissionSerializer(BCAPResourceSerializer):
+    class Meta(BCAPResourceSerializer.Meta):
+        graph_slug = "document_submission"
+
+
+class InformationRequestSerializer(BCAPResourceSerializer):
+    class Meta(BCAPResourceSerializer.Meta):
+        graph_slug = "information_request"
+
+
+class NoticeOfProjectIntentSerializer(BCAPResourceSerializer):
+    class Meta(BCAPResourceSerializer.Meta):
+        graph_slug = "notice_of_project_intent"
+
+
 # The serializer that validates and creates a module's host resource, by host
 # graph slug. A module names its host via the child whose resource matches the
 # module slug (see template_specs.host_graph); a slug with no group file or no
@@ -35,6 +55,10 @@ HOST_SERIALIZERS = {
     "investigation": InvestigationSerializer,
     "alteration": AlterationSerializer,
     "inspection": InspectionSerializer,
+    "site_visit": SiteVisitSerializer,
+    "document_submission": DocumentSubmissionSerializer,
+    "information_request": InformationRequestSerializer,
+    "notice_of_project_intent": NoticeOfProjectIntentSerializer,
 }
 
 

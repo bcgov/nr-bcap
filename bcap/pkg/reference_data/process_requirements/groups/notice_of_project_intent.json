@@ -8,5 +8,17 @@
     "notes": "",
     "satisfied": false,
     "sub_requirements": [],
-    "requirements": []
+    "requirements": [
+        {
+            "id": "REQ-NOI-TEMPLATE-001",
+            "name": "Submit Notice of Project Intent",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "notice_of_project_intent",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        }
+    ]
 }

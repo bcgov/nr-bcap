@@ -1,16 +1,13 @@
-from arches.app.models.models import TileModel
-
 from arches_querysets.models import ResourceTileTree
 
-from bcap.models.resource_draft import ResourceDraft
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
+from bcap.services.draft_service import DraftService
 from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     ExternalDashboardCard,
     ExternalDashboardPage,
     ExternalDashboardStatus,
 )
-from bcap.util.aliases.contributor import ContributorAliases
 from bcap.util.aliases.permit_application import PermitApplicationGroupAliases
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.dates import to_iso
@@ -53,7 +50,9 @@ class ExternalDashboardService(BaseDashboardService):
         cards = []
         for permit in permits:
             unread_count = unread.get(str(permit.pk), 0)
-            cards.append(self._application_card(permit, hca_permits, unread_count))
+            card = self._application_card(permit, hca_permits, unread_count)
+            card.module_progress = self._module_progress(permit)
+            cards.append(card)
         return count, cards
 
     def _application_queryset(self):
@@ -69,6 +68,11 @@ class ExternalDashboardService(BaseDashboardService):
                         self.PA.INDUSTRIAL_SECTOR,
                         self.PA.APPLICATION_PRIORITY_LEVEL,
                         self.PA.RELATED_PERMIT,
+                        self.PA.MODULE_ID,
+                        self.PA.MODULE_NAME,
+                        self.PA.MODULE_ORDER,
+                        self.PA.MODULE_COMPLETED_DATE,
+                        self.PA.IS_MODULE_COMPLETED,
                     ],
                 ),
                 as_representation=True,
@@ -87,25 +91,13 @@ class ExternalDashboardService(BaseDashboardService):
                 return queryset.filter(principaluser=user)
             case ExternalDashboardStatus.CREATED_BY_ASSOCIATED_COMPANIES:
                 return queryset.filter(
-                    principaluser__username__in=self._company_usernames(user)
+                    principaluser__username__in=self.contributors.company_usernames(
+                        user.username
+                    )
                 )
             case _:
                 # Unrecognized/unset status: scope to own applications.
                 return queryset.filter(principaluser=user)
-
-    def _company_usernames(self, user):
-        """bcap_usernames of the members of the user's associated companies
-        (includes the user). Empty if the user has no linked Contributor."""
-        ids = self.contributors.company_contributor_ids(user.username)
-        if not ids:
-            return set()
-        username_node, contributor_ng = self._node_info(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME
-        )
-        rows = TileModel.objects.filter(
-            nodegroup_id=contributor_ng, resourceinstance_id__in=ids
-        ).values_list(f"data__{username_node}", flat=True)
-        return {username for username in rows if username}
 
     def _application_card(self, permit, hca_permits, unread_messages=0):
         core = self._application_core(permit.aliased_data)
@@ -137,22 +129,19 @@ class ExternalDashboardService(BaseDashboardService):
         name = str(lifecycle.name) if lifecycle else None
         return self._STATUS_BY_LIFECYCLE.get(name, "")
 
-    def _draft_queryset(self, user):
-        """The user's permit-application drafts, oldest first."""
-        return ResourceDraft.objects.filter(
-            user=user, graph_slug=GraphSlugs.PERMIT_APPLICATION
-        ).order_by("created")
-
     def _draft_cards(self, user, query):
-        count, page = self._page(self._draft_queryset(user), query)
-        return count, [self._draft_card(draft, user) for draft in page]
+        store = DraftService()
+        count, page = self._page(
+            store.queryset(user, GraphSlugs.PERMIT_APPLICATION), query
+        )
+        return count, [self._draft_card(store.to_record(r), user) for r in page]
 
     def _draft_card(self, draft, user):
         ident = self._group_aliased_data(
             draft.data, PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION
         )
         return ExternalDashboardCard(
-            id=str(draft.id),
+            id=draft.id,
             is_draft=True,
             status="Submission Required",
             created_by_name=display_name(user),
