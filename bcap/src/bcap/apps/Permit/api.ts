@@ -308,6 +308,38 @@ export const patchModuleOrder = async (
     await apiFetch(url, { method: HttpMethod.Patch, body });
 };
 
+export const setModuleCompleted = async (
+    moduleTileId: string,
+    completed: boolean,
+    name: string,
+    moduleId: string,
+): Promise<void> => {
+    const url = arches.urls.api_tile(
+        GraphSlug.PermitApplication,
+        'process_module',
+        moduleTileId,
+    );
+    await apiFetch(url, {
+        method: HttpMethod.Patch,
+        body: {
+            aliased_data: {
+                // The tile endpoint validates the whole card, so the required
+                // fields ride along even though only completion is changing.
+                module_name: { node_value: localized(name) },
+                ...(moduleId ? { module_id: { node_value: moduleId } } : {}),
+                is_module_completed: { node_value: completed },
+                // Cleared when un-marking so the card doesn't keep showing a
+                // submitted date for a module that is no longer complete.
+                module_completed_date: {
+                    node_value: completed
+                        ? new Date().toISOString().slice(0, 10)
+                        : null,
+                },
+            },
+        },
+    });
+};
+
 export const removeModuleAndRequirements = async (
     permitId: string,
     moduleTileId: string,
@@ -471,15 +503,17 @@ export const getMessagesForPermit = async (
     return { messages, threadId };
 };
 
-export const getContributors = async (): Promise<
-    Array<{ label: string; value: string }>
-> => {
-    const data = await apiFetchJson<{
-        results?: Array<{ name?: string; resourceinstanceid: string }>;
-    }>(arches.urls.api_contributor);
+// The contributors you can address a message to for a resource: its
+// login-linked contributors (ministry assignees included), from the backend.
+export const getContributorsForResources = async (
+    resourceId: string,
+): Promise<Array<{ label: string; value: string }>> => {
+    const data = await apiFetchJson<
+        Array<{ id: string; name?: string; email?: string; type?: string }>
+    >(arches.urls.bcap_message_resource_contributors(resourceId));
 
-    return (data.results ?? []).map((item) => ({
+    return (data ?? []).map((item) => ({
         label: item.name || 'Unknown Contributor',
-        value: item.resourceinstanceid,
+        value: item.id,
     }));
 };
