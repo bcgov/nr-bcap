@@ -1,7 +1,7 @@
 import arches from 'arches';
 import { z } from 'zod';
 import {
-    zContributorOption,
+    zContributorSummary,
     zInternalDashboardPage,
     zNewContributor,
     zProcessRequirement,
@@ -92,7 +92,7 @@ export const getProcessRequirementData = async (
     return result.data;
 };
 
-export type UnlinkedContributor = z.infer<typeof zContributorOption>;
+export type UnlinkedContributor = z.infer<typeof zContributorSummary>;
 export type NewContributorInput = z.infer<typeof zNewContributor>;
 export type RegistrationLinkResult = z.infer<typeof zRegistrationLinkResponse>;
 export type IssueRegistrationLinkBody = z.infer<
