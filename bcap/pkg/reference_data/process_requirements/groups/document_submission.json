@@ -12,7 +12,7 @@
         {
             "id": "REQ-DOC-TEMPLATE-001",
             "name": "Submit Documents",
-            "type": "Workflow",
+            "type": "Document Submission",
             "internal": false,
             "resource": "document_submission",
             "due": null,
