@@ -154,9 +154,7 @@
                     "card_id": "c4cf7e09-b0c0-4bda-814a-f0b47252cb5c",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Frontend Version",
                         "maxLength": null,
                         "placeholder": {
@@ -179,9 +177,7 @@
                     "card_id": "dba195a7-bce2-44cf-930e-4e3f592105a9",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Graph Slug",
                         "maxLength": null,
                         "placeholder": {
@@ -224,9 +220,7 @@
                     "card_id": "27d16455-ef31-4fba-82ea-2ac9357b83cb",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Graph Publication Id",
                         "maxLength": null,
                         "placeholder": {
@@ -249,9 +243,7 @@
                     "card_id": "68f083b2-c21e-4aee-86ca-5885b4166843",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Draft Data",
                         "maxLength": null,
                         "placeholder": {
