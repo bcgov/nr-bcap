@@ -165,7 +165,10 @@ def build_permit_graph():
         {
             "project_name": builder.localized("My Project"),
             "application_id": builder.localized("APP-1"),
-            "filing_type": reference_value("permit_application", "filing_type"),
+            # Pinned by label so the card's submission_type is assertable.
+            "filing_type": reference_value(
+                "permit_application", "filing_type", "Site Visit"
+            ),
         },
     )
     builder.append_blank_tile_for_group(

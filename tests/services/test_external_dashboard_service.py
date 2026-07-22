@@ -43,7 +43,10 @@ def build_external_permit(builder, name, owner, lifecycle="Active", hca_permit=N
         {
             "project_name": builder.localized(name),
             "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
+            # Pinned by label so the card's submission_type is assertable.
+            "filing_type": reference_value(
+                "permit_application", "filing_type", "Site Visit"
+            ),
         },
     )
     builder.append_blank_tile_for_group(

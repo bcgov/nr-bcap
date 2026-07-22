@@ -68,6 +68,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual(card["id"], self.permit_id)
         self.assertEqual(card["project_name"], "My Project")
         self.assertRegex(card["application_number"], r"^APP-\d+$")
+        self.assertEqual(card["submission_type"], "Site Visit")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
         self.assertEqual(card["requirement_name"], "Field Assessment")
         self.assertEqual(card["ministry_assignee_name"], "Hopper, Grace")
@@ -184,6 +185,7 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual(card["created_by_name"], "testuser")
         self.assertEqual(card["project_name"], "My App")
         self.assertRegex(card["application_number"], r"^APP-\d+$")
+        self.assertEqual(card["submission_type"], "Site Visit")
         self.assertEqual(card["permit_id"], self.hca_id)
         self.assertEqual(card["permit_number"], "HCA-001")
 
