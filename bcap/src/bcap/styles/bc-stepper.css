@@ -1,0 +1,380 @@
+/* Generic BC-government stepper chrome: a progress rail beside a step card.
+
+   Project-agnostic -- it only reads the design tokens from bc-theme.css and
+   PrimeVue's own Stepper classes, so any app can import both files and get the
+   same layout by applying:
+
+     .bc-stepper-layout   wraps the rail and the panels
+     .bc-stepper-nav      the rail (put StepList inside it)
+     .bc-stepper-main     the panels column
+     .bc-step-header      eyebrow + title + top action, over the gold rule
+     .bc-step-card        the white card the active panel sits in
+     .bc-callout          highlighted "read this first" block
+     .bc-numbered-list    ordered list with badge numerals
+     .bc-pill-list        wrapped list of pills
+     .bc-step-actions     footer button row */
+
+/* No @import of bc-theme.css here on purpose: it carries global element rules
+   (a, :focus-visible) that would leak past the stepper and restyle the host
+   page chrome. The app imports it once; this file just reads its tokens. */
+
+.bc-stepper-layout {
+    display: flex;
+    /* stretch, not flex-start: the rail is a full-height band, so it has to
+       take the row's height rather than just its own content's. */
+    align-items: stretch;
+    gap: 2.5rem;
+    /* Carries the rail to the bottom of the page on short steps. */
+    min-height: 100vh;
+}
+
+/* Progress rail */
+
+.bc-stepper-nav {
+    flex: 0 0 250px;
+    padding: 2rem 0;
+}
+
+.bc-stepper-nav-label {
+    margin: 0 0 1.25rem;
+    padding: 0 1.5rem;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bc-grey);
+}
+
+.bc-stepper-nav .p-steplist {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.bc-stepper-nav .p-step {
+    padding: 0;
+}
+
+.bc-stepper-nav .p-step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.9rem 1.5rem;
+    /* Reserved so the active step's gold marker doesn't shift the row. */
+    border-left: 4px solid transparent;
+    /* Rounded on the marker side only; the row runs off toward the panel. */
+    border-radius: 4px 0 0 4px;
+    background: transparent;
+    text-align: left;
+}
+
+.bc-stepper-nav .p-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--bc-border);
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--bc-grey);
+}
+
+.bc-stepper-nav .p-step-title {
+    font-size: 14px;
+    color: var(--bc-grey);
+}
+
+.bc-stepper-nav .p-step-active .p-step-header {
+    border-left-color: var(--bc-gold);
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
+}
+
+.bc-stepper-nav .p-step-active .p-step-number {
+    border-color: var(--bc-navy);
+    color: var(--bc-navy);
+}
+
+.bc-stepper-nav .p-step-active .p-step-title {
+    font-weight: 700;
+    color: var(--bc-navy);
+}
+
+/* Panels */
+
+.bc-stepper-main {
+    flex: 1;
+    /* Without this a wide panel refuses to shrink and overflows the flex row. */
+    min-width: 0;
+}
+
+.bc-step-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 2px solid var(--bc-gold);
+}
+
+.bc-step-eyebrow {
+    margin: 0 0 0.35rem;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bc-link);
+}
+
+.bc-step-title {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--bc-text);
+}
+
+.bc-step-card {
+    margin-top: 2rem;
+    padding: 2.5rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+}
+
+/* A heading's own top margin stacks on the card padding and reads as a gap. */
+.bc-step-card > :first-child,
+.bc-step-card .p-steppanel > :first-child {
+    margin-top: 0;
+}
+
+.bc-step-card h2,
+.bc-step-heading {
+    margin: 0 0 0.5rem;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bc-text);
+}
+
+.bc-step-lede {
+    margin: 0;
+    font-size: 14px;
+    color: #333333;
+}
+
+/* Content blocks */
+
+.bc-callout {
+    display: flex;
+    gap: 0.85rem;
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.5rem;
+    background: #f6f9fc;
+    border-left: 4px solid var(--bc-navy);
+}
+
+.bc-callout-icon {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    font-size: 15px;
+    color: var(--bc-navy);
+}
+
+.bc-callout-title {
+    margin: 0 0 0.5rem;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--bc-navy);
+}
+
+.bc-callout ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 14px;
+}
+
+.bc-numbered-list {
+    counter-reset: bc-num;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bc-numbered-list > li {
+    display: flex;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+    font-size: 14px;
+    color: #333333;
+}
+
+.bc-numbered-list > li::before {
+    counter-increment: bc-num;
+    content: counter(bc-num);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--bc-selected);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--bc-navy);
+}
+
+.bc-pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0.85rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bc-pill-list > li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--bc-border);
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 14px;
+    color: #333333;
+}
+
+.bc-pill-list > li::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--bc-gold);
+}
+
+.bc-step-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Buttons. Scoped to the stepper so they don't collide with a host app's own
+   button styles; the PrimeVue selectors cover the shared StepperNavigation. */
+
+.bc-stepper-layout .p-button,
+.bc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.8rem;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Two classes deep on purpose: these render as <a>, so a bare .bc-btn-primary
+   loses to the theme's `.bcgov-main-content a` link colour. */
+.bc-stepper-layout .next-button,
+.bc-stepper-layout .bc-btn-primary {
+    background: var(--bc-navy);
+    border: 2px solid var(--bc-navy);
+    color: #ffffff;
+}
+
+/* The shared nav renders a label-only button, so the arrow is drawn here
+   rather than passed in as an icon prop. */
+.bc-stepper-layout .next-button::after {
+    content: '\f061';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 13px;
+}
+
+/* The last step's button isn't a "next" -- it prints -- so it loses the arrow
+   and the primary fill. Print sits at the left of the row; the primary action,
+   going back to the filing, is pushed to the far right. */
+.bc-step-actions.is-final .next-button::after {
+    content: none;
+}
+
+.bc-step-actions.is-final .next-button::before {
+    content: '\f02f';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 13px;
+}
+
+.bc-step-actions.is-final .next-button {
+    background: #ffffff;
+    border: 2px solid var(--bc-navy);
+    color: var(--bc-navy);
+}
+
+.bc-step-actions.is-final .next-button:not(:disabled):hover {
+    background: var(--bc-selected);
+    color: var(--bc-navy);
+}
+
+/* Regular weight to match the nav buttons, which the PrimeVue preset renders
+   unbolded. */
+.bc-stepper-layout .bc-btn-back {
+    font-weight: 400;
+}
+
+.bc-stepper-layout .bc-btn-back::after {
+    content: '\f061';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 13px;
+}
+
+/* The theme underlines links on hover; these render as buttons, so they don't.
+   Scoped to the stepper to outrank .bcgov-main-content a:hover. */
+.bc-stepper-layout .bc-btn:hover,
+.bc-stepper-layout .bc-btn:focus {
+    text-decoration: none;
+}
+
+.bc-stepper-layout .next-button:not(:disabled):hover,
+.bc-stepper-layout .bc-btn-primary:hover {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+    color: #ffffff;
+}
+
+.bc-stepper-layout .previous-button,
+.bc-btn-secondary {
+    background: #ffffff;
+    border: 2px solid var(--bc-navy);
+    color: var(--bc-navy);
+}
+
+.bc-stepper-layout .previous-button::before {
+    content: '\f060';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 13px;
+}
+
+.bc-stepper-layout .previous-button:not(:disabled):hover,
+.bc-btn-secondary:hover {
+    background: var(--bc-selected);
+}
+
+.bc-stepper-layout .p-button:disabled {
+    background: var(--bc-muted);
+    border-color: var(--bc-muted);
+    color: #ffffff;
+    opacity: 0.6;
+}
