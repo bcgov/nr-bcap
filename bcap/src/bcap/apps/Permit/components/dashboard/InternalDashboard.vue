@@ -57,15 +57,17 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
         bodySubtitle1: rawItem.application_number || 'No App #',
         bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-        body1: rawItem.permit_number
+        body1: rawItem.submission_type
+            ? `Type: ${rawItem.submission_type}`
+            : undefined,
+        body2: rawItem.permit_number
             ? `Permit: ${rawItem.permit_number}`
             : undefined,
-        body2: rawItem.permit_holder
+        body3: rawItem.permit_holder
             ? `Holder: ${rawItem.permit_holder}`
             : undefined,
-        body3: `Officer: ${rawItem.project_officer || ''}`,
-        body4: buildModuleSummary(rawItem.module_progress),
-        body5: undefined,
+        body4: `Officer: ${rawItem.project_officer || ''}`,
+        body5: buildModuleSummary(rawItem.module_progress),
 
         footerDate: rawItem.requirement_due_date || 'Not Started',
         footerName: rawItem.ministry_assignee_name || 'Unassigned',
@@ -81,12 +83,13 @@ const sortOptions = [
     { label: 'Assigned To', value: 'footerName' },
     { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
-    { label: 'Permit Holder', value: 'body2' },
-    { label: 'Permit Number', value: 'body1' },
+    { label: 'Permit Holder', value: 'body3' },
+    { label: 'Permit Number', value: 'body2' },
     { label: 'Priority', value: 'capPriority' },
     { label: 'Process', value: 'capLabel' },
-    { label: 'Project Officer', value: 'body3' },
+    { label: 'Project Officer', value: 'body4' },
     { label: 'Sector', value: 'bodySubtitle2' },
+    { label: 'Submission Type', value: 'body1' },
 ];
 
 const internalTabs = [
@@ -347,6 +350,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
    off "g", "y" and friends. */
 .dash-row :deep(.bodyTitle) {
     line-height: 1.35;
+}
+
+/* ProjectCard gives body <strong> a fixed 100px column, which leaves a gap
+   after short labels. */
+.dash-row :deep(.body-lines strong) {
+    width: auto;
+    margin-right: 0.35rem;
 }
 
 .loading-state,
