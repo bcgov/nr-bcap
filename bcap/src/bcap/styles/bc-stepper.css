@@ -26,16 +26,25 @@
     gap: 2.5rem;
     /* Carries the rail to the bottom of the page on short steps. */
     min-height: 100vh;
+    /* One top offset for the whole row so the rail label lines up with the
+       header's first line rather than each column padding on its own. */
+    padding-top: 2rem;
 }
 
 /* Progress rail */
 
 .bc-stepper-nav {
     flex: 0 0 250px;
-    padding: 2rem 0;
+    /* Top offset lives on the layout so the label aligns with the header. */
+    padding: 0 0 2rem;
 }
 
 .bc-stepper-nav-label {
+    /* Fixed line box, centered, so the label lines up with the header's first
+       line even when that line uses a larger font (e.g. a back link). */
+    display: flex;
+    align-items: center;
+    min-height: 1.75rem;
     margin: 0 0 1.25rem;
     padding: 0 1.5rem;
     font-size: 12px;
@@ -123,6 +132,11 @@
 }
 
 .bc-step-eyebrow {
+    /* Same fixed line box as the rail label so the two line up when the eyebrow
+       is the header's first line (every step past the first). */
+    display: flex;
+    align-items: center;
+    min-height: 1.75rem;
     margin: 0 0 0.35rem;
     font-size: 12px;
     font-weight: 700;

@@ -85,6 +85,7 @@ export const zDraftRecord = z.object({
     graph_slug: z.string(),
     graph_publication_id: z.string(),
     frontend_version: z.string(),
+    parent_resource_id: z.string().optional(),
     data: z.record(z.string(), z.unknown()).optional(),
     created: z.iso.datetime({ offset: true, local: true }).nullish(),
     updated: z.iso.datetime({ offset: true, local: true }).nullish()
@@ -92,11 +93,12 @@ export const zDraftRecord = z.object({
 
 /**
  * Request body for create/update: the whole draft blob, plus an optional
- * frontend version stamped on create.
+ * frontend version and parent resource stamped on create.
  */
 export const zDraftWrite = z.object({
     data: z.unknown(),
-    frontend_version: z.string().optional()
+    frontend_version: z.string().optional(),
+    parent_resource_id: z.string().optional()
 });
 
 export const zFileListAliasedNodeData = z.object({
@@ -389,11 +391,12 @@ export const zPatchedChecklistPatch = z.object({
 
 /**
  * Request body for create/update: the whole draft blob, plus an optional
- * frontend version stamped on create.
+ * frontend version and parent resource stamped on create.
  */
 export const zPatchedDraftWrite = z.object({
     data: z.unknown().optional(),
-    frontend_version: z.string().optional()
+    frontend_version: z.string().optional(),
+    parent_resource_id: z.string().optional()
 });
 
 /**
@@ -4522,6 +4525,7 @@ export const zDraftRecordWritable = z.object({
     graph_slug: z.string(),
     graph_publication_id: z.string(),
     frontend_version: z.string(),
+    parent_resource_id: z.string().optional(),
     data: z.record(z.string(), z.unknown()).optional(),
     created: z.iso.datetime({ offset: true, local: true }).nullish(),
     updated: z.iso.datetime({ offset: true, local: true }).nullish()

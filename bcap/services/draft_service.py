@@ -32,6 +32,9 @@ class DraftRecord:
     graph_slug: str
     graph_publication_id: str
     frontend_version: str
+    # The resource the draft was started from, so that resource's page can list
+    # its own drafts. Empty when the draft has no parent.
+    parent_resource_id: str = ""
     data: dict = field(default_factory=dict)
     created: datetime | None = None
     # Stamped in place on every save (drafts have no edit log to derive it from).
@@ -75,12 +78,21 @@ class DraftService(BaseGraphService):
             graph_slug=value(DraftsAliases.GRAPH_SLUG) or "",
             graph_publication_id=value(DraftsAliases.GRAPH_PUBLICATION_ID) or "",
             frontend_version=value(DraftsAliases.FRONTEND_VERSION) or "",
+            parent_resource_id=value(DraftsAliases.PARENT_RESOURCE_ID) or "",
             data=json.loads(blob) if blob else {},
             created=resource.createdtime,
             updated=datetime.fromisoformat(stamped) if stamped else None,
         )
 
-    def create(self, user, graph_slug, data, publication_id="", frontend_version=""):
+    def create(
+        self,
+        user,
+        graph_slug,
+        data,
+        publication_id="",
+        frontend_version="",
+        parent_resource_id="",
+    ):
         """Create a draft owned by the user, stamping the graph publication and
         save time, and return the flattened result."""
         resource = ResourceInstance.objects.create(
@@ -97,6 +109,7 @@ class DraftService(BaseGraphService):
                 DraftsAliases.GRAPH_SLUG: graph_slug,
                 DraftsAliases.GRAPH_PUBLICATION_ID: str(publication_id or ""),
                 DraftsAliases.FRONTEND_VERSION: frontend_version or "",
+                DraftsAliases.PARENT_RESOURCE_ID: str(parent_resource_id or ""),
                 DraftsAliases.DRAFT_DATA: json.dumps(data or {}),
                 DraftsAliases.UPDATED_DATE: timezone.now().isoformat(),
             },

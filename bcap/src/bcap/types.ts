@@ -81,12 +81,9 @@ export type PermitApplicationDraft = ResourceDraft & {
 
 // An investigation draft narrows the generic draft to the investigation
 // resource's writable (POST) aliased data, which carries the graph's required
-// fields. parent_resource_id is draft-only bookkeeping (the resource it was
-// started from); it is stripped before submit and is not part of the graph.
+// fields.
 export type InvestigationDraft = ResourceDraft & {
-    data?: z.infer<typeof zInvestigationResourceAliasedDataWritable> & {
-        parent_resource_id?: string;
-    };
+    data?: z.infer<typeof zInvestigationResourceAliasedDataWritable>;
 };
 
 export type RawThreadMessage = z.infer<typeof zBcapMessage>;

@@ -6115,6 +6115,8 @@ components:
           type: string
         frontend_version:
           type: string
+        parent_resource_id:
+          type: string
         data:
           type: object
           additionalProperties: {}
@@ -6136,10 +6138,12 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus an optional
-        frontend version stamped on create.
+        frontend version and parent resource stamped on create.
       properties:
         data: {}
         frontend_version:
+          type: string
+        parent_resource_id:
           type: string
       required:
       - data
@@ -9780,10 +9784,12 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus an optional
-        frontend version stamped on create.
+        frontend version and parent resource stamped on create.
       properties:
         data: {}
         frontend_version:
+          type: string
+        parent_resource_id:
           type: string
     PatchedPermitApplication:
       type: object

@@ -9,9 +9,7 @@ import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
 import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
-import ReviewSummary, {
-    type ReviewField,
-} from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
+import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import CompletedModules from '@/bcap/apps/Permit/components/dashboard/CompletedModules.vue';
 import { getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
@@ -25,6 +23,10 @@ import {
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import type { InvestigationDraft } from '@/bcap/types.ts';
+import {
+    permitModules as permitModuleCatalogue,
+    modulesForFilingType,
+} from './permitModules.ts';
 import QuestionDialog from './QuestionDialogExternal.vue';
 
 const route = useRoute();
@@ -49,6 +51,7 @@ const draftTitle = (draft: InvestigationDraft) => {
 interface PermitHeaderData {
     projectName: string;
     applicationNumber: string;
+    submissionType: string;
     sector: string;
     submittedDate: string | null;
 }
@@ -63,6 +66,7 @@ const state = reactive({
     permitData: {
         projectName: 'Loading...',
         applicationNumber: '...',
+        submissionType: '',
         sector: '...',
         submittedDate: null,
     } as PermitHeaderData,
@@ -80,85 +84,42 @@ const state = reactive({
     activeThreadId: null as string | null,
 });
 
-const permitModules = ref([
-    {
-        id: 'basic-info',
-        menuLabel: 'Project Summary',
-        title: 'Project Summary',
-        description:
-            'General information regarding the permit application and overall project scope.',
-        listItems: ['Project Details', 'Applicant Information'],
-        routeName: 'baseModule',
-        disabled: false,
-    },
-    // To the top temporarily
-    {
-        id: 'investigation',
-        menuLabel: 'Investigation',
-        title: 'Investigation module',
-        description:
-            'Details regarding the planned archaeological investigation, survey areas, and expected methodology.',
-        listItems: [
-            'Scope of investigation (para)',
-            'First Nations file number (if known)',
-            'Ancestral remains anticipated (boolean)',
-        ],
-        routeName: 'investigationModule',
-        disabled: false,
-    },
-    {
-        id: 'inspection',
-        menuLabel: 'Inspection',
-        title: 'Inspection module',
-        description:
-            'Information regarding site inspections and monitoring requirements.',
-        listItems: [
-            'Development description (description of work contained in inspection module - multiple paragraphs)',
-            'Assessment approach (multiple para)',
-            'First Nations file number (if known)',
-        ],
-        routeName: 'inspectionModule',
-        disabled: true,
-    },
-    {
-        id: 'alteration',
-        menuLabel: 'Alteration',
-        title: 'Alteration module',
-        description:
-            'The alteration module is designed for any projects that include site alterations; disturbing or modifying an archaeological site for development or post-depositional alterations.',
-        listItems: [
-            'Field Directors (list of Contributors)',
-            'Archaeologist to oversee (boolean)',
-            'Oversight approach (multiple para)',
-            'Is this a research permit (boolean)',
-        ],
-        routeName: 'alterationsModule',
-        disabled: true,
-    },
-    {
-        id: 'site-visit',
-        menuLabel: 'Site Visit',
-        title: 'Site Visit module',
-        description:
-            'Records of site visits conducted under the permit, including observations and follow-up actions.',
-        listItems: [],
-        // No route yet -- coming soon.
-        routeName: '',
-        disabled: true,
-    },
-]);
+const modulesAllowedForFilingType = computed(() =>
+    modulesForFilingType(
+        state.rawPermitData?.application_identification?.aliased_data
+            ?.filing_type?.display_value ?? '',
+    ),
+);
 
 const moduleFromQuery = route.query.module;
 const activeModuleId = ref(
     typeof moduleFromQuery === 'string' &&
-        permitModules.value.some((m) => m.id === moduleFromQuery)
+        modulesAllowedForFilingType.value.some((m) => m.id === moduleFromQuery)
         ? moduleFromQuery
-        : permitModules.value[0].id,
+        : modulesAllowedForFilingType.value[0].id,
 );
 
-const activeModule = computed(() => {
-    return permitModules.value.find((m) => m.id === activeModuleId.value);
+watch(modulesAllowedForFilingType, (mods) => {
+    if (mods.length && !mods.some((mod) => mod.id === activeModuleId.value)) {
+        activeModuleId.value = mods[0].id;
+    }
 });
+
+const activeModule = computed(() => {
+    return modulesAllowedForFilingType.value.find(
+        (m) => m.id === activeModuleId.value,
+    );
+});
+
+const headerMeta = computed(() =>
+    [
+        state.permitData.applicationNumber,
+        state.permitData.submissionType,
+        state.permitData.sector,
+    ]
+        .filter(Boolean)
+        .join(' · '),
+);
 
 const basicInfoFields = computed<ReviewField[]>(() => {
     return getBasicInfoFields(state.rawPermitData);
@@ -172,7 +133,6 @@ const processModules = computed(
         [],
 );
 
-// helper functions
 const getModuleStatus = (moduleId: string) => {
     return state.fetchedModuleData[moduleId]?.status || 'unstarted';
 };
@@ -199,16 +159,17 @@ const loadPermitDetails = async () => {
                 appIdent?.project_name?.display_value || 'Unnamed Project',
             applicationNumber:
                 appIdent?.application_id?.display_value || 'Pending',
-            sector:
-                devDetails?.industrial_sector?.display_value ||
-                'Unknown Sector',
+            submissionType: appIdent?.filing_type?.display_value || '',
+            // Left empty when unset so the header can mute it rather than
+            // stating a sector that was never given.
+            sector: devDetails?.industrial_sector?.display_value || '',
             submittedDate:
                 appAdmin?.aliased_data?.application_submission_date
                     ?.display_value || null,
         };
 
         state.fetchedModuleData = {
-            'basic-info': {
+            [GraphSlug.PermitApplication]: {
                 status: appIdent?.project_name?.display_value
                     ? 'completed'
                     : 'unstarted',
@@ -247,17 +208,13 @@ const startNewModule = () => {
 // The module types a staff member can add from the submitted-modules panel,
 // each routing to that module's existing workflow (Project Summary excluded).
 const addableModules = computed(() =>
-    permitModules.value
-        .filter((mod) => mod.id !== 'basic-info')
+    permitModuleCatalogue
+        .filter((mod) => mod.id !== GraphSlug.PermitApplication)
         .map((mod) => ({
             id: mod.id,
             label: mod.menuLabel,
         })),
 );
-
-const printModule = () => {
-    window.print();
-};
 
 const submitPermit = async () => {
     try {
@@ -324,8 +281,8 @@ const loadInvestigations = async () => {
     state.investigationDrafts = drafts.filter(
         (d: InvestigationDraft) =>
             d.graph_slug === GraphSlug.Investigation &&
-            !!d.data?.parent_resource_id &&
-            d.data.parent_resource_id === permitId.value,
+            !!d.parent_resource_id &&
+            d.parent_resource_id === permitId.value,
     );
 };
 
@@ -359,7 +316,7 @@ watch(permitId, () => {
 });
 
 watch(activeModuleId, (id) => {
-    if (id === 'basic-info') {
+    if (id === GraphSlug.PermitApplication) {
         loadInvestigations();
     }
 });
@@ -386,13 +343,34 @@ watch(activeModuleId, (id) => {
                     <h2 class="project-name">
                         {{ state.permitData.projectName }}
                     </h2>
-                    <p class="application-number">
-                        {{ state.permitData.applicationNumber }}
+                    <p class="permit-meta">
+                        {{ headerMeta }}
+                        <span
+                            v-if="!state.permitData.sector"
+                            class="meta-unset"
+                        >
+                            · Sector not specified
+                        </span>
                     </p>
-                    <p class="sector">{{ state.permitData.sector }}</p>
                 </div>
 
                 <div class="submit-area">
+                    <div
+                        v-if="state.permitData.submittedDate"
+                        class="submitted-text"
+                    >
+                        <i class="fa-regular fa-calendar-check"></i>
+                        Submitted
+                        <strong>{{ state.permitData.submittedDate }}</strong>
+                    </div>
+                    <button
+                        v-else
+                        class="print-btn"
+                        @click="submitPermit"
+                    >
+                        Submit Permit
+                    </button>
+
                     <QuestionDialog
                         :application-id="state.permitData.applicationNumber"
                         :permit-resource-id="permitId"
@@ -400,22 +378,6 @@ watch(activeModuleId, (id) => {
                         :thread-id="state.activeThreadId"
                         @message-sent="loadMessages"
                     />
-
-                    <div
-                        v-if="state.permitData.submittedDate"
-                        class="submitted-text"
-                    >
-                        <strong>Submitted:</strong>
-                        {{ state.permitData.submittedDate }}
-                    </div>
-                    <button
-                        v-else
-                        class="print-btn"
-                        style="margin-left: 1.5rem"
-                        @click="submitPermit"
-                    >
-                        Submit Permit
-                    </button>
                 </div>
             </div>
         </template>
@@ -426,13 +388,15 @@ watch(activeModuleId, (id) => {
                 class="side-menu"
             >
                 <button
-                    v-for="mod in permitModules"
+                    v-for="mod in modulesAllowedForFilingType"
                     :key="mod.id"
                     class="menu-item"
                     :class="{ active: activeModuleId === mod.id }"
                     @click="activeModuleId = mod.id"
                 >
-                    <span class="menu-label">{{ mod.menuLabel }}</span>
+                    <span class="menu-label">
+                        {{ mod.menuLabel }}
+                    </span>
 
                     <div class="status-icon-wrapper">
                         <i
@@ -447,156 +411,161 @@ watch(activeModuleId, (id) => {
                                 class="fa-solid fa-magnifying-glass icon-review"
                             ></i>
                         </div>
+                        <!-- Nothing done yet on a module that starts a new
+                             workflow: the add affordance takes the same slot,
+                             so one icon column runs down the menu. -->
+                        <i
+                            v-else-if="mod.id !== GraphSlug.PermitApplication"
+                            class="fa-solid fa-plus menu-add"
+                            title="Start this module"
+                        ></i>
                     </div>
                 </button>
             </div>
 
-            <div
-                v-if="activeModule"
-                class="content-area"
-                :class="{
-                    'white-card': ['completed', 'review'].includes(
-                        getModuleStatus(activeModule.id),
-                    ),
-                }"
+            <Transition
+                name="module-swap"
+                mode="out-in"
             >
-                <h3 class="content-title">{{ activeModule.title }}</h3>
-
-                <template
-                    v-if="
-                        ['completed', 'review'].includes(
-                            getModuleStatus(activeModule.id),
-                        )
-                    "
-                >
-                    <ReviewSummary
-                        v-if="activeModule.id === 'basic-info'"
-                        :fields="basicInfoFields"
-                    />
-
-                    <div
-                        v-else
-                        class="mb-4 text-gray-600 italic"
-                    >
-                        Summary view for {{ activeModule.menuLabel }} is under
-                        construction.
-                    </div>
-
-                    <button
-                        class="print-btn mt-4"
-                        @click="printModule"
-                    >
-                        Print
-                    </button>
-                </template>
-
-                <template v-else>
-                    <p class="content-description">
-                        {{ activeModule.description }}
-                    </p>
-
-                    <ul class="content-list">
-                        <li
-                            v-for="(item, index) in activeModule.listItems"
-                            :key="index"
-                        >
-                            {{ item }}
-                        </li>
-                    </ul>
-
-                    <div
-                        v-if="activeModule.id !== 'basic-info'"
-                        class="action-container"
-                    >
-                        <button
-                            class="add-module-btn"
-                            :disabled="activeModule.disabled"
-                            @click="startNewModule"
-                        >
-                            <i class="fa-solid fa-plus"></i>
-                            {{
-                                activeModule.disabled
-                                    ? 'Coming soon'
-                                    : `Add ${activeModule.menuLabel} module`
-                            }}
-                        </button>
-                    </div>
-                </template>
-
                 <div
-                    v-if="activeModule.id === 'basic-info'"
-                    class="investigation-lists"
+                    v-if="activeModule"
+                    :key="activeModule.id"
+                    class="content-area"
+                    :class="{
+                        'white-card': ['review'].includes(
+                            getModuleStatus(activeModule.id),
+                        ),
+                    }"
                 >
-                    <section
-                        v-if="!isStaff && state.investigationDrafts.length > 0"
-                        class="draft-modules"
-                    >
-                        <h4 class="list-heading">Draft modules</h4>
-                        <Accordion
-                            multiple
-                            class="draft-accordion"
-                        >
-                            <AccordionPanel
-                                v-for="draft in state.investigationDrafts"
-                                :key="draft.id"
-                                :value="draft.id"
-                                class="draft-panel"
-                            >
-                                <AccordionHeader>
-                                    <span class="draft-head">
-                                        <i
-                                            class="fa-regular fa-file-lines draft-icon"
-                                        ></i>
-                                        <span class="draft-name">
-                                            {{ draftTitle(draft) }}
-                                        </span>
-                                        <span class="draft-meta">
-                                            Last updated
-                                            {{
-                                                new Date(
-                                                    draft.updated ||
-                                                        draft.created,
-                                                ).toLocaleDateString()
-                                            }}
-                                        </span>
-                                    </span>
-                                </AccordionHeader>
-                                <AccordionContent>
-                                    <div class="draft-actions">
-                                        <router-link
-                                            class="draft-resume"
-                                            :to="{
-                                                name: routeNames.investigationModule,
-                                                query: { draftId: draft.id },
-                                            }"
-                                        >
-                                            <i class="fa-solid fa-pen"></i>
-                                            Resume draft
-                                        </router-link>
-                                        <button
-                                            type="button"
-                                            class="draft-delete"
-                                            @click="confirmDelete(draft)"
-                                        >
-                                            <i class="fa-solid fa-trash"></i>
-                                            Remove
-                                        </button>
-                                    </div>
-                                </AccordionContent>
-                            </AccordionPanel>
-                        </Accordion>
-                    </section>
+                    <h1 class="content-title">{{ activeModule.title }}</h1>
 
-                    <CompletedModules
-                        :modules="processModules"
-                        :permit-id="permitId"
-                        :admin-tile-id="state.adminTileMeta.tileid"
-                        :is-staff="isStaff"
-                        :addable-modules="addableModules"
-                        @changed="loadPermitDetails"
-                    />
+                    <template
+                        v-if="
+                            !['completed', 'review'].includes(
+                                getModuleStatus(activeModule.id),
+                            )
+                        "
+                    >
+                        <p class="content-description">
+                            {{ activeModule.description }}
+                        </p>
+
+                        <ul class="content-list">
+                            <li
+                                v-for="(item, index) in activeModule.listItems"
+                                :key="index"
+                            >
+                                {{ item }}
+                            </li>
+                        </ul>
+
+                        <div
+                            v-if="
+                                activeModule.id !== GraphSlug.PermitApplication
+                            "
+                            class="action-container"
+                        >
+                            <button
+                                class="add-module-btn"
+                                :disabled="activeModule.disabled"
+                                @click="startNewModule"
+                            >
+                                <i class="fa-solid fa-plus"></i>
+                                {{
+                                    activeModule.disabled
+                                        ? 'Coming soon'
+                                        : `Add ${activeModule.menuLabel} module`
+                                }}
+                            </button>
+                        </div>
+                    </template>
+
+                    <div
+                        v-if="activeModule.id === GraphSlug.PermitApplication"
+                        class="investigation-lists"
+                    >
+                        <section
+                            v-if="
+                                !isStaff && state.investigationDrafts.length > 0
+                            "
+                            class="draft-modules"
+                        >
+                            <h2 class="list-heading">Draft modules</h2>
+                            <Accordion
+                                multiple
+                                class="draft-accordion"
+                            >
+                                <AccordionPanel
+                                    v-for="draft in state.investigationDrafts"
+                                    :key="draft.id"
+                                    :value="draft.id"
+                                    class="draft-panel"
+                                >
+                                    <AccordionHeader>
+                                        <span class="draft-head">
+                                            <i
+                                                class="fa-regular fa-file-lines draft-icon"
+                                            ></i>
+                                            <span class="draft-name">
+                                                {{ draftTitle(draft) }}
+                                            </span>
+                                            <span class="draft-meta">
+                                                <i
+                                                    class="fa-regular fa-clock"
+                                                ></i>
+                                                Last updated
+                                                {{
+                                                    new Date(
+                                                        draft.updated ||
+                                                            draft.created ||
+                                                            '',
+                                                    ).toLocaleDateString()
+                                                }}
+                                            </span>
+                                        </span>
+                                    </AccordionHeader>
+                                    <AccordionContent>
+                                        <div class="draft-actions">
+                                            <router-link
+                                                class="draft-resume"
+                                                :to="{
+                                                    name: routeNames.investigationModule,
+                                                    query: {
+                                                        draftId: draft.id,
+                                                    },
+                                                }"
+                                            >
+                                                <i class="fa-solid fa-pen"></i>
+                                                Resume draft
+                                            </router-link>
+                                            <button
+                                                type="button"
+                                                class="draft-delete"
+                                                @click="confirmDelete(draft)"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-trash"
+                                                ></i>
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionPanel>
+                            </Accordion>
+                        </section>
+
+                        <CompletedModules
+                            :modules="processModules"
+                            :permit-id="permitId"
+                            :admin-tile-id="state.adminTileMeta.tileid"
+                            :is-staff="isStaff"
+                            :addable-modules="addableModules"
+                            :summary-fields="basicInfoFields"
+                            @changed="loadPermitDetails"
+                        />
+                    </div>
                 </div>
-            </div>
+            </Transition>
         </div>
     </Panel>
 
@@ -633,75 +602,114 @@ watch(activeModuleId, (id) => {
     min-height: 60vh;
 }
 
-/* Header */
+/* Header. PrimeVue wraps this in its own padded, bordered bar; that is stripped
+   so the navy band runs the full width of the panel. */
+.full-height :deep(.p-panel-header) {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
 .permit-header {
-    font-family: 'BC Sans', 'Noto Sans', Verdana, Arial, sans-serif;
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
     display: flex;
-    gap: 1rem;
-    padding: 0.5rem;
+    align-items: center;
+    gap: 1.25rem;
     width: 100%;
+    padding: 1.25rem 2rem;
+    background: var(--bc-navy);
+    border-bottom: 3px solid var(--bc-gold);
 }
 
 .permit-header .permit-icon-area {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     flex-shrink: 0;
-    width: 65px;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .permit-header .permit-icon {
-    font-size: 3rem;
-    color: #003366;
+    font-size: 1.9rem;
+    color: var(--bc-gold);
 }
 
 .permit-header .permit-info {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: 0.2rem;
     flex-grow: 1;
+    min-width: 0;
 }
 
 .permit-header .permit-info .project-name {
-    margin: 0 0 0.1rem 0;
-    font-size: 1.6rem;
-    line-height: 1.1;
-    font-weight: 600;
-    color: #2e51dd;
+    margin: 0;
+    font-size: 1.9rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #ffffff;
     word-break: break-word;
 }
 
-.permit-header .permit-info .application-number {
+.permit-header .permit-info .permit-meta {
     margin: 0;
     font-size: 1.2rem;
-    color: #333333;
-    font-weight: 500;
+    font-weight: 400;
+    color: #cbd5e1;
 }
 
-.permit-header .permit-info .sector {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #777777;
+.permit-header .permit-info .meta-unset {
+    color: #93a4bb;
+    font-style: italic;
 }
 
-/* New Submit Area Styles */
 .submit-area {
+    font-size: 1.15rem;
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
     flex-shrink: 0;
-    /* Nudge in so it lines up with the card's right edge, not the panel edge. */
-    margin-right: 1.5rem;
+}
+
+/* An outlined pill reads on the navy; a filled one would fight the button. A
+   fixed height on both keeps the pair level whatever padding each carries. */
+.submitted-text,
+.submit-area :deep(.trigger-btn) {
+    height: 2.5rem;
 }
 
 .submitted-text {
-    font-size: 1rem;
-    color: #1f2937;
-    background-color: #f3f4f6;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    border: 1px solid #d1d5db;
-    margin-left: 1.5rem; /* Restored the margin space so it doesn't bunch against the dialog button */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+    line-height: 1.5;
+    color: #ffffff;
+}
+
+.submitted-text strong {
+    font-weight: 700;
+}
+
+/* The trigger is the only action on the band, so it inverts to a solid white
+   button. PrimeVue ships its own font-size, hence the explicit inherit. */
+.submit-area :deep(.trigger-btn) {
+    font-size: inherit;
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: var(--bc-navy);
+    font-weight: 700;
+}
+
+.submit-area :deep(.trigger-btn:hover) {
+    background-color: var(--bc-selected);
+    border-color: var(--bc-selected);
 }
 
 /* Layout */
@@ -712,6 +720,19 @@ watch(activeModuleId, (id) => {
     min-height: 500px;
 }
 
+/* Cross-fade the panel when a different module is picked. Opacity only: the
+   panels differ in height, so moving them as well reads as a jump. */
+.module-swap-enter-active {
+    transition: opacity 0.22s ease-out;
+}
+.module-swap-leave-active {
+    transition: opacity 0.1s ease-in;
+}
+.module-swap-enter-from,
+.module-swap-leave-to {
+    opacity: 0;
+}
+
 /* Side Menu */
 .side-menu {
     display: flex;
@@ -719,6 +740,8 @@ watch(activeModuleId, (id) => {
     width: 220px;
     flex-shrink: 0;
     gap: 2px;
+    /* Drops the first item level with the panel heading beside it. */
+    margin-top: 1.5rem;
 }
 
 .menu-item {
@@ -728,7 +751,7 @@ watch(activeModuleId, (id) => {
     border-radius: 6px;
     padding: 1rem 1.2rem;
     text-align: left;
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: 400;
     cursor: pointer;
     transition:
@@ -736,12 +759,13 @@ watch(activeModuleId, (id) => {
         color 0.2s;
     font-family: inherit;
     display: flex;
-    justify-content: space-between;
+    gap: 0.6rem;
     align-items: center;
 }
 
-.menu-item:hover {
-    background-color: #e5e7eb;
+.menu-item:hover:not(.active) {
+    background-color: var(--bc-selected);
+    color: var(--bc-navy);
 }
 
 .menu-item.active {
@@ -750,8 +774,25 @@ watch(activeModuleId, (id) => {
     font-weight: 500;
 }
 
+/* A bare plus, lighter than the circled status glyphs it shares the column
+   with, so it reads as an affordance rather than a state. */
+.menu-add {
+    font-size: 0.95rem;
+    color: var(--bc-muted);
+}
+
+/* Grey disappears into the navy row. */
+.menu-item.active .menu-add {
+    color: #ffffff;
+}
+
+.menu-label {
+    flex: 1;
+}
+
 /* Status Icons */
 .status-icon-wrapper {
+    flex: 0 0 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -781,6 +822,8 @@ watch(activeModuleId, (id) => {
 .content-area {
     flex-grow: 1;
     width: 100%;
+    /* Long label/value rows strand on wide screens past about this width. */
+    max-width: 1100px;
     padding: 1rem 2rem;
 }
 
@@ -794,7 +837,7 @@ watch(activeModuleId, (id) => {
 
 .content-title {
     margin: 0 0 2rem 0;
-    font-size: 1.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: #000000;
 }
@@ -822,9 +865,23 @@ watch(activeModuleId, (id) => {
     margin-top: 1.5rem;
 }
 
+/* On the navy band the same button inverts, matching the question trigger. */
+.submit-area .print-btn {
+    background-color: #ffffff;
+    color: var(--bc-navy);
+    font-weight: 700;
+    font-size: inherit;
+}
+
+.submit-area .print-btn:hover {
+    background-color: var(--bc-selected);
+}
+
 .content-description {
     margin: 0 0 1.5rem 0;
-    font-size: 1.1rem;
+    /* px, not rem: the root is 62%, so rem values land on fractional pixels
+       and the glyphs rasterize badly. */
+    font-size: 14px;
     line-height: 1.6;
     color: #333333;
 }
@@ -833,7 +890,7 @@ watch(activeModuleId, (id) => {
     margin: 0;
     padding-left: 1.5rem;
     color: #333333;
-    font-size: 1.1rem;
+    font-size: 14px;
     line-height: 1.6;
 }
 
@@ -852,7 +909,7 @@ watch(activeModuleId, (id) => {
     color: #ffffff;
     border: none;
     padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 600;
     border-radius: 4px;
     cursor: pointer;
@@ -876,16 +933,19 @@ watch(activeModuleId, (id) => {
     margin-top: 2.5rem;
 }
 
+/* Same group label as the submitted-modules section title. */
 .investigation-lists .list-heading {
-    margin: 1.5rem 0 0.5rem;
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: #003366;
+    margin: 0 0 1.4rem;
+    font-size: 1.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--bc-grey);
 }
 
 /* Draft modules accordion */
 .draft-modules {
-    font-family: 'BC Sans', 'Noto Sans', Verdana, Arial, sans-serif;
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
 
 .draft-accordion {
@@ -896,7 +956,7 @@ watch(activeModuleId, (id) => {
 
 .draft-panel {
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 4px;
     background: #ffffff;
     box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
     overflow: hidden;
@@ -910,16 +970,43 @@ watch(activeModuleId, (id) => {
     border-color: #cbd5e1;
 }
 
-/* Tint the header blue so it reads as one family with the submitted modules. */
+/* Same navy header and gold rule as the submitted modules, so both lists read
+   as one family. */
 .draft-modules :deep(.p-accordionheader) {
-    background-color: var(--bc-selected);
-    border-bottom: 1px solid var(--bc-border);
-    font-family: 'BC Sans', 'Noto Sans', Verdana, Arial, sans-serif;
+    background-color: var(--bc-grey);
+    border-bottom: 3px solid var(--bc-gold);
+    color: #ffffff;
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+    padding: 1.35rem 1.5rem 1.35rem 2.5rem;
+    border-radius: 4px 4px 0 0;
+}
+
+.draft-modules :deep(.p-accordionheader) .draft-name,
+.draft-modules :deep(.p-accordionheader) .draft-icon,
+.draft-modules :deep(.p-accordionheader-toggle-icon) {
+    color: #ffffff;
+}
+
+/* PrimeVue hard-codes 14px on the chevron svg, so override the attributes. */
+.draft-modules :deep(.p-accordionheader-toggle-icon) {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* The open panel is ringed rather than tinted, so which one is selected is
+   obvious without changing the header colour. */
+.draft-modules :deep(.p-accordionpanel-active .p-accordionheader) {
+    outline: 2px solid var(--bc-link);
+    outline-offset: -2px;
+}
+
+.draft-modules :deep(.p-accordionheader:hover) {
+    background-color: #4a4a4a;
 }
 
 /* Match the submitted-modules content inset so both lists align. */
 .draft-modules :deep(.p-accordioncontent-content) {
-    padding: 0.75rem 1rem;
+    padding: 1.5rem 2rem;
 }
 
 .draft-head {
@@ -931,63 +1018,73 @@ watch(activeModuleId, (id) => {
 }
 
 .draft-icon {
+    margin-right: 0.35rem;
+    font-size: 1.15rem;
     color: #64748b;
 }
 
 .draft-name {
-    font-weight: 600;
-    font-size: 1.2rem;
+    font-weight: 700;
+    font-size: max(16px, 1.25rem);
     color: #111827;
 }
 
 .draft-meta {
     margin-left: auto;
-    font-size: 0.9rem;
-    color: #475569;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 13px;
+    color: #ffffff;
     white-space: nowrap;
-    background-color: #f1f5f9;
-    padding: 0.25rem 0.65rem;
+    background: transparent;
+    border: 1px solid #ffffff;
+    padding: 0.4rem 1rem;
     border-radius: 999px;
 }
 
 .draft-actions {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: center;
-    padding: 0.6rem 0.25rem 0.4rem;
-    font-size: 1.2rem;
+}
+
+/* BC Gov buttons: solid navy for the primary action, outlined red to remove. */
+.draft-resume,
+.draft-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.6rem;
+    border-radius: 4px;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .draft-resume {
-    color: var(--bc-navy);
-    font-weight: 600;
-    font-size: 1.2rem;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
+    background: var(--bc-navy);
+    border: 2px solid var(--bc-navy);
+    color: #ffffff;
 }
 
 .draft-resume:hover {
-    text-decoration: underline;
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+    color: #ffffff;
+    text-decoration: none;
 }
 
 .draft-delete {
-    background: none;
-    border: none;
+    background: #ffffff;
+    border: 2px solid #c8102e;
     color: #c8102e;
-    cursor: pointer;
-    font: inherit;
-    font-weight: 600;
-    font-size: 1.2rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0;
 }
 
 .draft-delete:hover {
-    text-decoration: underline;
+    background: #fdeaed;
 }
 
 .resource-list {

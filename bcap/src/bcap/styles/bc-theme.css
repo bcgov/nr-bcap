@@ -265,3 +265,72 @@
     background: #c1c1c1;
     border-radius: 5px;
 }
+
+/* Dialogs teleport to <body>, so they are themed globally rather than through
+   .bc-form. Navy header + gold rule is the BC Gov header signature. */
+.p-dialog {
+    border-radius: 4px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+.p-dialog .p-dialog-header {
+    background: var(--bc-navy);
+    color: #ffffff;
+    border-bottom: 3px solid var(--bc-gold);
+    border-radius: 4px 4px 0 0;
+    padding: 1rem 1.5rem;
+}
+.p-dialog .p-dialog-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.p-dialog .p-dialog-header-actions .p-button {
+    color: #ffffff;
+}
+.p-dialog .p-dialog-content {
+    padding: 1.5rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--bc-text);
+}
+.p-dialog .p-dialog-footer {
+    padding: 0 1.5rem 1.25rem;
+    gap: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+}
+/* BC Gov buttons are square-ish and full-weight; the danger red is the
+   standard #d8292f rather than the preset's brighter red. */
+.p-dialog .p-dialog-footer .p-button {
+    border-radius: 4px;
+    font-weight: 700;
+    padding: 0.55rem 1.25rem;
+}
+.p-dialog .p-dialog-footer .p-button-text {
+    color: var(--bc-navy);
+}
+.p-dialog .p-dialog-footer .p-button-text:not(:disabled):hover {
+    background: var(--bc-panel);
+}
+.p-dialog .p-dialog-footer .p-button-danger {
+    background: #d8292f;
+    border-color: #d8292f;
+    color: #ffffff;
+}
+.p-dialog .p-dialog-footer .p-button-danger:not(:disabled):hover {
+    background: #a91d22;
+    border-color: #a91d22;
+}
+/* Non-danger footer buttons are the navy primary action. */
+.p-dialog .p-dialog-footer .p-button:not(.p-button-text):not(.p-button-danger) {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+    color: #ffffff;
+}
+.p-dialog
+    .p-dialog-footer
+    .p-button:not(.p-button-text):not(.p-button-danger):not(:disabled):hover {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+}

@@ -102,8 +102,8 @@ describe('PermitDetails.vue', () => {
         expect(fetchPermitDetails).toHaveBeenCalledWith('mock-permit-123');
 
         expect(wrapper.find('.project-name').text()).toBe('Test Project Name');
-        expect(wrapper.find('.application-number').text()).toBe('APP-001');
-        expect(wrapper.find('.sector').text()).toBe('Forestry');
+        // Application id, submission type and sector share one subtitle line.
+        expect(wrapper.find('.permit-meta').text()).toBe('APP-001 · Forestry');
     });
 
     it('calls patchPermitSubmissionDate when the Submit Permit button is clicked', async () => {
@@ -135,12 +135,12 @@ describe('PermitDetails.vue', () => {
 
         // The menu items will safely exist now!
         const menuItems = wrapper.findAll('.menu-item');
-        await menuItems[1].trigger('click');
+        await menuItems[2].trigger('click');
 
         const addBtn = wrapper.find('.add-module-btn');
         await addBtn.trigger('click');
 
-        // menuItems[1] is the Investigation module (an enabled module); Add
+        // menuItems[2] is the Investigation module (an enabled module); Add
         // navigates to its route with the current permit as the query param.
         expect(mockPush).toHaveBeenCalledWith({
             name: 'investigationModule',
@@ -154,13 +154,15 @@ describe('PermitDetails.vue', () => {
             {
                 id: 'd1',
                 graph_slug: GraphSlug.Investigation,
-                data: { parent_resource_id: 'mock-permit-123' },
+                parent_resource_id: 'mock-permit-123',
+                data: {},
             },
             // Another permit's draft -- filtered out.
             {
                 id: 'd2',
                 graph_slug: GraphSlug.Investigation,
-                data: { parent_resource_id: 'other-permit' },
+                parent_resource_id: 'other-permit',
+                data: {},
             },
         ] as never);
 
@@ -181,8 +183,8 @@ describe('PermitDetails.vue', () => {
         await flushPromises();
 
         const menuItems = wrapper.findAll('.menu-item');
-        // menuItems[2] is Inspection, a "coming soon" (disabled) module.
-        await menuItems[2].trigger('click');
+        // menuItems[3] is Inspection, a "coming soon" (disabled) module.
+        await menuItems[3].trigger('click');
 
         expect(wrapper.find('.content-title').text()).toBe('Inspection module');
         const addBtn = wrapper.find('.add-module-btn');
@@ -190,14 +192,16 @@ describe('PermitDetails.vue', () => {
         expect(addBtn.text()).toContain('Coming soon');
     });
 
-    it('offers Site Visit as a disabled "coming soon" module', async () => {
+    it('offers Alteration as a disabled "coming soon" module', async () => {
         const wrapper = mount(PermitDetails, globalMountOptions);
         await flushPromises();
 
+        // With no filing type the menu falls back to the permit-application
+        // set, which ends at Alteration.
         const menuItems = wrapper.findAll('.menu-item');
         await menuItems[menuItems.length - 1].trigger('click');
 
-        expect(wrapper.find('.content-title').text()).toBe('Site Visit module');
+        expect(wrapper.find('.content-title').text()).toBe('Alteration module');
         const addBtn = wrapper.find('.add-module-btn');
         expect(addBtn.attributes('disabled')).toBeDefined();
         expect(addBtn.text()).toContain('Coming soon');
@@ -236,8 +240,8 @@ describe('PermitDetails.vue', () => {
             {
                 id: 'd1',
                 graph_slug: GraphSlug.Investigation,
+                parent_resource_id: 'mock-permit-123',
                 data: {
-                    parent_resource_id: 'mock-permit-123',
                     investigation_identification: {
                         aliased_data: {
                             investigation_identification: {

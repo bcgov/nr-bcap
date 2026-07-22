@@ -188,7 +188,7 @@ onMounted(async () => {
         const targetDraftId = route.query.draftId;
         if (targetDraftId) {
             const loaded = await fetchDraft(graphSlug, targetDraftId as string);
-            draft.loadDraft(loaded.id, loaded.data || {});
+            draft.loadDraft(loaded.id, (loaded.data || {}) as ArchesDraftData);
         }
 
         isDataLoaded.value = true;

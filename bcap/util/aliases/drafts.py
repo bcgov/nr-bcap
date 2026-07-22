@@ -6,6 +6,7 @@ class DraftsAliases(AbstractAliases):
     FRONTEND_VERSION = "frontend_version"
     GRAPH_PUBLICATION_ID = "graph_publication_id"
     GRAPH_SLUG = "graph_slug"
+    PARENT_RESOURCE_ID = "parent_resource_id"
     UPDATED_DATE = "updated_date"
 
     @staticmethod

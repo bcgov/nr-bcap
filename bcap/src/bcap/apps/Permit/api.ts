@@ -15,40 +15,37 @@ import type {
     PermitProcessModuleTileWritable,
     ProcessRequirement,
     RawThreadMessage,
+    ResourceDraft,
 } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-
-export interface ResourceDraftResponse {
-    id: string;
-    data: ArchesDraftData;
-}
 
 export const fetchDraft = async (
     graphSlug: string,
     draftId: string,
-): Promise<ResourceDraftResponse> => {
-    return apiFetchJson<ResourceDraftResponse>(
+): Promise<ResourceDraft> => {
+    return apiFetchJson<ResourceDraft>(
         `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`,
     );
 };
 
-// parentResourceId, when given, is stored as a top-level key in the draft blob
-// (not in aliased_data, which is validated against the graph on submit) so the
-// parent resource's page can filter its own drafts. The backend verifies the
-// user can access that resource before saving. It is stripped at submit time.
+// parentResourceId, when given, is stored on the draft's own node (outside the
+// blob, which is validated against the graph on submit) so the parent resource's
+// page can filter its own drafts. The backend verifies the user can access that
+// resource before saving.
 export const createDraft = async (
     graphSlug: string,
     parentResourceId?: string,
-): Promise<ResourceDraftResponse> => {
-    const data: { parent_resource_id?: string } = {};
-    if (parentResourceId) {
-        data.parent_resource_id = parentResourceId;
-    }
-    return apiFetchJson<ResourceDraftResponse>(
+): Promise<ResourceDraft> => {
+    return apiFetchJson<ResourceDraft>(
         arches.urls.api_resource_draft(graphSlug),
         {
             method: HttpMethod.Post,
-            body: { data },
+            body: {
+                data: {},
+                ...(parentResourceId
+                    ? { parent_resource_id: parentResourceId }
+                    : {}),
+            },
         },
     );
 };
@@ -159,14 +156,10 @@ export const submitModule = async (
     payload: ArchesDraftData,
 ): Promise<PermitApplicationResponse> => {
     try {
-        // parent_resource_id is draft-only bookkeeping, not a graph alias, so
-        // drop it before the serializer validates the body against the graph.
-        const aliasedData = { ...payload };
-        delete aliasedData.parent_resource_id;
         const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
         const result = await apiFetchJson<PermitApplicationResponse>(url, {
             method: HttpMethod.Post,
-            body: { aliased_data: aliasedData },
+            body: { aliased_data: payload },
         });
         if (draftId) {
             await deleteDraft(moduleSlug, draftId);

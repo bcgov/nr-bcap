@@ -128,7 +128,7 @@ describe('Permit API', () => {
             expect(result).toEqual(draft);
         });
 
-        it('stores the parent resource id in the draft blob when given', async () => {
+        it('sends the parent resource id alongside the blob when given', async () => {
             apiFetchJson.mockResolvedValue({ id: 'draft-new', data: {} });
 
             await createDraft('investigation', 'permit-1');
@@ -137,7 +137,7 @@ describe('Permit API', () => {
                 '/mock/draft/investigation',
                 {
                     method: 'POST',
-                    body: { data: { parent_resource_id: 'permit-1' } },
+                    body: { data: {}, parent_resource_id: 'permit-1' },
                 },
             );
         });
@@ -206,21 +206,6 @@ describe('Permit API', () => {
                 { method: 'DELETE' },
             );
             expect(result).toEqual(finalResource);
-        });
-
-        it('strips draft-only parent_resource_id from the posted body', async () => {
-            apiFetchJson.mockResolvedValue({ resourceinstanceid: 'i' });
-            apiFetch.mockResolvedValue(okResponse(undefined));
-
-            await submitModule('permit-1', 'draft-7', GraphSlug.Investigation, {
-                parent_resource_id: 'permit-1',
-                a: 1,
-            } as never);
-
-            expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/seed/permit-1/investigation',
-                { method: 'POST', body: { aliased_data: { a: 1 } } },
-            );
         });
 
         it('skips the draft delete for a staff quick-add (no draft id)', async () => {

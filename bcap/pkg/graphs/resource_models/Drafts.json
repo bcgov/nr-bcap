@@ -5,6 +5,35 @@
             "cards": [
                 {
                     "active": true,
+                    "cardid": "95ffb844-9bfe-4b13-8c3d-dc61cdf11b8f",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "Resource the draft was started from"
+                    },
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Parent Resource Id"
+                    },
+                    "nodegroup_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "27d16455-ef31-4fba-82ea-2ac9357b83cb",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -151,6 +180,29 @@
             ],
             "cards_x_nodes_x_widgets": [
                 {
+                    "card_id": "95ffb844-9bfe-4b13-8c3d-dc61cdf11b8f",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Parent Resource Id",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "255f8bd2-6eed-4734-b0be-5feb09427b3a",
+                    "label": {
+                        "en": "Parent Resource Id"
+                    },
+                    "node_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
                     "card_id": "c4cf7e09-b0c0-4bda-814a-f0b47252cb5c",
                     "config": {
                         "defaultValue": "",
@@ -274,6 +326,16 @@
                 {
                     "description": null,
                     "domainnode_id": "e85bfcaa-72e5-4b01-88b6-0d2259d5379f",
+                    "edgeid": "292d4361-fdbc-40bd-a20e-692e22cea788",
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e85bfcaa-72e5-4b01-88b6-0d2259d5379f",
                     "edgeid": "0bb83bce-ef3a-4195-9852-3f137feea501",
                     "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
                     "name": null,
@@ -337,6 +399,13 @@
             "nodegroups": [
                 {
                     "cardinality": "1",
+                    "grouping_node_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "legacygroupid": null,
+                    "nodegroupid": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
                     "grouping_node_id": "19c1c1cb-11e3-463e-a6d9-ae9ca44be242",
                     "legacygroupid": null,
                     "nodegroupid": "19c1c1cb-11e3-463e-a6d9-ae9ca44be242",
@@ -372,6 +441,29 @@
                 }
             ],
             "nodes": [
+                {
+                    "alias": "parent_resource_id",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": "Resource the draft was started from",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Parent Resource Id",
+                    "nodegroup_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "nodeid": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
                 {
                     "alias": "frontend_version",
                     "config": {},

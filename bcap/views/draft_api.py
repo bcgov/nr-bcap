@@ -25,11 +25,6 @@ from arches_querysets.rest_framework.permissions import ResourceEditor
 from bcap.services.draft_service import DraftRecord, DraftService
 from bcap.util.graph import get_current_graph
 
-# Top-level draft key linking a draft to the resource it was started from, so
-# that resource's page can list its own drafts. Not a graph alias; stripped at
-# submit. The user must be able to reach the referenced resource to set it.
-PARENT_RESOURCE_KEY = "parent_resource_id"
-
 
 class ResourceDraftSerializer(DataclassSerializer):
     graph_has_different_publication = serializers.SerializerMethodField()
@@ -47,10 +42,11 @@ class ResourceDraftSerializer(DataclassSerializer):
 
 class DraftWriteSerializer(serializers.Serializer):
     """Request body for create/update: the whole draft blob, plus an optional
-    frontend version stamped on create."""
+    frontend version and parent resource stamped on create."""
 
     data = serializers.JSONField()
     frontend_version = serializers.CharField(required=False, allow_blank=True)
+    parent_resource_id = serializers.CharField(required=False, allow_blank=True)
 
 
 class ResourceDraftBaseView(APIView):
@@ -63,10 +59,9 @@ class ResourceDraftBaseView(APIView):
         super().__init__(*args, **kwargs)
         self.store = DraftService()
 
-    def verify_parent_resource_access(self, data):
+    def verify_parent_resource_access(self, parent_id):
         """Block linking a draft to a resource the user can't reach, or the
         draft could be surfaced against someone else's resource."""
-        parent_id = (data or {}).get(PARENT_RESOURCE_KEY)
         if not parent_id:
             return
         user = self.request.user
@@ -95,15 +90,17 @@ class ResourceDraftListCreateView(ResourceDraftBaseView):
 
     @extend_schema(request=DraftWriteSerializer, responses=ResourceDraftSerializer)
     def post(self, request, graph_slug):
-        data = (request.data or {}).get("data") or {}
-        self.verify_parent_resource_access(data)
+        body = request.data or {}
+        parent_resource_id = body.get("parent_resource_id") or ""
+        self.verify_parent_resource_access(parent_resource_id)
         graph = get_current_graph(graph_slug)
         record = self.store.create(
             request.user,
             graph_slug,
-            data,
+            body.get("data") or {},
             publication_id=getattr(graph, "publication_id", ""),
-            frontend_version=(request.data or {}).get("frontend_version", ""),
+            frontend_version=body.get("frontend_version", ""),
+            parent_resource_id=parent_resource_id,
         )
         return Response(self.serialize(record), status=201)
 
@@ -130,7 +127,6 @@ class ResourceDraftDetailView(ResourceDraftBaseView):
     def put(self, request, graph_slug, pk):
         resource = self._get_or_404(request, pk)
         data = (request.data or {}).get("data") or {}
-        self.verify_parent_resource_access(data)
         return Response(self.serialize(self.store.set_data(resource, data)))
 
     @extend_schema(request=DraftWriteSerializer, responses=ResourceDraftSerializer)
@@ -140,7 +136,6 @@ class ResourceDraftDetailView(ResourceDraftBaseView):
             **self.store.to_record(resource).data,
             **(request.data or {}).get("data", {}),
         }
-        self.verify_parent_resource_access(merged)
         return Response(self.serialize(self.store.set_data(resource, merged)))
 
     @extend_schema(responses={204: None})

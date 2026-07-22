@@ -177,38 +177,42 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
 
     def test_post_with_owned_parent_resource_succeeds(self):
         parent = self._make_resource(self.editor)
-        resp = self._post({"data": {"parent_resource_id": str(parent.pk)}})
+        resp = self._post({"data": {}, "parent_resource_id": str(parent.pk)})
         self.assertEqual(resp.status_code, 201)
-        self.assertEqual(resp.json()["data"]["parent_resource_id"], str(parent.pk))
+        self.assertEqual(resp.json()["parent_resource_id"], str(parent.pk))
+        # Stored on its own node, never in the blob the client submits.
+        self.assertEqual(self._read(resp.json()["id"]).data, {})
 
     def test_resource_editor_may_reference_another_users_resource(self):
         # A resource editor can edit any unrestricted resource, so the "or
         # resource editor" rule lets them link to one they don't own.
         parent = self._make_resource(self.other_editor)
-        resp = self._post({"data": {"parent_resource_id": str(parent.pk)}})
+        resp = self._post({"data": {}, "parent_resource_id": str(parent.pk)})
         self.assertEqual(resp.status_code, 201)
 
     def test_post_with_unknown_parent_resource_is_forbidden(self):
         before = self._draft_count()
-        resp = self._post({"data": {"parent_resource_id": str(uuid.uuid4())}})
+        resp = self._post({"data": {}, "parent_resource_id": str(uuid.uuid4())})
         self.assertEqual(resp.status_code, 403)
         self.assertEqual(self._draft_count(), before)  # nothing saved
 
     def test_superuser_can_reference_any_parent_resource(self):
         parent = self._make_resource(self.other_editor)
         self.idir_login_simulate(self.admin)
-        resp = self._post({"data": {"parent_resource_id": str(parent.pk)}})
+        resp = self._post({"data": {}, "parent_resource_id": str(parent.pk)})
         self.assertEqual(resp.status_code, 201)
 
-    def test_patch_to_unknown_parent_resource_is_forbidden(self):
-        draft = self._create_draft(data={"step1": {"x": 1}})
-        resp = self.client.patch(
-            self._detail_url(draft.id),
-            data=json.dumps({"data": {"parent_resource_id": str(uuid.uuid4())}}),
+    def test_put_keeps_the_parent_resource(self):
+        parent = self._make_resource(self.editor)
+        draft_id = self._post(
+            {"data": {}, "parent_resource_id": str(parent.pk)}
+        ).json()["id"]
+        resp = self.client.put(
+            self._detail_url(draft_id),
+            data=json.dumps({"data": {"step1": {"x": 1}}}),
             content_type="application/json",
         )
-        self.assertEqual(resp.status_code, 403)
-        self.assertNotIn("parent_resource_id", self._read(draft.id).data)  # untouched
+        self.assertEqual(resp.json()["parent_resource_id"], str(parent.pk))
 
     def test_without_resource_editor_role_is_forbidden(self):
         # Drafts are editor-only on every verb, reads included.

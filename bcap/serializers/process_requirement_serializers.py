@@ -7,11 +7,18 @@ from rest_framework import serializers
 
 from arches_zod_validation.views.mixins import BCAPResourceSerializer
 
+from bcap.views.generated.document_submission import DocumentSubmissionSerializer
+from bcap.views.generated.information_request import InformationRequestSerializer
+from bcap.views.generated.notice_of_project_intent import (
+    NoticeOfProjectIntentSerializer,
+)
+from bcap.views.generated.site_visit import SiteVisitSerializer
 
-# Module host serializers. These graphs expose no generated routes of their own
+
+# Module host serializers for the graphs with no generated routes of their own
 # (their verbs are [] in generate.json); a host is only ever created through the
-# module host POST, so the serializers live here rather than in the generated
-# package.
+# module host POST, so these live here. The rest reuse the generated serializer:
+# two serializers over one graph would collide as duplicate schema components.
 class InvestigationSerializer(BCAPResourceSerializer):
     class Meta(BCAPResourceSerializer.Meta):
         graph_slug = "investigation"
@@ -26,25 +33,6 @@ class InspectionSerializer(BCAPResourceSerializer):
     class Meta(BCAPResourceSerializer.Meta):
         graph_slug = "inspection"
 
-
-class SiteVisitSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "site_visit"
-
-
-class DocumentSubmissionSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "document_submission"
-
-
-class InformationRequestSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "information_request"
-
-
-class NoticeOfProjectIntentSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "notice_of_project_intent"
 
 
 # The serializer that validates and creates a module's host resource, by host
