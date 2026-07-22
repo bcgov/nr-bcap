@@ -172,7 +172,7 @@ const cardDate = (iso: string) =>
     iso ? new Date(iso).toLocaleDateString() : '';
 
 const labelled = (label: string, value: string) =>
-    value ? `<strong>${label}:</strong> ${value}` : '';
+    value ? `${label}: ${value}` : '';
 
 const openResourceReport = (resourceId: string) => {
     router.push({
@@ -371,13 +371,6 @@ const openResourceReport = (resourceId: string) => {
 .full-height :deep(a:hover),
 .full-height :deep(a:focus) {
     text-decoration: none;
-}
-
-/* ProjectCard gives body <strong> a fixed 100px column, which leaves a gap
-   after short labels like "Type:". */
-.dashboard-div-flex :deep(.body-lines strong) {
-    width: auto;
-    margin-right: 0.35rem;
 }
 
 .loading-state {

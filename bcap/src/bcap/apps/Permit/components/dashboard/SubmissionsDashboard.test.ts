@@ -202,7 +202,7 @@ describe('project cards', () => {
 
         const card = wrapper.findComponent(ProjectCardStub);
         expect(card.props('body1')).toBe('Type: Site Visit');
-        expect(card.props('body2')).toBe('<strong>Permit:</strong> PN-9');
+        expect(card.props('body2')).toBe('Permit: PN-9');
         expect(card.props('body3')).toContain('1/3 modules complete');
     });
 
