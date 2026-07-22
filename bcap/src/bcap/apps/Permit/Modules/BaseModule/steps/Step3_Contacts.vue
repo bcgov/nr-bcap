@@ -47,7 +47,7 @@ defineExpose({ isValid });
 </script>
 
 <template>
-    <FieldSet legend="Application Contacts">
+    <FieldSet>
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="

@@ -65,6 +65,7 @@ class ExternalDashboardService(BaseDashboardService):
                         self.PA.PROJECT_NAME,
                         self.PA.APPLICATION_ID,
                         self.PA.APPLICATION_SUBMISSION_DATE,
+                        self.PA.FILING_TYPE,
                         self.PA.INDUSTRIAL_SECTOR,
                         self.PA.APPLICATION_PRIORITY_LEVEL,
                         self.PA.RELATED_PERMIT,
@@ -114,6 +115,7 @@ class ExternalDashboardService(BaseDashboardService):
             or "",
             project_name=core.project_name,
             application_number=core.application_number,
+            submission_type=core.submission_type,
             industrial_sector=core.industrial_sector,
             permit_id=core.related_permit_id,
             permit_number=hca.number,
@@ -148,6 +150,7 @@ class ExternalDashboardService(BaseDashboardService):
             created_date=to_iso(draft.created),
             project_name=self._display_text(ident.get(self.PA.PROJECT_NAME)),
             application_number=self._display_text(ident.get(self.PA.APPLICATION_ID)),
+            submission_type=self._display_text(ident.get(self.PA.FILING_TYPE)),
             # Not implemented for drafts yet.
             unread_messages=0,
         )

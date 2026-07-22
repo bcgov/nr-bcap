@@ -90,6 +90,7 @@ class InternalDashboardService(BaseDashboardService):
                     [
                         self.PA.PROJECT_NAME,
                         self.PA.APPLICATION_ID,
+                        self.PA.FILING_TYPE,
                         self.PA.INDUSTRIAL_SECTOR,
                         self.PA.APPLICATION_PRIORITY_LEVEL,
                         self.PA.RELATED_PERMIT,
@@ -364,6 +365,7 @@ class InternalDashboardService(BaseDashboardService):
             requirement_due_date=requirement.due_date,
             project_name=core.project_name,
             application_number=core.application_number,
+            submission_type=core.submission_type,
             industrial_sector=core.industrial_sector,
             permit_id=core.related_permit_id,
             permit_number=hca.number,

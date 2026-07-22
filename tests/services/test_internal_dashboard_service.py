@@ -716,11 +716,12 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
             (
                 core.project_name,
                 core.application_number,
+                core.submission_type,
                 core.industrial_sector,
                 core.priority_level,
                 core.related_permit_id,
             ),
-            ("", "", "", "", None),
+            ("", "", "", "", "", None),
         )
 
 

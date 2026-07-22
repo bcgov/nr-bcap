@@ -66,6 +66,7 @@ class BaseDashboardService(BaseGraphService):
         return ApplicationCore(
             project_name=display(self.PA.PROJECT_NAME),
             application_number=display(self.PA.APPLICATION_ID),
+            submission_type=display(self.PA.FILING_TYPE),
             industrial_sector=display(self.PA.INDUSTRIAL_SECTOR),
             priority_level=display(self.PA.APPLICATION_PRIORITY_LEVEL),
             related_permit_id=self._resource_id(

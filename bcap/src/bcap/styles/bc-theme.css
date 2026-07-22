@@ -7,14 +7,45 @@
      class="bc-form" to a form's root to opt in, and overlay-class="bc-overlay"
      on teleported Select/MultiSelect panels. */
 
+/* The plugin page doesn't load bcgov_arches_common's project.css, so the face
+   is declared here against a bundled copy of the font. */
+@font-face {
+    font-family: BCSans;
+    font-weight: 400 599;
+    font-style: normal;
+    font-display: swap;
+    src: url('../../../media/fonts/BCSans-Regular.woff2') format('woff2');
+}
+
 :root {
     --bc-navy: #003366;
     --bc-navy-dark: #00264d;
+    --bc-gold: #fcba19;
+    --bc-link: #1a5a96;
     --bc-border: #9ca3af;
     --bc-muted: #6b7280;
+    --bc-grey: #606060;
     --bc-panel: #f3f4f6;
     --bc-selected: #e6eef5;
     --bc-text: #222222;
+}
+
+/* BC Gov accessibility standard: a gold ring on keyboard focus. Mouse clicks
+   don't trigger focus-visible, so this stays out of the way. */
+:focus-visible {
+    outline: 2px solid var(--bc-gold);
+    outline-offset: 2px;
+}
+
+/* Scoped to the app's content root: a bare `a` selector reaches the Arches
+   chrome around the mounted app and recolours the top nav links. */
+.bcgov-main-content a {
+    color: var(--bc-link);
+    text-decoration: none;
+}
+.bcgov-main-content a:hover,
+.bcgov-main-content a:focus {
+    text-decoration: underline;
 }
 
 .title-row {

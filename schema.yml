@@ -6175,6 +6175,9 @@ components:
           type: string
           description: Permit application's human-readable application reference;
             not a GUID.
+        submission_type:
+          type: string
+          description: Permit application's filing type (reference label).
         industrial_sector:
           type: string
           description: Permit application's industrial sector (reference label).
@@ -6444,8 +6447,6 @@ components:
           type: string
           format: uuid
           nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
           readOnly: true
@@ -6501,59 +6502,6 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-    Information_Request_New_Node_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Information_Request_Resource_Aliased_Data:
-      type: object
-      properties:
-        new_node:
-          allOf:
-          - $ref: '#/components/schemas/Information_Request_New_Node_Tile'
-          nullable: true
     Inspection:
       type: object
       properties:
@@ -7369,6 +7317,9 @@ components:
           type: string
           description: Permit application's human-readable application reference (e.g.
             "APP-1"); not a GUID. The application's GUID is the card's `id`.
+        submission_type:
+          type: string
+          description: Permit application's filing type (reference label).
         industrial_sector:
           type: string
           description: Permit application's industrial sector (reference label).
@@ -9179,6 +9130,10 @@ components:
       - $ref: '#/components/schemas/Investigation'
       - $ref: '#/components/schemas/Alteration'
       - $ref: '#/components/schemas/Inspection'
+      - $ref: '#/components/schemas/SiteVisit'
+      - $ref: '#/components/schemas/DocumentSubmission'
+      - $ref: '#/components/schemas/InformationRequest'
+      - $ref: '#/components/schemas/NoticeOfProjectIntent'
     ModuleProgress:
       type: object
       properties:

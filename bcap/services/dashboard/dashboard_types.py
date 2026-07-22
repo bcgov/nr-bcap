@@ -94,6 +94,9 @@ class InternalDashboardCard:
         "not a GUID. The application's GUID is the card's `id`.",
         "",
     )
+    submission_type: str = described(
+        "Permit application's filing type (reference label).", ""
+    )
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
     )
@@ -184,6 +187,9 @@ class ExternalDashboardCard:
     application_number: str = described(
         "Permit application's human-readable application reference; not a GUID.", ""
     )
+    submission_type: str = described(
+        "Permit application's filing type (reference label).", ""
+    )
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
     )
@@ -243,6 +249,7 @@ class ApplicationCore:
 
     project_name: str = ""
     application_number: str = ""
+    submission_type: str = ""
     industrial_sector: str = ""
     priority_level: str = ""
     related_permit_id: str | None = None
