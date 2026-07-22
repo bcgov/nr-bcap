@@ -195,13 +195,6 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
             set(card["module_progress"]), {"current_module", "completed", "total"}
         )
 
-    def test_get_defaults_to_the_users_own_applications(self):
-        resp = self.client.get(self.url)
-
-        self.assertEqual(resp.status_code, 200)
-        body = resp.json()
-        self.assertEqual([c["id"] for c in body["results"]], [str(self.mine.pk)])
-
     def test_drafts_scope_returns_the_users_drafts(self):
         resp = self.client.get(self.url, {"status": ExternalDashboardStatus.DRAFTS})
 

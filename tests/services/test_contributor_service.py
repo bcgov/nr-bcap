@@ -453,9 +453,6 @@ class ContributorsForResourceTests(TestCase):
             self._ids(self.permit), {str(self.officer.pk), str(self.assignee.pk)}
         )
 
-    def test_excludes_linked_contributors_not_referenced(self):
-        self.assertNotIn(str(self.bystander.pk), self._ids(self.permit))
-
     def test_returns_contributors_sorted_by_name(self):
         rows = self.service.contributors_for_resource(str(self.permit.pk))
         self.assertEqual([r.name for r in rows], ["Assignee, Ash", "Officer, Ola"])

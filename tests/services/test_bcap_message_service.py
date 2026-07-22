@@ -268,11 +268,6 @@ class BcapMessageUnreadCountTests(TestCase):
             self.service.unread_count_across([self.permit.pk], "reader"), 2
         )
 
-    def test_unknown_username_counts_zero(self):
-        self.assertEqual(
-            self.service.unread_count_across([self.permit.pk], "nobody"), 0
-        )
-
     def test_unread_count_across_rolls_up_every_context(self):
         # The two unread on the permit plus the one on the other resource are a
         # single rolled-up count, the shape the dashboard needs for a permit and
@@ -282,11 +277,6 @@ class BcapMessageUnreadCountTests(TestCase):
                 [self.permit.pk, self.other_permit.pk], "reader"
             ),
             3,
-        )
-
-    def test_unread_count_across_of_one_context_matches_unread_count(self):
-        self.assertEqual(
-            self.service.unread_count_across([self.permit.pk], "reader"), 2
         )
 
     def test_unread_count_across_empty_or_unknown_counts_zero(self):
