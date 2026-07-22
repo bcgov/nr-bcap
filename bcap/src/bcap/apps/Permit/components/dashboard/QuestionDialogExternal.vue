@@ -4,7 +4,10 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { createBcapMessage, getContributors } from '@/bcap/apps/Permit/api.ts';
+import {
+    createBcapMessage,
+    getContributorsForResources,
+} from '@/bcap/apps/Permit/api.ts';
 
 const props = defineProps<{
     applicationId: string;
@@ -30,7 +33,9 @@ const isReplyMode = computed(() => {
 const loadRecipients = async () => {
     isLoadingRecipients.value = true;
     try {
-        const fetchedRecipients = await getContributors();
+        const fetchedRecipients = await getContributorsForResources(
+            props.permitResourceId,
+        );
         recipients.value = fetchedRecipients;
 
         if (recipients.value.length > 0) {
@@ -291,10 +296,11 @@ onMounted(() => {
 
 <style>
 /* --- Trigger Button Styles --- */
+/* BC Gov secondary button: navy outline on white. */
 .trigger-btn {
-    background-color: #d0d0d0;
-    color: #333;
-    border: none;
+    background-color: transparent;
+    color: var(--bc-navy);
+    border: 2px solid var(--bc-navy);
     border-radius: 4px;
     padding: 0.5rem 1rem;
     font-weight: 500;
@@ -305,7 +311,7 @@ onMounted(() => {
 }
 
 .trigger-btn:hover {
-    background-color: #e0e0e0;
+    background-color: var(--bc-selected);
 }
 
 /* --- Notification Badge --- */
