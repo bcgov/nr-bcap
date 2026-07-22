@@ -11,6 +11,21 @@ vi.mock('arches', () => ({
     },
 }));
 
+// ReviewSummary (a child) pulls in arches-component-lab, whose tsconfig has a
+// broken extends that crashes the esbuild transform. Mock the two entry points
+// so those files are never loaded.
+vi.mock(
+    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
+    () => ({
+        default: { name: 'GenericWidget', template: '<div />' },
+    }),
+);
+
+vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
+    EDIT: 'edit',
+    VIEW: 'view',
+}));
+
 const api = vi.hoisted(() => ({
     patchModuleOrder: vi.fn(),
     fetchRequirementDetails: vi.fn(),
