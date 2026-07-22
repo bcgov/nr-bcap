@@ -449,7 +449,11 @@ describe('CompletedModules staff controls', () => {
         expect(row.isCompleted).toBe(false);
         await vm.onToggleCompleted(row);
 
-        expect(api.setModuleCompleted).toHaveBeenCalledWith('permit-1', 'm1', true);
+        expect(api.setModuleCompleted).toHaveBeenCalledWith(
+            'permit-1',
+            'm1',
+            true,
+        );
         expect(wrapper.emitted('changed')).toHaveLength(1);
     });
 
