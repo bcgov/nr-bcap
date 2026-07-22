@@ -34,6 +34,8 @@ const api = vi.hoisted(() => ({
     reorderModuleRequirements: vi.fn(),
     addBlankRequirement: vi.fn(),
     removeRequirement: vi.fn(),
+    setModuleCompleted: vi.fn(),
+    setRequirementSatisfied: vi.fn(),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => api);
 
@@ -145,6 +147,8 @@ beforeEach(() => {
     api.addBlankRequirement.mockResolvedValue(undefined);
     api.removeRequirement.mockResolvedValue(undefined);
     api.patchModuleOrder.mockResolvedValue(undefined);
+    api.setModuleCompleted.mockResolvedValue(undefined);
+    api.setRequirementSatisfied.mockResolvedValue(undefined);
     sessionStorage.clear();
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -427,6 +431,45 @@ describe('CompletedModules staff controls', () => {
             'r-9',
         );
         expect(wrapper.emitted('changed')).toHaveLength(1);
+    });
+
+    it('toggling module completion sends the flipped flag and emits changed', async () => {
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            state: { rows: { tileid: string; isCompleted: boolean }[] };
+            onToggleCompleted: (row: {
+                tileid: string;
+                isCompleted: boolean;
+            }) => Promise<void>;
+        };
+        const row = vm.state.rows[0];
+        expect(row.isCompleted).toBe(false);
+        await vm.onToggleCompleted(row);
+
+        expect(api.setModuleCompleted).toHaveBeenCalledWith('permit-1', 'm1', true);
+        expect(wrapper.emitted('changed')).toHaveLength(1);
+    });
+
+    it('toggling a requirement satisfies it and updates the row in place', async () => {
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            onToggleRequirement: (r: {
+                resourceId: string;
+                satisfied: boolean | null;
+            }) => Promise<void>;
+        };
+        const requirement = { resourceId: 'r-9', satisfied: false };
+        await vm.onToggleRequirement(requirement);
+
+        expect(api.setRequirementSatisfied).toHaveBeenCalledWith('r-9', true);
+        // The row flips locally so the status icon updates without a reload.
+        expect(requirement.satisfied).toBe(true);
     });
 
     it('persisting order renumbers rows and patches every tile', async () => {
