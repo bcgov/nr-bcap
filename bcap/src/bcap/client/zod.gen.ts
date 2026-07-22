@@ -452,11 +452,25 @@ export const zPatchedDraftWrite = z.object({
 });
 
 /**
+ * The module completion PATCH body: whether the module is completed.
+ */
+export const zPatchedModuleCompletion = z.object({
+    completed: z.boolean().optional()
+});
+
+/**
  * The reorder PATCH body: the module's requirement resource ids in the new
  * order.
  */
 export const zPatchedReorderRequirements = z.object({
     order: z.array(z.uuid()).optional()
+});
+
+/**
+ * The status PATCH body: whether the requirement is satisfied.
+ */
+export const zPatchedRequirementStatus = z.object({
+    satisfied: z.boolean().optional()
 });
 
 export const zPermitApplicationArchaeologicalAssessmentPlanTile = z.object({
@@ -8773,6 +8787,18 @@ export const zApiPermitApplicationModuleDestroyPath = z.object({
  */
 export const zApiPermitApplicationModuleDestroyResponse = z.void();
 
+export const zApiPermitApplicationModulePartialUpdateBody = zPatchedModuleCompletion;
+
+export const zApiPermitApplicationModulePartialUpdatePath = z.object({
+    id: z.uuid(),
+    module_tileid: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiPermitApplicationModulePartialUpdateResponse = z.void();
+
 export const zApiPermitApplicationModuleRequirementDestroyPath = z.object({
     id: z.uuid(),
     module_tileid: z.uuid(),
@@ -8867,6 +8893,17 @@ export const zApiProcessRequirementChecklistPartialUpdatePath = z.object({
  * No response body
  */
 export const zApiProcessRequirementChecklistPartialUpdateResponse = z.void();
+
+export const zApiProcessRequirementStatusPartialUpdateBody = zPatchedRequirementStatus;
+
+export const zApiProcessRequirementStatusPartialUpdatePath = z.object({
+    requirement_id: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiProcessRequirementStatusPartialUpdateResponse = z.void();
 
 export const zApiPublicationListQuery = z.object({
     limit: z.int().optional(),

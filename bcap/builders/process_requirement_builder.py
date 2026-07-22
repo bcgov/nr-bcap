@@ -147,6 +147,23 @@ class ProcessRequirementBuilder(ResourceBuilder):
             Tile.objects.get(pk=tile.tileid).delete()
         return requirement
 
+    def set_requirement_status(self, requirement_id, satisfied):
+        """Set a requirement's assessment status (satisfied yes/no), creating the
+        assessment tile if it has none. A partial save, so only the assessment
+        nodegroup is touched."""
+        requirement = self._get_requirement_by_id(requirement_id)
+        assessment = requirement.aliased_data.sub_requirement_assessment_n1
+        if assessment is None:
+            assessment = self.append_blank_tile_for_group(
+                requirement,
+                groups.SUB_REQUIREMENT_ASSESSMENT_N1,
+                {aliases.REQUIREMENT_STATUS: satisfied},
+            )
+        else:
+            assessment.aliased_data.requirement_status = satisfied
+        requirement.save(force_admin=True, partial=True, index=False)
+        return requirement
+
     def clone_requirement(self, template_id, parent=None, submission=None):
         """A working copy of the requirement template with the given pk: every
         tile copied with a fresh GUID and the template flag cleared, so the copy

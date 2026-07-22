@@ -974,11 +974,15 @@ watch(activeModuleId, (id) => {
    as one family. */
 .draft-modules :deep(.p-accordionheader) {
     background-color: var(--bc-grey);
-    border-bottom: 3px solid var(--bc-gold);
     color: #ffffff;
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
     padding: 1.35rem 1.5rem 1.35rem 2.5rem;
     border-radius: 4px 4px 0 0;
+}
+
+/* The gold rule marks which draft is expanded, matching the submitted list. */
+.draft-modules :deep(.p-accordionpanel-active .p-accordionheader) {
+    border-bottom: 3px solid var(--bc-gold);
 }
 
 .draft-modules :deep(.p-accordionheader) .draft-name,

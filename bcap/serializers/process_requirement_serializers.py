@@ -34,7 +34,6 @@ class InspectionSerializer(BCAPResourceSerializer):
         graph_slug = "inspection"
 
 
-
 # The serializer that validates and creates a module's host resource, by host
 # graph slug. A module names its host via the child whose resource matches the
 # module slug (see template_specs.host_graph); a slug with no group file or no
@@ -66,6 +65,18 @@ class ReorderRequirementsSerializer(serializers.Serializer):
     order."""
 
     order = serializers.ListField(child=serializers.UUIDField())
+
+
+class RequirementStatusSerializer(serializers.Serializer):
+    """The status PATCH body: whether the requirement is satisfied."""
+
+    satisfied = serializers.BooleanField()
+
+
+class ModuleCompletionSerializer(serializers.Serializer):
+    """The module completion PATCH body: whether the module is completed."""
+
+    completed = serializers.BooleanField()
 
 
 class AddRequirementSerializer(serializers.Serializer):

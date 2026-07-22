@@ -16,6 +16,7 @@ import {
     addBlankRequirement,
     removeRequirement,
     setModuleCompleted,
+    setRequirementSatisfied,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
@@ -172,6 +173,7 @@ const ui = reactive({
     adding: null as string | null,
     addingRequirement: null as string | null,
     togglingModule: null as string | null,
+    togglingRequirement: null as string | null,
 });
 
 const loadRequirementDetails = async (rows: ModuleRow[]) => {
@@ -296,17 +298,30 @@ const onToggleCompleted = async (row: ModuleRow) => {
     if (ui.togglingModule) return;
     ui.togglingModule = row.tileid;
     try {
-        await setModuleCompleted(
-            row.tileid,
-            !row.isCompleted,
-            row.name,
-            row.moduleId,
-        );
+        await setModuleCompleted(permitId, row.tileid, !row.isCompleted);
         emit('changed');
     } catch (error) {
         console.error('Failed to change module completion:', error);
     } finally {
         ui.togglingModule = null;
+    }
+};
+
+// Toggle a non-checklist requirement's satisfied status. Updates the row and
+// the detail cache in place so the status icon flips without a full reload.
+const onToggleRequirement = async (requirement: RequirementItem) => {
+    if (ui.togglingRequirement) return;
+    ui.togglingRequirement = requirement.resourceId;
+    const next = !requirement.satisfied;
+    try {
+        await setRequirementSatisfied(requirement.resourceId, next);
+        requirement.satisfied = next;
+        const meta = detailCache.get(requirement.resourceId);
+        if (meta) meta.satisfied = next;
+    } catch (error) {
+        console.error('Failed to change requirement status:', error);
+    } finally {
+        ui.togglingRequirement = null;
     }
 };
 
@@ -383,7 +398,7 @@ const persistOrder = async () => {
             v-if="isStaff && addableModules && addableModules.length"
             class="add-module-bar"
         >
-            <span class="add-module-label">Add module</span>
+            <span class="add-module-label">Add module to submission</span>
             <button
                 v-for="mod in addableModules"
                 :key="mod.id"
@@ -565,14 +580,14 @@ const persistOrder = async () => {
                                         ? 'fa-regular fa-circle status-unknown'
                                         : requirement.satisfied
                                           ? 'fa-solid fa-circle-check status-ok'
-                                          : 'fa-solid fa-circle-xmark status-no'
+                                          : 'fa-solid fa-clock status-in-progress'
                                 "
                                 :title="
                                     requirement.satisfied === null
                                         ? 'Status loading'
                                         : requirement.satisfied
                                           ? 'Satisfied'
-                                          : 'Not satisfied'
+                                          : 'In progress'
                                 "
                             ></i>
                             <span class="requirement-name">
@@ -608,8 +623,12 @@ const persistOrder = async () => {
                                             "
                                             target="_blank"
                                             rel="noopener"
+                                            title="Complete the checklist to satisfy this requirement"
                                         >
-                                            Fill out checklist
+                                            <i
+                                                class="fa-solid fa-magnifying-glass"
+                                            ></i>
+                                            Complete Checklist
                                         </a>
                                         <a
                                             class="req-action"
@@ -622,16 +641,49 @@ const persistOrder = async () => {
                                             rel="noopener"
                                             title="Add, remove, or reorder subrequirements"
                                         >
-                                            Edit Checklist
+                                            Edit Checklist (manager only)
                                         </a>
                                     </template>
+                                    <button
+                                        v-else
+                                        type="button"
+                                        class="req-action req-satisfy"
+                                        :class="{
+                                            'is-satisfied':
+                                                requirement.satisfied,
+                                        }"
+                                        :disabled="
+                                            ui.togglingRequirement ===
+                                            requirement.resourceId
+                                        "
+                                        @click="
+                                            onToggleRequirement(requirement)
+                                        "
+                                    >
+                                        <i
+                                            class="fa-solid"
+                                            :class="
+                                                ui.togglingRequirement ===
+                                                requirement.resourceId
+                                                    ? 'fa-circle-notch fa-spin'
+                                                    : requirement.satisfied
+                                                      ? 'fa-rotate-left'
+                                                      : 'fa-check'
+                                            "
+                                        ></i>
+                                        {{
+                                            requirement.satisfied
+                                                ? 'Mark unsatisfied'
+                                                : 'Mark satisfied'
+                                        }}
+                                    </button>
                                     <a
                                         class="req-action"
                                         :href="`/bcap/resource/${requirement.resourceId}`"
                                         target="_blank"
                                         rel="noopener"
                                     >
-                                        View resource in Arches
+                                        View Arches
                                     </a>
                                     <button
                                         type="button"
@@ -761,12 +813,16 @@ const persistOrder = async () => {
 /* Navy header so each module reads as a distinct BC Gov card. */
 .submitted-modules :deep(.p-accordionheader) {
     background-color: var(--bc-navy);
-    /* The gold rule under navy is the BC Gov header signature. */
-    border-bottom: 3px solid var(--bc-gold);
     color: #ffffff;
     padding: 1.35rem 1.5rem 1.35rem 2.5rem;
     /* Match the panel's corners so the open-state outline follows them. */
     border-radius: 4px 4px 0 0;
+}
+
+/* The gold rule is the BC Gov header signature; reserve it for the open panel
+   so the underline marks which module is expanded. */
+.submitted-modules :deep(.p-accordionpanel-active .p-accordionheader) {
+    border-bottom: 3px solid var(--bc-gold);
 }
 /* The name and id carry their own dark colors; flip them for the navy bar,
    along with the toggle chevron. The date is a white pill, so it keeps navy. */
@@ -1124,8 +1180,8 @@ const persistOrder = async () => {
     color: #16a34a;
 }
 
-.status-no {
-    color: #dc2626;
+.status-in-progress {
+    color: #ea8f00;
 }
 
 .status-unknown {
@@ -1146,7 +1202,11 @@ const persistOrder = async () => {
     white-space: nowrap;
 }
 
+/* Fixed-width chip so the tags occupy one column and the actions after them
+   (View, trash) line up vertically down the list regardless of tag length. */
 .req-type {
+    flex: 0 0 11rem;
+    text-align: center;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -1155,6 +1215,8 @@ const persistOrder = async () => {
     padding: 0.15rem 0.5rem;
     border-radius: 999px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .req-assignee {
@@ -1184,6 +1246,33 @@ const persistOrder = async () => {
     background: var(--bc-panel);
     border-color: var(--bc-navy);
     text-decoration: none;
+}
+
+/* A button styled as a req-action; the icon needs the shared inline spacing. */
+.req-satisfy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Filled green once satisfied so the state reads off the button as well as the
+   status icon, matching the module-level toggle. */
+.req-satisfy.is-satisfied {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+}
+
+.req-satisfy.is-satisfied:hover {
+    background: #15803d;
+    border-color: #15803d;
+}
+
+.req-satisfy:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .req-drag-handle {

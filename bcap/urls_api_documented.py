@@ -29,6 +29,7 @@ from bcap.views.process_requirement_api import (
     ModuleRequirementsView,
     ModuleRequirementView,
     RequirementChecklistView,
+    RequirementStatusView,
     PermitModuleView,
     ProcessRequirementListView,
     ProcessRequirementSeedView,
@@ -147,6 +148,12 @@ documented_api_patterns = [
         "api/process_requirement/<uuid:requirement_id>/checklist",
         RequirementChecklistView.as_view(),
         name="requirement_checklist",
+    ),
+    # Mark a non-checklist process requirement satisfied/unsatisfied.
+    path(
+        "api/process_requirement/<uuid:requirement_id>/status",
+        RequirementStatusView.as_view(),
+        name="requirement_status",
     ),
     path(
         "api/bcap_message/resource/<uuid:resource_id>/threads",

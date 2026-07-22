@@ -29,7 +29,9 @@ from bcap.serializers.process_requirement_serializers import (
     AddRequirementSerializer,
     ChecklistPatchSerializer,
     HOST_SERIALIZERS,
+    ModuleCompletionSerializer,
     ReorderRequirementsSerializer,
+    RequirementStatusSerializer,
     module_host_schema,
 )
 from bcap.services.process_requirement.process_requirement_service import (
@@ -164,15 +166,18 @@ class ProcessRequirementSeedView(APIView):
         return Response(serializer_class(fresh, request=request).data, status=201)
 
 
-@extend_schema(tags=["External: process_requirement"], responses={204: None})
+@extend_schema(tags=["External: process_requirement"])
 class PermitModuleView(APIView):
-    """DELETE a submitted module from a permit application by its process_module
-    tile id: the tile is dropped and the requirement working copies it created
-    (grouping parent, child requirements, submission hosts) are deleted."""
+    """A submitted module on a permit application, by its process_module tile id.
+    DELETE drops the tile and the requirement working copies it created (grouping
+    parent, child requirements, submission hosts). PATCH flips its completion
+    flag, stamping or clearing the completed date without disturbing the module's
+    other card nodes."""
 
     authentication_classes = [SessionAuthentication]
     permission_classes = STAFF_MODULE_PERMISSIONS
 
+    @extend_schema(responses={204: None})
     def delete(self, request, pk, module_tileid):
         _require_exists(
             pk,
@@ -180,6 +185,22 @@ class PermitModuleView(APIView):
             "No permit application matches the given id.",
         )
         ProcessRequirementService(user=request.user).remove_module(pk, module_tileid)
+        return Response(status=204)
+
+    @extend_schema(request=ModuleCompletionSerializer, responses={204: None})
+    def patch(self, request, pk, module_tileid):
+        _require_exists(
+            pk,
+            GraphSlugs.PERMIT_APPLICATION,
+            "No permit application matches the given id.",
+        )
+        body = ModuleCompletionSerializer(data=request.data)
+        body.is_valid(raise_exception=True)
+        found = ProcessRequirementService(user=request.user).set_module_completed(
+            pk, module_tileid, body.validated_data["completed"]
+        )
+        if not found:
+            raise Http404("No module matches the given tile id.")
         return Response(status=204)
 
 
@@ -226,6 +247,33 @@ class ModuleRequirementView(APIView):
     def delete(self, request, pk, module_tileid, requirement_id):
         ProcessRequirementService(user=request.user).remove_requirement(
             pk, module_tileid, requirement_id
+        )
+        return Response(status=204)
+
+
+@extend_schema(
+    tags=["External: process_requirement"],
+    request=RequirementStatusSerializer,
+    responses={204: None},
+)
+class RequirementStatusView(APIView):
+    """PATCH: mark a process requirement satisfied/unsatisfied on its assessment
+    tile. For non-checklist requirements, whose status is set directly rather
+    than derived from subrequirements."""
+
+    authentication_classes = [SessionAuthentication]
+    permission_classes = STAFF_MODULE_PERMISSIONS
+
+    def patch(self, request, requirement_id):
+        _require_exists(
+            requirement_id,
+            GraphSlugs.PROCESS_REQUIREMENT,
+            "No process requirement matches the given id.",
+        )
+        body = RequirementStatusSerializer(data=request.data)
+        body.is_valid(raise_exception=True)
+        ProcessRequirementService(user=request.user).set_requirement_status(
+            requirement_id, body.validated_data["satisfied"]
         )
         return Response(status=204)
 

@@ -301,35 +301,29 @@ export const patchModuleOrder = async (
     await apiFetch(url, { method: HttpMethod.Patch, body });
 };
 
+// Mark a submitted module completed/incomplete. The dedicated route flips the
+// completion flag and stamps or clears the completed date server-side, touching
+// only those nodes so the module's order/name/id are left intact.
 export const setModuleCompleted = async (
+    permitId: string,
     moduleTileId: string,
     completed: boolean,
-    name: string,
-    moduleId: string,
 ): Promise<void> => {
-    const url = arches.urls.api_tile(
-        GraphSlug.PermitApplication,
-        'process_module',
-        moduleTileId,
-    );
-    await apiFetch(url, {
+    await apiFetch(arches.urls.permit_module(permitId, moduleTileId), {
         method: HttpMethod.Patch,
-        body: {
-            aliased_data: {
-                // The tile endpoint validates the whole card, so the required
-                // fields ride along even though only completion is changing.
-                module_name: { node_value: localized(name) },
-                ...(moduleId ? { module_id: { node_value: moduleId } } : {}),
-                is_module_completed: { node_value: completed },
-                // Cleared when un-marking so the card doesn't keep showing a
-                // submitted date for a module that is no longer complete.
-                module_completed_date: {
-                    node_value: completed
-                        ? new Date().toISOString().slice(0, 10)
-                        : null,
-                },
-            },
-        },
+        body: { completed },
+    });
+};
+
+// Mark a non-checklist requirement satisfied/unsatisfied. The dedicated route
+// sets the assessment tile server-side, so the client just sends the flag.
+export const setRequirementSatisfied = async (
+    requirementResourceId: string,
+    satisfied: boolean,
+): Promise<void> => {
+    await apiFetch(arches.urls.requirement_status(requirementResourceId), {
+        method: HttpMethod.Patch,
+        body: { satisfied },
     });
 };
 

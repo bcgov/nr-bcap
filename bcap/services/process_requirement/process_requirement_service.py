@@ -6,6 +6,7 @@ graph mechanics (build, clone, submission and parent linking) live in
 ProcessRequirementBuilder; this layer decides what to clone and where it goes."""
 
 from dataclasses import dataclass
+from datetime import date
 
 from arches.app.models.models import TileModel
 from arches.app.models.resource import Resource
@@ -185,6 +186,29 @@ class ProcessRequirementService:
         requirement = self.builder.update_checklist(requirement_id, name, steps)
         bulk_index([Resource.objects.get(pk=requirement.pk)])
         return requirement
+
+    def set_requirement_status(self, requirement_id, satisfied):
+        """Mark a requirement satisfied/unsatisfied on its assessment tile, then
+        index."""
+        requirement = self.builder.set_requirement_status(requirement_id, satisfied)
+        bulk_index([Resource.objects.get(pk=requirement.pk)])
+        return requirement
+
+    def set_module_completed(self, permit_id, module_tileid, completed):
+        """Flip a module's completion flag and stamp (or clear) its completed
+        date on the process_module tile directly, leaving the module's other card
+        nodes (order, name, id) untouched. Returns False for a stray module id
+        that isn't one of the permit's."""
+        if not self._module_belongs_to_permit(permit_id, module_tileid):
+            return False
+        completed_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.IS_MODULE_COMPLETED)
+        date_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.MODULE_COMPLETED_DATE)
+        tile = TileModel.objects.get(pk=module_tileid)
+        tile.data[completed_node] = completed
+        tile.data[date_node] = date.today().isoformat() if completed else None
+        tile.save(update_fields=["data"])
+        bulk_index([Resource.objects.get(pk=permit_id)])
+        return True
 
     @staticmethod
     def _module_belongs_to_permit(permit_id, module_tileid):

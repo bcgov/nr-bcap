@@ -1029,12 +1029,53 @@ paths:
         '204':
           description: No response body
   /bcap/api/permit_application/{id}/module/{module_tileid}:
+    patch:
+      operationId: api_permit_application_module_partial_update
+      description: |-
+        A submitted module on a permit application, by its process_module tile id.
+        DELETE drops the tile and the requirement working copies it created (grouping
+        parent, child requirements, submission hosts). PATCH flips its completion
+        flag, stamping or clearing the completed date without disturbing the module's
+        other card nodes.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: module_tileid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedModuleCompletion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedModuleCompletion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedModuleCompletion'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     delete:
       operationId: api_permit_application_module_destroy
       description: |-
-        DELETE a submitted module from a permit application by its process_module
-        tile id: the tile is dropped and the requirement working copies it created
-        (grouping parent, child requirements, submission hosts) are deleted.
+        A submitted module on a permit application, by its process_module tile id.
+        DELETE drops the tile and the requirement working copies it created (grouping
+        parent, child requirements, submission hosts). PATCH flips its completion
+        flag, stamping or clearing the completed date without disturbing the module's
+        other card nodes.
       parameters:
       - in: path
         name: id
@@ -1411,6 +1452,38 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/PatchedChecklistPatch'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /bcap/api/process_requirement/{requirement_id}/status:
+    patch:
+      operationId: api_process_requirement_status_partial_update
+      description: |-
+        PATCH: mark a process requirement satisfied/unsatisfied on its assessment
+        tile. For non-checklist requirements, whose status is set directly rather
+        than derived from subrequirements.
+      parameters:
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementStatus'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementStatus'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementStatus'
       security:
       - cookieAuth: []
       responses:
@@ -9921,6 +9994,12 @@ components:
           type: string
         parent_resource_id:
           type: string
+    PatchedModuleCompletion:
+      type: object
+      description: 'The module completion PATCH body: whether the module is completed.'
+      properties:
+        completed:
+          type: boolean
     PatchedPermitApplication:
       type: object
       properties:
@@ -10042,6 +10121,12 @@ components:
           items:
             type: string
             format: uuid
+    PatchedRequirementStatus:
+      type: object
+      description: 'The status PATCH body: whether the requirement is satisfied.'
+      properties:
+        satisfied:
+          type: boolean
     PermitApplication:
       type: object
       properties:
