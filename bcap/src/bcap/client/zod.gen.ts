@@ -8922,55 +8922,6 @@ export const zApiRegistrationLinkCreateBody = zRegistrationLinkRequest;
 
 export const zApiRegistrationLinkCreateResponse = zRegistrationLinkResponse;
 
-export const zApiResourceDraftListPath = z.object({
-    graph_slug: z.string()
-});
-
-export const zApiResourceDraftListResponse = z.array(zDraftRecord);
-
-export const zApiResourceDraftCreateBody = zDraftWrite;
-
-export const zApiResourceDraftCreatePath = z.object({
-    graph_slug: z.string()
-});
-
-export const zApiResourceDraftCreateResponse = zDraftRecord;
-
-export const zApiResourceDraftDestroyPath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiResourceDraftDestroyResponse = z.void();
-
-export const zApiResourceDraftRetrievePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiResourceDraftRetrieveResponse = zDraftRecord;
-
-export const zApiResourceDraftPartialUpdateBody = zPatchedDraftWrite;
-
-export const zApiResourceDraftPartialUpdatePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiResourceDraftPartialUpdateResponse = zDraftRecord;
-
-export const zApiResourceDraftUpdateBody = zDraftWrite;
-
-export const zApiResourceDraftUpdatePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiResourceDraftUpdateResponse = zDraftRecord;
-
 export const zApiSiteSubmissionListQuery = z.object({
     limit: z.int().optional(),
     offset: z.int().optional()
@@ -8996,5 +8947,54 @@ export const zApiSiteVisitRetrievePath = z.object({
 });
 
 export const zApiSiteVisitRetrieveResponse = zSiteVisit;
+
+export const zApiWorkflowDraftListPath = z.object({
+    graph_slug: z.string()
+});
+
+export const zApiWorkflowDraftListResponse = z.array(zDraftRecord);
+
+export const zApiWorkflowDraftCreateBody = zDraftWrite;
+
+export const zApiWorkflowDraftCreatePath = z.object({
+    graph_slug: z.string()
+});
+
+export const zApiWorkflowDraftCreateResponse = zDraftRecord;
+
+export const zApiWorkflowDraftDestroyPath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiWorkflowDraftDestroyResponse = z.void();
+
+export const zApiWorkflowDraftRetrievePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+export const zApiWorkflowDraftRetrieveResponse = zDraftRecord;
+
+export const zApiWorkflowDraftPartialUpdateBody = zPatchedDraftWrite;
+
+export const zApiWorkflowDraftPartialUpdatePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
+
+export const zApiWorkflowDraftUpdateBody = zDraftWrite;
+
+export const zApiWorkflowDraftUpdatePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+export const zApiWorkflowDraftUpdateResponse = zDraftRecord;
 
 export const zUserProfileRetrieveResponse = zUserProfileResponse;

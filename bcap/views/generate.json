@@ -12,7 +12,6 @@
     "document_submission": [
         "GET"
     ],
-    "drafts": [],
     "hca_permit": [
         "GET"
     ],
@@ -58,5 +57,6 @@
     ],
     "site_visit": [
         "GET"
-    ]
+    ],
+    "workflow_drafts": []
 }

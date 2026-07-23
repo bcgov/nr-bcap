@@ -1575,201 +1575,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegistrationLinkResponse'
           description: ''
-  /bcap/api/resource_draft/{graph_slug}:
-    get:
-      operationId: api_resource_draft_list
-      description: GET the current user's drafts for a graph; POST a new draft.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      tags:
-      - 'External: resource_draft'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    post:
-      operationId: api_resource_draft_create
-      description: GET the current user's drafts for a graph; POST a new draft.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      tags:
-      - 'External: resource_draft'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-        required: true
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-  /bcap/api/resource_draft/{graph_slug}/{id}:
-    get:
-      operationId: api_resource_draft_retrieve
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    put:
-      operationId: api_resource_draft_update
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-        required: true
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    patch:
-      operationId: api_resource_draft_partial_update
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    delete:
-      operationId: api_resource_draft_destroy
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/site_submission:
     get:
       operationId: api_site_submission_list
@@ -1890,6 +1695,201 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteVisit'
           description: ''
+  /bcap/api/workflow_draft/{graph_slug}:
+    get:
+      operationId: api_workflow_draft_list
+      description: GET the current user's drafts for a graph; POST a new draft.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    post:
+      operationId: api_workflow_draft_create
+      description: GET the current user's drafts for a graph; POST a new draft.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+  /bcap/api/workflow_draft/{graph_slug}/{id}:
+    get:
+      operationId: api_workflow_draft_retrieve
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    put:
+      operationId: api_workflow_draft_update
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    patch:
+      operationId: api_workflow_draft_partial_update
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDraftWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDraftWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDraftWrite'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    delete:
+      operationId: api_workflow_draft_destroy
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /bcap/user_profile:
     get:
       operationId: user_profile_retrieve
