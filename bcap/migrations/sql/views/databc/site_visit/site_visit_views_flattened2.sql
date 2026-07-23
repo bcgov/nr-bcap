@@ -260,8 +260,112 @@ CREATE INDEX mv_resource_flat_v1_geom
 -- Wrapper view. Same pattern as site_visit.resource: downstream names THIS,
 -- never the matview, so you can rebuild the backing matview and repoint.
 -- ---------------------------------------------------------------------
+-- Column list filtered and ordered to match the DataBC export spec.
+-- Excluded: all _ids / _count columns; NO fields (site_form_authors,
+--   first_date_of_site_visit); boundary_type (not in spec); centroid_lat/lon.
+-- site_name: view deliberately avoids the bare `name` alias; spreadsheet
+--   lists the field as `name` - confirm whether to rename here.
+-- site_visit_geom: PostGIS geometry, aliased to site_visit_location per spec.
+--   Spec type is geojson-feature-collection; this column is a geometry, not
+--   a GeoJSON text string - downstream tools must cast/transform as needed.
+-- recommended_unprotected_areas: NO? in spec and not present in matview.
 CREATE OR REPLACE VIEW site_visit.resource_flat AS
-SELECT * FROM site_visit.mv_resource_flat_v1;
+SELECT
+    resourceinstanceid,
+    -- Site Visit Details
+    site_visit_type,
+    is_site_visit_permitted,
+    last_date_of_site_visit,
+    project_description,
+    associated_permit,
+    archaeological_site,
+    affiliation,
+    -- Site Visit Location
+    site_visit_geom                         AS site_visit_location,
+    location_and_access,
+    latest_edit_type,
+    accuracy_remarks,
+    -- Biogeography
+    biogeography_type,
+    biogeography_description,
+    biogeography_name,
+    -- Additional Site Typology
+    typology_class,
+    typology_remark,
+    -- Ancestral Remains
+    ancestral_remains_type,
+    multiple_burials,
+    ancestral_remains_status,
+    ancestral_remains_remarks,
+    minimum_number_of_individuals,
+    ancestral_remains_repository,
+    -- Archaeological Culture
+    culture_remarks,
+    archaeological_culture,
+    -- Archaeological Feature
+    feature_count,
+    archaeological_feature,
+    feature_remarks,
+    -- Chronology (order matches spec)
+    end_year_calendar,
+    end_year_qualifier,
+    start_year,
+    determination_method,
+    chronology_remarks,
+    information_source,
+    end_year,
+    start_year_calendar,
+    start_year_qualifier,
+    -- Cultural Material
+    cultural_material_type,
+    cultural_material_status,
+    cultural_material_details,
+    number_of_artifacts,
+    repository,
+    -- General Remark
+    remark_source,
+    remark_date,
+    remark,
+    -- New Site Names (spreadsheet alias is `name`; see note above)
+    name_type,
+    site_name,
+    assigned_or_reported_by,
+    name_remarks,
+    assigned_or_reported_date,
+    -- Publication Reference
+    publication_reference,
+    -- Recommendation
+    recorders_recommendation,
+    archaeology_branch_recommendation,
+    -- Related Site Documents
+    related_document_type,
+    related_document_description,
+    related_site_documents,
+    -- Site Disturbance
+    disturbance_period,
+    disturbance_cause,
+    disturbance_remarks,
+    -- Site Images
+    primary_image,
+    image_type,
+    photographer,
+    site_images,
+    image_view,
+    image_description,
+    copyright,
+    image_date,
+    image_features,
+    -- Stratigraphy
+    stratigraphy,
+    -- Team Member
+    member_roles,
+    team_member,
+    was_on_site,
+    -- Temporary Number
+    temporary_number,
+    temporary_number_assigned_by,
+    temporary_number_assigned_date
+FROM site_visit.mv_resource_flat_v1;
 
 COMMENT ON VIEW site_visit.resource_flat IS
 'Flat denormalized site_visit records, one row per resource. Cardinality-n values are '
