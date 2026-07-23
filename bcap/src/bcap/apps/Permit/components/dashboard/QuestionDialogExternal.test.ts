@@ -1,20 +1,23 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import QuestionDialogExternal from './QuestionDialogExternal.vue';
-import { createBcapMessage, getContributors } from '@/bcap/apps/Permit/api.ts';
+import {
+    createBcapMessage,
+    getContributorsForResources,
+} from '@/bcap/apps/Permit/api.ts';
 
 // 1. Mock the API calls
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
-    getContributors: vi.fn(),
+    getContributorsForResources: vi.fn(),
 }));
 
 describe('QuestionDialogExternal.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
-        // Default successful response for getContributors
-        vi.mocked(getContributors).mockResolvedValue([
+        // Default successful response for the recipient fetch
+        vi.mocked(getContributorsForResources).mockResolvedValue([
             { label: 'John Doe', value: 'user-1' },
             { label: 'Jane Smith', value: 'user-2' },
         ]);
@@ -59,7 +62,8 @@ describe('QuestionDialogExternal.vue', () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        expect(getContributors).toHaveBeenCalledOnce();
+        expect(getContributorsForResources).toHaveBeenCalledOnce();
+        expect(getContributorsForResources).toHaveBeenCalledWith('permit-999');
 
         // Verify internal state (selectedRecipient should default to the first value)
         expect(wrapper.vm.recipients.length).toBe(2);

@@ -16,7 +16,7 @@ from arches_querysets.models import ResourceTileTree
 from bcap.builders.contributor_builder import ContributorBuilder, ContributorSpec
 from bcap.builders.resource_builder import ResourceBuilder
 from bcap.management.commands._dashboard_seed_base import _bulk_index
-from bcap.services.dashboard.contributor_service import ContributorService
+from bcap.services.contributor_service import ContributorService
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
@@ -25,7 +25,7 @@ from bcap.services.process_requirement.template_specs import (
     supported_permit_types,
 )
 from bcap.util.aliases.contributor import ContributorAliases as A
-from bcap.util.auth.roles import Roles
+from bcap.util.auth.groups import Groups
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import reference_value
 from bcap.util.dashboard.requirement_flow_seed import RequirementFlowBuilder
@@ -34,7 +34,7 @@ from bcap.util.indexing import bulk_index
 
 logger = logging.getLogger(__name__)
 
-ORG_NAME = Roles.ARCHAEOLOGY_BRANCH
+ORG_NAME = Groups.ARCHAEOLOGY_BRANCH
 GROUP_NAME = ORG_NAME
 
 # This is for testing only, this data will exist in DEV or a real database dump and gets loaded via ETL.

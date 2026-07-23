@@ -53,11 +53,6 @@ import uuid
 logger = logging.getLogger(__name__)
 
 
-class ArchesSiteVisitSerializer(ArchesResourceSerializer):
-    class Meta(ArchesResourceSerializer.Meta):
-        graph_slug = "site_visit"
-
-
 class BordenNumberBase:
     api = BordenNumberApi()
 
@@ -176,11 +171,6 @@ class MVT(MVTBase):
         return HttpResponse(tile, content_type="application/x-protobuf")
 
 
-class ArchesSiteVisitSerializer(ArchesResourceSerializer):
-    class Meta(ArchesResourceSerializer.Meta):
-        graph_slug = "site_visit"
-
-
 class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [ResourceEditor | ReadOnly]
     serializer_class = ArchesResourceSerializer
@@ -229,38 +219,6 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
         except ValueError:
             msg = _("No nodes found for graph slug: %s") % self.graph_slug
             raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: msg})
-
-
-class ResourceGraphs(APIBase):
-    def get(self, request):
-        from arches.app.models.system_settings import settings
-
-        graphs = (
-            models.GraphModel.objects.filter(isresource=True, is_active=True)
-            .exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID)
-            .exclude(source_identifier__isnull=False)
-            .values("graphid", "name", "iconclass")
-        )
-
-        graph_list = []
-
-        for graph in graphs:
-            name = graph["name"]
-
-            if isinstance(name, dict):
-                name = name.get("en", list(name.values())[0] if name else "")
-
-            graph_list.append(
-                {
-                    "graphid": str(graph["graphid"]),
-                    "name": name,
-                    "iconclass": graph["iconclass"],
-                }
-            )
-
-        graph_list.sort(key=lambda x: x["name"])
-
-        return JSONResponse({"graphs": graph_list})
 
 
 class TranslatableResourceTypesView(View):
@@ -539,22 +497,6 @@ class RegisterType(APIBase):
                 }
             )
         return HttpResponse(data.encode("utf-8"), content_type="application/json")
-
-
-class RequirementSubmission(APIBase):
-    def get(self, request, resource_id):
-        try:
-            resource = Resource.objects.get(resourceinstanceid=resource_id)
-            serialized_data = resource.serialize()
-            return JSONResponse(serialized_data)
-
-        except Resource.DoesNotExist:
-            return JSONResponse(
-                {"error": "Requirement Submission not found"}, status=404
-            )
-        except Exception as e:
-            logger.exception(f"Unable to fetch Requirement Submission {resource_id}")
-            return JSONResponse({"error": str(e)}, status=500)
 
 
 class BCAPResourceDetailView(ArchesResourceDetailView):

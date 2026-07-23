@@ -13,8 +13,11 @@ alongside the rest of the app.
 from django.urls import include, path
 from django.conf import settings
 
-from bcap.views.dashboard_api import InternalDashboardView, ExternalDashboardView
-from bcap.views.resource_draft_api import (
+from bcap.views.dashboard_api import (
+    InternalDashboardView,
+    ExternalDashboardView,
+)
+from bcap.views.draft_api import (
     ResourceDraftListCreateView,
     ResourceDraftDetailView,
 )
@@ -26,12 +29,14 @@ from bcap.views.process_requirement_api import (
     ModuleRequirementsView,
     ModuleRequirementView,
     RequirementChecklistView,
+    RequirementStatusView,
     PermitModuleView,
     ProcessRequirementListView,
     ProcessRequirementSeedView,
     ProcessRequirementView,
 )
 from bcap.views.bcap_message_api import (
+    BcapMessageContributorsView,
     BcapMessageCreateView,
     BcapMessageDetailView,
     BcapMessageThreadsView,
@@ -144,10 +149,21 @@ documented_api_patterns = [
         RequirementChecklistView.as_view(),
         name="requirement_checklist",
     ),
+    # Mark a non-checklist process requirement satisfied/unsatisfied.
+    path(
+        "api/process_requirement/<uuid:requirement_id>/status",
+        RequirementStatusView.as_view(),
+        name="requirement_status",
+    ),
     path(
         "api/bcap_message/resource/<uuid:resource_id>/threads",
         BcapMessageThreadsView.as_view(),
         name="bcap_message_resource_threads",
+    ),
+    path(
+        "api/bcap_message/resource/<uuid:resource_id>/contributor",
+        BcapMessageContributorsView.as_view(),
+        name="bcap_message_resource_contributors",
     ),
     path(
         "api/bcap_message/thread/<uuid:thread_id>/messages",

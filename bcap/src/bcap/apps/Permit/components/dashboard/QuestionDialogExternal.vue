@@ -4,7 +4,10 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { createBcapMessage, getContributors } from '@/bcap/apps/Permit/api.ts';
+import {
+    createBcapMessage,
+    getContributorsForResources,
+} from '@/bcap/apps/Permit/api.ts';
 
 const props = defineProps<{
     applicationId: string;
@@ -30,7 +33,9 @@ const isReplyMode = computed(() => {
 const loadRecipients = async () => {
     isLoadingRecipients.value = true;
     try {
-        const fetchedRecipients = await getContributors();
+        const fetchedRecipients = await getContributorsForResources(
+            props.permitResourceId,
+        );
         recipients.value = fetchedRecipients;
 
         if (recipients.value.length > 0) {
@@ -86,7 +91,6 @@ const submitMessage = async () => {
             props.threadId || undefined,
         );
 
-        console.log('Message successfully created:', responseData);
         emit('message-sent', responseData);
         closeDialog();
     } catch (error) {
@@ -292,13 +296,15 @@ onMounted(() => {
 
 <style>
 /* --- Trigger Button Styles --- */
+/* BC Gov secondary button: navy outline on white. */
+/* Filled navy so the primary action leads over the muted "Submitted" chip. */
 .trigger-btn {
-    background-color: #d0d0d0;
-    color: #333;
-    border: none;
+    background-color: var(--bc-navy);
+    color: #ffffff;
+    border: 2px solid var(--bc-navy);
     border-radius: 4px;
     padding: 0.5rem 1rem;
-    font-weight: 500;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -306,7 +312,8 @@ onMounted(() => {
 }
 
 .trigger-btn:hover {
-    background-color: #e0e0e0;
+    background-color: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
 }
 
 /* --- Notification Badge --- */
@@ -383,19 +390,6 @@ onMounted(() => {
     display: block;
     margin-bottom: 0.5rem;
     color: #333;
-}
-
-/* --- Static Recipient Display (No Box) --- */
-.recipient-display {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    color: #333;
-    margin-top: 0.5rem;
-    margin-left: 1rem;
-    margin-bottom: 2.5rem;
-    font-size: 1.5rem;
-    font-weight: 400;
 }
 
 /* --- Full Width Textarea --- */

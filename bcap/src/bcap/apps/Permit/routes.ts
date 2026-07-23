@@ -5,7 +5,7 @@ const routes = [
         path: arches.urls.plugin('submissions'),
         name: 'root',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/ExternalPermitSubmissions.vue'),
+            import('@/bcap/apps/Permit/components/dashboard/SubmissionsDashboard.vue'),
         meta: {
             shouldShowNavigation: true,
             requiresAuthentication: true,
@@ -108,16 +108,6 @@ const routes = [
         name: 'EditChecklist',
         component: () =>
             import('@/bcap/apps/Permit/components/dashboard/EditChecklist.vue'),
-    },
-    {
-        path: arches.urls.plugin('submissions/message-demo'),
-        name: 'messageDemo',
-        component: () =>
-            import('@/bcap/apps/Permit/components/MessageDemo.vue'),
-        meta: {
-            shouldShowNavigation: true,
-            requiresAuthentication: true,
-        },
     },
 ];
 

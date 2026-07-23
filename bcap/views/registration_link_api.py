@@ -17,11 +17,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from bcap.serializers.registration_serializers import (
-    ContributorOptionSerializer,
+    ContributorSummarySerializer,
     RegistrationLinkRequestSerializer,
     RegistrationLinkResponseSerializer,
 )
-from bcap.services.dashboard.contributor_service import (
+from bcap.services.contributor_service import (
     ContributorService,
     NewContributor,
 )
@@ -65,14 +65,14 @@ class UnlinkedContributorsView(APIView):
     permission_classes = [IsAdminUser]
 
     @extend_schema(
-        responses=ContributorOptionSerializer(many=True),
+        responses=ContributorSummarySerializer(many=True),
         description="Contributors not yet linked to a user account.",
     )
     def get(self, request):
         options = ContributorService().invitable_contributors(
             request.GET.get("search", "")
         )
-        return Response(ContributorOptionSerializer(options, many=True).data)
+        return Response(ContributorSummarySerializer(options, many=True).data)
 
 
 @extend_schema(tags=["Admin: registration"])

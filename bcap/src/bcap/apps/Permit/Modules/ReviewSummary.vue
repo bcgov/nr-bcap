@@ -93,10 +93,11 @@ const hasValue = (val: unknown): boolean => {
 <style scoped>
 .div-grid-cols {
     display: grid;
-    grid-template-columns: 250px 1fr;
-    gap: 1rem;
+    grid-template-columns: 210px 1fr;
+    gap: 1.3rem 1rem;
     align-items: start;
-    line-height: 1.4;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .div-grid-cols dt {

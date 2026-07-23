@@ -92,42 +92,6 @@ describe('BaseModule.vue', () => {
         );
     });
 
-    it('offers Site Visit as a disabled related module', () => {
-        const wrapper = shallowMount(BaseModule);
-
-        const related = (
-            wrapper.vm as unknown as {
-                relatedModules: Array<{
-                    id: string;
-                    label: string;
-                    subtitle: string;
-                    disabled: boolean;
-                }>;
-            }
-        ).relatedModules;
-
-        const siteVisit = related.find((m) => m.id === 'site-visit');
-        expect(siteVisit).toBeDefined();
-        expect(siteVisit?.label).toBe('Site Visit');
-        expect(siteVisit?.subtitle).toBe('Coming soon');
-        expect(siteVisit?.disabled).toBe(true);
-    });
-
-    it('links a related module to the permit details for that module', () => {
-        const wrapper = shallowMount(BaseModule);
-
-        const link = (
-            wrapper.vm as unknown as {
-                relatedModuleLink: (id: string) => {
-                    query: { module: string };
-                };
-            }
-        ).relatedModuleLink('site-visit');
-
-        // The card routes back to the permit details, pre-selecting the module.
-        expect(link.query).toEqual({ module: 'site-visit' });
-    });
-
     it('stamps today as the submission date before submitting', async () => {
         const wrapper = shallowMount(BaseModule);
         await flushPromises();

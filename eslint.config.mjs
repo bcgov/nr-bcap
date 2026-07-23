@@ -42,4 +42,12 @@ export default [
             "semi": ["error", "always"],
         },
     },
+    {
+        // Test files declare inline stub components for mounting; the
+        // one-component-per-file rule doesn't apply to them.
+        files: ["**/*.test.ts", "**/*.spec.ts"],
+        rules: {
+            "vue/one-component-per-file": "off",
+        },
+    },
 ];

@@ -90,10 +90,15 @@ class InternalDashboardService(BaseDashboardService):
                     [
                         self.PA.PROJECT_NAME,
                         self.PA.APPLICATION_ID,
+                        self.PA.FILING_TYPE,
                         self.PA.INDUSTRIAL_SECTOR,
                         self.PA.APPLICATION_PRIORITY_LEVEL,
                         self.PA.RELATED_PERMIT,
+                        self.PA.MODULE_ID,
+                        self.PA.MODULE_NAME,
                         self.PA.MODULE_ORDER,
+                        self.PA.MODULE_COMPLETED_DATE,
+                        self.PA.IS_MODULE_COMPLETED,
                         self.PA.PROCESS_REQUIREMENT,
                         self.PA.PROCESS_REQUIREMENT_ORDER,
                         self.PA.MINISTRY_ASSIGNEE,
@@ -232,7 +237,7 @@ class InternalDashboardService(BaseDashboardService):
         ids = set(assignee_ids)
         for hca in hca_permits.values():
             ids.update(hca.holder_ids)
-        return self.contributors.names_by_contributor_id(ids)
+        return {c.id: c.name for c in self.contributors.by_ids(ids)}
 
     def _choose_requirements(self, requirements_by_permit, requirement_ids):
         """Map permit id -> Requirement: per permit, the unsatisfied requirement
@@ -243,7 +248,7 @@ class InternalDashboardService(BaseDashboardService):
         # membership in `requirements` is the "is unsatisfied?" test below.
         requirements = {}
         if requirement_ids:
-            resources = self._resources(
+            resources = self._tiles(
                 GraphSlugs.PROCESS_REQUIREMENT,
                 requirement_ids,
                 [
@@ -288,9 +293,11 @@ class InternalDashboardService(BaseDashboardService):
 
     @staticmethod
     def _order_value(value):
-        """An order node's value as a sort key; a missing order sorts last
-        (infinity) so a tile that has one always wins."""
-        return value["node_value"] if value else float("inf")
+        """An order node's value as a sort key; a missing or unset order sorts
+        last (infinity) so a tile that has one always wins."""
+        if not value or value["node_value"] is None:
+            return float("inf")
+        return value["node_value"]
 
     def _assignee_change_dates(self, chosen_by_permit):
         """Map requirement-tile id -> date its ministry_assignee last changed.
@@ -329,7 +336,9 @@ class InternalDashboardService(BaseDashboardService):
         cards = []
         for permit in permits:
             if data.chosen_by_permit.get(str(permit.pk)) is not None:
-                cards.append(self._card_to_json(permit, data))
+                card = self._card_to_json(permit, data)
+                card.module_progress = self._module_progress(permit)
+                cards.append(card)
         return cards
 
     def _card_to_json(self, permit, data: InternalDashboardData):
@@ -358,6 +367,7 @@ class InternalDashboardService(BaseDashboardService):
             requirement_due_date=requirement.due_date,
             project_name=core.project_name,
             application_number=core.application_number,
+            submission_type=core.submission_type,
             industrial_sector=core.industrial_sector,
             permit_id=core.related_permit_id,
             permit_number=hca.number,

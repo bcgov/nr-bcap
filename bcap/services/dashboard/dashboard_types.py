@@ -59,6 +59,21 @@ class DashboardFilter:
 
 
 @dataclass
+class ModuleProgress:
+    """What a dashboard card says about a permit's modules: how far along it is
+    and which module it is waiting on. The per-module list is deliberately not
+    exposed -- a card only ever renders this summary."""
+
+    current_module: str = described(
+        "Name of the lowest-ordered module not yet completed, or empty once "
+        "they are all done.",
+        "",
+    )
+    completed: int = described("How many modules are marked completed.", 0)
+    total: int = described("How many modules the permit has.", 0)
+
+
+@dataclass
 class InternalDashboardCard:
     """Response structure for the internal dashboard, and the single source of
     truth for the card's shape -- the response serializer derives its fields
@@ -78,6 +93,9 @@ class InternalDashboardCard:
         'Permit application\'s human-readable application reference (e.g. "APP-1"); '
         "not a GUID. The application's GUID is the card's `id`.",
         "",
+    )
+    submission_type: str = described(
+        "Permit application's filing type (reference label).", ""
     )
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
@@ -130,6 +148,7 @@ class InternalDashboardCard:
         "Count of the permit's BCAP messages not yet read for the user or group.",
         0,
     )
+    module_progress: ModuleProgress = field(default_factory=ModuleProgress)
 
 
 @dataclass
@@ -168,6 +187,9 @@ class ExternalDashboardCard:
     application_number: str = described(
         "Permit application's human-readable application reference; not a GUID.", ""
     )
+    submission_type: str = described(
+        "Permit application's filing type (reference label).", ""
+    )
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
     )
@@ -186,6 +208,7 @@ class ExternalDashboardCard:
         "group.",
         0,
     )
+    module_progress: ModuleProgress = field(default_factory=ModuleProgress)
 
 
 @dataclass
@@ -226,6 +249,7 @@ class ApplicationCore:
 
     project_name: str = ""
     application_number: str = ""
+    submission_type: str = ""
     industrial_sector: str = ""
     priority_level: str = ""
     related_permit_id: str | None = None

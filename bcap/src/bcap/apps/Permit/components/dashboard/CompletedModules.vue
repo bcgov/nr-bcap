@@ -15,16 +15,19 @@ import {
     reorderModuleRequirements,
     addBlankRequirement,
     removeRequirement,
+    setModuleCompleted,
+    setRequirementSatisfied,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
+import ReviewSummary, {
+    type ReviewField,
+} from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import type {
     ProcessRequirement,
     PermitProcessModuleTile,
 } from '@/bcap/types.ts';
-
-const QUICK_ADD_MODULE_TYPES = ['investigation', 'alteration', 'inspection'];
 
 const requirementType = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.requirement_identification?.aliased_data
@@ -39,28 +42,22 @@ const editChecklistHref = (id: string): string =>
 interface AddableModule {
     id: string;
     label: string;
-    routeName: string;
-    disabled: boolean;
 }
 
 const {
     modules,
     permitId,
     adminTileId,
-    submissionDate,
     isStaff,
     addableModules,
+    summaryFields,
 } = defineProps<{
     modules: PermitProcessModuleTile[];
     permitId: string;
     adminTileId: string;
-    // The permit's submission date, shown as the module date until per-module
-    // completion dates are tracked.
-    submissionDate?: string | null;
-    // Staff view: enables reordering (and the add/remove controls).
     isStaff?: boolean;
-    // Module types a staff member can add, each routing to its workflow.
     addableModules?: AddableModule[];
+    summaryFields?: ReviewField[];
 }>();
 
 const emit = defineEmits<{
@@ -72,11 +69,8 @@ interface RequirementItem {
     name: string;
     resourceId: string;
     type: string;
-    // Ministry assignee from the module's requirement tile (may be empty).
     ministryAssignee: string;
-    // null until its status has loaded from the requirement resource.
     satisfied: boolean | null;
-    // Internal (staff-only) step; null until loaded.
     internal: boolean | null;
     href: string;
 }
@@ -86,9 +80,19 @@ interface ModuleRow {
     name: string;
     moduleId: string;
     completedDate: string;
+    isCompleted: boolean;
     order: number;
     requirements: RequirementItem[];
 }
+
+// Status glyphs, defined once so the legend, module pills, and requirement rows
+// stay in sync. The app loads only Font Awesome solid, so every class is solid.
+const STATUS_ICON = {
+    future: 'fa-solid fa-circle-notch',
+    inProgress: 'fa-solid fa-clock',
+    complete: 'fa-solid fa-check',
+    unknown: 'fa-solid fa-circle-notch',
+} as const;
 
 const isChecklist = (type: string): boolean =>
     type.toLowerCase().includes('checklist');
@@ -98,11 +102,14 @@ const hrefFor = (type: string, id: string): string => {
     return isChecklist(type) ? checklistHref(id) : `/bcap/resource/${id}`;
 };
 
-// resourceId -> type/satisfied, so rows rebuilt after a reorder keep their
-// type/link/status without a fetch-driven flash.
-const typeCache = new Map<string, string>();
-const satisfiedCache = new Map<string, boolean>();
-const internalCache = new Map<string, boolean>();
+// resourceId -> type/satisfied/internal, so rows rebuilt after a reorder keep
+// their type/link/status without a fetch-driven flash.
+interface RequirementMeta {
+    type: string;
+    satisfied: boolean;
+    internal: boolean;
+}
+const detailCache = new Map<string, RequirementMeta>();
 
 const requirementSatisfied = (requirement: ProcessRequirement): boolean =>
     requirement.aliased_data?.sub_requirement_assessment_n1?.aliased_data
@@ -131,32 +138,18 @@ const requirementItems = (tile: PermitProcessModuleTile): RequirementItem[] =>
         .map(({ name, resourceId, ministryAssignee }) => {
             // Seed type/status from the cache so a rebuild (e.g. after reorder)
             // doesn't flash empty while the fetch re-runs.
-            const type = typeCache.get(resourceId) ?? '';
+            const meta = detailCache.get(resourceId);
+            const type = meta?.type ?? '';
             return {
                 name,
                 resourceId,
                 type,
                 ministryAssignee,
-                satisfied: satisfiedCache.has(resourceId)
-                    ? (satisfiedCache.get(resourceId) ?? null)
-                    : null,
-                internal: internalCache.has(resourceId)
-                    ? (internalCache.get(resourceId) ?? null)
-                    : null,
+                satisfied: meta?.satisfied ?? null,
+                internal: meta?.internal ?? null,
                 href: hrefFor(type, resourceId),
             };
         });
-
-// TODO: fake, varied dates for demo until per-module completion dates exist.
-const fakeDate = (order: number): string => {
-    const parsed = submissionDate ? new Date(submissionDate) : null;
-    const base =
-        parsed && !Number.isNaN(parsed.getTime())
-            ? parsed
-            : new Date('2026-07-14');
-    base.setDate(base.getDate() - order * 5);
-    return base.toISOString().slice(0, 10);
-};
 
 const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
     const order = tile.aliased_data?.module_order?.node_value ?? 0;
@@ -169,8 +162,10 @@ const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
             tile.aliased_data?.module_id?.node_value ||
             '',
         completedDate:
-            tile.aliased_data?.module_completed_date?.display_value ||
-            fakeDate(order),
+            tile.aliased_data?.module_completed_date?.display_value || '',
+        isCompleted: Boolean(
+            tile.aliased_data?.is_module_completed?.node_value,
+        ),
         order,
         requirements: requirementItems(tile),
     };
@@ -179,39 +174,71 @@ const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
 const state = reactive({
     rows: [] as ModuleRow[],
     saving: false,
+    loading: [] as string[],
 });
 
-const loadRequirementDetails = async () => {
-    // Only fetch ids we haven't cached; everything else is already on the rows.
+const ui = reactive({
+    openPanels: [] as string[],
+    adding: null as string | null,
+    addingRequirement: null as string | null,
+    togglingModule: null as string | null,
+    togglingRequirement: null as string | null,
+});
+
+const loadRequirementDetails = async (rows: ModuleRow[]) => {
+    // Only fetch for rows with ids we haven't cached; the rest are already
+    // hydrated, so they neither fetch nor show a loader.
+    const rowsToLoad = rows.filter((row) =>
+        row.requirements.some(
+            (r) => r.resourceId && !detailCache.has(r.resourceId),
+        ),
+    );
+    if (!rowsToLoad.length) return;
     const ids = [
         ...new Set(
-            state.rows
+            rowsToLoad
                 .flatMap((row) => row.requirements)
                 .map((requirement) => requirement.resourceId)
-                .filter((id) => id && !typeCache.has(id)),
+                .filter((id) => id && !detailCache.has(id)),
         ),
     ];
-    if (!ids.length) return;
-    const details = await fetchRequirementDetails(ids);
-    for (const [id, detail] of Object.entries(details)) {
-        typeCache.set(id, requirementType(detail));
-        satisfiedCache.set(id, requirementSatisfied(detail));
-        internalCache.set(id, requirementInternal(detail));
-    }
-    for (const row of state.rows) {
-        for (const requirement of row.requirements) {
-            const type = typeCache.get(requirement.resourceId);
-            if (type === undefined) continue;
-            requirement.type = type;
-            requirement.href = hrefFor(type, requirement.resourceId);
-            requirement.satisfied =
-                satisfiedCache.get(requirement.resourceId) ?? null;
-            requirement.internal =
-                internalCache.get(requirement.resourceId) ?? null;
+    const tileids = rowsToLoad.map((row) => row.tileid);
+    state.loading.push(...tileids);
+    try {
+        const details = await fetchRequirementDetails(ids);
+        for (const [id, detail] of Object.entries(details)) {
+            detailCache.set(id, {
+                type: requirementType(detail),
+                satisfied: requirementSatisfied(detail),
+                internal: requirementInternal(detail),
+            });
         }
+        for (const row of rowsToLoad) {
+            for (const requirement of row.requirements) {
+                const meta = detailCache.get(requirement.resourceId);
+                if (meta === undefined) continue;
+                requirement.type = meta.type;
+                requirement.href = hrefFor(meta.type, requirement.resourceId);
+                requirement.satisfied = meta.satisfied;
+                requirement.internal = meta.internal;
+            }
+        }
+    } finally {
+        state.loading = state.loading.filter((id) => !tileids.includes(id));
     }
 };
 
+const isLoadingRequirements = (row: ModuleRow): boolean =>
+    state.loading.includes(row.tileid);
+
+// Fetch statuses only for the modules whose panels are open, so opening a permit
+// doesn't chain a request for every module's requirements up front.
+const loadOpenModules = (openIds: string[]) => {
+    const openRows = state.rows.filter((row) => openIds.includes(row.tileid));
+    if (openRows.length) loadRequirementDetails(openRows);
+};
+
+let seededDefaultOpen = false;
 watch(
     () => modules,
     (tiles) => {
@@ -219,26 +246,18 @@ watch(
             .filter((tile) => tile.tileid && tile.aliased_data?.module_name)
             .map(toRow)
             .sort((a, b) => a.order - b.order);
-        loadRequirementDetails();
+        // On first load, open the top module by default; afterward the user's
+        // open/closed choices stand for the life of the view.
+        if (!seededDefaultOpen) {
+            seededDefaultOpen = true;
+            if (!ui.openPanels.length && state.rows.length) {
+                ui.openPanels = [state.rows[0].tileid];
+            }
+        }
+        loadOpenModules(ui.openPanels);
     },
     { immediate: true, deep: true },
 );
-
-const openStorageKey = `submitted-modules-open:${permitId}`;
-const readOpenPanels = (): string[] => {
-    try {
-        return JSON.parse(sessionStorage.getItem(openStorageKey) || '[]');
-    } catch {
-        return [];
-    }
-};
-const ui = reactive({
-    openPanels: readOpenPanels(),
-    // The module type currently being added (quick-add bar).
-    adding: null as string | null,
-    // The module tile a requirement is currently being added to.
-    addingRequirement: null as string | null,
-});
 
 const dnd = useDragReorder();
 const persistReqOrder = (row: ModuleRow) =>
@@ -248,10 +267,8 @@ const persistReqOrder = (row: ModuleRow) =>
         row.requirements.map((requirement) => requirement.resourceId),
     );
 
-const canAdd = (id: string) => QUICK_ADD_MODULE_TYPES.includes(id);
-
 const onAddModule = async (mod: AddableModule) => {
-    if (!canAdd(mod.id) || ui.adding) return;
+    if (ui.adding) return;
     ui.adding = mod.id;
     try {
         // Blank host: staff fill it in afterward via the module's edit links.
@@ -266,24 +283,52 @@ const onAddModule = async (mod: AddableModule) => {
 watch(
     () => ui.openPanels,
     (value) => {
-        sessionStorage.setItem(openStorageKey, JSON.stringify(value));
+        loadOpenModules(value);
     },
+    { deep: true },
 );
 
 const hasModules = computed(() => state.rows.length > 0);
 
-// Applicants (non-staff) don't see internal-only requirements.
+// All requirements are shown, internal ones included.
 const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
-    isStaff
-        ? row.requirements
-        : row.requirements.filter(
-              (requirement) => requirement.internal !== true,
-          );
+    row.requirements;
 
 const moduleRemove = useConfirmAction<ModuleRow>(async (row) => {
     await removeModuleAndRequirements(permitId, row.tileid);
     emit('changed');
 });
+
+const onToggleCompleted = async (row: ModuleRow) => {
+    if (ui.togglingModule) return;
+    ui.togglingModule = row.tileid;
+    try {
+        await setModuleCompleted(permitId, row.tileid, !row.isCompleted);
+        emit('changed');
+    } catch (error) {
+        console.error('Failed to change module completion:', error);
+    } finally {
+        ui.togglingModule = null;
+    }
+};
+
+// Toggle a non-checklist requirement's satisfied status. Updates the row and
+// the detail cache in place so the status icon flips without a full reload.
+const onToggleRequirement = async (requirement: RequirementItem) => {
+    if (ui.togglingRequirement) return;
+    ui.togglingRequirement = requirement.resourceId;
+    const next = !requirement.satisfied;
+    try {
+        await setRequirementSatisfied(requirement.resourceId, next);
+        requirement.satisfied = next;
+        const meta = detailCache.get(requirement.resourceId);
+        if (meta) meta.satisfied = next;
+    } catch (error) {
+        console.error('Failed to change requirement status:', error);
+    } finally {
+        ui.togglingRequirement = null;
+    }
+};
 
 const onAddRequirement = async (row: ModuleRow) => {
     if (ui.addingRequirement) return;
@@ -339,7 +384,7 @@ const persistOrder = async () => {
         class="submitted-modules"
     >
         <div class="section-head">
-            <h4 class="section-title">Submitted modules</h4>
+            <h2 class="section-title">Submitted modules</h2>
             <span
                 v-if="state.saving"
                 class="saving-note"
@@ -347,28 +392,26 @@ const persistOrder = async () => {
                 <i class="fa-solid fa-circle-notch fa-spin"></i>
                 Saving order…
             </span>
+            <span class="status-legend">
+                <i :class="[STATUS_ICON.future, 'is-future']"></i>
+                Future
+                <i :class="[STATUS_ICON.inProgress, 'is-in-progress']"></i>
+                In progress
+                <i :class="[STATUS_ICON.complete, 'is-satisfied']"></i>
+                Complete
+            </span>
         </div>
-        <p
-            v-if="isStaff"
-            class="drag-hint"
-        >
-            Drag a module by its handle to reorder.
-        </p>
-
         <div
             v-if="isStaff && addableModules && addableModules.length"
             class="add-module-bar"
         >
-            <span class="add-module-label">Add module:</span>
             <button
                 v-for="mod in addableModules"
                 :key="mod.id"
                 type="button"
                 class="add-module-chip"
-                :disabled="!canAdd(mod.id) || ui.adding !== null"
-                :title="
-                    canAdd(mod.id) ? `Add ${mod.label} module` : 'Coming soon'
-                "
+                :disabled="ui.adding !== null"
+                :title="`Add ${mod.label} module`"
                 @click="onAddModule(mod)"
             >
                 <i
@@ -414,33 +457,108 @@ const persistOrder = async () => {
                         >
                             <i class="fa-solid fa-grip-vertical"></i>
                         </span>
-                        <span class="module-name">{{ row.name }}</span>
-                        <span
-                            v-if="row.moduleId"
-                            class="module-id"
-                        >
-                            - {{ row.moduleId }}
+                        <span class="module-title">
+                            <span class="module-name">{{ row.name }}</span>
+                            <span
+                                v-if="row.moduleId"
+                                class="module-id"
+                            >
+                                · {{ row.moduleId }}
+                            </span>
                         </span>
                         <span
-                            v-if="row.completedDate"
-                            class="module-date"
+                            class="module-state-pill"
+                            :class="
+                                row.isCompleted
+                                    ? 'state-complete'
+                                    : 'state-progress'
+                            "
                         >
-                            Submitted {{ row.completedDate }}
+                            <i
+                                :class="
+                                    row.isCompleted
+                                        ? STATUS_ICON.complete
+                                        : STATUS_ICON.inProgress
+                                "
+                            ></i>
+                            {{ row.isCompleted ? 'Complete' : 'In progress' }}
                         </span>
-                        <button
-                            v-if="isStaff"
-                            type="button"
-                            class="module-remove"
-                            title="Remove module"
-                            @click.stop="moduleRemove.open(row)"
-                        >
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <span class="module-trailing">
+                            <span
+                                v-if="row.completedDate"
+                                class="module-date"
+                            >
+                                <i class="fa-regular fa-circle-check"></i>
+                                Submitted {{ row.completedDate }}
+                            </span>
+                            <button
+                                v-if="isStaff"
+                                type="button"
+                                class="module-toggle"
+                                :class="{ 'is-satisfied': row.isCompleted }"
+                                :disabled="ui.togglingModule === row.tileid"
+                                :title="
+                                    row.isCompleted
+                                        ? 'Mark this module unsatisfied'
+                                        : 'Mark this module satisfied'
+                                "
+                                @click.stop="onToggleCompleted(row)"
+                            >
+                                <i
+                                    class="fa-solid"
+                                    :class="
+                                        ui.togglingModule === row.tileid
+                                            ? 'fa-circle-notch fa-spin'
+                                            : row.isCompleted
+                                              ? 'fa-rotate-left'
+                                              : 'fa-check'
+                                    "
+                                ></i>
+                                {{
+                                    row.isCompleted
+                                        ? 'Mark unsatisfied'
+                                        : 'Mark satisfied'
+                                }}
+                            </button>
+                            <button
+                                v-if="isStaff"
+                                type="button"
+                                class="module-remove"
+                                title="Remove module"
+                                @click.stop="moduleRemove.open(row)"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </span>
                     </span>
                 </AccordionHeader>
                 <AccordionContent>
+                    <!-- The Submission Resource (first) carries the Project
+                         Summary above its requirements. -->
+                    <div
+                        v-if="index === 0"
+                        class="module-summary"
+                    >
+                        <ReviewSummary :fields="summaryFields || []" />
+                        <a
+                            v-if="isStaff"
+                            class="req-action req-action-edit submission-action"
+                            :href="`/bcap/resource/${permitId}`"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            View submission in Arches
+                        </a>
+                    </div>
+                    <p
+                        v-if="isLoadingRequirements(row)"
+                        class="empty-note loading-note"
+                    >
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        Loading requirements&hellip;
+                    </p>
                     <ul
-                        v-if="visibleRequirements(row).length"
+                        v-else-if="visibleRequirements(row).length"
                         class="requirement-list"
                     >
                         <li
@@ -473,17 +591,23 @@ const persistOrder = async () => {
                                 class="status-icon"
                                 :class="
                                     requirement.satisfied === null
-                                        ? 'fa-regular fa-circle status-unknown'
+                                        ? [
+                                              STATUS_ICON.unknown,
+                                              'status-unknown',
+                                          ]
                                         : requirement.satisfied
-                                          ? 'fa-solid fa-circle-check status-ok'
-                                          : 'fa-solid fa-circle-xmark status-no'
+                                          ? [STATUS_ICON.complete, 'status-ok']
+                                          : [
+                                                STATUS_ICON.inProgress,
+                                                'status-in-progress',
+                                            ]
                                 "
                                 :title="
                                     requirement.satisfied === null
                                         ? 'Status loading'
                                         : requirement.satisfied
                                           ? 'Satisfied'
-                                          : 'Not satisfied'
+                                          : 'In progress'
                                 "
                             ></i>
                             <span class="requirement-name">
@@ -519,11 +643,15 @@ const persistOrder = async () => {
                                             "
                                             target="_blank"
                                             rel="noopener"
+                                            title="Complete the checklist to satisfy this requirement"
                                         >
-                                            Fill out checklist
+                                            <i
+                                                class="fa-solid fa-magnifying-glass"
+                                            ></i>
+                                            Complete Checklist
                                         </a>
                                         <a
-                                            class="req-action req-action-edit"
+                                            class="req-action"
                                             :href="
                                                 editChecklistHref(
                                                     requirement.resourceId,
@@ -531,18 +659,51 @@ const persistOrder = async () => {
                                             "
                                             target="_blank"
                                             rel="noopener"
+                                            title="Add, remove, or reorder subrequirements"
                                         >
-                                            Edit Checklist (add/remove/order
-                                            subrequirements)
+                                            Edit Checklist (manager only)
                                         </a>
                                     </template>
+                                    <button
+                                        v-else
+                                        type="button"
+                                        class="req-action req-satisfy"
+                                        :class="{
+                                            'is-satisfied':
+                                                requirement.satisfied,
+                                        }"
+                                        :disabled="
+                                            ui.togglingRequirement ===
+                                            requirement.resourceId
+                                        "
+                                        @click="
+                                            onToggleRequirement(requirement)
+                                        "
+                                    >
+                                        <i
+                                            class="fa-solid"
+                                            :class="
+                                                ui.togglingRequirement ===
+                                                requirement.resourceId
+                                                    ? 'fa-circle-notch fa-spin'
+                                                    : requirement.satisfied
+                                                      ? 'fa-rotate-left'
+                                                      : 'fa-check'
+                                            "
+                                        ></i>
+                                        {{
+                                            requirement.satisfied
+                                                ? 'Mark unsatisfied'
+                                                : 'Mark satisfied'
+                                        }}
+                                    </button>
                                     <a
-                                        class="req-action req-action-edit"
+                                        class="req-action"
                                         :href="`/bcap/resource/${requirement.resourceId}`"
                                         target="_blank"
                                         rel="noopener"
                                     >
-                                        View resource in Arches
+                                        View Arches
                                     </a>
                                     <button
                                         type="button"
@@ -659,25 +820,63 @@ const persistOrder = async () => {
     margin-top: 2.5rem;
     font-size: 1.05rem;
     line-height: 1.5;
-    font-family: 'BC Sans', 'Noto Sans', Verdana, Arial, sans-serif;
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
 
 /* Text inherits BC Sans from the root; Font Awesome icons keep their own font
    (a universal override here would swap the icon font and break the glyphs). */
 .submitted-modules :deep(.p-accordionheader),
 .submitted-modules :deep(.p-accordioncontent-content) {
-    font-family: 'BC Sans', 'Noto Sans', Verdana, Arial, sans-serif;
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
 
-/* Tint the header blue so the panel doesn't read as an all-white block. */
+/* Pale blue header so each module reads as a distinct, airy BC Gov card. */
 .submitted-modules :deep(.p-accordionheader) {
-    background-color: var(--bc-selected);
-    border-bottom: 1px solid var(--bc-border);
+    background-color: #eef4fb;
+    color: var(--bc-navy);
+    padding: 1.9rem 1.5rem 1.9rem 2.5rem;
+    /* Match the panel's corners so the open-state outline follows them. */
+    border-radius: 10px 10px 0 0;
 }
 
-/* Match the draft accordion's content inset so both lists align. */
+/* Name in navy, id muted grey, chevron navy, all against the pale blue bar. */
+.submitted-modules :deep(.p-accordionheader) .module-name,
+.submitted-modules :deep(.p-accordionheader-toggle-icon) {
+    color: var(--bc-navy);
+}
+.submitted-modules :deep(.p-accordionheader) .module-id {
+    color: var(--bc-muted);
+    font-size: 1.3rem;
+}
+/* PrimeVue hard-codes 14px on the chevron svg, so override the attributes. */
+.submitted-modules :deep(.p-accordionheader-toggle-icon) {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+.submitted-modules :deep(.p-accordionheader) .drag-handle {
+    color: rgba(0, 51, 102, 0.5);
+}
+.submitted-modules :deep(.p-accordionheader) .drag-handle:hover {
+    color: var(--bc-navy);
+    background-color: rgba(0, 51, 102, 0.1);
+}
+
+/* Darken on hover so the whole header reads as the click target. */
+/* The open panel is ringed rather than tinted, so which one is selected is
+   obvious without changing the header colour. */
+.submitted-modules :deep(.p-accordionpanel-active .p-accordionheader) {
+    outline: 2px solid var(--bc-link);
+    outline-offset: -2px;
+}
+
+.submitted-modules :deep(.p-accordionheader:hover) {
+    background-color: #e2ecf8;
+}
+
+/* Match the draft accordion's content inset so both lists align. The top inset
+   matches the row gap so the first row isn't pinched against the gold rule. */
 .submitted-modules :deep(.p-accordioncontent-content) {
-    padding: 0.75rem 1rem;
+    padding: 1.5rem 2rem 1.75rem;
 }
 
 .section-head {
@@ -686,12 +885,37 @@ const persistOrder = async () => {
     gap: 1rem;
 }
 
+/* Quiet key for the two header glyphs; sits opposite the section title. */
+.status-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 1.4rem auto;
+    font-size: 1.3rem;
+    color: var(--bc-muted);
+}
+
+.status-legend .is-satisfied {
+    color: #16a34a;
+    margin-left: 0.75rem;
+}
+
+.status-legend .is-in-progress {
+    color: #7c3aed;
+    margin-left: 0.75rem;
+}
+
+.status-legend .is-future {
+    color: #94a3b8;
+}
+
 .section-title {
-    margin: 0;
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: #003366;
-    letter-spacing: 0.01em;
+    margin: 0 0 1.4rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--bc-grey);
 }
 
 .saving-note {
@@ -699,45 +923,35 @@ const persistOrder = async () => {
     color: #2563eb;
 }
 
-.drag-hint {
-    margin: 0.35rem 0 1rem;
-    font-size: 0.95rem;
-    color: #6b7280;
-}
-
 .add-module-bar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.6rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2.5rem;
 }
 
-.add-module-label {
-    font-weight: 600;
-    color: var(--bc-navy);
-}
-
+/* Outlined by default, filled on hover. */
 .add-module-chip {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.4rem 0.85rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--bc-navy);
-    background: var(--bc-selected);
-    border: 1px solid var(--bc-border);
-    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+    font-size: 14px;
+    font-weight: 700;
+    color: #3a3f4b;
+    background: #ffffff;
+    border: 1px solid #3a3f4b;
+    border-radius: 4px;
     cursor: pointer;
     transition:
         background-color 0.15s ease,
-        border-color 0.15s ease;
+        color 0.15s ease;
 }
 
 .add-module-chip:hover:not(:disabled) {
-    background: #dbe6f5;
-    border-color: var(--bc-navy);
+    background: #3a3f4b;
+    color: #ffffff;
 }
 
 .add-module-chip:disabled {
@@ -749,9 +963,6 @@ const persistOrder = async () => {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    /* Space from the heading; holds on the non-staff view where the drag hint
-       above is absent. */
-    margin-top: 1rem;
 }
 
 .module-panel {
@@ -812,37 +1023,144 @@ const persistOrder = async () => {
     cursor: grabbing;
 }
 
+/* Name and id share a baseline as one unit, so the id lines up with the name
+   however their sizes differ. The block as a whole centers in the header row. */
+.module-title {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
 .module-name {
-    font-weight: 600;
-    font-size: 1.2rem;
+    font-weight: 700;
+    font-size: max(16px, 1.25rem);
     color: #111827;
 }
 
 .module-id {
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: max(16px, 1.25rem);
+    font-weight: 400;
     color: #111827;
 }
 
-.module-date {
+/* The date pill and the staff actions sit together at the row's right end. */
+.module-trailing {
     margin-left: auto;
-    font-size: 0.9rem;
-    color: #475569;
-    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Tan for in progress, green for complete: the state reads at a glance from
+   the right end of the bar. */
+.module-state-pill {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    margin-left: 0.75rem;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.module-state-pill.state-progress {
+    background-color: #ede9fe;
+    color: #7c3aed;
+}
+
+.module-state-pill.state-complete {
+    background-color: #cdeed6;
+    color: #15803d;
+}
+
+.module-state-pill.state-future {
     background-color: #f1f5f9;
-    padding: 0.25rem 0.65rem;
+    color: #64748b;
+}
+
+/* Matches the draft accordion's "Last updated" pill. */
+.module-date {
+    font-size: 13px;
+    color: var(--bc-navy);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--bc-border);
+    padding: 0.4rem 1rem;
     border-radius: 999px;
 }
 
-/* When the date is absent this stays right-aligned via its own auto margin. */
+.module-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--bc-navy);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--bc-navy);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.module-toggle:hover:not(:disabled) {
+    background: rgba(0, 51, 102, 0.08);
+}
+
+/* Filled navy once satisfied, so the state reads off the button as well as
+   the status icon. */
+.module-toggle.is-satisfied {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+    color: #ffffff;
+}
+
+.module-toggle.is-satisfied:hover:not(:disabled) {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+}
+
+/* The glyph sits inside a filled circle: gold = in progress, green = complete. */
+.module-status {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+    color: #ffffff;
+    margin-right: 0.35rem;
+}
+
+.module-status.is-satisfied {
+    background-color: #16a34a;
+}
+
+.module-status.is-in-progress {
+    background-color: #7c3aed;
+}
+
+.module-toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .module-remove {
-    margin-left: 0.5rem;
     background: none;
     border: none;
-    color: #c8102e;
+    /* Muted until hover, where it turns BC Gov red. */
+    color: rgba(0, 51, 102, 0.5);
     cursor: pointer;
     font-size: 1rem;
     padding: 0.35rem;
@@ -850,12 +1168,45 @@ const persistOrder = async () => {
     transition: background-color 0.15s ease;
 }
 
-.module-remove:first-child {
-    margin-left: auto;
+.module-remove:hover {
+    color: #ffffff;
+    background-color: rgba(200, 16, 46, 0.85);
 }
 
-.module-remove:hover {
-    background-color: #fde8ea;
+.submission-action {
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+/* The per-row hairlines already close off the summary, so no extra rule here. */
+.module-summary {
+    /* Matches the module menu items on the left. */
+    font-size: 1.25rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* The summary is plain data, so labels and values both read as text even when
+   a value happens to be a link. */
+.module-summary :deep(.div-grid-cols dt) {
+    color: #111827;
+}
+
+.module-summary :deep(.div-grid-cols dd),
+.module-summary :deep(.div-grid-cols dd a) {
+    color: #333333;
+}
+
+/* Hairline between summary rows. The grid's column gap is dropped so each
+   line runs unbroken across both columns. */
+.module-summary :deep(.div-grid-cols) {
+    gap: 0;
+}
+
+.module-summary :deep(.div-grid-cols dt),
+.module-summary :deep(.div-grid-cols dd) {
+    padding: 0.9rem 1rem 0.9rem 0;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .requirement-list {
@@ -870,17 +1221,19 @@ const persistOrder = async () => {
 .requirement-item {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.55rem 0.25rem;
-    border-bottom: 1px solid #f1f5f9;
+    gap: 0.75rem;
+    padding: 0.9rem 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 4px;
+    transition: background-color 0.12s ease;
 }
 
-.requirement-item:last-child {
-    border-bottom: none;
+.requirement-item:hover {
+    background-color: #f6f9fd;
 }
 
 .status-icon {
-    font-size: 1rem;
+    font-size: 13px;
     flex-shrink: 0;
 }
 
@@ -888,8 +1241,9 @@ const persistOrder = async () => {
     color: #16a34a;
 }
 
-.status-no {
-    color: #dc2626;
+/* Violet marks the row as in progress, matching the module status glyph. */
+.status-in-progress {
+    color: #7c3aed;
 }
 
 .status-unknown {
@@ -899,7 +1253,7 @@ const persistOrder = async () => {
 .requirement-name {
     color: #111827;
     font-weight: 500;
-    font-size: 1.1rem;
+    font-size: 13px;
 }
 
 .req-right {
@@ -910,14 +1264,20 @@ const persistOrder = async () => {
     white-space: nowrap;
 }
 
+/* Subtle bordered chip so the type reads as an intentional tag, not a stray
+   label. Fixed width keeps the actions after it (View, trash) aligned. */
 .req-type {
-    font-size: 0.72rem;
+    display: inline-block;
+    min-width: 8rem;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #475569;
-    background-color: #f1f5f9;
-    padding: 0.15rem 0.5rem;
+    letter-spacing: 0.05em;
+    color: var(--bc-muted);
+    border: 1px solid var(--bc-border);
     border-radius: 999px;
+    padding: 0.2rem 0.75rem;
     white-space: nowrap;
 }
 
@@ -925,33 +1285,56 @@ const persistOrder = async () => {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.85rem;
+    font-size: 12px;
     color: #475569;
     white-space: nowrap;
 }
 
 .req-action {
-    font-size: 0.9rem;
+    font-size: 13px;
     font-weight: 600;
     color: var(--bc-navy);
     text-decoration: none;
     padding: 0.25rem 0.65rem;
     border: 1px solid var(--bc-border);
     border-radius: 6px;
-    background: var(--bc-selected);
+    background: #ffffff;
     transition:
         background-color 0.15s ease,
         border-color 0.15s ease;
 }
 
 .req-action:hover {
-    background: #dbe6f5;
+    background: var(--bc-panel);
     border-color: var(--bc-navy);
     text-decoration: none;
 }
 
-.req-action-edit {
-    background: #ffffff;
+/* A button styled as a req-action; the icon needs the shared inline spacing. */
+.req-satisfy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Filled green once satisfied so the state reads off the button as well as the
+   status icon, matching the module-level toggle. */
+.req-satisfy.is-satisfied {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+}
+
+.req-satisfy.is-satisfied:hover {
+    background: #15803d;
+    border-color: #15803d;
+}
+
+.req-satisfy:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .req-drag-handle {
@@ -979,7 +1362,7 @@ const persistOrder = async () => {
     border: none;
     color: #c8102e;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 13px;
     padding: 0.25rem 0.35rem;
     border-radius: 4px;
     transition: background-color 0.15s ease;
@@ -993,30 +1376,33 @@ const persistOrder = async () => {
     margin-top: 0.75rem;
 }
 
+/* Matches the add-module chips at the top of the panel. */
 .add-req-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--bc-navy);
-    background: var(--bc-selected);
-    border: 1px solid var(--bc-border);
-    border-radius: 999px;
-    padding: 0.4rem 0.85rem;
+    font-size: 14px;
+    font-weight: 700;
+    color: #3a3f4b;
+    background: #ffffff;
+    border: 1px solid #3a3f4b;
+    border-radius: 4px;
+    padding: 0.6rem 1.2rem;
     cursor: pointer;
     transition:
         background-color 0.15s ease,
-        border-color 0.15s ease;
+        color 0.15s ease;
 }
 
 .add-req-btn:hover {
-    background: #dbe6f5;
-    border-color: var(--bc-navy);
+    background: #3a3f4b;
+    color: #ffffff;
 }
 
 .empty-note {
-    margin: 0;
+    margin: 0.85rem 0 0;
+    /* Matches the module menu items on the left. */
+    font-size: 14px;
     color: #6b7280;
     font-style: italic;
 }

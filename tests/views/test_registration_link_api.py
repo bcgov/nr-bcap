@@ -4,7 +4,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from bcap.models import RegistrationLink
-from bcap.services.dashboard.contributor_service import ContributorService
+from bcap.services.contributor_service import ContributorService
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder

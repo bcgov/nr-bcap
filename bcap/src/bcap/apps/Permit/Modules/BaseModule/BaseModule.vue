@@ -10,7 +10,6 @@ import StepPanels from 'primevue/steppanels';
 import ProgressSpinner from 'primevue/progressspinner';
 import StepperNavigation from '@/bcgov_arches_common/components/Stepper/components/StepperNavigation/StepperNavigation.vue';
 import Panel from 'primevue/panel';
-import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import type { Ref } from 'vue';
 import type { StepperProps, StepperState } from 'primevue/stepper';
 
@@ -46,42 +45,10 @@ const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
 
 // Related submissions offered on the completion step. Each opens the new
 // permit's detail page with that module pre-selected.
-const relatedModules = [
-    {
-        id: 'investigation',
-        label: 'Investigation',
-        subtitle: 'Start an investigation for this permit',
-        icon: 'fa fa-magnifying-glass',
-        disabled: false,
-    },
-    {
-        id: 'inspection',
-        label: 'Inspection',
-        subtitle: 'Coming soon',
-        icon: 'fa fa-clipboard-check',
-        disabled: true,
-    },
-    {
-        id: 'alteration',
-        label: 'Alteration',
-        subtitle: 'Coming soon',
-        icon: 'fa fa-screwdriver-wrench',
-        disabled: true,
-    },
-    {
-        id: 'site-visit',
-        label: 'Site Visit',
-        subtitle: 'Coming soon',
-        icon: 'fa fa-location-dot',
-        disabled: true,
-    },
-];
-
-const relatedModuleLink = (moduleId: string): RouteLocationRaw => ({
+const backToFilingSummaryPage = computed<RouteLocationRaw>(() => ({
     name: routeNames.permitDetails,
     params: { id: finalizedResourceData.value?.resourceinstanceid ?? '' },
-    query: { module: moduleId },
-});
+}));
 
 const submitNewSiteData = async (): Promise<boolean> => {
     console.log('Submitting final application...');
@@ -221,7 +188,7 @@ onMounted(async () => {
         const targetDraftId = route.query.draftId;
         if (targetDraftId) {
             const loaded = await fetchDraft(graphSlug, targetDraftId as string);
-            draft.loadDraft(loaded.id, loaded.data || {});
+            draft.loadDraft(loaded.id, (loaded.data || {}) as ArchesDraftData);
         }
 
         isDataLoaded.value = true;
@@ -239,7 +206,6 @@ const nextLabel = computed(() => {
 const showPrevious = computed(() => {
     return !(currentStep.value === steps.length || currentStep.value === 1);
 });
-const showDebug = ref(false);
 </script>
 
 <template>
@@ -249,18 +215,6 @@ const showDebug = ref(false);
     >
         <ProgressSpinner />
     </div>
-    <div
-        id="debug-div"
-        :v-show="showDebug"
-        class="debug-step"
-        :class="{ 'show-debug': showDebug }"
-    >
-        {{ JSON.stringify('') }}
-    </div>
-    <i
-        class="fa fa-eye-slash debug-toggle"
-        @click="showDebug = !showDebug"
-    ></i>
     <Panel class="full-height">
         <div
             v-if="!isDataLoaded"
@@ -278,8 +232,9 @@ const showDebug = ref(false);
             linear
             @update:value="activateStep"
         >
-            <div class="bcgov-stepper">
-                <div class="bcgov-vertical-steps">
+            <div class="bc-stepper-layout">
+                <aside class="bc-stepper-nav">
+                    <p class="bc-stepper-nav-label">Your progress</p>
                     <StepList>
                         <Step :value="1">Submission Information</Step>
                         <Step :value="2">Preamble</Step>
@@ -288,9 +243,31 @@ const showDebug = ref(false);
                         <Step :value="5">Review Submission</Step>
                         <Step :value="6">Submission Complete</Step>
                     </StepList>
-                </div>
-                <div class="bcgov-vertical-step-panels">
-                    <h1>Submit Filing</h1>
+                </aside>
+                <div class="bc-stepper-main">
+                    <header class="bc-step-header">
+                        <div>
+                            <p class="bc-step-eyebrow">
+                                Step {{ currentStep }} of {{ steps.length }}
+                            </p>
+                            <h1 class="bc-step-title">Submit Filing</h1>
+                        </div>
+                        <router-link
+                            v-if="finalizedResourceData?.resourceinstanceid"
+                            class="bc-btn bc-btn-primary bc-btn-back"
+                            :to="backToFilingSummaryPage"
+                        >
+                            To Filing Summary Page
+                        </router-link>
+                        <StepperNavigation
+                            v-else
+                            :step-number="currentStep"
+                            :is-valid="currentStepIsValid"
+                            :show-previous="false"
+                            :next-label="nextLabel"
+                            @next-click="activateNextStep"
+                        ></StepperNavigation>
+                    </header>
                     <div
                         v-if="submissionErrors.length > 0"
                         class="red"
@@ -304,15 +281,7 @@ const showDebug = ref(false);
                             {{ err.message }}
                         </div>
                     </div>
-                    <StepPanels>
-                        <StepperNavigation
-                            :step-number="currentStep"
-                            :is-valid="currentStepIsValid"
-                            :show-previous="showPrevious"
-                            :next-label="nextLabel"
-                            @next-click="activateNextStep"
-                            @previous-click="activatePreviousStep"
-                        ></StepperNavigation>
+                    <StepPanels class="bc-step-card">
                         <StepPanel :value="1">
                             <Step1_About ref="step1"></Step1_About>
                         </StepPanel>
@@ -369,46 +338,29 @@ const showDebug = ref(false);
                                     setCurrentStepValid($event, 6)
                                 "
                             ></Step99_Review>
-
-                            <div
-                                v-if="finalizedResourceData?.resourceinstanceid"
-                                class="related-submissions"
-                            >
-                                <h3 class="mb-2 font-bold">
-                                    Would you like to create an Investigation,
-                                    Inspection, Alteration, or Site Visit for
-                                    this permit?
-                                </h3>
-                                <div class="related-submissions-tiles">
-                                    <Card
-                                        v-for="mod in relatedModules"
-                                        :key="mod.id"
-                                        :label="mod.label"
-                                        :description="mod.label"
-                                        :subtitle="mod.subtitle"
-                                        :icon="mod.icon"
-                                        :class="
-                                            mod.disabled
-                                                ? 'related-tile related-tile--disabled'
-                                                : 'related-tile'
-                                        "
-                                        :route="
-                                            mod.disabled
-                                                ? {}
-                                                : relatedModuleLink(mod.id)
-                                        "
-                                    />
-                                </div>
-                            </div>
                         </StepPanel>
-                        <StepperNavigation
-                            :step-number="currentStep"
-                            :is-valid="currentStepIsValid"
-                            :show-previous="showPrevious"
-                            :next-label="nextLabel"
-                            @next-click="activateNextStep"
-                            @previous-click="activatePreviousStep"
-                        ></StepperNavigation>
+                        <div
+                            class="bc-step-actions"
+                            :class="{
+                                'is-final': currentStep === steps.length,
+                            }"
+                        >
+                            <StepperNavigation
+                                :step-number="currentStep"
+                                :is-valid="currentStepIsValid"
+                                :show-previous="showPrevious"
+                                :next-label="nextLabel"
+                                @next-click="activateNextStep"
+                                @previous-click="activatePreviousStep"
+                            ></StepperNavigation>
+                            <router-link
+                                v-if="finalizedResourceData?.resourceinstanceid"
+                                class="bc-btn bc-btn-primary bc-btn-back"
+                                :to="backToFilingSummaryPage"
+                            >
+                                To Filing Summary Page
+                            </router-link>
+                        </div>
                     </StepPanels>
                 </div>
             </div>
@@ -421,27 +373,25 @@ const showDebug = ref(false);
 
 <style>
 @import url('@/bcgov_arches_common/css/arches_common.css');
+@import url('@/bcap/styles/bc-stepper.css');
 .language-selector {
     display: none;
 }
-/* Keep the nav buttons together on the left with room above and below so they
-   never crowd the step content. Hide the empty spacer the shared nav inserts
-   when Previous is hidden so Next sits at the left on the first step. */
+/* The shared nav is laid out by .bc-step-actions now; just drop the empty
+   spacer it inserts when Previous is hidden. */
 .stepper-nav-panel {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin: 1.5rem 0;
 }
 .stepper-nav-panel > div {
     display: none;
 }
 @media print {
     aside,
-    .bcgov-vertical-steps,
+    .bc-stepper-nav,
     .stepper-nav-panel,
-    .sidenav,
-    .debug-toggle {
+    .sidenav {
         display: none !important;
     }
 
@@ -464,8 +414,8 @@ const showDebug = ref(false);
         display: block !important;
     }
 
-    .bcgov-stepper,
-    .bcgov-vertical-step-panels {
+    .bc-stepper-layout,
+    .bc-stepper-main {
         display: block !important;
         width: 100% !important;
         max-width: 100% !important;
@@ -482,7 +432,7 @@ const showDebug = ref(false);
         border: none !important;
     }
 
-    .bcgov-vertical-step-panels h1 {
+    .bc-step-title {
         margin-top: 0 !important;
         padding-top: 0 !important;
     }
@@ -492,49 +442,6 @@ const showDebug = ref(false);
 }
 </style>
 <style scoped>
-.related-submissions {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #d1d5db;
-}
-
-.related-submissions-tiles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.related-tile {
-    width: 225px !important;
-    aspect-ratio: 1 / 1;
-}
-
-.related-tile--disabled {
-    pointer-events: none;
-    opacity: 0.55;
-}
-
-.related-tile :deep(.bcgov-custom-card) {
-    height: 100%;
-}
-
-.related-tile :deep(.stack-icon) {
-    font-size: 3.5rem !important;
-    margin-bottom: 2rem !important;
-}
-
-.related-tile :deep(.description) {
-    font-size: 1.1rem !important;
-    font-weight: bold !important;
-    color: #3b3bff !important;
-}
-
-.related-tile :deep(.subtitle) {
-    color: #1a1a1a !important;
-    font-size: 0.9rem !important;
-}
-
 .submit-overlay {
     display: flex;
     justify-content: center;
@@ -568,27 +475,5 @@ li {
     font-weight: bold;
     line-height: inherit;
     color: #333;
-}
-
-.debug-step {
-    max-width: 80%;
-    margin-top: 100px;
-    display: none;
-    position: absolute;
-    bottom: 10px;
-    word-wrap: anywhere;
-    color: darkgray;
-}
-
-.show-debug {
-    display: inline-block !important;
-}
-
-.debug-toggle {
-    position: absolute;
-    top: 0;
-    left: 0.5rem;
-    color: white;
-    z-index: 9000;
 }
 </style>

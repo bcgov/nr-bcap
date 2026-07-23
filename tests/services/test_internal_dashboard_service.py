@@ -165,7 +165,10 @@ def build_permit_graph():
         {
             "project_name": builder.localized("My Project"),
             "application_id": builder.localized("APP-1"),
-            "filing_type": reference_value("permit_application", "filing_type"),
+            # Pinned by label so the card's submission_type is assertable.
+            "filing_type": reference_value(
+                "permit_application", "filing_type", "Site Visit"
+            ),
         },
     )
     builder.append_blank_tile_for_group(
@@ -502,10 +505,10 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(card.permit_holder, "Acme Corp")
         self.assertEqual(card.permit_holder_ids, [self.acme_id])
         # The project_officer on the permit's application_admin group.
-        self.assertEqual(card.project_officer, "Alan Turing")
+        self.assertEqual(card.project_officer, "Turing, Alan")
         self.assertEqual(card.project_officer_id, self.alan_id)
         # The assignee on the chosen ("Field Assessment") tile.
-        self.assertEqual(card.ministry_assignee_name, "Grace Hopper")
+        self.assertEqual(card.ministry_assignee_name, "Hopper, Grace")
         self.assertEqual(card.ministry_assignee_id, self.grace_id)
 
     def test_assigned_to_me_status_filters_by_user_bcap_username(self):
@@ -627,7 +630,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
             {"related_permit": hca, "is_related_permit": True},
         )
         permit.save(**builder.save_kwargs)
-        permits = self.service._resources(
+        permits = self.service._tiles(
             GraphSlugs.PERMIT_APPLICATION, [permit.pk], [self.service.PA.RELATED_PERMIT]
         )
 
@@ -672,14 +675,22 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(
             names,
             {
-                self.ada_id: "Ada Lovelace",
-                self.grace_id: "Grace Hopper",
+                self.ada_id: "Lovelace, Ada",
+                self.grace_id: "Hopper, Grace",
                 self.acme_id: "Acme Corp",
             },
         )
 
     def test_node_value_tolerates_a_none_aliased_data(self):
         self.assertEqual(self.service._node_value(None, "requirement_name"), {})
+
+    def test_order_value_treats_a_null_order_as_last(self):
+        # A present-but-unset order node has node_value None. It must sort last
+        # (inf) like a missing node, not return None, or the tuple sort in
+        # _requirement_tiles_by_permit compares an int against None and crashes.
+        self.assertEqual(self.service._order_value(None), float("inf"))
+        self.assertEqual(self.service._order_value({"node_value": None}), float("inf"))
+        self.assertEqual(self.service._order_value({"node_value": 2}), 2)
 
     def test_application_core_handles_missing_groups_and_null_values(self):
         aliased = SimpleNamespace(
@@ -716,11 +727,12 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
             (
                 core.project_name,
                 core.application_number,
+                core.submission_type,
                 core.industrial_sector,
                 core.priority_level,
                 core.related_permit_id,
             ),
-            ("", "", "", "", None),
+            ("", "", "", "", "", None),
         )
 
 

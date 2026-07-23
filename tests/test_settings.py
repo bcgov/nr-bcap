@@ -32,13 +32,14 @@ BUSINESS_DATA_FILES = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+# localhost may not work cross networks in docker
 DATABASES = {
     "default": {
         "ATOMIC_REQUESTS": False,
         "AUTOCOMMIT": True,
         "CONN_MAX_AGE": 0,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": "localhost",
+        "HOST": os.environ.get("PGHOST", "localhost"),
         "NAME": "bcap",
         "OPTIONS": {},
         "PASSWORD": "postgis",
@@ -77,8 +78,13 @@ SILENCED_SYSTEM_CHECKS.append(
     "arches.W001",
 )
 
+# localhost may not work cross networks in docker
 ELASTICSEARCH_HOSTS = [
-    {"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
+    {
+        "scheme": os.environ.get("ES_SCHEME", "http"),
+        "host": os.environ.get("ES_HOST", "localhost"),
+        "port": int(os.environ.get("ES_PORT", ELASTICSEARCH_HTTP_PORT)),
+    }
 ]
 
 # No broker in tests. Empty short-circuits check_if_celery_available() so every

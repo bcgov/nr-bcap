@@ -3,7 +3,7 @@ Used by single resource view for SimpleMapView under details.
 """
 
 from django.db import connection
-from bcap.util.queryset import deep_get
+from bcap.util.dicts import deep_get
 
 # graph_slug -> (geom node uuid, geojson node alias, map attribute aliases)
 # Note: underlying SQL needs to change for site_visit to work.
@@ -24,8 +24,6 @@ GRAPH_CONFIG = {
         ],
     ),
 }
-
-from functools import reduce
 
 
 def inject_map_attributes(response_data, resourceinstanceid, graph_slug):
