@@ -59,7 +59,7 @@ export const saveDraftFieldToBackend = async (
     fullDraftData: ArchesDraftData,
 ) => {
     try {
-        const patchUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId}`;
+        const patchUrl = `/bcap/api/workflow_draft/${graphSlug}/${draftId}`;
 
         await apiFetch(patchUrl, {
             method: HttpMethod.Patch,

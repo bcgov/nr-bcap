@@ -19,7 +19,7 @@ from arches.app.models.models import (
 )
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.util.aliases.drafts import DraftsAliases
+from bcap.util.aliases.workflow_drafts import WorkflowDraftsAliases
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import get_current_graph
 
@@ -41,18 +41,20 @@ class DraftRecord:
     updated: datetime | None = None
 
 
-class DraftService(BaseGraphService):
+class WorkflowDraftService(BaseGraphService):
     """Owner-scoped CRUD over draft resources. All reads go through queryset() so
     the dashboard can page the same rows the API returns."""
 
     def queryset(self, user, graph_slug=None):
         """The user's drafts (superusers see all), oldest first. Filters by the
         target graph in SQL so callers can page without loading every draft."""
-        qs = ResourceInstance.objects.filter(graph__slug=GraphSlugs.DRAFTS)
+        qs = ResourceInstance.objects.filter(graph__slug=GraphSlugs.WORKFLOW_DRAFTS)
         if not user.is_superuser:
             qs = qs.filter(principaluser=user)
         if graph_slug is not None:
-            nodeid, ngid = self._node_info(GraphSlugs.DRAFTS, DraftsAliases.GRAPH_SLUG)
+            nodeid, ngid = self._node_info(
+                GraphSlugs.WORKFLOW_DRAFTS, WorkflowDraftsAliases.GRAPH_SLUG
+            )
             qs = qs.filter(
                 tilemodel__nodegroup_id=ngid,
                 **{f"tilemodel__data__{nodeid}": graph_slug},
@@ -68,17 +70,20 @@ class DraftService(BaseGraphService):
         by_group = {str(t.nodegroup_id): t.data for t in resource.tilemodel_set.all()}
 
         def value(alias):
-            nodeid, ngid = self._node_info(GraphSlugs.DRAFTS, alias)
+            nodeid, ngid = self._node_info(GraphSlugs.WORKFLOW_DRAFTS, alias)
             return (by_group.get(ngid) or {}).get(nodeid)
 
-        blob = value(DraftsAliases.DRAFT_DATA)
-        stamped = value(DraftsAliases.UPDATED_DATE)
+        blob = value(WorkflowDraftsAliases.DRAFT_DATA)
+        stamped = value(WorkflowDraftsAliases.UPDATED_DATE)
         return DraftRecord(
             id=str(resource.pk),
-            graph_slug=value(DraftsAliases.GRAPH_SLUG) or "",
-            graph_publication_id=value(DraftsAliases.GRAPH_PUBLICATION_ID) or "",
-            frontend_version=value(DraftsAliases.FRONTEND_VERSION) or "",
-            parent_resource_id=value(DraftsAliases.PARENT_RESOURCE_ID) or "",
+            graph_slug=value(WorkflowDraftsAliases.GRAPH_SLUG) or "",
+            graph_publication_id=value(WorkflowDraftsAliases.GRAPH_PUBLICATION_ID)
+            or "",
+            frontend_version=value(WorkflowDraftsAliases.FRONTEND_VERSION) or "",
+            parent_resource_id=self._resource_id_from(
+                value(WorkflowDraftsAliases.PARENT_RESOURCE_ID)
+            ),
             data=json.loads(blob) if blob else {},
             created=resource.createdtime,
             updated=datetime.fromisoformat(stamped) if stamped else None,
@@ -97,7 +102,7 @@ class DraftService(BaseGraphService):
         save time, and return the flattened result."""
         resource = ResourceInstance.objects.create(
             resourceinstanceid=uuid.uuid4(),
-            graph_id=get_current_graph(GraphSlugs.DRAFTS).pk,
+            graph_id=get_current_graph(GraphSlugs.WORKFLOW_DRAFTS).pk,
             principaluser=user,
             resource_instance_lifecycle_state=(
                 ResourceInstanceLifecycleState.objects.first()
@@ -106,12 +111,14 @@ class DraftService(BaseGraphService):
         self._write(
             resource,
             {
-                DraftsAliases.GRAPH_SLUG: graph_slug,
-                DraftsAliases.GRAPH_PUBLICATION_ID: str(publication_id or ""),
-                DraftsAliases.FRONTEND_VERSION: frontend_version or "",
-                DraftsAliases.PARENT_RESOURCE_ID: str(parent_resource_id or ""),
-                DraftsAliases.DRAFT_DATA: json.dumps(data or {}),
-                DraftsAliases.UPDATED_DATE: timezone.now().isoformat(),
+                WorkflowDraftsAliases.GRAPH_SLUG: graph_slug,
+                WorkflowDraftsAliases.GRAPH_PUBLICATION_ID: str(publication_id or ""),
+                WorkflowDraftsAliases.FRONTEND_VERSION: frontend_version or "",
+                WorkflowDraftsAliases.PARENT_RESOURCE_ID: self._resource_instance_value(
+                    parent_resource_id
+                ),
+                WorkflowDraftsAliases.DRAFT_DATA: json.dumps(data or {}),
+                WorkflowDraftsAliases.UPDATED_DATE: timezone.now().isoformat(),
             },
         )
         return self.to_record(resource)
@@ -123,8 +130,8 @@ class DraftService(BaseGraphService):
         self._write(
             resource,
             {
-                DraftsAliases.DRAFT_DATA: json.dumps(data),
-                DraftsAliases.UPDATED_DATE: now.isoformat(),
+                WorkflowDraftsAliases.DRAFT_DATA: json.dumps(data),
+                WorkflowDraftsAliases.UPDATED_DATE: now.isoformat(),
             },
         )
         # record() reads the resource's (now stale) prefetched tiles; only
@@ -134,10 +141,24 @@ class DraftService(BaseGraphService):
         record.updated = now
         return record
 
+    @staticmethod
+    def _resource_instance_value(resource_id):
+        """A resource-instance node value (a one-element list) for a parent id, or
+        an empty list when the draft has no parent."""
+        return [{"resourceId": str(resource_id)}] if resource_id else []
+
+    @staticmethod
+    def _resource_id_from(node_value):
+        """The parent resource id out of a resource-instance node value, tolerating
+        a legacy bare string from before parent_resource_id became resource-instance."""
+        if isinstance(node_value, list):
+            return node_value[0]["resourceId"] if node_value else ""
+        return node_value or ""
+
     def _write(self, resource, values_by_alias):
         """Upsert each field's single-node tile, replacing its value in place."""
         for alias, value in values_by_alias.items():
-            nodeid, ngid = self._node_info(GraphSlugs.DRAFTS, alias)
+            nodeid, ngid = self._node_info(GraphSlugs.WORKFLOW_DRAFTS, alias)
             TileModel.objects.update_or_create(
                 resourceinstance=resource,
                 nodegroup_id=ngid,

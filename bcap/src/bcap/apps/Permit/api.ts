@@ -24,7 +24,7 @@ export const fetchDraft = async (
     draftId: string,
 ): Promise<ResourceDraft> => {
     return apiFetchJson<ResourceDraft>(
-        `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`,
+        `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`,
     );
 };
 
@@ -37,7 +37,7 @@ export const createDraft = async (
     parentResourceId?: string,
 ): Promise<ResourceDraft> => {
     return apiFetchJson<ResourceDraft>(
-        arches.urls.api_resource_draft(graphSlug),
+        arches.urls.api_workflow_draft(graphSlug),
         {
             method: HttpMethod.Post,
             body: {
@@ -65,7 +65,7 @@ export const fetchDrafts = async () => {
         DRAFT_GRAPHS.map(async (graphSlug) => {
             try {
                 const response = await apiFetch(
-                    arches.urls.api_resource_draft(graphSlug),
+                    arches.urls.api_workflow_draft(graphSlug),
                 );
                 const data = await response.json();
                 return data.results || data || [];
@@ -82,7 +82,7 @@ export const deleteDraft = async (
     graphSlug: string,
     draftId: string,
 ): Promise<void> => {
-    await apiFetch(`${arches.urls.api_resource_draft(graphSlug)}/${draftId}`, {
+    await apiFetch(`${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`, {
         method: HttpMethod.Delete,
     });
 };
@@ -134,7 +134,7 @@ export const submitApplication = async (
         );
 
         // Delete the draft after successful submission
-        const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
+        const deleteUrl = `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`;
         await apiFetch(deleteUrl, { method: HttpMethod.Delete });
 
         return finalResource;

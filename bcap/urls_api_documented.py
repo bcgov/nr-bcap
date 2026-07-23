@@ -17,9 +17,9 @@ from bcap.views.dashboard_api import (
     InternalDashboardView,
     ExternalDashboardView,
 )
-from bcap.views.draft_api import (
-    ResourceDraftListCreateView,
-    ResourceDraftDetailView,
+from bcap.views.workflow_draft_api import (
+    WorkflowDraftListCreateView,
+    WorkflowDraftDetailView,
 )
 from bcap.views.permit_application_api import (
     PermitApplicationView,
@@ -66,15 +66,15 @@ documented_api_patterns = [
     ),
     # Submitter - object level user filtering
     path(
-        "api/resource_draft/<slug:graph_slug>",
-        ResourceDraftListCreateView.as_view(),
-        name="resource_draft_list_create",
+        "api/workflow_draft/<slug:graph_slug>",
+        WorkflowDraftListCreateView.as_view(),
+        name="workflow_draft_list_create",
     ),
     # Submitter - object level user filtering
     path(
-        "api/resource_draft/<slug:graph_slug>/<uuid:pk>",
-        ResourceDraftDetailView.as_view(),
-        name="resource_draft_detail",
+        "api/workflow_draft/<slug:graph_slug>/<uuid:pk>",
+        WorkflowDraftDetailView.as_view(),
+        name="workflow_draft_detail",
     ),
     # Submitter - object level user filtering - override
     path(

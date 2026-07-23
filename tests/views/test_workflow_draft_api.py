@@ -2,7 +2,7 @@
 draft, PATCH-merge sections into it, PUT-replace the whole blob, and DELETE it;
 drafts are owner-scoped (superusers excepted), and the graph publication is
 stamped on create so a stale draft can be detected. Drafts are stored as
-resources of the 'drafts' graph (see DraftService), not a bespoke table."""
+resources of the 'drafts' graph (see WorkflowDraftService), not a bespoke table."""
 
 import json
 import uuid
@@ -16,7 +16,7 @@ from django.urls import reverse
 
 from arches.app.models.models import ResourceInstance
 
-from bcap.services.draft_service import DraftService
+from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import get_current_graph
 
@@ -26,7 +26,7 @@ SLUG = GraphSlugs.PERMIT_APPLICATION
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")
-class ResourceDraftApiTests(AuthTestHelper, TestCase):
+class WorkflowDraftApiTests(AuthTestHelper, TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -41,14 +41,14 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.svc = DraftService()
+        self.svc = WorkflowDraftService()
         self.idir_login_simulate(self.editor)
         self.list_url = reverse(
-            "resource_draft_list_create", kwargs={"graph_slug": SLUG}
+            "workflow_draft_list_create", kwargs={"graph_slug": SLUG}
         )
 
     def _detail_url(self, pk):
-        return reverse("resource_draft_detail", kwargs={"graph_slug": SLUG, "pk": pk})
+        return reverse("workflow_draft_detail", kwargs={"graph_slug": SLUG, "pk": pk})
 
     def _post(self, payload, url=None):
         return self.client.post(
@@ -73,7 +73,9 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
         return resource
 
     def _draft_count(self):
-        return ResourceInstance.objects.filter(graph__slug=GraphSlugs.DRAFTS).count()
+        return ResourceInstance.objects.filter(
+            graph__slug=GraphSlugs.WORKFLOW_DRAFTS
+        ).count()
 
     def test_post_creates_draft_and_stamps_graph_publication(self):
         resp = self._post({"data": {"step1": {"x": 1}}, "frontend_version": "2.1.0"})
@@ -113,7 +115,9 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
     def test_updated_is_stamped_on_create_and_bumped_on_save(self):
         t1 = datetime(2026, 7, 21, 10, 0, tzinfo=dt_timezone.utc)
         t2 = datetime(2026, 7, 21, 11, 30, tzinfo=dt_timezone.utc)
-        with patch("bcap.services.draft_service.timezone.now", return_value=t1):
+        with patch(
+            "bcap.services.workflow_draft_service.timezone.now", return_value=t1
+        ):
             resp = self._post({"data": {"step1": {"x": 1}}})
         self.assertEqual(resp.status_code, 201)
         draft_id = resp.json()["id"]
@@ -121,7 +125,9 @@ class ResourceDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(self._read(draft_id).updated, t1)
 
         # A later save advances the timestamp.
-        with patch("bcap.services.draft_service.timezone.now", return_value=t2):
+        with patch(
+            "bcap.services.workflow_draft_service.timezone.now", return_value=t2
+        ):
             resp = self.client.patch(
                 self._detail_url(draft_id),
                 data=json.dumps({"data": {"step2": {"y": 2}}}),

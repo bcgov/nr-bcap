@@ -1,7 +1,7 @@
 from bcap.util.bcap_aliases import AbstractAliases
 
 
-class DraftsAliases(AbstractAliases):
+class WorkflowDraftsAliases(AbstractAliases):
     DRAFT_DATA = "draft_data"
     FRONTEND_VERSION = "frontend_version"
     GRAPH_PUBLICATION_ID = "graph_publication_id"
@@ -11,11 +11,11 @@ class DraftsAliases(AbstractAliases):
 
     @staticmethod
     def get_aliases():
-        return AbstractAliases.get_dict(DraftsAliases)
+        return AbstractAliases.get_dict(WorkflowDraftsAliases)
 
 
-class DraftsGroupAliases(AbstractAliases):
+class WorkflowDraftsGroupAliases(AbstractAliases):
 
     @staticmethod
     def get_aliases():
-        return AbstractAliases.get_dict(DraftsGroupAliases)
+        return AbstractAliases.get_dict(WorkflowDraftsGroupAliases)

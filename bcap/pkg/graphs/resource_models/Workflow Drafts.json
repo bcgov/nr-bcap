@@ -27,7 +27,7 @@
                     "name": {
                         "en": "Parent Resource Id"
                     },
-                    "nodegroup_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "nodegroup_id": "076698db-120c-455e-965a-34224d2a7e60",
                     "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
@@ -196,7 +196,7 @@
                     "label": {
                         "en": "Parent Resource Id"
                     },
-                    "node_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "node_id": "076698db-120c-455e-965a-34224d2a7e60",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
@@ -330,7 +330,7 @@
                     "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
                     "name": null,
                     "ontologyproperty": null,
-                    "rangenode_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "rangenode_id": "076698db-120c-455e-965a-34224d2a7e60",
                     "source_identifier_id": null
                 },
                 {
@@ -394,14 +394,14 @@
             "isresource": true,
             "jsonldcontext": null,
             "name": {
-                "en": "Drafts"
+                "en": "Workflow Drafts"
             },
             "nodegroups": [
                 {
                     "cardinality": "1",
-                    "grouping_node_id": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "grouping_node_id": "076698db-120c-455e-965a-34224d2a7e60",
                     "legacygroupid": null,
-                    "nodegroupid": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "nodegroupid": "076698db-120c-455e-965a-34224d2a7e60",
                     "parentnodegroup_id": null
                 },
                 {
@@ -443,8 +443,12 @@
             "nodes": [
                 {
                     "alias": "parent_resource_id",
-                    "config": {},
-                    "datatype": "non-localized-string",
+                    "config": {
+                        "graphs": [],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
                     "description": "Resource the draft was started from",
                     "exportable": false,
                     "fieldname": null,
@@ -453,11 +457,11 @@
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": false,
-                    "issearchable": true,
+                    "issearchable": false,
                     "istopnode": false,
                     "name": "Parent Resource Id",
-                    "nodegroup_id": "6415f200-3eda-4432-b153-cd273e0a9319",
-                    "nodeid": "6415f200-3eda-4432-b153-cd273e0a9319",
+                    "nodegroup_id": "076698db-120c-455e-965a-34224d2a7e60",
+                    "nodeid": "076698db-120c-455e-965a-34224d2a7e60",
                     "ontologyclass": null,
                     "parentproperty": null,
                     "sortorder": 0,
@@ -476,7 +480,7 @@
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": false,
-                    "issearchable": true,
+                    "issearchable": false,
                     "istopnode": false,
                     "name": "Frontend Version",
                     "nodegroup_id": "19c1c1cb-11e3-463e-a6d9-ae9ca44be242",
@@ -499,7 +503,7 @@
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": false,
-                    "issearchable": true,
+                    "issearchable": false,
                     "istopnode": false,
                     "name": "Graph Publication Id",
                     "nodegroup_id": "77fa2495-9f5f-46d2-a882-51639a0bb308",
@@ -522,7 +526,7 @@
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": false,
-                    "issearchable": true,
+                    "issearchable": false,
                     "istopnode": false,
                     "name": "Draft Data",
                     "nodegroup_id": "a3c46923-df6c-4b00-92e8-3ff30e7c670c",
@@ -545,7 +549,7 @@
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": true,
-                    "issearchable": true,
+                    "issearchable": false,
                     "istopnode": false,
                     "name": "Graph Slug",
                     "nodegroup_id": "d37f01cd-e66f-420b-901a-63cc530f6eb2",
@@ -568,7 +572,7 @@
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
-                    "issearchable": true,
+                    "issearchable": false,
                     "istopnode": true,
                     "name": "Drafts",
                     "nodegroup_id": null,
@@ -593,7 +597,7 @@
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": false,
-                    "issearchable": true,
+                    "issearchable": false,
                     "istopnode": false,
                     "name": "Updated Date",
                     "nodegroup_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
@@ -688,7 +692,7 @@
                 "is_collector": false,
                 "is_immutable": false,
                 "isrequired": false,
-                "issearchable": true,
+                "issearchable": false,
                 "istopnode": true,
                 "name": "Drafts",
                 "nodegroup_id": null,
@@ -698,7 +702,7 @@
                 "source_identifier_id": null,
                 "sourcebranchpublication_id": null
             },
-            "slug": "drafts",
+            "slug": "workflow_drafts",
             "source_identifier_id": null,
             "spatial_views": [],
             "subtitle": {

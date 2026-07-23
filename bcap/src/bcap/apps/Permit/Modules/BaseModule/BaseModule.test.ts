@@ -38,8 +38,8 @@ vi.mock('@/bcap/util.ts', () => ({
 vi.mock('arches', () => ({
     default: {
         urls: {
-            api_resource_draft: (graphSlug: string) =>
-                `/bcap/api/resource_draft/${graphSlug}`,
+            api_workflow_draft: (graphSlug: string) =>
+                `/bcap/api/workflow_draft/${graphSlug}`,
             plugin: (path: string) => `/${path}`,
         },
     },
@@ -87,7 +87,7 @@ describe('BaseModule.vue', () => {
         // Nothing is created until the first edit, so an abandoned form leaves
         // no empty draft behind.
         expect(fetch).not.toHaveBeenCalledWith(
-            '/bcap/api/resource_draft/permit_application',
+            '/bcap/api/workflow_draft/permit_application',
             expect.objectContaining({ method: 'POST' }),
         );
     });

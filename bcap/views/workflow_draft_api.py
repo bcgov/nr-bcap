@@ -2,7 +2,7 @@
 JSON blob, keyed by user + graph slug. The front end PUT/PATCHes `data`, GETs it
 back to rehydrate on resume, then POSTs to the resource's create view to submit
 (validated only then) and DELETEs the draft. Drafts are stored as resources of
-the standalone 'drafts' graph via DraftService (raw ORM, no edit log/index).
+the standalone 'drafts' graph via WorkflowDraftService (raw ORM, no edit log/index).
 
 File uploads are held by reference: the front end uploads to Arches' `/temp_file`
 (bytes in `files_temporary`, unattached) and keeps the `file_id` + file-list
@@ -22,11 +22,14 @@ from arches.app.models.models import ResourceInstance
 from arches.app.utils.permission_backend import user_can_edit_resource
 from arches_querysets.rest_framework.permissions import ResourceEditor
 
-from bcap.services.draft_service import DraftRecord, DraftService
+from bcap.services.workflow_draft_service import (
+    DraftRecord,
+    WorkflowDraftService,
+)
 from bcap.util.graph import get_current_graph
 
 
-class ResourceDraftSerializer(DataclassSerializer):
+class WorkflowDraftSerializer(DataclassSerializer):
     graph_has_different_publication = serializers.SerializerMethodField()
 
     class Meta:
@@ -49,15 +52,15 @@ class DraftWriteSerializer(serializers.Serializer):
     parent_resource_id = serializers.CharField(required=False, allow_blank=True)
 
 
-class ResourceDraftBaseView(APIView):
+class WorkflowDraftBaseView(APIView):
     authentication_classes = [SessionAuthentication]
     # Drafts are personal scratch data -- every verb (incl. GET) requires the
-    # editor role; owner-scoping in DraftService then limits each editor to their own.
+    # editor role; owner-scoping in WorkflowDraftService then limits each editor to their own.
     permission_classes = [ResourceEditor]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.store = DraftService()
+        self.store = WorkflowDraftService()
 
     def verify_parent_resource_access(self, parent_id):
         """Block linking a draft to a resource the user can't reach, or the
@@ -76,19 +79,19 @@ class ResourceDraftBaseView(APIView):
         raise PermissionDenied("You do not have access to the linked resource.")
 
     def serialize(self, record):
-        return ResourceDraftSerializer(record).data
+        return WorkflowDraftSerializer(record).data
 
 
-@extend_schema(tags=["External: resource_draft"])
-class ResourceDraftListCreateView(ResourceDraftBaseView):
+@extend_schema(tags=["External: workflow_draft"])
+class WorkflowDraftListCreateView(WorkflowDraftBaseView):
     """GET the current user's drafts for a graph; POST a new draft."""
 
-    @extend_schema(responses=ResourceDraftSerializer(many=True))
+    @extend_schema(responses=WorkflowDraftSerializer(many=True))
     def get(self, request, graph_slug):
         drafts = self.store.queryset(request.user, graph_slug)
         return Response([self.serialize(self.store.to_record(d)) for d in drafts])
 
-    @extend_schema(request=DraftWriteSerializer, responses=ResourceDraftSerializer)
+    @extend_schema(request=DraftWriteSerializer, responses=WorkflowDraftSerializer)
     def post(self, request, graph_slug):
         body = request.data or {}
         parent_resource_id = body.get("parent_resource_id") or ""
@@ -105,8 +108,8 @@ class ResourceDraftListCreateView(ResourceDraftBaseView):
         return Response(self.serialize(record), status=201)
 
 
-@extend_schema(tags=["External: resource_draft"])
-class ResourceDraftDetailView(ResourceDraftBaseView):
+@extend_schema(tags=["External: workflow_draft"])
+class WorkflowDraftDetailView(WorkflowDraftBaseView):
     """GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
     shallow-merges by section key -- untouched sections are kept, but a section
     present in the body is replaced wholesale (no deep merge), so the client must
@@ -118,18 +121,18 @@ class ResourceDraftDetailView(ResourceDraftBaseView):
             raise NotFound()
         return resource
 
-    @extend_schema(responses=ResourceDraftSerializer)
+    @extend_schema(responses=WorkflowDraftSerializer)
     def get(self, request, graph_slug, pk):
         record = self.store.to_record(self._get_or_404(request, pk))
         return Response(self.serialize(record))
 
-    @extend_schema(request=DraftWriteSerializer, responses=ResourceDraftSerializer)
+    @extend_schema(request=DraftWriteSerializer, responses=WorkflowDraftSerializer)
     def put(self, request, graph_slug, pk):
         resource = self._get_or_404(request, pk)
         data = (request.data or {}).get("data") or {}
         return Response(self.serialize(self.store.set_data(resource, data)))
 
-    @extend_schema(request=DraftWriteSerializer, responses=ResourceDraftSerializer)
+    @extend_schema(request=DraftWriteSerializer, responses=WorkflowDraftSerializer)
     def patch(self, request, graph_slug, pk):
         resource = self._get_or_404(request, pk)
         merged = {

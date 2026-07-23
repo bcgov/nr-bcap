@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from bcap.services.draft_service import DraftService
+from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
@@ -152,7 +152,7 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         cls.mine = build_external_permit(
             builder, "My App", cls.user, "Active", hca_permit=hca
         )
-        cls.draft = DraftService().create(
+        cls.draft = WorkflowDraftService().create(
             cls.user,
             "permit_application",
             {

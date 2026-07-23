@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from arches.app.models.models import ResourceInstance
 
-from bcap.services.draft_service import DraftService
+from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.external_dashboard_service import (
     ExternalDashboardService,
 )
@@ -243,7 +243,7 @@ class ExternalDashboardDraftsTests(TestCase):
         cls.service = ExternalDashboardService()
         cls.user = make_user("drafter")
         cls.other = make_user("other")
-        cls.draft = DraftService().create(
+        cls.draft = WorkflowDraftService().create(
             cls.user,
             "permit_application",
             {
@@ -258,8 +258,8 @@ class ExternalDashboardDraftsTests(TestCase):
             },
         )
         # A draft for another graph and another user -- neither should surface.
-        DraftService().create(cls.user, "hca_permit", {})
-        DraftService().create(cls.other, "permit_application", {})
+        WorkflowDraftService().create(cls.user, "hca_permit", {})
+        WorkflowDraftService().create(cls.other, "permit_application", {})
 
     def test_drafts_scope_returns_only_the_users_permit_application_drafts(self):
         page = self.service.get_cards(
@@ -290,7 +290,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         ResourceInstance.objects.filter(
             graph__slug="drafts", principaluser=self.user
         ).delete()
-        DraftService().create(self.user, "permit_application", data)
+        WorkflowDraftService().create(self.user, "permit_application", data)
         page = self.service.get_cards(
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
         )

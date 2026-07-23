@@ -18,7 +18,7 @@
      api_resource_list='(graph_slug) => {return "{% url "arches_querysets:api-resources" "----p1"%}".replace("----p1", graph_slug)}'
      api_tile='(graph_slug, nodegroup_alias, tile_id) => {return "{% url "arches_querysets:api-tile" "----p1" "----p2" "00000000-0000-0000-0000-000000000000"%}".replace("----p1", graph_slug).replace("----p2", nodegroup_alias).replace("00000000-0000-0000-0000-000000000000", tile_id)}'
      api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
-     api_resource_draft="(graph_slug) => {return `/bcap/api/resource_draft/${graph_slug}`}"
+     api_workflow_draft="(graph_slug) => {return `/bcap/api/workflow_draft/${graph_slug}`}"
      api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"
      permit_application_create="{% url 'permit_application_create' %}"
      seed_process_requirements='(permit_id, permit_type) => {return "{% url "seed_process_requirements" "00000000-0000-0000-0000-000000000000" "----p1" %}".replace("00000000-0000-0000-0000-000000000000", permit_id).replace("----p1", permit_type)}'
