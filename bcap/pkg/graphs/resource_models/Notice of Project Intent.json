@@ -1,19 +1,19 @@
 {
     "graph": [
         {
-            "author": "Test User",
+            "author": "Brett Ferguson",
             "cards": [
                 {
                     "active": true,
-                    "cardid": "07152cea-b79b-40e7-a9c0-c474aff92076",
+                    "cardid": "295002ef-cd5a-4fde-8487-2194f9ff7ba5",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
                     "constraints": [],
                     "cssclass": null,
                     "description": {
-                        "en": "Description of the intended project"
+                        "en": "A document that was delivered to or received from the First Nation describing the project detail, and proof of support or opposition to the project."
                     },
-                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                     "helpenabled": false,
                     "helptext": {
                         "en": ""
@@ -25,20 +25,382 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Project Description"
+                        "en": "Engagement Document"
                     },
-                    "nodegroup_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "nodegroup_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
                     "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "29eb7dbe-3967-4c95-a502-f7a289339764",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "The act of notifying the First Nation about the project intent."
+                    },
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Notification"
+                    },
+                    "nodegroup_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "66064bae-aa94-4d66-963f-b301b1d6c02c",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "The First Nation being Notified of the Project Intent."
+                    },
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "First Nation"
+                    },
+                    "nodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "7de87dfd-ff8c-4f4a-a402-35671081a457",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "High-level details about the project in enough detail to provide stakeholders sufficient information to understand the scope and intent of the project. This information is intended to determine stakeholder support, specifically First Nation groups, before going in depth into the Archaeological Methodologies and processes for formal and more in-depth and structured First Nation Consultation processes."
+                    },
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": "Provide enough detail to allow all stakeholders to understand the intent, scope and impact of the project."
+                    },
+                    "name": {
+                        "en": "Project Details"
+                    },
+                    "nodegroup_id": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "e50e986e-76a4-4d15-ba28-cdd51b26e822",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Project Stakeholders"
+                    },
+                    "nodegroup_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
                 {
-                    "card_id": "07152cea-b79b-40e7-a9c0-c474aff92076",
+                    "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
                     "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Document Type",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "03fa2672-4f41-4ceb-92be-510709536bba",
+                    "label": {
+                        "en": "Document Type"
+                    },
+                    "node_id": "82846265-0e0f-49c1-b646-8d5708dbf0f5",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "29eb7dbe-3967-4c95-a502-f7a289339764",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Notification Method",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "132c2303-2283-4678-9b91-c5808a74d36a",
+                    "label": {
+                        "en": "Notification Method"
+                    },
+                    "node_id": "85532d44-fb23-4978-b9ae-8be020729816",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "label": "Delivery Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "26557ee7-9c09-4000-8286-2478a1cb0f5b",
+                    "label": {
+                        "en": "Delivery Date"
+                    },
+                    "node_id": "346f45c7-a9af-4b8a-862b-73112a8f0db3",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Perliminary Terms",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "350e7452-760a-42df-ab9b-4562bce7fe39",
+                    "label": {
+                        "en": "Perliminary Terms"
+                    },
+                    "node_id": "4445b2d9-e048-49d7-a0c1-9349b38db0a6",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "First Nation",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "47712e37-3f6e-4b80-9794-4c449eab009c",
+                    "label": {
+                        "en": "First Nation"
+                    },
+                    "node_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "29eb7dbe-3967-4c95-a502-f7a289339764",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD",
+                        "defaultValue": "",
+                        "label": "Notification Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "73548049-84c6-4f84-b44a-1cdd395f7410",
+                    "label": {
+                        "en": "Notification Date"
+                    },
+                    "node_id": "8a598f35-26b0-4e8e-a65e-4494a4cd0b42",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
+                    "config": {
+                        "acceptedFiles": "",
+                        "defaultValue": [],
+                        "label": "Engagement Document",
+                        "maxFilesize": "200",
+                        "rerender": true
+                    },
+                    "id": "7becf33d-df09-47ba-b638-08e491b0d59c",
+                    "label": {
+                        "en": "Engagement Document"
+                    },
+                    "node_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000019"
+                },
+                {
+                    "card_id": "29eb7dbe-3967-4c95-a502-f7a289339764",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Notification Delivery Person",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "7f82cfca-60e7-43eb-ae32-a6e589e8b74b",
+                    "label": {
+                        "en": "Notification Delivery Person"
+                    },
+                    "node_id": "c2898307-d0f6-4760-8a6d-0ca4c1c1fa54",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Nation Specific Project Details",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "a70ab7ff-879d-4507-840d-0f03df853acc",
+                    "label": {
+                        "en": "Nation Specific Project Details"
+                    },
+                    "node_id": "afc68880-2bf8-4634-9cae-bcd716830294",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Is For Distribution"
+                    },
+                    "id": "be33dc3b-474c-4949-8238-2736c9837691",
+                    "label": {
+                        "en": "Is For Distribution"
+                    },
+                    "node_id": "a4cf22a2-cf53-4cbd-a572-7bcb28f344c3",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "7de87dfd-ff8c-4f4a-a402-35671081a457",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
@@ -47,18 +409,18 @@
                         "uneditable": false,
                         "width": "100%"
                     },
-                    "id": "833cd5bc-031e-4173-962a-57196c832aae",
+                    "id": "d205a266-05d3-45d5-9275-6418bee0a3ea",
                     "label": {
                         "en": "Project Description"
                     },
-                    "node_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
-                    "sortorder": 0,
+                    "node_id": "53da3e92-6ca7-4ea6-82a7-1f4533f3d05a",
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 }
             ],
-            "color": null,
+            "color": "#16c287",
             "config": {},
             "deploymentdate": null,
             "deploymentfile": null,
@@ -68,17 +430,167 @@
             "edges": [
                 {
                     "description": null,
-                    "domainnode_id": "e1cbf4cc-1ffa-4ecf-b8f3-a640645fc971",
-                    "edgeid": "b42b69f0-df62-467e-a1f8-761f7eabe397",
-                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "domainnode_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "edgeid": "0e0920e4-5708-4a88-b127-227b19e983b8",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                     "name": null,
-                    "ontologyproperty": null,
-                    "rangenode_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "82846265-0e0f-49c1-b646-8d5708dbf0f5",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "edgeid": "11de8e6e-3036-445b-96ac-e42ff0462eba",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "rangenode_id": "04a3fa8c-c0f5-4419-ad00-7609654b51fb",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "edgeid": "2a51de7c-44da-472b-8a99-e8e527cbf8e9",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "rangenode_id": "c2898307-d0f6-4760-8a6d-0ca4c1c1fa54",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "edgeid": "318afbbc-4bc5-4c91-a758-fe0ee16b3d37",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "rangenode_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "edgeid": "3b590e54-9c8b-492a-a428-c0c59242eaf4",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P128_carries",
+                    "rangenode_id": "346f45c7-a9af-4b8a-862b-73112a8f0db3",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "edgeid": "5c1fc9c9-8b17-416d-a629-e45f94b49db6",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
+                    "rangenode_id": "afc68880-2bf8-4634-9cae-bcd716830294",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "edgeid": "5fa642ab-e383-4ebd-9ab6-4996cb631f32",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "a4cf22a2-cf53-4cbd-a572-7bcb28f344c3",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "edgeid": "60d33223-2de1-488a-88c0-4028951eeec6",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
+                    "rangenode_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "edgeid": "6e0f6f28-900a-4602-91da-81189f0b5764",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
+                    "rangenode_id": "4445b2d9-e048-49d7-a0c1-9349b38db0a6",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "edgeid": "9f5ba8aa-63df-43ab-a979-0dd40231ae5b",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P11i_participated_in",
+                    "rangenode_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "93419c55-b342-4ca5-9490-892f7b2a4cea",
+                    "edgeid": "a5b40636-094e-452e-b1fa-19c9ad3bba6e",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "93419c55-b342-4ca5-9490-892f7b2a4cea",
+                    "edgeid": "b9cbdfca-337a-4911-b19d-37037603fde9",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "edgeid": "c6a277e8-849c-41bc-ad21-25f0e8918acf",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "8a598f35-26b0-4e8e-a65e-4494a4cd0b42",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "edgeid": "cc1df63f-0e31-418e-b35f-c015a7283f80",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P148_has_component",
+                    "rangenode_id": "53da3e92-6ca7-4ea6-82a7-1f4533f3d05a",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "edgeid": "e17b0469-8344-40cc-b487-d51ad647a3a2",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "rangenode_id": "596d4ede-a0f0-41c8-a188-227303de0c43",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "edgeid": "faf7aa3b-1605-40f6-a1c6-a1f1ce4c11c5",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P32_used_general_technique",
+                    "rangenode_id": "85532d44-fb23-4978-b9ae-8be020729816",
                     "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [],
-            "graphid": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+            "graphid": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
             "group_permissions": {},
             "has_unpublished_changes": true,
             "iconclass": "fa fa-bullhorn",
@@ -91,33 +603,357 @@
             },
             "nodegroups": [
                 {
-                    "cardinality": "1",
-                    "grouping_node_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "cardinality": "n",
+                    "grouping_node_id": "0fb9d675-e68a-498a-a647-007a0d423850",
                     "legacygroupid": null,
-                    "nodegroupid": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "nodegroupid": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "parentnodegroup_id": "9cde4eca-9721-478c-b4bb-186d614101b5"
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "legacygroupid": null,
+                    "nodegroupid": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "parentnodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850"
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "legacygroupid": null,
+                    "nodegroupid": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "legacygroupid": null,
+                    "nodegroupid": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "parentnodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850"
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "legacygroupid": null,
+                    "nodegroupid": "9cde4eca-9721-478c-b4bb-186d614101b5",
                     "parentnodegroup_id": null
                 }
             ],
             "nodes": [
                 {
-                    "alias": "project_description",
-                    "config": {},
-                    "datatype": "non-localized-string",
-                    "description": "Description of the intended project",
+                    "alias": "proposed_first_nations_consultations",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance-list",
+                    "description": "Proposed list of First Nations that will be consulted with. This may or may not be the same as the list First Nations whose territorial boundaries intersect with the project boundary.",
                     "exportable": false,
                     "fieldname": null,
-                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Proposed First Nations Consultations",
+                    "nodegroup_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "nodeid": "04a3fa8c-c0f5-4419-ad00-7609654b51fb",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "first_nation",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "The First Nation being Notified of the Project Intent.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "First Nation",
+                    "nodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "nodeid": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "notification",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "The act of notifying the First Nation about the project intent.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                     "hascustomalias": false,
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
+                    "name": "Notification",
+                    "nodegroup_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "nodeid": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P11i_participated_in",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "delivery_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD"
+                    },
+                    "datatype": "date",
+                    "description": "Date the document was sent to the First Nation",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Delivery Date",
+                    "nodegroup_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "nodeid": "346f45c7-a9af-4b8a-862b-73112a8f0db3",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E50_Date",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P128_carries",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "perliminary_terms",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Any specific terms that have been identified as part of the Notice of Project Intent with the nation",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Perliminary Terms",
+                    "nodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "nodeid": "4445b2d9-e048-49d7-a0c1-9349b38db0a6",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "project_description",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
                     "name": "Project Description",
-                    "nodegroup_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
-                    "nodeid": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
-                    "ontologyclass": null,
-                    "parentproperty": null,
+                    "nodegroup_id": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "nodeid": "53da3e92-6ca7-4ea6-82a7-1f4533f3d05a",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P148_has_component",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "calculated_impacted_first_nations",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance-list",
+                    "description": "List First Nations whose territorial boundaries intersect with the project boundary. Can be done as a spatial calculation using the Project Boundary and information from PIP and/or FNCS.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Calculated Impacted First Nations",
+                    "nodegroup_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "nodeid": "596d4ede-a0f0-41c8-a188-227303de0c43",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "project_details",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "High-level details about the project in enough detail to provide stakeholders sufficient information to understand the scope and intent of the project. This information is intended to determine stakeholder support, specifically First Nation groups, before going in depth into the Archaeological Methodologies and processes for formal and more in-depth and structured First Nation Consultation processes.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Project Details",
+                    "nodegroup_id": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "nodeid": "683ab311-cdf7-4e95-b5d5-a9d5465513d4",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E89_Propositional_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "engagement_document",
+                    "config": {
+                        "imagesOnly": false,
+                        "maxFileSize": null,
+                        "maxFiles": 1
+                    },
+                    "datatype": "file-list",
+                    "description": "A document that was delivered to or received from the First Nation describing the project detail, and proof of support or opposition to the project.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Engagement Document",
+                    "nodegroup_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "nodeid": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E84_Information_Carrier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "document_type",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Type of document - Engagement Letter, Letter of Support or Opposition, Project Summary document, others?\nShould become a reference datatype once the list is created.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Document Type",
+                    "nodegroup_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "nodeid": "82846265-0e0f-49c1-b646-8d5708dbf0f5",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "notification_method",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "The mechanism for the delivery to the First Nation (eg - email, letter mail, fax, direct access, others?). This should become a controlled list once defined.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Notification Method",
+                    "nodegroup_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "nodeid": "85532d44-fb23-4978-b9ae-8be020729816",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P32_used_general_technique",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "notification_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD"
+                    },
+                    "datatype": "date",
+                    "description": "The date the Notification took place",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Notification Date",
+                    "nodegroup_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "nodeid": "8a598f35-26b0-4e8e-a65e-4494a4cd0b42",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E50_Date",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -129,7 +965,7 @@
                     "description": "",
                     "exportable": false,
                     "fieldname": null,
-                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
@@ -138,21 +974,133 @@
                     "istopnode": true,
                     "name": "Notice of Project Intent",
                     "nodegroup_id": null,
-                    "nodeid": "e1cbf4cc-1ffa-4ecf-b8f3-a640645fc971",
-                    "ontologyclass": null,
+                    "nodeid": "93419c55-b342-4ca5-9490-892f7b2a4cea",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity",
                     "parentproperty": "",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "project_stakeholders",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Project Stakeholders",
+                    "nodegroup_id": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "nodeid": "9cde4eca-9721-478c-b4bb-186d614101b5",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "is_for_distribution",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": "Whether this document should be distributed to the First Nation",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Is For Distribution",
+                    "nodegroup_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
+                    "nodeid": "a4cf22a2-cf53-4cbd-a572-7bcb28f344c3",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "nation_specific_project_details",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Details about the project that only pertain to a specific First Nation.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Nation Specific Project Details",
+                    "nodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850",
+                    "nodeid": "afc68880-2bf8-4634-9cae-bcd716830294",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "notification_delivery_person",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "The person who delivered the notification",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Notification Delivery Person",
+                    "nodegroup_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
+                    "nodeid": "c2898307-d0f6-4760-8a6d-0ca4c1c1fa54",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }
             ],
-            "ontology_id": null,
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
-                "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                 "most_recent_edit_id": null,
-                "notes": "Adding in Notice of Project Intent",
-                "publicationid": "d34d2c0f-6aef-4c88-8c24-91d6a0122a00",
-                "published_time": "2026-07-21T15:11:59.616"
+                "notes": "Widget tweaks, put notification and documents on separate cards",
+                "publicationid": "0006465b-d95f-4abd-a2ea-4174d29bd153",
+                "published_time": "2026-07-23T14:49:33.420"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -224,7 +1172,7 @@
                 "description": "",
                 "exportable": false,
                 "fieldname": null,
-                "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                 "hascustomalias": false,
                 "is_collector": false,
                 "is_immutable": false,
@@ -233,8 +1181,8 @@
                 "istopnode": true,
                 "name": "Notice of Project Intent",
                 "nodegroup_id": null,
-                "nodeid": "e1cbf4cc-1ffa-4ecf-b8f3-a640645fc971",
-                "ontologyclass": null,
+                "nodeid": "93419c55-b342-4ca5-9490-892f7b2a4cea",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity",
                 "sortorder": 0,
                 "source_identifier_id": null,
                 "sourcebranchpublication_id": null
@@ -243,7 +1191,7 @@
             "source_identifier_id": null,
             "spatial_views": [],
             "subtitle": {
-                "en": ""
+                "en": "Model to track preliminary distribution of NOI to stakeholders"
             },
             "template_id": "50000000-0000-0000-0000-000000000001",
             "user_permissions": {},
@@ -251,9 +1199,9 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: detected dubious ownership in repository at '/web_root/arches'",
+        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
-        "os version": "6.18.35.2-microsoft-standard-WSL2"
+        "os version": "6.12.76-linuxkit"
     }
 }
