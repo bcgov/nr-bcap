@@ -14,7 +14,12 @@ import type {
     PermitApplicationResponse,
     PermitProcessModuleTileWritable,
     ProcessRequirement,
+<<<<<<< HEAD
     AppThread,
+=======
+    RawThreadMessage,
+    ResourceDraft,
+>>>>>>> origin/release/2.0.x
 } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { getCsrfToken } from '@/bcap/util.ts';
@@ -29,37 +34,33 @@ type PatchedBcapMessageWritable = z.infer<typeof zPatchedBcapMessageWritable>;
 export type RawThreadMessage = z.infer<typeof zBcapMessage>;
 type PaginatedMessages = z.infer<typeof zPaginatedBcapMessageList>;
 
-export interface ResourceDraftResponse {
-    id: string;
-    data: ArchesDraftData;
-}
-
 export const fetchDraft = async (
     graphSlug: string,
     draftId: string,
-): Promise<ResourceDraftResponse> => {
-    return apiFetchJson<ResourceDraftResponse>(
+): Promise<ResourceDraft> => {
+    return apiFetchJson<ResourceDraft>(
         `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`,
     );
 };
 
-// parentResourceId, when given, is stored as a top-level key in the draft blob
-// (not in aliased_data, which is validated against the graph on submit) so the
-// parent resource's page can filter its own drafts. The backend verifies the
-// user can access that resource before saving. It is stripped at submit time.
+// parentResourceId, when given, is stored on the draft's own node (outside the
+// blob, which is validated against the graph on submit) so the parent resource's
+// page can filter its own drafts. The backend verifies the user can access that
+// resource before saving.
 export const createDraft = async (
     graphSlug: string,
     parentResourceId?: string,
-): Promise<ResourceDraftResponse> => {
-    const data: { parent_resource_id?: string } = {};
-    if (parentResourceId) {
-        data.parent_resource_id = parentResourceId;
-    }
-    return apiFetchJson<ResourceDraftResponse>(
+): Promise<ResourceDraft> => {
+    return apiFetchJson<ResourceDraft>(
         arches.urls.api_resource_draft(graphSlug),
         {
             method: HttpMethod.Post,
-            body: { data },
+            body: {
+                data: {},
+                ...(parentResourceId
+                    ? { parent_resource_id: parentResourceId }
+                    : {}),
+            },
         },
     );
 };
@@ -146,7 +147,6 @@ export const submitApplication = async (
                 },
             },
         );
-        console.log('Final resource created successfully!', finalResource);
 
         // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
@@ -171,14 +171,10 @@ export const submitModule = async (
     payload: ArchesDraftData,
 ): Promise<PermitApplicationResponse> => {
     try {
-        // parent_resource_id is draft-only bookkeeping, not a graph alias, so
-        // drop it before the serializer validates the body against the graph.
-        const aliasedData = { ...payload };
-        delete aliasedData.parent_resource_id;
         const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
         const result = await apiFetchJson<PermitApplicationResponse>(url, {
             method: HttpMethod.Post,
-            body: { aliased_data: aliasedData },
+            body: { aliased_data: payload },
         });
         if (draftId) {
             await deleteDraft(moduleSlug, draftId);
@@ -320,6 +316,32 @@ export const patchModuleOrder = async (
     await apiFetch(url, { method: HttpMethod.Patch, body });
 };
 
+// Mark a submitted module completed/incomplete. The dedicated route flips the
+// completion flag and stamps or clears the completed date server-side, touching
+// only those nodes so the module's order/name/id are left intact.
+export const setModuleCompleted = async (
+    permitId: string,
+    moduleTileId: string,
+    completed: boolean,
+): Promise<void> => {
+    await apiFetch(arches.urls.permit_module(permitId, moduleTileId), {
+        method: HttpMethod.Patch,
+        body: { completed },
+    });
+};
+
+// Mark a non-checklist requirement satisfied/unsatisfied. The dedicated route
+// sets the assessment tile server-side, so the client just sends the flag.
+export const setRequirementSatisfied = async (
+    requirementResourceId: string,
+    satisfied: boolean,
+): Promise<void> => {
+    await apiFetch(arches.urls.requirement_status(requirementResourceId), {
+        method: HttpMethod.Patch,
+        body: { satisfied },
+    });
+};
+
 export const removeModuleAndRequirements = async (
     permitId: string,
     moduleTileId: string,
@@ -388,19 +410,12 @@ export const createBcapMessage = async (
         message_content: {
             aliased_data: {
                 message_content: {
-                    node_value: {
-                        en: { value: messageText, direction: 'ltr' },
-                    },
+                    node_value: localized(messageText),
                 },
                 message_subject: {
-                    node_value: {
-                        en: {
-                            value: topic
-                                ? `${topic} - Application ${applicationId}`
-                                : `Comment regarding Application ${applicationId}`,
-                            direction: 'ltr',
-                        },
-                    },
+                    node_value: localized(
+                        `Comment regarding Application ${applicationId}`,
+                    ),
                 },
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
@@ -549,16 +564,18 @@ export const getMessagesForPermit = async (
     return { threads };
 };
 
-export const getContributors = async (): Promise<
-    Array<{ label: string; value: string }>
-> => {
-    const data = await apiFetchJson<{
-        results?: Array<{ name?: string; resourceinstanceid: string }>;
-    }>(arches.urls.api_contributor);
+// The contributors you can address a message to for a resource: its
+// login-linked contributors (ministry assignees included), from the backend.
+export const getContributorsForResources = async (
+    resourceId: string,
+): Promise<Array<{ label: string; value: string }>> => {
+    const data = await apiFetchJson<
+        Array<{ id: string; name?: string; email?: string; type?: string }>
+    >(arches.urls.bcap_message_resource_contributors(resourceId));
 
-    return (data.results ?? []).map((item) => ({
+    return (data ?? []).map((item) => ({
         label: item.name || 'Unknown Contributor',
-        value: item.resourceinstanceid,
+        value: item.id,
     }));
 };
 

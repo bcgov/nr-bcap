@@ -64,7 +64,9 @@ const isReplyMode = computed(() => {
 const loadRecipients = async () => {
     isLoadingRecipients.value = true;
     try {
-        const fetchedRecipients = await getContributors();
+        const fetchedRecipients = await getContributorsForResources(
+            props.permitResourceId,
+        );
         recipients.value = fetchedRecipients;
 
         if (recipients.value.length > 0) {
@@ -156,7 +158,6 @@ const submitMessage = async () => {
             isReplyMode.value ? undefined : formattedTopic,
         );
 
-        console.log('Message successfully created:', responseData);
         emit('message-sent', responseData);
         closeDialog();
     } catch (error) {
@@ -436,13 +437,15 @@ onMounted(() => {
 
 <style>
 /* --- Trigger Button Styles --- */
+/* BC Gov secondary button: navy outline on white. */
+/* Filled navy so the primary action leads over the muted "Submitted" chip. */
 .trigger-btn {
-    background-color: #d0d0d0;
-    color: #333;
-    border: none;
+    background-color: var(--bc-navy);
+    color: #ffffff;
+    border: 2px solid var(--bc-navy);
     border-radius: 4px;
     padding: 0.5rem 1rem;
-    font-weight: 500;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -450,7 +453,8 @@ onMounted(() => {
 }
 
 .trigger-btn:hover {
-    background-color: #e0e0e0;
+    background-color: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
 }
 
 .message-badge {
@@ -598,7 +602,7 @@ onMounted(() => {
     color: #333;
 }
 
-/* Flex-grow removed to stop expanding */
+/* --- Full Width Textarea --- */
 .full-width-textarea {
     width: 100% !important;
     box-sizing: border-box;

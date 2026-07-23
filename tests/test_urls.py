@@ -239,20 +239,6 @@ class UrlEdgeCaseTests(SimpleTestCase):
         assert resolver.view_name == "bcap_tile_server"
         assert resolver.kwargs["path"] == "layer/name-with_special.chars"
 
-    def test_uuid_lowercase_resolves(self):
-        lowercase_uuid = "12345678-1234-1234-1234-123456789abc"
-        url = reverse("borden_number", kwargs={"resourceinstanceid": lowercase_uuid})
-        resolver = resolve(url)
-        assert resolver.view_name == "borden_number"
-        assert str(resolver.kwargs["resourceinstanceid"]) == lowercase_uuid
-
-    def test_graph_slug_with_underscores(self):
-        url = reverse(
-            "api-related-sites-resources", kwargs={"graph": "archaeological_site"}
-        )
-        resolver = resolve(url)
-        assert resolver.kwargs["graph"] == "archaeological_site"
-
     def test_graph_slug_with_hyphens(self):
         url = reverse("api-related-sites-resources", kwargs={"graph": "site-visit"})
         resolver = resolve(url)

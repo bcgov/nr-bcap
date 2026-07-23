@@ -1,4 +1,3 @@
-/* eslint-disable vue/one-component-per-file -- test stubs live together */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';

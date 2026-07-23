@@ -1,0 +1,259 @@
+{
+    "graph": [
+        {
+            "author": "Test User",
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "07152cea-b79b-40e7-a9c0-c474aff92076",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "Description of the intended project"
+                    },
+                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Project Description"
+                    },
+                    "nodegroup_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "07152cea-b79b-40e7-a9c0-c474aff92076",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Project Description",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "833cd5bc-031e-4173-962a-57196c832aae",
+                    "label": {
+                        "en": "Project Description"
+                    },
+                    "node_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                }
+            ],
+            "color": null,
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": ""
+            },
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "e1cbf4cc-1ffa-4ecf-b8f3-a640645fc971",
+                    "edgeid": "b42b69f0-df62-467e-a1f8-761f7eabe397",
+                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "source_identifier_id": null
+                }
+            ],
+            "functions_x_graphs": [],
+            "graphid": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+            "group_permissions": {},
+            "has_unpublished_changes": true,
+            "iconclass": "fa fa-bullhorn",
+            "is_active": true,
+            "is_copy_immutable": false,
+            "isresource": true,
+            "jsonldcontext": null,
+            "name": {
+                "en": "Notice of Project Intent"
+            },
+            "nodegroups": [
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "legacygroupid": null,
+                    "nodegroupid": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "nodes": [
+                {
+                    "alias": "project_description",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": "Description of the intended project",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Project Description",
+                    "nodegroup_id": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "nodeid": "8d854cd7-1bc1-44c8-bfee-b1f62c058d92",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "new_resource_model",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "Notice of Project Intent",
+                    "nodegroup_id": null,
+                    "nodeid": "e1cbf4cc-1ffa-4ecf-b8f3-a640645fc971",
+                    "ontologyclass": null,
+                    "parentproperty": "",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "ontology_id": null,
+            "publication": {
+                "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                "most_recent_edit_id": null,
+                "notes": "Adding in Notice of Project Intent",
+                "publicationid": "d34d2c0f-6aef-4c88-8c24-91d6a0122a00",
+                "published_time": "2026-07-21T15:11:59.616"
+            },
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "resource_instance_lifecycle": {
+                "id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75",
+                "name": {
+                    "en": "Standard"
+                },
+                "resource_instance_lifecycle_states": [
+                    {
+                        "action_label": {
+                            "en": "Revert to Draft"
+                        },
+                        "can_delete_resource_instances": true,
+                        "can_edit_resource_instances": true,
+                        "id": "9375c9a7-dad2-4f14-a5c1-d7e329fdde4f",
+                        "is_initial_state": true,
+                        "name": {
+                            "en": "Draft"
+                        },
+                        "next_resource_instance_lifecycle_states": [
+                            "f75bb034-36e3-4ab4-8167-f520cf0b4c58"
+                        ],
+                        "previous_resource_instance_lifecycle_states": [],
+                        "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
+                    },
+                    {
+                        "action_label": {
+                            "en": "Make Active"
+                        },
+                        "can_delete_resource_instances": false,
+                        "can_edit_resource_instances": true,
+                        "id": "f75bb034-36e3-4ab4-8167-f520cf0b4c58",
+                        "is_initial_state": false,
+                        "name": {
+                            "en": "Active"
+                        },
+                        "next_resource_instance_lifecycle_states": [
+                            "d95d9c0e-0e2c-4450-93a3-d788b91abcc8"
+                        ],
+                        "previous_resource_instance_lifecycle_states": [
+                            "9375c9a7-dad2-4f14-a5c1-d7e329fdde4f"
+                        ],
+                        "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
+                    },
+                    {
+                        "action_label": {
+                            "en": "Retire"
+                        },
+                        "can_delete_resource_instances": false,
+                        "can_edit_resource_instances": false,
+                        "id": "d95d9c0e-0e2c-4450-93a3-d788b91abcc8",
+                        "is_initial_state": false,
+                        "name": {
+                            "en": "Retired"
+                        },
+                        "next_resource_instance_lifecycle_states": [],
+                        "previous_resource_instance_lifecycle_states": [
+                            "f75bb034-36e3-4ab4-8167-f520cf0b4c58"
+                        ],
+                        "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
+                    }
+                ]
+            },
+            "root": {
+                "alias": "new_resource_model",
+                "config": {},
+                "datatype": "semantic",
+                "description": "",
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "ae61c9e3-0676-4daa-abdf-39982d721cb3",
+                "hascustomalias": false,
+                "is_collector": false,
+                "is_immutable": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "Notice of Project Intent",
+                "nodegroup_id": null,
+                "nodeid": "e1cbf4cc-1ffa-4ecf-b8f3-a640645fc971",
+                "ontologyclass": null,
+                "sortorder": 0,
+                "source_identifier_id": null,
+                "sourcebranchpublication_id": null
+            },
+            "slug": "notice_of_project_intent",
+            "source_identifier_id": null,
+            "spatial_views": [],
+            "subtitle": {
+                "en": ""
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "user_permissions": {},
+            "version": ""
+        }
+    ],
+    "metadata": {
+        "db": "PostgreSQL 16.4 (Debian 16.4-1.pgdg110+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
+        "git hash": "fatal: detected dubious ownership in repository at '/web_root/arches'",
+        "os": "Linux",
+        "os version": "6.18.35.2-microsoft-standard-WSL2"
+    }
+}

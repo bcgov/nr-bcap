@@ -4,7 +4,6 @@ from arches.app.datatypes.datatypes import DataTypeFactory
 from bcap.util.aliases.permit_application import PermitApplicationAliases as pa
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as aliases
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.controlled_list import get_hierarchy_for_list_item
 from bcap.util.graph import node_id
 
 details = {

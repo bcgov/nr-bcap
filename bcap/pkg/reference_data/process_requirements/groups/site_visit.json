@@ -74,6 +74,17 @@
                     "sub_satisfied": false
                 }
             ]
+        },
+        {
+            "id": "REQ-SV-TEMPLATE-003",
+            "name": "Submit Site Visit",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "site_visit",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
         }
     ]
 }

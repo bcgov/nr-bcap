@@ -18,8 +18,8 @@ describe('QuestionDialogExternal.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
-        // Default successful response for getContributors
-        vi.mocked(getContributors).mockResolvedValue([
+        // Default successful response for the recipient fetch
+        vi.mocked(getContributorsForResources).mockResolvedValue([
             { label: 'John Doe', value: 'user-1' },
             { label: 'Jane Smith', value: 'user-2' },
         ]);
@@ -64,7 +64,8 @@ describe('QuestionDialogExternal.vue', () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        expect(getContributors).toHaveBeenCalledOnce();
+        expect(getContributorsForResources).toHaveBeenCalledOnce();
+        expect(getContributorsForResources).toHaveBeenCalledWith('permit-999');
 
         // Use 'as any' to bypass the <script setup> private instance TypeScript error
         expect((wrapper.vm as unknown).recipients.length).toBe(2);

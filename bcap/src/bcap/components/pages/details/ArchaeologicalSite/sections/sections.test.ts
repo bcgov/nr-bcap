@@ -56,6 +56,9 @@ const fixtures = [
                 site_alert: { aliased_data: {} },
             },
         },
+        // These sections also declare required hria/child/site-visit props; pass
+        // them present (empty/undefined) so Vue's required check is satisfied.
+        extraProps: { hriaData: undefined, childSiteData: undefined },
     },
     {
         name: 'DetailsSection3',
@@ -83,11 +86,13 @@ const fixtures = [
                 aliased_data: { elevation_comments: [{ aliased_data: {} }] },
             },
         },
+        extraProps: { siteVisitData: [], hriaData: undefined },
     },
     {
         name: 'DetailsSection5',
         component: DetailsSection5,
         data: { aliased_data: {} },
+        extraProps: { hriaData: undefined },
     },
     {
         name: 'DetailsSection6',
@@ -115,16 +120,18 @@ const fixtures = [
 ];
 
 describe('ArchaeologicalSite detail sections', () => {
-    for (const { name, component, data } of fixtures) {
+    for (const { name, component, data, extraProps = {} } of fixtures) {
         it(`${name} renders the empty state with no data`, () => {
             const wrapper = shallowMount(component, {
-                props: { data: undefined },
+                props: { data: undefined, ...extraProps },
             });
             expect(wrapper.html()).toBeTruthy();
         });
 
         it(`${name} renders the populated state with data`, () => {
-            const wrapper = shallowMount(component, { props: { data } });
+            const wrapper = shallowMount(component, {
+                props: { data, ...extraProps },
+            });
             expect(wrapper.html()).toBeTruthy();
         });
     }

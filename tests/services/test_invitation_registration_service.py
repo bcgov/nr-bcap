@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from bcap.models import RegistrationLink
-from bcap.services.dashboard.contributor_service import (
+from bcap.services.contributor_service import (
     ContributorService,
     NewContributor,
 )
