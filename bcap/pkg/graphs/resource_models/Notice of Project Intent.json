@@ -157,9 +157,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Document Type",
                         "maxLength": null,
                         "placeholder": {
@@ -187,9 +185,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Notification Method",
                         "maxLength": null,
                         "placeholder": {
@@ -238,9 +234,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Perliminary Terms",
                         "maxLength": null,
                         "placeholder": {
@@ -263,9 +257,7 @@
                     "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "First Nation",
                         "placeholder": {
                             "en": ""
@@ -325,9 +317,7 @@
                     "card_id": "29eb7dbe-3967-4c95-a502-f7a289339764",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Notification Delivery Person",
                         "placeholder": {
                             "en": ""
@@ -352,9 +342,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Nation Specific Project Details",
                         "maxLength": null,
                         "placeholder": {
@@ -398,9 +386,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
@@ -1010,10 +996,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
