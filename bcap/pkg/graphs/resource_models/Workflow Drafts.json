@@ -25,7 +25,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Parent Resource Id"
+                        "en": "Parent Resource"
                     },
                     "nodegroup_id": "076698db-120c-455e-965a-34224d2a7e60",
                     "sortorder": null,
@@ -184,7 +184,7 @@
                     "config": {
                         "defaultValue": "",
                         "i18n_properties": ["placeholder"],
-                        "label": "Parent Resource Id",
+                        "label": "Parent Resource",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -194,7 +194,7 @@
                     },
                     "id": "255f8bd2-6eed-4734-b0be-5feb09427b3a",
                     "label": {
-                        "en": "Parent Resource Id"
+                        "en": "Parent Resource"
                     },
                     "node_id": "076698db-120c-455e-965a-34224d2a7e60",
                     "sortorder": 0,
@@ -442,7 +442,7 @@
             ],
             "nodes": [
                 {
-                    "alias": "parent_resource_id",
+                    "alias": "parent_resource",
                     "config": {
                         "graphs": [],
                         "searchDsl": "",
@@ -457,9 +457,9 @@
                     "is_collector": true,
                     "is_immutable": false,
                     "isrequired": false,
-                    "issearchable": false,
+                    "issearchable": true,
                     "istopnode": false,
-                    "name": "Parent Resource Id",
+                    "name": "Parent Resource",
                     "nodegroup_id": "076698db-120c-455e-965a-34224d2a7e60",
                     "nodeid": "076698db-120c-455e-965a-34224d2a7e60",
                     "ontologyclass": null,
