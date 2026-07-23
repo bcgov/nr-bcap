@@ -219,7 +219,9 @@ onMounted(async () => {
 
 const nextLabel = computed(() => {
     if (currentStep.value === steps.length) return 'Print';
-    return currentStep.value < steps.length - 1 ? 'Next' : 'Create Investigation';
+    return currentStep.value < steps.length - 1
+        ? 'Next'
+        : 'Create Filing';
 });
 
 const showPrevious = computed(() => {
