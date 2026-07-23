@@ -185,7 +185,7 @@ onMounted(() => {
             class="trigger-btn"
             @click="openDialog"
         >
-            <span class="trigger-label">View Messages</span>
+            <span class="trigger-label">Messages</span>
             <i class="fa-regular fa-comment-dots"></i>
 
             <span

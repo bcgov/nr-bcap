@@ -411,7 +411,8 @@ export const createBcapMessage = async (
                 },
                 message_subject: {
                     node_value: localized(
-                        `Comment regarding Application ${applicationId}`,
+                        topic ||
+                            `Comment regarding Application ${applicationId}`,
                     ),
                 },
                 message_creation_date: { node_value: new Date().toISOString() },

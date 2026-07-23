@@ -577,7 +577,11 @@ watch(activeModuleId, (id) => {
                             :is-staff="isStaff"
                             :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
+                            :application-id="state.permitData.applicationNumber"
+                            :threads="state.threads"
                             @changed="loadPermitDetails"
+                            @message-sent="loadMessages"
+                            @thread-resolved="handleThreadResolved"
                         />
                     </div>
                 </div>
