@@ -82,7 +82,7 @@ class WorkflowDraftService(BaseGraphService):
             or "",
             frontend_version=value(WorkflowDraftsAliases.FRONTEND_VERSION) or "",
             parent_resource_id=self._resource_id_from(
-                value(WorkflowDraftsAliases.PARENT_RESOURCE_ID)
+                value(WorkflowDraftsAliases.PARENT_RESOURCE)
             ),
             data=json.loads(blob) if blob else {},
             created=resource.createdtime,
@@ -114,7 +114,7 @@ class WorkflowDraftService(BaseGraphService):
                 WorkflowDraftsAliases.GRAPH_SLUG: graph_slug,
                 WorkflowDraftsAliases.GRAPH_PUBLICATION_ID: str(publication_id or ""),
                 WorkflowDraftsAliases.FRONTEND_VERSION: frontend_version or "",
-                WorkflowDraftsAliases.PARENT_RESOURCE_ID: self._resource_instance_value(
+                WorkflowDraftsAliases.PARENT_RESOURCE: self._resource_instance_value(
                     parent_resource_id
                 ),
                 WorkflowDraftsAliases.DRAFT_DATA: json.dumps(data or {}),
@@ -150,7 +150,7 @@ class WorkflowDraftService(BaseGraphService):
     @staticmethod
     def _resource_id_from(node_value):
         """The parent resource id out of a resource-instance node value, tolerating
-        a legacy bare string from before parent_resource_id became resource-instance."""
+        a legacy bare string from before parent_resource became resource-instance."""
         if isinstance(node_value, list):
             return node_value[0]["resourceId"] if node_value else ""
         return node_value or ""
