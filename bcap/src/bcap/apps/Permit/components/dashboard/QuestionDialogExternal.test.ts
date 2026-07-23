@@ -3,15 +3,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import QuestionDialogExternal from './QuestionDialogExternal.vue';
 import {
     createBcapMessage,
-    getContributors,
     markMessageAsRead,
+    getContributorsForResources,
 } from '@/bcap/apps/Permit/api.ts';
 
 // 1. Mock the API calls
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
-    getContributors: vi.fn(),
     markMessageAsRead: vi.fn(),
+    getContributorsForResources: vi.fn(),
 }));
 
 describe('QuestionDialogExternal.vue', () => {

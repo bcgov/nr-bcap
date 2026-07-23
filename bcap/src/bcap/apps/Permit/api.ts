@@ -14,12 +14,9 @@ import type {
     PermitApplicationResponse,
     PermitProcessModuleTileWritable,
     ProcessRequirement,
-<<<<<<< HEAD
-    AppThread,
-=======
     RawThreadMessage,
     ResourceDraft,
->>>>>>> origin/release/2.0.x
+    AppThread,
 } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { getCsrfToken } from '@/bcap/util.ts';

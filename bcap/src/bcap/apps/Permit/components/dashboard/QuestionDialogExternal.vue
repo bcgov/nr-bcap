@@ -7,8 +7,8 @@ import Dropdown from 'primevue/dropdown';
 import { z } from 'zod';
 import {
     createBcapMessage,
-    getContributors,
     markMessageAsRead,
+    getContributorsForResources,
 } from '@/bcap/apps/Permit/api.ts';
 import type { FormattedMessage, AppThread } from '@/bcap/types.ts';
 import {
