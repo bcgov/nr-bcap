@@ -4,6 +4,7 @@ from django.test import TestCase
 from arches.app.models.models import ResourceInstance
 
 from bcap.services.workflow_draft_service import WorkflowDraftService
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.services.dashboard.external_dashboard_service import (
     ExternalDashboardService,
 )
@@ -288,7 +289,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
     def _draft_card(self, data):
         # The dashboard expects one draft, so clear the user's drafts first.
         ResourceInstance.objects.filter(
-            graph__slug="drafts", principaluser=self.user
+            graph__slug=GraphSlugs.WORKFLOW_DRAFTS, principaluser=self.user
         ).delete()
         WorkflowDraftService().create(self.user, "permit_application", data)
         page = self.service.get_cards(
