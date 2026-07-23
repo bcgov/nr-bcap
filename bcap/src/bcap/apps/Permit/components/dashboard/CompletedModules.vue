@@ -85,6 +85,15 @@ interface ModuleRow {
     requirements: RequirementItem[];
 }
 
+// Status glyphs, defined once so the legend, module pills, and requirement rows
+// stay in sync. The app loads only Font Awesome solid, so every class is solid.
+const STATUS_ICON = {
+    future: 'fa-solid fa-circle-notch',
+    inProgress: 'fa-solid fa-clock',
+    complete: 'fa-solid fa-check',
+    unknown: 'fa-solid fa-circle-notch',
+} as const;
+
 const isChecklist = (type: string): boolean =>
     type.toLowerCase().includes('checklist');
 
@@ -281,13 +290,9 @@ watch(
 
 const hasModules = computed(() => state.rows.length > 0);
 
-// Applicants (non-staff) don't see internal-only requirements.
+// All requirements are shown, internal ones included.
 const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
-    isStaff
-        ? row.requirements
-        : row.requirements.filter(
-              (requirement) => requirement.internal === false,
-          );
+    row.requirements;
 
 const moduleRemove = useConfirmAction<ModuleRow>(async (row) => {
     await removeModuleAndRequirements(permitId, row.tileid);
@@ -388,17 +393,18 @@ const persistOrder = async () => {
                 Saving order…
             </span>
             <span class="status-legend">
-                <i class="fa-solid fa-circle-check is-satisfied"></i>
-                Complete
-                <i class="fa-solid fa-clock is-in-progress"></i>
+                <i :class="[STATUS_ICON.future, 'is-future']"></i>
+                Future
+                <i :class="[STATUS_ICON.inProgress, 'is-in-progress']"></i>
                 In progress
+                <i :class="[STATUS_ICON.complete, 'is-satisfied']"></i>
+                Complete
             </span>
         </div>
         <div
             v-if="isStaff && addableModules && addableModules.length"
             class="add-module-bar"
         >
-            <span class="add-module-label">Add module to submission</span>
             <button
                 v-for="mod in addableModules"
                 :key="mod.id"
@@ -451,23 +457,31 @@ const persistOrder = async () => {
                         >
                             <i class="fa-solid fa-grip-vertical"></i>
                         </span>
-                        <i
-                            class="module-status"
+                        <span class="module-title">
+                            <span class="module-name">{{ row.name }}</span>
+                            <span
+                                v-if="row.moduleId"
+                                class="module-id"
+                            >
+                                · {{ row.moduleId }}
+                            </span>
+                        </span>
+                        <span
+                            class="module-state-pill"
                             :class="
                                 row.isCompleted
-                                    ? 'fa-solid fa-circle-check is-satisfied'
-                                    : 'fa-solid fa-clock is-in-progress'
+                                    ? 'state-complete'
+                                    : 'state-progress'
                             "
-                            :title="
-                                row.isCompleted ? 'Satisfied' : 'In progress'
-                            "
-                        ></i>
-                        <span class="module-name">{{ row.name }}</span>
-                        <span
-                            v-if="row.moduleId"
-                            class="module-id"
                         >
-                            - {{ row.moduleId }}
+                            <i
+                                :class="
+                                    row.isCompleted
+                                        ? STATUS_ICON.complete
+                                        : STATUS_ICON.inProgress
+                                "
+                            ></i>
+                            {{ row.isCompleted ? 'Complete' : 'In progress' }}
                         </span>
                         <span class="module-trailing">
                             <span
@@ -577,10 +591,16 @@ const persistOrder = async () => {
                                 class="status-icon"
                                 :class="
                                     requirement.satisfied === null
-                                        ? 'fa-regular fa-circle status-unknown'
+                                        ? [
+                                              STATUS_ICON.unknown,
+                                              'status-unknown',
+                                          ]
                                         : requirement.satisfied
-                                          ? 'fa-solid fa-circle-check status-ok'
-                                          : 'fa-solid fa-clock status-in-progress'
+                                          ? [STATUS_ICON.complete, 'status-ok']
+                                          : [
+                                                STATUS_ICON.inProgress,
+                                                'status-in-progress',
+                                            ]
                                 "
                                 :title="
                                     requirement.satisfied === null
@@ -810,26 +830,23 @@ const persistOrder = async () => {
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
 
-/* Navy header so each module reads as a distinct BC Gov card. */
+/* Pale blue header so each module reads as a distinct, airy BC Gov card. */
 .submitted-modules :deep(.p-accordionheader) {
-    background-color: var(--bc-navy);
-    color: #ffffff;
-    padding: 1.35rem 1.5rem 1.35rem 2.5rem;
+    background-color: #eef4fb;
+    color: var(--bc-navy);
+    padding: 1.9rem 1.5rem 1.9rem 2.5rem;
     /* Match the panel's corners so the open-state outline follows them. */
-    border-radius: 4px 4px 0 0;
+    border-radius: 10px 10px 0 0;
 }
 
-/* The gold rule is the BC Gov header signature; reserve it for the open panel
-   so the underline marks which module is expanded. */
-.submitted-modules :deep(.p-accordionpanel-active .p-accordionheader) {
-    border-bottom: 3px solid var(--bc-gold);
-}
-/* The name and id carry their own dark colors; flip them for the navy bar,
-   along with the toggle chevron. The date is a white pill, so it keeps navy. */
+/* Name in navy, id muted grey, chevron navy, all against the pale blue bar. */
 .submitted-modules :deep(.p-accordionheader) .module-name,
-.submitted-modules :deep(.p-accordionheader) .module-id,
 .submitted-modules :deep(.p-accordionheader-toggle-icon) {
-    color: #ffffff;
+    color: var(--bc-navy);
+}
+.submitted-modules :deep(.p-accordionheader) .module-id {
+    color: var(--bc-muted);
+    font-size: 1.3rem;
 }
 /* PrimeVue hard-codes 14px on the chevron svg, so override the attributes. */
 .submitted-modules :deep(.p-accordionheader-toggle-icon) {
@@ -837,11 +854,11 @@ const persistOrder = async () => {
     height: 1.5rem;
 }
 .submitted-modules :deep(.p-accordionheader) .drag-handle {
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(0, 51, 102, 0.5);
 }
 .submitted-modules :deep(.p-accordionheader) .drag-handle:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--bc-navy);
+    background-color: rgba(0, 51, 102, 0.1);
 }
 
 /* Darken on hover so the whole header reads as the click target. */
@@ -853,7 +870,7 @@ const persistOrder = async () => {
 }
 
 .submitted-modules :deep(.p-accordionheader:hover) {
-    background-color: var(--bc-navy-dark);
+    background-color: #e2ecf8;
 }
 
 /* Match the draft accordion's content inset so both lists align. The top inset
@@ -874,22 +891,27 @@ const persistOrder = async () => {
     align-items: center;
     gap: 0.4rem;
     margin: 0 0 1.4rem auto;
-    font-size: 0.95rem;
+    font-size: 1.3rem;
     color: var(--bc-muted);
 }
 
 .status-legend .is-satisfied {
     color: #16a34a;
+    margin-left: 0.75rem;
 }
 
 .status-legend .is-in-progress {
-    color: #b8860b;
+    color: #7c3aed;
     margin-left: 0.75rem;
+}
+
+.status-legend .is-future {
+    color: #94a3b8;
 }
 
 .section-title {
     margin: 0 0 1.4rem;
-    font-size: 1.7rem;
+    font-size: 1.3rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -909,15 +931,6 @@ const persistOrder = async () => {
     margin-bottom: 2.5rem;
 }
 
-/* Full-width so the buttons wrap onto their own rows beneath it. */
-.add-module-label {
-    flex-basis: 100%;
-    margin-bottom: 0.25rem;
-    font-size: 14px;
-    font-weight: 700;
-    color: #333333;
-}
-
 /* Outlined by default, filled on hover. */
 .add-module-chip {
     display: inline-flex;
@@ -926,9 +939,9 @@ const persistOrder = async () => {
     padding: 0.6rem 1.2rem;
     font-size: 14px;
     font-weight: 700;
-    color: var(--bc-link);
+    color: #3a3f4b;
     background: #ffffff;
-    border: 1px solid var(--bc-link);
+    border: 1px solid #3a3f4b;
     border-radius: 4px;
     cursor: pointer;
     transition:
@@ -937,7 +950,7 @@ const persistOrder = async () => {
 }
 
 .add-module-chip:hover:not(:disabled) {
-    background: var(--bc-link);
+    background: #3a3f4b;
     color: #ffffff;
 }
 
@@ -954,7 +967,7 @@ const persistOrder = async () => {
 
 .module-panel {
     border: 1px solid #e5e7eb;
-    border-radius: 4px;
+    border-radius: 10px;
     background: #ffffff;
     box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
     overflow: hidden;
@@ -1010,6 +1023,14 @@ const persistOrder = async () => {
     cursor: grabbing;
 }
 
+/* Name and id share a baseline as one unit, so the id lines up with the name
+   however their sizes differ. The block as a whole centers in the header row. */
+.module-title {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
 .module-name {
     font-weight: 700;
     font-size: max(16px, 1.25rem);
@@ -1030,16 +1051,47 @@ const persistOrder = async () => {
     gap: 0.75rem;
 }
 
+/* Tan for in progress, green for complete: the state reads at a glance from
+   the right end of the bar. */
+.module-state-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: 0.75rem;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.module-state-pill.state-progress {
+    background-color: #ede9fe;
+    color: #7c3aed;
+}
+
+.module-state-pill.state-complete {
+    background-color: #cdeed6;
+    color: #15803d;
+}
+
+.module-state-pill.state-future {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
 /* Matches the draft accordion's "Last updated" pill. */
 .module-date {
     font-size: 13px;
-    color: #ffffff;
+    color: var(--bc-navy);
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     background: transparent;
-    border: 1px solid #ffffff;
+    border: 1px solid var(--bc-border);
     padding: 0.4rem 1rem;
     border-radius: 999px;
 }
@@ -1049,10 +1101,10 @@ const persistOrder = async () => {
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 1rem;
-    border: 1px solid #ffffff;
+    border: 1px solid var(--bc-navy);
     border-radius: 4px;
     background: transparent;
-    color: #ffffff;
+    color: var(--bc-navy);
     font: inherit;
     font-size: 13px;
     font-weight: 700;
@@ -1061,35 +1113,42 @@ const persistOrder = async () => {
 }
 
 .module-toggle:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 51, 102, 0.08);
 }
 
-/* Filled green once satisfied, so the state reads off the button as well as
+/* Filled navy once satisfied, so the state reads off the button as well as
    the status icon. */
 .module-toggle.is-satisfied {
-    background: #16a34a;
-    border-color: #16a34a;
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+    color: #ffffff;
 }
 
 .module-toggle.is-satisfied:hover:not(:disabled) {
-    background: #15803d;
-    border-color: #15803d;
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
 }
 
+/* The glyph sits inside a filled circle: gold = in progress, green = complete. */
 .module-status {
     flex-shrink: 0;
-    font-size: 16px;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+    color: #ffffff;
     margin-right: 0.35rem;
 }
 
 .module-status.is-satisfied {
-    color: #4ade80;
+    background-color: #16a34a;
 }
 
-/* Gold reads as "still in progress" against the navy bar, the same way the
-   green check reads as done in the nav. */
 .module-status.is-in-progress {
-    color: var(--bc-gold);
+    background-color: #7c3aed;
 }
 
 .module-toggle:disabled {
@@ -1100,8 +1159,8 @@ const persistOrder = async () => {
 .module-remove {
     background: none;
     border: none;
-    /* Bright red fights the navy header; stay muted until hover. */
-    color: rgba(255, 255, 255, 0.65);
+    /* Muted until hover, where it turns BC Gov red. */
+    color: rgba(0, 51, 102, 0.5);
     cursor: pointer;
     font-size: 1rem;
     padding: 0.35rem;
@@ -1162,13 +1221,15 @@ const persistOrder = async () => {
 .requirement-item {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.55rem 0.25rem;
-    border-bottom: 1px solid #f1f5f9;
+    gap: 0.75rem;
+    padding: 0.9rem 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 4px;
+    transition: background-color 0.12s ease;
 }
 
-.requirement-item:last-child {
-    border-bottom: none;
+.requirement-item:hover {
+    background-color: #f6f9fd;
 }
 
 .status-icon {
@@ -1180,8 +1241,9 @@ const persistOrder = async () => {
     color: #16a34a;
 }
 
+/* Violet marks the row as in progress, matching the module status glyph. */
 .status-in-progress {
-    color: #ea8f00;
+    color: #7c3aed;
 }
 
 .status-unknown {
@@ -1191,7 +1253,7 @@ const persistOrder = async () => {
 .requirement-name {
     color: #111827;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .req-right {
@@ -1202,21 +1264,21 @@ const persistOrder = async () => {
     white-space: nowrap;
 }
 
-/* Fixed-width chip so the tags occupy one column and the actions after them
-   (View, trash) line up vertically down the list regardless of tag length. */
+/* Subtle bordered chip so the type reads as an intentional tag, not a stray
+   label. Fixed width keeps the actions after it (View, trash) aligned. */
 .req-type {
-    flex: 0 0 11rem;
+    display: inline-block;
+    min-width: 8rem;
     text-align: center;
     font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #475569;
-    background-color: #f1f5f9;
-    padding: 0.15rem 0.5rem;
+    letter-spacing: 0.05em;
+    color: var(--bc-muted);
+    border: 1px solid var(--bc-border);
     border-radius: 999px;
+    padding: 0.2rem 0.75rem;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .req-assignee {

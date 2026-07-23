@@ -269,7 +269,7 @@ describe('CompletedModules requirement detail loading', () => {
         expect(api.fetchRequirementDetails).not.toHaveBeenCalled();
     });
 
-    it('hides internal-only requirements from applicants', async () => {
+    it('shows internal requirements to applicants too', async () => {
         api.fetchRequirementDetails.mockResolvedValue({
             'r-pub': requirementDetail({ internal: false }),
             'r-int': requirementDetail({ internal: true }),
@@ -290,7 +290,7 @@ describe('CompletedModules requirement detail loading', () => {
         await flushPromises();
 
         const names = wrapper.findAll('.requirement-name').map((n) => n.text());
-        expect(names).toEqual(['Public']);
+        expect(names).toEqual(['Public', 'Internal']);
     });
 
     it('shows internal requirements to staff', async () => {

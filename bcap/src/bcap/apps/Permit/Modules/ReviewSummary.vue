@@ -96,7 +96,7 @@ const hasValue = (val: unknown): boolean => {
     grid-template-columns: 210px 1fr;
     gap: 1.3rem 1rem;
     align-items: start;
-    font-size: 1.35rem;
+    font-size: 13px;
     line-height: 1.5;
 }
 

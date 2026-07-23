@@ -274,7 +274,7 @@ const showPrevious = computed(() => {
                         class="back-to-permit"
                     >
                         <i class="fa-solid fa-chevron-left"></i>
-                        Back to permit
+                        Back to Project Summary
                     </RouterLink>
                     <header class="bc-step-header">
                         <div>
@@ -286,7 +286,7 @@ const showPrevious = computed(() => {
                         <StepperNavigation
                             :step-number="currentStep"
                             :is-valid="currentStepIsValid"
-                            :show-previous="showPrevious"
+                            :show-previous="false"
                             :next-label="nextLabel"
                             @next-click="activateNextStep"
                             @previous-click="activatePreviousStep"
@@ -407,20 +407,20 @@ const showPrevious = computed(() => {
                                 class="back-to-permit mt-4"
                             >
                                 <i class="fa-solid fa-chevron-left"></i>
-                                Back to permit application
+                                Back to Project Summary
                             </RouterLink>
                         </StepPanel>
+                        <div class="bc-step-actions">
+                            <StepperNavigation
+                                :step-number="currentStep"
+                                :is-valid="currentStepIsValid"
+                                :show-previous="showPrevious"
+                                :next-label="nextLabel"
+                                @next-click="activateNextStep"
+                                @previous-click="activatePreviousStep"
+                            ></StepperNavigation>
+                        </div>
                     </StepPanels>
-                    <div class="bc-step-actions">
-                        <StepperNavigation
-                            :step-number="currentStep"
-                            :is-valid="currentStepIsValid"
-                            :show-previous="showPrevious"
-                            :next-label="nextLabel"
-                            @next-click="activateNextStep"
-                            @previous-click="activatePreviousStep"
-                        ></StepperNavigation>
-                    </div>
                 </div>
             </div>
         </Stepper>

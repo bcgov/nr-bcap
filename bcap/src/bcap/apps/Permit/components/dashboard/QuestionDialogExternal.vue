@@ -297,13 +297,14 @@ onMounted(() => {
 <style>
 /* --- Trigger Button Styles --- */
 /* BC Gov secondary button: navy outline on white. */
+/* Filled navy so the primary action leads over the muted "Submitted" chip. */
 .trigger-btn {
-    background-color: transparent;
-    color: var(--bc-navy);
+    background-color: var(--bc-navy);
+    color: #ffffff;
     border: 2px solid var(--bc-navy);
     border-radius: 4px;
     padding: 0.5rem 1rem;
-    font-weight: 500;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -311,7 +312,8 @@ onMounted(() => {
 }
 
 .trigger-btn:hover {
-    background-color: var(--bc-selected);
+    background-color: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
 }
 
 /* --- Notification Badge --- */

@@ -684,6 +684,14 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
     def test_node_value_tolerates_a_none_aliased_data(self):
         self.assertEqual(self.service._node_value(None, "requirement_name"), {})
 
+    def test_order_value_treats_a_null_order_as_last(self):
+        # A present-but-unset order node has node_value None. It must sort last
+        # (inf) like a missing node, not return None, or the tuple sort in
+        # _requirement_tiles_by_permit compares an int against None and crashes.
+        self.assertEqual(self.service._order_value(None), float("inf"))
+        self.assertEqual(self.service._order_value({"node_value": None}), float("inf"))
+        self.assertEqual(self.service._order_value({"node_value": 2}), 2)
+
     def test_application_core_handles_missing_groups_and_null_values(self):
         aliased = SimpleNamespace(
             application_identification=_tile(

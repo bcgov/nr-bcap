@@ -15,6 +15,12 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     patchPermitSubmissionDate: vi.fn(),
     fetchDrafts: vi.fn(() => Promise.resolve([])),
     deleteDraft: vi.fn(),
+    // Also imported by PermitDetails and its QuestionDialog child; without
+    // them the components' error handlers log "Error loading messages/recipients".
+    getMessagesForPermit: vi.fn(() =>
+        Promise.resolve({ messages: [], threadId: null }),
+    ),
+    getContributorsForResources: vi.fn(() => Promise.resolve([])),
 }));
 
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({

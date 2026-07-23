@@ -293,9 +293,11 @@ class InternalDashboardService(BaseDashboardService):
 
     @staticmethod
     def _order_value(value):
-        """An order node's value as a sort key; a missing order sorts last
-        (infinity) so a tile that has one always wins."""
-        return value["node_value"] if value else float("inf")
+        """An order node's value as a sort key; a missing or unset order sorts
+        last (infinity) so a tile that has one always wins."""
+        if not value or value["node_value"] is None:
+            return float("inf")
+        return value["node_value"]
 
     def _assignee_change_dates(self, chosen_by_permit):
         """Map requirement-tile id -> date its ministry_assignee last changed.

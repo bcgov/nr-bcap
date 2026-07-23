@@ -401,7 +401,7 @@ watch(activeModuleId, (id) => {
                     <div class="status-icon-wrapper">
                         <i
                             v-if="getModuleStatus(mod.id) === 'completed'"
-                            class="fa-solid fa-circle-check icon-completed"
+                            class="fa-solid fa-check icon-completed"
                         ></i>
                         <div
                             v-else-if="getModuleStatus(mod.id) === 'review'"
@@ -503,9 +503,6 @@ watch(activeModuleId, (id) => {
                                 >
                                     <AccordionHeader>
                                         <span class="draft-head">
-                                            <i
-                                                class="fa-regular fa-file-lines draft-icon"
-                                            ></i>
                                             <span class="draft-name">
                                                 {{ draftTitle(draft) }}
                                             </span>
@@ -574,7 +571,8 @@ watch(activeModuleId, (id) => {
         modal
         :closable="false"
         header="Remove draft?"
-        :style="{ width: '28rem' }"
+        class="remove-dialog"
+        :style="{ width: '30rem' }"
     >
         <p>This permanently removes the draft. This action cannot be undone.</p>
         <template #footer>
@@ -593,6 +591,21 @@ watch(activeModuleId, (id) => {
         </template>
     </Dialog>
 </template>
+
+<!-- Not scoped: PrimeVue teleports the dialog to <body>, out of this component's
+     scoped tree, so these rules must be global to reach it. -->
+<style lang="css">
+.remove-dialog .p-dialog-title {
+    font-size: 1.8rem;
+}
+.remove-dialog .p-dialog-content {
+    font-size: 1.4rem;
+    line-height: 1.5;
+}
+.remove-dialog .p-button-label {
+    font-size: 1.4rem;
+}
+</style>
 
 <style scoped lang="css">
 .permit-loading {
@@ -679,16 +692,16 @@ watch(activeModuleId, (id) => {
    fixed height on both keeps the pair level whatever padding each carries. */
 .submitted-text,
 .submit-area :deep(.trigger-btn) {
-    height: 2.5rem;
+    height: 3.1rem;
 }
 
 .submitted-text {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0 1rem;
+    padding: 0 1.1rem;
     border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 999px;
+    border-radius: 6px;
     line-height: 1.5;
     color: #ffffff;
 }
@@ -715,7 +728,7 @@ watch(activeModuleId, (id) => {
 /* Layout */
 .module-layout {
     display: flex;
-    gap: 3rem;
+    gap: 1.25rem;
     padding: 2rem 1.5rem;
     min-height: 500px;
 }
@@ -737,9 +750,9 @@ watch(activeModuleId, (id) => {
 .side-menu {
     display: flex;
     flex-direction: column;
-    width: 220px;
+    width: 260px;
     flex-shrink: 0;
-    gap: 2px;
+    gap: 0.85rem;
     /* Drops the first item level with the panel heading beside it. */
     margin-top: 1.5rem;
 }
@@ -749,9 +762,9 @@ watch(activeModuleId, (id) => {
     color: #333333;
     border: none;
     border-radius: 6px;
-    padding: 1rem 1.2rem;
+    padding: 1.3rem 1.5rem;
     text-align: left;
-    font-size: 1.25rem;
+    font-size: 1.45rem;
     font-weight: 400;
     cursor: pointer;
     transition:
@@ -771,7 +784,7 @@ watch(activeModuleId, (id) => {
 .menu-item.active {
     background-color: #003366;
     color: #ffffff;
-    font-weight: 500;
+    font-weight: 700;
 }
 
 /* A bare plus, lighter than the circled status glyphs it shares the column
@@ -798,8 +811,10 @@ watch(activeModuleId, (id) => {
     justify-content: center;
 }
 
+/* White check on the navy active row. on an inactive (white) row a
+   completed module's check goes invisible; say so if that state needs a colour. */
 .icon-completed {
-    color: #22c55e;
+    color: #ffffff;
     font-size: 1.2rem;
 }
 
@@ -836,10 +851,13 @@ watch(activeModuleId, (id) => {
 }
 
 .content-title {
-    margin: 0 0 2rem 0;
-    font-size: 2.2rem;
+    /* Top margin lines the heading up with the first side-menu button label.
+       The heading's larger line box means its top sits above equal-offset text,
+       so the offset is tuned by eye rather than summed from the paddings. */
+    margin: 1.1rem 0 2rem 0;
+    font-size: 2.8rem;
     font-weight: 700;
-    color: #000000;
+    color: #26292e;
 }
 
 /* Buttons */
@@ -936,7 +954,7 @@ watch(activeModuleId, (id) => {
 /* Same group label as the submitted-modules section title. */
 .investigation-lists .list-heading {
     margin: 0 0 1.4rem;
-    font-size: 1.7rem;
+    font-size: 1.3rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -954,9 +972,11 @@ watch(activeModuleId, (id) => {
     gap: 0.75rem;
 }
 
+/* Drafts carry the least weight on the page, so they're light white cards with
+   a dashed muted border to signal "unfinished", not a solid brand-coloured bar. */
 .draft-panel {
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
     background: #ffffff;
     box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
     overflow: hidden;
@@ -967,28 +987,20 @@ watch(activeModuleId, (id) => {
 
 .draft-panel:hover {
     box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
-    border-color: #cbd5e1;
+    border-color: #94a3b8;
 }
 
-/* Same navy header and gold rule as the submitted modules, so both lists read
-   as one family. */
 .draft-modules :deep(.p-accordionheader) {
-    background-color: var(--bc-grey);
-    color: #ffffff;
+    background-color: #ffffff;
+    color: #6b7280;
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
-    padding: 1.35rem 1.5rem 1.35rem 2.5rem;
-    border-radius: 4px 4px 0 0;
-}
-
-/* The gold rule marks which draft is expanded, matching the submitted list. */
-.draft-modules :deep(.p-accordionpanel-active .p-accordionheader) {
-    border-bottom: 3px solid var(--bc-gold);
+    padding: 1.9rem 1.5rem 1.9rem 2rem;
+    border-radius: 10px 10px 0 0;
 }
 
 .draft-modules :deep(.p-accordionheader) .draft-name,
-.draft-modules :deep(.p-accordionheader) .draft-icon,
 .draft-modules :deep(.p-accordionheader-toggle-icon) {
-    color: #ffffff;
+    color: #6b7280;
 }
 
 /* PrimeVue hard-codes 14px on the chevron svg, so override the attributes. */
@@ -997,15 +1009,12 @@ watch(activeModuleId, (id) => {
     height: 1.5rem;
 }
 
-/* The open panel is ringed rather than tinted, so which one is selected is
-   obvious without changing the header colour. */
 .draft-modules :deep(.p-accordionpanel-active .p-accordionheader) {
-    outline: 2px solid var(--bc-link);
-    outline-offset: -2px;
+    background-color: #f8fafc;
 }
 
 .draft-modules :deep(.p-accordionheader:hover) {
-    background-color: #4a4a4a;
+    background-color: #f8fafc;
 }
 
 /* Match the submitted-modules content inset so both lists align. */
@@ -1021,16 +1030,10 @@ watch(activeModuleId, (id) => {
     padding-right: 0.75rem;
 }
 
-.draft-icon {
-    margin-right: 0.35rem;
-    font-size: 1.15rem;
-    color: #64748b;
-}
-
 .draft-name {
     font-weight: 700;
     font-size: max(16px, 1.25rem);
-    color: #111827;
+    color: #6b7280;
 }
 
 .draft-meta {
@@ -1039,12 +1042,8 @@ watch(activeModuleId, (id) => {
     align-items: center;
     gap: 0.5rem;
     font-size: 13px;
-    color: #ffffff;
+    color: #6b7280;
     white-space: nowrap;
-    background: transparent;
-    border: 1px solid #ffffff;
-    padding: 0.4rem 1rem;
-    border-radius: 999px;
 }
 
 .draft-actions {
