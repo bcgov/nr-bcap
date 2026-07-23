@@ -1376,26 +1376,27 @@ const persistOrder = async () => {
     margin-top: 0.75rem;
 }
 
+/* Matches the add-module chips at the top of the panel. */
 .add-req-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--bc-navy);
+    font-size: 14px;
+    font-weight: 700;
+    color: #3a3f4b;
     background: #ffffff;
-    border: 1px solid var(--bc-border);
-    border-radius: 999px;
-    padding: 0.4rem 0.85rem;
+    border: 1px solid #3a3f4b;
+    border-radius: 4px;
+    padding: 0.6rem 1.2rem;
     cursor: pointer;
     transition:
         background-color 0.15s ease,
-        border-color 0.15s ease;
+        color 0.15s ease;
 }
 
 .add-req-btn:hover {
-    background: var(--bc-panel);
-    border-color: var(--bc-navy);
+    background: #3a3f4b;
+    color: #ffffff;
 }
 
 .empty-note {
