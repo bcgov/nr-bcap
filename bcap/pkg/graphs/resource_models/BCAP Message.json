@@ -597,7 +597,7 @@
                 {
                     "alias": "message_type",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "e29c2159-b222-4b6d-a844-63ed5641c7ed",
                         "multiValue": false
                     },
                     "datatype": "reference",
