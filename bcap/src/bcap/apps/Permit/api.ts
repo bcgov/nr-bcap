@@ -28,10 +28,8 @@ export const fetchDraft = async (
     );
 };
 
-// parentResourceId, when given, is stored on the draft's own node (outside the
-// blob, which is validated against the graph on submit) so the parent resource's
-// page can filter its own drafts. The backend verifies the user can access that
-// resource before saving.
+// parentResourceId links the draft to a parent so its page can filter its own
+// drafts. The backend checks access before saving.
 export const createDraft = async (
     graphSlug: string,
     parentResourceId?: string,
