@@ -1,3 +1,4 @@
+<!-- Ideally we want to rename this to FilingSummary.vue --->
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -10,7 +11,7 @@ import AccordionPanel from 'primevue/accordionpanel';
 import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
-import CompletedModules from '@/bcap/apps/Permit/components/dashboard/CompletedModules.vue';
+import CompletedModules from './CompletedModules.vue';
 import { getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 import {
@@ -26,8 +27,8 @@ import type { InvestigationDraft } from '@/bcap/types.ts';
 import {
     permitModules as permitModuleCatalogue,
     modulesForFilingType,
-} from './permitModules.ts';
-import QuestionDialog from './QuestionDialogExternal.vue';
+} from '../dashboard/permitModules.ts';
+import QuestionDialog from '../common/QuestionDialogExternal.vue';
 
 const route = useRoute();
 const router = useRouter();
