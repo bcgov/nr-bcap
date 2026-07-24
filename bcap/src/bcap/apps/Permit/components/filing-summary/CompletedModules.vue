@@ -819,6 +819,7 @@ const persistOrder = async () => {
 
 <style scoped>
 .submitted-modules {
+    --progress-gold: #e3a82b;
     margin-top: 2.5rem;
     font-size: 1.05rem;
     line-height: 1.5;
@@ -903,7 +904,7 @@ const persistOrder = async () => {
 }
 
 .status-legend .is-in-progress {
-    color: #7c3aed;
+    color: var(--progress-gold);
     margin-left: 0.75rem;
 }
 
@@ -1070,8 +1071,8 @@ const persistOrder = async () => {
 }
 
 .module-state-pill.state-progress {
-    background-color: #ede9fe;
-    color: #7c3aed;
+    background-color: #fbeecb;
+    color: #8a6100;
 }
 
 .module-state-pill.state-complete {
@@ -1150,7 +1151,8 @@ const persistOrder = async () => {
 }
 
 .module-status.is-in-progress {
-    background-color: #7c3aed;
+    background-color: var(--progress-gold);
+    color: var(--bc-navy);
 }
 
 .module-toggle:disabled {
@@ -1243,9 +1245,9 @@ const persistOrder = async () => {
     color: #16a34a;
 }
 
-/* Violet marks the row as in progress, matching the module status glyph. */
+/* Gold marks the row as in progress, matching the module status glyph. */
 .status-in-progress {
-    color: #7c3aed;
+    color: var(--progress-gold);
 }
 
 .status-unknown {
