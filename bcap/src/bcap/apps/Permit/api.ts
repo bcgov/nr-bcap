@@ -122,16 +122,13 @@ export const submitApplication = async (
             },
         } as unknown as DraftNode;
 
-        const finalResource = await apiFetchJson<PermitApplication>(
-            submitUrl,
-            {
-                method: HttpMethod.Post,
-                body: {
-                    draft_id: draftId,
-                    aliased_data: cleanPayload,
-                },
+        const finalResource = await apiFetchJson<PermitApplication>(submitUrl, {
+            method: HttpMethod.Post,
+            body: {
+                draft_id: draftId,
+                aliased_data: cleanPayload,
             },
-        );
+        });
 
         // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`;
@@ -429,13 +426,10 @@ export const createBcapMessage = async (
         };
     }
 
-    return apiFetchJson<BcapMessage>(
-        arches.urls.bcap_message_list_create,
-        {
-            method: HttpMethod.Post,
-            body: { aliased_data: aliasedData },
-        },
-    );
+    return apiFetchJson<BcapMessage>(arches.urls.bcap_message_list_create, {
+        method: HttpMethod.Post,
+        body: { aliased_data: aliasedData },
+    });
 };
 
 // Example unused for now.

@@ -51,9 +51,10 @@ const associatedPermitIds = computed(() => {
     return (permitField?.details ?? []).map((detail) => detail.resource_id);
 });
 
-const { data: permitData } = useResourceList<
-    Ref<ApiHcaPermitListResponse>
->('hca_permit', associatedPermitIds);
+const { data: permitData } = useResourceList<Ref<ApiHcaPermitListResponse>>(
+    'hca_permit',
+    associatedPermitIds,
+);
 
 const permitDetails = computed(() => {
     return (permitData?.value?.results.map(

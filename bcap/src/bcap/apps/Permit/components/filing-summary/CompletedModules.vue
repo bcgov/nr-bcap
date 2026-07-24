@@ -120,7 +120,9 @@ const requirementInternal = (requirement: ProcessRequirement): boolean =>
         ?.is_template_requirement?.aliased_data?.is_internal_requirement
         ?.node_value === true;
 
-const requirementItems = (tile: PermitApplicationProcessModuleTile): RequirementItem[] =>
+const requirementItems = (
+    tile: PermitApplicationProcessModuleTile,
+): RequirementItem[] =>
     (tile.aliased_data?.process_requirement || [])
         .map((child) => ({
             order:
