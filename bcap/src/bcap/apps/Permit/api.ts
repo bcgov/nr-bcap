@@ -18,7 +18,6 @@ import type {
     AppThread,
 } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import { getCsrfToken } from '@/bcap/util.ts';
 import { z } from 'zod';
 import {
     zPatchedBcapMessageWritable,
@@ -519,19 +518,9 @@ export const getMessagesForPermit = async (
                 isUnread: message.isUnread,
             }));
 
-        const aliasedData = rootMessage.aliased_data as unknown as {
-            message_response?: {
-                aliased_data?: {
-                    response_completed?: {
-                        node_value?: boolean;
-                    };
-                };
-            };
-        };
-
         const isResolved =
-            aliasedData?.message_response?.aliased_data?.response_completed
-                ?.node_value === true;
+            rootMessage.aliased_data?.message_response?.aliased_data
+                ?.response_completed?.node_value === true;
 
         const unreadCount = messages.filter((msg) => msg.isUnread).length;
         const hasUnread = unreadCount > 0;
@@ -591,18 +580,8 @@ export const markMessageAsRead = async (messageId: string): Promise<void> => {
         },
     };
 
-    const response = await fetch(arches.urls.bcap_message_detail(messageId), {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCsrfToken(),
-        },
-        body: JSON.stringify(body),
+    await apiFetchJson(arches.urls.bcap_message_detail(messageId), {
+        method: HttpMethod.Patch,
+        body: body,
     });
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to mark read: ${response.status} ${await response.text()}`,
-        );
-    }
 };

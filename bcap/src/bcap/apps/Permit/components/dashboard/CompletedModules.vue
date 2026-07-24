@@ -167,15 +167,15 @@ const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
     const moduleResourceId = Array.isArray(nodeVal)
         ? nodeVal[0]?.resourceId || ''
         : '';
+    const moduleId =
+        tile.aliased_data?.module_id?.display_value ||
+        (Array.isArray(nodeVal) ? '' : String(nodeVal ?? ''));
 
     return {
         tileid: tile.tileid ?? '',
         name:
             tile.aliased_data?.module_name?.display_value || 'Untitled module',
-        moduleId:
-            tile.aliased_data?.module_id?.display_value ||
-            (!Array.isArray(nodeVal) ? String(nodeVal || '') : '') ||
-            '',
+        moduleId,
         moduleResourceId, // Now safely either a UUID or an empty string
         completedDate:
             tile.aliased_data?.module_completed_date?.display_value || '',
