@@ -14,7 +14,6 @@ import type {
     PermitApplicationResponse,
     PermitProcessModuleTileWritable,
     ProcessRequirement,
-    RawThreadMessage,
     ResourceDraft,
     AppThread,
 } from '@/bcap/types.ts';
