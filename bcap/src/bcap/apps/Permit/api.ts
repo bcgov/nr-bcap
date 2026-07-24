@@ -518,10 +518,7 @@ export const getMessagesForPermit = async (
                 isUnread: message.isUnread,
             }));
 
-        const isResolved =
-            rootMessage.aliased_data?.message_response?.aliased_data
-                ?.response_completed?.node_value === true;
-
+        const isResolved = false;
         const unreadCount = messages.filter((msg) => msg.isUnread).length;
         const hasUnread = unreadCount > 0;
 
