@@ -21,7 +21,7 @@ const routes = [
         path: arches.urls.plugin('submissions/permit/:id'),
         name: 'permitDetails',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/PermitDetails.vue'),
+            import('@/bcap/apps/Permit/components/filing-summary/PermitDetails.vue'),
         meta: {
             shouldShowNavigation: true,
             requiresAuthentication: true,
@@ -101,13 +101,13 @@ const routes = [
         path: arches.urls.plugin('internal-permit-dashboard/checklist'),
         name: 'Checklist',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/TaskChecklist.vue'),
+            import('@/bcap/apps/Permit/components/checklist/TaskChecklist.vue'),
     },
     {
         path: arches.urls.plugin('internal-permit-dashboard/EditChecklist'),
         name: 'EditChecklist',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/EditChecklist.vue'),
+            import('@/bcap/apps/Permit/components/checklist/EditChecklist.vue'),
     },
 ];
 
