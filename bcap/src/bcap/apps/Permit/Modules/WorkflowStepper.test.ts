@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount, flushPromises } from '@vue/test-utils';
-import InvestigationModule from './InvestigationModule.vue';
+import WorkflowStepper from './WorkflowStepper.vue';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
@@ -17,19 +17,10 @@ vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
     fetchDraft,
 }));
 
-// Stub the step children (and the shared nav) so the test doesn't transform the
-// real arches_component_lab widget tree. shallowMount stubs them at render time;
-// mocking the modules also keeps their dependencies out of the transform graph.
+// Stub the shared review and nav so the test doesn't transform the real
+// arches_component_lab widget tree.
 const stub = vi.hoisted(() => () => ({ default: { template: '<div />' } }));
-vi.mock('./steps/Step1_About.vue', stub);
-vi.mock('./steps/Step2_Overview.vue', stub);
-vi.mock('./steps/Step3_Personnel.vue', stub);
-vi.mock('./steps/Step4_Methods.vue', stub);
-vi.mock('./steps/Step5_Recordings.vue', stub);
-vi.mock('./steps/Step6_Materials.vue', stub);
-vi.mock('./steps/Step7_Remains.vue', stub);
-vi.mock('./steps/Step8_Repository.vue', stub);
-vi.mock('./steps/Step99_Review.vue', stub);
+vi.mock('@/bcap/apps/Permit/Modules/Step99_Review.vue', stub);
 vi.mock(
     '@/bcgov_arches_common/components/Stepper/components/StepperNavigation/StepperNavigation.vue',
     stub,
@@ -41,8 +32,23 @@ vi.mock('vue-router', () => ({
     useRoute: () => ({ query: routeQuery.value }),
 }));
 
-type ModuleVm = {
-    submitNewSiteData: () => Promise<boolean>;
+const StubStep = { template: '<div />' };
+const steps = [
+    { label: 'Submission Information', component: StubStep, heading: '' },
+    { label: 'Details', component: StubStep },
+];
+
+const mountStepper = () =>
+    shallowMount(WorkflowStepper, {
+        props: {
+            graphSlug: GraphSlug.Investigation,
+            title: 'Submit Investigation',
+            steps,
+        },
+    });
+
+type StepperVm = {
+    submitFiling: () => Promise<boolean>;
     state: {
         isDataLoaded: boolean;
         finalizedResourceData: unknown;
@@ -50,7 +56,7 @@ type ModuleVm = {
     };
 };
 
-describe('InvestigationModule.vue', () => {
+describe('WorkflowStepper.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         routeQuery.value = {};
@@ -65,7 +71,7 @@ describe('InvestigationModule.vue', () => {
             data: {},
         });
 
-        const wrapper = shallowMount(InvestigationModule);
+        const wrapper = mountStepper();
         await flushPromises();
 
         expect(fetchDraft).toHaveBeenCalledWith(
@@ -73,7 +79,7 @@ describe('InvestigationModule.vue', () => {
             'draft-7',
         );
         expect(useDraftStore().draftId).toBe('draft-7');
-        expect((wrapper.vm as unknown as ModuleVm).state.isDataLoaded).toBe(
+        expect((wrapper.vm as unknown as StepperVm).state.isDataLoaded).toBe(
             true,
         );
     });
@@ -81,11 +87,11 @@ describe('InvestigationModule.vue', () => {
     it('does not fetch a draft when the query has no draftId', async () => {
         routeQuery.value = { permitId: 'permit-1' };
 
-        const wrapper = shallowMount(InvestigationModule);
+        const wrapper = mountStepper();
         await flushPromises();
 
         expect(fetchDraft).not.toHaveBeenCalled();
-        expect((wrapper.vm as unknown as ModuleVm).state.isDataLoaded).toBe(
+        expect((wrapper.vm as unknown as StepperVm).state.isDataLoaded).toBe(
             true,
         );
     });
@@ -94,15 +100,15 @@ describe('InvestigationModule.vue', () => {
         routeQuery.value = { permitId: 'permit-1' };
         submitModule.mockResolvedValue({ aliased_data: { foo: 'bar' } });
 
-        const wrapper = shallowMount(InvestigationModule);
+        const wrapper = mountStepper();
         await flushPromises();
 
         // initDraft set the parent permit from the URL; supply a draft id as the
         // first edit would have.
         useDraftStore().loadDraft('draft-7', { x: 1 });
 
-        const vm = wrapper.vm as unknown as ModuleVm;
-        const ok = await vm.submitNewSiteData();
+        const vm = wrapper.vm as unknown as StepperVm;
+        const ok = await vm.submitFiling();
 
         expect(ok).toBe(true);
         expect(submitModule).toHaveBeenCalledWith(
@@ -120,12 +126,12 @@ describe('InvestigationModule.vue', () => {
         routeQuery.value = { permitId: 'permit-1' };
         submitModule.mockRejectedValue(new Error('nope'));
 
-        const wrapper = shallowMount(InvestigationModule);
+        const wrapper = mountStepper();
         await flushPromises();
         useDraftStore().loadDraft('draft-7', {});
 
-        const vm = wrapper.vm as unknown as ModuleVm;
-        const ok = await vm.submitNewSiteData();
+        const vm = wrapper.vm as unknown as StepperVm;
+        const ok = await vm.submitFiling();
 
         expect(ok).toBe(false);
         expect(submitModule).toHaveBeenCalled();
@@ -136,11 +142,11 @@ describe('InvestigationModule.vue', () => {
     it('refuses to submit without an active draft', async () => {
         routeQuery.value = { permitId: 'permit-1' };
 
-        const wrapper = shallowMount(InvestigationModule);
+        const wrapper = mountStepper();
         await flushPromises();
 
-        const vm = wrapper.vm as unknown as ModuleVm;
-        const ok = await vm.submitNewSiteData();
+        const vm = wrapper.vm as unknown as StepperVm;
+        const ok = await vm.submitFiling();
 
         expect(ok).toBe(false);
         expect(submitModule).not.toHaveBeenCalled();
