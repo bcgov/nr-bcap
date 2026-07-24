@@ -35,4 +35,12 @@ sql_items = [
         reverse_sql="drop view bc_labelled_sandcastle_geometries;",
         replace=True,
     ),
+    SQLItem(
+        "get_map_attribute_data",
+        format_sql(
+            "sql/functions/get_map_attribute_data.sql",
+        ),
+        reverse_sql="drop function get_map_attribute_data;",
+        replace=True,
+    ),
 ]
