@@ -41,9 +41,32 @@ const props = withDefaults(
         title: string;
         steps: WorkflowStep[];
         submitLabel?: string;
+        // How to persist on the final step. Defaults to the module-filing flow
+        // (submitModule against the parent permit). The base permit application
+        // has no parent, so it passes its own that calls submitApplication.
+        submit?: () => Promise<PermitApplicationResponse | null>;
+        // The Review/Submitted step body. Defaults to the generic summary of
+        // every filled node; the base permit passes a curated version.
+        reviewComponent?: Component;
     }>(),
-    { submitLabel: 'Create Filing' },
+    {
+        submitLabel: 'Create Filing',
+        reviewComponent: Step99_Review,
+        submit: undefined,
+    },
 );
+
+const defaultSubmit = async (): Promise<PermitApplicationResponse | null> => {
+    if (!draft.draftId) throw new Error('No active draft found.');
+    if (!draft.parentPermitId)
+        throw new Error('No permit associated with this filing.');
+    return submitModule(
+        draft.parentPermitId,
+        draft.draftId,
+        props.graphSlug,
+        draft.draftData,
+    );
+};
 
 const route = useRoute();
 const draft = useDraftStore();
@@ -64,14 +87,13 @@ const state = reactive({
 const reviewStepNumber = computed(() => props.steps.length + 1);
 const totalSteps = computed(() => props.steps.length + 2);
 
-const permitBackLink = computed(() =>
-    draft.parentPermitId
-        ? {
-              name: routeNames.permitDetails,
-              params: { id: draft.parentPermitId },
-          }
-        : null,
-);
+// The filing summary to return to: the parent permit while filing a module, or
+// the just-created permit on the base application's completion step.
+const permitBackLink = computed(() => {
+    const id =
+        draft.parentPermitId ?? state.finalizedResourceData?.resourceinstanceid;
+    return id ? { name: routeNames.permitDetails, params: { id } } : null;
+});
 
 const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
     if (!state.finalizedResourceData?.aliased_data) return null;
@@ -113,16 +135,7 @@ const submitFiling = async (): Promise<boolean> => {
     state.submitting = true;
     state.submissionErrors = [];
     try {
-        if (!draft.draftId) throw new Error('No active draft found.');
-        if (!draft.parentPermitId)
-            throw new Error('No permit associated with this filing.');
-
-        const response = await submitModule(
-            draft.parentPermitId,
-            draft.draftId,
-            props.graphSlug,
-            draft.draftData,
-        );
+        const response = await (props.submit ?? defaultSubmit)();
         if (response) state.finalizedResourceData = response;
         return true;
     } catch (error) {
@@ -315,7 +328,8 @@ onMounted(async () => {
                             <h3 class="heading-margin-bottom">
                                 Review Submission
                             </h3>
-                            <Step99_Review
+                            <component
+                                :is="reviewComponent"
                                 :ref="
                                     (el: unknown) =>
                                         setStepRef(reviewStepNumber - 1, el)
@@ -326,11 +340,12 @@ onMounted(async () => {
                                         reviewStepNumber,
                                     )
                                 "
-                            ></Step99_Review>
+                            ></component>
                         </StepPanel>
                         <StepPanel :value="totalSteps">
                             <h3 class="heading-margin-bottom">Submitted</h3>
-                            <Step99_Review
+                            <component
+                                :is="reviewComponent"
                                 :ref="
                                     (el: unknown) =>
                                         setStepRef(totalSteps - 1, el)
@@ -340,7 +355,7 @@ onMounted(async () => {
                                 @update:step-is-valid="
                                     setCurrentStepValid($event, totalSteps)
                                 "
-                            ></Step99_Review>
+                            ></component>
                             <RouterLink
                                 v-if="permitBackLink"
                                 :to="permitBackLink"

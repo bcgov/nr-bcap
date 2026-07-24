@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { shallowMount, flushPromises } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import BaseModule from './BaseModule.vue';
+import WorkflowStepper from '@/bcap/apps/Permit/Modules/WorkflowStepper.vue';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 
 // Own the submit mock so the date-stamp assertion can read it without a
@@ -53,61 +54,31 @@ vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
 describe('BaseModule.vue', () => {
     beforeEach(() => {
         vi.restoreAllMocks();
-
-        // Mock global fetch to intercept the onMounted API calls
-        vi.stubGlobal(
-            'fetch',
-            vi.fn(() =>
-                Promise.resolve({
-                    ok: true,
-                    json: () =>
-                        Promise.resolve({ id: 'mock-draft-id', data: {} }),
-                } as Response),
-            ),
-        );
     });
 
-    it('mounts the stepper workflow successfully', () => {
-        // shallowMount automatically stubs all child components
+    it('drives the permit application through the shared workflow stepper', () => {
         const wrapper = shallowMount(BaseModule);
 
-        expect(wrapper.exists()).toBe(true);
-        // With no draftId in the query there is nothing to fetch, so the
-        // workflow is ready immediately (the draft is created lazily on first
-        // edit, not on mount).
-        expect(wrapper.vm.isDataLoaded).toBe(true);
-    });
-
-    it('does not create a draft on mount (lazy creation)', async () => {
-        shallowMount(BaseModule);
-
-        // Wait for the asynchronous onMounted hook to settle.
-        await flushPromises();
-
-        // Nothing is created until the first edit, so an abandoned form leaves
-        // no empty draft behind.
-        expect(fetch).not.toHaveBeenCalledWith(
-            '/bcap/api/workflow_draft/permit_application',
-            expect.objectContaining({ method: 'POST' }),
-        );
+        const stepper = wrapper.findComponent(WorkflowStepper);
+        expect(stepper.exists()).toBe(true);
+        expect(stepper.props('graphSlug')).toBe('permit_application');
     });
 
     it('stamps today as the submission date before submitting', async () => {
         const wrapper = shallowMount(BaseModule);
-        await flushPromises();
 
         // Submit requires an existing draft; simulate one the first edit would
         // have created via the store.
         useDraftStore().loadDraft('mock-draft-id', {});
 
-        const submitted = await (
-            wrapper.vm as unknown as {
-                submitNewSiteData: () => Promise<boolean>;
-            }
-        ).submitNewSiteData();
+        // BaseModule owns only the submit strategy; the stepper shell invokes it
+        // on the final step.
+        const submit = wrapper
+            .findComponent(WorkflowStepper)
+            .props('submit') as () => Promise<unknown>;
+        await submit();
 
         const today = new Date().toISOString().slice(0, 10);
-        expect(submitted).toBe(true);
         // The server treats application_submission_date as the "submitted"
         // signal, so the draft must carry today's date (YYYY-MM-DD) on submit.
         expect(submitApplication).toHaveBeenCalledWith(
