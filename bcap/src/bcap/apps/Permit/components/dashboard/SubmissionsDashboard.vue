@@ -309,14 +309,13 @@ const openResourceReport = (resourceId: string) => {
                                         query: { draftId: draft.id },
                                     }"
                                 />
-                                <button
+                                <Button
                                     type="button"
                                     class="draft-delete-btn"
+                                    icon="fa fa-trash"
                                     :aria-label="$gettext('Delete draft')"
                                     @click="confirmDelete(draft)"
-                                >
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                                />
                             </div>
                         </div>
                     </Fluid>

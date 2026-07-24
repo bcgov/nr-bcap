@@ -2,6 +2,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import arches from 'arches';
+import Button from 'primevue/button';
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
@@ -333,30 +334,26 @@ const saveChanges = async () => {
             v-if="isDirty"
             class="actions-bar"
         >
-            <button
+            <Button
                 type="button"
                 class="action-btn undo-btn"
+                icon="fa-solid fa-rotate-left"
+                label="Undo"
                 :disabled="isSaving"
                 @click="undoChanges"
-            >
-                <i class="fa-solid fa-rotate-left"></i>
-                Undo
-            </button>
-            <button
+            />
+            <Button
                 type="button"
                 class="action-btn save-btn"
+                :icon="
+                    isSaving
+                        ? 'fa-solid fa-spinner fa-spin'
+                        : 'fa-solid fa-floppy-disk'
+                "
+                :label="isSaving ? 'Saving…' : 'Save'"
                 :disabled="isSaving"
                 @click="saveChanges"
-            >
-                <i
-                    :class="
-                        isSaving
-                            ? 'fa-solid fa-spinner fa-spin'
-                            : 'fa-solid fa-floppy-disk'
-                    "
-                ></i>
-                {{ isSaving ? 'Saving…' : 'Save' }}
-            </button>
+            />
         </div>
     </div>
 </template>

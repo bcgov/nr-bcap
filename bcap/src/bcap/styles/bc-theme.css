@@ -282,7 +282,7 @@
     padding: 1rem 1.5rem;
 }
 .p-dialog .p-dialog-title {
-    font-size: 1.25rem;
+    font-size: 1.8rem;
     font-weight: 700;
 }
 .p-dialog .p-dialog-header-actions .p-button {
@@ -290,9 +290,12 @@
 }
 .p-dialog .p-dialog-content {
     padding: 1.5rem;
-    font-size: 1.05rem;
+    font-size: 1.4rem;
     line-height: 1.5;
     color: var(--bc-text);
+}
+.p-dialog .p-button-label {
+    font-size: 1.4rem;
 }
 .p-dialog .p-dialog-footer {
     padding: 0 1.5rem 1.25rem;

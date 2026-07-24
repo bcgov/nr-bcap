@@ -407,7 +407,7 @@ const persistOrder = async () => {
             v-if="isStaff && addableModules && addableModules.length"
             class="add-module-bar"
         >
-            <button
+            <Button
                 v-for="mod in addableModules"
                 :key="mod.id"
                 type="button"
@@ -425,7 +425,7 @@ const persistOrder = async () => {
                     "
                 ></i>
                 {{ mod.label }}
-            </button>
+            </Button>
         </div>
 
         <Accordion
@@ -493,7 +493,7 @@ const persistOrder = async () => {
                                 <i class="fa-regular fa-circle-check"></i>
                                 Submitted {{ row.completedDate }}
                             </span>
-                            <button
+                            <Button
                                 v-if="isStaff"
                                 type="button"
                                 class="module-toggle"
@@ -521,16 +521,15 @@ const persistOrder = async () => {
                                         ? 'Mark unsatisfied'
                                         : 'Mark satisfied'
                                 }}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 v-if="isStaff"
                                 type="button"
                                 class="module-remove"
+                                icon="fa-solid fa-trash"
                                 title="Remove module"
                                 @click.stop="moduleRemove.open(row)"
-                            >
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                            />
                         </span>
                     </span>
                 </AccordionHeader>
@@ -666,7 +665,7 @@ const persistOrder = async () => {
                                             Edit Checklist (manager only)
                                         </a>
                                     </template>
-                                    <button
+                                    <Button
                                         v-else
                                         type="button"
                                         class="req-action req-satisfy"
@@ -698,7 +697,7 @@ const persistOrder = async () => {
                                                 ? 'Mark unsatisfied'
                                                 : 'Mark satisfied'
                                         }}
-                                    </button>
+                                    </Button>
                                     <a
                                         class="req-action"
                                         :href="`/bcap/resource/${requirement.resourceId}`"
@@ -707,16 +706,15 @@ const persistOrder = async () => {
                                     >
                                         View Arches
                                     </a>
-                                    <button
+                                    <Button
                                         type="button"
                                         class="req-remove"
+                                        icon="fa-solid fa-trash"
                                         title="Remove requirement"
                                         @click="
                                             reqRemove.open({ row, requirement })
                                         "
-                                    >
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
+                                    />
                                 </template>
                             </span>
                         </li>
@@ -731,7 +729,7 @@ const persistOrder = async () => {
                         v-if="isStaff"
                         class="add-req-row"
                     >
-                        <button
+                        <Button
                             type="button"
                             class="add-req-btn"
                             :disabled="ui.addingRequirement === row.tileid"
@@ -746,7 +744,7 @@ const persistOrder = async () => {
                                 "
                             ></i>
                             Add Checklist
-                        </button>
+                        </Button>
                     </div>
                 </AccordionContent>
             </AccordionPanel>

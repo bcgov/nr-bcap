@@ -2,6 +2,7 @@
 import { reactive, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import arches from 'arches';
+import Button from 'primevue/button';
 import { apiFetchJson } from '@/bcap/api.ts';
 import { saveChecklist } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
@@ -151,13 +152,12 @@ const saveRequirements = async () => {
             <h2 class="page-title">
                 {{ isEditing ? 'Edit' : 'Create' }} Process Requirement
             </h2>
-            <button
+            <Button
                 class="btn-primary"
                 :disabled="!canSave"
+                :label="state.isSaving ? 'Saving...' : 'Save Checklist'"
                 @click="saveRequirements"
-            >
-                {{ state.isSaving ? 'Saving...' : 'Save Checklist' }}
-            </button>
+            />
         </div>
 
         <p
@@ -249,25 +249,24 @@ const saveRequirements = async () => {
                             </div>
                         </div>
 
-                        <button
+                        <Button
                             v-if="state.steps.length > 1"
                             class="btn-delete"
                             title="Remove Step"
                             @click="removeStep(index)"
                         >
                             &times;
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
 
             <div class="action-row">
-                <button
+                <Button
                     class="btn-secondary"
+                    label="+ Add Another Step"
                     @click="addStep"
-                >
-                    + Add Another Step
-                </button>
+                />
             </div>
         </div>
     </div>

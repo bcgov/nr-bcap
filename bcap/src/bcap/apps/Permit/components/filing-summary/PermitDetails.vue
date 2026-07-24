@@ -364,13 +364,12 @@ watch(activeModuleId, (id) => {
                         Submitted
                         <strong>{{ state.permitData.submittedDate }}</strong>
                     </div>
-                    <button
+                    <Button
                         v-else
                         class="print-btn"
+                        label="Submit Permit"
                         @click="submitPermit"
-                    >
-                        Submit Permit
-                    </button>
+                    />
 
                     <QuestionDialog
                         :application-id="state.permitData.applicationNumber"
@@ -388,7 +387,7 @@ watch(activeModuleId, (id) => {
                 v-if="!isStaff"
                 class="side-menu"
             >
-                <button
+                <Button
                     v-for="mod in modulesAllowedForFilingType"
                     :key="mod.id"
                     class="menu-item"
@@ -421,7 +420,7 @@ watch(activeModuleId, (id) => {
                             title="Start this module"
                         ></i>
                     </div>
-                </button>
+                </Button>
             </div>
 
             <Transition
@@ -466,18 +465,17 @@ watch(activeModuleId, (id) => {
                             "
                             class="action-container"
                         >
-                            <button
+                            <Button
                                 class="add-module-btn"
+                                icon="fa-solid fa-plus"
                                 :disabled="activeModule.disabled"
-                                @click="startNewModule"
-                            >
-                                <i class="fa-solid fa-plus"></i>
-                                {{
+                                :label="
                                     activeModule.disabled
                                         ? 'Coming soon'
                                         : `Add ${activeModule.menuLabel} module`
-                                }}
-                            </button>
+                                "
+                                @click="startNewModule"
+                            />
                         </div>
                     </template>
 
@@ -536,16 +534,12 @@ watch(activeModuleId, (id) => {
                                                 <i class="fa-solid fa-pen"></i>
                                                 Resume draft
                                             </router-link>
-                                            <button
-                                                type="button"
+                                            <Button
                                                 class="draft-delete"
+                                                icon="fa-solid fa-trash"
+                                                label="Remove"
                                                 @click="confirmDelete(draft)"
-                                            >
-                                                <i
-                                                    class="fa-solid fa-trash"
-                                                ></i>
-                                                Remove
-                                            </button>
+                                            />
                                         </div>
                                     </AccordionContent>
                                 </AccordionPanel>
@@ -572,7 +566,6 @@ watch(activeModuleId, (id) => {
         modal
         :closable="false"
         header="Remove draft?"
-        class="remove-dialog"
         :style="{ width: '30rem' }"
     >
         <p>This permanently removes the draft. This action cannot be undone.</p>
@@ -592,21 +585,6 @@ watch(activeModuleId, (id) => {
         </template>
     </Dialog>
 </template>
-
-<!-- Not scoped: PrimeVue teleports the dialog to <body>, out of this component's
-     scoped tree, so these rules must be global to reach it. -->
-<style lang="css">
-.remove-dialog .p-dialog-title {
-    font-size: 1.8rem;
-}
-.remove-dialog .p-dialog-content {
-    font-size: 1.4rem;
-    line-height: 1.5;
-}
-.remove-dialog .p-button-label {
-    font-size: 1.4rem;
-}
-</style>
 
 <style scoped lang="css">
 .permit-loading {
