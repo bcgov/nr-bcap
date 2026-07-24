@@ -41,8 +41,8 @@ export const modulesForFilingType = (filingType: string): PermitModule[] => {
 export const permitModules: PermitModule[] = [
     {
         id: GraphSlug.PermitApplication,
-        menuLabel: 'Project Summary',
-        title: 'Project Summary',
+        menuLabel: 'Filing Summary',
+        title: 'Filing Summary',
         description:
             'General information regarding the permit application and overall project scope.',
         listItems: ['Project Details', 'Applicant Information'],
