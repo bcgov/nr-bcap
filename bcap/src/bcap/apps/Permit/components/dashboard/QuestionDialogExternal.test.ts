@@ -77,7 +77,7 @@ describe('QuestionDialogExternal.vue', () => {
         await flushPromises();
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];
-        expect(triggerBtn.text()).toContain('View Messages');
+        expect(triggerBtn.text()).toContain('Messages');
 
         // Badge should not exist
         const badge = wrapper.find('.message-badge');
@@ -99,7 +99,7 @@ describe('QuestionDialogExternal.vue', () => {
         await flushPromises();
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];
-        expect(triggerBtn.text()).toContain('View Messages');
+        expect(triggerBtn.text()).toContain('Messages');
 
         // Badge should exist and sum the unread count
         const badge = wrapper.find('.message-badge');
