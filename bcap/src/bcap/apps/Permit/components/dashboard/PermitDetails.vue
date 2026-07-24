@@ -28,6 +28,7 @@ import {
     modulesForFilingType,
 } from './permitModules.ts';
 import QuestionDialog from './QuestionDialogExternal.vue';
+import type { AppThread } from '@/bcap/types.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -76,12 +77,7 @@ const state = reactive({
     investigationDrafts: [] as InvestigationDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as InvestigationDraft[],
-    existingMessages: [] as Array<{
-        author: string;
-        text: string;
-        date: string;
-    }>,
-    activeThreadId: null as string | null,
+    threads: [] as AppThread[],
 });
 
 const modulesAllowedForFilingType = computed(() =>
@@ -290,16 +286,23 @@ const loadMessages = async () => {
     if (!permitId.value) return;
 
     try {
-        const { messages, threadId } = await getMessagesForPermit(
-            permitId.value,
+        const { threads } = await getMessagesForPermit(permitId.value);
+        state.threads = threads || [];
+
+        console.log(
+            'THREADS SENT TO DIALOG:',
+            JSON.parse(JSON.stringify(state.threads)),
         );
-        state.existingMessages = messages;
-        state.activeThreadId = threadId;
     } catch (error) {
-        console.error('Error loading messages:', error);
-        state.existingMessages = [];
-        state.activeThreadId = null;
+        console.error('Error loading threads:', error);
+        state.threads = [];
     }
+};
+
+const handleThreadResolved = async (threadId: string) => {
+    console.log(`Thread ${threadId} marked as resolved.`);
+    // TODO: Add your API call here to update the thread status to resolved.
+    await loadMessages();
 };
 
 onMounted(() => {
@@ -374,9 +377,10 @@ watch(activeModuleId, (id) => {
                     <QuestionDialog
                         :application-id="state.permitData.applicationNumber"
                         :permit-resource-id="permitId"
-                        :existing-messages="state.existingMessages"
-                        :thread-id="state.activeThreadId"
+                        :threads="state.threads"
+                        context="Permit Application"
                         @message-sent="loadMessages"
+                        @thread-resolved="handleThreadResolved"
                     />
                 </div>
             </div>
@@ -545,6 +549,21 @@ watch(activeModuleId, (id) => {
                                                 ></i>
                                                 Remove
                                             </button>
+                                            <QuestionDialog
+                                                :application-id="
+                                                    state.permitData
+                                                        .applicationNumber
+                                                "
+                                                :permit-resource-id="permitId"
+                                                :threads="state.threads"
+                                                :context="
+                                                    activeModule.menuLabel
+                                                "
+                                                @message-sent="loadMessages"
+                                                @thread-resolved="
+                                                    handleThreadResolved
+                                                "
+                                            />
                                         </div>
                                     </AccordionContent>
                                 </AccordionPanel>
@@ -558,7 +577,11 @@ watch(activeModuleId, (id) => {
                             :is-staff="isStaff"
                             :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
+                            :application-id="state.permitData.applicationNumber"
+                            :threads="state.threads"
                             @changed="loadPermitDetails"
+                            @message-sent="loadMessages"
+                            @thread-resolved="handleThreadResolved"
                         />
                     </div>
                 </div>
@@ -920,6 +943,8 @@ watch(activeModuleId, (id) => {
     margin-top: 2.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid #d1d5db;
+    display: flex;
+    gap: 1rem;
 }
 
 .add-module-btn {

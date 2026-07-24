@@ -14,10 +14,20 @@ import type {
     PermitApplicationResponse,
     PermitProcessModuleTileWritable,
     ProcessRequirement,
-    RawThreadMessage,
     ResourceDraft,
+    AppThread,
 } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { z } from 'zod';
+import {
+    zPatchedBcapMessageWritable,
+    zBcapMessage,
+    zPaginatedBcapMessageList,
+} from '@/bcap/client/zod.gen.ts';
+
+type PatchedBcapMessageWritable = z.infer<typeof zPatchedBcapMessageWritable>;
+export type RawThreadMessage = z.infer<typeof zBcapMessage>;
+type PaginatedMessages = z.infer<typeof zPaginatedBcapMessageList>;
 
 export const fetchDraft = async (
     graphSlug: string,
@@ -389,6 +399,7 @@ export const createBcapMessage = async (
     applicationId: string,
     permitResourceId: string,
     threadId?: string,
+    topic?: string,
 ) => {
     const aliasedData: NonNullable<BcapMessagePayload['aliased_data']> = {
         message_content: {
@@ -398,11 +409,10 @@ export const createBcapMessage = async (
                 },
                 message_subject: {
                     node_value: localized(
-                        `Comment regarding Application ${applicationId}`,
+                        topic ||
+                            `Comment regarding Application ${applicationId}`,
                     ),
                 },
-                // Applied server-side after save (the REST date field would
-                // otherwise drop the UTC offset).
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
                     node_value: [{ resourceId: permitResourceId }],
@@ -411,14 +421,12 @@ export const createBcapMessage = async (
         },
     };
 
-    // The recipient is optional; a reply inherits its thread's recipient.
     if (recipientId) {
         aliasedData.message_content!.aliased_data!.recipient = {
             node_value: [{ resourceId: recipientId }],
         };
     }
 
-    // A reply points back at its thread's root message.
     if (threadId) {
         aliasedData.related_source_message = {
             aliased_data: {
@@ -449,45 +457,94 @@ const formatMessageDate = (isoDate: string | null | undefined): string =>
 
 export const getMessagesForPermit = async (
     permitId: string,
-): Promise<{ messages: FormattedMessage[]; threadId: string | null }> => {
-    const threads = await apiFetchJson<{ results: RawThreadMessage[] }>(
+): Promise<{ threads: AppThread[] }> => {
+    const threadsResponse = await apiFetchJson<PaginatedMessages>(
         arches.urls.bcap_message_resource_threads(permitId),
     );
-    const threadId = threads.results?.[0]?.resourceinstanceid ?? null;
-    if (!threadId) {
-        return { messages: [], threadId: null };
+
+    if (!threadsResponse.results || threadsResponse.results.length === 0) {
+        return { threads: [] };
     }
 
-    // The thread endpoint returns the root and its replies as separate messages.
-    const thread = await apiFetchJson<{ results: RawThreadMessage[] }>(
-        arches.urls.bcap_message_thread_messages(threadId),
-    );
+    const threadPromises = threadsResponse.results.map(async (rootMessage) => {
+        const threadId = rootMessage.resourceinstanceid;
 
-    const messages = (thread.results ?? [])
-        .map((message) => {
-            const content = message.aliased_data?.message_content?.aliased_data;
-            return {
-                author: content?.message_author?.display_value || 'Unknown',
-                text:
-                    content?.message_content?.node_value?.en?.value ||
-                    content?.message_content?.display_value ||
-                    '',
-                date: content?.message_creation_date?.node_value ?? null,
-            };
-        })
-        .filter((message) => message.text)
-        .sort(
-            (a, b) =>
-                new Date(a.date ?? 0).getTime() -
-                new Date(b.date ?? 0).getTime(),
+        const contentData =
+            rootMessage.aliased_data?.message_content?.aliased_data;
+        const rawSubject =
+            contentData?.message_subject?.display_value ||
+            contentData?.message_subject?.node_value?.en?.value ||
+            'General Question';
+
+        const topic = rawSubject.split(' - Application')[0] || rawSubject;
+
+        const threadMessagesResponse = await apiFetchJson<PaginatedMessages>(
+            arches.urls.bcap_message_thread_messages(threadId as string),
+        );
+
+        const messages: FormattedMessage[] = (
+            threadMessagesResponse.results ?? []
         )
-        .map((message) => ({
-            author: message.author,
-            text: message.text,
-            date: formatMessageDate(message.date),
-        }));
+            .map((message) => {
+                const messageContentNode =
+                    message.aliased_data?.message_content;
+                const content = messageContentNode?.aliased_data;
+                const readDate = content?.message_read_date?.node_value;
 
-    return { messages, threadId };
+                return {
+                    id: message.resourceinstanceid ?? '',
+                    rawResource: message,
+                    author: content?.message_author?.display_value || 'Unknown',
+                    text:
+                        content?.message_content?.node_value?.en?.value ||
+                        content?.message_content?.display_value ||
+                        '',
+                    date: content?.message_creation_date?.node_value ?? null,
+                    isUnread: !readDate,
+                };
+            })
+            .filter((message) => message.text)
+            .sort(
+                (a, b) =>
+                    new Date(a.date ?? 0).getTime() -
+                    new Date(b.date ?? 0).getTime(),
+            )
+            .map((message) => ({
+                id: message.id,
+                rawResource: message.rawResource,
+                author: message.author,
+                text: message.text,
+                date: formatMessageDate(message.date),
+                isUnread: message.isUnread,
+            }));
+
+        const isResolved = false;
+        const unreadCount = messages.filter((msg) => msg.isUnread).length;
+        const hasUnread = unreadCount > 0;
+
+        return {
+            id: threadId,
+            topic,
+            messages,
+            hasUnread,
+            unreadCount,
+            isResolved,
+        } as AppThread;
+    });
+
+    const threads = await Promise.all(threadPromises);
+
+    threads.sort((a: AppThread, b: AppThread) => {
+        if (a.messages.length === 0 || b.messages.length === 0) return 0;
+
+        const lastMsgA = a.messages[a.messages.length - 1];
+        const lastMsgB = b.messages[b.messages.length - 1];
+        const dateA = lastMsgA?.date ? new Date(lastMsgA.date).getTime() : 0;
+        const dateB = lastMsgB?.date ? new Date(lastMsgB.date).getTime() : 0;
+        return dateB - dateA; // Descending
+    });
+
+    return { threads };
 };
 
 // The contributors you can address a message to for a resource: its
@@ -503,4 +560,25 @@ export const getContributorsForResources = async (
         label: item.name || 'Unknown Contributor',
         value: item.id,
     }));
+};
+
+export const markMessageAsRead = async (messageId: string): Promise<void> => {
+    const nextReadDate = new Date().toISOString();
+
+    const body: PatchedBcapMessageWritable = {
+        aliased_data: {
+            message_content: {
+                aliased_data: {
+                    message_content: null,
+                    resource_context: null,
+                    message_read_date: { node_value: nextReadDate },
+                },
+            },
+        },
+    };
+
+    await apiFetchJson(arches.urls.bcap_message_detail(messageId), {
+        method: HttpMethod.Patch,
+        body: body,
+    });
 };

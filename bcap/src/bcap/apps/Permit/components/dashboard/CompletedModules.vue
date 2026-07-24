@@ -28,6 +28,8 @@ import type {
     ProcessRequirement,
     PermitProcessModuleTile,
 } from '@/bcap/types.ts';
+import QuestionDialog from '@/bcap/apps/Permit/components/dashboard/QuestionDialogExternal.vue';
+import type { AppThread } from '@/bcap/types.ts';
 
 const requirementType = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.requirement_identification?.aliased_data
@@ -50,6 +52,8 @@ const {
     adminTileId,
     isStaff,
     addableModules,
+    applicationId,
+    threads,
     summaryFields,
 } = defineProps<{
     modules: PermitProcessModuleTile[];
@@ -57,12 +61,17 @@ const {
     adminTileId: string;
     isStaff?: boolean;
     addableModules?: AddableModule[];
+    applicationId?: string;
+    threads?: AppThread[];
     summaryFields?: ReviewField[];
 }>();
 
 const emit = defineEmits<{
     // A module was added or removed; the parent should reload the modules.
     (event: 'changed'): void;
+    // Messaging events to bubble up to the parent
+    (event: 'message-sent'): void;
+    (event: 'thread-resolved', threadId: string): void;
 }>();
 
 interface RequirementItem {
@@ -79,6 +88,7 @@ interface ModuleRow {
     tileid: string;
     name: string;
     moduleId: string;
+    moduleResourceId: string; // NEW: Holds the UUID of the module for the API
     completedDate: string;
     isCompleted: boolean;
     order: number;
@@ -153,14 +163,20 @@ const requirementItems = (tile: PermitProcessModuleTile): RequirementItem[] =>
 
 const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
     const order = tile.aliased_data?.module_order?.node_value ?? 0;
+    const nodeVal = tile.aliased_data?.module_id?.node_value;
+    const moduleResourceId = Array.isArray(nodeVal)
+        ? nodeVal[0]?.resourceId || ''
+        : '';
+    const moduleId =
+        tile.aliased_data?.module_id?.display_value ||
+        (Array.isArray(nodeVal) ? '' : String(nodeVal ?? ''));
+
     return {
         tileid: tile.tileid ?? '',
         name:
             tile.aliased_data?.module_name?.display_value || 'Untitled module',
-        moduleId:
-            tile.aliased_data?.module_id?.display_value ||
-            tile.aliased_data?.module_id?.node_value ||
-            '',
+        moduleId,
+        moduleResourceId, // Now safely either a UUID or an empty string
         completedDate:
             tile.aliased_data?.module_completed_date?.display_value || '',
         isCompleted: Boolean(
@@ -725,26 +741,41 @@ const persistOrder = async () => {
                     >
                         No process requirements on this module.
                     </p>
-                    <div
-                        v-if="isStaff"
-                        class="add-req-row"
-                    >
-                        <button
-                            type="button"
-                            class="add-req-btn"
-                            :disabled="ui.addingRequirement === row.tileid"
-                            @click="onAddRequirement(row)"
+
+                    <div class="module-footer-actions">
+                        <QuestionDialog
+                            v-if="applicationId && threads"
+                            :application-id="applicationId"
+                            :permit-resource-id="
+                                row.moduleResourceId || permitId
+                            "
+                            :threads="threads"
+                            :context="row.name"
+                            @message-sent="$emit('message-sent')"
+                            @thread-resolved="$emit('thread-resolved', $event)"
+                        />
+
+                        <div
+                            v-if="isStaff"
+                            class="add-req-row"
                         >
-                            <i
-                                class="fa-solid"
-                                :class="
-                                    ui.addingRequirement === row.tileid
-                                        ? 'fa-circle-notch fa-spin'
-                                        : 'fa-plus'
-                                "
-                            ></i>
-                            Add Checklist
-                        </button>
+                            <button
+                                type="button"
+                                class="add-req-btn"
+                                :disabled="ui.addingRequirement === row.tileid"
+                                @click="onAddRequirement(row)"
+                            >
+                                <i
+                                    class="fa-solid"
+                                    :class="
+                                        ui.addingRequirement === row.tileid
+                                            ? 'fa-circle-notch fa-spin'
+                                            : 'fa-plus'
+                                    "
+                                ></i>
+                                Add Checklist
+                            </button>
+                        </div>
                     </div>
                 </AccordionContent>
             </AccordionPanel>
@@ -1372,8 +1403,15 @@ const persistOrder = async () => {
     background-color: #fde8ea;
 }
 
+.module-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
 .add-req-row {
-    margin-top: 0.75rem;
+    margin-top: 0;
 }
 
 /* Matches the add-module chips at the top of the panel. */

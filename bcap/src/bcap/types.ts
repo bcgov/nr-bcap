@@ -91,9 +91,21 @@ export type BcapMessagePayload = z.infer<typeof zBcapMessageWritable>;
 
 // A message flattened and date-formatted for the permit message thread UI.
 export interface FormattedMessage {
+    id: string;
+    rawResource: Record<string, unknown>;
     author: string;
     text: string;
-    date: string;
+    date: string | null;
+    isUnread: boolean;
+}
+
+export interface AppThread {
+    id: string;
+    topic: string;
+    messages: FormattedMessage[];
+    hasUnread: boolean;
+    unreadCount?: number;
+    isResolved?: boolean;
 }
 
 export interface TileReference {
