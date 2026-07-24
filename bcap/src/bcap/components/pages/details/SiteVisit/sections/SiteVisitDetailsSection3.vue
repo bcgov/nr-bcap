@@ -4,7 +4,7 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import type { zApiHcaPermitListResponseType } from '@/bcap/types.ts';
+import type { ApiHcaPermitListResponse } from '@/bcap/client/types.gen.ts';
 import { useResourceList } from '@/bcap/composables/useResourceData.ts';
 import {
     useTileEditLog,
@@ -52,7 +52,7 @@ const associatedPermitIds = computed(() => {
 });
 
 const { data: permitData } = useResourceList<
-    Ref<zApiHcaPermitListResponseType>
+    Ref<ApiHcaPermitListResponse>
 >('hca_permit', associatedPermitIds);
 
 const permitDetails = computed(() => {

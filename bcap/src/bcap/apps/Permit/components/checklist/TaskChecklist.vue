@@ -2,10 +2,8 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import arches from 'arches';
-import {
-    getProcessRequirementData,
-    type ProcessRequirement,
-} from '@/bcap/components/pages/api.ts';
+import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
+import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
 
 const route = useRoute();

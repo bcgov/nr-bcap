@@ -14,10 +14,8 @@ import Panel from 'primevue/panel';
 import type { StepperProps, StepperState } from 'primevue/stepper';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
-import type {
-    ArchesDraftData,
-    PermitApplicationResponse,
-} from '@/bcap/types.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
+import type { PermitApplication } from '@/bcap/client/types.gen.ts';
 import { submitModule, fetchDraft } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
@@ -44,7 +42,7 @@ const props = withDefaults(
         // How to persist on the final step. Defaults to the module-filing flow
         // (submitModule against the parent permit). The base permit application
         // has no parent, so it passes its own that calls submitApplication.
-        submit?: () => Promise<PermitApplicationResponse | null>;
+        submit?: () => Promise<PermitApplication | null>;
         // The Review/Submitted step body. Defaults to the generic summary of
         // every filled node; the base permit passes a curated version.
         reviewComponent?: Component;
@@ -56,7 +54,7 @@ const props = withDefaults(
     },
 );
 
-const defaultSubmit = async (): Promise<PermitApplicationResponse | null> => {
+const defaultSubmit = async (): Promise<PermitApplication | null> => {
     if (!draft.draftId) throw new Error('No active draft found.');
     if (!draft.parentPermitId)
         throw new Error('No permit associated with this filing.');
@@ -80,7 +78,7 @@ const state = reactive({
     submitting: false,
     devMode: true,
     isDataLoaded: false,
-    finalizedResourceData: null as PermitApplicationResponse | null,
+    finalizedResourceData: null as PermitApplication | null,
 });
 
 // The content steps plus the always-present Review and Submitted steps.

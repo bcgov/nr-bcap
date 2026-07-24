@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
-import type { ProcessRequirement } from '@/bcap/types.ts';
+import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 
 // Route query is controlled per-test via this ref.
 const mockQuery = ref<Record<string, string | undefined>>({});

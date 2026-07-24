@@ -15,12 +15,12 @@ import type {
 } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
+import type { DashboardStatus } from '@/bcap/types.ts';
 import type {
     ProcessRequirement,
-    DashboardStatus,
     InternalDashboardCard,
-} from '@/bcap/types.ts';
-export type { ProcessRequirement, DashboardStatus, InternalDashboardCard };
+} from '@/bcap/client/types.gen.ts';
+export type { DashboardStatus };
 
 export const getResourceData = async (
     graph_slug: string,
@@ -89,7 +89,7 @@ export const getProcessRequirementData = async (
         console.warn('ProcessRequirement failed validation:', result.error);
         return json as ProcessRequirement;
     }
-    return result.data;
+    return json as ProcessRequirement;
 };
 
 export type UnlinkedContributor = z.infer<typeof zContributorSummary>;

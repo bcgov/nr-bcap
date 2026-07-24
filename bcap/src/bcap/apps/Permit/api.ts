@@ -3,27 +3,29 @@ import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
 import { localized } from '@/bcap/util.ts';
 import type {
     ArchesDraftData,
-    BcapMessagePayload,
-    ChecklistStep,
     DraftNode,
     FormattedMessage,
     InvestigationDraft,
-    PatchedPermitApplication,
     PermitAliasedData,
-    PermitApplicationAdminTileWritable,
-    PermitApplicationResponse,
-    PermitProcessModuleTileWritable,
-    ProcessRequirement,
-    RawThreadMessage,
-    ResourceDraft,
 } from '@/bcap/types.ts';
+import type {
+    BcapMessage,
+    BcapMessageWritable,
+    ChecklistStep,
+    DraftRecord,
+    PatchedPermitApplicationWritable,
+    PermitApplication,
+    PermitApplicationApplicationAdminTileWritable,
+    PermitApplicationProcessModuleTileWritable,
+    ProcessRequirement,
+} from '@/bcap/client/types.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export const fetchDraft = async (
     graphSlug: string,
     draftId: string,
-): Promise<ResourceDraft> => {
-    return apiFetchJson<ResourceDraft>(
+): Promise<DraftRecord> => {
+    return apiFetchJson<DraftRecord>(
         `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`,
     );
 };
@@ -33,8 +35,8 @@ export const fetchDraft = async (
 export const createDraft = async (
     graphSlug: string,
     parentResourceId?: string,
-): Promise<ResourceDraft> => {
-    return apiFetchJson<ResourceDraft>(
+): Promise<DraftRecord> => {
+    return apiFetchJson<DraftRecord>(
         arches.urls.api_workflow_draft(graphSlug),
         {
             method: HttpMethod.Post,
@@ -102,7 +104,7 @@ export const submitApplication = async (
     draftId: string,
     payload: ArchesDraftData,
     graphSlug: string = GraphSlug.PermitApplication,
-): Promise<PermitApplicationResponse> => {
+): Promise<PermitApplication> => {
     try {
         const submitUrl = arches.urls.permit_application_create;
         const cleanPayload = JSON.parse(
@@ -120,7 +122,7 @@ export const submitApplication = async (
             },
         } as unknown as DraftNode;
 
-        const finalResource = await apiFetchJson<PermitApplicationResponse>(
+        const finalResource = await apiFetchJson<PermitApplication>(
             submitUrl,
             {
                 method: HttpMethod.Post,
@@ -152,10 +154,10 @@ export const submitModule = async (
     draftId: string | undefined,
     moduleSlug: GraphSlug,
     payload: ArchesDraftData,
-): Promise<PermitApplicationResponse> => {
+): Promise<PermitApplication> => {
     try {
         const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
-        const result = await apiFetchJson<PermitApplicationResponse>(url, {
+        const result = await apiFetchJson<PermitApplication>(url, {
             method: HttpMethod.Post,
             body: { aliased_data: payload },
         });
@@ -221,7 +223,7 @@ export const fetchPermitDetails = async (
 ): Promise<PermitAliasedData | null | undefined> => {
     const url = arches.urls.api_resource(GraphSlug.PermitApplication, permitId);
 
-    const rawJson = await apiFetchJson<PermitApplicationResponse>(url);
+    const rawJson = await apiFetchJson<PermitApplication>(url);
 
     if (!rawJson || !rawJson.aliased_data) {
         console.warn('API payload did not contain aliased_data');
@@ -266,9 +268,9 @@ export const patchModuleOrder = async (
 
     const toModuleTile = (
         module: ModuleOrderPatch,
-    ): PermitProcessModuleTileWritable => {
+    ): PermitApplicationProcessModuleTileWritable => {
         const aliasedData: NonNullable<
-            PermitProcessModuleTileWritable['aliased_data']
+            PermitApplicationProcessModuleTileWritable['aliased_data']
         > = {
             module_order: { node_value: module.order },
             module_name: { node_value: localized(module.name) },
@@ -285,14 +287,14 @@ export const patchModuleOrder = async (
         };
     };
 
-    const applicationAdmin: PermitApplicationAdminTileWritable = {
+    const applicationAdmin: PermitApplicationApplicationAdminTileWritable = {
         aliased_data: { process_module: modules.map(toModuleTile) },
     };
     if (adminTileId) {
         applicationAdmin.tileid = adminTileId;
     }
 
-    const body: PatchedPermitApplication = {
+    const body: PatchedPermitApplicationWritable = {
         aliased_data: { application_admin: applicationAdmin },
     };
 
@@ -388,7 +390,7 @@ export const createBcapMessage = async (
     permitResourceId: string,
     threadId?: string,
 ) => {
-    const aliasedData: NonNullable<BcapMessagePayload['aliased_data']> = {
+    const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
                 message_content: {
@@ -427,7 +429,7 @@ export const createBcapMessage = async (
         };
     }
 
-    return apiFetchJson<RawThreadMessage>(
+    return apiFetchJson<BcapMessage>(
         arches.urls.bcap_message_list_create,
         {
             method: HttpMethod.Post,
@@ -455,7 +457,7 @@ const formatMessageDate = (isoDate: string | null | undefined): string =>
 export const getMessagesForPermit = async (
     permitId: string,
 ): Promise<{ messages: FormattedMessage[]; threadId: string | null }> => {
-    const threads = await apiFetchJson<{ results: RawThreadMessage[] }>(
+    const threads = await apiFetchJson<{ results: BcapMessage[] }>(
         arches.urls.bcap_message_resource_threads(permitId),
     );
     const threadId = threads.results?.[0]?.resourceinstanceid ?? null;
@@ -464,7 +466,7 @@ export const getMessagesForPermit = async (
     }
 
     // The thread endpoint returns the root and its replies as separate messages.
-    const thread = await apiFetchJson<{ results: RawThreadMessage[] }>(
+    const thread = await apiFetchJson<{ results: BcapMessage[] }>(
         arches.urls.bcap_message_thread_messages(threadId),
     );
 

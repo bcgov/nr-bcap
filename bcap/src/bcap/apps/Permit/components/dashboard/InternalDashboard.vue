@@ -11,8 +11,8 @@ import SortingBar from './SortingBar.vue';
 import {
     getInternalDashboardData,
     type DashboardStatus,
-    type InternalDashboardCard,
 } from '@/bcap/components/pages/api.ts';
+import type { InternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 
 const currentRoute = useRoute();

@@ -3,7 +3,8 @@ import WorkflowStepper from '@/bcap/apps/Permit/Modules/WorkflowStepper.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { submitApplication } from '@/bcap/apps/Permit/api.ts';
-import type { DraftNode, PermitApplicationResponse } from '@/bcap/types.ts';
+import type { DraftNode } from '@/bcap/types.ts';
+import type { PermitApplication } from '@/bcap/client/types.gen.ts';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prelim.vue';
@@ -22,7 +23,7 @@ const draft = useDraftStore();
 
 // The permit application is the root resource (no parent permit), so it creates
 // a new permit rather than filing a module against one.
-const submit = (): Promise<PermitApplicationResponse> => {
+const submit = (): Promise<PermitApplication> => {
     if (!draft.draftId) throw new Error('No active draft found.');
 
     // Stamp the submission date: the server treats application_submission_date

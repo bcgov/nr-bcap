@@ -16,7 +16,8 @@ import {
 } from '@/bcap/apps/Permit/api.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import type { ModuleProgress, PermitApplicationDraft } from '@/bcap/types.ts';
+import type { PermitApplicationDraft } from '@/bcap/types.ts';
+import type { ModuleProgress } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 

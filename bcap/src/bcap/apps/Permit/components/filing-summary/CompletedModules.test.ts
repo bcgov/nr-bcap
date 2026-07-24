@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
-import type { PermitProcessModuleTile } from '@/bcap/types.ts';
+import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
 
 vi.mock('arches', () => ({
     default: {
@@ -72,7 +72,7 @@ const moduleTile = (opts: {
     order?: number;
     completedDate?: string;
     requirements?: Req[];
-}): PermitProcessModuleTile =>
+}): PermitApplicationProcessModuleTile =>
     ({
         tileid: opts.tileid ?? 't1',
         aliased_data: {
@@ -97,7 +97,7 @@ const moduleTile = (opts: {
                 },
             })),
         },
-    }) as unknown as PermitProcessModuleTile;
+    }) as unknown as PermitApplicationProcessModuleTile;
 
 // A loaded requirement resource, in the shape the detail-fetch reads.
 const requirementDetail = (opts: {

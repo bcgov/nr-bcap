@@ -7,7 +7,7 @@ import { saveChecklist } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { readString } from '@/bcap/util.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
-import type { ProcessRequirement } from '@/bcap/types.ts';
+import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 
 const route = useRoute();
 const processId = computed(() => route.query.id as string | undefined);

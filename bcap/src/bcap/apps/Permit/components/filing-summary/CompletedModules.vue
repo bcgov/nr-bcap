@@ -26,8 +26,8 @@ import ReviewSummary, {
 } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import type {
     ProcessRequirement,
-    PermitProcessModuleTile,
-} from '@/bcap/types.ts';
+    PermitApplicationProcessModuleTile,
+} from '@/bcap/client/types.gen.ts';
 
 const requirementType = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.requirement_identification?.aliased_data
@@ -52,7 +52,7 @@ const {
     addableModules,
     summaryFields,
 } = defineProps<{
-    modules: PermitProcessModuleTile[];
+    modules: PermitApplicationProcessModuleTile[];
     permitId: string;
     adminTileId: string;
     isStaff?: boolean;
@@ -120,7 +120,7 @@ const requirementInternal = (requirement: ProcessRequirement): boolean =>
         ?.is_template_requirement?.aliased_data?.is_internal_requirement
         ?.node_value === true;
 
-const requirementItems = (tile: PermitProcessModuleTile): RequirementItem[] =>
+const requirementItems = (tile: PermitApplicationProcessModuleTile): RequirementItem[] =>
     (tile.aliased_data?.process_requirement || [])
         .map((child) => ({
             order:
@@ -151,7 +151,7 @@ const requirementItems = (tile: PermitProcessModuleTile): RequirementItem[] =>
             };
         });
 
-const toRow = (tile: PermitProcessModuleTile): ModuleRow => {
+const toRow = (tile: PermitApplicationProcessModuleTile): ModuleRow => {
     const order = tile.aliased_data?.module_order?.node_value ?? 0;
     return {
         tileid: tile.tileid ?? '',

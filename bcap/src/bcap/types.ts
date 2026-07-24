@@ -1,23 +1,11 @@
-import { z } from 'zod';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import {
-    zApiHcaPermitListResponse,
-    zApiDashboardInternalRetrieveQuery,
-    zBcapMessage,
-    zBcapMessageWritable,
-    zChecklistStep,
-    zInternalDashboardCard,
-    zModuleProgress,
-    zPermitApplication,
-    zPermitApplicationProcessModuleTile,
-    zProcessRequirement,
-    zDraftRecord,
-    zInvestigationResourceAliasedDataWritable,
-    zPermitApplicationResourceAliasedDataWritable,
-    zPatchedPermitApplicationWritable,
-    zPermitApplicationProcessModuleTileWritable,
-    zPermitApplicationApplicationAdminTileWritable,
-} from '@/bcap/client/zod.gen.ts';
+import type {
+    ApiDashboardInternalRetrieveData,
+    DraftRecord,
+    InvestigationResourceAliasedDataWritable,
+    PermitApplication,
+    PermitApplicationResourceAliasedDataWritable,
+} from '@/bcap/client/types.gen.ts';
 
 import type {
     ReferenceSelectValue,
@@ -37,57 +25,24 @@ export type DraftNodeGroup = {
 
 export type ArchesDraftData = Record<string, DraftNodeGroup>;
 
-export type PermitApplicationResponse = z.infer<typeof zPermitApplication>;
-
-export type ProcessRequirement = z.infer<typeof zProcessRequirement>;
-
-export type ChecklistStep = z.infer<typeof zChecklistStep>;
-
-export type DashboardStatus = z.infer<
-    typeof zApiDashboardInternalRetrieveQuery
+export type DashboardStatus = NonNullable<
+    ApiDashboardInternalRetrieveData['query']
 >['status'];
 
-export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
-
-export type ModuleProgress = z.infer<typeof zModuleProgress>;
-
-export type PermitAliasedData = NonNullable<
-    z.infer<typeof zPermitApplication>['aliased_data']
->;
-
-export type PermitProcessModuleTile = z.infer<
-    typeof zPermitApplicationProcessModuleTile
->;
-
-export type PatchedPermitApplication = z.infer<
-    typeof zPatchedPermitApplicationWritable
->;
-
-export type PermitProcessModuleTileWritable = z.infer<
-    typeof zPermitApplicationProcessModuleTileWritable
->;
-
-export type PermitApplicationAdminTileWritable = z.infer<
-    typeof zPermitApplicationApplicationAdminTileWritable
->;
-
-export type ResourceDraft = z.infer<typeof zDraftRecord>;
+export type PermitAliasedData = NonNullable<PermitApplication['aliased_data']>;
 
 // A permit application draft narrows the generic draft to the permit resource's
 // writable (POST) aliased data, which carries the graph's required fields.
-export type PermitApplicationDraft = ResourceDraft & {
-    data?: z.infer<typeof zPermitApplicationResourceAliasedDataWritable>;
+export type PermitApplicationDraft = DraftRecord & {
+    data?: PermitApplicationResourceAliasedDataWritable;
 };
 
 // An investigation draft narrows the generic draft to the investigation
 // resource's writable (POST) aliased data, which carries the graph's required
 // fields.
-export type InvestigationDraft = ResourceDraft & {
-    data?: z.infer<typeof zInvestigationResourceAliasedDataWritable>;
+export type InvestigationDraft = DraftRecord & {
+    data?: InvestigationResourceAliasedDataWritable;
 };
-
-export type RawThreadMessage = z.infer<typeof zBcapMessage>;
-export type BcapMessagePayload = z.infer<typeof zBcapMessageWritable>;
 
 // A message flattened and date-formatted for the permit message thread UI.
 export interface FormattedMessage {
@@ -136,10 +91,6 @@ export type NullableReferenceSelectValue =
           node_value: ReferenceSelectNodeValue[] | null;
           details: ReferenceSelectDetails[] | [];
       });
-
-export type zApiHcaPermitListResponseType = z.infer<
-    typeof zApiHcaPermitListResponse
->;
 
 export interface BcapURLs {
     add_resource: (graphid: string) => string;

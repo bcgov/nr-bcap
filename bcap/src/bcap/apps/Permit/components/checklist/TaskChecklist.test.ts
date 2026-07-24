@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { ref, nextTick } from 'vue';
-import type { ProcessRequirement } from '@/bcap/components/pages/api.ts';
+import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 
 // Dynamic route query so individual tests can override the resource ID.
 const mockRouteQuery = ref<Record<string, string | undefined>>({
