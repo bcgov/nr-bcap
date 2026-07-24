@@ -54,7 +54,6 @@ const stubs = {
     AccordionHeader: slotStub('AccordionHeader'),
     AccordionContent: slotStub('AccordionContent'),
     Dialog: slotStub('Dialog'),
-    Button: slotStub('Button'),
 };
 
 // A module tile in the aliased_data shape the component reads. requirements is a
