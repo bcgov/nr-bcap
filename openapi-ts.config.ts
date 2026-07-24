@@ -1,7 +1,7 @@
 import { defineConfig } from "@hey-api/openapi-ts";
 
-// Generate Zod schemas (single source of truth) from the OpenAPI spec.
-// Types are derived via z.infer, so no separate type plugin.
+// Generate Zod schemas (single source of truth) from the OpenAPI spec, plus
+// plain TypeScript types for code that needs a shape without importing Zod.
 // output.header adds a regenerated guide for mapping a schema name to its route.
 export default defineConfig({
     input: "schema.yml",
@@ -34,5 +34,8 @@ export default defineConfig({
     // dates.local/offset emit z.iso.datetime({ local: true, offset: true }) so
     // the backend's naive datetimes (USE_TZ=False, no offset) and any tz-aware
     // ones both validate, instead of the default strict (Z-required) form.
-    plugins: [{ name: "zod", dates: { local: true, offset: true } }],
+    plugins: [
+        { name: "zod", dates: { local: true, offset: true } },
+        "@hey-api/typescript",
+    ],
 });
