@@ -114,6 +114,16 @@ class BcapMessageService(BaseGraphService):
                 data={node_id: [{"resourceId": str(contributor_id)}]},
             )
 
+    def unarchive_thread_for_all(self, message_id):
+        """Clear every viewer's archive of a message's thread so a new reply
+        resurfaces it for all. A new root has no such tiles, so it no-ops."""
+        thread_id = self._thread_id(message_id)
+        _, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
+        TileModel.objects.filter(
+            nodegroup_id=nodegroup_id,
+            resourceinstance_id=str(thread_id),
+        ).delete()
+
     def _archived_by_tiles(self, contributor_id, thread_id=None):
         """archived_by tiles naming this contributor, optionally scoped to one root."""
         node_id, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)

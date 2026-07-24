@@ -349,6 +349,22 @@ class BcapMessageArchiveTests(TestCase):
         self.assertIn(str(self.root.pk), self._root_ids(self.staff, False))
         self.assertEqual(self._root_ids(self.staff, True), set())
 
+    def test_new_message_unarchives_the_thread_for_all(self):
+        # Both parties file the thread away; a new message must resurface it for
+        # everyone, not just the poster. Passing a reply id also proves it lands
+        # on the root the listing filters on.
+        self.service.set_archived_state(self.root.pk, {"archived": True}, "archstaff")
+        self.service.set_archived_state(self.root.pk, {"archived": True}, "archapp")
+        self.assertEqual(self._root_ids(self.staff, True), {str(self.root.pk)})
+        self.assertEqual(self._root_ids(self.applicant, True), {str(self.root.pk)})
+
+        self.service.unarchive_thread_for_all(self.reply.pk)
+
+        self.assertEqual(self._root_ids(self.staff, True), set())
+        self.assertEqual(self._root_ids(self.applicant, True), set())
+        self.assertIn(str(self.root.pk), self._root_ids(self.staff, False))
+        self.assertIn(str(self.root.pk), self._root_ids(self.applicant, False))
+
     def test_archiving_twice_is_idempotent(self):
         # A second archive must not add a duplicate tile; unarchiving once still
         # fully clears it.

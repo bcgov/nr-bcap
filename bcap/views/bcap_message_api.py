@@ -117,6 +117,8 @@ class BcapMessageCreateView(BcapMessageListView):
         if not user_can_edit_resource(request.user, resourceid=resource_id):
             raise PermissionDenied("No access to the resource context.")
         self.perform_create(serializer)
+        # A reply resurfaces the thread
+        service.unarchive_thread_for_all(serializer.instance.pk)
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
