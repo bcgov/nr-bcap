@@ -171,14 +171,6 @@ class BcapMessageVisibilityTests(TestCase):
         self.assertNotIn(str(self.public_reply.pk), ids)
         self.assertNotIn(str(self.elsewhere.pk), ids)
 
-    def test_internal_user_also_sees_internal_only_roots(self):
-        # Internal users see every root; the internal-only ones are included, not
-        # the only thing they see.
-        ids = self._root_ids(self.staff)
-        self.assertIn(str(self.internal_root.pk), ids)
-        self.assertIn(str(self.internal_to_applicant.pk), ids)
-        self.assertIn(str(self.public_root.pk), ids)
-
     def test_external_user_sees_only_roots_they_are_party_to(self):
         # The applicant sees only the public root: not the staff-only note (not
         # party), and not the internal note addressed to them (party, but
@@ -263,27 +255,126 @@ class BcapMessageUnreadCountTests(TestCase):
             subject="elsewhere",
         )
 
-    def test_counts_only_unread_addressed_to_the_user_on_this_resource(self):
-        self.assertEqual(
-            self.service.unread_count_across([self.permit.pk], "reader"), 2
+    def test_unread_count_across(self):
+        count = self.service.unread_count_across
+        # Only unread messages addressed to the user on the given resources: two
+        # on the permit, and rolled up with the other resource makes three (the
+        # shape the dashboard needs for a permit and its related submissions).
+        self.assertEqual(count([self.permit.pk], "reader"), 2)
+        self.assertEqual(count([self.permit.pk, self.other_permit.pk], "reader"), 3)
+        # No resources or an unknown user counts zero.
+        self.assertEqual(count([], "reader"), 0)
+        self.assertEqual(count([self.permit.pk], "nobody"), 0)
+
+
+class BcapMessageArchiveTests(TestCase):
+    """Archiving is personal: an archived_by tile on the thread root marks the
+    thread archived for one viewer only, so one party archiving never hides it
+    from another; it is root-scoped, so archiving from a reply archives the
+    thread; and root_queryset splits each viewer's active vs archived threads."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = BcapMessageService()
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
+
+        # A staffer and an applicant, both party to the thread (author of one
+        # message, recipient of another) so each can see it and archive it.
+        cls.staff = make_user("archstaff", internal=True)
+        cls.applicant = make_user("archapp")
+        staff_contrib = builder.make_contributor(
+            ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="archstaff")
+        )
+        applicant_contrib = builder.make_contributor(
+            ContributorSpec(contributor_type, "Amy", "App", bcap_username="archapp")
+        )
+        cls.permit = builder.make_resource("permit_application")
+        cls.permit_id = str(cls.permit.pk)
+
+        # One thread (root + reply) and a second standalone thread on the same
+        # resource, to prove the archived filter selects between them.
+        cls.root = make_message(
+            builder,
+            context=cls.permit,
+            author=applicant_contrib,
+            recipient=staff_contrib,
+            subject="Root",
+        )
+        cls.reply = make_message(
+            builder,
+            context=cls.permit,
+            author=staff_contrib,
+            recipient=applicant_contrib,
+            subject="Reply",
+            root=cls.root,
+        )
+        cls.other_root = make_message(
+            builder,
+            context=cls.permit,
+            author=applicant_contrib,
+            recipient=staff_contrib,
+            subject="Other",
         )
 
-    def test_unread_count_across_rolls_up_every_context(self):
-        # The two unread on the permit plus the one on the other resource are a
-        # single rolled-up count, the shape the dashboard needs for a permit and
-        # its related submission resources.
-        self.assertEqual(
-            self.service.unread_count_across(
-                [self.permit.pk, self.other_permit.pk], "reader"
-            ),
-            3,
-        )
+    def _root_ids(self, user, archived):
+        roots = self.service.root_queryset(self.permit_id, user, archived=archived)
+        return {str(m.pk) for m in roots}
 
-    def test_unread_count_across_empty_or_unknown_counts_zero(self):
-        self.assertEqual(self.service.unread_count_across([], "reader"), 0)
+    def test_archive_is_per_viewer(self):
+        # Staff archives the thread; it moves to staff's archived list but the
+        # applicant's view is untouched, the leak the single-flag design had.
+        self.service.set_archived_state(self.root.pk, {"archived": True}, "archstaff")
+
+        self.assertEqual(self._root_ids(self.staff, False), {str(self.other_root.pk)})
+        self.assertEqual(self._root_ids(self.staff, True), {str(self.root.pk)})
+
         self.assertEqual(
-            self.service.unread_count_across([self.permit.pk], "nobody"), 0
+            self._root_ids(self.applicant, False),
+            {str(self.root.pk), str(self.other_root.pk)},
         )
+        self.assertEqual(self._root_ids(self.applicant, True), set())
+
+    def test_archiving_from_a_reply_archives_the_thread(self):
+        # The action can come from any message; it lands on the root, which is
+        # what the listing filters on.
+        self.service.set_archived_state(self.reply.pk, {"archived": True}, "archstaff")
+        self.assertEqual(self._root_ids(self.staff, True), {str(self.root.pk)})
+        self.assertNotIn(str(self.root.pk), self._root_ids(self.staff, False))
+
+    def test_unarchive_restores_the_thread(self):
+        self.service.set_archived_state(self.root.pk, {"archived": True}, "archstaff")
+        self.service.set_archived_state(self.root.pk, {"archived": False}, "archstaff")
+        self.assertIn(str(self.root.pk), self._root_ids(self.staff, False))
+        self.assertEqual(self._root_ids(self.staff, True), set())
+
+    def test_archiving_twice_is_idempotent(self):
+        # A second archive must not add a duplicate tile; unarchiving once still
+        # fully clears it.
+        self.service.set_archived_state(self.root.pk, {"archived": True}, "archstaff")
+        self.service.set_archived_state(self.root.pk, {"archived": True}, "archstaff")
+        self.service.set_archived_state(self.root.pk, {"archived": False}, "archstaff")
+        self.assertEqual(self._root_ids(self.staff, True), set())
+
+    def test_archive_is_a_noop_for_a_user_without_a_contributor(self):
+        # Internal so the party-visibility gate does not also hide the threads;
+        # this isolates the archive path for a user with no Contributor to key on.
+        stranger = make_user("archstranger", internal=True)
+        self.service.set_archived_state(
+            self.root.pk, {"archived": True}, "archstranger"
+        )
+        # Nothing archived, and their views degrade to all-active / none-archived.
+        self.assertEqual(
+            self._root_ids(stranger, False),
+            {str(self.root.pk), str(self.other_root.pk)},
+        )
+        self.assertEqual(self._root_ids(stranger, True), set())
+
+    def test_read_setter_noops_without_its_node(self):
+        # A body carrying no read date (e.g. an archive-only PATCH) leaves the
+        # read state untouched, so read and archive share one endpoint safely.
+        self.assertIsNone(self.service.set_read_state(self.root.pk, {}))
 
 
 class BcapMessagePartyAndPayloadTests(TestCase):
@@ -367,26 +458,24 @@ class BcapMessagePrepareTests(TestCase):
         self.service.prepare_message(data, self.applicant)
         self.assertEqual(self._author_id(data), str(self.applicant_contrib.pk))
 
-    def test_external_poster_internal_flag_forced_off(self):
-        data = self._payload(is_internal=True, recipient=self.staff_contrib)
-        self.service.prepare_message(data, self.applicant)
-        self.assertFalse(self.service._is_internal_payload(data))
+    def test_internal_flag_honored_only_for_internal_posters(self):
+        # An external poster's internal flag is forced off; an internal poster's
+        # is kept.
+        external = self._payload(is_internal=True, recipient=self.staff_contrib)
+        self.service.prepare_message(external, self.applicant)
+        self.assertFalse(self.service._is_internal_payload(external))
 
-    def test_internal_poster_keeps_the_internal_flag(self):
-        data = self._payload(is_internal=True, recipient=self.staff_contrib)
-        self.service.prepare_message(data, self.staff)
-        self.assertTrue(self.service._is_internal_payload(data))
+        internal = self._payload(is_internal=True, recipient=self.staff_contrib)
+        self.service.prepare_message(internal, self.staff)
+        self.assertTrue(self.service._is_internal_payload(internal))
 
-    def test_internal_message_to_external_recipient_is_rejected(self):
-        data = self._payload(is_internal=True, recipient=self.applicant_contrib)
-        with self.assertRaises(InternalMessageToExternal):
-            self.service.prepare_message(data, self.staff)
-
-    def test_internal_message_to_unlinked_recipient_is_rejected(self):
-        # An unlinked Contributor is not staff, so it counts as external.
-        data = self._payload(is_internal=True, recipient=self.unlinked)
-        with self.assertRaises(InternalMessageToExternal):
-            self.service.prepare_message(data, self.staff)
+    def test_internal_message_to_a_non_staff_recipient_is_rejected(self):
+        # An external applicant, and an unlinked Contributor (not staff either),
+        # both count as external and are rejected.
+        for recipient in (self.applicant_contrib, self.unlinked):
+            data = self._payload(is_internal=True, recipient=recipient)
+            with self.assertRaises(InternalMessageToExternal):
+                self.service.prepare_message(data, self.staff)
 
     def test_internal_message_without_a_recipient_is_allowed(self):
         data = self._payload(is_internal=True)

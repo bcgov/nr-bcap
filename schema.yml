@@ -112,7 +112,9 @@ paths:
       operationId: api_bcap_message_retrieve
       description: |-
         GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH writes only message_read_date.
+        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
+        in the body) and/or the caller's personal archive of the thread (a top-level
+        "archived" boolean), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -135,7 +137,9 @@ paths:
       operationId: api_bcap_message_partial_update
       description: |-
         GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH writes only message_read_date.
+        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
+        in the body) and/or the caller's personal archive of the thread (a top-level
+        "archived" boolean), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -149,13 +153,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedBcapMessage'
+              $ref: '#/components/schemas/PatchedBcapMessagePatch'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedBcapMessage'
+              $ref: '#/components/schemas/PatchedBcapMessagePatch'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedBcapMessage'
+              $ref: '#/components/schemas/PatchedBcapMessagePatch'
       security:
       - cookieAuth: []
       responses:
@@ -199,6 +203,12 @@ paths:
         GET the threads on a parent resource, one per thread as its root
         (thread-starting) message, with the standard limit/offset pagination.
       parameters:
+      - in: query
+        name: archived
+        schema:
+          type: boolean
+          default: false
+        description: Return the viewer's archived threads instead of active ones.
       - name: limit
         required: false
         in: query
@@ -5259,6 +5269,61 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Bcap_Message_Archived_By_Aliased_Data:
+      type: object
+      properties:
+        archived_by:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+    Bcap_Message_Archived_By_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Message_Archived_By_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Bcap_Message_Message_Content_Aliased_Data:
       type: object
       properties:
@@ -5416,6 +5481,11 @@ components:
     Bcap_Message_Resource_Aliased_Data:
       type: object
       properties:
+        archived_by:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Message_Archived_By_Tile'
+          nullable: true
         message_content:
           allOf:
           - $ref: '#/components/schemas/Bcap_Message_Message_Content_Tile'
@@ -9446,15 +9516,28 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-    Notice_Of_Project_Intent_Project_Description_Aliased_Data:
+    Notice_Of_Project_Intent_Engagement_Document_Aliased_Data:
       type: object
       properties:
-        project_description:
+        delivery_date:
           allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        document_type:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-    Notice_Of_Project_Intent_Project_Description_Tile:
+        is_for_distribution:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        engagement_document:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+    Notice_Of_Project_Intent_Engagement_Document_Tile:
       type: object
       properties:
         tileid:
@@ -9474,7 +9557,270 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Description_Aliased_Data'
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Engagement_Document_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_First_Nation_Aliased_Data:
+      type: object
+      properties:
+        nation_specific_project_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        notification:
+          allOf:
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Notification_Tile'
+          nullable: true
+        perliminary_terms:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        engagement_document:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notice_Of_Project_Intent_Engagement_Document_Tile'
+          nullable: true
+        first_nation:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+      required:
+      - first_nation
+    Notice_Of_Project_Intent_First_Nation_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_First_Nation_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_Notification_Aliased_Data:
+      type: object
+      properties:
+        notification_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        notification_delivery_person:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        notification_method:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+    Notice_Of_Project_Intent_Notification_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Notification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_Project_Details_Aliased_Data:
+      type: object
+      properties:
+        project_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - project_description
+    Notice_Of_Project_Intent_Project_Details_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Details_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_Project_Stakeholders_Aliased_Data:
+      type: object
+      properties:
+        calculated_impacted_first_nations:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+        proposed_first_nations_consultations:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+        first_nation:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notice_Of_Project_Intent_First_Nation_Tile'
+          nullable: true
+    Notice_Of_Project_Intent_Project_Stakeholders_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Stakeholders_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -9505,9 +9851,13 @@ components:
     Notice_Of_Project_Intent_Resource_Aliased_Data:
       type: object
       properties:
-        project_description:
+        project_details:
           allOf:
-          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Description_Tile'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Details_Tile'
+          nullable: true
+        project_stakeholders:
+          allOf:
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Stakeholders_Tile'
           nullable: true
     NumberAliasedNodeData:
       type: object
@@ -9916,7 +10266,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SiteVisit'
-    PatchedBcapMessage:
+    PatchedBcapMessagePatch:
       type: object
       properties:
         resourceinstanceid:
@@ -9928,6 +10278,9 @@ components:
         graph_has_different_publication:
           type: boolean
           readOnly: true
+        archived:
+          type: boolean
+          description: Toggle the caller's personal archive of the thread.
         name:
           type: string
           readOnly: true

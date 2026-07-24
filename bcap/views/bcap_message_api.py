@@ -4,8 +4,8 @@ resource_context. The list views extend the generated arches_querysets view
 (serialization and pagination come for free); query logic lives in
 BcapMessageService."""
 
-from drf_spectacular.utils import extend_schema
-from rest_framework import status
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import serializers, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
@@ -33,11 +33,33 @@ from bcap.services.message.bcap_message_service import (
 )
 from bcap.views.generated.bcap_message import (
     BcapMessageListView,
+    BcapMessageSerializer,
     BcapMessageViewMixin,
 )
 
 
-@extend_schema(tags=["External: bcap_message"])
+class ThreadsQuerySerializer(serializers.Serializer):
+    """Query params for the threads list. Documents them in the spec and coerces
+    archived from the usual truthy strings (true/1) rather than a bare == "true"."""
+
+    archived = serializers.BooleanField(
+        default=False,
+        help_text="Return the viewer's archived threads instead of active ones.",
+    )
+
+
+class BcapMessagePatchSerializer(BcapMessageSerializer):
+    """PATCH body schema: the message representation plus a top-level archived
+    flag that toggles the caller's personal archive of the whole thread. It is a
+    command, not a stored node, so it lives beside aliased_data rather than in it."""
+
+    archived = serializers.BooleanField(
+        required=False,
+        help_text="Toggle the caller's personal archive of the thread.",
+    )
+
+
+@extend_schema(tags=["External: bcap_message"], parameters=[ThreadsQuerySerializer])
 class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIView):
     """GET the threads on a parent resource, one per thread as its root
     (thread-starting) message, with the standard limit/offset pagination."""
@@ -46,8 +68,12 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
     pagination_class = ArchesLimitOffsetPagination
 
     def get_queryset(self):
+        params = ThreadsQuerySerializer(data=self.request.query_params)
+        params.is_valid(raise_exception=True)
         return BcapMessageService().root_queryset(
-            self.kwargs["resource_id"], self.request.user
+            self.kwargs["resource_id"],
+            self.request.user,
+            archived=params.validated_data["archived"],
         )
 
 
@@ -122,11 +148,14 @@ class BcapMessageContributorsView(APIView):
 
 
 @extend_schema(tags=["External: bcap_message"])
+@extend_schema_view(patch=extend_schema(request=BcapMessagePatchSerializer))
 class BcapMessageDetailView(
     BcapMessageViewMixin, ArchesModelAPIMixin, RetrieveUpdateAPIView
 ):
     """GET or PATCH a single message, both gated like create (edit access to the
-    resource_context, not owner-scoped). PATCH writes only message_read_date."""
+    resource_context, not owner-scoped). PATCH sets the read date (message_read_date
+    in the body) and/or the caller's personal archive of the thread (a top-level
+    "archived" boolean), whichever the body carries."""
 
     permission_classes = [IsAuthenticated]
     http_method_names = ["get", "patch", "options"]
@@ -143,5 +172,11 @@ class BcapMessageDetailView(
 
     def update(self, request, *args, **kwargs):
         self._require_context_edit(request)
-        BcapMessageService().set_read_state(self.kwargs["pk"], request.data)
+        service = BcapMessageService()
+        # A PATCH can carry the read date, the archive flag, either, or both; each
+        # setter no-ops when its own field is absent from the body.
+        service.set_read_state(self.kwargs["pk"], request.data)
+        service.set_archived_state(
+            self.kwargs["pk"], request.data, request.user.username
+        )
         return Response(self.get_serializer(self.get_object()).data)

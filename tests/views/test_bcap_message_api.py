@@ -79,12 +79,12 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             subject="Internal",
         )
 
-    def _thread_roots(self, user):
+    def _thread_roots(self, user, archived=False):
         self.idir_login_simulate(user)
         url = reverse(
             "bcap_message_resource_threads", kwargs={"resource_id": self.permit_id}
         )
-        resp = self.client.get(url)
+        resp = self.client.get(url, {"archived": "true"} if archived else {})
         self.assertEqual(resp.status_code, 200)
         return {r["resourceinstanceid"] for r in resp.json()["results"]}
 
@@ -275,6 +275,13 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
 
+    def _patch_archived(self, message_id, archived):
+        return self.client.patch(
+            reverse("bcap_message_detail", kwargs={"pk": str(message_id)}),
+            data=json.dumps({"archived": archived}),
+            content_type="application/json",
+        )
+
     def test_get_returns_the_message_when_caller_can_edit_context(self):
         # GET by id is gated like PATCH: edit access to the resource_context,
         # not owner-scoped, so staff (not the creator) can read it.
@@ -370,6 +377,67 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         # The seeded content ("Public") survived; the injected value did not.
         self.assertEqual(
             content["message_content"]["node_value"]["en"]["value"], "Public"
+        )
+
+    def test_patch_archives_thread_for_that_viewer_only(self):
+        # A top-level "archived": true on the PATCH moves the thread to the
+        # caller's archived list; the other party's view is untouched.
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self._patch_archived(self.public_root.pk, True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn(str(self.public_root.pk), self._thread_roots(self.staff))
+        self.assertIn(
+            str(self.public_root.pk),
+            self._thread_roots(self.staff, archived=True),
+        )
+        # The applicant, also party to the thread, still sees it as active.
+        self.assertIn(str(self.public_root.pk), self._thread_roots(self.user))
+        self.assertEqual(self._thread_roots(self.user, archived=True), set())
+
+    def test_patch_unarchives_thread_back_to_active(self):
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            self._patch_archived(self.public_root.pk, True)
+            resp = self._patch_archived(self.public_root.pk, False)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(str(self.public_root.pk), self._thread_roots(self.staff))
+        self.assertEqual(self._thread_roots(self.staff, archived=True), set())
+
+    def test_patch_sets_read_date_and_archive_in_one_request(self):
+        # The detail PATCH is shared: read date (a node in the body) and the
+        # top-level archive flag both apply from a single request.
+        payload = {
+            "archived": True,
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "message_read_date": {"node_value": "2026-07-10T14:04:46.334Z"},
+                    }
+                }
+            },
+        }
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self.client.patch(
+                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
+                data=json.dumps(payload),
+                content_type="application/json",
+            )
+        self.assertEqual(resp.status_code, 200)
+        read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
+            "message_read_date"
+        ]["node_value"]
+        self.assertIsNotNone(read)
+        self.assertIn(
+            str(self.public_root.pk),
+            self._thread_roots(self.staff, archived=True),
         )
 
     def test_create_rejected_when_poster_has_no_contributor(self):

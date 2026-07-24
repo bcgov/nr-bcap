@@ -56,6 +56,33 @@
                     "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "1016668d-ebe8-48c7-8a75-b8aedf3f5f10",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Archived By"
+                    },
+                    "nodegroup_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -290,6 +317,26 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "1016668d-ebe8-48c7-8a75-b8aedf3f5f10",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Archived By",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "d535985e-f2e3-4558-9c50-4243fcbbb4ad",
+                    "label": {
+                        "en": "Archived By"
+                    },
+                    "node_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 }
             ],
             "color": "#06a480",
@@ -409,6 +456,16 @@
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
                     "rangenode_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
                     "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "dade15d6-a679-4e08-a91a-3913c4b3f7e5",
+                    "edgeid": "f478a0b5-ac6d-4d7f-bfe3-037c3c80016b",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
+                    "rangenode_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
+                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [
@@ -459,6 +516,13 @@
                     "grouping_node_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
                     "legacygroupid": null,
                     "nodegroupid": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
+                    "legacygroupid": null,
+                    "nodegroupid": "c47ba982-3094-4608-b8cb-46088aaebd3d",
                     "parentnodegroup_id": null
                 }
             ],
@@ -809,6 +873,38 @@
                     "name": "Related Source Message",
                     "nodegroup_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
                     "nodeid": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "archived_by",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "Contributors who have archived this thread (personal, per-viewer). One tile per contributor; stored on the thread root message only, so it is read/written on the root even when the action comes from a reply.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Archived By",
+                    "nodegroup_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
+                    "nodeid": "c47ba982-3094-4608-b8cb-46088aaebd3d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
                     "sortorder": 0,

@@ -5,6 +5,7 @@ import logging
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 
+from arches.app.models.models import TileModel
 from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
@@ -30,6 +31,11 @@ class BcapMessageService(BaseGraphService):
     """Resolve, filter, and thread messages by their parent resource."""
 
     A = BcapMessageAliases
+
+    @staticmethod
+    def _contributor_id(username):
+        """The user's Contributor id, or None."""
+        return ContributorService().username_contributor_id(username)
 
     @staticmethod
     def _user_log_id(username):
@@ -65,6 +71,8 @@ class BcapMessageService(BaseGraphService):
 
     def set_read_state(self, message_id, data):
         """Set (a datetime) or clear (None) a message's read date from a PATCH body."""
+        if not self._payload_has(data, self.A.MESSAGE_READ_DATE):
+            return None
         read_date = self._payload_node_value(data, self.A.MESSAGE_READ_DATE)
         message = ResourceTileTree.get_tiles(
             MESSAGE_GRAPH_SLUG, resource_ids=[str(message_id)]
@@ -75,10 +83,70 @@ class BcapMessageService(BaseGraphService):
         message.save(request=None, force_admin=True, partial=True)
         return message
 
+    def set_archived_state(self, message_id, data, username):
+        """Archive a thread for one viewer from a PATCH body's top-level archived flag.
+
+        Three states: true archives, false unarchives, absent is a no-op. Personal
+        and root-scoped: an archived_by tile on the thread root names each
+        contributor who archived it, so one party never hides it from another and
+        archiving from a reply lands on the root. No-op too without a Contributor."""
+        if "archived" not in data:
+            return
+        contributor_id = self._contributor_id(username)
+        if not contributor_id:
+            logger.warning(
+                "No Contributor for user %s; archive ignored.",
+                self._user_log_id(username),
+            )
+            return
+        thread_id = self._thread_id(message_id)
+        existing = self._archived_by_tiles(contributor_id, thread_id)
+        if not data["archived"]:
+            existing.delete()
+            return
+        if not existing.exists():
+            node_id, nodegroup_id = self._node_info(
+                MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY
+            )
+            TileModel.objects.create(
+                resourceinstance_id=thread_id,
+                nodegroup_id=nodegroup_id,
+                data={node_id: [{"resourceId": str(contributor_id)}]},
+            )
+
+    def _archived_by_tiles(self, contributor_id, thread_id=None):
+        """archived_by tiles naming this contributor, optionally scoped to one root."""
+        node_id, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
+        tiles = TileModel.objects.filter(
+            nodegroup_id=nodegroup_id,
+            **{f"data__{node_id}__contains": [{"resourceId": str(contributor_id)}]},
+        )
+        if thread_id is not None:
+            tiles = tiles.filter(resourceinstance_id=str(thread_id))
+        return tiles
+
+    def _thread_id(self, message_id):
+        """The thread-root resource id for a message (itself if it starts the thread)."""
+        root_id = (
+            ResourceTileTree.get_tiles(
+                MESSAGE_GRAPH_SLUG,
+                nodes=self.nodes(MESSAGE_GRAPH_SLUG, [self.A.RELATED_SOURCE_MESSAGE]),
+                resource_ids=[str(message_id)],
+            )
+            .values_list("related_source_message__id", flat=True)
+            .first()
+        )
+        return str(root_id) if root_id else str(message_id)
+
     @classmethod
     def _payload_node_value(cls, data, alias):
         """The node_value under an alias in the payload's message_content group."""
         return cls._group_node_value(data, cls.A.MESSAGE_CONTENT, alias)
+
+    @classmethod
+    def _payload_has(cls, data, alias):
+        """Whether the payload carries this node at all (present but null still counts)."""
+        return alias in cls._group_aliased_data(data, cls.A.MESSAGE_CONTENT)
 
     @classmethod
     def _payload_relation_id(cls, data, alias):
@@ -126,8 +194,10 @@ class BcapMessageService(BaseGraphService):
         ):
             raise InternalMessageToExternal(recipient_id)
 
-    def root_queryset(self, resource_id, user):
-        """The thread-starting messages on a parent resource, gated for externals."""
+    def root_queryset(self, resource_id, user, archived=False):
+        """The thread-starting messages on a parent resource, gated for externals.
+        Archive is per-user: a thread is archived only for the contributors on its root's
+        archived_by."""
         roots = (
             ResourceTileTree.get_tiles(
                 MESSAGE_GRAPH_SLUG, as_representation=True
@@ -138,16 +208,30 @@ class BcapMessageService(BaseGraphService):
             # Newest thread first; createdtime breaks ties on a null creation date.
             .order_by("-message_creation_date", "-createdtime")
         )
+        roots = self._by_archived(roots, user.username, archived)
         # Coarse role gate for now; a future groups ticket moves this to Guardian.
         if not is_internal_user(user):
             roots = self._external_visible(roots, user.username)
         return roots
 
+    def _by_archived(self, roots, username, archived):
+        """Narrow roots to the viewer's archived or active threads."""
+        contributor_id = self._contributor_id(username)
+        if not contributor_id:
+            return roots.none() if archived else roots
+        archived_ids = self._archived_by_tiles(contributor_id).values_list(
+            "resourceinstance_id", flat=True
+        )
+        if archived:
+            return roots.filter(pk__in=archived_ids)
+        return roots.exclude(pk__in=archived_ids)
+
     def thread_queryset(self, thread_id, user):
         """One thread's messages, oldest first, gated for external users."""
         messages = (
             ResourceTileTree.get_tiles(
-                MESSAGE_GRAPH_SLUG, as_representation=True
+                MESSAGE_GRAPH_SLUG,
+                as_representation=True,
             ).filter(
                 Q(pk=str(thread_id)) | Q(related_source_message__id=str(thread_id))
             )
@@ -164,7 +248,7 @@ class BcapMessageService(BaseGraphService):
 
     def unread_counts_by_context(self, context_ids, username):
         """Unread messages for the user per resource context, in one grouped query."""
-        contributor_id = ContributorService().username_contributor_id(username)
+        contributor_id = self._contributor_id(username)
         if not contributor_id:
             logger.warning(
                 "No Contributor for user %s; unread counts are 0.",
@@ -203,7 +287,7 @@ class BcapMessageService(BaseGraphService):
 
     def recipient_or_author(self, messages, username):
         """Narrow to messages the user's Contributor is party to (recipient or author)."""
-        contributor_id = ContributorService().username_contributor_id(username)
+        contributor_id = self._contributor_id(username)
         if not contributor_id:
             logger.warning(
                 "No Contributor for user %s; no messages visible.",

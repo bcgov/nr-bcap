@@ -436,6 +436,13 @@ export const createBcapMessage = async (
     );
 };
 
+// Example unused for now.
+export const setThreadArchived = async (messageId: string, archived: boolean) =>
+    apiFetch(arches.urls.bcap_message_detail(messageId), {
+        method: HttpMethod.Patch,
+        body: { archived },
+    });
+
 const formatMessageDate = (isoDate: string | null | undefined): string =>
     new Date(isoDate ?? 0).toLocaleString(undefined, {
         year: 'numeric',
