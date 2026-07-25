@@ -2,25 +2,14 @@ drop function if exists get_map_attribute_data;
 create or replace function get_map_attribute_data(p_resourceinstanceid uuid, nodeid uuid) returns jsonb as
     $$
 declare
-    l_arch_site_legislative_act_id text = '034d2e02-13f2-11f0-9ff8-0242ac170007';
-
-    l_borden_number_id text = '7e15332c-1c54-11f0-b5bf-0242ac170007';
-    l_borden_numer_nodegroup_id text = '034d1c32-13f2-11f0-9ff8-0242ac170007';
-
-    l_leg_act_authority_node_id text = '7789d580-3b87-11ee-a701-080027b7463b';
-
-    l_decision_date_node_id text = 'f80f0c00-1977-11f0-8713-0242ac170008';
-    l_registration_status_node_id text = '4abdfeea-8d15-4ea6-94bd-d2385d47a5ac';
-    l_registration_status_nodegroup_id text = 'f80f08ae-1977-11f0-8713-0242ac170008';
-
     data jsonb;
 begin
     if nodeid = archaeological_site.node_alias_uuid('site_boundary') then -- Archaeological Site
         with borden_number as (
             select resourceinstanceid,
-                   tiledata ->> l_borden_number_id as borden_number
+                   tiledata ->> archaeological_site.node_alias_uuid('borden_number')::text as borden_number
             from tiles
-            where nodegroupid = l_borden_numer_nodegroup_id::uuid
+            where nodegroupid = archaeological_site.node_alias_uuid('identification_and_registration')
               and resourceinstanceid = p_resourceinstanceid
         ),
         arch_site_leg_acts as (
@@ -29,7 +18,7 @@ begin
             from tiles t
             where nodegroupid = archaeological_site.node_alias_uuid('authority')
               and t.resourceinstanceid = p_resourceinstanceid
-              and tiledata -> l_arch_site_legislative_act_id is not null
+              and tiledata -> archaeological_site.node_alias_uuid('legislative_act')::text is not null
         ),
         authorities as (
             select resourceinstanceid,
@@ -39,11 +28,11 @@ begin
         ),
         registration_status as (
             select resourceinstanceid,
-                   tiledata->l_registration_status_node_id->0->'labels'->0->>'value' status
+                   tiledata->(archaeological_site.node_alias_uuid('decision_registration_status')::text)->0->'labels'->0->>'value' status
             from tiles where
                            resourceinstanceid = p_resourceinstanceid and
-                nodegroupid = l_registration_status_nodegroup_id::uuid
-                       order by tiledata->>l_decision_date_node_id desc limit 1
+                nodegroupid = archaeological_site.node_alias_uuid('site_decision')
+                       order by tiledata->>archaeological_site.node_alias_uuid('decision_date')::text desc limit 1
         )
         select jsonb_build_object(
             'authorities', coalesce(array_agg(distinct a.authority) filter (where a.authority is not null), '{}'::text[]),
