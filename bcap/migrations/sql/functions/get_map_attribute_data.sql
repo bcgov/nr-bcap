@@ -40,12 +40,13 @@ begin
             'registration_status', rs.status
         )
         into data
-        from borden_number bn
-             left join arch_site_leg_acts hs on hs.resourceinstanceid = bn.resourceinstanceid
+        from bcap.public.resource_instances ri
+            left join borden_number bn on ri.resourceinstanceid = bn.resourceinstanceid
+             left join arch_site_leg_acts hs on hs.resourceinstanceid = ri.resourceinstanceid
              left join authorities a on a.resourceinstanceid = hs.legislative_act_id
-             left join registration_status rs on rs.resourceinstanceid = bn.resourceinstanceid 
-        where bn.resourceinstanceid = p_resourceinstanceid
-        group by bn.resourceinstanceid, bn.borden_number, rs.status;
+             left join registration_status rs on rs.resourceinstanceid = ri.resourceinstanceid
+        where ri.resourceinstanceid = p_resourceinstanceid
+        group by ri.resourceinstanceid, bn.borden_number, rs.status;
 
     end if;
     return data;
