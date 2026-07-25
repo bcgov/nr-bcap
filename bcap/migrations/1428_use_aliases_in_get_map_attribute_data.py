@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcap", "1426_create_node_alias_packages"),
+        ("bcap", "1427_create_node_alias_packages"),
     ]
 
     operations = [

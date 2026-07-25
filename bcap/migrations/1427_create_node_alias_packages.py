@@ -9,7 +9,7 @@ def create_node_alias_packages(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcap", "1425_process_module_ids"),
+        ("bcap", "1426_drop_resource_draft"),
     ]
 
     operations = [
