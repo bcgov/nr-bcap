@@ -11,6 +11,21 @@ vi.mock('arches', () => ({
     },
 }));
 
+// ReviewSummary (a child) pulls in arches-component-lab, whose tsconfig has a
+// broken extends that crashes the esbuild transform. Mock the two entry points
+// so those files are never loaded.
+vi.mock(
+    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
+    () => ({
+        default: { name: 'GenericWidget', template: '<div />' },
+    }),
+);
+
+vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
+    EDIT: 'edit',
+    VIEW: 'view',
+}));
+
 const api = vi.hoisted(() => ({
     patchModuleOrder: vi.fn(),
     fetchRequirementDetails: vi.fn(),
@@ -19,6 +34,8 @@ const api = vi.hoisted(() => ({
     reorderModuleRequirements: vi.fn(),
     addBlankRequirement: vi.fn(),
     removeRequirement: vi.fn(),
+    setModuleCompleted: vi.fn(),
+    setRequirementSatisfied: vi.fn(),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => api);
 
@@ -130,6 +147,8 @@ beforeEach(() => {
     api.addBlankRequirement.mockResolvedValue(undefined);
     api.removeRequirement.mockResolvedValue(undefined);
     api.patchModuleOrder.mockResolvedValue(undefined);
+    api.setModuleCompleted.mockResolvedValue(undefined);
+    api.setRequirementSatisfied.mockResolvedValue(undefined);
     sessionStorage.clear();
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -171,7 +190,7 @@ describe('CompletedModules rendering', () => {
         expect(wrapper.text()).toContain('Submitted 2026-02-02');
     });
 
-    it('lists requirements sorted by order', () => {
+    it('lists requirements sorted by order', async () => {
         const wrapper = mountModules({
             modules: [
                 moduleTile({
@@ -183,7 +202,13 @@ describe('CompletedModules rendering', () => {
                     ],
                 }),
             ],
+            // Staff so the internal-visibility filter (which hides requirements
+            // until their details load) doesn't suppress the list.
+            isStaff: true,
         });
+        // Let the detail fetch settle so the list renders instead of the
+        // loading note.
+        await flushPromises();
         const names = wrapper.findAll('.requirement-name').map((n) => n.text());
         expect(names).toEqual(['Alpha', 'Beta']);
     });
@@ -220,7 +245,9 @@ describe('CompletedModules requirement detail loading', () => {
         expect(api.fetchRequirementDetails).toHaveBeenCalledWith(['r-1']);
         expect(wrapper.find('.req-type').text()).toBe('Checklist');
         // A checklist type surfaces the fill-out link built from arches.urls.
-        const fill = wrapper.find('a.req-action');
+        // Scoped to the requirement so the summary's "View submission" link
+        // (also a .req-action) isn't picked up first.
+        const fill = wrapper.find('.requirement-item a.req-action');
         expect(fill.attributes('href')).toBe(
             '/plugins/internal-permit-dashboard/checklist?id=r-1',
         );
@@ -242,7 +269,7 @@ describe('CompletedModules requirement detail loading', () => {
         expect(api.fetchRequirementDetails).not.toHaveBeenCalled();
     });
 
-    it('hides internal-only requirements from applicants', async () => {
+    it('shows internal requirements to applicants too', async () => {
         api.fetchRequirementDetails.mockResolvedValue({
             'r-pub': requirementDetail({ internal: false }),
             'r-int': requirementDetail({ internal: true }),
@@ -263,7 +290,7 @@ describe('CompletedModules requirement detail loading', () => {
         await flushPromises();
 
         const names = wrapper.findAll('.requirement-name').map((n) => n.text());
-        expect(names).toEqual(['Public']);
+        expect(names).toEqual(['Public', 'Internal']);
     });
 
     it('shows internal requirements to staff', async () => {
@@ -309,30 +336,21 @@ describe('CompletedModules staff controls', () => {
         expect(wrapper.find('.add-req-btn').exists()).toBe(false);
     });
 
-    it('renders the add-module bar and only enables quick-add types', () => {
+    it('renders a chip for each addable module', () => {
         const wrapper = mountModules({
             modules: [staffModule()],
             isStaff: true,
             addableModules: [
-                {
-                    id: 'investigation',
-                    label: 'Investigation',
-                    routeName: 'investigationModule',
-                    disabled: false,
-                },
-                {
-                    id: 'permit',
-                    label: 'Permit',
-                    routeName: '',
-                    disabled: true,
-                },
+                { id: 'investigation', label: 'Investigation' },
+                { id: 'permit', label: 'Permit' },
             ],
         });
         const chips = wrapper.findAll('.add-module-chip');
         expect(chips).toHaveLength(2);
+        // Chips are enabled unless a submit is in flight; the parent decides
+        // which modules are offered.
         expect((chips[0].element as HTMLButtonElement).disabled).toBe(false);
-        // A non quick-add type stays disabled.
-        expect((chips[1].element as HTMLButtonElement).disabled).toBe(true);
+        expect((chips[1].element as HTMLButtonElement).disabled).toBe(false);
     });
 
     it('add-module submits a blank host then emits changed', async () => {
@@ -353,18 +371,6 @@ describe('CompletedModules staff controls', () => {
             {},
         );
         expect(wrapper.emitted('changed')).toHaveLength(1);
-    });
-
-    it('ignores add-module for a non quick-add type', async () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            onAddModule: (m: { id: string }) => Promise<void>;
-        };
-        await vm.onAddModule({ id: 'permit' });
-        expect(api.submitModule).not.toHaveBeenCalled();
     });
 
     it('confirming module removal deletes it and emits changed', async () => {
@@ -425,6 +431,49 @@ describe('CompletedModules staff controls', () => {
             'r-9',
         );
         expect(wrapper.emitted('changed')).toHaveLength(1);
+    });
+
+    it('toggling module completion sends the flipped flag and emits changed', async () => {
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            state: { rows: { tileid: string; isCompleted: boolean }[] };
+            onToggleCompleted: (row: {
+                tileid: string;
+                isCompleted: boolean;
+            }) => Promise<void>;
+        };
+        const row = vm.state.rows[0];
+        expect(row.isCompleted).toBe(false);
+        await vm.onToggleCompleted(row);
+
+        expect(api.setModuleCompleted).toHaveBeenCalledWith(
+            'permit-1',
+            'm1',
+            true,
+        );
+        expect(wrapper.emitted('changed')).toHaveLength(1);
+    });
+
+    it('toggling a requirement satisfies it and updates the row in place', async () => {
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            onToggleRequirement: (r: {
+                resourceId: string;
+                satisfied: boolean | null;
+            }) => Promise<void>;
+        };
+        const requirement = { resourceId: 'r-9', satisfied: false };
+        await vm.onToggleRequirement(requirement);
+
+        expect(api.setRequirementSatisfied).toHaveBeenCalledWith('r-9', true);
+        // The row flips locally so the status icon updates without a reload.
+        expect(requirement.satisfied).toBe(true);
     });
 
     it('persisting order renumbers rows and patches every tile', async () => {

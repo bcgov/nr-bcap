@@ -61,7 +61,8 @@ describe('InvestigationModule.vue', () => {
         routeQuery.value = { permitId: 'permit-1', draftId: 'draft-7' };
         fetchDraft.mockResolvedValue({
             id: 'draft-7',
-            data: { parent_resource_id: 'permit-1' },
+            parent_resource_id: 'permit-1',
+            data: {},
         });
 
         const wrapper = shallowMount(InvestigationModule);

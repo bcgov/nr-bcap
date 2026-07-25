@@ -205,10 +205,9 @@ onMounted(async () => {
         const targetDraftId = route.query.draftId;
         if (targetDraftId) {
             const loaded = await fetchDraft(graphSlug, targetDraftId as string);
-            draft.loadDraft(loaded.id, loaded.data || {});
+            draft.loadDraft(loaded.id, (loaded.data || {}) as ArchesDraftData);
             draft.parentPermitId =
-                (loaded.data as { parent_resource_id?: string })
-                    ?.parent_resource_id ?? draft.parentPermitId;
+                loaded.parent_resource_id || draft.parentPermitId;
         }
 
         state.isDataLoaded = true;
@@ -226,7 +225,6 @@ const nextLabel = computed(() => {
 const showPrevious = computed(() => {
     return !(currentStep.value === steps.length || currentStep.value === 1);
 });
-const showDebug = ref(false);
 </script>
 
 <template>
@@ -236,18 +234,6 @@ const showDebug = ref(false);
     >
         <ProgressSpinner />
     </div>
-    <div
-        v-show="showDebug"
-        id="debug-div"
-        class="debug-step"
-        :class="{ 'show-debug': showDebug }"
-    >
-        {{ JSON.stringify('') }}
-    </div>
-    <i
-        class="fa fa-eye-slash debug-toggle"
-        @click="showDebug = !showDebug"
-    ></i>
     <Panel class="full-height">
         <div
             v-if="!state.isDataLoaded"
@@ -265,8 +251,9 @@ const showDebug = ref(false);
             linear
             @update:value="activateStep"
         >
-            <div class="bcgov-stepper">
-                <div class="bcgov-vertical-steps">
+            <div class="bc-stepper-layout">
+                <aside class="bc-stepper-nav">
+                    <p class="bc-stepper-nav-label">Your progress</p>
                     <StepList>
                         <Step :value="1">Submission Information</Step>
                         <Step :value="2">Preamble</Step>
@@ -279,17 +266,32 @@ const showDebug = ref(false);
                         <Step :value="9">Review Submission</Step>
                         <Step :value="10">Submission Complete</Step>
                     </StepList>
-                </div>
-                <div class="bcgov-vertical-step-panels">
+                </aside>
+                <div class="bc-stepper-main">
                     <RouterLink
                         v-if="permitBackLink && currentStep === 1"
                         :to="permitBackLink"
                         class="back-to-permit"
                     >
                         <i class="fa-solid fa-chevron-left"></i>
-                        Back to permit
+                        Back to Project Summary
                     </RouterLink>
-                    <h1>Submit Investigation</h1>
+                    <header class="bc-step-header">
+                        <div>
+                            <p class="bc-step-eyebrow">
+                                Step {{ currentStep }} of {{ steps.length }}
+                            </p>
+                            <h1 class="bc-step-title">Submit Investigation</h1>
+                        </div>
+                        <StepperNavigation
+                            :step-number="currentStep"
+                            :is-valid="currentStepIsValid"
+                            :show-previous="false"
+                            :next-label="nextLabel"
+                            @next-click="activateNextStep"
+                            @previous-click="activatePreviousStep"
+                        ></StepperNavigation>
+                    </header>
                     <div
                         v-if="state.submissionErrors.length > 0"
                         class="red"
@@ -303,15 +305,7 @@ const showDebug = ref(false);
                             {{ err.message }}
                         </div>
                     </div>
-                    <StepPanels>
-                        <StepperNavigation
-                            :step-number="currentStep"
-                            :is-valid="currentStepIsValid"
-                            :show-previous="showPrevious"
-                            :next-label="nextLabel"
-                            @next-click="activateNextStep"
-                            @previous-click="activatePreviousStep"
-                        ></StepperNavigation>
+                    <StepPanels class="bc-step-card">
                         <StepPanel :value="1">
                             <Step1_About ref="step1"></Step1_About>
                         </StepPanel>
@@ -413,17 +407,19 @@ const showDebug = ref(false);
                                 class="back-to-permit mt-4"
                             >
                                 <i class="fa-solid fa-chevron-left"></i>
-                                Back to permit application
+                                Back to Project Summary
                             </RouterLink>
                         </StepPanel>
-                        <StepperNavigation
-                            :step-number="currentStep"
-                            :is-valid="currentStepIsValid"
-                            :show-previous="showPrevious"
-                            :next-label="nextLabel"
-                            @next-click="activateNextStep"
-                            @previous-click="activatePreviousStep"
-                        ></StepperNavigation>
+                        <div class="bc-step-actions">
+                            <StepperNavigation
+                                :step-number="currentStep"
+                                :is-valid="currentStepIsValid"
+                                :show-previous="showPrevious"
+                                :next-label="nextLabel"
+                                @next-click="activateNextStep"
+                                @previous-click="activatePreviousStep"
+                            ></StepperNavigation>
+                        </div>
                     </StepPanels>
                 </div>
             </div>
@@ -436,27 +432,25 @@ const showDebug = ref(false);
 
 <style>
 @import url('@/bcgov_arches_common/css/arches_common.css');
+@import url('@/bcap/styles/bc-stepper.css');
 .language-selector {
     display: none;
 }
-/* Keep the nav buttons together on the left with room above and below so they
-   never crowd the step content. Hide the empty spacer the shared nav inserts
-   when Previous is hidden so Next sits at the left on the first step. */
+/* The shared nav is laid out by .bc-step-actions now; just drop the empty
+   spacer it inserts when Previous is hidden. */
 .stepper-nav-panel {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin: 1.5rem 0;
 }
 .stepper-nav-panel > div {
     display: none;
 }
 @media print {
     aside,
-    .bcgov-vertical-steps,
+    .bc-stepper-nav,
     .stepper-nav-panel,
-    .sidenav,
-    .debug-toggle {
+    .sidenav {
         display: none !important;
     }
 }
@@ -467,8 +461,13 @@ const showDebug = ref(false);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    /* Same fixed line box as the rail's "Your progress" label so the two center
+       on the same line on step 1, where this is the header's first line. */
+    min-height: 1.75rem;
     margin-bottom: 1rem;
+    line-height: 1;
     color: var(--bc-navy, #003366);
+    font-weight: 700;
     text-decoration: none;
 }
 .back-to-permit .fa-chevron-left {
@@ -495,24 +494,5 @@ const showDebug = ref(false);
     z-index: 500;
     left: 0;
     top: 0;
-}
-.debug-step {
-    max-width: 80%;
-    margin-top: 100px;
-    display: none;
-    position: absolute;
-    bottom: 10px;
-    word-wrap: anywhere;
-    color: darkgray;
-}
-.show-debug {
-    display: inline-block !important;
-}
-.debug-toggle {
-    position: absolute;
-    top: 0;
-    left: 0.5rem;
-    color: white;
-    z-index: 9000;
 }
 </style>

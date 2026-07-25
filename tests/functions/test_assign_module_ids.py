@@ -21,18 +21,15 @@ def _tile(data=None, pk="tile-pk"):
 
 
 class SlugTests(SimpleTestCase):
-    def test_uppercases_and_hyphenates(self):
-        self.assertEqual(AssignModuleIds._slug("Site Assessment"), "SITE-ASSESSMENT")
-
-    def test_collapses_runs_of_non_alphanumerics(self):
-        self.assertEqual(AssignModuleIds._slug("A -- b__c"), "A-B-C")
-
-    def test_strips_leading_and_trailing_separators(self):
-        self.assertEqual(AssignModuleIds._slug("  hello!  "), "HELLO")
-
-    def test_empty_and_none_become_empty_string(self):
-        self.assertEqual(AssignModuleIds._slug(""), "")
-        self.assertEqual(AssignModuleIds._slug(None), "")
+    def test_slug(self):
+        slug = AssignModuleIds._slug
+        self.assertEqual(
+            slug("Site Assessment"), "SITE-ASSESSMENT"
+        )  # uppercase + hyphenate
+        self.assertEqual(slug("A -- b__c"), "A-B-C")  # collapse non-alphanumeric runs
+        self.assertEqual(slug("  hello!  "), "HELLO")  # strip outer separators
+        self.assertEqual(slug(""), "")  # empty
+        self.assertEqual(slug(None), "")  # None
 
 
 @patch("bcap.functions.assign_module_ids.node_id", NODE_ID)

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted, watch } from 'vue';
+import DOMPurify from 'dompurify';
 import { useRoute, useRouter } from 'vue-router';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import Panel from 'primevue/panel';
@@ -12,15 +13,13 @@ import {
     type DashboardStatus,
     type InternalDashboardCard,
 } from '@/bcap/components/pages/api.ts';
+import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 
 const currentRoute = useRoute();
 const router = useRouter();
 
 interface ProjectData {
     id: string;
-    realId: string; // Keep track of the true resource ID for routing
-    permitId?: string;
-    reqId?: string;
     unreadMessages: number;
     capPriority: boolean;
     capLabel: string;
@@ -47,9 +46,6 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
     return {
         id: rawItem.id,
-        realId: rawItem.id,
-        permitId: rawItem.permit_id ?? undefined,
-        reqId: rawItem.requirement_id || rawItem.id,
         unreadMessages: rawItem.unread_messages || 0,
 
         capPriority: isPriority,
@@ -61,15 +57,17 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
         bodySubtitle1: rawItem.application_number || 'No App #',
         bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-        body1: rawItem.permit_number
+        body1: rawItem.submission_type
+            ? `Type: ${rawItem.submission_type}`
+            : undefined,
+        body2: rawItem.permit_number
             ? `Permit: ${rawItem.permit_number}`
             : undefined,
-        body2: rawItem.permit_holder
+        body3: rawItem.permit_holder
             ? `Holder: ${rawItem.permit_holder}`
             : undefined,
-        body3: `Officer: ${rawItem.project_officer || ''}`,
-        body4: undefined,
-        body5: undefined,
+        body4: `Officer: ${rawItem.project_officer || ''}`,
+        body5: buildModuleSummary(rawItem.module_progress),
 
         footerDate: rawItem.requirement_due_date || 'Not Started',
         footerName: rawItem.ministry_assignee_name || 'Unassigned',
@@ -85,12 +83,13 @@ const sortOptions = [
     { label: 'Assigned To', value: 'footerName' },
     { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
-    { label: 'Permit Holder', value: 'body2' },
-    { label: 'Permit Number', value: 'body1' },
+    { label: 'Permit Holder', value: 'body3' },
+    { label: 'Permit Number', value: 'body2' },
     { label: 'Priority', value: 'capPriority' },
     { label: 'Process', value: 'capLabel' },
-    { label: 'Project Officer', value: 'body3' },
+    { label: 'Project Officer', value: 'body4' },
     { label: 'Sector', value: 'bodySubtitle2' },
+    { label: 'Submission Type', value: 'body1' },
 ];
 
 const internalTabs = [
@@ -99,10 +98,16 @@ const internalTabs = [
     { label: 'All', value: 'ALL' },
 ];
 
+const TAB_KEY = 'bcap.internalDashboard.tab';
+const savedTab = sessionStorage.getItem(TAB_KEY);
+const initialTab = internalTabs.some((tab) => tab.value === savedTab)
+    ? (savedTab as DashboardStatus | 'ALL')
+    : 'ASSIGNED_TO_ME';
+
 const state = reactive({
     rawProjects: [] as ProjectData[],
     isLoading: true,
-    currentFilter: 'ASSIGNED_TO_ME' as DashboardStatus | 'ALL',
+    currentFilter: initialTab,
     currentSearch: '',
     lastUpdateDate: new Date(),
     currentSort: 'default',
@@ -118,6 +123,7 @@ onMounted(() => {
 watch(
     () => state.currentFilter,
     (value, oldValue) => {
+        if (value) sessionStorage.setItem(TAB_KEY, value);
         if (value !== oldValue) loadData();
     },
 );
@@ -216,15 +222,8 @@ const displayedProjects = computed(() => {
     return state.sortOrder === 'desc' ? sorted.reverse() : sorted;
 });
 
-const formatBodyLine = (text?: string) => {
-    if (!text) return '';
-    const parts = text.split(':');
-    if (parts.length > 1) {
-        const label = parts.shift();
-        return `<strong>${label}:</strong>${parts.join(':')}`;
-    }
-    return text;
-};
+const formatBodyLine = (text?: string) =>
+    text ? DOMPurify.sanitize(text) : '';
 
 const onCardClick = (event: MouseEvent, item: ProjectData) => {
     // Ctrl/Cmd-click opens the underlying resource instead of the permit view.
@@ -295,7 +294,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                     :body1="formatBodyLine(item.body1)"
                     :body2="formatBodyLine(item.body2)"
                     :body3="formatBodyLine(item.body3)"
-                    :body4="formatBodyLine(item.body4)"
+                    :body4="item.body4"
                     :body5="formatBodyLine(item.body5)"
                     :route="{ name: item.route }"
                     :search-query="state.currentSearch"
@@ -317,6 +316,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
 </template>
 
 <style scoped>
+/* The whole card is the link, so the hover underline on its title reads as
+   noise here. Beats the theme's .bcgov-main-content rule on specificity. */
+.full-height :deep(a:hover),
+.full-height :deep(a:focus) {
+    text-decoration: none;
+}
+
 .dashboard-div-flex {
     display: flex;
     flex-wrap: wrap;
@@ -328,6 +334,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     flex-wrap: wrap;
     gap: 1.5rem;
     margin-bottom: 1rem;
+}
+
+/* ProjectCard clamps its title to two lines with overflow:hidden at
+   line-height 1.1, which is shorter than the glyphs and cuts the descenders
+   off "g", "y" and friends. */
+.dash-row :deep(.bodyTitle) {
+    line-height: 1.35;
 }
 
 .loading-state,

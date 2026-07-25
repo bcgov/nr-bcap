@@ -1,4 +1,4 @@
-"""Requirement Submission API, scoped to the requesting user's own resources: a
+"""Information Request API, scoped to the requesting user's own resources: a
 collection endpoint and a by-id detail endpoint. Verbs (GET)
 come from generated/generate.json -- edit that file and regenerate to change
 which methods each endpoint exposes.
@@ -21,23 +21,23 @@ from arches_zod_validation.views.mixins import (
 )
 
 
-class RequirementSubmissionSerializer(BCAPResourceSerializer):
+class InformationRequestSerializer(BCAPResourceSerializer):
     class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "requirement_submission"
+        graph_slug = "information_request"
 
 
-class RequirementSubmissionViewMixin(ArchesResourceViewMixin):
-    serializer_class = RequirementSubmissionSerializer
+class InformationRequestViewMixin(ArchesResourceViewMixin):
+    serializer_class = InformationRequestSerializer
 
 
-@extend_schema(tags=["External: requirement_submission"])
-class RequirementSubmissionListView(
-    RequirementSubmissionViewMixin,
+@extend_schema(tags=["External: information_request"])
+class InformationRequestListView(
+    InformationRequestViewMixin,
     UserOwnedResourceMixin,
     ArchesModelAPIMixin,
     ListAPIView,
 ):
-    """Collection endpoint for the requesting user's Requirement Submission resources.
+    """Collection endpoint for the requesting user's Information Request resources.
 
     Owner-scoped: only the resources the user created. Declared verbs:
     GET (from generated/generate.json); the ListAPIView base
@@ -48,14 +48,14 @@ class RequirementSubmissionListView(
     pagination_class = ArchesLimitOffsetPagination
 
 
-@extend_schema(tags=["External: requirement_submission"])
-class RequirementSubmissionView(
-    RequirementSubmissionViewMixin,
+@extend_schema(tags=["External: information_request"])
+class InformationRequestView(
+    InformationRequestViewMixin,
     UserOwnedResourceMixin,
     ArchesModelAPIMixin,
     RetrieveAPIView,
 ):
-    """Detail endpoint for a single Requirement Submission resource and its nested tiles.
+    """Detail endpoint for a single Information Request resource and its nested tiles.
 
     Owner-scoped: requesting one created by another user returns 404. Declared
     verbs: GET (from generated/generate.json); the

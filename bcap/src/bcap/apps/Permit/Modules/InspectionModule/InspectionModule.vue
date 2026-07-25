@@ -185,7 +185,7 @@ onMounted(async () => {
             ? await fetchDraft(graphSlug, targetDraftId as string)
             : await createDraft(graphSlug);
         draftId.value = draft.id;
-        draftData.value = draft.data || {};
+        draftData.value = (draft.data || {}) as ArchesDraftData;
 
         isDataLoaded.value = true;
     } catch (error) {

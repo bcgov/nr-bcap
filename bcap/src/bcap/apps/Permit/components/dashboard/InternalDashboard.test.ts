@@ -92,6 +92,9 @@ function makeCard(overrides: Record<string, unknown> = {}) {
 }
 
 beforeEach(() => {
+    // The dashboard remembers the active tab, so a tab set by one test would
+    // otherwise decide the next test's starting filter.
+    sessionStorage.clear();
     getInternalDashboardData.mockReset();
     push.mockReset();
 });
@@ -186,17 +189,17 @@ describe('field mapping (data shows up right)', () => {
         ).toBe(false);
     });
 
-    it('formats labelled body lines as bold-prefixed HTML', async () => {
-        getInternalDashboardData.mockResolvedValue([makeCard()]);
+    it('formats the labelled body lines as plain text', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ submission_type: 'Site Visit' }),
+        ]);
         const wrapper = mountDashboard();
         await flushPromises();
 
         const card = wrapper.findComponent(ProjectCardStub);
-        expect(card.props('body1')).toBe('<strong>Permit:</strong> PN-9');
-        expect(card.props('body2')).toBe('<strong>Holder:</strong> Acme Co');
-        expect(card.props('body3')).toBe(
-            '<strong>Officer:</strong> Jane Officer',
-        );
+        expect(card.props('body1')).toBe('Type: Site Visit');
+        expect(card.props('body2')).toBe('Permit: PN-9');
+        expect(card.props('body3')).toBe('Holder: Acme Co');
     });
 
     it('falls back to placeholder text for missing fields', async () => {

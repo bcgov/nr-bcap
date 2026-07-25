@@ -13,7 +13,6 @@ from bcap.views.api import (
     ControlledListHierarchy,
     TranslatableResourceTypesView,
     TranslateToResourceTypeView,
-    RequirementSubmission,
 )
 from bcap.views.registration_link_api import RegistrationClaimView
 from bcap.urls_api_documented import api_documented_patterns
@@ -110,11 +109,6 @@ bcap_patterns = [
         "api/translate-to-resource-type",
         TranslateToResourceTypeView.as_view(),
         name="translate_to_resource_type",
-    ),
-    path(
-        "api/requirement_submissions/<uuid:resource_id>",
-        RequirementSubmission.as_view(),
-        name="requirement_submission",
     ),
     path(
         "api/translatable-resource-types",

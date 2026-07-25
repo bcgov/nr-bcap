@@ -39,8 +39,8 @@ class BaseGraphService:
         return graph.nodegroup_id(graph_slug, alias)
 
     @classmethod
-    def _resources(cls, slug, ids, aliases):
-        """Resources of the given graph for the given ids, with the requested
+    def _tiles(cls, slug, ids, aliases):
+        """Tiles of the given graph for the given ids, with the requested
         aliases loaded as representation values."""
         return ResourceTileTree.get_tiles(
             slug,

@@ -221,7 +221,7 @@ const activeSortLabel = computed(() => {
     gap: 2.25rem;
     padding: 1.5rem 0;
     width: 100%;
-    font-family: 'BC Sans', 'Noto Sans', sans-serif;
+    font-family: 'BCSans', 'Noto Sans', sans-serif;
 }
 
 .flex-spacer {

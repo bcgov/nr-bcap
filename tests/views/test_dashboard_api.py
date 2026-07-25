@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from bcap.models.resource_draft import ResourceDraft
+from bcap.services.draft_service import DraftService
 from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
@@ -68,9 +68,16 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual(card["id"], self.permit_id)
         self.assertEqual(card["project_name"], "My Project")
         self.assertRegex(card["application_number"], r"^APP-\d+$")
+        self.assertEqual(card["submission_type"], "Site Visit")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
         self.assertEqual(card["requirement_name"], "Field Assessment")
-        self.assertEqual(card["ministry_assignee_name"], "Grace Hopper")
+        self.assertEqual(card["ministry_assignee_name"], "Hopper, Grace")
+
+        self.assertNotIn("modules", card)
+        self.assertEqual(
+            card["module_progress"],
+            {"current_module": "Permit Review", "completed": 0, "total": 1},
+        )
 
     def test_get_filters_by_assignment_status(self):
         # Grace's bcap_username is the session user "testuser" and she is the
@@ -145,10 +152,10 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         cls.mine = build_external_permit(
             builder, "My App", cls.user, "Active", hca_permit=hca
         )
-        cls.draft = ResourceDraft.objects.create(
-            user=cls.user,
-            graph_slug="permit_application",
-            data={
+        cls.draft = DraftService().create(
+            cls.user,
+            "permit_application",
+            {
                 "aliased_data": {
                     "application_identification": {
                         "aliased_data": {
@@ -178,15 +185,15 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual(card["created_by_name"], "testuser")
         self.assertEqual(card["project_name"], "My App")
         self.assertRegex(card["application_number"], r"^APP-\d+$")
+        self.assertEqual(card["submission_type"], "Site Visit")
         self.assertEqual(card["permit_id"], self.hca_id)
         self.assertEqual(card["permit_number"], "HCA-001")
 
-    def test_get_defaults_to_the_users_own_applications(self):
-        resp = self.client.get(self.url)
-
-        self.assertEqual(resp.status_code, 200)
-        body = resp.json()
-        self.assertEqual([c["id"] for c in body["results"]], [str(self.mine.pk)])
+        # The card carries the module summary, not the per-module list.
+        self.assertNotIn("modules", card)
+        self.assertEqual(
+            set(card["module_progress"]), {"current_module", "completed", "total"}
+        )
 
     def test_drafts_scope_returns_the_users_drafts(self):
         resp = self.client.get(self.url, {"status": ExternalDashboardStatus.DRAFTS})

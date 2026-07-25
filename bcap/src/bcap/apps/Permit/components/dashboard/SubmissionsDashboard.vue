@@ -5,6 +5,7 @@ import Panel from 'primevue/panel';
 import Fluid from 'primevue/fluid';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
 import { useGettext } from 'vue3-gettext';
 import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import SortingBar from './SortingBar.vue';
@@ -13,8 +14,9 @@ import {
     fetchMyProjects,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
+import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import type { PermitApplicationDraft } from '@/bcap/types.ts';
+import type { ModuleProgress, PermitApplicationDraft } from '@/bcap/types.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
@@ -31,15 +33,16 @@ interface DashboardProject {
     created_date: string;
     project_name: string;
     application_number: string;
+    submission_type: string;
     industrial_sector: string;
     permit_id: string | null;
     permit_number: string;
     urgency: number;
     priority_level: string;
     unread_messages: number;
+    module_progress: ModuleProgress;
 }
 
-// SortingBar State -- persist the selected tab across navigation (saved on card click).
 const EXTERNAL_TAB_KEY = 'bcap.externalDashboard.tab';
 const EXTERNAL_TABS = ['my_projects', 'company_projects', 'drafts'];
 const storedTab = localStorage.getItem(EXTERNAL_TAB_KEY) ?? '';
@@ -74,15 +77,24 @@ const workflowItems = ref([
     },
 ]);
 
-const loadDashboardData = async () => {
-    const [draftsData, projectsData] = await Promise.all([
-        fetchDrafts(),
-        fetchMyProjects(),
-    ]);
+const isLoading = ref(true);
 
-    savedDrafts.value = draftsData;
-    submittedProjects.value = projectsData;
-    lastUpdated.value = new Date();
+const loadDashboardData = async () => {
+    isLoading.value = true;
+    try {
+        const [draftsData, projectsData] = await Promise.all([
+            fetchDrafts(),
+            fetchMyProjects(),
+        ]);
+
+        savedDrafts.value = draftsData;
+        submittedProjects.value = projectsData;
+        lastUpdated.value = new Date();
+    } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+    } finally {
+        isLoading.value = false;
+    }
 };
 
 onMounted(() => {
@@ -156,6 +168,12 @@ const filteredProjects = computed(() => {
     });
 });
 
+const cardDate = (iso: string) =>
+    iso ? new Date(iso).toLocaleDateString() : '';
+
+const labelled = (label: string, value: string) =>
+    value ? `${label}: ${value}` : '';
+
 const openResourceReport = (resourceId: string) => {
     router.push({
         name: routeNames.permitDetails,
@@ -199,7 +217,21 @@ const openResourceReport = (resourceId: string) => {
                 @refresh="loadDashboardData"
             />
 
-            <div class="tab-content-container">
+            <div
+                v-if="isLoading"
+                class="loading-state"
+            >
+                <ProgressSpinner
+                    style="width: 50px; height: 50px"
+                    stroke-width="4"
+                />
+                <p>Loading submissions...</p>
+            </div>
+
+            <div
+                v-else
+                class="tab-content-container"
+            >
                 <div v-if="activeTab === 'my_projects'">
                     <Fluid v-if="filteredProjects.length > 0">
                         <div class="dashboard-div-flex">
@@ -210,13 +242,7 @@ const openResourceReport = (resourceId: string) => {
                                     project.priority_level === 'High'
                                 "
                                 :cap-label="project.status || 'Submitted'"
-                                :cap-date="
-                                    project.created_date
-                                        ? new Date(
-                                              project.created_date,
-                                          ).toLocaleDateString()
-                                        : ''
-                                "
+                                :cap-date="cardDate(project.created_date)"
                                 icon="fa-solid fa-folder-open"
                                 :body-title="
                                     project.project_name ||
@@ -227,17 +253,17 @@ const openResourceReport = (resourceId: string) => {
                                 "
                                 :body-subtitle2="project.industrial_sector"
                                 :body1="
-                                    project.permit_number
-                                        ? `<strong>Permit:</strong> ${project.permit_number}`
+                                    project.submission_type
+                                        ? `Type: ${project.submission_type}`
                                         : ''
                                 "
-                                :footer-date="
-                                    project.created_date
-                                        ? new Date(
-                                              project.created_date,
-                                          ).toLocaleDateString()
-                                        : ''
+                                :body2="
+                                    labelled('Permit', project.permit_number)
                                 "
+                                :body3="
+                                    buildModuleSummary(project.module_progress)
+                                "
+                                :footer-date="cardDate(project.created_date)"
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
                                 :unread-messages="project.unread_messages || 0"
@@ -274,7 +300,7 @@ const openResourceReport = (resourceId: string) => {
                                         'Untitled Application'
                                     "
                                     :description="draftWorkflow(draft).label"
-                                    :subtitle="`Last updated: ${new Date(draft.updated || draft.created).toLocaleDateString()}`"
+                                    :subtitle="`Last updated: ${new Date(draft.updated || draft.created || '').toLocaleDateString()}`"
                                     icon="fa fa-file-pen"
                                     class="dashboard-card ipa"
                                     :route="{
@@ -340,6 +366,22 @@ const openResourceReport = (resourceId: string) => {
 </template>
 
 <style scoped>
+/* The whole card is the link, so the hover underline on its title reads as
+   noise here. Beats the theme's .bcgov-main-content rule on specificity. */
+.full-height :deep(a:hover),
+.full-height :deep(a:focus) {
+    text-decoration: none;
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #555;
+}
+
 .dashboard-div-flex {
     display: flex;
     flex-wrap: wrap;
@@ -350,6 +392,23 @@ const openResourceReport = (resourceId: string) => {
 .dashboard-card {
     width: 225px !important;
     aspect-ratio: 1 / 1;
+}
+
+/* ProjectCard clamps its title to two lines with overflow:hidden at
+   line-height 1.1, which is shorter than the glyphs and cuts the descenders
+   off "g", "y" and friends. */
+.dashboard-div-flex :deep(.bodyTitle) {
+    line-height: 1.35;
+}
+
+/* CenterCard ships from bcgov_arches_common, so its body text is sized here.
+   px, not rem: the root is 62%, so rem values land on fractional pixels. */
+.dashboard-card :deep(.description) {
+    font-size: 18px;
+}
+
+.dashboard-card :deep(.subtitle) {
+    font-size: 14px;
 }
 
 .draft-card-wrapper {

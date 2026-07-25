@@ -7,10 +7,11 @@ import {
     zBcapMessageWritable,
     zChecklistStep,
     zInternalDashboardCard,
+    zModuleProgress,
     zPermitApplication,
     zPermitApplicationProcessModuleTile,
     zProcessRequirement,
-    zResourceDraft,
+    zDraftRecord,
     zInvestigationResourceAliasedDataWritable,
     zPermitApplicationResourceAliasedDataWritable,
     zPatchedPermitApplicationWritable,
@@ -48,6 +49,8 @@ export type DashboardStatus = z.infer<
 
 export type InternalDashboardCard = z.infer<typeof zInternalDashboardCard>;
 
+export type ModuleProgress = z.infer<typeof zModuleProgress>;
+
 export type PermitAliasedData = NonNullable<
     z.infer<typeof zPermitApplication>['aliased_data']
 >;
@@ -68,7 +71,7 @@ export type PermitApplicationAdminTileWritable = z.infer<
     typeof zPermitApplicationApplicationAdminTileWritable
 >;
 
-export type ResourceDraft = z.infer<typeof zResourceDraft>;
+export type ResourceDraft = z.infer<typeof zDraftRecord>;
 
 // A permit application draft narrows the generic draft to the permit resource's
 // writable (POST) aliased data, which carries the graph's required fields.
@@ -78,12 +81,9 @@ export type PermitApplicationDraft = ResourceDraft & {
 
 // An investigation draft narrows the generic draft to the investigation
 // resource's writable (POST) aliased data, which carries the graph's required
-// fields. parent_resource_id is draft-only bookkeeping (the resource it was
-// started from); it is stripped before submit and is not part of the graph.
+// fields.
 export type InvestigationDraft = ResourceDraft & {
-    data?: z.infer<typeof zInvestigationResourceAliasedDataWritable> & {
-        parent_resource_id?: string;
-    };
+    data?: z.infer<typeof zInvestigationResourceAliasedDataWritable>;
 };
 
 export type RawThreadMessage = z.infer<typeof zBcapMessage>;
@@ -91,9 +91,21 @@ export type BcapMessagePayload = z.infer<typeof zBcapMessageWritable>;
 
 // A message flattened and date-formatted for the permit message thread UI.
 export interface FormattedMessage {
+    id: string;
+    rawResource: Record<string, unknown>;
     author: string;
     text: string;
-    date: string;
+    date: string | null;
+    isUnread: boolean;
+}
+
+export interface AppThread {
+    id: string;
+    topic: string;
+    messages: FormattedMessage[];
+    hasUnread: boolean;
+    unreadCount?: number;
+    isResolved?: boolean;
 }
 
 export interface TileReference {
@@ -157,7 +169,6 @@ export interface BcapURLs {
         nodegroup_alias: string,
     ) => string;
     api_concepts_tree: (graph_slug: string, node_alias: string) => string;
-    api_contributor: string;
     api_get_frontend_i18n_data: string;
     api_get_nodegroup_tree: string;
     api_instance_permissions: string;

@@ -147,6 +147,23 @@ class ProcessRequirementBuilder(ResourceBuilder):
             Tile.objects.get(pk=tile.tileid).delete()
         return requirement
 
+    def set_requirement_status(self, requirement_id, satisfied):
+        """Set a requirement's assessment status (satisfied yes/no), creating the
+        assessment tile if it has none. A partial save, so only the assessment
+        nodegroup is touched."""
+        requirement = self._get_requirement_by_id(requirement_id)
+        assessment = requirement.aliased_data.sub_requirement_assessment_n1
+        if assessment is None:
+            assessment = self.append_blank_tile_for_group(
+                requirement,
+                groups.SUB_REQUIREMENT_ASSESSMENT_N1,
+                {aliases.REQUIREMENT_STATUS: satisfied},
+            )
+        else:
+            assessment.aliased_data.requirement_status = satisfied
+        requirement.save(force_admin=True, partial=True, index=False)
+        return requirement
+
     def clone_requirement(self, template_id, parent=None, submission=None):
         """A working copy of the requirement template with the given pk: every
         tile copied with a fresh GUID and the template flag cleared, so the copy
@@ -199,7 +216,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
             parent_group = nodegroup_id(
                 GraphSlugs.PROCESS_REQUIREMENT, aliases.PARENT_MODULE
             )
-            tile = self._tile_for_nodegroup(copy, parent_group)
+            tile = self._existing_tile(copy, parent_group)
             tile.data[parent_node] = self._resource_reference(parent.pk)
             reference_tiles.append((tile, parent_node))
         if submission is not None:
@@ -215,7 +232,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
                 )
                 submission_tile = Tile(
                     nodegroup_id=submission_node,
-                    parenttile=self._tile_for_nodegroup(copy, data_group),
+                    parenttile=self._existing_tile(copy, data_group),
                     resourceinstance=copy,
                     sortorder=0,
                 )
@@ -233,11 +250,6 @@ class ProcessRequirementBuilder(ResourceBuilder):
         return next(
             (t for t in resource.tiles if str(t.nodegroup_id) == nodegroup), None
         )
-
-    def _tile_for_nodegroup(self, resource, nodegroup):
-        """The cloned copy's tile for a nodegroup id, which the template always
-        carries."""
-        return self._existing_tile(resource, nodegroup)
 
     def templates_by_id(self):
         """The is_template_requirement templates, keyed by their requirement id."""

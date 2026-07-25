@@ -4,16 +4,38 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { createBcapMessage, getContributors } from '@/bcap/apps/Permit/api.ts';
+import { z } from 'zod';
+import {
+    createBcapMessage,
+    markMessageAsRead,
+    getContributorsForResources,
+} from '@/bcap/apps/Permit/api.ts';
+import type { FormattedMessage, AppThread } from '@/bcap/types.ts';
+import {
+    zBcapMessage,
+    zPaginatedBcapMessageList,
+    zPaginatedContributorList,
+} from '@/bcap/client/zod.gen.ts';
 
-const props = defineProps<{
-    applicationId: string;
-    permitResourceId: string;
-    existingMessages?: Array<{ author: string; text: string; date?: string }>;
-    threadId?: string | null;
-}>();
+export type RawBcapMessage = z.infer<typeof zBcapMessage>;
+export type BcapMessageList = z.infer<typeof zPaginatedBcapMessageList>;
+export type ContributorList = z.infer<typeof zPaginatedContributorList>;
 
-const emit = defineEmits(['message-sent']);
+const props = withDefaults(
+    defineProps<{
+        applicationId: string;
+        permitResourceId: string;
+        threads?: AppThread[];
+        context?: string;
+    }>(),
+    {
+        threads: () => [],
+        context: 'General',
+    },
+);
+
+const emit = defineEmits(['message-sent', 'thread-resolved']);
+
 const visible = ref(false);
 const messageText = ref('');
 const isSubmitting = ref(false);
@@ -22,15 +44,29 @@ const threadContainer = ref<HTMLElement | null>(null);
 const selectedRecipient = ref('');
 const recipients = ref<Array<{ label: string; value: string }>>([]);
 const isLoadingRecipients = ref(false);
+const selectedTopic = ref('General Question');
+const topics = ref([
+    { label: 'General Question', value: 'General Question' },
+    { label: 'Modification Request', value: 'Modification Request' },
+    { label: 'Additional Information', value: 'Additional Information' },
+]);
+const selectedThreadId = ref<string>('new');
+
+const activeThread = computed(() => {
+    if (selectedThreadId.value === 'new' || !props.threads) return null;
+    return props.threads.find((t) => t.id === selectedThreadId.value) || null;
+});
 
 const isReplyMode = computed(() => {
-    return props.existingMessages && props.existingMessages.length > 0;
+    return selectedThreadId.value !== 'new' && activeThread.value !== null;
 });
 
 const loadRecipients = async () => {
     isLoadingRecipients.value = true;
     try {
-        const fetchedRecipients = await getContributors();
+        const fetchedRecipients = await getContributorsForResources(
+            props.permitResourceId,
+        );
         recipients.value = fetchedRecipients;
 
         if (recipients.value.length > 0) {
@@ -46,22 +82,51 @@ const loadRecipients = async () => {
 };
 
 const openDialog = () => {
+    selectedThreadId.value = 'new';
     visible.value = true;
 };
 
 const closeDialog = () => {
     visible.value = false;
     messageText.value = '';
+    selectedTopic.value = 'General Question';
 };
 
-const handleDialogShow = async () => {
-    await nextTick();
+const selectThread = async (threadId: string) => {
+    selectedThreadId.value = threadId;
+    messageText.value = '';
 
+    if (activeThread.value && activeThread.value.hasUnread) {
+        const unreadMessages = activeThread.value.messages.filter(
+            (msg: FormattedMessage) => msg.isUnread,
+        );
+
+        for (const msg of unreadMessages) {
+            if (msg.id) {
+                try {
+                    await markMessageAsRead(msg.id);
+                    msg.isUnread = false;
+
+                    if (
+                        activeThread.value.unreadCount &&
+                        activeThread.value.unreadCount > 0
+                    ) {
+                        activeThread.value.unreadCount--;
+                    }
+                } catch (e) {
+                    console.error('Failed to mark message as read:', e);
+                }
+            }
+        }
+
+        activeThread.value.hasUnread = false;
+    }
+
+    await nextTick();
     if (messageInput.value) {
         messageInput.value.$el.focus();
     }
 
-    // Scroll the thread container to the very bottom
     if (threadContainer.value) {
         threadContainer.value.scrollTop = threadContainer.value.scrollHeight;
     }
@@ -78,15 +143,21 @@ const submitMessage = async () => {
     isSubmitting.value = true;
 
     try {
+        const targetThreadId = isReplyMode.value
+            ? activeThread.value?.id
+            : undefined;
+
+        const formattedTopic = `${props.context} ${selectedTopic.value.toLowerCase()}`;
+
         const responseData = await createBcapMessage(
             messageText.value,
             selectedRecipient.value as string,
             props.applicationId,
             props.permitResourceId,
-            props.threadId || undefined,
+            targetThreadId,
+            isReplyMode.value ? undefined : formattedTopic,
         );
 
-        console.log('Message successfully created:', responseData);
         emit('message-sent', responseData);
         closeDialog();
     } catch (error) {
@@ -95,6 +166,11 @@ const submitMessage = async () => {
     } finally {
         isSubmitting.value = false;
     }
+};
+
+const markAsResolved = () => {
+    if (!activeThread.value) return;
+    emit('thread-resolved', activeThread.value.id);
 };
 
 onMounted(() => {
@@ -109,16 +185,14 @@ onMounted(() => {
             class="trigger-btn"
             @click="openDialog"
         >
-            <span class="trigger-label">
-                {{ isReplyMode ? 'View message' : 'Ask a question' }}
-            </span>
+            <span class="trigger-label">Messages</span>
             <i class="fa-regular fa-comment-dots"></i>
 
             <span
-                v-if="isReplyMode"
+                v-if="threads.some((t) => t.hasUnread)"
                 class="message-badge"
             >
-                !
+                {{ threads.reduce((sum, t) => sum + (t.unreadCount || 0), 0) }}
             </span>
         </Button>
     </div>
@@ -127,17 +201,17 @@ onMounted(() => {
         v-model:visible="visible"
         modal
         :closable="true"
-        :style="{ width: '500px' }"
+        :style="{ width: '850px' }"
         :pt="{
             root: { class: 'message-dialog' },
             header: { class: 'message-dialog-header' },
             closeButton: { class: 'message-dialog-close' },
+            content: { style: { padding: '0', overflow: 'hidden' } },
         }"
-        @show="handleDialogShow"
     >
         <template #header>
             <span class="header-title">
-                Comment on Application {{ applicationId }}
+                Comments on Application {{ applicationId }}
             </span>
         </template>
 
@@ -145,160 +219,233 @@ onMounted(() => {
             <i class="fa-solid fa-xmark custom-close-icon"></i>
         </template>
 
-        <div class="dialog-body">
-            <div
-                v-if="!isReplyMode"
-                class="new-question-view"
-            >
+        <!-- SPLIT LAYOUT CONTAINER -->
+        <div class="dialog-body-split">
+            <!-- SIDEBAR -->
+            <div class="thread-sidebar">
                 <div
-                    class="field-container"
-                    style="margin-bottom: 1rem"
+                    v-for="thread in threads"
+                    :key="thread.id"
+                    class="sidebar-item"
+                    :class="{
+                        active: selectedThreadId === thread.id,
+                        unread: thread.hasUnread,
+                        resolved: thread.isResolved,
+                    }"
+                    @click="selectThread(thread.id)"
                 >
-                    <Dropdown
-                        v-model="selectedRecipient"
-                        :options="recipients"
-                        :loading="isLoadingRecipients"
-                        option-label="label"
-                        option-value="value"
-                        placeholder="Select Recipient"
-                        class="w-full"
-                        :pt="{
-                            root: {
-                                style: {
-                                    height: '3.5rem',
-                                    alignItems: 'center',
-                                    borderRadius: '6px',
-                                },
-                            },
-                            item: { style: { padding: '1rem' } },
-                        }"
-                    >
-                        <template #value="slotProps">
-                            <div
-                                v-if="
-                                    slotProps.value !== null &&
-                                    slotProps.value !== undefined
-                                "
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.75rem;
-                                    font-size: 1.25rem;
-                                    color: #495057;
-                                "
-                            >
-                                <i
-                                    class="fa-regular fa-envelope"
-                                    style="font-size: 1.3rem"
-                                ></i>
-                                <span>
-                                    {{
-                                        recipients.find(
-                                            (r) => r.value === slotProps.value,
-                                        )?.label
-                                    }}
-                                </span>
-                            </div>
-                            <span
-                                v-else
-                                style="font-size: 1.25rem; color: #6c757d"
-                            >
-                                {{ slotProps.placeholder }}
-                            </span>
-                        </template>
-                        <template #option="slotProps">
-                            <div
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.75rem;
-                                    font-size: 1.25rem;
-                                    color: #495057;
-                                "
-                            >
-                                <i
-                                    class="fa-regular fa-envelope"
-                                    style="font-size: 1.3rem"
-                                ></i>
-                                <span>{{ slotProps.option.label }}</span>
-                            </div>
-                        </template>
-                    </Dropdown>
+                    <span class="thread-topic-label">{{ thread.topic }}</span>
+                    <span class="thread-count">
+                        ({{ thread.messages.length }})
+                    </span>
                 </div>
 
-                <div class="field-container">
-                    <label class="field-label">Question:</label>
-                    <Textarea
-                        ref="messageInput"
-                        v-model="messageText"
-                        rows="4"
-                        class="full-width-textarea"
-                        auto-resize
-                    />
+                <div
+                    class="sidebar-item new-message-item"
+                    :class="{ active: selectedThreadId === 'new' }"
+                    @click="selectThread('new')"
+                >
+                    + New Message
                 </div>
             </div>
-
-            <div
-                v-else
-                class="reply-view"
-            >
+            <div class="thread-content">
+                <!-- NEW MESSAGE VIEW -->
                 <div
-                    ref="threadContainer"
-                    class="message-thread"
+                    v-if="!isReplyMode"
+                    class="new-question-view"
                 >
                     <div
-                        v-for="(msg, index) in existingMessages"
-                        :key="index"
-                        class="historical-message"
+                        class="field-container"
+                        style="margin-bottom: 1rem"
                     >
-                        <div class="message-header">
-                            <strong>{{ msg.author }}:</strong>
-                            <span
-                                v-if="msg.date"
-                                class="message-date"
-                            >
-                                {{ msg.date }}
-                            </span>
+                        <Dropdown
+                            v-model="selectedRecipient"
+                            :options="recipients"
+                            :loading="isLoadingRecipients"
+                            option-label="label"
+                            option-value="value"
+                            placeholder="Select Recipient"
+                            class="w-full"
+                            :pt="{
+                                root: {
+                                    style: {
+                                        height: '3.5rem',
+                                        alignItems: 'center',
+                                        borderRadius: '6px',
+                                    },
+                                },
+                                item: { style: { padding: '1rem' } },
+                            }"
+                        >
+                            <template #value="slotProps">
+                                <div
+                                    v-if="
+                                        slotProps.value !== null &&
+                                        slotProps.value !== undefined
+                                    "
+                                    class="dropdown-value-template"
+                                >
+                                    <i class="fa-regular fa-envelope"></i>
+                                    <span>
+                                        {{
+                                            recipients.find(
+                                                (r) =>
+                                                    r.value === slotProps.value,
+                                            )?.label
+                                        }}
+                                    </span>
+                                </div>
+                                <span
+                                    v-else
+                                    style="font-size: 1.25rem; color: #6c757d"
+                                >
+                                    {{ slotProps.placeholder }}
+                                </span>
+                            </template>
+                            <template #option="slotProps">
+                                <div class="dropdown-value-template">
+                                    <i class="fa-regular fa-envelope"></i>
+                                    <span>{{ slotProps.option.label }}</span>
+                                </div>
+                            </template>
+                        </Dropdown>
+                    </div>
+
+                    <div
+                        class="field-container"
+                        style="margin-bottom: 1rem"
+                    >
+                        <div class="context-display-box">
+                            <span class="context-label">Regarding:</span>
+                            <span class="context-value">{{ context }}</span>
                         </div>
-                        <p>{{ msg.text }}</p>
+                    </div>
+
+                    <div
+                        class="field-container"
+                        style="margin-bottom: 1.5rem"
+                    >
+                        <Dropdown
+                            v-model="selectedTopic"
+                            :options="topics"
+                            option-label="label"
+                            option-value="value"
+                            class="w-full"
+                            :pt="{
+                                root: {
+                                    style: {
+                                        height: '3.5rem',
+                                        alignItems: 'center',
+                                        borderRadius: '6px',
+                                    },
+                                },
+                                input: {
+                                    style: {
+                                        fontSize: '1.35rem',
+                                        color: '#495057',
+                                        paddingLeft: '1rem',
+                                    },
+                                },
+                                item: {
+                                    style: {
+                                        padding: '1rem',
+                                        fontSize: '1.35rem',
+                                        color: '#495057',
+                                    },
+                                },
+                            }"
+                        />
+                    </div>
+
+                    <div class="field-container textarea-wrapper">
+                        <label class="field-label">Message:</label>
+                        <Textarea
+                            ref="messageInput"
+                            v-model="messageText"
+                            rows="5"
+                            class="full-width-textarea"
+                            auto-resize
+                        />
+                    </div>
+
+                    <div class="action-footer">
+                        <Button
+                            label="Send"
+                            class="send-btn"
+                            :loading="isSubmitting"
+                            @click="submitMessage"
+                        />
                     </div>
                 </div>
 
-                <div class="field-container">
-                    <label class="field-label">Write a Reply:</label>
-                    <Textarea
-                        ref="messageInput"
-                        v-model="messageText"
-                        rows="4"
-                        class="full-width-textarea"
-                        auto-resize
-                    />
+                <!-- REPLY VIEW -->
+                <div
+                    v-else
+                    class="reply-view"
+                >
+                    <div
+                        ref="threadContainer"
+                        class="message-thread"
+                    >
+                        <div
+                            v-for="(msg, index) in activeThread?.messages"
+                            :key="index"
+                            class="historical-message"
+                        >
+                            <div class="message-header">
+                                <strong>{{ msg.author }}:</strong>
+                                <span
+                                    v-if="msg.date"
+                                    class="message-date"
+                                >
+                                    {{ msg.date }}
+                                </span>
+                            </div>
+                            <p>{{ msg.text }}</p>
+                        </div>
+                    </div>
+
+                    <div class="field-container textarea-wrapper">
+                        <label class="field-label">Write a Reply:</label>
+                        <Textarea
+                            ref="messageInput"
+                            v-model="messageText"
+                            rows="4"
+                            class="full-width-textarea"
+                            auto-resize
+                        />
+                    </div>
+
+                    <div class="action-footer">
+                        <Button
+                            label="Mark as Resolved"
+                            class="send-btn"
+                            @click="markAsResolved"
+                        />
+                        <Button
+                            label="Send"
+                            class="send-btn"
+                            :loading="isSubmitting"
+                            @click="submitMessage"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
-
-        <template #footer>
-            <div class="dialog-footer">
-                <Button
-                    label="Send"
-                    class="send-btn"
-                    :loading="isSubmitting"
-                    @click="submitMessage"
-                />
-            </div>
-        </template>
     </Dialog>
 </template>
 
 <style>
 /* --- Trigger Button Styles --- */
+/* BC Gov secondary button: navy outline on white. */
+/* Filled navy so the primary action leads over the muted "Submitted" chip. */
 .trigger-btn {
-    background-color: #d0d0d0;
-    color: #333;
-    border: none;
+    background-color: var(--bc-navy);
+    color: #ffffff;
+    border: 2px solid var(--bc-navy);
     border-radius: 4px;
     padding: 0.5rem 1rem;
-    font-weight: 500;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -306,10 +453,10 @@ onMounted(() => {
 }
 
 .trigger-btn:hover {
-    background-color: #e0e0e0;
+    background-color: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
 }
 
-/* --- Notification Badge --- */
 .message-badge {
     position: absolute;
     top: -8px;
@@ -328,13 +475,12 @@ onMounted(() => {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* --- Dialog Container --- */
+/* --- Dialog Container & Header --- */
 .message-dialog {
     border-radius: 8px;
     overflow: hidden;
 }
 
-/* --- Dialog Header --- */
 .message-dialog-header {
     background-color: #003366 !important;
     color: white !important;
@@ -344,16 +490,14 @@ onMounted(() => {
 
 .message-dialog-header .header-title {
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
-/* --- Custom Close Icon --- */
 .custom-close-icon {
     font-size: 1.5rem;
     color: white;
 }
 
-/* Ensure the button container centers the new icon */
 .message-dialog-close {
     color: white !important;
     width: 2.5rem !important;
@@ -368,15 +512,88 @@ onMounted(() => {
     background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* --- Dialog Body --- */
-.dialog-body {
-    padding: 1.5rem 0 0 0;
+/* --- Split Layout Body (FIXED HEIGHT) --- */
+.dialog-body-split {
+    display: flex;
+    height: 450px;
+    background-color: #f8f9fa;
 }
 
-/* --- Field Layout --- */
+/* --- Sidebar Styles --- */
+.thread-sidebar {
+    width: 260px;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar-item {
+    padding: 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    font-size: 1.15rem;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-item:hover {
+    background-color: #f1f3f5;
+}
+
+/* UNREAD STATE: Bolds the topic text */
+.sidebar-item.unread .thread-topic-label {
+    font-weight: 700;
+    color: #000;
+}
+
+.sidebar-item.resolved {
+    color: #a0a0a0;
+}
+
+.sidebar-item.active {
+    background-color: #1a6ab0;
+    color: #ffffff;
+    border-bottom-color: #1a6ab0;
+}
+
+.sidebar-item.active.unread .thread-topic-label,
+.sidebar-item.active.resolved {
+    color: #ffffff;
+}
+
+.new-message-item {
+    margin-top: auto;
+    font-weight: 500;
+}
+
+/* --- Main Content Area --- */
+.thread-content {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent internal elements from breaking layout */
+}
+
+.new-question-view,
+.reply-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
 .field-container {
-    margin-bottom: 3.5rem;
     width: 100%;
+}
+
+.textarea-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto; /* Pushes to bottom */
 }
 
 .field-label {
@@ -385,69 +602,47 @@ onMounted(() => {
     color: #333;
 }
 
-/* --- Static Recipient Display (No Box) --- */
-.recipient-display {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    color: #333;
-    margin-top: 0.5rem;
-    margin-left: 1rem;
-    margin-bottom: 2.5rem;
-    font-size: 1.5rem;
-    font-weight: 400;
-}
-
 /* --- Full Width Textarea --- */
 .full-width-textarea {
     width: 100% !important;
     box-sizing: border-box;
+    border-radius: 6px;
+    border-color: #ced4da;
 }
 
-/* --- Thread / Reply Styles --- */
+/* --- Dynamic Thread History Area --- */
 .message-thread {
-    margin-bottom: 2rem;
-    max-height: 200px !important;
-    overflow-y: auto !important;
+    flex-grow: 1; /* Eats remaining vertical space */
+    overflow-y: auto; /* Adds scrollbar strictly to this box */
+    margin-bottom: 1.5rem;
     padding: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     background-color: #fafafa;
-    display: block;
-    flex-shrink: 0;
 }
 
-/* --- Individual messages --- */
 .historical-message {
     margin-bottom: 1rem;
     color: #333;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
 }
 
-.historical-message:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-/* --- Message Header & Date --- */
 .message-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
 }
 
 .historical-message strong {
-    color: #003366;
+    color: #000;
+    font-weight: 600;
     margin: 0;
 }
 
 .message-date {
-    font-size: 1rem;
+    font-size: 0.85rem;
     color: #6c757d;
-    font-style: italic;
 }
 
 .historical-message p {
@@ -455,21 +650,44 @@ onMounted(() => {
     line-height: 1.5;
 }
 
-/* --- Footer & Send Button --- */
-.dialog-footer {
+/* --- Footer Buttons --- */
+.action-footer {
     display: flex;
     justify-content: flex-end;
-    padding-top: 1rem;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
 .send-btn {
     background-color: #007bff;
     border: none;
-    padding: 0.5rem 2rem;
+    padding: 0.5rem 1.5rem;
     border-radius: 6px;
 }
 
 .send-btn:hover {
     background-color: #0069d9;
+}
+
+.dropdown-value-template {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    color: #495057;
+}
+
+.dropdown-value-template i {
+    font-size: 1.3rem;
+}
+
+/* Context Display */
+.context-label {
+    font-weight: 500;
+}
+
+.context-value {
+    font-weight: 600;
+    padding-left: 0.5rem;
 }
 </style>

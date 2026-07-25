@@ -20,6 +20,7 @@ from bcap.util.aliases.process_requirement import ProcessRequirementAliases as p
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import node_id
 from bcap.util.i18n import localized, localized_string
+from bcap.util.tiles import referenced_resource_ids
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000002012",
@@ -62,8 +63,8 @@ class AssignModuleIds(BaseFunction):
         reference_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
         for child in TileModel.objects.filter(parenttile_id=tile.pk):
             order = int(child.data.get(order_node) or 0)
-            for reference in child.data.get(reference_node) or []:
-                self._stamp_requirement(reference.get("resourceId"), module_id, order)
+            for requirement_id in referenced_resource_ids([child], reference_node):
+                self._stamp_requirement(requirement_id, module_id, order)
 
     def _stamp_requirement(self, requirement_id, module_id, order):
         """Write the id straight to the identification tile rather than through a
