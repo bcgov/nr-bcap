@@ -1,0 +1,55 @@
+-- GENERATED - edit pub_spec.py and re-run generate.py.
+-- Requires publication/mv_resource_v1.sql to be applied first.
+--
+-- Built ON TOP OF mv_resource_v1: one source of truth, zero joins.
+-- CONTRACT:
+--   * cardinality-1 fields keep REAL TYPES (date, numeric, boolean, text)
+--   * cardinality-n fields are TEXT CSV: ' | ' between tiles, '; ' within a tile
+--   * POSITIONAL ALIGNMENT IS THE CONTRACT. Null elements emit an EMPTY SLOT.
+--   * references come in pairs: x (labels) + x_ids
+
+SET client_min_messages = warning;
+
+DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource_flat_v1 CASCADE;
+CREATE MATERIALIZED VIEW publication.mv_resource_flat_v1 AS
+SELECT
+    r.resourceinstanceid,
+    arches_util.resource_names_csv(r.reference_link -> 'archaeological_sites', ' | ') AS archaeological_sites,
+    arches_util.a2csv(r.reference_link -> 'archaeological_sites', NULL, ' | ') AS archaeological_sites_ids,
+    arches_util.resource_names_csv(r.reference_link -> 'site_visits', ' | ') AS site_visits,
+    arches_util.a2csv(r.reference_link -> 'site_visits', NULL, ' | ') AS site_visits_ids,
+    arches_util.resource_names_csv(r.reference_link -> 'repositories', ' | ') AS repositories,
+    arches_util.a2csv(r.reference_link -> 'repositories', NULL, ' | ') AS repositories_ids,
+    arches_util.deep_csv_nested(r.information_carrier, '{}'::text[], 'information_carrier', 'name', ' | ', '; ') AS information_carrier,
+    arches_util.deep_csv_nested(r.information_carrier, '{}'::text[], 'information_carrier', 'file_id', ' | ', '; ') AS information_carrier_file_ids,
+    jsonb_array_length(arches_util.as_array(r.information_carrier)) AS information_carrier_count,
+    (r.copyright_type ->> 'distribution_permitted')::boolean AS distribution_permitted,
+    arches_util.a2csv(r.copyright_type -> 'signed_agreement', 'name', ' | ') AS signed_agreement,
+    arches_util.a2csv(r.copyright_type -> 'signed_agreement', 'file_id', ' | ') AS signed_agreement_file_ids,
+    r.copyright_type ->> 'agreement_text' AS agreement_text,
+    arches_util.a2csv(r.copyright_type -> 'copyright_type', 'label', ' | ') AS copyright_type,
+    arches_util.a2csv(r.copyright_type -> 'copyright_type', 'list_item_id', ' | ') AS copyright_type_ids,
+    arches_util.deep_csv_nested(r.keyword, '{}'::text[], 'keyword', 'label', ' | ', '; ') AS keyword,
+    arches_util.deep_csv_nested(r.keyword, '{}'::text[], 'keyword', 'list_item_id', ' | ', '; ') AS keyword_ids,
+    jsonb_array_length(arches_util.as_array(r.keyword)) AS keyword_count,
+    arches_util.deep_csv(r.authors, '{}'::text[], 'other_authors_unlisted', ' | ') AS other_authors_unlisted,
+    arches_util.deep_res_csv_nested(r.authors, '{}'::text[], 'authors', ' | ', '; ') AS authors,
+    arches_util.deep_csv_nested(r.authors, '{}'::text[], 'authors', NULL, ' | ', '; ') AS authors_ids,
+    jsonb_array_length(arches_util.as_array(r.authors)) AS authors_count,
+    r.publication_details ->> 'title' AS title,
+    (r.publication_details ->> 'page_range_end')::numeric AS page_range_end,
+    r.publication_details ->> 'other_journal_or_volume_name' AS other_journal_or_volume_name,
+    arches_util.resource_name(arches_util.to_uuid(r.publication_details ->> 'journal_or_volume_name')) AS journal_or_volume_name,
+    r.publication_details ->> 'journal_or_volume_name' AS journal_or_volume_name_id,
+    arches_util.a2csv(r.publication_details -> 'publication_type', 'label', ' | ') AS publication_type,
+    arches_util.a2csv(r.publication_details -> 'publication_type', 'list_item_id', ' | ') AS publication_type_ids,
+    (r.publication_details ->> 'page_range_start')::numeric AS page_range_start,
+    (r.publication_details ->> 'year_of_publication')::date AS year_of_publication,
+    r.publication_details ->> 'publication_remarks' AS publication_remarks,
+    arches_util.deep_csv_nested(r.publication_details -> 'publication_identifier', '{}'::text[], 'publication_identifier_type', 'label', ' | ', '; ') AS publication_identifier_type,
+    arches_util.deep_csv_nested(r.publication_details -> 'publication_identifier', '{}'::text[], 'publication_identifier_type', 'list_item_id', ' | ', '; ') AS publication_identifier_type_ids,
+    arches_util.deep_csv(r.publication_details -> 'publication_identifier', '{}'::text[], 'publication_identifier', ' | ') AS publication_identifier,
+    jsonb_array_length(arches_util.as_array(r.publication_details -> 'publication_identifier')) AS publication_identifier_count
+FROM publication.mv_resource_v1 r;
+
+CREATE UNIQUE INDEX mv_resource_flat_v1_pk ON publication.mv_resource_flat_v1 (resourceinstanceid);

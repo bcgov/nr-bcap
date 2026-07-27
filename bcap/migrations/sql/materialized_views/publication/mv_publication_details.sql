@@ -1,0 +1,55 @@
+-- GENERATED - edit pub_spec.py and re-run generate.py. Do not hand-edit.
+-- Graph 3caf329f-b8f7-11e6-84a5-026d961c88e6
+-- Requires 00_arches_util.sql (arches_util helpers) to be applied first.
+--
+-- Reads public.tiles DIRECTLY. The generated publication.* views are NOT used:
+-- each LEFT JOINs edit_log twice with a text->uuid cast that no index can serve.
+--
+-- INVARIANTS (downstream depends on these - do not change silently):
+--   * every key ALWAYS present; empty means null, never absent. No jsonb_strip_nulls.
+--   * cardinality-n children are ALWAYS a jsonb array, [] when empty, never null.
+--   * cardinality-1 branches are an object, or null when the tile does not exist.
+--   * array order is tiles.sortorder, then tileid. Stable across refreshes.
+
+SET client_min_messages = warning;   -- ST_MakeValid emits a NOTICE per repair
+SET maintenance_work_mem = '512MB';
+SET work_mem             = '128MB';
+
+CREATE SCHEMA IF NOT EXISTS publication;
+
+-- ---------------------------------------------------------------------
+-- publication_details  (cardinality 1)  children: publication_identifier
+-- ---------------------------------------------------------------------
+DROP MATERIALIZED VIEW IF EXISTS publication.mv_publication_details CASCADE;
+CREATE MATERIALIZED VIEW publication.mv_publication_details AS
+WITH publication_identifier AS (
+    SELECT t.parenttileid AS parenttileid,
+           jsonb_agg(jsonb_build_object(
+            'publication_identifier_type', arches_util.reference_flat(t.tiledata -> '3604650c-2978-464a-83bb-fd559f7b9ea8'),
+            'publication_identifier', arches_util.i18n_text(t.tiledata -> '63960b1a-bc3f-11ed-bd90-5254004d77d3')
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    WHERE t.nodegroupid = '63960b1a-bc3f-11ed-bd90-5254004d77d3'::uuid
+    GROUP BY t.parenttileid
+),
+publication_details AS (
+    SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
+           jsonb_build_object(
+            'title', arches_util.i18n_text(t.tiledata -> '1930617c-c407-11ed-8154-5254004d77d3'),
+            'page_range_end', NULLIF(t.tiledata ->> '2d410f4c-bc3f-11ed-a483-5254004d77d3', '')::numeric,
+            'other_journal_or_volume_name', arches_util.i18n_text(t.tiledata -> '553a3d1a-bc36-11ed-a2df-5254004d77d3'),
+            'journal_or_volume_name', arches_util.resource_id(t.tiledata -> 'c89a294c-bc35-11ed-9b80-5254004d77d3'),
+            'publication_type', arches_util.reference_flat(t.tiledata -> '83f08723-772b-456c-b693-863b0f84cb07'),
+            'page_range_start', NULLIF(t.tiledata ->> 'd4f3cb86-bc3e-11ed-9b80-5254004d77d3', '')::numeric,
+            'year_of_publication', to_date(NULLIF(t.tiledata ->> '45216022-c409-11ed-81a5-5254004d77d3', ''), 'YYYY-MM-DD'),
+            'publication_remarks', arches_util.i18n_text(t.tiledata -> '289599a4-e307-4635-959e-7e415b0e8ec4'),
+            'publication_identifier', COALESCE(publication_identifier.arr, '[]'::jsonb)
+        ) AS obj
+    FROM public.tiles t
+    LEFT JOIN publication_identifier publication_identifier ON publication_identifier.parenttileid = t.tileid
+    WHERE t.nodegroupid = 'e9366370-bc33-11ed-bf42-5254004d77d3'::uuid
+    ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
+)
+SELECT resourceinstanceid, obj AS publication_details FROM publication_details;
+
+CREATE UNIQUE INDEX mv_publication_details_pk ON publication.mv_publication_details (resourceinstanceid);

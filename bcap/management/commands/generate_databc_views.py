@@ -42,12 +42,14 @@ from django.core.management.base import BaseCommand, CommandError
 
 from arches.app.models.models import GraphModel, Node, NodeGroup
 
-
 # Maps the DataBC short slug used by this command to the Arches graph slug
 # stored in GraphModel.slug.  Update this if graph slugs change in the DB.
 GRAPH_SLUGS = {
     "sv": "site-visit",
     "as": "archaeological-site",
+    "rep": "repository",
+    "pub": "publication",
+    "per": "hca_permit",
 }
 
 DATE_FORMAT_DEFAULT = "YYYY-MM-DD"
@@ -94,11 +96,11 @@ class Command(BaseCommand):
             )
 
         # Locate directories
-        cmd_dir  = os.path.dirname(os.path.abspath(__file__))
-        app_dir  = os.path.dirname(os.path.dirname(cmd_dir))
-        mig_dir  = os.path.join(app_dir, "migrations")
+        cmd_dir = os.path.dirname(os.path.abspath(__file__))
+        app_dir = os.path.dirname(os.path.dirname(cmd_dir))
+        mig_dir = os.path.join(app_dir, "migrations")
         spec_dir = os.path.join(mig_dir, "databc")
-        out_dir  = os.path.join(mig_dir, "sql", "materialized_views")
+        out_dir = os.path.join(mig_dir, "sql", "materialized_views")
         os.makedirs(out_dir, exist_ok=True)
 
         # 1. Optionally regenerate specs from the live database
@@ -110,7 +112,9 @@ class Command(BaseCommand):
         src = os.path.join(spec_dir, "00_common.sql")
         dst = os.path.join(out_dir, "00_arches_util.sql")
         shutil.copy2(src, dst)
-        self.stdout.write(f"  copied 00_common.sql -> sql/materialized_views/00_arches_util.sql")
+        self.stdout.write(
+            f"  copied 00_common.sql -> sql/materialized_views/00_arches_util.sql"
+        )
 
         # 3. Generate stack + flat SQL for each requested graph
         generate_script = os.path.join(spec_dir, "generate.py")
@@ -123,9 +127,7 @@ class Command(BaseCommand):
                 text=True,
             )
             if result.returncode != 0:
-                raise CommandError(
-                    f"generate.py failed for '{slug}':\n{result.stderr}"
-                )
+                raise CommandError(f"generate.py failed for '{slug}':\n{result.stderr}")
             if result.stdout.strip():
                 self.stdout.write(result.stdout.rstrip())
             self.stdout.write(self.style.SUCCESS(f"  [OK] {slug}"))
@@ -145,7 +147,9 @@ class Command(BaseCommand):
     def _regenerate_spec(self, slug, spec_dir):
         """Query the live DB for the graph and write an updated spec.py."""
         arches_slug = GRAPH_SLUGS[slug]
-        self.stdout.write(f"\nRegenerating spec for '{slug}' (graph slug: {arches_slug}) ...")
+        self.stdout.write(
+            f"\nRegenerating spec for '{slug}' (graph slug: {arches_slug}) ..."
+        )
 
         try:
             graph = GraphModel.objects.get(slug=arches_slug)
@@ -190,7 +194,9 @@ class Command(BaseCommand):
             if ng_id == root_ng_id:
                 continue
             datefmt = self._date_format(node) if node.datatype in DATE_DT else None
-            ng_fields[ng_id].append((node.alias, str(node.nodeid), node.datatype, datefmt))
+            ng_fields[ng_id].append(
+                (node.alias, str(node.nodeid), node.datatype, datefmt)
+            )
 
         children = defaultdict(list)
         tops = []
@@ -212,17 +218,20 @@ class Command(BaseCommand):
             queue.extend(children.get(ng_id, []))
 
         skipped = [
-            ng_id for ng_id in ng_by_id
+            ng_id
+            for ng_id in ng_by_id
             if ng_id != root_ng_id and ng_id not in set(ordered)
         ]
         for ng_id in skipped:
-            self.stderr.write(self.style.WARNING(
-                f"  Warning: nodegroup '{ng_alias.get(ng_id, ng_id)}' unreachable, skipped."
-            ))
+            self.stderr.write(
+                self.style.WARNING(
+                    f"  Warning: nodegroup '{ng_alias.get(ng_id, ng_id)}' unreachable, skipped."
+                )
+            )
 
         # Load existing spec to preserve SLUG and FLAT_GRAINS (not queryable from DB)
         existing = self._load_existing_spec(slug, spec_dir)
-        spec_slug   = existing.get("SLUG", slug)
+        spec_slug = existing.get("SLUG", slug)
         flat_grains = existing.get("FLAT_GRAINS", [])
 
         ng_list = []
@@ -231,16 +240,23 @@ class Command(BaseCommand):
             alias = ng_alias.get(ng_id, ng_id)
             parent_id = str(ng.parentnodegroup_id) if ng.parentnodegroup_id else None
             parent_alias = (
-                None if parent_id is None or parent_id == root_ng_id
+                None
+                if parent_id is None or parent_id == root_ng_id
                 else ng_alias.get(parent_id)
             )
-            ng_list.append((alias, ng_id, parent_alias, ng.cardinality, ng_fields.get(ng_id, [])))
+            ng_list.append(
+                (alias, ng_id, parent_alias, ng.cardinality, ng_fields.get(ng_id, []))
+            )
 
-        content = self._render_spec(graph_id, graph.slug.replace("-", "_"), spec_slug, flat_grains, ng_list)
+        content = self._render_spec(
+            graph_id, graph.slug.replace("-", "_"), spec_slug, flat_grains, ng_list
+        )
         out_path = os.path.join(spec_dir, f"{slug}_spec.py")
         with open(out_path, "w") as fh:
             fh.write(content)
-        self.stdout.write(self.style.SUCCESS(f"  wrote {out_path} ({len(ng_list)} nodegroups)"))
+        self.stdout.write(
+            self.style.SUCCESS(f"  wrote {out_path} ({len(ng_list)} nodegroups)")
+        )
 
         geom_nodes = [
             (f_alias, f_nid, ng_id)
@@ -249,9 +265,11 @@ class Command(BaseCommand):
             if dt == "geojson-feature-collection"
         ]
         if geom_nodes:
-            self.stdout.write(self.style.WARNING(
-                "  geojson-feature-collection nodes detected — verify geom_mv() calls in generate.py:"
-            ))
+            self.stdout.write(
+                self.style.WARNING(
+                    "  geojson-feature-collection nodes detected — verify geom_mv() calls in generate.py:"
+                )
+            )
             for g_alias, g_nid, g_ng_id in geom_nodes:
                 self.stdout.write(f"    geom_mv('{g_alias}', '{g_nid}', '{g_ng_id}')")
 
@@ -266,6 +284,7 @@ class Command(BaseCommand):
     def _load_existing_spec(self, slug, spec_dir):
         """Return a dict with SLUG and FLAT_GRAINS from the existing spec, if it exists."""
         import importlib.util
+
         path = os.path.join(spec_dir, f"{slug}_spec.py")
         if not os.path.exists(path):
             return {}
@@ -303,7 +322,9 @@ class Command(BaseCommand):
                 lines.append(f"    ('{alias}', '{ngid}', {parent_repr}, '{card}', [")
                 for f_alias, f_nodeid, f_dt, f_datefmt in fields:
                     datefmt_repr = f"'{f_datefmt}'" if f_datefmt else "None"
-                    lines.append(f"        ('{f_alias}', '{f_nodeid}', '{f_dt}', {datefmt_repr}),")
+                    lines.append(
+                        f"        ('{f_alias}', '{f_nodeid}', '{f_dt}', {datefmt_repr}),"
+                    )
                 lines.append("    ]),")
         lines.append("]")
         return "\n".join(lines) + "\n"
