@@ -24,6 +24,37 @@ _SV_GRAIN_FLATS = [
 ]
 
 # ---------------------------------------------------------------------------
+# hca_permit dependency lists
+# ---------------------------------------------------------------------------
+_PER_BRANCHES = [
+    ("bcap", "per_mv_permit_identification"),
+]
+
+# ---------------------------------------------------------------------------
+# publication dependency lists
+# ---------------------------------------------------------------------------
+_PUB_BRANCHES = [
+    ("bcap", "pub_mv_reference_link"),
+    ("bcap", "pub_mv_information_carrier"),
+    ("bcap", "pub_mv_copyright_type"),
+    ("bcap", "pub_mv_keyword"),
+    ("bcap", "pub_mv_authors"),
+    ("bcap", "pub_mv_publication_details"),
+]
+
+# ---------------------------------------------------------------------------
+# repository dependency lists
+# ---------------------------------------------------------------------------
+_REP_BRANCHES = [
+    ("bcap", "rep_mv_contact_information"),
+    ("bcap", "rep_mv_repository_notes"),
+    ("bcap", "rep_mv_repository_identifier"),
+]
+_REP_GEOMS = [
+    ("bcap", "rep_mv_geom_physical_location"),
+]
+
+# ---------------------------------------------------------------------------
 # archaeological_site dependency lists
 # ---------------------------------------------------------------------------
 _AS_BRANCHES = [
@@ -361,5 +392,219 @@ sql_items = [
         reverse_sql="DROP PROCEDURE IF EXISTS archaeological_site.refresh_flat(boolean);",
         replace=True,
         dependencies=[("bcap", "as_mv_resource_flat_v1")] + _AS_GRAIN_FLATS,
+    ),
+    # -----------------------------------------------------------------------
+    # DataBC — hca_permit: branch materialized view
+    # -----------------------------------------------------------------------
+    SQLItem(
+        "per_mv_permit_identification",
+        format_sql("sql/materialized_views/hca_permit/mv_permit_identification.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS hca_permit.mv_permit_identification CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    # DataBC — hca_permit: final stack materialized view
+    SQLItem(
+        "per_mv_resource_v1",
+        format_sql("sql/materialized_views/hca_permit/mv_resource_v1.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS hca_permit.mv_resource_v1 CASCADE;",
+        dependencies=_PER_BRANCHES,
+    ),
+    # DataBC — hca_permit: stable wrapper view
+    SQLItem(
+        "per_resource_view",
+        format_sql("sql/materialized_views/hca_permit/resource_view.sql"),
+        reverse_sql="DROP VIEW IF EXISTS hca_permit.resource;",
+        replace=True,
+        dependencies=[("bcap", "per_mv_resource_v1")],
+    ),
+    # DataBC — hca_permit: refresh procedure (stack)
+    SQLItem(
+        "per_refresh_resource",
+        format_sql("sql/materialized_views/hca_permit/refresh_resource.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS hca_permit.refresh_resource(boolean);",
+        replace=True,
+        dependencies=[("bcap", "per_mv_resource_v1")],
+    ),
+    # DataBC — hca_permit: flat materialized view
+    SQLItem(
+        "per_mv_resource_flat_v1",
+        format_sql("sql/materialized_views/hca_permit/mv_resource_flat_v1.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS hca_permit.mv_resource_flat_v1 CASCADE;",
+        dependencies=[("bcap", "per_mv_resource_v1")],
+    ),
+    # DataBC — hca_permit: flat wrapper view
+    SQLItem(
+        "per_flat_views",
+        format_sql("sql/materialized_views/hca_permit/flat_views.sql"),
+        reverse_sql="DROP VIEW IF EXISTS hca_permit.resource_flat;",
+        replace=True,
+        dependencies=[("bcap", "per_mv_resource_flat_v1")],
+    ),
+    # DataBC — hca_permit: refresh procedure (flat)
+    SQLItem(
+        "per_refresh_flat",
+        format_sql("sql/materialized_views/hca_permit/refresh_flat.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS hca_permit.refresh_flat(boolean);",
+        replace=True,
+        dependencies=[("bcap", "per_mv_resource_flat_v1")],
+    ),
+    # -----------------------------------------------------------------------
+    # DataBC — publication: branch materialized views
+    # -----------------------------------------------------------------------
+    SQLItem(
+        "pub_mv_reference_link",
+        format_sql("sql/materialized_views/publication/mv_reference_link.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_reference_link CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "pub_mv_information_carrier",
+        format_sql("sql/materialized_views/publication/mv_information_carrier.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_information_carrier CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "pub_mv_copyright_type",
+        format_sql("sql/materialized_views/publication/mv_copyright_type.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_copyright_type CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "pub_mv_keyword",
+        format_sql("sql/materialized_views/publication/mv_keyword.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_keyword CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "pub_mv_authors",
+        format_sql("sql/materialized_views/publication/mv_authors.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_authors CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "pub_mv_publication_details",
+        format_sql("sql/materialized_views/publication/mv_publication_details.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_publication_details CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    # DataBC — publication: final stack materialized view
+    SQLItem(
+        "pub_mv_resource_v1",
+        format_sql("sql/materialized_views/publication/mv_resource_v1.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource_v1 CASCADE;",
+        dependencies=_PUB_BRANCHES,
+    ),
+    # DataBC — publication: stable wrapper view
+    SQLItem(
+        "pub_resource_view",
+        format_sql("sql/materialized_views/publication/resource_view.sql"),
+        reverse_sql="DROP VIEW IF EXISTS publication.resource;",
+        replace=True,
+        dependencies=[("bcap", "pub_mv_resource_v1")],
+    ),
+    # DataBC — publication: refresh procedure (stack)
+    SQLItem(
+        "pub_refresh_resource",
+        format_sql("sql/materialized_views/publication/refresh_resource.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS publication.refresh_resource(boolean);",
+        replace=True,
+        dependencies=[("bcap", "pub_mv_resource_v1")],
+    ),
+    # DataBC — publication: flat materialized view
+    SQLItem(
+        "pub_mv_resource_flat_v1",
+        format_sql("sql/materialized_views/publication/mv_resource_flat_v1.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource_flat_v1 CASCADE;",
+        dependencies=[("bcap", "pub_mv_resource_v1")],
+    ),
+    # DataBC — publication: flat wrapper view
+    SQLItem(
+        "pub_flat_views",
+        format_sql("sql/materialized_views/publication/flat_views.sql"),
+        reverse_sql="DROP VIEW IF EXISTS publication.resource_flat;",
+        replace=True,
+        dependencies=[("bcap", "pub_mv_resource_flat_v1")],
+    ),
+    # DataBC — publication: refresh procedure (flat)
+    SQLItem(
+        "pub_refresh_flat",
+        format_sql("sql/materialized_views/publication/refresh_flat.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS publication.refresh_flat(boolean);",
+        replace=True,
+        dependencies=[("bcap", "pub_mv_resource_flat_v1")],
+    ),
+    # -----------------------------------------------------------------------
+    # DataBC — repository: branch materialized views
+    # -----------------------------------------------------------------------
+    SQLItem(
+        "rep_mv_contact_information",
+        format_sql("sql/materialized_views/repository/mv_contact_information.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS repository.mv_contact_information CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "rep_mv_repository_notes",
+        format_sql("sql/materialized_views/repository/mv_repository_notes.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS repository.mv_repository_notes CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "rep_mv_repository_identifier",
+        format_sql("sql/materialized_views/repository/mv_repository_identifier.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS repository.mv_repository_identifier CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    # DataBC — repository: geometry materialized view
+    SQLItem(
+        "rep_mv_geom_physical_location",
+        format_sql("sql/materialized_views/repository/mv_geom_physical_location.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS repository.mv_geom_physical_location CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    # DataBC — repository: final stack materialized view
+    SQLItem(
+        "rep_mv_resource_v1",
+        format_sql("sql/materialized_views/repository/mv_resource_v1.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS repository.mv_resource_v1 CASCADE;",
+        dependencies=_REP_BRANCHES + _REP_GEOMS,
+    ),
+    # DataBC — repository: stable wrapper view
+    SQLItem(
+        "rep_resource_view",
+        format_sql("sql/materialized_views/repository/resource_view.sql"),
+        reverse_sql="DROP VIEW IF EXISTS repository.resource;",
+        replace=True,
+        dependencies=[("bcap", "rep_mv_resource_v1")],
+    ),
+    # DataBC — repository: refresh procedure (stack)
+    SQLItem(
+        "rep_refresh_resource",
+        format_sql("sql/materialized_views/repository/refresh_resource.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS repository.refresh_resource(boolean);",
+        replace=True,
+        dependencies=[("bcap", "rep_mv_resource_v1")],
+    ),
+    # DataBC — repository: flat materialized view
+    SQLItem(
+        "rep_mv_resource_flat_v1",
+        format_sql("sql/materialized_views/repository/mv_resource_flat_v1.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS repository.mv_resource_flat_v1 CASCADE;",
+        dependencies=[("bcap", "rep_mv_resource_v1")],
+    ),
+    # DataBC — repository: flat wrapper view
+    SQLItem(
+        "rep_flat_views",
+        format_sql("sql/materialized_views/repository/flat_views.sql"),
+        reverse_sql="DROP VIEW IF EXISTS repository.resource_flat;",
+        replace=True,
+        dependencies=[("bcap", "rep_mv_resource_flat_v1")],
+    ),
+    # DataBC — repository: refresh procedure (flat)
+    SQLItem(
+        "rep_refresh_flat",
+        format_sql("sql/materialized_views/repository/refresh_flat.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS repository.refresh_flat(boolean);",
+        replace=True,
+        dependencies=[("bcap", "rep_mv_resource_flat_v1")],
     ),
 ]

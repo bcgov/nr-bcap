@@ -14,8 +14,17 @@ import importlib
 from collections import defaultdict
 
 S = importlib.import_module(sys.argv[1])
-out_dir = sys.argv[2] if len(sys.argv) > 2 else os.path.normpath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sql", "materialized_views")
+out_dir = (
+    sys.argv[2]
+    if len(sys.argv) > 2
+    else os.path.normpath(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "..",
+            "sql",
+            "materialized_views",
+        )
+    )
 )
 SC, SLUG = S.SCHEMA, S.SLUG
 
@@ -309,12 +318,16 @@ for n in TOPS:
     open(os.path.join(SC_DIR, f"mv_{n}.sql"), "w").write(_HEAD + branch_mv(n))
 
 for ng, fname, nid in GEOMS:
-    open(os.path.join(SC_DIR, f"mv_geom_{fname}.sql"), "w").write(_HEAD + geom_mv(fname, nid, ngid(ng)))
+    open(os.path.join(SC_DIR, f"mv_geom_{fname}.sql"), "w").write(
+        _HEAD + geom_mv(fname, nid, ngid(ng))
+    )
 
 open(os.path.join(SC_DIR, "mv_resource_v1.sql"), "w").write(_HEAD + final_mv())
 
 open(os.path.join(SC_DIR, "resource_view.sql"), "w").write(
-    "-- GENERATED - edit " + sys.argv[1] + ".py and re-run generate.py. Do not hand-edit.\n"
+    "-- GENERATED - edit "
+    + sys.argv[1]
+    + ".py and re-run generate.py. Do not hand-edit.\n"
     "-- Wrapper view — the downstream contract. Repoint the backing matview here,\n"
     "-- never rename this view. To ship v2: build mv_resource_v2, verify, repoint.\n\n"
     f"CREATE OR REPLACE VIEW {SC}.resource AS SELECT * FROM {SC}.mv_resource_v1;\n\n"
@@ -326,7 +339,9 @@ open(os.path.join(SC_DIR, "resource_view.sql"), "w").write(
 )
 
 open(os.path.join(SC_DIR, "refresh_resource.sql"), "w").write(
-    "-- GENERATED - edit " + sys.argv[1] + ".py and re-run generate.py. Do not hand-edit.\n"
+    "-- GENERATED - edit "
+    + sys.argv[1]
+    + ".py and re-run generate.py. Do not hand-edit.\n"
     "-- Refresh order: geometry first (branches embed GeoJSON), then branches, then final.\n\n"
     f"CREATE OR REPLACE PROCEDURE {SC}.refresh_resource(concurrent boolean DEFAULT true)\n"
     f"LANGUAGE plpgsql AS $$\n"
@@ -614,20 +629,26 @@ for gname, gcols in grain_tables:
 wraps = [("resource_flat", "resource_flat_v1")] + [
     (f"{g}_flat", f"{g}_flat_v1") for g in GRAINS
 ]
-_fv = "-- GENERATED - edit " + sys.argv[1] + ".py and re-run generate.py. Do not hand-edit.\n\n"
+_fv = (
+    "-- GENERATED - edit "
+    + sys.argv[1]
+    + ".py and re-run generate.py. Do not hand-edit.\n\n"
+)
 for w, m in wraps:
     _fv += f"CREATE OR REPLACE VIEW {SC}.{w} AS SELECT * FROM {SC}.mv_{m};\n"
 _fv += (
     f"\nCOMMENT ON VIEW {SC}.resource_flat IS\n"
     f"'Flat {SC} records, one row per resource. Cardinality-n values are delimiter-joined text '\n"
-    f"'(\" | \" between tiles, \"; \" within a tile) and are POSITIONALLY ALIGNED with their siblings - '\n"
+    f'\'(" | " between tiles, "; " within a tile) and are POSITIONALLY ALIGNED with their siblings - \'\n'
     f"'empty slots are meaningful, do not strip them. Deeply nested subtrees live in the *_flat '\n"
     f"'companion tables, joined on resourceinstanceid.';\n"
 )
 open(os.path.join(SC_DIR, "flat_views.sql"), "w").write(_fv)
 
 open(os.path.join(SC_DIR, "refresh_flat.sql"), "w").write(
-    "-- GENERATED - edit " + sys.argv[1] + ".py and re-run generate.py. Do not hand-edit.\n\n"
+    "-- GENERATED - edit "
+    + sys.argv[1]
+    + ".py and re-run generate.py. Do not hand-edit.\n\n"
     f"CREATE OR REPLACE PROCEDURE {SC}.refresh_flat(concurrent boolean DEFAULT true)\n"
     f"LANGUAGE plpgsql AS $$\n"
     f"DECLARE\n"
@@ -686,9 +707,7 @@ open(os.path.join(SC_DIR, "alignment_test.sql"), "w").write(
     "-- Every sibling column from one cardinality-n nodegroup must have exactly\n"
     "-- <nodegroup>_count slots. A mismatch means a null element got SKIPPED.\n"
     "-- =====================================================================\n"
-    "WITH v AS (\n"
-    + "\n  UNION ALL\n".join(parts)
-    + "\n)\n"
+    "WITH v AS (\n" + "\n  UNION ALL\n".join(parts) + "\n)\n"
     "SELECT grp, colname,\n"
     "       count(DISTINCT resourceinstanceid) AS rows_affected,\n"
     "       count(*)                           AS bad_cells\n"
