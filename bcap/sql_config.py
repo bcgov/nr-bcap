@@ -607,4 +607,51 @@ sql_items = [
         replace=True,
         dependencies=[("bcap", "rep_mv_resource_flat_v1")],
     ),
+    # -----------------------------------------------------------------------
+    # DataBC — public export views (filtered subsets for data sharing)
+    # Each file creates one or more CREATE OR REPLACE VIEWs on top of the
+    # {schema}.resource_flat / grain flat wrapper views.
+    # -----------------------------------------------------------------------
+    SQLItem(
+        "databc_hca_permit",
+        format_sql("sql/views/databc_hca_permit.sql"),
+        reverse_sql="DROP VIEW IF EXISTS databc.vw_hca_permit;",
+        replace=True,
+        dependencies=[("bcap", "per_flat_views")],
+    ),
+    SQLItem(
+        "databc_publication",
+        format_sql("sql/views/databc_publication.sql"),
+        reverse_sql="DROP VIEW IF EXISTS databc.vw_publication;",
+        replace=True,
+        dependencies=[("bcap", "pub_flat_views")],
+    ),
+    SQLItem(
+        "databc_repository",
+        format_sql("sql/views/databc_repository.sql"),
+        reverse_sql="DROP VIEW IF EXISTS databc.vw_repository;",
+        replace=True,
+        dependencies=[("bcap", "rep_flat_views")],
+    ),
+    SQLItem(
+        "databc_archaeological_site",
+        format_sql("sql/views/databc_archaeological_site.sql"),
+        reverse_sql=(
+            "DROP VIEW IF EXISTS databc.vw_archaeological_site;\n"
+            "DROP VIEW IF EXISTS databc.vw_archaeological_site_site_location;\n"
+            "DROP VIEW IF EXISTS databc.vw_archaeological_site_bc_property_address;"
+        ),
+        replace=True,
+        dependencies=[("bcap", "as_flat_views")],
+    ),
+    SQLItem(
+        "databc_site_visit",
+        format_sql("sql/views/databc_site_visit.sql"),
+        reverse_sql=(
+            "DROP VIEW IF EXISTS databc.vw_site_visit;\n"
+            "DROP VIEW IF EXISTS databc.vw_site_visit_location;"
+        ),
+        replace=True,
+        dependencies=[("bcap", "sv_flat_views")],
+    ),
 ]
