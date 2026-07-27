@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import arches from 'arches';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
@@ -19,6 +20,10 @@ import {
     setRequirementSatisfied,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import { graphForModule } from '@/bcap/apps/Permit/components/dashboard/permitModules.ts';
+import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { setReviewNav } from '@/bcap/apps/Permit/reviewNav.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
 import ReviewSummary, {
@@ -54,6 +59,7 @@ const {
     addableModules,
     applicationId,
     summaryFields,
+    permitHeader,
 } = defineProps<{
     modules: PermitApplicationProcessModuleTile[];
     permitId: string;
@@ -62,6 +68,7 @@ const {
     addableModules?: AddableModule[];
     applicationId?: string;
     summaryFields?: ReviewField[];
+    permitHeader?: PermitHeader;
 }>();
 
 const emit = defineEmits<{
@@ -261,6 +268,29 @@ const isLoadingRequirements = (row: ModuleRow): boolean =>
 const loadOpenModules = (openIds: string[]) => {
     const openRows = state.rows.filter((row) => openIds.includes(row.tileid));
     if (openRows.length) loadRequirementDetails(openRows);
+};
+
+const router = useRouter();
+
+// The button only shows once requirements have loaded, so hostResourceId is
+// already populated here.
+const onViewSubmission = (row: ModuleRow, index: number) => {
+    let graph: string = GraphSlug.PermitApplication;
+    let resourceId = permitId;
+    if (index !== 0) {
+        const resolved = graphForModule(row.name);
+        if (!resolved || !row.hostResourceId) return;
+        graph = resolved;
+        resourceId = row.hostResourceId;
+    }
+    setReviewNav({
+        graph,
+        resourceId,
+        permitId,
+        title: row.name,
+        permitHeader,
+    });
+    router.push({ name: routeNames.moduleReview });
 };
 
 let seededDefaultOpen = false;
@@ -765,6 +795,15 @@ const persistOrder = async () => {
                     </p>
 
                     <div class="module-footer-actions">
+                        <Button
+                            v-if="!isLoadingRequirements(row)"
+                            type="button"
+                            class="module-view-submission"
+                            @click="onViewSubmission(row, index)"
+                        >
+                            <i class="fa-solid fa-file-lines"></i>
+                            View Submission
+                        </Button>
                         <QuestionDialog
                             v-if="applicationId && !isLoadingRequirements(row)"
                             :key="row.hostResourceId || permitId"
@@ -1168,6 +1207,28 @@ const persistOrder = async () => {
     font-weight: 700;
     white-space: nowrap;
     cursor: pointer;
+}
+
+/* Sits in the footer beside Messages; same size, outlined to its filled navy. */
+.module-view-submission {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.6rem;
+    border: 2px solid var(--bc-navy);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--bc-navy);
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.module-view-submission:hover {
+    background: rgba(0, 51, 102, 0.08);
 }
 
 .module-toggle:hover:not(:disabled) {

@@ -234,6 +234,15 @@ export const fetchPermitDetails = async (
     return rawJson.aliased_data as PermitAliasedData;
 };
 
+export const fetchResourceData = async (
+    graphSlug: string,
+    resourceId: string,
+): Promise<ArchesDraftData | null> => {
+    const url = arches.urls.api_resource(graphSlug, resourceId);
+    const rawJson = await apiFetchJson<PermitApplication>(url);
+    return (rawJson?.aliased_data as unknown as ArchesDraftData) ?? null;
+};
+
 export const patchPermitSubmissionDate = async (
     permitId: string,
     adminPayload: {

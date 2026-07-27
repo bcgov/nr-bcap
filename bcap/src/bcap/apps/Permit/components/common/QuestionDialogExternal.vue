@@ -517,7 +517,9 @@ onMounted(() => {
                         </div>
                         <template v-else>
                             <div
-                                v-for="(msg, index) in messageStore.openMessages"
+                                v-for="(
+                                    msg, index
+                                ) in messageStore.openMessages"
                                 :key="index"
                                 class="historical-message"
                             >

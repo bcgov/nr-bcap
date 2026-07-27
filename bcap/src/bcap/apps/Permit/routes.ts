@@ -28,6 +28,16 @@ const routes = [
         },
     },
     {
+        path: arches.urls.plugin('submissions/moduleReview'),
+        name: 'moduleReview',
+        component: () =>
+            import('@/bcap/apps/Permit/components/filing-summary/ModuleSubmissionReview.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
         path: arches.urls.plugin('submissions/alterationsModule'),
         name: 'alterationsModule',
         component: () =>
@@ -116,6 +126,7 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
     permitDetails: string;
     checklist: string;
     editchecklist: string;
+    moduleReview: string;
     alterationsModule: string;
     baseModule: string;
     collectionModule: string;
@@ -131,6 +142,7 @@ const routeNames: ExternalPermitRouteNamesType = {
     permitDetails: 'permitDetails',
     checklist: 'Checklist',
     editchecklist: 'EditChecklist',
+    moduleReview: 'moduleReview',
     alterationsModule: 'alterationsModule',
     baseModule: 'baseModule',
     collectionModule: 'collectionModule',

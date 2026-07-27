@@ -95,8 +95,7 @@ const permitBackLink = computed(() => {
 
 const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
     if (!state.finalizedResourceData?.aliased_data) return null;
-    return state.finalizedResourceData
-        .aliased_data as unknown as ArchesDraftData;
+    return state.finalizedResourceData.aliased_data as ArchesDraftData;
 });
 
 // Rendered step instances, indexed 0-based, for calling their isValid().

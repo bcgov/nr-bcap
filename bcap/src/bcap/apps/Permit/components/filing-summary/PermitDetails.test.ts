@@ -132,7 +132,7 @@ describe('PermitDetails.vue', () => {
         await flushPromises();
 
         // The button will safely exist now!
-        const submitBtn = wrapper.find('.print-btn');
+        const submitBtn = wrapper.find('.header-submit-btn');
         expect(submitBtn.exists()).toBe(true);
         expect(submitBtn.text()).toBe('Submit Permit');
 

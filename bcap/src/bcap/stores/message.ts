@@ -26,7 +26,10 @@ export const useMessageStore = defineStore('bcapMessages', () => {
 
     const cacheFor = (isArchived: boolean) => (isArchived ? archived : active);
 
-    function threadsFor(resourceId: string, isArchived = false): MessageThread[] {
+    function threadsFor(
+        resourceId: string,
+        isArchived = false,
+    ): MessageThread[] {
         return cacheFor(isArchived).get(resourceId) ?? [];
     }
 

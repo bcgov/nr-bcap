@@ -12,6 +12,7 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import CompletedModules from './CompletedModules.vue';
+import PermitHeaderBand from './PermitHeaderBand.vue';
 import { getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 import {
@@ -112,16 +113,6 @@ const activeModule = computed(() => {
         (m) => m.id === activeModuleId.value,
     );
 });
-
-const headerMeta = computed(() =>
-    [
-        state.permitData.applicationNumber,
-        state.permitData.submissionType,
-        state.permitData.sector,
-    ]
-        .filter(Boolean)
-        .join(' · '),
-);
 
 const basicInfoFields = computed<ReviewField[]>(() => {
     return getBasicInfoFields(state.rawPermitData);
@@ -324,43 +315,15 @@ watch(activeModuleId, (id) => {
         class="full-height"
     >
         <template #header>
-            <div class="permit-header w-full">
-                <div class="permit-icon-area">
-                    <i class="fa-solid fa-bolt permit-icon"></i>
-                </div>
-
-                <div class="permit-info">
-                    <h2 class="project-name">
-                        {{ state.permitData.projectName }}
-                    </h2>
-                    <p class="permit-meta">
-                        {{ headerMeta }}
-                        <span
-                            v-if="!state.permitData.sector"
-                            class="meta-unset"
-                        >
-                            · Sector not specified
-                        </span>
-                    </p>
-                </div>
-
-                <div class="submit-area">
-                    <div
-                        v-if="state.permitData.submittedDate"
-                        class="submitted-text"
-                    >
-                        <i class="fa-regular fa-calendar-check"></i>
-                        Submitted
-                        <strong>{{ state.permitData.submittedDate }}</strong>
-                    </div>
+            <PermitHeaderBand :header="state.permitData">
+                <template #actions>
                     <Button
-                        v-else
-                        class="print-btn"
+                        class="header-submit-btn"
                         label="Submit Permit"
                         @click="submitPermit"
                     />
-                </div>
-            </div>
+                </template>
+            </PermitHeaderBand>
         </template>
 
         <div class="module-layout">
@@ -563,6 +526,7 @@ watch(activeModuleId, (id) => {
                             :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
                             :application-id="state.permitData.applicationNumber"
+                            :permit-header="state.permitData"
                             @changed="loadPermitDetails"
                         />
                     </div>
@@ -613,103 +577,21 @@ watch(activeModuleId, (id) => {
     background: transparent;
 }
 
-.permit-header {
-    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    width: 100%;
-    padding: 1.25rem 2rem;
-    background: var(--bc-navy);
-    border-bottom: 3px solid var(--bc-gold);
-}
-
-.permit-header .permit-icon-area {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.permit-header .permit-icon {
-    font-size: 1.9rem;
-    color: var(--bc-gold);
-}
-
-.permit-header .permit-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    flex-grow: 1;
-    min-width: 0;
-}
-
-.permit-header .permit-info .project-name {
-    margin: 0;
-    font-size: 1.9rem;
-    line-height: 1.2;
-    font-weight: 700;
-    color: #ffffff;
-    word-break: break-word;
-}
-
-.permit-header .permit-info .permit-meta {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: #cbd5e1;
-}
-
-.permit-header .permit-info .meta-unset {
-    color: #93a4bb;
-    font-style: italic;
-}
-
-.submit-area {
-    font-size: 1.15rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-shrink: 0;
-}
-
-/* An outlined pill reads on the navy; a filled one would fight the button. A
-   fixed height on both keeps the pair level whatever padding each carries. */
-.submitted-text,
-.submit-area :deep(.trigger-btn) {
+/* The header band lives in PermitHeaderBand; only its slotted Submit button is
+   styled here. */
+.header-submit-btn {
     height: 3.1rem;
-}
-
-.submitted-text {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0 1.1rem;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 6px;
-    line-height: 1.5;
-    color: #ffffff;
-}
-
-.submitted-text strong {
+    padding: 0 1.5rem;
+    font-size: 1.15rem;
     font-weight: 700;
-}
-
-/* The trigger is the only action on the band, so it inverts to a solid white
-   button. PrimeVue ships its own font-size, hence the explicit inherit. */
-.submit-area :deep(.trigger-btn) {
-    font-size: inherit;
+    border-radius: 4px;
     background-color: #ffffff;
     border-color: #ffffff;
     color: var(--bc-navy);
-    font-weight: 700;
+    cursor: pointer;
 }
 
-.submit-area :deep(.trigger-btn:hover) {
+.header-submit-btn:hover {
     background-color: var(--bc-selected);
     border-color: var(--bc-selected);
 }
@@ -873,18 +755,6 @@ watch(activeModuleId, (id) => {
    room so it isn't crowding the last row. */
 .content-area .print-btn {
     margin-top: 1.5rem;
-}
-
-/* On the navy band the same button inverts, matching the question trigger. */
-.submit-area .print-btn {
-    background-color: #ffffff;
-    color: var(--bc-navy);
-    font-weight: 700;
-    font-size: inherit;
-}
-
-.submit-area .print-btn:hover {
-    background-color: var(--bc-selected);
 }
 
 .content-description {
