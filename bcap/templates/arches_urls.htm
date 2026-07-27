@@ -30,6 +30,7 @@
      bcap_message_list_create="{% url 'bcap_message_list_create' %}"
      bcap_message_resource_threads='(resource_id) => {return "{% url "bcap_message_resource_threads" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      bcap_message_resource_contributors='(resource_id) => {return "{% url "bcap_message_resource_contributors" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     bcap_message_module_unread='(submission_id) => {return "{% url "bcap_message_module_unread" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", submission_id)}'
      bcap_message_thread_messages='(thread_id) => {return "{% url "bcap_message_thread_messages" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", thread_id)}'
      bcap_message_detail='(message_id) => {return "{% url "bcap_message_detail" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", message_id)}'
      >

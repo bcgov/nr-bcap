@@ -3,35 +3,66 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import QuestionDialogExternal from './QuestionDialogExternal.vue';
 import {
     createBcapMessage,
+    markMessageAsRead,
     getContributorsForResources,
+    getThreadsForResource,
+    getMessagesForThread,
 } from '@/bcap/apps/Permit/api.ts';
+import type { MessageThread } from '@/bcap/types.ts';
 
-// 1. Mock the API calls
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
+    markMessageAsRead: vi.fn(),
     getContributorsForResources: vi.fn(),
+    getThreadsForResource: vi.fn(),
+    getMessagesForThread: vi.fn(),
+    setThreadArchived: vi.fn(),
 }));
+
+// The topic picker fetches the Message Type controlled list itself; stand in
+// for it and emit the display label it would emit.
+vi.mock(
+    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
+    () => ({
+        default: {
+            name: 'GenericWidget',
+            template:
+                '<select class="mock-topic" @change="$emit(\'update:value\', [$event.target.value])"></select>',
+        },
+    }),
+);
 
 describe('QuestionDialogExternal.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
-        // Default successful response for the recipient fetch
         vi.mocked(getContributorsForResources).mockResolvedValue([
             { label: 'John Doe', value: 'user-1' },
             { label: 'Jane Smith', value: 'user-2' },
         ]);
+        vi.mocked(getThreadsForResource).mockResolvedValue([]);
+        vi.mocked(getMessagesForThread).mockResolvedValue([]);
     });
 
+    // The dialog loads its own threads; the archived tab loads a second list.
+    const withThreads = (active: unknown[], archived: unknown[] = []) => {
+        vi.mocked(getThreadsForResource).mockImplementation(
+            (_resourceId: string, isArchived?: boolean) =>
+                Promise.resolve(
+                    (isArchived ? archived : active) as MessageThread[],
+                ),
+        );
+    };
+
+    // Stub the PrimeVue components to avoid Teleport/DOM issues in tests.
     const mountComponent = (props = {}) => {
         return mount(QuestionDialogExternal, {
             props: {
                 applicationId: 'APP-1234',
-                permitResourceId: 'permit-999',
+                resourceId: 'permit-999',
                 ...props,
             },
             global: {
-                // Stub PrimeVue components to avoid Teleport/DOM issues in tests
                 stubs: {
                     Dialog: {
                         template:
@@ -65,64 +96,139 @@ describe('QuestionDialogExternal.vue', () => {
         expect(getContributorsForResources).toHaveBeenCalledOnce();
         expect(getContributorsForResources).toHaveBeenCalledWith('permit-999');
 
-        // Verify internal state (selectedRecipient should default to the first value)
-        expect(wrapper.vm.recipients.length).toBe(2);
-        expect(wrapper.vm.selectedRecipient).toBe('user-1');
+        expect((wrapper.vm as unknown).state.recipients.length).toBe(2);
+        expect((wrapper.vm as unknown).state.selectedRecipient).toBe('user-1');
     });
 
-    it('renders the "Ask a question" trigger when in New Question mode', async () => {
+    it('renders the "View Messages" trigger without a badge when there are no unread threads', async () => {
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        // Threads load on mount so the unread badge is ready before opening.
+        expect(getThreadsForResource).toHaveBeenCalledWith('permit-999', false);
+
+        const triggerBtn = wrapper.findAll('.mock-button')[0];
+        expect(triggerBtn.text()).toContain('Messages');
+        expect(wrapper.find('.message-badge').exists()).toBe(false);
+    });
+
+    it('renders the badge when threads have unread messages', async () => {
+        withThreads([
+            {
+                id: 't1',
+                topic: 'General Question',
+                messages: [],
+                hasUnread: true,
+                unreadCount: 3,
+            },
+        ]);
+
         const wrapper = mountComponent();
         await flushPromises();
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];
-        expect(triggerBtn.text()).toContain('Ask a question');
+        expect(triggerBtn.text()).toContain('Messages');
 
-        // Badge should not exist
-        const badge = wrapper.find('.message-badge');
-        expect(badge.exists()).toBe(false);
-    });
-
-    it('renders the "View message" trigger and badge when in Reply mode', async () => {
-        const wrapper = mountComponent({
-            existingMessages: [{ author: 'System', text: 'Needs more info' }],
-        });
-        await flushPromises();
-
-        const triggerBtn = wrapper.findAll('.mock-button')[0];
-        expect(triggerBtn.text()).toContain('View message');
-
-        // Badge should exist
         const badge = wrapper.find('.message-badge');
         expect(badge.exists()).toBe(true);
-        expect(badge.text()).toBe('!');
+        expect(badge.text()).toBe('3');
+    });
+
+    it('loads threads on mount so unread counts are ready before the dialog opens', async () => {
+        withThreads([
+            {
+                id: 't1',
+                topic: 'General Question',
+                messages: [],
+                hasUnread: true,
+                unreadCount: 4,
+            },
+        ]);
+
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        // No dialog open yet: the fetch and the badge both come from mount.
+        expect(wrapper.find('.mock-dialog').exists()).toBe(false);
+        expect(getThreadsForResource).toHaveBeenCalledWith('permit-999', false);
+        expect(wrapper.find('.message-badge').text()).toBe('4');
+    });
+
+    // The dialog is scoped to its resource id, so it lists every thread on that
+    // resource and the badge sums their unread counts.
+    it('lists every thread on the resource and sums their unread counts', async () => {
+        withThreads([
+            {
+                id: 't1',
+                topic: 'Site Plan general question',
+                messages: [],
+                hasUnread: true,
+                unreadCount: 2,
+            },
+            {
+                id: 't2',
+                topic: 'Water Licence general question',
+                messages: [],
+                hasUnread: true,
+                unreadCount: 5,
+            },
+        ]);
+
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.find('.message-badge').text()).toBe('7');
+
+        const topics = wrapper.findAll('.thread-topic-label');
+        expect(topics.map((t) => t.text())).toEqual([
+            'Site Plan general question',
+            'Water Licence general question',
+        ]);
     });
 
     it('opens the dialog when the trigger button is clicked', async () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        // Dialog should be hidden initially
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
 
-        // Click trigger
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        // Dialog should now be visible
         expect(wrapper.find('.mock-dialog').exists()).toBe(true);
-        expect(wrapper.html()).toContain('Comment on Application APP-1234');
+        expect(wrapper.html()).toContain('Permit Application');
     });
 
-    it('displays existing messages in the thread when in Reply mode', async () => {
-        const wrapper = mountComponent({
-            existingMessages: [
-                { author: 'Jane', text: 'Please fix this', date: 'Oct 1' },
-            ],
-        });
+    it('displays existing messages in the thread when a sidebar thread is selected (Reply mode)', async () => {
+        withThreads([
+            {
+                id: 'thread-555',
+                topic: 'General Question',
+                hasUnread: false,
+            },
+        ]);
+        // Messages are fetched for the open thread, not carried on the list.
+        vi.mocked(getMessagesForThread).mockResolvedValue([
+            {
+                id: 'msg-1',
+                author: 'Jane',
+                text: 'Please fix this',
+                date: 'Oct 1',
+                isUnread: false,
+                attachments: [],
+            },
+        ]);
+
+        const wrapper = mountComponent();
         await flushPromises();
 
-        // Open dialog
         await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper.findAll('.sidebar-item')[0].trigger('click');
         await flushPromises();
 
         const thread = wrapper.find('.message-thread');
@@ -136,53 +242,213 @@ describe('QuestionDialogExternal.vue', () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        // Open dialog
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        // Click Send without typing anything (second button is the submit footer button)
+        // Index 1 is the Send button in the new-message view.
         await wrapper.findAll('.mock-button')[1].trigger('click');
 
         expect(createBcapMessage).not.toHaveBeenCalled();
     });
 
-    it('submits a new message successfully and emits event', async () => {
-        const mockResponseData = { id: 'msg-123', success: true };
-        vi.mocked(createBcapMessage).mockResolvedValue(mockResponseData);
-
-        const wrapper = mountComponent({
-            threadId: 'thread-555',
+    it('submits a NEW message successfully and reloads the thread list', async () => {
+        vi.mocked(createBcapMessage).mockResolvedValue({
+            id: 'msg-123',
+            success: true,
         });
+
+        const wrapper = mountComponent();
         await flushPromises();
 
-        // Open dialog
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        // Type a message
-        const textarea = wrapper.find('textarea');
-        await textarea.setValue('This is my question.');
+        await wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:value', ['General Question']);
+        await wrapper.find('textarea').setValue('This is my question.');
 
-        // Click Send
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
 
-        // Verify API call
-        expect(createBcapMessage).toHaveBeenCalledWith(
-            'This is my question.',
-            'user-1', // Default selected recipient
-            'APP-1234',
-            'permit-999',
-            'thread-555',
-        );
+        expect(createBcapMessage).toHaveBeenCalledWith({
+            messageText: 'This is my question.',
+            recipientId: 'user-1',
+            applicationId: 'APP-1234',
+            resourceId: 'permit-999',
+            threadId: undefined,
+            topic: 'General Question',
+            files: [],
+        });
 
-        // Verify it emitted the success event with API response
-        expect(wrapper.emitted('message-sent')).toBeTruthy();
-        expect(wrapper.emitted('message-sent')?.[0]).toEqual([
-            mockResponseData,
+        // The store fetches this resource's threads on mount, again when the
+        // dialog opens, and once more after the send.
+        expect(vi.mocked(getThreadsForResource).mock.calls).toEqual([
+            ['permit-999', false],
+            ['permit-999', false],
+            ['permit-999', false],
         ]);
 
-        // Verify dialog closes
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
+    });
+
+    it('marks unread messages as read when an unread thread is selected', async () => {
+        withThreads([
+            {
+                id: 'thread-999',
+                topic: 'Modification Request',
+                hasUnread: true,
+                unreadCount: 1,
+            },
+        ]);
+        vi.mocked(getMessagesForThread).mockResolvedValue([
+            {
+                id: 'msg-55',
+                author: 'Ministry',
+                text: 'Needs update',
+                date: '',
+                isUnread: true,
+                attachments: [],
+            },
+        ]);
+
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await flushPromises();
+
+        expect(markMessageAsRead).toHaveBeenCalledWith('msg-55');
+        expect(markMessageAsRead).toHaveBeenCalledTimes(1);
+    });
+
+    // The subject is the picked topic alone; the title names the resource, so
+    // the subject does not repeat the context. context never filters the view.
+    it('sends the picked topic as the subject', async () => {
+        vi.mocked(createBcapMessage).mockResolvedValue({ id: 'msg-123' });
+
+        const wrapper = mountComponent({ context: 'Investigation' });
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.html()).toContain('Investigation');
+
+        await wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:value', ['General Question']);
+        await wrapper.find('textarea').setValue('A question.');
+        await wrapper.findAll('.mock-button')[1].trigger('click');
+        await flushPromises();
+
+        expect(createBcapMessage).toHaveBeenCalledWith({
+            messageText: 'A question.',
+            recipientId: 'user-1',
+            applicationId: 'APP-1234',
+            resourceId: 'permit-999',
+            threadId: undefined,
+            topic: 'General Question',
+            files: [],
+        });
+    });
+
+    // A new thread needs a message type, so Send stays disabled until one is
+    // picked; typing text alone posts nothing.
+    it('does not send a new thread without a message type', async () => {
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper.find('textarea').setValue('No topic picked.');
+        await wrapper.findAll('.mock-button')[1].trigger('click');
+        await flushPromises();
+
+        expect(createBcapMessage).not.toHaveBeenCalled();
+    });
+
+    // The attachments widget emits an entry per file with the raw File in .file;
+    // the dialog forwards those Files to the create call.
+    it('sends attached files with a new message', async () => {
+        vi.mocked(createBcapMessage).mockResolvedValue({ id: 'msg-file' });
+
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        // Topic widget first, attachments widget second.
+        const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
+        await widgets[0].vm.$emit('update:value', ['General Question']);
+        const file = new File(['x'], 'plan.pdf');
+        await widgets[1].vm.$emit('update:value', [{ name: 'plan.pdf', file }]);
+        await wrapper.find('textarea').setValue('See attached.');
+        await wrapper.findAll('.mock-button')[1].trigger('click');
+        await flushPromises();
+
+        expect(createBcapMessage).toHaveBeenCalledWith(
+            expect.objectContaining({
+                messageText: 'See attached.',
+                topic: 'General Question',
+                files: [file],
+            }),
+        );
+    });
+
+    it('submits a REPLY to an existing thread successfully', async () => {
+        vi.mocked(createBcapMessage).mockResolvedValue({
+            id: 'msg-reply',
+            success: true,
+        });
+
+        withThreads([
+            {
+                id: 'thread-777',
+                topic: 'Investigation question',
+                hasUnread: false,
+                messages: [
+                    {
+                        id: 'm1',
+                        author: 'Ministry',
+                        text: 'Hi',
+                        isUnread: false,
+                    },
+                ],
+            },
+        ]);
+
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper.find('textarea').setValue('This is my reply.');
+
+        const sendReplyBtn = wrapper
+            .findAll('.mock-button')
+            .find((b) => b.text().includes('Send'));
+        await sendReplyBtn?.trigger('click');
+        await flushPromises();
+
+        // A reply carries its thread id and inherits the thread's topic.
+        expect(createBcapMessage).toHaveBeenCalledWith({
+            messageText: 'This is my reply.',
+            recipientId: 'user-1',
+            applicationId: 'APP-1234',
+            resourceId: 'permit-999',
+            threadId: 'thread-777',
+            topic: undefined,
+            files: [],
+        });
     });
 });

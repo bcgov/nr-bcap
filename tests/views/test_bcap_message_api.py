@@ -16,11 +16,12 @@ from django.urls import reverse
 from arches.app.models.models import File
 
 from bcap.builders.contributor_builder import ContributorSpec
-from bcap.services.message.bcap_message_service import MESSAGE_GRAPH_SLUG
+from bcap.services.message.bcap_message_service import (
+    MESSAGE_GRAPH_SLUG,
+    ModuleUnread,
+)
 from bcap.services.workflow_draft_service import WorkflowDraftService
-from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.util.controlled_list import reference_value
-from bcap.util.graph import node_id
 from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.test_bcap_message_service import make_message
@@ -246,9 +247,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def test_create_with_a_multipart_attachment_stores_the_file(self):
         # A message can carry a file: the collection endpoint accepts multipart
-        # (a "json" part plus the file), and arches links the upload to the
-        # attachments file-list node by matching its name.
-        attachments_node = node_id(MESSAGE_GRAPH_SLUG, BcapMessageAliases.ATTACHMENTS)
+        # (a "json" part plus files under the "attachments" alias key), re-keys
+        # them to the file-list node, and arches links the upload by name.
         payload = {
             "aliased_data": {
                 "message_content": {
@@ -278,7 +278,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
                 reverse("bcap_message_list_create"),
                 data={
                     "json": json.dumps(payload),
-                    f"file-list_{attachments_node}": upload,
+                    "attachments": upload,
                 },
             )
         self.assertEqual(resp.status_code, 201)
@@ -477,3 +477,35 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         ):
             resp = self._post_message()
         self.assertEqual(resp.status_code, 400)
+
+    def test_module_unread_returns_the_serialized_counts(self):
+        self.idir_login_simulate(self.user)
+        url = reverse(
+            "bcap_message_module_unread", kwargs={"submission_id": self.permit_id}
+        )
+        rows = [
+            ModuleUnread(module_id="tile-1", unread_count=3),
+            ModuleUnread(module_id="tile-2", unread_count=0),
+        ]
+        with patch(
+            "bcap.views.bcap_message_api.BcapMessageService.unread_by_module",
+            return_value=rows,
+        ):
+            resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            resp.json(),
+            [
+                {"module_id": "tile-1", "unread_count": 3},
+                {"module_id": "tile-2", "unread_count": 0},
+            ],
+        )
+
+    def test_module_unread_requires_authentication(self):
+        url = reverse(
+            "bcap_message_module_unread", kwargs={"submission_id": self.permit_id}
+        )
+        resp = self.client.get(url)
+        # Unauthenticated is blocked: DRF denies (401/403), or the project's auth
+        # middleware redirects to login (302). Any of these means "not served".
+        self.assertIn(resp.status_code, (302, 401, 403))

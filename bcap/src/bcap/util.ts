@@ -8,6 +8,37 @@ export const sanitizeHtml = (html: string | undefined): string => {
     return DOMPurify.sanitize(html);
 };
 
+export const formatTimestamp = (iso: string | null | undefined): string =>
+    new Date(iso ?? 0).toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+export const downloadFile = async (
+    url: string,
+    name: string,
+): Promise<void> => {
+    try {
+        const response = await fetch(url, { credentials: 'same-origin' });
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = name;
+        // The anchor must be in the document for click() to trigger in Firefox.
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+        console.error('Failed to download file:', error);
+        window.open(url, '_blank');
+    }
+};
+
 export const formatDateTime = (isoString: string | null): string | null => {
     if (!isoString) return null;
 

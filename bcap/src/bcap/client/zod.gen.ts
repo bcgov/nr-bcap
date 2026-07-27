@@ -275,6 +275,11 @@ export const zInternalDashboardPage = z.object({
     results: z.array(zInternalDashboardCard).optional()
 });
 
+export const zModuleUnread = z.object({
+    module_id: z.string(),
+    unread_count: z.int()
+});
+
 /**
  * Details for a Contributor created as part of the invite (for someone who
  * has no Contributor record yet).
@@ -4535,6 +4540,7 @@ export const zThreadRoot = z.object({
     aliased_data: zBcapMessageResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
     unread_count: z.int().readonly(),
+    last_message_date: z.iso.datetime({ offset: true, local: true }).readonly(),
     name: z.string().readonly().nullable(),
     descriptors: z.object({
         en: z.object({
@@ -8887,11 +8893,11 @@ export const zApiBcapMessagePartialUpdatePath = z.object({
 
 export const zApiBcapMessagePartialUpdateResponse = zBcapMessage;
 
-export const zApiBcapMessageResourceContributorListPath = z.object({
+export const zApiBcapMessageResourceContributorsListPath = z.object({
     resource_id: z.uuid()
 });
 
-export const zApiBcapMessageResourceContributorListResponse = z.array(zContributorSummary);
+export const zApiBcapMessageResourceContributorsListResponse = z.array(zContributorSummary);
 
 export const zApiBcapMessageResourceThreadsListPath = z.object({
     resource_id: z.uuid()
@@ -8904,6 +8910,12 @@ export const zApiBcapMessageResourceThreadsListQuery = z.object({
 });
 
 export const zApiBcapMessageResourceThreadsListResponse = zPaginatedThreadRootList;
+
+export const zApiBcapMessageSubmissionUnreadByModuleListPath = z.object({
+    submission_id: z.uuid()
+});
+
+export const zApiBcapMessageSubmissionUnreadByModuleListResponse = z.array(zModuleUnread);
 
 export const zApiBcapMessageThreadMessagesListPath = z.object({
     thread_id: z.uuid()

@@ -1,12 +1,14 @@
 """Messages on a parent resource: per-recipient unread state and threading."""
 
 import logging
+from dataclasses import dataclass
 
 from django.contrib.auth import get_user_model
 from django.db.models import (
     BooleanField,
     Case,
     Count,
+    DateTimeField,
     IntegerField,
     Q,
     Value,
@@ -18,6 +20,9 @@ from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.contributor_service import ContributorService
+from bcap.services.process_requirement.process_requirement_service import (
+    ProcessRequirementService,
+)
 from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.util.auth.groups import is_internal_user
 from bcap.util.dates import parse_iso_or_set_value
@@ -25,6 +30,14 @@ from bcap.util.dates import parse_iso_or_set_value
 logger = logging.getLogger(__name__)
 
 MESSAGE_GRAPH_SLUG = "bcap_message"
+
+
+@dataclass
+class ModuleUnread:
+    """A process_module's unread message count for the viewer."""
+
+    module_id: str
+    unread_count: int
 
 
 class NoAuthorContributor(Exception):
@@ -230,26 +243,28 @@ class BcapMessageService(BaseGraphService):
         # Coarse role gate for now; a future groups ticket moves this to Guardian.
         if not is_internal_user(user):
             roots = self._external_visible(roots, user.username)
-        return self._annotate_unread_count(roots, resource_id, user.username)
-
-    def _annotate_unread_count(self, roots, resource_id, username):
-        """Annotate each root with its thread's unread count for the viewer. The
-        counts come from one grouped query, mapped onto the roots by pk. A
-        subquery annotation can't do this: the thread link is a JSON resource
-        node, not a column an OuterRef can compare against."""
-        counts = self._unread_counts_by_thread(resource_id, username)
-        whens = [When(pk=root_id, then=Value(n)) for root_id, n in counts.items()]
+        unread, latest = self._thread_summaries(resource_id, user.username)
+        # A subquery annotation can't reach these: the thread link is a JSON node,
+        # not a column an OuterRef can compare against, so map them on by pk.
         return roots.annotate(
-            unread_count=Case(*whens, default=Value(0), output_field=IntegerField())
+            unread_count=Case(
+                *[When(pk=r, then=Value(n)) for r, n in unread.items()],
+                default=Value(0),
+                output_field=IntegerField(),
+            ),
+            last_message_date=Case(
+                *[When(pk=r, then=Value(dt)) for r, dt in latest.items()],
+                default=None,
+                output_field=DateTimeField(),
+            ),
         )
 
-    def _unread_counts_by_thread(self, resource_id, username):
-        """The viewer's unread count per thread on a resource, in one query. A
-        message's thread is the message it replies to, or itself if it is a root;
-        replies carry the same resource_context, so one filter covers the thread."""
+    def _thread_summaries(self, resource_id, username):
+        """Per thread on a resource, in one query: the viewer's unread count and
+        the latest message date. A message's thread is the message it replies to,
+        or itself if it is a root; replies share the resource_context, so one
+        filter covers the whole thread."""
         contributor_id = self._contributor_id(username)
-        if not contributor_id:
-            return {}
         rows = (
             ResourceTileTree.get_tiles(
                 MESSAGE_GRAPH_SLUG,
@@ -258,23 +273,34 @@ class BcapMessageService(BaseGraphService):
                     [
                         self.A.RECIPIENT,
                         self.A.MESSAGE_READ_DATE,
+                        self.A.MESSAGE_CREATION_DATE,
                         self.A.RESOURCE_CONTEXT,
                         self.A.RELATED_SOURCE_MESSAGE,
                     ],
                 ),
             )
-            .filter(
-                recipient__id=contributor_id,
-                message_read_date__isnull=True,
-                resource_context__id=str(resource_id),
+            .filter(resource_context__id=str(resource_id))
+            .values(
+                "pk",
+                "related_source_message__id",
+                "recipient__id",
+                "message_read_date",
+                "message_creation_date",
             )
-            .values("pk", "related_source_message__id")
         )
-        counts = {}
+        unread, latest = {}, {}
         for row in rows:
             root_id = str(row["related_source_message__id"] or row["pk"])
-            counts[root_id] = counts.get(root_id, 0) + 1
-        return counts
+            date = row["message_creation_date"]
+            if date and (root_id not in latest or date > latest[root_id]):
+                latest[root_id] = date
+            if (
+                contributor_id
+                and str(row["recipient__id"]) == str(contributor_id)
+                and row["message_read_date"] is None
+            ):
+                unread[root_id] = unread.get(root_id, 0) + 1
+        return unread, latest
 
     def _by_archived(self, roots, username, archived):
         """Narrow roots to the viewer's archived or active threads."""
@@ -318,6 +344,25 @@ class BcapMessageService(BaseGraphService):
         if not is_internal_user(user):
             messages = self._external_visible(messages, user.username)
         return messages
+
+    def unread_by_module(self, submission_id, username) -> list[ModuleUnread]:
+        """The viewer's unread count per process_module of a submission, one entry
+        per module tile."""
+        contexts = ProcessRequirementService().module_message_contexts(
+            str(submission_id)
+        )
+        counts = self.unread_counts_by_context(contexts.values(), username)
+        return [
+            ModuleUnread(module_id=tile, unread_count=counts.get(ctx, 0))
+            for tile, ctx in contexts.items()
+        ]
+
+    def attachments_file_key(self):
+        """The multipart field key the create endpoint expects for attachment
+        files: file-list_<attachments node id>, resolved from the graph so no
+        node id is hard-coded on the client."""
+        node_id, _ = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ATTACHMENTS)
+        return f"file-list_{node_id}"
 
     def unread_count_across(self, context_ids, username):
         """Unread messages for the user across the given contexts, as one count."""

@@ -90,6 +90,28 @@ class ProcessRequirementServiceTests(TestCase):
         for copy in copies:
             self.assertFalse(self._is_template(copy))
 
+    def test_module_hosts_uses_first_hosted_requirement_else_default(self):
+        # A module files its messages against its first requirement (in flow
+        # order) that has a submission host; a module whose requirements have no
+        # host falls back to the permit itself, as does one with no requirements.
+        requirements = {
+            "module-hosted": ["req-a", "req-b"],
+            "module-unhosted": ["req-c"],
+            "module-empty": [],
+        }
+        hosts = {"req-a": set(), "req-b": {"host-b"}, "req-c": set()}
+        result = ProcessRequirementService._module_hosts(
+            requirements, hosts, default="permit-1"
+        )
+        self.assertEqual(
+            result,
+            {
+                "module-hosted": "host-b",
+                "module-unhosted": "permit-1",
+                "module-empty": "permit-1",
+            },
+        )
+
     def test_update_checklist_edits_steps_in_place(self):
         # A checklist edit must reconcile the existing steps, not recreate them:
         # a kept step keeps its tile id, a removed one is deleted, and the rest

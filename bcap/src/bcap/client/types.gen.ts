@@ -3689,6 +3689,11 @@ export type ModuleProgress = {
     total?: number;
 };
 
+export type ModuleUnread = {
+    module_id: string;
+    unread_count: number;
+};
+
 /**
  * Details for a Contributor created as part of the invite (for someone who
  * has no Contributor record yet).
@@ -6626,6 +6631,7 @@ export type ThreadRoot = {
     aliased_data?: BcapMessageResourceAliasedData;
     readonly graph_has_different_publication: boolean;
     readonly unread_count: number;
+    readonly last_message_date: string;
     readonly name: string | null;
     readonly descriptors: {
         en?: {
@@ -12594,21 +12600,21 @@ export type ApiBcapMessagePartialUpdateResponses = {
 export type ApiBcapMessagePartialUpdateResponse =
     ApiBcapMessagePartialUpdateResponses[keyof ApiBcapMessagePartialUpdateResponses];
 
-export type ApiBcapMessageResourceContributorListData = {
+export type ApiBcapMessageResourceContributorsListData = {
     body?: never;
     path: {
         resource_id: string;
     };
     query?: never;
-    url: '/bcap/api/bcap_message/resource/{resource_id}/contributor';
+    url: '/bcap/api/bcap_message/resource/{resource_id}/contributors';
 };
 
-export type ApiBcapMessageResourceContributorListResponses = {
+export type ApiBcapMessageResourceContributorsListResponses = {
     200: Array<ContributorSummary>;
 };
 
-export type ApiBcapMessageResourceContributorListResponse =
-    ApiBcapMessageResourceContributorListResponses[keyof ApiBcapMessageResourceContributorListResponses];
+export type ApiBcapMessageResourceContributorsListResponse =
+    ApiBcapMessageResourceContributorsListResponses[keyof ApiBcapMessageResourceContributorsListResponses];
 
 export type ApiBcapMessageResourceThreadsListData = {
     body?: never;
@@ -12638,6 +12644,22 @@ export type ApiBcapMessageResourceThreadsListResponses = {
 
 export type ApiBcapMessageResourceThreadsListResponse =
     ApiBcapMessageResourceThreadsListResponses[keyof ApiBcapMessageResourceThreadsListResponses];
+
+export type ApiBcapMessageSubmissionUnreadByModuleListData = {
+    body?: never;
+    path: {
+        submission_id: string;
+    };
+    query?: never;
+    url: '/bcap/api/bcap_message/submission/{submission_id}/unread-by-module';
+};
+
+export type ApiBcapMessageSubmissionUnreadByModuleListResponses = {
+    200: Array<ModuleUnread>;
+};
+
+export type ApiBcapMessageSubmissionUnreadByModuleListResponse =
+    ApiBcapMessageSubmissionUnreadByModuleListResponses[keyof ApiBcapMessageSubmissionUnreadByModuleListResponses];
 
 export type ApiBcapMessageThreadMessagesListData = {
     body?: never;

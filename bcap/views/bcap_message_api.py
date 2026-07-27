@@ -5,7 +5,7 @@ resource_context. The list views extend the generated arches_querysets view
 BcapMessageService."""
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
@@ -20,12 +20,15 @@ from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPaginati
 from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
-from rest_framework_dataclasses.serializers import DataclassSerializer
-
-from bcap.services.contributor_service import (
-    ContributorSummary,
-    ContributorService,
+from bcap.serializers.bcap_message_serializers import (
+    BcapMessagePatchSerializer,
+    ContributorSummarySerializer,
+    ModuleUnreadSerializer,
+    ThreadMessageSerializer,
+    ThreadRootSerializer,
+    ThreadsQuerySerializer,
 )
+from bcap.services.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     InternalMessageToExternal,
@@ -33,38 +36,8 @@ from bcap.services.message.bcap_message_service import (
 )
 from bcap.views.generated.bcap_message import (
     BcapMessageListView,
-    BcapMessageSerializer,
     BcapMessageViewMixin,
 )
-
-
-class ThreadsQuerySerializer(serializers.Serializer):
-    """Query params for the threads list. Documents them in the spec and coerces
-    archived from the usual truthy strings (true/1) rather than a bare == "true"."""
-
-    archived = serializers.BooleanField(
-        default=False,
-        help_text="Return the viewer's archived threads instead of active ones.",
-    )
-
-
-class BcapMessagePatchSerializer(BcapMessageSerializer):
-    """PATCH body schema: the message representation plus a top-level archived
-    flag that toggles the caller's personal archive of the whole thread. It is a
-    command, not a stored node, so it lives beside aliased_data rather than in it."""
-
-    archived = serializers.BooleanField(
-        required=False,
-        help_text="Toggle the caller's personal archive of the thread.",
-    )
-
-
-class ThreadRootSerializer(BcapMessageSerializer):
-    """A thread root plus the viewer's unread count across the whole thread
-    (annotated by the service), so the list renders unread state without
-    fetching each thread's messages."""
-
-    unread_count = serializers.IntegerField(read_only=True)
 
 
 @extend_schema(tags=["External: bcap_message"], parameters=[ThreadsQuerySerializer])
@@ -84,13 +57,6 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
             self.request.user,
             archived=params.validated_data["archived"],
         )
-
-
-class ThreadMessageSerializer(BcapMessageSerializer):
-    """A thread message plus the queryset's per-viewer is_unread annotation, so
-    the client shows unread only for messages addressed to the viewer."""
-
-    is_unread = serializers.BooleanField(read_only=True)
 
 
 @extend_schema(tags=["External: bcap_message"])
@@ -118,6 +84,9 @@ class BcapMessageCreateView(BcapMessageListView):
 
     def create(self, request, *args, **kwargs):
         service = BcapMessageService()
+        attachments = request.FILES.getlist("attachments")
+        if attachments:
+            request.FILES.setlist(service.attachments_file_key(), attachments)
         try:
             service.prepare_message(request.data, request.user)
         except NoAuthorContributor:
@@ -142,9 +111,22 @@ class BcapMessageCreateView(BcapMessageListView):
         )
 
 
-class ContributorSummarySerializer(DataclassSerializer):
-    class Meta:
-        dataclass = ContributorSummary
+@extend_schema(
+    tags=["External: bcap_message"], responses=ModuleUnreadSerializer(many=True)
+)
+class BcapMessageModuleUnreadView(APIView):
+    """GET the viewer's unread count per process_module of a submission, so the
+    module list badges unread without loading each module's threads. Counts are
+    the caller's own, so IsAuthenticated leaks nothing."""
+
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, submission_id):
+        rows = BcapMessageService().unread_by_module(
+            str(submission_id), request.user.username
+        )
+        return Response(ModuleUnreadSerializer(rows, many=True).data)
 
 
 @extend_schema(

@@ -19,7 +19,6 @@ import {
     patchPermitSubmissionDate,
     fetchDrafts,
     deleteDraft,
-    getMessagesForPermit,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
@@ -29,6 +28,9 @@ import {
     modulesForFilingType,
 } from '../dashboard/permitModules.ts';
 import QuestionDialog from '../common/QuestionDialogExternal.vue';
+import { useMessageStore } from '@/bcap/stores/message.ts';
+
+const messageStore = useMessageStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -39,6 +41,11 @@ const permitId = computed(() => route.params.id as string);
 const isStaff = computed(
     () => String(route.query.staff).toLowerCase() === 'true',
 );
+
+// A draft resumes into its own module's workflow, chosen by its graph slug.
+const draftRouteName = (draft: InvestigationDraft): string =>
+    permitModuleCatalogue.find((mod) => mod.id === draft.graph_slug)
+        ?.routeName || routeNames.investigationModule;
 
 const draftTitle = (draft: InvestigationDraft) => {
     const ident = draft.data?.investigation_identification?.aliased_data
@@ -77,12 +84,6 @@ const state = reactive({
     investigationDrafts: [] as InvestigationDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as InvestigationDraft[],
-    existingMessages: [] as Array<{
-        author: string;
-        text: string;
-        date: string;
-    }>,
-    activeThreadId: null as string | null,
 });
 
 const modulesAllowedForFilingType = computed(() =>
@@ -277,6 +278,7 @@ const performDelete = async () => {
     }
 };
 
+// This needs to be more generic in the future
 const loadInvestigations = async () => {
     const drafts = await fetchDrafts();
     state.investigationDrafts = drafts.filter(
@@ -285,35 +287,22 @@ const loadInvestigations = async () => {
             !!d.parent_resource_id &&
             d.parent_resource_id === permitId.value,
     );
-};
-
-const loadMessages = async () => {
-    if (!permitId.value) return;
-
-    try {
-        const { messages, threadId } = await getMessagesForPermit(
-            permitId.value,
-        );
-        state.existingMessages = messages;
-        state.activeThreadId = threadId;
-    } catch (error) {
-        console.error('Error loading messages:', error);
-        state.existingMessages = [];
-        state.activeThreadId = null;
+    // Load each draft's threads up front so its header can badge unread without
+    // the dialog being opened. Drafts are few, so a fetch each is fine.
+    for (const draft of state.investigationDrafts) {
+        if (draft.id) messageStore.load(draft.id);
     }
 };
 
 onMounted(() => {
     loadPermitDetails();
     loadInvestigations();
-    loadMessages();
 });
 
 watch(permitId, () => {
     state.isLoading = true;
     loadPermitDetails();
     loadInvestigations();
-    loadMessages();
 });
 
 watch(activeModuleId, (id) => {
@@ -369,14 +358,6 @@ watch(activeModuleId, (id) => {
                         class="print-btn"
                         label="Submit Permit"
                         @click="submitPermit"
-                    />
-
-                    <QuestionDialog
-                        :application-id="state.permitData.applicationNumber"
-                        :permit-resource-id="permitId"
-                        :existing-messages="state.existingMessages"
-                        :thread-id="state.activeThreadId"
-                        @message-sent="loadMessages"
                     />
                 </div>
             </div>
@@ -518,6 +499,26 @@ watch(activeModuleId, (id) => {
                                                     ).toLocaleDateString()
                                                 }}
                                             </span>
+                                            <span
+                                                v-if="
+                                                    messageStore.unreadCount(
+                                                        draft.id,
+                                                    )
+                                                "
+                                                class="draft-unread-badge"
+                                                :title="`${messageStore.unreadCount(
+                                                    draft.id,
+                                                )} unread message(s)`"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-comment-dots"
+                                                ></i>
+                                                {{
+                                                    messageStore.unreadCount(
+                                                        draft.id,
+                                                    )
+                                                }}
+                                            </span>
                                         </span>
                                     </AccordionHeader>
                                     <AccordionContent>
@@ -525,7 +526,7 @@ watch(activeModuleId, (id) => {
                                             <router-link
                                                 class="draft-resume"
                                                 :to="{
-                                                    name: routeNames.investigationModule,
+                                                    name: draftRouteName(draft),
                                                     query: {
                                                         draftId: draft.id,
                                                     },
@@ -540,6 +541,14 @@ watch(activeModuleId, (id) => {
                                                 label="Remove"
                                                 @click="confirmDelete(draft)"
                                             />
+                                            <QuestionDialog
+                                                :application-id="
+                                                    state.permitData
+                                                        .applicationNumber
+                                                "
+                                                :resource-id="draft.id"
+                                                :context="draftTitle(draft)"
+                                            />
                                         </div>
                                     </AccordionContent>
                                 </AccordionPanel>
@@ -553,6 +562,7 @@ watch(activeModuleId, (id) => {
                             :is-staff="isStaff"
                             :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
+                            :application-id="state.permitData.applicationNumber"
                             @changed="loadPermitDetails"
                         />
                     </div>
@@ -790,11 +800,14 @@ watch(activeModuleId, (id) => {
     justify-content: center;
 }
 
-/* White check on the navy active row. on an inactive (white) row a
-   completed module's check goes invisible; say so if that state needs a colour. */
+/* Grey on the inactive (white) row; white on the navy active row. */
 .icon-completed {
-    color: #ffffff;
+    color: var(--bc-grey);
     font-size: 1.2rem;
+}
+
+.menu-item.active .icon-completed {
+    color: #ffffff;
 }
 
 .icon-review-wrapper {
@@ -899,6 +912,8 @@ watch(activeModuleId, (id) => {
     margin-top: 2.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid #d1d5db;
+    display: flex;
+    gap: 1rem;
 }
 
 .add-module-btn {
@@ -1022,6 +1037,20 @@ watch(activeModuleId, (id) => {
     gap: 0.5rem;
     font-size: 13px;
     color: #6b7280;
+    white-space: nowrap;
+}
+
+/* Red unread pill at the far right of the draft header, by the chevron. */
+.draft-unread-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #d32f2f;
+    border-radius: 999px;
     white-space: nowrap;
 }
 

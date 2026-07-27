@@ -169,9 +169,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/BcapMessage'
           description: ''
-  /bcap/api/bcap_message/resource/{resource_id}/contributor:
+  /bcap/api/bcap_message/resource/{resource_id}/contributors:
     get:
-      operationId: api_bcap_message_resource_contributor_list
+      operationId: api_bcap_message_resource_contributors_list
       description: |-
         GET the contributors you can address a message to for a resource: the
         login-linked contributors referenced on it plus its ministry assignees.
@@ -237,6 +237,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedThreadRootList'
+          description: ''
+  /bcap/api/bcap_message/submission/{submission_id}/unread-by-module:
+    get:
+      operationId: api_bcap_message_submission_unread_by_module_list
+      description: |-
+        GET the viewer's unread count per process_module of a submission, so the
+        module list badges unread without loading each module's threads. Counts are
+        the caller's own, so IsAuthenticated leaks nothing.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: bcap_message'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModuleUnread'
           description: ''
   /bcap/api/bcap_message/thread/{thread_id}/messages:
     get:
@@ -9359,6 +9386,16 @@ components:
         total:
           type: integer
           description: How many modules the permit has.
+    ModuleUnread:
+      type: object
+      properties:
+        module_id:
+          type: string
+        unread_count:
+          type: integer
+      required:
+      - module_id
+      - unread_count
     NewContributor:
       type: object
       description: |-
@@ -15788,6 +15825,10 @@ components:
         unread_count:
           type: integer
           readOnly: true
+        last_message_date:
+          type: string
+          format: date-time
+          readOnly: true
         name:
           type: string
           readOnly: true
@@ -15836,6 +15877,7 @@ components:
       - descriptors
       - graph_has_different_publication
       - graph_publication
+      - last_message_date
       - legacyid
       - name
       - principaluser

@@ -1,11 +1,13 @@
 import arches from 'arches';
 import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
-import { localized } from '@/bcap/util.ts';
+import { localized, formatTimestamp } from '@/bcap/util.ts';
 import type {
+    MessageThread,
     ArchesDraftData,
     DraftNode,
     FormattedMessage,
     InvestigationDraft,
+    NewBcapMessage,
     PermitAliasedData,
 } from '@/bcap/types.ts';
 import type {
@@ -13,11 +15,13 @@ import type {
     BcapMessageWritable,
     ChecklistStep,
     DraftRecord,
+    PatchedBcapMessagePatchWritable,
     PatchedPermitApplicationWritable,
     PermitApplication,
     PermitApplicationApplicationAdminTileWritable,
     PermitApplicationProcessModuleTileWritable,
     ProcessRequirement,
+    ModuleUnread,
 } from '@/bcap/client/types.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
@@ -380,13 +384,15 @@ export const saveChecklist = async (
     });
 };
 
-export const createBcapMessage = async (
-    messageText: string,
-    recipientId: string,
-    applicationId: string,
-    permitResourceId: string,
-    threadId?: string,
-) => {
+export const createBcapMessage = async ({
+    messageText,
+    recipientId,
+    applicationId,
+    resourceId,
+    threadId,
+    topic,
+    files,
+}: NewBcapMessage) => {
     const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
@@ -395,27 +401,24 @@ export const createBcapMessage = async (
                 },
                 message_subject: {
                     node_value: localized(
-                        `Comment regarding Application ${applicationId}`,
+                        topic ||
+                            `Comment regarding Application ${applicationId}`,
                     ),
                 },
-                // Applied server-side after save (the REST date field would
-                // otherwise drop the UTC offset).
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
-                    node_value: [{ resourceId: permitResourceId }],
+                    node_value: [{ resourceId }],
                 },
             },
         },
     };
 
-    // The recipient is optional; a reply inherits its thread's recipient.
     if (recipientId) {
         aliasedData.message_content!.aliased_data!.recipient = {
             node_value: [{ resourceId: recipientId }],
         };
     }
 
-    // A reply points back at its thread's root message.
     if (threadId) {
         aliasedData.related_source_message = {
             aliased_data: {
@@ -426,69 +429,121 @@ export const createBcapMessage = async (
         };
     }
 
+    if (files?.length) {
+        aliasedData.message_content!.aliased_data!.attachments = {
+            node_value: files.map((file) => ({
+                name: file.name,
+                url: null,
+                size: file.size,
+            })),
+        };
+        // Multipart: the payload rides as a "json" part; each file under the
+        // "attachments" key, matched to its node_value by name. The create view
+        // resolves the alias to the file-list node so no node id lives here.
+        const form = new FormData();
+        form.append('json', JSON.stringify({ aliased_data: aliasedData }));
+        for (const file of files) {
+            form.append('attachments', file);
+        }
+        const response = await apiFetch(arches.urls.bcap_message_list_create, {
+            method: HttpMethod.Post,
+            body: form,
+        });
+        return response.json() as Promise<BcapMessage>;
+    }
+
     return apiFetchJson<BcapMessage>(arches.urls.bcap_message_list_create, {
         method: HttpMethod.Post,
         body: { aliased_data: aliasedData },
     });
 };
 
-// Example unused for now.
 export const setThreadArchived = async (messageId: string, archived: boolean) =>
     apiFetch(arches.urls.bcap_message_detail(messageId), {
         method: HttpMethod.Patch,
         body: { archived },
     });
 
-const formatMessageDate = (isoDate: string | null | undefined): string =>
-    new Date(isoDate ?? 0).toLocaleString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-
-export const getMessagesForPermit = async (
-    permitId: string,
-): Promise<{ messages: FormattedMessage[]; threadId: string | null }> => {
-    const threads = await apiFetchJson<{ results: BcapMessage[] }>(
-        arches.urls.bcap_message_resource_threads(permitId),
+// One root per thread with an annotated unread_count; messages load on click.
+export const getThreadsForResource = async (
+    resourceId: string,
+    archived = false,
+): Promise<MessageThread[]> => {
+    const { results = [] } = await apiFetchJson<{ results: BcapMessage[] }>(
+        `${arches.urls.bcap_message_resource_threads(resourceId)}?archived=${archived}`,
     );
-    const threadId = threads.results?.[0]?.resourceinstanceid ?? null;
-    if (!threadId) {
-        return { messages: [], threadId: null };
-    }
 
-    // The thread endpoint returns the root and its replies as separate messages.
-    const thread = await apiFetchJson<{ results: BcapMessage[] }>(
+    // Newest-first from the backend; keep that order.
+    return results.map((root) => {
+        const content = root.aliased_data?.message_content?.aliased_data;
+        const subject = content?.message_subject;
+        const unreadCount =
+            (root as { unread_count?: number }).unread_count ?? 0;
+        return {
+            id: root.resourceinstanceid ?? '',
+            topic:
+                subject?.display_value ||
+                subject?.node_value?.en?.value ||
+                'General Question',
+            startedBy: content?.message_author?.display_value || 'Unknown',
+            // The threads endpoint annotates the whole thread's latest date;
+            // fall back to the root's own date if it is ever absent.
+            lastMessageDate:
+                (root as { last_message_date?: string }).last_message_date ||
+                content?.message_creation_date?.node_value ||
+                '',
+            hasUnread: unreadCount > 0,
+            unreadCount,
+        };
+    });
+};
+
+export const getSubmissionModulesUnreadCounts = async (
+    submissionId: string,
+): Promise<ModuleUnread[]> => {
+    return apiFetchJson<ModuleUnread[]>(
+        arches.urls.bcap_message_module_unread(submissionId),
+    );
+};
+
+// One thread's messages, oldest-first; is_unread is per-viewer.
+export const getMessagesForThread = async (
+    threadId: string,
+): Promise<FormattedMessage[]> => {
+    const { results = [] } = await apiFetchJson<{ results: BcapMessage[] }>(
         arches.urls.bcap_message_thread_messages(threadId),
     );
 
-    const messages = (thread.results ?? [])
+    return results
         .map((message) => {
             const content = message.aliased_data?.message_content?.aliased_data;
             return {
+                id: message.resourceinstanceid ?? '',
                 author: content?.message_author?.display_value || 'Unknown',
                 text:
                     content?.message_content?.node_value?.en?.value ||
                     content?.message_content?.display_value ||
                     '',
-                date: content?.message_creation_date?.node_value ?? null,
+                // ISO timestamps, so string order is chronological order.
+                date: content?.message_creation_date?.node_value ?? '',
+                isUnread: Boolean(
+                    (message as { is_unread?: boolean }).is_unread,
+                ),
+                attachments: (content?.attachments?.node_value ?? [])
+                    .filter((file) => file.url)
+                    .map((file) => ({
+                        name: file.name ?? 'attachment',
+                        url: file.url as string,
+                        size: file.size,
+                    })),
             };
         })
         .filter((message) => message.text)
-        .sort(
-            (a, b) =>
-                new Date(a.date ?? 0).getTime() -
-                new Date(b.date ?? 0).getTime(),
-        )
+        .sort((a, b) => a.date.localeCompare(b.date))
         .map((message) => ({
-            author: message.author,
-            text: message.text,
-            date: formatMessageDate(message.date),
+            ...message,
+            date: formatTimestamp(message.date),
         }));
-
-    return { messages, threadId };
 };
 
 // The contributors you can address a message to for a resource: its
@@ -504,4 +559,27 @@ export const getContributorsForResources = async (
         label: item.name || 'Unknown Contributor',
         value: item.id,
     }));
+};
+
+export const markMessageAsRead = async (messageId: string): Promise<void> => {
+    // The route reads only the read date; the null siblings are required by the
+    // generated writable type.
+    const body: PatchedBcapMessagePatchWritable = {
+        aliased_data: {
+            message_content: {
+                aliased_data: {
+                    message_content: null,
+                    resource_context: null,
+                    message_read_date: {
+                        node_value: new Date().toISOString(),
+                    },
+                },
+            },
+        },
+    };
+
+    await apiFetch(arches.urls.bcap_message_detail(messageId), {
+        method: HttpMethod.Patch,
+        body,
+    });
 };

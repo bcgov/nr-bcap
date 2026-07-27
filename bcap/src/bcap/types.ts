@@ -44,11 +44,39 @@ export type InvestigationDraft = DraftRecord & {
     data?: InvestigationResourceAliasedDataWritable;
 };
 
-// A message flattened and date-formatted for the permit message thread UI.
+export interface NewBcapMessage {
+    messageText: string;
+    recipientId: string;
+    applicationId: string;
+    resourceId: string;
+    threadId?: string;
+    topic?: string;
+    files?: File[];
+}
+
+export interface MessageAttachment {
+    name: string;
+    url: string;
+    size?: number;
+}
+
 export interface FormattedMessage {
+    id: string;
     author: string;
     text: string;
     date: string;
+    isUnread: boolean;
+    attachments: MessageAttachment[];
+}
+
+export interface MessageThread {
+    id: string;
+    topic: string;
+    startedBy: string;
+    lastMessageDate: string;
+    hasUnread: boolean;
+    unreadCount: number;
+    isResolved?: boolean;
 }
 
 export interface TileReference {

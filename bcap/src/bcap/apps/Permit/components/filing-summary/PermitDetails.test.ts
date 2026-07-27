@@ -15,13 +15,24 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     patchPermitSubmissionDate: vi.fn(),
     fetchDrafts: vi.fn(() => Promise.resolve([])),
     deleteDraft: vi.fn(),
-    // Also imported by PermitDetails and its QuestionDialog child; without
-    // them the components' error handlers log "Error loading messages/recipients".
-    getMessagesForPermit: vi.fn(() =>
-        Promise.resolve({ messages: [], threadId: null }),
-    ),
+    // Imported by the QuestionDialog child; without them its error handlers log
+    // "Error loading threads/recipients".
+    getThreadsForResource: vi.fn(() => Promise.resolve([])),
     getContributorsForResources: vi.fn(() => Promise.resolve([])),
+    // Pulled in by the message store the dialog uses.
+    createBcapMessage: vi.fn(),
+    markMessageAsRead: vi.fn(),
+    setThreadArchived: vi.fn(),
 }));
+
+// The QuestionDialog's topic picker; the real widget's package cannot be
+// transformed under vitest.
+vi.mock(
+    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
+    () => ({
+        default: { name: 'GenericWidget', template: '<div />' },
+    }),
+);
 
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
     default: { template: '<div class="mock-review-summary"></div>' },

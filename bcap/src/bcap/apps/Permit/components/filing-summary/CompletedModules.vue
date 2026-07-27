@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import arches from 'arches';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
@@ -28,6 +28,8 @@ import type {
     ProcessRequirement,
     PermitApplicationProcessModuleTile,
 } from '@/bcap/client/types.gen.ts';
+import QuestionDialog from '@/bcap/apps/Permit/components/common/QuestionDialogExternal.vue';
+import { useMessageStore } from '@/bcap/stores/message.ts';
 
 const requirementType = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.requirement_identification?.aliased_data
@@ -50,6 +52,7 @@ const {
     adminTileId,
     isStaff,
     addableModules,
+    applicationId,
     summaryFields,
 } = defineProps<{
     modules: PermitApplicationProcessModuleTile[];
@@ -57,6 +60,7 @@ const {
     adminTileId: string;
     isStaff?: boolean;
     addableModules?: AddableModule[];
+    applicationId?: string;
     summaryFields?: ReviewField[];
 }>();
 
@@ -83,6 +87,7 @@ interface ModuleRow {
     isCompleted: boolean;
     order: number;
     requirements: RequirementItem[];
+    hostResourceId: string;
 }
 
 // Status glyphs, defined once so the legend, module pills, and requirement rows
@@ -102,12 +107,13 @@ const hrefFor = (type: string, id: string): string => {
     return isChecklist(type) ? checklistHref(id) : `/bcap/resource/${id}`;
 };
 
-// resourceId -> type/satisfied/internal, so rows rebuilt after a reorder keep
+// resourceId -> type/satisfied/internal/host, so rows rebuilt after a reorder keep
 // their type/link/status without a fetch-driven flash.
 interface RequirementMeta {
     type: string;
     satisfied: boolean;
     internal: boolean;
+    hostResourceId: string;
 }
 const detailCache = new Map<string, RequirementMeta>();
 
@@ -119,6 +125,18 @@ const requirementInternal = (requirement: ProcessRequirement): boolean =>
     requirement.aliased_data?.requirement_identification?.aliased_data
         ?.is_template_requirement?.aliased_data?.is_internal_requirement
         ?.node_value === true;
+
+const requirementHost = (requirement: ProcessRequirement): string =>
+    requirement.aliased_data?.requirement_data?.aliased_data?.submission_data
+        ?.aliased_data?.submission_data?.node_value?.[0]?.resourceId ?? '';
+
+const moduleHost = (requirements: RequirementItem[]): string =>
+    requirements
+        .map(
+            (requirement) =>
+                detailCache.get(requirement.resourceId)?.hostResourceId,
+        )
+        .find(Boolean) ?? '';
 
 const requirementItems = (
     tile: PermitApplicationProcessModuleTile,
@@ -155,21 +173,24 @@ const requirementItems = (
 
 const toRow = (tile: PermitApplicationProcessModuleTile): ModuleRow => {
     const order = tile.aliased_data?.module_order?.node_value ?? 0;
+    const moduleId =
+        tile.aliased_data?.module_id?.display_value ||
+        String(tile.aliased_data?.module_id?.node_value ?? '');
+
+    const requirements = requirementItems(tile);
     return {
         tileid: tile.tileid ?? '',
         name:
             tile.aliased_data?.module_name?.display_value || 'Untitled module',
-        moduleId:
-            tile.aliased_data?.module_id?.display_value ||
-            tile.aliased_data?.module_id?.node_value ||
-            '',
+        moduleId,
         completedDate:
             tile.aliased_data?.module_completed_date?.display_value || '',
         isCompleted: Boolean(
             tile.aliased_data?.is_module_completed?.node_value,
         ),
         order,
-        requirements: requirementItems(tile),
+        requirements,
+        hostResourceId: moduleHost(requirements),
     };
 };
 
@@ -213,6 +234,7 @@ const loadRequirementDetails = async (rows: ModuleRow[]) => {
                 type: requirementType(detail),
                 satisfied: requirementSatisfied(detail),
                 internal: requirementInternal(detail),
+                hostResourceId: requirementHost(detail),
             });
         }
         for (const row of rowsToLoad) {
@@ -224,6 +246,7 @@ const loadRequirementDetails = async (rows: ModuleRow[]) => {
                 requirement.satisfied = meta.satisfied;
                 requirement.internal = meta.internal;
             }
+            row.hostResourceId = moduleHost(row.requirements);
         }
     } finally {
         state.loading = state.loading.filter((id) => !tileids.includes(id));
@@ -260,6 +283,9 @@ watch(
     },
     { immediate: true, deep: true },
 );
+
+const messageStore = useMessageStore();
+onMounted(() => messageStore.loadModuleUnread(permitId));
 
 const dnd = useDragReorder();
 const persistReqOrder = (row: ModuleRow) =>
@@ -468,24 +494,26 @@ const persistOrder = async () => {
                                 · {{ row.moduleId }}
                             </span>
                         </span>
-                        <span
-                            class="module-state-pill"
-                            :class="
-                                row.isCompleted
-                                    ? 'state-complete'
-                                    : 'state-progress'
-                            "
-                        >
-                            <i
+                        <span class="module-trailing">
+                            <span
+                                class="module-state-pill"
                                 :class="
                                     row.isCompleted
-                                        ? STATUS_ICON.complete
-                                        : STATUS_ICON.inProgress
+                                        ? 'state-complete'
+                                        : 'state-progress'
                                 "
-                            ></i>
-                            {{ row.isCompleted ? 'Complete' : 'In progress' }}
-                        </span>
-                        <span class="module-trailing">
+                            >
+                                <i
+                                    :class="
+                                        row.isCompleted
+                                            ? STATUS_ICON.complete
+                                            : STATUS_ICON.inProgress
+                                    "
+                                ></i>
+                                {{
+                                    row.isCompleted ? 'Complete' : 'In progress'
+                                }}
+                            </span>
                             <span
                                 v-if="row.completedDate"
                                 class="module-date"
@@ -530,6 +558,16 @@ const persistOrder = async () => {
                                 title="Remove module"
                                 @click.stop="moduleRemove.open(row)"
                             />
+                        </span>
+                        <span
+                            v-if="messageStore.moduleUnreadCount(row.tileid)"
+                            class="module-unread-badge"
+                            :title="`${messageStore.moduleUnreadCount(
+                                row.tileid,
+                            )} unread message(s)`"
+                        >
+                            <i class="fa-solid fa-comment-dots"></i>
+                            {{ messageStore.moduleUnreadCount(row.tileid) }}
                         </span>
                     </span>
                 </AccordionHeader>
@@ -725,26 +763,38 @@ const persistOrder = async () => {
                     >
                         No process requirements on this module.
                     </p>
-                    <div
-                        v-if="isStaff"
-                        class="add-req-row"
-                    >
-                        <Button
-                            type="button"
-                            class="add-req-btn"
-                            :disabled="ui.addingRequirement === row.tileid"
-                            @click="onAddRequirement(row)"
+
+                    <div class="module-footer-actions">
+                        <QuestionDialog
+                            v-if="applicationId && !isLoadingRequirements(row)"
+                            :key="row.hostResourceId || permitId"
+                            :application-id="applicationId"
+                            :resource-id="row.hostResourceId || permitId"
+                            :context="row.name"
+                            :context-id="row.moduleId"
+                        />
+
+                        <div
+                            v-if="isStaff"
+                            class="add-req-row"
                         >
-                            <i
-                                class="fa-solid"
-                                :class="
-                                    ui.addingRequirement === row.tileid
-                                        ? 'fa-circle-notch fa-spin'
-                                        : 'fa-plus'
-                                "
-                            ></i>
-                            Add Checklist
-                        </Button>
+                            <Button
+                                type="button"
+                                class="add-req-btn"
+                                :disabled="ui.addingRequirement === row.tileid"
+                                @click="onAddRequirement(row)"
+                            >
+                                <i
+                                    class="fa-solid"
+                                    :class="
+                                        ui.addingRequirement === row.tileid
+                                            ? 'fa-circle-notch fa-spin'
+                                            : 'fa-plus'
+                                    "
+                                ></i>
+                                Add Checklist
+                            </Button>
+                        </div>
                     </div>
                 </AccordionContent>
             </AccordionPanel>
@@ -1024,8 +1074,6 @@ const persistOrder = async () => {
     cursor: grabbing;
 }
 
-/* Name and id share a baseline as one unit, so the id lines up with the name
-   however their sizes differ. The block as a whole centers in the header row. */
 .module-title {
     display: inline-flex;
     align-items: baseline;
@@ -1044,7 +1092,6 @@ const persistOrder = async () => {
     color: #111827;
 }
 
-/* The date pill and the staff actions sit together at the row's right end. */
 .module-trailing {
     margin-left: auto;
     display: inline-flex;
@@ -1052,8 +1099,6 @@ const persistOrder = async () => {
     gap: 0.75rem;
 }
 
-/* Tan for in progress, green for complete: the state reads at a glance from
-   the right end of the bar. */
 .module-state-pill {
     display: inline-flex;
     align-items: center;
@@ -1064,6 +1109,19 @@ const persistOrder = async () => {
     text-transform: uppercase;
     letter-spacing: 0.04em;
     padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.module-unread-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #d32f2f;
     border-radius: 999px;
     white-space: nowrap;
 }
@@ -1083,7 +1141,6 @@ const persistOrder = async () => {
     color: #64748b;
 }
 
-/* Matches the draft accordion's "Last updated" pill. */
 .module-date {
     font-size: 13px;
     color: var(--bc-navy);
@@ -1117,8 +1174,6 @@ const persistOrder = async () => {
     background: rgba(0, 51, 102, 0.08);
 }
 
-/* Filled navy once satisfied, so the state reads off the button as well as
-   the status icon. */
 .module-toggle.is-satisfied {
     background: var(--bc-navy);
     border-color: var(--bc-navy);
@@ -1130,7 +1185,6 @@ const persistOrder = async () => {
     border-color: var(--bc-navy-dark);
 }
 
-/* The glyph sits inside a filled circle: gold = in progress, green = complete. */
 .module-status {
     flex-shrink: 0;
     width: 22px;
@@ -1161,7 +1215,6 @@ const persistOrder = async () => {
 .module-remove {
     background: none;
     border: none;
-    /* Muted until hover, where it turns BC Gov red. */
     color: rgba(0, 51, 102, 0.5);
     cursor: pointer;
     font-size: 1rem;
@@ -1374,8 +1427,15 @@ const persistOrder = async () => {
     background-color: #fde8ea;
 }
 
+.module-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
 .add-req-row {
-    margin-top: 0.75rem;
+    margin-top: 0;
 }
 
 /* Matches the add-module chips at the top of the panel. */

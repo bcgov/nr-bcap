@@ -39,6 +39,7 @@ from bcap.views.bcap_message_api import (
     BcapMessageContributorsView,
     BcapMessageCreateView,
     BcapMessageDetailView,
+    BcapMessageModuleUnreadView,
     BcapMessageThreadsView,
     BcapMessageThreadView,
 )
@@ -161,9 +162,15 @@ documented_api_patterns = [
         name="bcap_message_resource_threads",
     ),
     path(
-        "api/bcap_message/resource/<uuid:resource_id>/contributor",
+        "api/bcap_message/resource/<uuid:resource_id>/contributors",
         BcapMessageContributorsView.as_view(),
         name="bcap_message_resource_contributors",
+    ),
+    # Permit App will be renamed to Submission
+    path(
+        "api/bcap_message/submission/<uuid:submission_id>/unread-by-module",
+        BcapMessageModuleUnreadView.as_view(),
+        name="bcap_message_module_unread",
     ),
     path(
         "api/bcap_message/thread/<uuid:thread_id>/messages",

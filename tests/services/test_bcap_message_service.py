@@ -2,6 +2,8 @@
 resource (internal-only included); an external applicant sees only those their
 Contributor is party to, as author or recipient."""
 
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -44,6 +46,7 @@ def make_message(
     is_internal=False,
     subject="",
     read_date=None,
+    created=None,
     root=None,
 ):
     """A bcap_message on a parent resource, optionally a reply within a thread."""
@@ -59,6 +62,7 @@ def make_message(
             A.RESOURCE_CONTEXT: context,
             A.IS_INTERNAL: is_internal,
             A.MESSAGE_READ_DATE: _datetime(read_date),
+            A.MESSAGE_CREATION_DATE: _datetime(created),
         },
     )
     if root is not None:
@@ -598,4 +602,100 @@ class BcapMessagePrepareTests(TestCase):
         contributors = ContributorService()
         self.assertEqual(
             contributors.contributor_username(str(self.staff_contrib.pk)), "prepstaff"
+        )
+
+
+class BcapMessageThreadDateTests(TestCase):
+    """root_queryset annotates each root with its thread's latest message date,
+    rolled up from the root and its replies, independent of the viewer."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = BcapMessageService()
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
+
+        cls.staff = make_user("datestaff", internal=True)
+        recipient = builder.make_contributor(
+            ContributorSpec(contributor_type, "Amy", "App", bcap_username="datestaff")
+        )
+        cls.permit = builder.make_resource("permit_application")
+        cls.permit_id = str(cls.permit.pk)
+
+        # A thread whose reply is newer than its root, so the reply's date wins.
+        cls.thread = make_message(
+            builder,
+            context=cls.permit,
+            recipient=recipient,
+            subject="root",
+            created="2026-01-01",
+        )
+        make_message(
+            builder,
+            context=cls.permit,
+            recipient=recipient,
+            subject="reply",
+            created="2026-01-05",
+            root=cls.thread,
+        )
+        # A lone root carries its own date.
+        cls.lone = make_message(
+            builder,
+            context=cls.permit,
+            recipient=recipient,
+            subject="lone",
+            created="2026-02-01",
+        )
+
+    def test_last_message_date_is_the_threads_latest(self):
+        dates = {
+            str(root.pk): root.last_message_date
+            for root in self.service.root_queryset(self.permit_id, self.staff)
+        }
+        # A datetime, formatted client-side. The reply is newer than its root, so
+        # the reply's date is the one that rolls up.
+        self.assertEqual(dates[str(self.thread.pk)].date().isoformat(), "2026-01-05")
+        self.assertEqual(dates[str(self.lone.pk)].date().isoformat(), "2026-02-01")
+
+
+class BcapMessageModuleUnreadTests(TestCase):
+    """unread_by_module maps each of a submission's process_module tiles to the
+    viewer's unread count on the resource that module's messages file against."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = BcapMessageService()
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
+
+        cls.reader = make_user("modreader")
+        recipient = builder.make_contributor(
+            ContributorSpec(contributor_type, "Amy", "App", bcap_username="modreader")
+        )
+        # Two resources a module's messages could file against: one with two
+        # unread messages to the reader, one with none.
+        cls.hosted = builder.make_resource("permit_application")
+        cls.empty = builder.make_resource("permit_application")
+        make_message(builder, context=cls.hosted, recipient=recipient, subject="1")
+        make_message(builder, context=cls.hosted, recipient=recipient, subject="2")
+
+    def test_unread_by_module_counts_per_module_context(self):
+        # Stub the module-to-context mapping so the count roll-up is what's under
+        # test; each ModuleUnread carries its module tile id and the context's
+        # unread count (zero when the context has none).
+        contexts = {
+            "module-hosted": str(self.hosted.pk),
+            "module-empty": str(self.empty.pk),
+        }
+        with patch(
+            "bcap.services.message.bcap_message_service.ProcessRequirementService"
+        ) as service:
+            service.return_value.module_message_contexts.return_value = contexts
+            rows = self.service.unread_by_module("permit-x", "modreader")
+
+        self.assertEqual(
+            {row.module_id: row.unread_count for row in rows},
+            {"module-hosted": 2, "module-empty": 0},
         )

@@ -5,6 +5,7 @@ into editable working copies and attaching them to a permit in flow order. The
 graph mechanics (build, clone, submission and parent linking) live in
 ProcessRequirementBuilder; this layer decides what to clone and where it goes."""
 
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date
 
@@ -260,6 +261,38 @@ class ProcessRequirementService:
             requirement_ids,
             node_id(GraphSlugs.PROCESS_REQUIREMENT, prq.SUBMISSION_DATA),
         )
+
+    def module_message_contexts(self, permit_id: str):
+        """Each process_module tile mapped to the resource its messages file
+        against: its first requirement's submission host in flow order, or the
+        permit itself when it has none. Matches the message dialog."""
+        node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
+        requirements = defaultdict(list)
+        all_ids = set()
+        for child in TileModel.objects.filter(
+            resourceinstance_id=permit_id,
+            parenttile__isnull=False,
+            data__has_key=node,
+        ).order_by("sortorder"):
+            ids = referenced_resource_ids([child], node)
+            requirements[str(child.parenttile_id)] += ids
+            all_ids |= ids
+        hosts = self.host_ids_by_requirement(all_ids)
+        return self._module_hosts(requirements, hosts, default=permit_id)
+
+    @staticmethod
+    def _module_hosts(requirements, hosts, default):
+        """Each module mapped to its first requirement's submission host in flow
+        order, or the default when none of its requirements has one."""
+        module_hosts = {}
+        for module, requirement_ids in requirements.items():
+            host = default
+            for rid in requirement_ids:
+                if hosts.get(rid):
+                    host = next(iter(hosts[rid]))
+                    break
+            module_hosts[module] = host
+        return module_hosts
 
     def _clone_module(self, permit_type, host=None):
         """Clone the module's grouping parent and child requirements, linking each
