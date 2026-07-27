@@ -40,7 +40,7 @@ begin
             'registration_status', rs.status
         )
         into data
-        from bcap.public.resource_instances ri
+        from resource_instances ri
             left join borden_number bn on ri.resourceinstanceid = bn.resourceinstanceid
              left join arch_site_leg_acts hs on hs.resourceinstanceid = ri.resourceinstanceid
              left join authorities a on a.resourceinstanceid = hs.legislative_act_id
