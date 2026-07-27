@@ -29,12 +29,13 @@ def make_user(username, internal=False):
 
 
 def _datetime(day):
-    """Widen a bare day to midnight UTC, since the message date nodes are
-    datetime-with-timezone. An explicit offset (not a Z) keeps the day from
-    shifting under a non-UTC local zone."""
+    """Widen a bare day to noon UTC, since the message date nodes are
+    datetime-with-timezone. Noon (not midnight) keeps .date() on the given day
+    once the value is localized to the settings zone, whose offset would roll a
+    midnight-UTC value back a day."""
     if day is None:
         return None
-    return f"{day} 00:00:00+00:00"
+    return f"{day} 12:00:00+00:00"
 
 
 def make_message(
