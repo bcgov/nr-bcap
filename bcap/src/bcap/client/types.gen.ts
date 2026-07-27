@@ -3970,13 +3970,6 @@ export type PaginatedArchaeologicalSiteList = {
     results: Array<ArchaeologicalSite>;
 };
 
-export type PaginatedBcapMessageList = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<BcapMessage>;
-};
-
 export type PaginatedContributorList = {
     count: number;
     next?: string | null;
@@ -4066,6 +4059,20 @@ export type PaginatedSiteVisitList = {
     next?: string | null;
     previous?: string | null;
     results: Array<SiteVisit>;
+};
+
+export type PaginatedThreadMessageList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<ThreadMessage>;
+};
+
+export type PaginatedThreadRootList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<ThreadRoot>;
 };
 
 export type PatchedBcapMessagePatch = {
@@ -6591,6 +6598,48 @@ export type StringAliasedNodeDataMax9 = {
     readonly details?: Array<{
         [key: string]: unknown;
     }>;
+};
+
+export type ThreadMessage = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapMessageResourceAliasedData;
+    readonly graph_has_different_publication: boolean;
+    readonly is_unread: boolean;
+    readonly name: string | null;
+    readonly descriptors: {
+        en?: {
+            name?: string;
+            description?: string;
+            map_popup?: string;
+        };
+    } | null;
+    readonly legacyid: string | null;
+    readonly createdtime: string;
+    graph?: string | null;
+    readonly graph_publication: string | null;
+    readonly resource_instance_lifecycle_state: string;
+    readonly principaluser: number | null;
+};
+
+export type ThreadRoot = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapMessageResourceAliasedData;
+    readonly graph_has_different_publication: boolean;
+    readonly unread_count: number;
+    readonly name: string | null;
+    readonly descriptors: {
+        en?: {
+            name?: string;
+            description?: string;
+            map_popup?: string;
+        };
+    } | null;
+    readonly legacyid: string | null;
+    readonly createdtime: string;
+    graph?: string | null;
+    readonly graph_publication: string | null;
+    readonly resource_instance_lifecycle_state: string;
+    readonly principaluser: number | null;
 };
 
 export type UrlAliasedNodeData = {
@@ -10059,13 +10108,6 @@ export type PaginatedArchaeologicalSiteListWritable = {
     results: Array<ArchaeologicalSiteWritable>;
 };
 
-export type PaginatedBcapMessageListWritable = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<BcapMessageWritable>;
-};
-
 export type PaginatedContributorListWritable = {
     count: number;
     next?: string | null;
@@ -10155,6 +10197,20 @@ export type PaginatedSiteVisitListWritable = {
     next?: string | null;
     previous?: string | null;
     results: Array<SiteVisitWritable>;
+};
+
+export type PaginatedThreadMessageListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<ThreadMessageWritable>;
+};
+
+export type PaginatedThreadRootListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<ThreadRootWritable>;
 };
 
 export type PatchedBcapMessagePatchWritable = {
@@ -12414,6 +12470,18 @@ export type StringAliasedNodeDataMax9Writable = {
     } | null;
 };
 
+export type ThreadMessageWritable = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapMessageResourceAliasedDataWritable;
+    graph?: string | null;
+};
+
+export type ThreadRootWritable = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapMessageResourceAliasedDataWritable;
+    graph?: string | null;
+};
+
 export type UrlAliasedNodeDataWritable = {
     node_value: {
         url?: string;
@@ -12565,7 +12633,7 @@ export type ApiBcapMessageResourceThreadsListData = {
 };
 
 export type ApiBcapMessageResourceThreadsListResponses = {
-    200: PaginatedBcapMessageList;
+    200: PaginatedThreadRootList;
 };
 
 export type ApiBcapMessageResourceThreadsListResponse =
@@ -12590,7 +12658,7 @@ export type ApiBcapMessageThreadMessagesListData = {
 };
 
 export type ApiBcapMessageThreadMessagesListResponses = {
-    200: PaginatedBcapMessageList;
+    200: PaginatedThreadMessageList;
 };
 
 export type ApiBcapMessageThreadMessagesListResponse =

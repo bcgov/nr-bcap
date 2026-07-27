@@ -112,6 +112,14 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(self._read(draft.id).data, {"step3": {"z": 3}})
 
+    def test_create_stamps_descriptors(self):
+        # A draft is referenced by other resources (a message's resource_context
+        # points at it), and arches dereferences descriptors when building those
+        # names. A null descriptor there is a 500, so create must stamp one.
+        record = self._create_draft(data={"step1": {"x": 1}})
+        resource = ResourceInstance.objects.get(pk=record.id)
+        self.assertIsNotNone(resource.descriptors)
+
     def test_updated_is_stamped_on_create_and_bumped_on_save(self):
         t1 = datetime(2026, 7, 21, 10, 0, tzinfo=dt_timezone.utc)
         t2 = datetime(2026, 7, 21, 11, 30, tzinfo=dt_timezone.utc)

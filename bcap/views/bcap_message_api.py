@@ -59,6 +59,14 @@ class BcapMessagePatchSerializer(BcapMessageSerializer):
     )
 
 
+class ThreadRootSerializer(BcapMessageSerializer):
+    """A thread root plus the viewer's unread count across the whole thread
+    (annotated by the service), so the list renders unread state without
+    fetching each thread's messages."""
+
+    unread_count = serializers.IntegerField(read_only=True)
+
+
 @extend_schema(tags=["External: bcap_message"], parameters=[ThreadsQuerySerializer])
 class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIView):
     """GET the threads on a parent resource, one per thread as its root
@@ -66,6 +74,7 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
 
     permission_classes = [ResourceEditor | ReadOnly]
     pagination_class = ArchesLimitOffsetPagination
+    serializer_class = ThreadRootSerializer
 
     def get_queryset(self):
         params = ThreadsQuerySerializer(data=self.request.query_params)
@@ -77,6 +86,13 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
         )
 
 
+class ThreadMessageSerializer(BcapMessageSerializer):
+    """A thread message plus the queryset's per-viewer is_unread annotation, so
+    the client shows unread only for messages addressed to the viewer."""
+
+    is_unread = serializers.BooleanField(read_only=True)
+
+
 @extend_schema(tags=["External: bcap_message"])
 class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIView):
     """GET one thread's messages (its root and replies), oldest-first, with the
@@ -84,6 +100,7 @@ class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIVi
 
     permission_classes = [ResourceEditor | ReadOnly]
     pagination_class = ArchesLimitOffsetPagination
+    serializer_class = ThreadMessageSerializer
 
     def get_queryset(self):
         return BcapMessageService().thread_queryset(

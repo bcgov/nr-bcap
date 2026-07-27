@@ -188,6 +188,27 @@ class BcapMessageVisibilityTests(TestCase):
             [str(self.internal_to_applicant.pk)],
         )
 
+    def test_is_unread_only_for_messages_addressed_to_the_viewer(self):
+        # A message is unread to a viewer only when addressed to them and not yet
+        # read; a message they authored is never unread to them.
+        applicant_view = {
+            str(m.pk): m.is_unread
+            for m in self.service.thread_queryset(
+                str(self.public_root.pk), self.applicant
+            )
+        }
+        # The applicant authored the root (not unread) and is the reply's recipient.
+        self.assertFalse(applicant_view[str(self.public_root.pk)])
+        self.assertTrue(applicant_view[str(self.public_reply.pk)])
+
+        staff_view = {
+            str(m.pk): m.is_unread
+            for m in self.service.thread_queryset(str(self.public_root.pk), self.staff)
+        }
+        # Mirror image: staff is the root's recipient, and authored the reply.
+        self.assertTrue(staff_view[str(self.public_root.pk)])
+        self.assertFalse(staff_view[str(self.public_reply.pk)])
+
     def test_external_user_party_to_nothing_sees_no_roots(self):
         self.assertEqual(self._root_ids(self.outsider), set())
 
@@ -265,6 +286,77 @@ class BcapMessageUnreadCountTests(TestCase):
         # No resources or an unknown user counts zero.
         self.assertEqual(count([], "reader"), 0)
         self.assertEqual(count([self.permit.pk], "nobody"), 0)
+
+
+class BcapMessageThreadUnreadCountTests(TestCase):
+    """root_queryset annotates each thread root with the viewer's unread count
+    for the whole thread: a reply's unread rolls up to its root, while read
+    messages and messages addressed to another viewer do not count."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = BcapMessageService()
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
+
+        cls.staff = make_user("threadstaff", internal=True)
+        cls.applicant = make_user("threadapp")
+        staff_contrib = builder.make_contributor(
+            ContributorSpec(
+                contributor_type, "Sam", "Staff", bcap_username="threadstaff"
+            )
+        )
+        applicant_contrib = builder.make_contributor(
+            ContributorSpec(contributor_type, "Amy", "App", bcap_username="threadapp")
+        )
+        cls.permit = builder.make_resource("permit_application")
+        cls.permit_id = str(cls.permit.pk)
+
+        # Thread A: root and reply both unread to the applicant -> the root
+        # carries the whole thread's unread count of 2 for the applicant.
+        cls.thread_a = make_message(
+            builder, context=cls.permit, recipient=applicant_contrib, subject="a-root"
+        )
+        make_message(
+            builder,
+            context=cls.permit,
+            recipient=applicant_contrib,
+            subject="a-reply",
+            root=cls.thread_a,
+        )
+        # Thread B: root read by the applicant, reply unread to staff. The
+        # applicant has 0 unread here; staff has 1.
+        cls.thread_b = make_message(
+            builder,
+            context=cls.permit,
+            recipient=applicant_contrib,
+            read_date="2026-02-01",
+            subject="b-root",
+        )
+        make_message(
+            builder,
+            context=cls.permit,
+            recipient=staff_contrib,
+            subject="b-reply",
+            root=cls.thread_b,
+        )
+
+    def _unread_by_root(self, user):
+        roots = self.service.root_queryset(self.permit_id, user)
+        return {str(root.pk): root.unread_count for root in roots}
+
+    def test_reply_unread_rolls_up_to_root(self):
+        counts = self._unread_by_root(self.applicant)
+        self.assertEqual(counts[str(self.thread_a.pk)], 2)
+        # Read root and a reply addressed to someone else both count zero.
+        self.assertEqual(counts[str(self.thread_b.pk)], 0)
+
+    def test_unread_count_is_per_viewer(self):
+        counts = self._unread_by_root(self.staff)
+        # Staff is party to none of thread A, but the reply in thread B is to them.
+        self.assertEqual(counts[str(self.thread_a.pk)], 0)
+        self.assertEqual(counts[str(self.thread_b.pk)], 1)
 
 
 class BcapMessageArchiveTests(TestCase):

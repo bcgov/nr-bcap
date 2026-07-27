@@ -17,6 +17,7 @@ from arches.app.models.models import (
     ResourceInstanceLifecycleState,
     TileModel,
 )
+from arches.app.models.resource import Resource
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.workflow_drafts import WorkflowDraftsAliases
@@ -121,6 +122,10 @@ class WorkflowDraftService(BaseGraphService):
                 WorkflowDraftsAliases.UPDATED_DATE: timezone.now().isoformat(),
             },
         )
+        # Other resources reference a draft (a message's resource_context points
+        # at it), and arches dereferences descriptors when building those names.
+        # Build them once here so a draft never has a null descriptor.
+        Resource.objects.get(pk=resource.pk).save_descriptors()
         return self.to_record(resource)
 
     def set_data(self, resource, data):

@@ -236,7 +236,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedBcapMessageList'
+                $ref: '#/components/schemas/PaginatedThreadRootList'
           description: ''
   /bcap/api/bcap_message/thread/{thread_id}/messages:
     get:
@@ -272,7 +272,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedBcapMessageList'
+                $ref: '#/components/schemas/PaginatedThreadMessageList'
           description: ''
   /bcap/api/contributor:
     get:
@@ -9944,29 +9944,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ArchaeologicalSite'
-    PaginatedBcapMessageList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/BcapMessage'
     PaginatedContributorList:
       type: object
       required:
@@ -10266,6 +10243,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SiteVisit'
+    PaginatedThreadMessageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThreadMessage'
+    PaginatedThreadRootList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThreadRoot'
     PatchedBcapMessagePatch:
       type: object
       properties:
@@ -15682,6 +15705,142 @@ components:
           readOnly: true
       required:
       - node_value
+    ThreadMessage:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
+        graph_has_different_publication:
+          type: boolean
+          readOnly: true
+        is_unread:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          nullable: true
+        descriptors:
+          type: object
+          readOnly: true
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - is_unread
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+    ThreadRoot:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
+        graph_has_different_publication:
+          type: boolean
+          readOnly: true
+        unread_count:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          nullable: true
+        descriptors:
+          type: object
+          readOnly: true
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+      - unread_count
     UrlAliasedNodeData:
       type: object
       properties:

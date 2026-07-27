@@ -8,4 +8,5 @@ export enum GraphSlug {
     DocumentSubmission = 'document_submission',
     InformationRequest = 'information_request',
     ProcessRequirement = 'process_requirement',
+    BcapMessage = 'bcap_message',
 }

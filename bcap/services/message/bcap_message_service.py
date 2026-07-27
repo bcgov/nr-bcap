@@ -3,7 +3,15 @@
 import logging
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Q
+from django.db.models import (
+    BooleanField,
+    Case,
+    Count,
+    IntegerField,
+    Q,
+    Value,
+    When,
+)
 
 from arches.app.models.models import TileModel
 from arches_querysets.models import ResourceTileTree
@@ -222,7 +230,51 @@ class BcapMessageService(BaseGraphService):
         # Coarse role gate for now; a future groups ticket moves this to Guardian.
         if not is_internal_user(user):
             roots = self._external_visible(roots, user.username)
-        return roots
+        return self._annotate_unread_count(roots, resource_id, user.username)
+
+    def _annotate_unread_count(self, roots, resource_id, username):
+        """Annotate each root with its thread's unread count for the viewer. The
+        counts come from one grouped query, mapped onto the roots by pk. A
+        subquery annotation can't do this: the thread link is a JSON resource
+        node, not a column an OuterRef can compare against."""
+        counts = self._unread_counts_by_thread(resource_id, username)
+        whens = [When(pk=root_id, then=Value(n)) for root_id, n in counts.items()]
+        return roots.annotate(
+            unread_count=Case(*whens, default=Value(0), output_field=IntegerField())
+        )
+
+    def _unread_counts_by_thread(self, resource_id, username):
+        """The viewer's unread count per thread on a resource, in one query. A
+        message's thread is the message it replies to, or itself if it is a root;
+        replies carry the same resource_context, so one filter covers the thread."""
+        contributor_id = self._contributor_id(username)
+        if not contributor_id:
+            return {}
+        rows = (
+            ResourceTileTree.get_tiles(
+                MESSAGE_GRAPH_SLUG,
+                nodes=self.nodes(
+                    MESSAGE_GRAPH_SLUG,
+                    [
+                        self.A.RECIPIENT,
+                        self.A.MESSAGE_READ_DATE,
+                        self.A.RESOURCE_CONTEXT,
+                        self.A.RELATED_SOURCE_MESSAGE,
+                    ],
+                ),
+            )
+            .filter(
+                recipient__id=contributor_id,
+                message_read_date__isnull=True,
+                resource_context__id=str(resource_id),
+            )
+            .values("pk", "related_source_message__id")
+        )
+        counts = {}
+        for row in rows:
+            root_id = str(row["related_source_message__id"] or row["pk"])
+            counts[root_id] = counts.get(root_id, 0) + 1
+        return counts
 
     def _by_archived(self, roots, username, archived):
         """Narrow roots to the viewer's archived or active threads."""
@@ -237,14 +289,29 @@ class BcapMessageService(BaseGraphService):
         return roots.exclude(pk__in=archived_ids)
 
     def thread_queryset(self, thread_id, user):
-        """One thread's messages, oldest first, gated for external users."""
+        """One thread's messages, oldest first, gated for external users. Each row
+        is annotated is_unread for this viewer: addressed to them and not yet read,
+        so a message they authored is never unread to them."""
+        contributor_id = self._contributor_id(user.username)
+        if contributor_id:
+            unread = Case(
+                When(
+                    recipient__id=contributor_id,
+                    message_read_date__isnull=True,
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        else:
+            unread = Value(False, output_field=BooleanField())
         messages = (
             ResourceTileTree.get_tiles(
                 MESSAGE_GRAPH_SLUG,
                 as_representation=True,
-            ).filter(
-                Q(pk=str(thread_id)) | Q(related_source_message__id=str(thread_id))
             )
+            .filter(Q(pk=str(thread_id)) | Q(related_source_message__id=str(thread_id)))
+            .annotate(is_unread=unread)
             # Oldest first; createdtime breaks ties on a null creation date.
             .order_by("message_creation_date", "createdtime")
         )

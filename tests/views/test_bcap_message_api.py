@@ -17,6 +17,7 @@ from arches.app.models.models import File
 
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.services.message.bcap_message_service import MESSAGE_GRAPH_SLUG
+from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.util.controlled_list import reference_value
 from bcap.util.graph import node_id
@@ -160,6 +161,30 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         ):
             resp = self._post_message()
         self.assertEqual(resp.status_code, 201)
+
+    def test_create_against_a_draft_resource_context(self):
+        draft = WorkflowDraftService().create(self.user, "investigation", {})
+        payload = {
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "resource_context": {
+                            "node_value": [{"resourceId": str(draft.id)}]
+                        },
+                        "message_content": {
+                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
+                        },
+                    }
+                }
+            }
+        }
+        self.idir_login_simulate(self.user)
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 201, resp.content)
 
     def test_create_stamps_the_posting_user_as_author(self):
         # The poster's Contributor (resolved from their username) is written as
