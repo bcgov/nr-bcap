@@ -254,6 +254,7 @@ class Command(BaseCommand):
         out_path = os.path.join(spec_dir, f"{slug}_spec.py")
         with open(out_path, "w") as fh:
             fh.write(content)
+        self._format_with_black(out_path)
         self.stdout.write(
             self.style.SUCCESS(f"  wrote {out_path} ({len(ng_list)} nodegroups)")
         )
@@ -272,6 +273,17 @@ class Command(BaseCommand):
             )
             for g_alias, g_nid, g_ng_id in geom_nodes:
                 self.stdout.write(f"    geom_mv('{g_alias}', '{g_nid}', '{g_ng_id}')")
+
+    def _format_with_black(self, path):
+        result = subprocess.run(
+            [sys.executable, "-m", "black", "--quiet", path],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            self.stderr.write(
+                self.style.WARNING(f"  black could not format {path}:\n{result.stderr.strip()}")
+            )
 
     def _date_format(self, node):
         cfg = node.config
