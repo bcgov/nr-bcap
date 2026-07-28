@@ -87,7 +87,7 @@ const cultureColumns = [
 
 const chronologyColumns = [
     { field: 'determination_method', label: 'Method' },
-    { field: 'information_source', label: 'Source' },
+    { field: 'information_source', label: 'Source', isHtml: true },
     { field: 'chronology_remarks', label: 'Chronology Remarks', isHtml: true },
     { field: 'start_year', label: 'From Date' },
     { field: 'start_year_qualifier', label: 'From Date Qualifier' },

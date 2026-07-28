@@ -59,7 +59,7 @@ const locationAndAccess = computed(() => {
 const biogeographyColumns = [
     { field: 'biogeography_type', label: 'Type' },
     { field: 'biogeography_name', label: 'Name' },
-    { field: 'biogeography_description', label: 'Description' },
+    { field: 'biogeography_description', label: 'Description', isHtml: true },
 ];
 
 const tenureColumns = [
@@ -147,7 +147,7 @@ const streetAddressColumns = [
     { field: 'street_name', label: 'Street Name' },
     { field: 'city', label: 'City' },
     { field: 'postal_code', label: 'Postal Code' },
-    { field: 'address_remarks', label: 'Address Remarks' },
+    { field: 'address_remarks', label: 'Address Remarks', isHtml: true },
 ];
 
 const hasCoordinates = computed(() => {

@@ -73,7 +73,11 @@ const generalRemarkColumns = computed<ColumnDefinition[]>(() => {
 
 const restrictedRemarkColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'restricted_remark', label: 'Restricted Remarks' },
+        {
+            field: 'restricted_remark',
+            label: 'Restricted Remarks',
+            isHtml: true,
+        },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',
@@ -131,7 +135,7 @@ const restrictedDocumentColumns = computed<ColumnDefinition[]>(() => {
 
 const hcaContraventionColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'inventory_remark', label: 'Inventory Remarks' },
+        { field: 'inventory_remark', label: 'Inventory Remarks', isHtml: true },
         { field: 'contravention_address', label: 'Address' },
         { field: 'contravention_pid', label: 'PID' },
         { field: 'nros_file_number', label: 'NROS File #' },
@@ -151,7 +155,11 @@ const hcaContraventionColumns = computed<ColumnDefinition[]>(() => {
 const convictionColumns = computed<ColumnDefinition[]>(() => {
     return [
         { field: 'conviction_date', label: 'Conviction Date' },
-        { field: 'conviction_details', label: 'Inventory Remarks' },
+        {
+            field: 'conviction_details',
+            label: 'Inventory Remarks',
+            isHtml: true,
+        },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',
