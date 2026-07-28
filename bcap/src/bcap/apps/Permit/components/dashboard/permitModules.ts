@@ -29,6 +29,13 @@ const MODULES_BY_FILING_TYPE: Record<FilingType, string[]> = {
     [FilingType.InformationRequest]: [GraphSlug.InformationRequest],
 };
 
+export const graphForModule = (name: string): string | undefined =>
+    permitModules.find(
+        (mod) =>
+            mod.id !== GraphSlug.PermitApplication &&
+            name.toLowerCase().includes(mod.menuLabel.toLowerCase()),
+    )?.id;
+
 export const modulesForFilingType = (filingType: string): PermitModule[] => {
     const ids =
         MODULES_BY_FILING_TYPE[filingType as FilingType] ??
@@ -41,8 +48,8 @@ export const modulesForFilingType = (filingType: string): PermitModule[] => {
 export const permitModules: PermitModule[] = [
     {
         id: GraphSlug.PermitApplication,
-        menuLabel: 'Project Summary',
-        title: 'Project Summary',
+        menuLabel: 'Filing Summary',
+        title: 'Filing Summary',
         description:
             'General information regarding the permit application and overall project scope.',
         listItems: ['Project Details', 'Applicant Information'],

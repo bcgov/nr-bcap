@@ -16,7 +16,8 @@ import {
 } from '@/bcap/apps/Permit/api.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import type { ModuleProgress, PermitApplicationDraft } from '@/bcap/types.ts';
+import type { PermitApplicationDraft } from '@/bcap/types.ts';
+import type { ModuleProgress } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
@@ -308,14 +309,13 @@ const openResourceReport = (resourceId: string) => {
                                         query: { draftId: draft.id },
                                     }"
                                 />
-                                <button
+                                <Button
                                     type="button"
                                     class="draft-delete-btn"
+                                    icon="fa fa-trash"
                                     :aria-label="$gettext('Delete draft')"
                                     @click="confirmDelete(draft)"
-                                >
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                                />
                             </div>
                         </div>
                     </Fluid>

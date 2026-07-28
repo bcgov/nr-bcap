@@ -275,6 +275,11 @@ export const zInternalDashboardPage = z.object({
     results: z.array(zInternalDashboardCard).optional()
 });
 
+export const zModuleUnread = z.object({
+    module_id: z.string(),
+    unread_count: z.int()
+});
+
 /**
  * Details for a Contributor created as part of the invite (for someone who
  * has no Contributor record yet).
@@ -355,51 +360,6 @@ export const zNonLocalizedStringAliasedNodeDataMax9 = z.object({
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
 });
 
-export const zNoticeOfProjectIntentProjectDescriptionAliasedData = z.object({
-    project_description: zNonLocalizedStringAliasedNodeData.nullish()
-});
-
-export const zNoticeOfProjectIntentProjectDescriptionTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zNoticeOfProjectIntentProjectDescriptionAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zNoticeOfProjectIntentResourceAliasedData = z.object({
-    project_description: zNoticeOfProjectIntentProjectDescriptionTile.nullish()
-});
-
-export const zNoticeOfProjectIntent = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zNoticeOfProjectIntentResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly(),
-    name: z.string().readonly().nullable(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullable(),
-    legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullable(),
-    resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable()
-});
-
 export const zNumberAliasedNodeData = z.object({
     node_value: z.number().nullable(),
     display_value: z.string().readonly().optional(),
@@ -423,13 +383,6 @@ export const zPaginatedInformationRequestList = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zInformationRequest)
-});
-
-export const zPaginatedNoticeOfProjectIntentList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zNoticeOfProjectIntent)
 });
 
 /**
@@ -636,6 +589,27 @@ export const zResourceInstanceAliasedNodeData = z.object({
     })).nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(zResourceInstanceDetail).readonly().optional()
+});
+
+export const zBcapMessageArchivedByAliasedData = z.object({
+    archived_by: zResourceInstanceAliasedNodeData.nullish()
+});
+
+export const zBcapMessageArchivedByTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zBcapMessageArchivedByAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zBcapMessageRelatedSourceMessageAliasedData = z.object({
@@ -1572,6 +1546,7 @@ export const zBcapMessageMessageContentTile = z.object({
 });
 
 export const zBcapMessageResourceAliasedData = z.object({
+    archived_by: z.array(zBcapMessageArchivedByTile).nullish(),
     message_content: zBcapMessageMessageContentTile.nullish(),
     related_source_message: zBcapMessageRelatedSourceMessageTile.nullish()
 });
@@ -2289,11 +2264,145 @@ export const zLocalGovernment = z.object({
     principaluser: z.int().readonly().nullable()
 });
 
-export const zPaginatedBcapMessageList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zBcapMessage)
+export const zNoticeOfProjectIntentEngagementDocumentAliasedData = z.object({
+    delivery_date: zDateAliasedNodeData.nullish(),
+    document_type: zStringAliasedNodeData.nullish(),
+    is_for_distribution: zBooleanAliasedNodeData.nullish(),
+    engagement_document: zFileListAliasedNodeData.nullish()
+});
+
+export const zNoticeOfProjectIntentEngagementDocumentTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentEngagementDocumentAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentNotificationAliasedData = z.object({
+    notification_date: zDateAliasedNodeData.nullish(),
+    notification_delivery_person: zResourceInstanceAliasedNodeData.nullish(),
+    notification_method: zStringAliasedNodeData.nullish()
+});
+
+export const zNoticeOfProjectIntentNotificationTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentNotificationAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentFirstNationAliasedData = z.object({
+    nation_specific_project_details: zStringAliasedNodeData.nullish(),
+    notification: zNoticeOfProjectIntentNotificationTile.nullish(),
+    perliminary_terms: zStringAliasedNodeData.nullish(),
+    engagement_document: z.array(zNoticeOfProjectIntentEngagementDocumentTile).nullish(),
+    first_nation: zResourceInstanceAliasedNodeData.nullable()
+});
+
+export const zNoticeOfProjectIntentFirstNationTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentFirstNationAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentProjectDetailsAliasedData = z.object({
+    project_description: zStringAliasedNodeData.nullable()
+});
+
+export const zNoticeOfProjectIntentProjectDetailsTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentProjectDetailsAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentProjectStakeholdersAliasedData = z.object({
+    calculated_impacted_first_nations: zResourceInstanceListAliasedNodeData.nullish(),
+    proposed_first_nations_consultations: zResourceInstanceListAliasedNodeData.nullish(),
+    first_nation: z.array(zNoticeOfProjectIntentFirstNationTile).nullish()
+});
+
+export const zNoticeOfProjectIntentProjectStakeholdersTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentProjectStakeholdersAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentResourceAliasedData = z.object({
+    project_details: zNoticeOfProjectIntentProjectDetailsTile.nullish(),
+    project_stakeholders: zNoticeOfProjectIntentProjectStakeholdersTile.nullish()
+});
+
+export const zNoticeOfProjectIntent = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly(),
+    name: z.string().readonly().nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
+    legacyid: z.string().readonly().nullable(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullable(),
+    resource_instance_lifecycle_state: z.uuid().readonly(),
+    principaluser: z.int().readonly().nullable()
 });
 
 export const zPaginatedLocalGovernmentList = z.object({
@@ -2303,10 +2412,18 @@ export const zPaginatedLocalGovernmentList = z.object({
     results: z.array(zLocalGovernment)
 });
 
-export const zPatchedBcapMessage = z.object({
+export const zPaginatedNoticeOfProjectIntentList = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zNoticeOfProjectIntent)
+});
+
+export const zPatchedBcapMessagePatch = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly().optional(),
+    archived: z.boolean().optional(),
     name: z.string().readonly().nullish(),
     descriptors: z.object({
         en: z.object({
@@ -4390,6 +4507,63 @@ export const zArchaeologicalSiteRemarksAndRestrictedInformationTile = z.object({
     })).nullish()
 });
 
+export const zThreadMessage = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zBcapMessageResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly(),
+    is_unread: z.boolean().readonly(),
+    name: z.string().readonly().nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
+    legacyid: z.string().readonly().nullable(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullable(),
+    resource_instance_lifecycle_state: z.uuid().readonly(),
+    principaluser: z.int().readonly().nullable()
+});
+
+export const zPaginatedThreadMessageList = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zThreadMessage)
+});
+
+export const zThreadRoot = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zBcapMessageResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly(),
+    unread_count: z.int().readonly(),
+    last_message_date: z.iso.datetime({ offset: true, local: true }).readonly(),
+    name: z.string().readonly().nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
+    legacyid: z.string().readonly().nullable(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullable(),
+    resource_instance_lifecycle_state: z.uuid().readonly(),
+    principaluser: z.int().readonly().nullable()
+});
+
+export const zPaginatedThreadRootList = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zThreadRoot)
+});
+
 export const zUrlAliasedNodeData = z.object({
     node_value: z.object({
         url: z.string().optional(),
@@ -4732,37 +4906,6 @@ export const zNonLocalizedStringAliasedNodeDataMax9Writable = z.object({
     node_value: z.string().max(9).nullable()
 });
 
-export const zNoticeOfProjectIntentProjectDescriptionAliasedDataWritable = z.object({
-    project_description: zNonLocalizedStringAliasedNodeDataWritable.nullish()
-});
-
-export const zNoticeOfProjectIntentProjectDescriptionTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zNoticeOfProjectIntentProjectDescriptionAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zNoticeOfProjectIntentResourceAliasedDataWritable = z.object({
-    project_description: zNoticeOfProjectIntentProjectDescriptionTileWritable.nullish()
-});
-
-export const zNoticeOfProjectIntentWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zNoticeOfProjectIntentResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
 export const zNumberAliasedNodeDataWritable = z.object({
     node_value: z.number().nullable()
 });
@@ -4780,13 +4923,6 @@ export const zPaginatedInformationRequestListWritable = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zInformationRequestWritable)
-});
-
-export const zPaginatedNoticeOfProjectIntentListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zNoticeOfProjectIntentWritable)
 });
 
 export const zProcessRequirementRequirementExecutionDurationAliasedDataWritable = z.object({
@@ -4911,6 +5047,27 @@ export const zResourceInstanceAliasedNodeDataWritable = z.object({
         resourceXresourceId: z.string().nullish(),
         inverseOntologyProperty: z.string().nullish()
     })).nullable()
+});
+
+export const zBcapMessageArchivedByAliasedDataWritable = z.object({
+    archived_by: zResourceInstanceAliasedNodeDataWritable.nullish()
+});
+
+export const zBcapMessageArchivedByTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zBcapMessageArchivedByAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
 });
 
 export const zBcapMessageRelatedSourceMessageAliasedDataWritable = z.object({
@@ -5813,6 +5970,7 @@ export const zBcapMessageMessageContentTileWritable = z.object({
 });
 
 export const zBcapMessageResourceAliasedDataWritable = z.object({
+    archived_by: z.array(zBcapMessageArchivedByTileWritable).nullish(),
     message_content: zBcapMessageMessageContentTileWritable.nullish(),
     related_source_message: zBcapMessageRelatedSourceMessageTileWritable.nullish()
 });
@@ -6474,11 +6632,131 @@ export const zLocalGovernmentWritable = z.object({
     graph: z.uuid().nullish()
 });
 
-export const zPaginatedBcapMessageListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zBcapMessageWritable)
+export const zNoticeOfProjectIntentEngagementDocumentAliasedDataWritable = z.object({
+    delivery_date: zDateAliasedNodeDataWritable.nullish(),
+    document_type: zStringAliasedNodeDataWritable.nullish(),
+    is_for_distribution: zBooleanAliasedNodeDataWritable.nullish(),
+    engagement_document: zFileListAliasedNodeDataWritable.nullish()
+});
+
+export const zNoticeOfProjectIntentEngagementDocumentTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentEngagementDocumentAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentNotificationAliasedDataWritable = z.object({
+    notification_date: zDateAliasedNodeDataWritable.nullish(),
+    notification_delivery_person: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    notification_method: zStringAliasedNodeDataWritable.nullish()
+});
+
+export const zNoticeOfProjectIntentNotificationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentNotificationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentFirstNationAliasedDataWritable = z.object({
+    nation_specific_project_details: zStringAliasedNodeDataWritable.nullish(),
+    notification: zNoticeOfProjectIntentNotificationTileWritable.nullish(),
+    perliminary_terms: zStringAliasedNodeDataWritable.nullish(),
+    engagement_document: z.array(zNoticeOfProjectIntentEngagementDocumentTileWritable).nullish(),
+    first_nation: zResourceInstanceAliasedNodeDataWritable.nullable()
+});
+
+export const zNoticeOfProjectIntentFirstNationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentFirstNationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentProjectDetailsAliasedDataWritable = z.object({
+    project_description: zStringAliasedNodeDataWritable.nullable()
+});
+
+export const zNoticeOfProjectIntentProjectDetailsTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentProjectDetailsAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentProjectStakeholdersAliasedDataWritable = z.object({
+    calculated_impacted_first_nations: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    proposed_first_nations_consultations: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    first_nation: z.array(zNoticeOfProjectIntentFirstNationTileWritable).nullish()
+});
+
+export const zNoticeOfProjectIntentProjectStakeholdersTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentProjectStakeholdersAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zNoticeOfProjectIntentResourceAliasedDataWritable = z.object({
+    project_details: zNoticeOfProjectIntentProjectDetailsTileWritable.nullish(),
+    project_stakeholders: zNoticeOfProjectIntentProjectStakeholdersTileWritable.nullish()
+});
+
+export const zNoticeOfProjectIntentWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zNoticeOfProjectIntentResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
 });
 
 export const zPaginatedLocalGovernmentListWritable = z.object({
@@ -6488,9 +6766,17 @@ export const zPaginatedLocalGovernmentListWritable = z.object({
     results: z.array(zLocalGovernmentWritable)
 });
 
-export const zPatchedBcapMessageWritable = z.object({
+export const zPaginatedNoticeOfProjectIntentListWritable = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zNoticeOfProjectIntentWritable)
+});
+
+export const zPatchedBcapMessagePatchWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
+    archived: z.boolean().optional(),
     graph: z.uuid().nullish()
 });
 
@@ -8413,6 +8699,32 @@ export const zArchaeologicalSiteRemarksAndRestrictedInformationTileWritable = z.
     })).nullish()
 });
 
+export const zThreadMessageWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
+});
+
+export const zPaginatedThreadMessageListWritable = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zThreadMessageWritable)
+});
+
+export const zThreadRootWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
+});
+
+export const zPaginatedThreadRootListWritable = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zThreadRootWritable)
+});
+
 export const zUrlAliasedNodeDataWritable = z.object({
     node_value: z.object({
         url: z.string().optional(),
@@ -8573,7 +8885,7 @@ export const zApiBcapMessageRetrievePath = z.object({
 
 export const zApiBcapMessageRetrieveResponse = zBcapMessage;
 
-export const zApiBcapMessagePartialUpdateBody = zPatchedBcapMessageWritable;
+export const zApiBcapMessagePartialUpdateBody = zPatchedBcapMessagePatchWritable;
 
 export const zApiBcapMessagePartialUpdatePath = z.object({
     id: z.uuid()
@@ -8581,22 +8893,29 @@ export const zApiBcapMessagePartialUpdatePath = z.object({
 
 export const zApiBcapMessagePartialUpdateResponse = zBcapMessage;
 
-export const zApiBcapMessageResourceContributorListPath = z.object({
+export const zApiBcapMessageResourceContributorsListPath = z.object({
     resource_id: z.uuid()
 });
 
-export const zApiBcapMessageResourceContributorListResponse = z.array(zContributorSummary);
+export const zApiBcapMessageResourceContributorsListResponse = z.array(zContributorSummary);
 
 export const zApiBcapMessageResourceThreadsListPath = z.object({
     resource_id: z.uuid()
 });
 
 export const zApiBcapMessageResourceThreadsListQuery = z.object({
+    archived: z.boolean().optional().default(false),
     limit: z.int().optional(),
     offset: z.int().optional()
 });
 
-export const zApiBcapMessageResourceThreadsListResponse = zPaginatedBcapMessageList;
+export const zApiBcapMessageResourceThreadsListResponse = zPaginatedThreadRootList;
+
+export const zApiBcapMessageSubmissionUnreadByModuleListPath = z.object({
+    submission_id: z.uuid()
+});
+
+export const zApiBcapMessageSubmissionUnreadByModuleListResponse = z.array(zModuleUnread);
 
 export const zApiBcapMessageThreadMessagesListPath = z.object({
     thread_id: z.uuid()
@@ -8607,7 +8926,7 @@ export const zApiBcapMessageThreadMessagesListQuery = z.object({
     offset: z.int().optional()
 });
 
-export const zApiBcapMessageThreadMessagesListResponse = zPaginatedBcapMessageList;
+export const zApiBcapMessageThreadMessagesListResponse = zPaginatedThreadMessageList;
 
 export const zApiContributorListQuery = z.object({
     limit: z.int().optional(),
@@ -8922,55 +9241,6 @@ export const zApiRegistrationLinkCreateBody = zRegistrationLinkRequest;
 
 export const zApiRegistrationLinkCreateResponse = zRegistrationLinkResponse;
 
-export const zApiResourceDraftListPath = z.object({
-    graph_slug: z.string()
-});
-
-export const zApiResourceDraftListResponse = z.array(zDraftRecord);
-
-export const zApiResourceDraftCreateBody = zDraftWrite;
-
-export const zApiResourceDraftCreatePath = z.object({
-    graph_slug: z.string()
-});
-
-export const zApiResourceDraftCreateResponse = zDraftRecord;
-
-export const zApiResourceDraftDestroyPath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiResourceDraftDestroyResponse = z.void();
-
-export const zApiResourceDraftRetrievePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiResourceDraftRetrieveResponse = zDraftRecord;
-
-export const zApiResourceDraftPartialUpdateBody = zPatchedDraftWrite;
-
-export const zApiResourceDraftPartialUpdatePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiResourceDraftPartialUpdateResponse = zDraftRecord;
-
-export const zApiResourceDraftUpdateBody = zDraftWrite;
-
-export const zApiResourceDraftUpdatePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiResourceDraftUpdateResponse = zDraftRecord;
-
 export const zApiSiteSubmissionListQuery = z.object({
     limit: z.int().optional(),
     offset: z.int().optional()
@@ -8996,5 +9266,54 @@ export const zApiSiteVisitRetrievePath = z.object({
 });
 
 export const zApiSiteVisitRetrieveResponse = zSiteVisit;
+
+export const zApiWorkflowDraftListPath = z.object({
+    graph_slug: z.string()
+});
+
+export const zApiWorkflowDraftListResponse = z.array(zDraftRecord);
+
+export const zApiWorkflowDraftCreateBody = zDraftWrite;
+
+export const zApiWorkflowDraftCreatePath = z.object({
+    graph_slug: z.string()
+});
+
+export const zApiWorkflowDraftCreateResponse = zDraftRecord;
+
+export const zApiWorkflowDraftDestroyPath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiWorkflowDraftDestroyResponse = z.void();
+
+export const zApiWorkflowDraftRetrievePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+export const zApiWorkflowDraftRetrieveResponse = zDraftRecord;
+
+export const zApiWorkflowDraftPartialUpdateBody = zPatchedDraftWrite;
+
+export const zApiWorkflowDraftPartialUpdatePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
+
+export const zApiWorkflowDraftUpdateBody = zDraftWrite;
+
+export const zApiWorkflowDraftUpdatePath = z.object({
+    graph_slug: z.string(),
+    id: z.uuid()
+});
+
+export const zApiWorkflowDraftUpdateResponse = zDraftRecord;
 
 export const zUserProfileRetrieveResponse = zUserProfileResponse;

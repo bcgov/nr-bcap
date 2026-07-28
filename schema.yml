@@ -112,7 +112,9 @@ paths:
       operationId: api_bcap_message_retrieve
       description: |-
         GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH writes only message_read_date.
+        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
+        in the body) and/or the caller's personal archive of the thread (a top-level
+        "archived" boolean), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -135,7 +137,9 @@ paths:
       operationId: api_bcap_message_partial_update
       description: |-
         GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH writes only message_read_date.
+        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
+        in the body) and/or the caller's personal archive of the thread (a top-level
+        "archived" boolean), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -149,13 +153,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedBcapMessage'
+              $ref: '#/components/schemas/PatchedBcapMessagePatch'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedBcapMessage'
+              $ref: '#/components/schemas/PatchedBcapMessagePatch'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedBcapMessage'
+              $ref: '#/components/schemas/PatchedBcapMessagePatch'
       security:
       - cookieAuth: []
       responses:
@@ -165,9 +169,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/BcapMessage'
           description: ''
-  /bcap/api/bcap_message/resource/{resource_id}/contributor:
+  /bcap/api/bcap_message/resource/{resource_id}/contributors:
     get:
-      operationId: api_bcap_message_resource_contributor_list
+      operationId: api_bcap_message_resource_contributors_list
       description: |-
         GET the contributors you can address a message to for a resource: the
         login-linked contributors referenced on it plus its ministry assignees.
@@ -199,6 +203,12 @@ paths:
         GET the threads on a parent resource, one per thread as its root
         (thread-starting) message, with the standard limit/offset pagination.
       parameters:
+      - in: query
+        name: archived
+        schema:
+          type: boolean
+          default: false
+        description: Return the viewer's archived threads instead of active ones.
       - name: limit
         required: false
         in: query
@@ -226,7 +236,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedBcapMessageList'
+                $ref: '#/components/schemas/PaginatedThreadRootList'
+          description: ''
+  /bcap/api/bcap_message/submission/{submission_id}/unread-by-module:
+    get:
+      operationId: api_bcap_message_submission_unread_by_module_list
+      description: |-
+        GET the viewer's unread count per process_module of a submission, so the
+        module list badges unread without loading each module's threads. Counts are
+        the caller's own, so IsAuthenticated leaks nothing.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: bcap_message'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModuleUnread'
           description: ''
   /bcap/api/bcap_message/thread/{thread_id}/messages:
     get:
@@ -262,7 +299,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedBcapMessageList'
+                $ref: '#/components/schemas/PaginatedThreadMessageList'
           description: ''
   /bcap/api/contributor:
     get:
@@ -1575,201 +1612,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegistrationLinkResponse'
           description: ''
-  /bcap/api/resource_draft/{graph_slug}:
-    get:
-      operationId: api_resource_draft_list
-      description: GET the current user's drafts for a graph; POST a new draft.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      tags:
-      - 'External: resource_draft'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    post:
-      operationId: api_resource_draft_create
-      description: GET the current user's drafts for a graph; POST a new draft.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      tags:
-      - 'External: resource_draft'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-        required: true
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-  /bcap/api/resource_draft/{graph_slug}/{id}:
-    get:
-      operationId: api_resource_draft_retrieve
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    put:
-      operationId: api_resource_draft_update
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/DraftWrite'
-        required: true
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    patch:
-      operationId: api_resource_draft_partial_update
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    delete:
-      operationId: api_resource_draft_destroy
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: resource_draft'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/site_submission:
     get:
       operationId: api_site_submission_list
@@ -1890,6 +1732,201 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteVisit'
           description: ''
+  /bcap/api/workflow_draft/{graph_slug}:
+    get:
+      operationId: api_workflow_draft_list
+      description: GET the current user's drafts for a graph; POST a new draft.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    post:
+      operationId: api_workflow_draft_create
+      description: GET the current user's drafts for a graph; POST a new draft.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+  /bcap/api/workflow_draft/{graph_slug}/{id}:
+    get:
+      operationId: api_workflow_draft_retrieve
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    put:
+      operationId: api_workflow_draft_update
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DraftWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    patch:
+      operationId: api_workflow_draft_partial_update
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDraftWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDraftWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDraftWrite'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftRecord'
+          description: ''
+    delete:
+      operationId: api_workflow_draft_destroy
+      description: |-
+        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
+        shallow-merges by section key -- untouched sections are kept, but a section
+        present in the body is replaced wholesale (no deep merge), so the client must
+        send the complete section, not just changed fields within it.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /bcap/user_profile:
     get:
       operationId: user_profile_retrieve
@@ -5259,6 +5296,61 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Bcap_Message_Archived_By_Aliased_Data:
+      type: object
+      properties:
+        archived_by:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+    Bcap_Message_Archived_By_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Message_Archived_By_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Bcap_Message_Message_Content_Aliased_Data:
       type: object
       properties:
@@ -5416,6 +5508,11 @@ components:
     Bcap_Message_Resource_Aliased_Data:
       type: object
       properties:
+        archived_by:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Message_Archived_By_Tile'
+          nullable: true
         message_content:
           allOf:
           - $ref: '#/components/schemas/Bcap_Message_Message_Content_Tile'
@@ -9289,6 +9386,16 @@ components:
         total:
           type: integer
           description: How many modules the permit has.
+    ModuleUnread:
+      type: object
+      properties:
+        module_id:
+          type: string
+        unread_count:
+          type: integer
+      required:
+      - module_id
+      - unread_count
     NewContributor:
       type: object
       description: |-
@@ -9446,15 +9553,28 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-    Notice_Of_Project_Intent_Project_Description_Aliased_Data:
+    Notice_Of_Project_Intent_Engagement_Document_Aliased_Data:
       type: object
       properties:
-        project_description:
+        delivery_date:
           allOf:
-          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        document_type:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-    Notice_Of_Project_Intent_Project_Description_Tile:
+        is_for_distribution:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        engagement_document:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+    Notice_Of_Project_Intent_Engagement_Document_Tile:
       type: object
       properties:
         tileid:
@@ -9474,7 +9594,270 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Description_Aliased_Data'
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Engagement_Document_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_First_Nation_Aliased_Data:
+      type: object
+      properties:
+        nation_specific_project_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        notification:
+          allOf:
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Notification_Tile'
+          nullable: true
+        perliminary_terms:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        engagement_document:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notice_Of_Project_Intent_Engagement_Document_Tile'
+          nullable: true
+        first_nation:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+      required:
+      - first_nation
+    Notice_Of_Project_Intent_First_Nation_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_First_Nation_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_Notification_Aliased_Data:
+      type: object
+      properties:
+        notification_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        notification_delivery_person:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        notification_method:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+    Notice_Of_Project_Intent_Notification_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Notification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_Project_Details_Aliased_Data:
+      type: object
+      properties:
+        project_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - project_description
+    Notice_Of_Project_Intent_Project_Details_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Details_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Notice_Of_Project_Intent_Project_Stakeholders_Aliased_Data:
+      type: object
+      properties:
+        calculated_impacted_first_nations:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+        proposed_first_nations_consultations:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+        first_nation:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notice_Of_Project_Intent_First_Nation_Tile'
+          nullable: true
+    Notice_Of_Project_Intent_Project_Stakeholders_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Stakeholders_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -9505,9 +9888,13 @@ components:
     Notice_Of_Project_Intent_Resource_Aliased_Data:
       type: object
       properties:
-        project_description:
+        project_details:
           allOf:
-          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Description_Tile'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Details_Tile'
+          nullable: true
+        project_stakeholders:
+          allOf:
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Project_Stakeholders_Tile'
           nullable: true
     NumberAliasedNodeData:
       type: object
@@ -9594,29 +9981,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ArchaeologicalSite'
-    PaginatedBcapMessageList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/BcapMessage'
     PaginatedContributorList:
       type: object
       required:
@@ -9916,7 +10280,53 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SiteVisit'
-    PatchedBcapMessage:
+    PaginatedThreadMessageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThreadMessage'
+    PaginatedThreadRootList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThreadRoot'
+    PatchedBcapMessagePatch:
       type: object
       properties:
         resourceinstanceid:
@@ -9928,6 +10338,9 @@ components:
         graph_has_different_publication:
           type: boolean
           readOnly: true
+        archived:
+          type: boolean
+          description: Toggle the caller's personal archive of the thread.
         name:
           type: string
           readOnly: true
@@ -15329,6 +15742,147 @@ components:
           readOnly: true
       required:
       - node_value
+    ThreadMessage:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
+        graph_has_different_publication:
+          type: boolean
+          readOnly: true
+        is_unread:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          nullable: true
+        descriptors:
+          type: object
+          readOnly: true
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - is_unread
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+    ThreadRoot:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
+        graph_has_different_publication:
+          type: boolean
+          readOnly: true
+        unread_count:
+          type: integer
+          readOnly: true
+        last_message_date:
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          nullable: true
+        descriptors:
+          type: object
+          readOnly: true
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - last_message_date
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+      - unread_count
     UrlAliasedNodeData:
       type: object
       properties:

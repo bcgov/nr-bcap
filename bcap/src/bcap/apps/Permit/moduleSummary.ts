@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import type { ModuleProgress } from '@/bcap/types.ts';
+import type { ModuleProgress } from '@/bcap/client/types.gen.ts';
 
 // Builds the module-progress HTML shown on a dashboard card (rendered via
 // v-html in ProjectCard). The summary arrives on the card, so this is a pure

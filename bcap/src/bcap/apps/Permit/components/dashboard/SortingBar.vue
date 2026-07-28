@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import type { PropType } from 'vue';
+import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 
 const props = defineProps({
@@ -128,20 +129,22 @@ const activeSortLabel = computed(() => {
         />
 
         <div class="segmented-control">
-            <button
+            <Button
                 v-for="tab in props.tabs"
                 :key="tab.value"
+                unstyled
                 class="segment-btn"
                 :class="{ active: props.activeTab === tab.value }"
                 @click="selectTab(tab.value)"
             >
                 {{ tab.label }}
-            </button>
+            </Button>
         </div>
 
         <div class="search-section">
             <div class="search-bar-wrapper">
-                <button
+                <Button
+                    unstyled
                     aria-label="Sort Options"
                     class="icon-btn"
                     style="display: flex; gap: 5px"
@@ -157,7 +160,7 @@ const activeSortLabel = computed(() => {
                         ]"
                         style="font-size: 0.8rem; margin-top: 2px"
                     ></i>
-                </button>
+                </Button>
 
                 <input
                     v-model="searchQuery"
@@ -167,12 +170,13 @@ const activeSortLabel = computed(() => {
                     @input="handleSearchInput"
                 />
 
-                <button
+                <Button
+                    unstyled
                     class="icon-btn search-submit-btn"
                     aria-label="Search"
                 >
                     <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
+                </Button>
             </div>
 
             <div

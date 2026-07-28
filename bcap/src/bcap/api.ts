@@ -21,16 +21,20 @@ export const apiFetch = async (
     options: ApiFetchOptions = {},
 ): Promise<Response> => {
     const { method = HttpMethod.Get, body } = options;
+    const isForm = body instanceof FormData;
     const headers: Record<string, string> = {
         Accept: 'application/json',
         'X-CSRFToken': getCsrfToken(),
     };
-    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (body !== undefined && !isForm)
+        headers['Content-Type'] = 'application/json';
 
     const response = await fetch(url, {
         method,
         headers,
-        ...(body !== undefined && { body: JSON.stringify(body) }),
+        ...(body !== undefined && {
+            body: isForm ? (body as FormData) : JSON.stringify(body),
+        }),
     });
 
     if (!response.ok) {
@@ -59,7 +63,7 @@ export const saveDraftFieldToBackend = async (
     fullDraftData: ArchesDraftData,
 ) => {
     try {
-        const patchUrl = `/bcap/api/resource_draft/${graphSlug}/${draftId}`;
+        const patchUrl = `/bcap/api/workflow_draft/${graphSlug}/${draftId}`;
 
         await apiFetch(patchUrl, {
             method: HttpMethod.Patch,

@@ -21,7 +21,17 @@ const routes = [
         path: arches.urls.plugin('submissions/permit/:id'),
         name: 'permitDetails',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/PermitDetails.vue'),
+            import('@/bcap/apps/Permit/components/filing-summary/PermitDetails.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
+        path: arches.urls.plugin('submissions/moduleReview'),
+        name: 'moduleReview',
+        component: () =>
+            import('@/bcap/apps/Permit/components/filing-summary/ModuleSubmissionReview.vue'),
         meta: {
             shouldShowNavigation: true,
             requiresAuthentication: true,
@@ -101,13 +111,13 @@ const routes = [
         path: arches.urls.plugin('internal-permit-dashboard/checklist'),
         name: 'Checklist',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/TaskChecklist.vue'),
+            import('@/bcap/apps/Permit/components/checklist/TaskChecklist.vue'),
     },
     {
         path: arches.urls.plugin('internal-permit-dashboard/EditChecklist'),
         name: 'EditChecklist',
         component: () =>
-            import('@/bcap/apps/Permit/components/dashboard/EditChecklist.vue'),
+            import('@/bcap/apps/Permit/components/checklist/EditChecklist.vue'),
     },
 ];
 
@@ -116,6 +126,7 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
     permitDetails: string;
     checklist: string;
     editchecklist: string;
+    moduleReview: string;
     alterationsModule: string;
     baseModule: string;
     collectionModule: string;
@@ -131,6 +142,7 @@ const routeNames: ExternalPermitRouteNamesType = {
     permitDetails: 'permitDetails',
     checklist: 'Checklist',
     editchecklist: 'EditChecklist',
+    moduleReview: 'moduleReview',
     alterationsModule: 'alterationsModule',
     baseModule: 'baseModule',
     collectionModule: 'collectionModule',

@@ -16,10 +16,12 @@ from django.urls import reverse
 from arches.app.models.models import File
 
 from bcap.builders.contributor_builder import ContributorSpec
-from bcap.services.message.bcap_message_service import MESSAGE_GRAPH_SLUG
-from bcap.util.aliases.bcap_message import BcapMessageAliases
+from bcap.services.message.bcap_message_service import (
+    MESSAGE_GRAPH_SLUG,
+    ModuleUnread,
+)
+from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.controlled_list import reference_value
-from bcap.util.graph import node_id
 from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.test_bcap_message_service import make_message
@@ -79,12 +81,12 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             subject="Internal",
         )
 
-    def _thread_roots(self, user):
+    def _thread_roots(self, user, archived=False):
         self.idir_login_simulate(user)
         url = reverse(
             "bcap_message_resource_threads", kwargs={"resource_id": self.permit_id}
         )
-        resp = self.client.get(url)
+        resp = self.client.get(url, {"archived": "true"} if archived else {})
         self.assertEqual(resp.status_code, 200)
         return {r["resourceinstanceid"] for r in resp.json()["results"]}
 
@@ -161,6 +163,30 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             resp = self._post_message()
         self.assertEqual(resp.status_code, 201)
 
+    def test_create_against_a_draft_resource_context(self):
+        draft = WorkflowDraftService().create(self.user, "investigation", {})
+        payload = {
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "resource_context": {
+                            "node_value": [{"resourceId": str(draft.id)}]
+                        },
+                        "message_content": {
+                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
+                        },
+                    }
+                }
+            }
+        }
+        self.idir_login_simulate(self.user)
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 201, resp.content)
+
     def test_create_stamps_the_posting_user_as_author(self):
         # The poster's Contributor (resolved from their username) is written as
         # the message author, even though the payload never sets it.
@@ -221,9 +247,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def test_create_with_a_multipart_attachment_stores_the_file(self):
         # A message can carry a file: the collection endpoint accepts multipart
-        # (a "json" part plus the file), and arches links the upload to the
-        # attachments file-list node by matching its name.
-        attachments_node = node_id(MESSAGE_GRAPH_SLUG, BcapMessageAliases.ATTACHMENTS)
+        # (a "json" part plus files under the "attachments" alias key), re-keys
+        # them to the file-list node, and arches links the upload by name.
         payload = {
             "aliased_data": {
                 "message_content": {
@@ -253,7 +278,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
                 reverse("bcap_message_list_create"),
                 data={
                     "json": json.dumps(payload),
-                    f"file-list_{attachments_node}": upload,
+                    "attachments": upload,
                 },
             )
         self.assertEqual(resp.status_code, 201)
@@ -272,6 +297,13 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         return self.client.patch(
             reverse("bcap_message_detail", kwargs={"pk": str(message_id)}),
             data=json.dumps(payload),
+            content_type="application/json",
+        )
+
+    def _patch_archived(self, message_id, archived):
+        return self.client.patch(
+            reverse("bcap_message_detail", kwargs={"pk": str(message_id)}),
+            data=json.dumps({"archived": archived}),
             content_type="application/json",
         )
 
@@ -372,6 +404,67 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             content["message_content"]["node_value"]["en"]["value"], "Public"
         )
 
+    def test_patch_archives_thread_for_that_viewer_only(self):
+        # A top-level "archived": true on the PATCH moves the thread to the
+        # caller's archived list; the other party's view is untouched.
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self._patch_archived(self.public_root.pk, True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn(str(self.public_root.pk), self._thread_roots(self.staff))
+        self.assertIn(
+            str(self.public_root.pk),
+            self._thread_roots(self.staff, archived=True),
+        )
+        # The applicant, also party to the thread, still sees it as active.
+        self.assertIn(str(self.public_root.pk), self._thread_roots(self.user))
+        self.assertEqual(self._thread_roots(self.user, archived=True), set())
+
+    def test_patch_unarchives_thread_back_to_active(self):
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            self._patch_archived(self.public_root.pk, True)
+            resp = self._patch_archived(self.public_root.pk, False)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(str(self.public_root.pk), self._thread_roots(self.staff))
+        self.assertEqual(self._thread_roots(self.staff, archived=True), set())
+
+    def test_patch_sets_read_date_and_archive_in_one_request(self):
+        # The detail PATCH is shared: read date (a node in the body) and the
+        # top-level archive flag both apply from a single request.
+        payload = {
+            "archived": True,
+            "aliased_data": {
+                "message_content": {
+                    "aliased_data": {
+                        "message_read_date": {"node_value": "2026-07-10T14:04:46.334Z"},
+                    }
+                }
+            },
+        }
+        self.idir_login_simulate(self.staff)
+        with patch(
+            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
+        ):
+            resp = self.client.patch(
+                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
+                data=json.dumps(payload),
+                content_type="application/json",
+            )
+        self.assertEqual(resp.status_code, 200)
+        read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
+            "message_read_date"
+        ]["node_value"]
+        self.assertIsNotNone(read)
+        self.assertIn(
+            str(self.public_root.pk),
+            self._thread_roots(self.staff, archived=True),
+        )
+
     def test_create_rejected_when_poster_has_no_contributor(self):
         # A user with no linked Contributor cannot author a message, so the
         # create is refused before any write.
@@ -384,3 +477,35 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         ):
             resp = self._post_message()
         self.assertEqual(resp.status_code, 400)
+
+    def test_module_unread_returns_the_serialized_counts(self):
+        self.idir_login_simulate(self.user)
+        url = reverse(
+            "bcap_message_module_unread", kwargs={"submission_id": self.permit_id}
+        )
+        rows = [
+            ModuleUnread(module_id="tile-1", unread_count=3),
+            ModuleUnread(module_id="tile-2", unread_count=0),
+        ]
+        with patch(
+            "bcap.views.bcap_message_api.BcapMessageService.unread_by_module",
+            return_value=rows,
+        ):
+            resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            resp.json(),
+            [
+                {"module_id": "tile-1", "unread_count": 3},
+                {"module_id": "tile-2", "unread_count": 0},
+            ],
+        )
+
+    def test_module_unread_requires_authentication(self):
+        url = reverse(
+            "bcap_message_module_unread", kwargs={"submission_id": self.permit_id}
+        )
+        resp = self.client.get(url)
+        # Unauthenticated is blocked: DRF denies (401/403), or the project's auth
+        # middleware redirects to login (302). Any of these means "not served".
+        self.assertIn(resp.status_code, (302, 401, 403))

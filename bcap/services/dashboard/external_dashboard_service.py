@@ -1,7 +1,7 @@
 from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
-from bcap.services.draft_service import DraftService
+from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     ExternalDashboardCard,
@@ -132,7 +132,7 @@ class ExternalDashboardService(BaseDashboardService):
         return self._STATUS_BY_LIFECYCLE.get(name, "")
 
     def _draft_cards(self, user, query):
-        store = DraftService()
+        store = WorkflowDraftService()
         count, page = self._page(
             store.queryset(user, GraphSlugs.PERMIT_APPLICATION), query
         )

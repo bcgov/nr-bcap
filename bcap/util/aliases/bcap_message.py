@@ -2,6 +2,7 @@ from bcap.util.bcap_aliases import AbstractAliases
 
 
 class BcapMessageAliases(AbstractAliases):
+    ARCHIVED_BY = "archived_by"
     ATTACHMENTS = "attachments"
     IS_INTERNAL = "is_internal"
     MESSAGE_AUTHOR = "message_author"

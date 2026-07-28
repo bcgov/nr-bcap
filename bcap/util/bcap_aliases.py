@@ -19,7 +19,6 @@ class GraphSlugs:
     ARCHAEOLOGICAL_SITE = "archaeological_site"
     CONTRIBUTOR = "contributor"
     DOCUMENT_SUBMISSION = "document_submission"
-    DRAFTS = "drafts"
     HCA_PERMIT = "hca_permit"
     HRIA_DISCONTINUED_DATA = "hria_discontinued_data"
     INSPECTION = "inspection"
@@ -30,3 +29,4 @@ class GraphSlugs:
     PUBLICATION = "publication"
     SITE_SUBMISSION = "site_submission"
     SITE_VISIT = "site_visit"
+    WORKFLOW_DRAFTS = "workflow_drafts"

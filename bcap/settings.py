@@ -821,3 +821,5 @@ TIMEWHEEL_DATE_TIERS = {
 
 # "Translating" one resource type to another (i.e., finding related instances)
 TRANSLATE_RESOURCE_TYPE_MAX_SOURCES = 10000
+
+TIME_ZONE = "America/Vancouver"

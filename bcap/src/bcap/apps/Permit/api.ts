@@ -1,53 +1,47 @@
 import arches from 'arches';
 import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
-import { localized } from '@/bcap/util.ts';
+import { localized, formatTimestamp } from '@/bcap/util.ts';
 import type {
+    MessageThread,
     ArchesDraftData,
-    BcapMessagePayload,
-    ChecklistStep,
     DraftNode,
     FormattedMessage,
     InvestigationDraft,
-    PatchedPermitApplication,
+    NewBcapMessage,
     PermitAliasedData,
-    PermitApplicationAdminTileWritable,
-    PermitApplicationResponse,
-    PermitProcessModuleTileWritable,
-    ProcessRequirement,
-    ResourceDraft,
-    AppThread,
 } from '@/bcap/types.ts';
+import type {
+    BcapMessage,
+    BcapMessageWritable,
+    ChecklistStep,
+    DraftRecord,
+    PatchedBcapMessagePatchWritable,
+    PatchedPermitApplicationWritable,
+    PermitApplication,
+    PermitApplicationApplicationAdminTileWritable,
+    PermitApplicationProcessModuleTileWritable,
+    ProcessRequirement,
+    ModuleUnread,
+} from '@/bcap/client/types.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import { z } from 'zod';
-import {
-    zPatchedBcapMessageWritable,
-    zBcapMessage,
-    zPaginatedBcapMessageList,
-} from '@/bcap/client/zod.gen.ts';
-
-type PatchedBcapMessageWritable = z.infer<typeof zPatchedBcapMessageWritable>;
-export type RawThreadMessage = z.infer<typeof zBcapMessage>;
-type PaginatedMessages = z.infer<typeof zPaginatedBcapMessageList>;
 
 export const fetchDraft = async (
     graphSlug: string,
     draftId: string,
-): Promise<ResourceDraft> => {
-    return apiFetchJson<ResourceDraft>(
-        `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`,
+): Promise<DraftRecord> => {
+    return apiFetchJson<DraftRecord>(
+        `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`,
     );
 };
 
-// parentResourceId, when given, is stored on the draft's own node (outside the
-// blob, which is validated against the graph on submit) so the parent resource's
-// page can filter its own drafts. The backend verifies the user can access that
-// resource before saving.
+// parentResourceId links the draft to a parent so its page can filter its own
+// drafts. The backend checks access before saving.
 export const createDraft = async (
     graphSlug: string,
     parentResourceId?: string,
-): Promise<ResourceDraft> => {
-    return apiFetchJson<ResourceDraft>(
-        arches.urls.api_resource_draft(graphSlug),
+): Promise<DraftRecord> => {
+    return apiFetchJson<DraftRecord>(
+        arches.urls.api_workflow_draft(graphSlug),
         {
             method: HttpMethod.Post,
             body: {
@@ -75,7 +69,7 @@ export const fetchDrafts = async () => {
         DRAFT_GRAPHS.map(async (graphSlug) => {
             try {
                 const response = await apiFetch(
-                    arches.urls.api_resource_draft(graphSlug),
+                    arches.urls.api_workflow_draft(graphSlug),
                 );
                 const data = await response.json();
                 return data.results || data || [];
@@ -92,7 +86,7 @@ export const deleteDraft = async (
     graphSlug: string,
     draftId: string,
 ): Promise<void> => {
-    await apiFetch(`${arches.urls.api_resource_draft(graphSlug)}/${draftId}`, {
+    await apiFetch(`${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`, {
         method: HttpMethod.Delete,
     });
 };
@@ -114,7 +108,7 @@ export const submitApplication = async (
     draftId: string,
     payload: ArchesDraftData,
     graphSlug: string = GraphSlug.PermitApplication,
-): Promise<PermitApplicationResponse> => {
+): Promise<PermitApplication> => {
     try {
         const submitUrl = arches.urls.permit_application_create;
         const cleanPayload = JSON.parse(
@@ -132,19 +126,16 @@ export const submitApplication = async (
             },
         } as unknown as DraftNode;
 
-        const finalResource = await apiFetchJson<PermitApplicationResponse>(
-            submitUrl,
-            {
-                method: HttpMethod.Post,
-                body: {
-                    draft_id: draftId,
-                    aliased_data: cleanPayload,
-                },
+        const finalResource = await apiFetchJson<PermitApplication>(submitUrl, {
+            method: HttpMethod.Post,
+            body: {
+                draft_id: draftId,
+                aliased_data: cleanPayload,
             },
-        );
+        });
 
         // Delete the draft after successful submission
-        const deleteUrl = `${arches.urls.api_resource_draft(graphSlug)}/${draftId}`;
+        const deleteUrl = `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`;
         await apiFetch(deleteUrl, { method: HttpMethod.Delete });
 
         return finalResource;
@@ -164,10 +155,10 @@ export const submitModule = async (
     draftId: string | undefined,
     moduleSlug: GraphSlug,
     payload: ArchesDraftData,
-): Promise<PermitApplicationResponse> => {
+): Promise<PermitApplication> => {
     try {
         const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
-        const result = await apiFetchJson<PermitApplicationResponse>(url, {
+        const result = await apiFetchJson<PermitApplication>(url, {
             method: HttpMethod.Post,
             body: { aliased_data: payload },
         });
@@ -233,7 +224,7 @@ export const fetchPermitDetails = async (
 ): Promise<PermitAliasedData | null | undefined> => {
     const url = arches.urls.api_resource(GraphSlug.PermitApplication, permitId);
 
-    const rawJson = await apiFetchJson<PermitApplicationResponse>(url);
+    const rawJson = await apiFetchJson<PermitApplication>(url);
 
     if (!rawJson || !rawJson.aliased_data) {
         console.warn('API payload did not contain aliased_data');
@@ -241,6 +232,15 @@ export const fetchPermitDetails = async (
     }
 
     return rawJson.aliased_data as PermitAliasedData;
+};
+
+export const fetchResourceData = async (
+    graphSlug: string,
+    resourceId: string,
+): Promise<ArchesDraftData | null> => {
+    const url = arches.urls.api_resource(graphSlug, resourceId);
+    const rawJson = await apiFetchJson<PermitApplication>(url);
+    return (rawJson?.aliased_data as unknown as ArchesDraftData) ?? null;
 };
 
 export const patchPermitSubmissionDate = async (
@@ -278,9 +278,9 @@ export const patchModuleOrder = async (
 
     const toModuleTile = (
         module: ModuleOrderPatch,
-    ): PermitProcessModuleTileWritable => {
+    ): PermitApplicationProcessModuleTileWritable => {
         const aliasedData: NonNullable<
-            PermitProcessModuleTileWritable['aliased_data']
+            PermitApplicationProcessModuleTileWritable['aliased_data']
         > = {
             module_order: { node_value: module.order },
             module_name: { node_value: localized(module.name) },
@@ -297,14 +297,14 @@ export const patchModuleOrder = async (
         };
     };
 
-    const applicationAdmin: PermitApplicationAdminTileWritable = {
+    const applicationAdmin: PermitApplicationApplicationAdminTileWritable = {
         aliased_data: { process_module: modules.map(toModuleTile) },
     };
     if (adminTileId) {
         applicationAdmin.tileid = adminTileId;
     }
 
-    const body: PatchedPermitApplication = {
+    const body: PatchedPermitApplicationWritable = {
         aliased_data: { application_admin: applicationAdmin },
     };
 
@@ -393,15 +393,16 @@ export const saveChecklist = async (
     });
 };
 
-export const createBcapMessage = async (
-    messageText: string,
-    recipientId: string,
-    applicationId: string,
-    permitResourceId: string,
-    threadId?: string,
-    topic?: string,
-) => {
-    const aliasedData: NonNullable<BcapMessagePayload['aliased_data']> = {
+export const createBcapMessage = async ({
+    messageText,
+    recipientId,
+    applicationId,
+    resourceId,
+    threadId,
+    topic,
+    files,
+}: NewBcapMessage) => {
+    const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
                 message_content: {
@@ -415,7 +416,7 @@ export const createBcapMessage = async (
                 },
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
-                    node_value: [{ resourceId: permitResourceId }],
+                    node_value: [{ resourceId }],
                 },
             },
         },
@@ -437,114 +438,121 @@ export const createBcapMessage = async (
         };
     }
 
-    return apiFetchJson<RawThreadMessage>(
-        arches.urls.bcap_message_list_create,
-        {
+    if (files?.length) {
+        aliasedData.message_content!.aliased_data!.attachments = {
+            node_value: files.map((file) => ({
+                name: file.name,
+                url: null,
+                size: file.size,
+            })),
+        };
+        // Multipart: the payload rides as a "json" part; each file under the
+        // "attachments" key, matched to its node_value by name. The create view
+        // resolves the alias to the file-list node so no node id lives here.
+        const form = new FormData();
+        form.append('json', JSON.stringify({ aliased_data: aliasedData }));
+        for (const file of files) {
+            form.append('attachments', file);
+        }
+        const response = await apiFetch(arches.urls.bcap_message_list_create, {
             method: HttpMethod.Post,
-            body: { aliased_data: aliasedData },
-        },
+            body: form,
+        });
+        return response.json() as Promise<BcapMessage>;
+    }
+
+    return apiFetchJson<BcapMessage>(arches.urls.bcap_message_list_create, {
+        method: HttpMethod.Post,
+        body: { aliased_data: aliasedData },
+    });
+};
+
+export const setThreadArchived = async (messageId: string, archived: boolean) =>
+    apiFetch(arches.urls.bcap_message_detail(messageId), {
+        method: HttpMethod.Patch,
+        body: { archived },
+    });
+
+// One root per thread with an annotated unread_count; messages load on click.
+export const getThreadsForResource = async (
+    resourceId: string,
+    archived = false,
+): Promise<MessageThread[]> => {
+    const { results = [] } = await apiFetchJson<{ results: BcapMessage[] }>(
+        `${arches.urls.bcap_message_resource_threads(resourceId)}?archived=${archived}`,
+    );
+
+    // Newest-first from the backend; keep that order.
+    return results.map((root) => {
+        const content = root.aliased_data?.message_content?.aliased_data;
+        const subject = content?.message_subject;
+        const unreadCount =
+            (root as { unread_count?: number }).unread_count ?? 0;
+        return {
+            id: root.resourceinstanceid ?? '',
+            topic:
+                subject?.display_value ||
+                subject?.node_value?.en?.value ||
+                'General Question',
+            startedBy: content?.message_author?.display_value || 'Unknown',
+            // The threads endpoint annotates the whole thread's latest date;
+            // fall back to the root's own date if it is ever absent.
+            lastMessageDate:
+                (root as { last_message_date?: string }).last_message_date ||
+                content?.message_creation_date?.node_value ||
+                '',
+            hasUnread: unreadCount > 0,
+            unreadCount,
+        };
+    });
+};
+
+export const getSubmissionModulesUnreadCounts = async (
+    submissionId: string,
+): Promise<ModuleUnread[]> => {
+    return apiFetchJson<ModuleUnread[]>(
+        arches.urls.bcap_message_module_unread(submissionId),
     );
 };
 
-const formatMessageDate = (isoDate: string | null | undefined): string =>
-    new Date(isoDate ?? 0).toLocaleString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-
-export const getMessagesForPermit = async (
-    permitId: string,
-): Promise<{ threads: AppThread[] }> => {
-    const threadsResponse = await apiFetchJson<PaginatedMessages>(
-        arches.urls.bcap_message_resource_threads(permitId),
+// One thread's messages, oldest-first; is_unread is per-viewer.
+export const getMessagesForThread = async (
+    threadId: string,
+): Promise<FormattedMessage[]> => {
+    const { results = [] } = await apiFetchJson<{ results: BcapMessage[] }>(
+        arches.urls.bcap_message_thread_messages(threadId),
     );
 
-    if (!threadsResponse.results || threadsResponse.results.length === 0) {
-        return { threads: [] };
-    }
-
-    const threadPromises = threadsResponse.results.map(async (rootMessage) => {
-        const threadId = rootMessage.resourceinstanceid;
-
-        const contentData =
-            rootMessage.aliased_data?.message_content?.aliased_data;
-        const rawSubject =
-            contentData?.message_subject?.display_value ||
-            contentData?.message_subject?.node_value?.en?.value ||
-            'General Question';
-
-        const topic = rawSubject.split(' - Application')[0] || rawSubject;
-
-        const threadMessagesResponse = await apiFetchJson<PaginatedMessages>(
-            arches.urls.bcap_message_thread_messages(threadId as string),
-        );
-
-        const messages: FormattedMessage[] = (
-            threadMessagesResponse.results ?? []
-        )
-            .map((message) => {
-                const messageContentNode =
-                    message.aliased_data?.message_content;
-                const content = messageContentNode?.aliased_data;
-                const readDate = content?.message_read_date?.node_value;
-
-                return {
-                    id: message.resourceinstanceid ?? '',
-                    rawResource: message,
-                    author: content?.message_author?.display_value || 'Unknown',
-                    text:
-                        content?.message_content?.node_value?.en?.value ||
-                        content?.message_content?.display_value ||
-                        '',
-                    date: content?.message_creation_date?.node_value ?? null,
-                    isUnread: !readDate,
-                };
-            })
-            .filter((message) => message.text)
-            .sort(
-                (a, b) =>
-                    new Date(a.date ?? 0).getTime() -
-                    new Date(b.date ?? 0).getTime(),
-            )
-            .map((message) => ({
-                id: message.id,
-                rawResource: message.rawResource,
-                author: message.author,
-                text: message.text,
-                date: formatMessageDate(message.date),
-                isUnread: message.isUnread,
-            }));
-
-        const isResolved = false;
-        const unreadCount = messages.filter((msg) => msg.isUnread).length;
-        const hasUnread = unreadCount > 0;
-
-        return {
-            id: threadId,
-            topic,
-            messages,
-            hasUnread,
-            unreadCount,
-            isResolved,
-        } as AppThread;
-    });
-
-    const threads = await Promise.all(threadPromises);
-
-    threads.sort((a: AppThread, b: AppThread) => {
-        if (a.messages.length === 0 || b.messages.length === 0) return 0;
-
-        const lastMsgA = a.messages[a.messages.length - 1];
-        const lastMsgB = b.messages[b.messages.length - 1];
-        const dateA = lastMsgA?.date ? new Date(lastMsgA.date).getTime() : 0;
-        const dateB = lastMsgB?.date ? new Date(lastMsgB.date).getTime() : 0;
-        return dateB - dateA; // Descending
-    });
-
-    return { threads };
+    return results
+        .map((message) => {
+            const content = message.aliased_data?.message_content?.aliased_data;
+            return {
+                id: message.resourceinstanceid ?? '',
+                author: content?.message_author?.display_value || 'Unknown',
+                text:
+                    content?.message_content?.node_value?.en?.value ||
+                    content?.message_content?.display_value ||
+                    '',
+                // ISO timestamps, so string order is chronological order.
+                date: content?.message_creation_date?.node_value ?? '',
+                isUnread: Boolean(
+                    (message as { is_unread?: boolean }).is_unread,
+                ),
+                attachments: (content?.attachments?.node_value ?? [])
+                    .filter((file) => file.url)
+                    .map((file) => ({
+                        name: file.name ?? 'attachment',
+                        url: file.url as string,
+                        size: file.size,
+                    })),
+            };
+        })
+        .filter((message) => message.text)
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .map((message) => ({
+            ...message,
+            date: formatTimestamp(message.date),
+        }));
 };
 
 // The contributors you can address a message to for a resource: its
@@ -563,22 +571,24 @@ export const getContributorsForResources = async (
 };
 
 export const markMessageAsRead = async (messageId: string): Promise<void> => {
-    const nextReadDate = new Date().toISOString();
-
-    const body: PatchedBcapMessageWritable = {
+    // The route reads only the read date; the null siblings are required by the
+    // generated writable type.
+    const body: PatchedBcapMessagePatchWritable = {
         aliased_data: {
             message_content: {
                 aliased_data: {
                     message_content: null,
                     resource_context: null,
-                    message_read_date: { node_value: nextReadDate },
+                    message_read_date: {
+                        node_value: new Date().toISOString(),
+                    },
                 },
             },
         },
     };
 
-    await apiFetchJson(arches.urls.bcap_message_detail(messageId), {
+    await apiFetch(arches.urls.bcap_message_detail(messageId), {
         method: HttpMethod.Patch,
-        body: body,
+        body,
     });
 };

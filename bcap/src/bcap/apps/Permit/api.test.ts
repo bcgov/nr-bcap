@@ -8,6 +8,10 @@ import {
     submitModule,
     fetchPermitModules,
     deleteDraft,
+    getThreadsForResource,
+    getMessagesForThread,
+    setThreadArchived,
+    markMessageAsRead,
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
 
@@ -17,7 +21,7 @@ vi.mock('arches', () => ({
         urls: {
             api_resource_blank: (graphSlug: string) =>
                 `/mock/blank/${graphSlug}`,
-            api_resource_draft: (graphSlug: string) =>
+            api_workflow_draft: (graphSlug: string) =>
                 `/mock/draft/${graphSlug}`,
             permit_application_create: '/mock/create/permit_application',
             seed_process_requirements: (permitId: string, slug: string) =>
@@ -25,6 +29,12 @@ vi.mock('arches', () => ({
             dashboard_external: '/bcap/api/dashboard/external',
             api_resource: (graph: string, pk: string) =>
                 `/bcap/api/resource/${graph}/${pk}`,
+            bcap_message_resource_threads: (resourceId: string) =>
+                `/mock/threads/${resourceId}`,
+            bcap_message_thread_messages: (threadId: string) =>
+                `/mock/thread/${threadId}`,
+            bcap_message_detail: (messageId: string) =>
+                `/mock/message/${messageId}`,
         },
     },
 }));
@@ -348,6 +358,150 @@ describe('Permit API', () => {
                 'Submission API failed:',
                 failure,
             );
+        });
+    });
+
+    describe('getThreadsForResource', () => {
+        const root = (id: string, subject: string, unread: number) => ({
+            resourceinstanceid: id,
+            unread_count: unread,
+            aliased_data: {
+                message_content: {
+                    aliased_data: {
+                        message_subject: { display_value: subject },
+                        message_author: { display_value: 'Jane Doe' },
+                    },
+                },
+            },
+        });
+
+        it('builds thread stubs from roots without fetching messages', async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [root('t1', 'A question', 2)],
+            });
+
+            const threads = await getThreadsForResource('res-1');
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/threads/res-1?archived=false',
+            );
+            expect(threads).toEqual([
+                {
+                    id: 't1',
+                    topic: 'A question',
+                    startedBy: 'Jane Doe',
+                    lastMessageDate: '',
+                    hasUnread: true,
+                    unreadCount: 2,
+                },
+            ]);
+        });
+
+        it('requests the archived list when asked', async () => {
+            apiFetchJson.mockResolvedValue({ results: [] });
+
+            await getThreadsForResource('res-1', true);
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/threads/res-1?archived=true',
+            );
+        });
+
+        it('defaults a missing unread_count to zero and not-unread', async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [
+                    {
+                        resourceinstanceid: 't2',
+                        aliased_data: { message_content: { aliased_data: {} } },
+                    },
+                ],
+            });
+
+            const [thread] = await getThreadsForResource('res-1');
+
+            expect(thread.unreadCount).toBe(0);
+            expect(thread.hasUnread).toBe(false);
+            expect(thread.topic).toBe('General Question');
+        });
+    });
+
+    describe('getMessagesForThread', () => {
+        const message = (
+            id: string,
+            author: string,
+            text: string,
+            date: string,
+            unread = false,
+        ) => ({
+            resourceinstanceid: id,
+            is_unread: unread,
+            aliased_data: {
+                message_content: {
+                    aliased_data: {
+                        message_author: { display_value: author },
+                        message_content: {
+                            node_value: { en: { value: text } },
+                        },
+                        message_creation_date: { node_value: date },
+                    },
+                },
+            },
+        });
+
+        it('returns messages oldest-first and drops empty ones', async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [
+                    message('m2', 'Sam', 'Later', '2026-01-02T00:00:00Z', true),
+                    message('m1', 'Amy', 'Earlier', '2026-01-01T00:00:00Z'),
+                    message('m3', 'Amy', '', '2026-01-03T00:00:00Z'),
+                ],
+            });
+
+            const messages = await getMessagesForThread('t1');
+
+            expect(apiFetchJson).toHaveBeenCalledWith('/mock/thread/t1');
+            expect(messages.map((m) => m.id)).toEqual(['m1', 'm2']);
+            expect(messages[0]).toMatchObject({
+                author: 'Amy',
+                text: 'Earlier',
+                isUnread: false,
+            });
+            expect(messages[1]).toMatchObject({
+                author: 'Sam',
+                text: 'Later',
+                isUnread: true,
+            });
+        });
+    });
+
+    describe('setThreadArchived', () => {
+        it('PATCHes the message with the archived flag', async () => {
+            apiFetch.mockResolvedValue(okResponse({}));
+
+            await setThreadArchived('m1', true);
+
+            expect(apiFetch).toHaveBeenCalledWith('/mock/message/m1', {
+                method: 'PATCH',
+                body: { archived: true },
+            });
+        });
+    });
+
+    describe('markMessageAsRead', () => {
+        it('PATCHes the message with a read date', async () => {
+            apiFetch.mockResolvedValue(okResponse({}));
+
+            await markMessageAsRead('m1');
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/message/m1',
+                expect.objectContaining({ method: 'PATCH' }),
+            );
+            const body = apiFetch.mock.calls[0][1].body;
+            expect(
+                body.aliased_data.message_content.aliased_data.message_read_date
+                    .node_value,
+            ).toEqual(expect.any(String));
         });
     });
 });
