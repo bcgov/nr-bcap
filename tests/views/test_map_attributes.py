@@ -51,7 +51,19 @@ class TestInjectMapAttributes(TestCase):
 
         response = _response_with([{"properties": {"id": 1}}])
         inject_map_attributes(response, str(resource.resourceinstanceid), SLUG)
-        self.assertEqual(_features_of(response), [{"properties": {"id": 1}}])
+        self.assertEqual(
+            _features_of(response),
+            [
+                {
+                    "properties": {
+                        "id": 1,
+                        "authorities": "[]",
+                        "borden_number": None,
+                        "registration_status": None,
+                    }
+                }
+            ],
+        )
 
     def test_attrs_injected_for_real_resource(self):
         graph = GraphModel.objects.get(slug=SLUG)

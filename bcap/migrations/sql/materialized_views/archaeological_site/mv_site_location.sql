@@ -1,0 +1,133 @@
+-- GENERATED - edit as_spec.py and re-run generate.py. Do not hand-edit.
+-- Graph cef9c510-e3e6-4057-ac08-89ad926180b4
+-- Requires 00_arches_util.sql (arches_util helpers) to be applied first.
+--
+-- Reads public.tiles DIRECTLY. The generated archaeological_site.* views are NOT used:
+-- each LEFT JOINs edit_log twice with a text->uuid cast that no index can serve.
+--
+-- INVARIANTS (downstream depends on these - do not change silently):
+--   * every key ALWAYS present; empty means null, never absent. No jsonb_strip_nulls.
+--   * cardinality-n children are ALWAYS a jsonb array, [] when empty, never null.
+--   * cardinality-1 branches are an object, or null when the tile does not exist.
+--   * array order is tiles.sortorder, then tileid. Stable across refreshes.
+
+SET client_min_messages = warning;   -- ST_MakeValid emits a NOTICE per repair
+SET maintenance_work_mem = '512MB';
+SET work_mem             = '128MB';
+
+CREATE SCHEMA IF NOT EXISTS archaeological_site;
+
+-- ---------------------------------------------------------------------
+-- site_location  (cardinality n)  children: biogeography, site_tenure, elevation, bc_property_address
+-- ---------------------------------------------------------------------
+DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_site_location CASCADE;
+CREATE MATERIALIZED VIEW archaeological_site.mv_site_location AS
+WITH biogeography AS (
+    SELECT t.parenttileid AS parenttileid,
+           jsonb_agg(jsonb_build_object(
+            'biogeography_type', arches_util.reference_flat(t.tiledata -> '7044fb24-197f-11f0-9fc9-0242ac170008'),
+            'biogeography_name', arches_util.i18n_text(t.tiledata -> '96df3a2e-197f-11f0-9fc9-0242ac170008'),
+            'biogeography_description', arches_util.i18n_text(t.tiledata -> 'aad2e7e2-197f-11f0-9fc9-0242ac170008')
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    WHERE t.nodegroupid = '2509f4a2-197f-11f0-b2a5-0242ac170008'::uuid
+    GROUP BY t.parenttileid
+),
+site_tenure_remarks AS (
+    SELECT DISTINCT ON (t.parenttileid) t.parenttileid AS parenttileid,
+           jsonb_build_object(
+            'site_tenure_remarks', arches_util.i18n_text(t.tiledata -> '4598a202-197c-11f0-b2a5-0242ac170008')
+        ) AS obj
+    FROM public.tiles t
+    WHERE t.nodegroupid = '4598a202-197c-11f0-b2a5-0242ac170008'::uuid
+    ORDER BY t.parenttileid, COALESCE(t.sortorder, 2147483647), t.tileid
+),
+site_tenure_type AS (
+    SELECT DISTINCT ON (t.parenttileid) t.parenttileid AS parenttileid,
+           jsonb_build_object(
+            'site_tenure_type', arches_util.i18n_text(t.tiledata -> '7b8991ec-197b-11f0-8d46-0242ac170008'),
+            'site_tenure_identifier', arches_util.i18n_text(t.tiledata -> 'b2fcabe0-197c-11f0-b2a5-0242ac170008')
+        ) AS obj
+    FROM public.tiles t
+    WHERE t.nodegroupid = '7b8991ec-197b-11f0-8d46-0242ac170008'::uuid
+    ORDER BY t.parenttileid, COALESCE(t.sortorder, 2147483647), t.tileid
+),
+site_tenure AS (
+    SELECT DISTINCT ON (t.parenttileid) t.parenttileid AS parenttileid,
+           jsonb_build_object(
+            'site_tenure_remarks', site_tenure_remarks.obj,
+            'site_tenure_type', site_tenure_type.obj
+        ) AS obj
+    FROM public.tiles t
+    LEFT JOIN site_tenure_remarks site_tenure_remarks ON site_tenure_remarks.parenttileid = t.tileid
+    LEFT JOIN site_tenure_type site_tenure_type ON site_tenure_type.parenttileid = t.tileid
+    WHERE t.nodegroupid = '40a52cd0-197b-11f0-8d46-0242ac170008'::uuid
+    ORDER BY t.parenttileid, COALESCE(t.sortorder, 2147483647), t.tileid
+),
+elevation_comments AS (
+    SELECT t.parenttileid AS parenttileid,
+           jsonb_agg(jsonb_build_object(
+            'elevation_comments', arches_util.i18n_text(t.tiledata -> 'bc131e78-01bf-11f0-97f7-0242ac170007')
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    WHERE t.nodegroupid = 'bc131e78-01bf-11f0-97f7-0242ac170007'::uuid
+    GROUP BY t.parenttileid
+),
+elevation AS (
+    SELECT DISTINCT ON (t.parenttileid) t.parenttileid AS parenttileid,
+           jsonb_build_object(
+            'gis_lower_elevation', NULLIF(t.tiledata ->> '55b8225e-01bf-11f0-97f7-0242ac170007', '')::numeric,
+            'gis_upper_elevation', NULLIF(t.tiledata ->> '547414ac-01bf-11f0-97f7-0242ac170007', '')::numeric,
+            'elevation_comments', COALESCE(elevation_comments.arr, '[]'::jsonb)
+        ) AS obj
+    FROM public.tiles t
+    LEFT JOIN elevation_comments elevation_comments ON elevation_comments.parenttileid = t.tileid
+    WHERE t.nodegroupid = 'c2f9e970-01be-11f0-9078-0242ac170007'::uuid
+    ORDER BY t.parenttileid, COALESCE(t.sortorder, 2147483647), t.tileid
+),
+bc_property_legal_description AS (
+    SELECT t.parenttileid AS parenttileid,
+           jsonb_agg(jsonb_build_object(
+            'pid', t.tiledata ->> 'f5c343f3-217f-4ff0-a414-5dcaff74d2fa',
+            'pin', t.tiledata ->> '5513b739-04f5-4c98-9e6f-def560ff3555',
+            'legal_description', arches_util.i18n_text(t.tiledata -> '1b623ccc-0d0f-11ed-98c2-5254008afee6'),
+            'legal_address_remarks', arches_util.i18n_text(t.tiledata -> '15656a28-1a67-11ed-b83c-5254008afee6')
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    WHERE t.nodegroupid = '1b622ab6-0d0f-11ed-98c2-5254008afee6'::uuid
+    GROUP BY t.parenttileid
+),
+bc_property_address AS (
+    SELECT t.parenttileid AS parenttileid,
+           jsonb_agg(jsonb_build_object(
+            'street_number', arches_util.i18n_text(t.tiledata -> '428ee192-8829-11ee-b6ec-080027b7463b'),
+            'street_name', arches_util.i18n_text(t.tiledata -> '1b624e60-0d0f-11ed-98c2-5254008afee6'),
+            'city', arches_util.i18n_text(t.tiledata -> '1b624082-0d0f-11ed-98c2-5254008afee6'),
+            'postal_code', arches_util.i18n_text(t.tiledata -> '1b625414-0d0f-11ed-98c2-5254008afee6'),
+            'address_remarks', arches_util.i18n_text(t.tiledata -> 'a1032cd8-1a66-11ed-a3cf-5254008afee6'),
+            'bc_property_legal_description', COALESCE(bc_property_legal_description.arr, '[]'::jsonb)
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    LEFT JOIN bc_property_legal_description bc_property_legal_description ON bc_property_legal_description.parenttileid = t.tileid
+    WHERE t.nodegroupid = '1b622e58-0d0f-11ed-98c2-5254008afee6'::uuid
+    GROUP BY t.parenttileid
+),
+site_location AS (
+    SELECT t.resourceinstanceid AS resourceinstanceid,
+           jsonb_agg(jsonb_build_object(
+            'biogeography', COALESCE(biogeography.arr, '[]'::jsonb),
+            'site_tenure', site_tenure.obj,
+            'elevation', elevation.obj,
+            'bc_property_address', COALESCE(bc_property_address.arr, '[]'::jsonb)
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    LEFT JOIN biogeography biogeography ON biogeography.parenttileid = t.tileid
+    LEFT JOIN site_tenure site_tenure ON site_tenure.parenttileid = t.tileid
+    LEFT JOIN elevation elevation ON elevation.parenttileid = t.tileid
+    LEFT JOIN bc_property_address bc_property_address ON bc_property_address.parenttileid = t.tileid
+    WHERE t.nodegroupid = '1b62393e-0d0f-11ed-98c2-5254008afee6'::uuid
+    GROUP BY t.resourceinstanceid
+)
+SELECT resourceinstanceid, arr AS site_location FROM site_location;
+
+CREATE UNIQUE INDEX mv_site_location_pk ON archaeological_site.mv_site_location (resourceinstanceid);

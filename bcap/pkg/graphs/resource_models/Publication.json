@@ -1,7 +1,7 @@
 {
     "graph": [
         {
-            "author": " GCI",
+            "author": "QED Systems Inc.",
             "cards": [
                 {
                     "active": true,
@@ -13,18 +13,10 @@
                     "description": null,
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                     "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Reference Link"
-                    },
+                    "helptext": { "en": "" },
+                    "helptitle": { "en": "" },
+                    "instructions": { "en": "" },
+                    "name": { "en": "Reference Link" },
                     "nodegroup_id": "037c8f98-be00-11ed-8b5e-5254004d77d3",
                     "sortorder": 6,
                     "source_identifier_id": null,
@@ -40,18 +32,10 @@
                     "description": null,
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                     "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Publication Identifier"
-                    },
+                    "helptext": { "en": "" },
+                    "helptitle": { "en": "" },
+                    "instructions": { "en": "" },
+                    "name": { "en": "Publication Identifier" },
                     "nodegroup_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -70,15 +54,11 @@
                     "helptext": {
                         "en": "<p><strong>Publication Type</strong> -&nbsp;When you pick the Publication Type &ldquo;Volume / Publication Number&rdquo;, you can enter the volume number in the &ldquo;Title of the Work&rdquo;</p>\n\n<p><strong>Other Journal or Publication Name</strong> &ndash; if the name of the publication does not exist in Journal or Publication Name list, enter the full name here.</p>\n<strong>Publication Identifier</strong> &ndash; once you have selected a Journal of Publication Name, enter the Report Number (e.g., enter the Bulletin number if it is a GSC Bulletin), or enter the URL, or enter a DOI with character string divided into a prefix and a suffix separated by a slash (e.g., 10.000/123).<br />\n&nbsp;"
                     },
-                    "helptitle": {
-                        "en": "Publication Help Guide"
-                    },
+                    "helptitle": { "en": "Publication Help Guide" },
                     "instructions": {
                         "en": "Enter a description for the reference."
                     },
-                    "name": {
-                        "en": "Publication Details"
-                    },
+                    "name": { "en": "Publication Details" },
                     "nodegroup_id": "e9366370-bc33-11ed-bf42-5254004d77d3",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -94,18 +74,12 @@
                     "description": null,
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                     "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
+                    "helptext": { "en": "" },
+                    "helptitle": { "en": "" },
                     "instructions": {
                         "en": "Select the author(s) or corporate author"
                     },
-                    "name": {
-                        "en": "Authors"
-                    },
+                    "name": { "en": "Authors" },
                     "nodegroup_id": "c03e8f18-bc30-11ed-bf42-5254004d77d3",
                     "sortorder": 1,
                     "source_identifier_id": null,
@@ -123,18 +97,10 @@
                     },
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                     "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": "Upload pdf(s) of the reference."
-                    },
-                    "name": {
-                        "en": "Publication File"
-                    },
+                    "helptext": { "en": "" },
+                    "helptitle": { "en": "" },
+                    "instructions": { "en": "Upload pdf(s) of the reference." },
+                    "name": { "en": "Publication File" },
                     "nodegroup_id": "9f210d2d-e74a-11e6-84a6-026d961c88e6",
                     "sortorder": 2,
                     "source_identifier_id": null,
@@ -150,18 +116,10 @@
                     "description": "",
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                     "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Copyright Information"
-                    },
+                    "helptext": { "en": "" },
+                    "helptitle": { "en": "" },
+                    "instructions": { "en": "" },
+                    "name": { "en": "Copyright Information" },
                     "nodegroup_id": "a5f5c7b4-c40c-11ed-82cd-5254004d77d3",
                     "sortorder": 3,
                     "source_identifier_id": null,
@@ -179,18 +137,12 @@
                     },
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                     "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
+                    "helptext": { "en": "" },
+                    "helptitle": { "en": "" },
                     "instructions": {
                         "en": "Select keywords associated with the resource."
                     },
-                    "name": {
-                        "en": "Keyword"
-                    },
+                    "name": { "en": "Keyword" },
                     "nodegroup_id": "b5f5b1ed-e74a-11e6-84a6-026d961c88e6",
                     "sortorder": 4,
                     "source_identifier_id": null,
@@ -208,9 +160,7 @@
                         "rerender": true
                     },
                     "id": "06a06195-4863-4f0f-a32a-8755057dedc3",
-                    "label": {
-                        "en": "Signed Agreement"
-                    },
+                    "label": { "en": "Signed Agreement" },
                     "node_id": "a5f5d268-c40c-11ed-82cd-5254004d77d3",
                     "sortorder": 3,
                     "source_identifier_id": null,
@@ -223,14 +173,10 @@
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
                         "label": "Authors",
-                        "placeholder": {
-                            "en": "Select author"
-                        }
+                        "placeholder": { "en": "Select author" }
                     },
                     "id": "0c188b4f-d18f-4005-9cea-bdbe6e0ea538",
-                    "label": {
-                        "en": "Authors"
-                    },
+                    "label": { "en": "Authors" },
                     "node_id": "c03e8f18-bc30-11ed-bf42-5254004d77d3",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -249,9 +195,7 @@
                         "viewMode": "days"
                     },
                     "id": "1328ed10-1fb4-4db2-871d-d6ebd4c4ce98",
-                    "label": {
-                        "en": "Publication or Report Year"
-                    },
+                    "label": { "en": "Publication or Report Year" },
                     "node_id": "45216022-c409-11ed-81a5-5254004d77d3",
                     "sortorder": 2,
                     "source_identifier_id": null,
@@ -262,10 +206,7 @@
                     "card_id": "66575824-fa2d-4657-8c09-62e13a1ed6e5",
                     "config": {
                         "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
+                            "en": { "direction": "ltr", "value": "" }
                         },
                         "i18n_properties": ["placeholder"],
                         "label": "Title of the Work",
@@ -277,9 +218,7 @@
                         "width": "100%"
                     },
                     "id": "13c47b16-a90a-47db-a715-4d55c0f4d180",
-                    "label": {
-                        "en": "Title of the Work"
-                    },
+                    "label": { "en": "Title of the Work" },
                     "node_id": "1930617c-c407-11ed-8154-5254004d77d3",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -292,14 +231,10 @@
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
                         "label": "Fossil Site",
-                        "placeholder": {
-                            "en": ""
-                        }
+                        "placeholder": { "en": "" }
                     },
                     "id": "194cd8ca-673f-4c18-b23e-fa0bf4c77d29",
-                    "label": {
-                        "en": "Fossil Site"
-                    },
+                    "label": { "en": "Fossil Site" },
                     "node_id": "20c23f8a-be00-11ed-bdf6-5254004d77d3",
                     "sortorder": 1,
                     "source_identifier_id": null,
@@ -313,9 +248,7 @@
                         "label": "Other authors unlisted"
                     },
                     "id": "5dca6c9d-ab46-4688-95ca-bd162496d66a",
-                    "label": {
-                        "en": "Other authors unlisted"
-                    },
+                    "label": { "en": "Other authors unlisted" },
                     "node_id": "63f108ea-bdfb-11ed-a2b1-5254004d77d3",
                     "sortorder": 1,
                     "source_identifier_id": null,
@@ -327,14 +260,10 @@
                     "config": {
                         "i18n_properties": ["placeholder"],
                         "label": "Publication Type",
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
+                        "placeholder": { "en": "Select an option" }
                     },
                     "id": "5df689fb-d110-463c-860b-85ff8afbd329",
-                    "label": {
-                        "en": "Publication Type"
-                    },
+                    "label": { "en": "Publication Type" },
                     "node_id": "83f08723-772b-456c-b693-863b0f84cb07",
                     "sortorder": 1,
                     "source_identifier_id": null,
@@ -350,24 +279,16 @@
                         "label": "Page Range Start",
                         "max": "",
                         "min": "",
-                        "placeholder": {
-                            "en": "Enter number"
-                        },
+                        "placeholder": { "en": "Enter number" },
                         "precision": "0",
-                        "prefix": {
-                            "en": ""
-                        },
+                        "prefix": { "en": "" },
                         "step": "",
-                        "suffix": {
-                            "en": ""
-                        },
+                        "suffix": { "en": "" },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "5e242e21-a965-4b6c-9ffb-c3816fc28254",
-                    "label": {
-                        "en": "Page Range Start"
-                    },
+                    "label": { "en": "Page Range Start" },
                     "node_id": "d4f3cb86-bc3e-11ed-9b80-5254004d77d3",
                     "sortorder": 5,
                     "source_identifier_id": null,
@@ -381,9 +302,7 @@
                         "label": "Distribution Permitted"
                     },
                     "id": "63f69456-f65b-430c-bbc2-7cd71e4d03ed",
-                    "label": {
-                        "en": "Distribution Permitted"
-                    },
+                    "label": { "en": "Distribution Permitted" },
                     "node_id": "a5f5cc8c-c40c-11ed-82cd-5254004d77d3",
                     "sortorder": 1,
                     "source_identifier_id": null,
@@ -394,24 +313,17 @@
                     "card_id": "66575824-fa2d-4657-8c09-62e13a1ed6e5",
                     "config": {
                         "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
+                            "en": { "direction": "ltr", "value": "" }
                         },
                         "i18n_properties": ["placeholder"],
                         "label": "Other Journal or Volume",
                         "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
+                        "placeholder": { "en": "Enter text" },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "75e7a802-c844-449d-8a76-8915ba00da70",
-                    "label": {
-                        "en": "Other Journal or Volume"
-                    },
+                    "label": { "en": "Other Journal or Volume" },
                     "node_id": "553a3d1a-bc36-11ed-a2df-5254004d77d3",
                     "sortorder": 4,
                     "source_identifier_id": null,
@@ -421,32 +333,8 @@
                 {
                     "card_id": "28a2d308-2ac6-44ac-86ea-02b537b88acf",
                     "config": {
-                        "defaultValue": "59e073cc-89fb-4e8c-a69a-ac68923486de",
-                        "i18n_properties": ["placeholder"],
-                        "label": "Publication Identifier Type",
-                        "options": [],
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "813efb84-3f90-41f7-9990-fe5cd01698df",
-                    "label": {
-                        "en": "Publication Identifier Type"
-                    },
-                    "node_id": "76eeb332-c410-11ed-81a5-5254004d77d3",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000002"
-                },
-                {
-                    "card_id": "28a2d308-2ac6-44ac-86ea-02b537b88acf",
-                    "config": {
                         "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
+                            "en": { "direction": "ltr", "value": "" }
                         },
                         "i18n_properties": ["placeholder"],
                         "label": "Publication Identifier",
@@ -458,14 +346,27 @@
                         "width": "100%"
                     },
                     "id": "86a29c4f-7516-493d-95bc-233f1a2280d3",
-                    "label": {
-                        "en": "Publication Identifier"
-                    },
+                    "label": { "en": "Publication Identifier" },
                     "node_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "28a2d308-2ac6-44ac-86ea-02b537b88acf",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Publication Identifier Type",
+                        "placeholder": { "en": "Select an option" }
+                    },
+                    "id": "a109d97e-c063-45da-b328-71a1f906f633",
+                    "label": { "en": "Publication Identifier Type" },
+                    "node_id": "3604650c-2978-464a-83bb-fd559f7b9ea8",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "9f210d2f-e74a-11e6-84a6-026d961c88e6",
@@ -477,9 +378,7 @@
                         "rerender": true
                     },
                     "id": "a41054eb-e371-4c68-bda9-8d5d3e727885",
-                    "label": {
-                        "en": "Publication File"
-                    },
+                    "label": { "en": "Publication File" },
                     "node_id": "9f210d2d-e74a-11e6-84a6-026d961c88e6",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -490,24 +389,17 @@
                     "card_id": "a5f5ca84-c40c-11ed-82cd-5254004d77d3",
                     "config": {
                         "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
+                            "en": { "direction": "ltr", "value": "" }
                         },
                         "i18n_properties": ["placeholder"],
                         "label": "Agreement Text",
                         "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
+                        "placeholder": { "en": "Enter text" },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "a413df97-9682-4067-a218-4443f75c32bb",
-                    "label": {
-                        "en": "Agreement Text"
-                    },
+                    "label": { "en": "Agreement Text" },
                     "node_id": "a5f5d6fa-c40c-11ed-82cd-5254004d77d3",
                     "sortorder": 2,
                     "source_identifier_id": null,
@@ -519,14 +411,10 @@
                     "config": {
                         "i18n_properties": ["placeholder"],
                         "label": "Copyright Type",
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
+                        "placeholder": { "en": "Select an option" }
                     },
                     "id": "be6a9d5d-6d7f-4eb0-bc6e-527652ce3ce2",
-                    "label": {
-                        "en": "Copyright Type"
-                    },
+                    "label": { "en": "Copyright Type" },
                     "node_id": "a5f5c7b4-c40c-11ed-82cd-5254004d77d3",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -537,24 +425,17 @@
                     "card_id": "66575824-fa2d-4657-8c09-62e13a1ed6e5",
                     "config": {
                         "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
+                            "en": { "direction": "ltr", "value": "" }
                         },
                         "i18n_properties": ["placeholder"],
                         "label": "Publication Remarks",
                         "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
+                        "placeholder": { "en": "Enter text" },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "bfe8af14-7cb2-4749-a072-0720a0245095",
-                    "label": {
-                        "en": "Publication Remarks"
-                    },
+                    "label": { "en": "Publication Remarks" },
                     "node_id": "289599a4-e307-4635-959e-7e415b0e8ec4",
                     "sortorder": 7,
                     "source_identifier_id": null,
@@ -567,14 +448,10 @@
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
                         "label": "Repository",
-                        "placeholder": {
-                            "en": ""
-                        }
+                        "placeholder": { "en": "" }
                     },
                     "id": "d947eaec-7bc0-435d-8e99-8ad4d6211505",
-                    "label": {
-                        "en": "Repository"
-                    },
+                    "label": { "en": "Repository" },
                     "node_id": "68b9813a-be01-11ed-8b5e-5254004d77d3",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -587,14 +464,10 @@
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
                         "label": "Collection Events",
-                        "placeholder": {
-                            "en": ""
-                        }
+                        "placeholder": { "en": "" }
                     },
                     "id": "dcd0b3c9-6f90-4633-a496-3b5df7e4053e",
-                    "label": {
-                        "en": "Collection Events"
-                    },
+                    "label": { "en": "Collection Events" },
                     "node_id": "10517634-be00-11ed-b38b-5254004d77d3",
                     "sortorder": 2,
                     "source_identifier_id": null,
@@ -610,24 +483,16 @@
                         "label": "Page Range End",
                         "max": "",
                         "min": "",
-                        "placeholder": {
-                            "en": "Enter number"
-                        },
+                        "placeholder": { "en": "Enter number" },
                         "precision": "0",
-                        "prefix": {
-                            "en": ""
-                        },
+                        "prefix": { "en": "" },
                         "step": "",
-                        "suffix": {
-                            "en": ""
-                        },
+                        "suffix": { "en": "" },
                         "uneditable": false,
                         "width": "100%"
                     },
                     "id": "e0d389ae-98c5-49e5-8816-4575be4fe4b0",
-                    "label": {
-                        "en": "Page Range End"
-                    },
+                    "label": { "en": "Page Range End" },
                     "node_id": "2d410f4c-bc3f-11ed-a483-5254004d77d3",
                     "sortorder": 6,
                     "source_identifier_id": null,
@@ -656,9 +521,7 @@
                 }
             ],
             "color": "rgba(37,168,152,1)",
-            "config": {
-                "nodes": ["9f210d2d-e74a-11e6-84a6-026d961c88e6"]
-            },
+            "config": { "nodes": ["9f210d2d-e74a-11e6-84a6-026d961c88e6"] },
             "deploymentdate": null,
             "deploymentfile": null,
             "description": {
@@ -673,16 +536,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
                     "rangenode_id": "289599a4-e307-4635-959e-7e415b0e8ec4",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
-                    "edgeid": "14bd9c80-aa17-4697-aab9-cd80ec250aab",
-                    "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "rangenode_id": "76eeb332-c410-11ed-81a5-5254004d77d3",
                     "source_identifier_id": null
                 },
                 {
@@ -897,6 +750,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
+                    "edgeid": "dc3a32ea-db2f-42ca-95c4-60f9ae2843e8",
+                    "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "3604650c-2978-464a-83bb-fd559f7b9ea8",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "037c8f98-be00-11ed-8b5e-5254004d77d3",
                     "edgeid": "e8497aaf-60ef-4423-bfde-d6ce6bca3f37",
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
@@ -931,9 +794,7 @@
             "is_copy_immutable": false,
             "isresource": true,
             "jsonldcontext": null,
-            "name": {
-                "en": "Publication"
-            },
+            "name": { "en": "Publication" },
             "nodegroups": [
                 {
                     "cardinality": "1",
@@ -988,9 +849,7 @@
             "nodes": [
                 {
                     "alias": "reference_link",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "semantic",
                     "description": null,
                     "exportable": false,
@@ -1049,9 +908,7 @@
                 },
                 {
                     "alias": "title",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "string",
                     "description": null,
                     "exportable": true,
@@ -1133,9 +990,7 @@
                 },
                 {
                     "alias": "page_range_end",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "number",
                     "description": null,
                     "exportable": false,
@@ -1152,6 +1007,33 @@
                     "nodeid": "2d410f4c-bc3f-11ed-a483-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P9_consists_of",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "publication_identifier_type",
+                    "config": {
+                        "controlledList": "82d2b088-5de3-4b4b-8102-602950365a25",
+                        "multiValue": false,
+                        "rdmCollection": null
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Publication Identifier Type",
+                    "nodegroup_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
+                    "nodeid": "3604650c-2978-464a-83bb-fd559f7b9ea8",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -1181,9 +1063,7 @@
                 },
                 {
                     "alias": "year_of_publication",
-                    "config": {
-                        "dateFormat": "YYYY"
-                    },
+                    "config": { "dateFormat": "YYYY" },
                     "datatype": "date",
                     "description": null,
                     "exportable": true,
@@ -1206,9 +1086,7 @@
                 },
                 {
                     "alias": "other_journal_or_volume_name",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "string",
                     "description": "The the Journal or Volume is not present in the list it can be entered in this field. Values in this field should be added to the Journal or Volume Name if they are acceptable by FMO.",
                     "exportable": true,
@@ -1231,9 +1109,7 @@
                 },
                 {
                     "alias": "publication_identifier",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "string",
                     "description": null,
                     "exportable": false,
@@ -1257,13 +1133,9 @@
                 {
                     "alias": "other_authors_unlisted",
                     "config": {
-                        "falseLabel": {
-                            "en": "Author list complete"
-                        },
+                        "falseLabel": { "en": "Author list complete" },
                         "i18n_properties": ["trueLabel", "falseLabel"],
-                        "trueLabel": {
-                            "en": "Additional unlisted authors"
-                        }
+                        "trueLabel": { "en": "Additional unlisted authors" }
                     },
                     "datatype": "boolean",
                     "description": null,
@@ -1317,29 +1189,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
                     "sortorder": 2,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "publication_identifier_type",
-                    "config": {},
-                    "datatype": "concept",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Publication Identifier Type",
-                    "nodegroup_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
-                    "nodeid": "76eeb332-c410-11ed-81a5-5254004d77d3",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1426,13 +1275,9 @@
                 {
                     "alias": "distribution_permitted",
                     "config": {
-                        "falseLabel": {
-                            "en": "No"
-                        },
+                        "falseLabel": { "en": "No" },
                         "i18n_properties": ["trueLabel", "falseLabel"],
-                        "trueLabel": {
-                            "en": "Yes"
-                        }
+                        "trueLabel": { "en": "Yes" }
                     },
                     "datatype": "boolean",
                     "description": null,
@@ -1456,9 +1301,7 @@
                 },
                 {
                     "alias": "distribution_agreement",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "semantic",
                     "description": null,
                     "exportable": false,
@@ -1509,9 +1352,7 @@
                 },
                 {
                     "alias": "agreement_text",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "string",
                     "description": null,
                     "exportable": false,
@@ -1756,9 +1597,7 @@
                 },
                 {
                     "alias": "page_range_start",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "number",
                     "description": null,
                     "exportable": false,
@@ -1781,9 +1620,7 @@
                 },
                 {
                     "alias": "publication_details",
-                    "config": {
-                        "en": ""
-                    },
+                    "config": { "en": "" },
                     "datatype": "semantic",
                     "description": null,
                     "exportable": false,
@@ -1809,29 +1646,23 @@
             "publication": {
                 "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                 "most_recent_edit_id": null,
-                "notes": "Reorder remarks node",
-                "publicationid": "c56cb7c7-2de4-4d58-9cb4-d715b212c81d",
-                "published_time": "2026-05-13T16:06:11.326"
+                "notes": "Change publication identifier type to reference",
+                "publicationid": "f8e0f7ff-66ca-4ed6-a731-2520dbbec6d3",
+                "published_time": "2026-07-27T14:52:40.655"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
             "resource_instance_lifecycle": {
                 "id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75",
-                "name": {
-                    "en": "Standard"
-                },
+                "name": { "en": "Standard" },
                 "resource_instance_lifecycle_states": [
                     {
-                        "action_label": {
-                            "en": "Revert to Draft"
-                        },
+                        "action_label": { "en": "Revert to Draft" },
                         "can_delete_resource_instances": true,
                         "can_edit_resource_instances": true,
                         "id": "9375c9a7-dad2-4f14-a5c1-d7e329fdde4f",
                         "is_initial_state": true,
-                        "name": {
-                            "en": "Draft"
-                        },
+                        "name": { "en": "Draft" },
                         "next_resource_instance_lifecycle_states": [
                             "f75bb034-36e3-4ab4-8167-f520cf0b4c58"
                         ],
@@ -1839,16 +1670,12 @@
                         "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
                     },
                     {
-                        "action_label": {
-                            "en": "Make Active"
-                        },
+                        "action_label": { "en": "Make Active" },
                         "can_delete_resource_instances": false,
                         "can_edit_resource_instances": true,
                         "id": "f75bb034-36e3-4ab4-8167-f520cf0b4c58",
                         "is_initial_state": false,
-                        "name": {
-                            "en": "Active"
-                        },
+                        "name": { "en": "Active" },
                         "next_resource_instance_lifecycle_states": [
                             "d95d9c0e-0e2c-4450-93a3-d788b91abcc8"
                         ],
@@ -1858,16 +1685,12 @@
                         "resource_instance_lifecycle_id": "7e3cce56-fbfb-4a4b-8e83-59b9f9e7cb75"
                     },
                     {
-                        "action_label": {
-                            "en": "Retire"
-                        },
+                        "action_label": { "en": "Retire" },
                         "can_delete_resource_instances": false,
                         "can_edit_resource_instances": false,
                         "id": "d95d9c0e-0e2c-4450-93a3-d788b91abcc8",
                         "is_initial_state": false,
-                        "name": {
-                            "en": "Retired"
-                        },
+                        "name": { "en": "Retired" },
                         "next_resource_instance_lifecycle_states": [],
                         "previous_resource_instance_lifecycle_states": [
                             "f75bb034-36e3-4ab4-8167-f520cf0b4c58"
@@ -1911,7 +1734,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "d5a4f8fb2c 2026-04-22 06:33:18 -0700",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }
