@@ -614,28 +614,28 @@ sql_items = [
     # -----------------------------------------------------------------------
     SQLItem(
         "databc_hca_permit",
-        format_sql("sql/views/databc_hca_permit.sql"),
+        format_sql("sql/views/databc/vw_hca_permit.sql"),
         reverse_sql="DROP VIEW IF EXISTS databc.vw_hca_permit;",
         replace=True,
         dependencies=[("bcap", "per_flat_views")],
     ),
     SQLItem(
         "databc_publication",
-        format_sql("sql/views/databc_publication.sql"),
+        format_sql("sql/views/databc/vw_publication.sql"),
         reverse_sql="DROP VIEW IF EXISTS databc.vw_publication;",
         replace=True,
         dependencies=[("bcap", "pub_flat_views")],
     ),
     SQLItem(
         "databc_repository",
-        format_sql("sql/views/databc_repository.sql"),
+        format_sql("sql/views/databc/vw_repository.sql"),
         reverse_sql="DROP VIEW IF EXISTS databc.vw_repository;",
         replace=True,
         dependencies=[("bcap", "rep_flat_views")],
     ),
     SQLItem(
         "databc_archaeological_site",
-        format_sql("sql/views/databc_archaeological_site.sql"),
+        format_sql("sql/views/databc/vw_archaeological_site.sql"),
         reverse_sql=(
             "DROP VIEW IF EXISTS databc.vw_archaeological_site;\n"
             "DROP VIEW IF EXISTS databc.vw_archaeological_site_site_location;\n"
@@ -646,7 +646,7 @@ sql_items = [
     ),
     SQLItem(
         "databc_site_visit",
-        format_sql("sql/views/databc_site_visit.sql"),
+        format_sql("sql/views/databc/vw_site_visit.sql"),
         reverse_sql=(
             "DROP VIEW IF EXISTS databc.vw_site_visit;\n"
             "DROP VIEW IF EXISTS databc.vw_site_visit_location;"

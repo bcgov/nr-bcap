@@ -10,12 +10,11 @@ Output goes to:      migrations/sql/materialized_views/
 Usage:
     # Regenerate SQL from existing specs (most common after a manual spec edit):
     python manage.py generate_databc_views
-    python manage.py generate_databc_views sv
-    python manage.py generate_databc_views as
+    python manage.py generate_databc_views [ sv | as | per | pub | rep ]
 
     # Regenerate specs from the live database, THEN regenerate SQL:
     python manage.py generate_databc_views --from-db
-    python manage.py generate_databc_views --from-db sv
+    python manage.py generate_databc_views --from-db [ sv | as | per | pub | rep ]
 
 Workflow when the Arches graph model changes:
     1. Run with --from-db to pull the current node/nodegroup structure from the DB.
@@ -28,7 +27,6 @@ Workflow when the Arches graph model changes:
     5. Create a new migration (django_migrate_sql detects the diff via makemigrations).
     6. Commit specs, SQL, and migration together.
 
-Note: generate_mv_spec is the general-purpose spec generator for any graph slug.
 This command handles the full DataBC workflow end-to-end.
 """
 
