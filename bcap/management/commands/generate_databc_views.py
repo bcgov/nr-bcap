@@ -282,7 +282,9 @@ class Command(BaseCommand):
         )
         if result.returncode != 0:
             self.stderr.write(
-                self.style.WARNING(f"  black could not format {path}:\n{result.stderr.strip()}")
+                self.style.WARNING(
+                    f"  black could not format {path}:\n{result.stderr.strip()}"
+                )
             )
 
     def _date_format(self, node):
