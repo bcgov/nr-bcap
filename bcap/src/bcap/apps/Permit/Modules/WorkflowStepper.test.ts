@@ -28,8 +28,10 @@ vi.mock(
 
 // The component reads route.query; let each test set it.
 const routeQuery = vi.hoisted(() => ({ value: {} as Record<string, string> }));
+const routerPush = vi.fn();
 vi.mock('vue-router', () => ({
     useRoute: () => ({ query: routeQuery.value }),
+    useRouter: () => ({ push: routerPush }),
 }));
 
 const StubStep = { template: '<div />' };
@@ -49,6 +51,7 @@ const mountStepper = () =>
 
 type StepperVm = {
     submitFiling: () => Promise<boolean>;
+    saveAndExit: () => Promise<void>;
     state: {
         isDataLoaded: boolean;
         finalizedResourceData: unknown;
@@ -137,6 +140,36 @@ describe('WorkflowStepper.vue', () => {
         expect(submitModule).toHaveBeenCalled();
         expect(vm.state.submissionErrors).toHaveLength(1);
         expect(vm.state.submissionErrors[0].message).toBe('nope');
+    });
+
+    it('saves the draft and returns to the parent permit on save and exit', async () => {
+        routeQuery.value = { permitId: 'permit-1' };
+
+        const wrapper = mountStepper();
+        await flushPromises();
+        const store = useDraftStore();
+        store.loadDraft('draft-7', { x: 1 });
+        const saveNow = vi.spyOn(store, 'saveNow').mockResolvedValue();
+
+        await (wrapper.vm as unknown as StepperVm).saveAndExit();
+
+        expect(saveNow).toHaveBeenCalled();
+        expect(routerPush).toHaveBeenCalledWith({
+            name: 'permitDetails',
+            params: { id: 'permit-1' },
+        });
+    });
+
+    it('exits to the dashboard when the filing has no parent permit', async () => {
+        routeQuery.value = {};
+
+        const wrapper = mountStepper();
+        await flushPromises();
+        vi.spyOn(useDraftStore(), 'saveNow').mockResolvedValue();
+
+        await (wrapper.vm as unknown as StepperVm).saveAndExit();
+
+        expect(routerPush).toHaveBeenCalledWith({ name: 'root' });
     });
 
     it('refuses to submit without an active draft', async () => {

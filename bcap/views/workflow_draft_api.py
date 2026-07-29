@@ -14,13 +14,13 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
 from arches.app.models.models import ResourceInstance
 from arches.app.utils.permission_backend import user_can_edit_resource
-from arches_querysets.rest_framework.permissions import ResourceEditor
 
 from bcap.services.workflow_draft_service import (
     DraftRecord,
@@ -54,9 +54,9 @@ class DraftWriteSerializer(serializers.Serializer):
 
 class WorkflowDraftBaseView(APIView):
     authentication_classes = [SessionAuthentication]
-    # Drafts are personal scratch data -- every verb (incl. GET) requires the
-    # editor role; owner-scoping in WorkflowDraftService then limits each editor to their own.
-    permission_classes = [ResourceEditor]
+    # Drafts are personal scratch data -- every verb (incl. GET) owner-scoping in
+    # WorkflowDraftService then limits an applicant to their own.
+    permission_classes = [IsAuthenticated]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

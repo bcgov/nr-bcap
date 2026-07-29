@@ -131,6 +131,17 @@
     border-bottom: 2px solid var(--bc-gold);
 }
 
+.bc-step-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.bc-step-actions .save-exit {
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
 .bc-step-eyebrow {
     /* Same fixed line box as the rail label so the two line up when the eyebrow
        is the header's first line (every step past the first). */

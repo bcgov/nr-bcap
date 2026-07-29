@@ -428,9 +428,7 @@ watch(activeModuleId, (id) => {
                         class="investigation-lists"
                     >
                         <section
-                            v-if="
-                                !isStaff && state.investigationDrafts.length > 0
-                            "
+                            v-if="state.investigationDrafts.length > 0"
                             class="draft-modules"
                         >
                             <h2 class="list-heading">Draft modules</h2>
@@ -495,10 +493,22 @@ watch(activeModuleId, (id) => {
                                                     },
                                                 }"
                                             >
-                                                <i class="fa-solid fa-pen"></i>
-                                                Resume draft
+                                                <i
+                                                    class="fa-solid"
+                                                    :class="
+                                                        isStaff
+                                                            ? 'fa-eye'
+                                                            : 'fa-pen'
+                                                    "
+                                                ></i>
+                                                {{
+                                                    isStaff
+                                                        ? 'View draft'
+                                                        : 'Resume draft'
+                                                }}
                                             </router-link>
                                             <Button
+                                                v-if="!isStaff"
                                                 class="draft-delete"
                                                 icon="fa-solid fa-trash"
                                                 label="Remove"

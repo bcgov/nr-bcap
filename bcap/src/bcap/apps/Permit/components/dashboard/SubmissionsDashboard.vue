@@ -163,10 +163,18 @@ const filteredProjects = computed(() => {
     if (!searchQuery.value) return submittedProjects.value;
     const lowerQuery = searchQuery.value.toLowerCase();
 
-    return submittedProjects.value.filter((project) => {
-        const title = project.project_name || 'Untitled Application';
-        return title.toLowerCase().includes(lowerQuery);
-    });
+    return submittedProjects.value.filter((project) =>
+        [
+            project.project_name || 'Untitled Application',
+            project.application_number,
+            project.permit_number,
+            project.submission_type,
+            project.industrial_sector,
+        ]
+            .join(' ')
+            .toLowerCase()
+            .includes(lowerQuery),
+    );
 });
 
 const cardDate = (iso: string) =>

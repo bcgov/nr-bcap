@@ -122,6 +122,14 @@ export const useDraftStore = defineStore('draft', () => {
         return draftCreation;
     }
 
+    async function saveNow() {
+        debouncedSave.cancel();
+        if (!draftId.value && !Object.keys(draftData.value).length) return;
+        const id = await ensureDraftId();
+        if (id)
+            await saveDraftFieldToBackend(id, graphSlug.value, draftData.value);
+    }
+
     function updateValue(
         newValue: AliasedNodeData,
         attribute_name: string,
@@ -144,6 +152,7 @@ export const useDraftStore = defineStore('draft', () => {
         initDraft,
         loadDraft,
         ensureDraftId,
+        saveNow,
         updateValue,
     };
 });

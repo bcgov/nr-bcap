@@ -21,6 +21,7 @@ from arches.app.models.resource import Resource
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.workflow_drafts import WorkflowDraftsAliases
+from bcap.util.auth.groups import is_internal_user
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import get_current_graph
 
@@ -47,10 +48,11 @@ class WorkflowDraftService(BaseGraphService):
     the dashboard can page the same rows the API returns."""
 
     def queryset(self, user, graph_slug=None):
-        """The user's drafts (superusers see all), oldest first. Filters by the
-        target graph in SQL so callers can page without loading every draft."""
+        """The user's drafts, oldest first, or everyone's for branch staff.
+        Filters by the target graph in SQL so callers can page without loading
+        every draft."""
         qs = ResourceInstance.objects.filter(graph__slug=GraphSlugs.WORKFLOW_DRAFTS)
-        if not user.is_superuser:
+        if not is_internal_user(user):
             qs = qs.filter(principaluser=user)
         if graph_slug is not None:
             nodeid, ngid = self._node_info(

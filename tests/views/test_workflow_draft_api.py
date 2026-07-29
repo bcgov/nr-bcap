@@ -1,7 +1,7 @@
 """Tests for the generic per-user draft endpoints: a resource editor can POST a
 draft, PATCH-merge sections into it, PUT-replace the whole blob, and DELETE it;
-drafts are owner-scoped (superusers excepted), and the graph publication is
-stamped on create so a stale draft can be detected. Drafts are stored as
+drafts are owner-scoped for external applicants (ministry staff see all), and the
+graph publication is stamped on create so a stale draft can be detected. Drafts are stored as
 resources of the 'drafts' graph (see WorkflowDraftService), not a bespoke table."""
 
 import json
@@ -37,7 +37,15 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         cls.other_editor = User.objects.create_user(username="editor2", password="pass")
         cls.editor.groups.add(editors)
         cls.other_editor.groups.add(editors)
-        # cls.user (from AuthTestHelper) is intentionally not a Resource Editor.
+        # External applicants: unlike staff they only ever see their own drafts.
+        submitters = Group.objects.get(name="Submitter")
+        cls.applicant = User.objects.create_user(username="applicant1", password="pass")
+        cls.other_applicant = User.objects.create_user(
+            username="applicant2", password="pass"
+        )
+        cls.applicant.groups.add(submitters)
+        cls.other_applicant.groups.add(submitters)
+        # cls.user (from AuthTestHelper) intentionally holds neither role.
 
     def setUp(self):
         super().setUp()
@@ -144,18 +152,22 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(self._read(draft_id).updated, t2)
 
-    def test_list_is_owner_scoped_but_superuser_sees_all(self):
-        mine = self._create_draft()
-        self._create_draft(user=self.other_editor)
-        # Editor sees only their own draft; superuser sees both.
+    def test_applicant_list_is_owner_scoped_but_staff_see_all(self):
+        self.idir_login_simulate(self.applicant)
+        resp = self._post({"data": {"step1": {"x": 1}}})
+        self.assertEqual(resp.status_code, 201)
+        mine = resp.json()["id"]
+        self._create_draft(user=self.other_applicant)
+        # The applicant sees only their own draft; staff see both.
         resp = self.client.get(self.list_url)
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual({row["id"] for row in resp.json()}, {mine.id})
-        self.idir_login_simulate(self.admin)
+        self.assertEqual({row["id"] for row in resp.json()}, {mine})
+        self.idir_login_simulate(self.editor)
         self.assertEqual(len(self.client.get(self.list_url).json()), 2)
 
     def test_non_owner_cannot_access_draft(self):
-        others = self._create_draft(user=self.other_editor, data={"step1": {"x": 1}})
+        self.idir_login_simulate(self.applicant)
+        others = self._create_draft(user=self.other_applicant, data={"step1": {"x": 1}})
         url = self._detail_url(others.id)
         body = json.dumps({"data": {"step2": {"y": 2}}})
         for resp in (
@@ -228,8 +240,12 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.json()["parent_resource_id"], str(parent.pk))
 
-    def test_without_resource_editor_role_is_forbidden(self):
-        # Drafts are editor-only on every verb, reads included.
+    def test_drafts_need_no_role_but_do_need_a_login(self):
+        # Any signed-in user may keep drafts; owner scoping is what separates
+        # them, not a role.
         self.idir_login_simulate(self.user)
-        self.assertEqual(self._post({"data": {}}).status_code, 403)
-        self.assertEqual(self.client.get(self.list_url).status_code, 403)
+        self.assertEqual(self._post({"data": {}}).status_code, 201)
+        # Anonymous never reaches the view: auth middleware bounces it to login.
+        self.client.logout()
+        self.assertEqual(self._post({"data": {}}).status_code, 302)
+        self.assertEqual(self.client.get(self.list_url).status_code, 302)
