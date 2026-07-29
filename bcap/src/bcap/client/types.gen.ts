@@ -2133,6 +2133,10 @@ export type ExternalDashboardCard = {
      */
     submission_date?: string;
     /**
+     * ISO timestamp of the last save; only drafts carry one.
+     */
+    updated_date?: string;
+    /**
      * Permit application's project name.
      */
     project_name?: string;

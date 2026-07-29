@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import Button from 'primevue/button';
+import Menu from 'primevue/menu';
 import QuestionDialog from '@/bcap/apps/Permit/components/common/QuestionDialogExternal.vue';
 import {
     STATUS_ICON,
@@ -11,7 +13,7 @@ import {
     type RequirementItem,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
 
-defineProps<{
+const props = defineProps<{
     requirement: RequirementItem;
     moduleId: string;
     permitId: string;
@@ -24,11 +26,46 @@ defineProps<{
     canViewSubmission?: boolean;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
     (event: 'toggle'): void;
     (event: 'remove'): void;
     (event: 'view-submission'): void;
 }>();
+
+const moreMenu = ref();
+
+// The secondary actions; the destructive one is separated and styled by class.
+const moreItems = computed(() => [
+    {
+        label: 'View in Arches',
+        icon: 'fa-solid fa-share-from-square',
+        url: `/bcap/resource/${props.requirement.resourceId}`,
+        target: '_blank',
+    },
+    ...(isChecklist(props.requirement.type)
+        ? [
+              {
+                  label: 'Edit checklist (manager only)',
+                  icon: 'fa-solid fa-pen-to-square',
+                  url: withPermitContext(
+                      editChecklistHref(props.requirement.resourceId),
+                      props.permitId,
+                      props.staff,
+                  ),
+                  target: '_blank',
+              },
+          ]
+        : []),
+    {
+        separator: true,
+    },
+    {
+        label: 'Delete requirement',
+        icon: 'fa-solid fa-trash',
+        class: 'req-more-danger',
+        command: () => emit('remove'),
+    },
+]);
 </script>
 
 <template>
@@ -65,15 +102,20 @@ defineEmits<{
         >
             {{ requirement.type }}
         </span>
-        <QuestionDialog
+        <!-- Wrapped because the dialog component has two roots, so a class on it
+             is dropped rather than landing on the trigger. -->
+        <span
             v-if="applicationId && requirement.resourceId"
-            :key="requirement.resourceId"
             class="req-messages"
-            :application-id="applicationId"
-            :resource-id="requirement.resourceId"
-            :context="requirement.name"
-            :context-id="moduleId"
-        />
+        >
+            <QuestionDialog
+                :key="requirement.resourceId"
+                :application-id="applicationId"
+                :resource-id="requirement.resourceId"
+                :context="requirement.name"
+                :context-id="moduleId"
+            />
+        </span>
         <Button
             v-if="canViewSubmission && hasSubmission(requirement.type)"
             type="button"
@@ -84,43 +126,29 @@ defineEmits<{
             View Submission
         </Button>
         <template v-if="isStaff && requirement.resourceId">
-            <template v-if="isChecklist(requirement.type)">
-                <a
-                    class="req-action"
-                    :href="
-                        withPermitContext(
-                            checklistHref(requirement.resourceId),
-                            permitId,
-                            staff,
-                        )
-                    "
-                    target="_blank"
-                    rel="noopener"
-                    title="Complete the checklist to satisfy this requirement"
-                >
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    Complete Checklist
-                </a>
-                <a
-                    class="req-action"
-                    :href="
-                        withPermitContext(
-                            editChecklistHref(requirement.resourceId),
-                            permitId,
-                            staff,
-                        )
-                    "
-                    target="_blank"
-                    rel="noopener"
-                    title="Add, remove, or reorder subrequirements"
-                >
-                    Edit Checklist (manager only)
-                </a>
-            </template>
+            <!-- The everyday action stays on the row; the rest sit behind the
+                 kebab. -->
+            <a
+                v-if="isChecklist(requirement.type)"
+                class="req-action req-primary"
+                :href="
+                    withPermitContext(
+                        checklistHref(requirement.resourceId),
+                        permitId,
+                        staff,
+                    )
+                "
+                target="_blank"
+                rel="noopener"
+                title="Complete the checklist to satisfy this requirement"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Complete Checklist
+            </a>
             <Button
                 v-else
                 type="button"
-                class="req-action req-satisfy"
+                class="req-action req-primary req-satisfy"
                 :class="{ 'is-satisfied': requirement.satisfied }"
                 :disabled="toggling === requirement.resourceId"
                 @click="$emit('toggle')"
@@ -141,21 +169,19 @@ defineEmits<{
                         : 'Mark satisfied'
                 }}
             </Button>
-            <a
-                class="req-action req-view-arches"
-                :href="`/bcap/resource/${requirement.resourceId}`"
-                target="_blank"
-                rel="noopener"
-            >
-                <i class="fa-solid fa-share-from-square"></i>
-                View Arches
-            </a>
             <Button
                 type="button"
-                class="req-remove"
-                icon="fa-solid fa-trash"
-                title="Remove requirement"
-                @click="$emit('remove')"
+                class="req-more-toggle"
+                icon="fa-solid fa-ellipsis"
+                title="More actions"
+                @click="moreMenu?.toggle($event)"
+            />
+            <Menu
+                ref="moreMenu"
+                :model="moreItems"
+                popup
+                append-to="body"
+                class="req-more-menu"
             />
         </template>
     </span>
@@ -220,12 +246,19 @@ defineEmits<{
     white-space: nowrap;
 }
 
+/* Every action on the row shares this box model -- padding, border, font and
+   line-height -- so they come out the same height without a fixed one. */
 .req-action {
-    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.2;
     font-weight: 600;
     color: var(--bc-navy);
     text-decoration: none;
-    padding: 0.25rem 0.65rem;
+    padding: 0.7rem 1.2rem;
     border: 1px solid var(--bc-border);
     border-radius: 6px;
     background: #ffffff;
@@ -240,13 +273,10 @@ defineEmits<{
     text-decoration: none;
 }
 
-/* Buttons styled as req-actions; the icon needs the shared inline spacing. */
+/* Buttons styled as req-actions; the layout comes from .req-action above. */
 .req-satisfy,
 .req-view-arches,
 .req-view-submission {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
     cursor: pointer;
     font-family: inherit;
 }
@@ -269,37 +299,121 @@ defineEmits<{
     cursor: not-allowed;
 }
 
-/* The shared Messages trigger is footer-sized; match the row actions instead. */
+/* The shared Messages trigger is footer-sized; give it the row's box model. */
 .req-messages :deep(.trigger-btn) {
-    padding: 0.25rem 0.65rem;
+    box-sizing: border-box;
+    padding: 0.7rem 1.2rem;
     border-width: 1px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 1.2;
     font-weight: 600;
-    line-height: 1.4;
-    gap: 0.35rem;
+    gap: 0.4rem;
 }
 
 .req-messages :deep(.trigger-btn i) {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .req-messages :deep(.message-badge) {
     font-size: 10px;
 }
 
-.req-remove {
-    background: none;
-    border: none;
-    color: #c8102e;
-    cursor: pointer;
-    font-size: 13px;
-    padding: 0.25rem 0.35rem;
-    border-radius: 4px;
-    transition: background-color 0.15s ease;
+.req-primary {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+    color: #ffffff;
 }
 
-.req-remove:hover {
-    background-color: #fde8ea;
+.req-primary:hover {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+    color: #ffffff;
+}
+
+.req-more-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0.7rem 1rem;
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--bc-navy);
+    border: 1px solid var(--bc-border);
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.req-more-toggle:hover {
+    background: var(--bc-panel);
+    border-color: var(--bc-navy);
+}
+</style>
+
+<style>
+/* The popup teleports to <body>, so its rules can't be scoped. Styled to match
+   the dashboard's sort menu. */
+.req-more-menu {
+    min-width: 24rem;
+    padding: 0.35rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16);
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+
+.req-more-menu,
+.req-more-menu * {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+    --p-focus-ring: none !important;
+    --p-focus-ring-width: 0px !important;
+    --p-focus-ring-color: transparent !important;
+    --p-focus-ring-offset: 0px !important;
+    --p-focus-ring-shadow: none !important;
+}
+
+/* Restored after the reset above, which strips every border colour. */
+.req-more-menu {
+    border-color: #e5e7eb !important;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16) !important;
+}
+
+.req-more-menu .p-menu-separator {
+    border-top: 1px solid #e5e7eb !important;
+    margin: 0.35rem 0;
+}
+
+.req-more-menu .p-menu-item-link {
+    padding: 0.75rem 1.35rem;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--bc-navy);
+    text-decoration: none;
+}
+
+.req-more-menu .p-menu-item-icon {
+    width: 1.6rem;
+    margin-right: 0.75rem;
+    font-size: 13px;
+    color: inherit;
+}
+
+.req-more-menu .p-menu-item-link:hover {
+    background: var(--bc-navy);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.req-more-menu .req-more-danger .p-menu-item-link {
+    color: #c8102e;
+}
+
+.req-more-menu .req-more-danger .p-menu-item-link:hover {
+    background: #c8102e;
+    color: #ffffff;
 }
 </style>

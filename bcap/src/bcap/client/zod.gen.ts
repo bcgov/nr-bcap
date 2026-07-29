@@ -206,6 +206,7 @@ export const zExternalDashboardCard = z.object({
     created_by_name: z.string().optional(),
     created_date: z.string().optional(),
     submission_date: z.string().optional(),
+    updated_date: z.string().optional(),
     project_name: z.string().optional(),
     application_number: z.string().optional(),
     submission_type: z.string().optional(),

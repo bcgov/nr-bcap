@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
-import {
-    fetchPermitDetails,
-    patchPermitSubmissionDate,
-    fetchDrafts,
-} from '@/bcap/apps/Permit/api.ts';
+import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 
@@ -125,26 +121,13 @@ describe('PermitDetails.vue', () => {
         expect(wrapper.find('.permit-meta').text()).toBe('APP-001 · Forestry');
     });
 
-    it('calls patchPermitSubmissionDate when the Submit Permit button is clicked', async () => {
+    it('has no submit action in the header band', async () => {
         const wrapper = mount(PermitDetails, globalMountOptions);
 
         await flushPromises();
 
-        // The button will safely exist now!
-        const submitBtn = wrapper.find('.header-submit-btn');
-        expect(submitBtn.exists()).toBe(true);
-        expect(submitBtn.text()).toBe('Submit Permit');
-
-        await submitBtn.trigger('click');
-        await flushPromises();
-
-        expect(patchPermitSubmissionDate).toHaveBeenCalledWith(
-            'mock-permit-123',
-            expect.objectContaining({
-                tileid: 'mock-tile-123',
-                aliased_data: expect.any(Object),
-            }),
-        );
+        // Submitting happens in the workflow, not from the permit header.
+        expect(wrapper.find('.header-submit-btn').exists()).toBe(false);
     });
 
     it('navigates to a new module when "Add module" is clicked', async () => {

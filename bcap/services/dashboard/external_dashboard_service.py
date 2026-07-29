@@ -1,6 +1,7 @@
 from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
+from bcap.services.message.bcap_message_service import BcapMessageService
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
@@ -136,11 +137,18 @@ class ExternalDashboardService(BaseDashboardService):
         count, page = self._page(
             store.queryset(user, GraphSlugs.PERMIT_APPLICATION), query
         )
-        return count, [self._draft_card(store.to_record(r), user) for r in page]
+        drafts = [store.to_record(draft) for draft in page]
+        unread = BcapMessageService().unread_counts_by_context(
+            {draft.id for draft in drafts}, user.username
+        )
+        return count, [
+            self._draft_card(draft, user, unread.get(draft.id, 0)) for draft in drafts
+        ]
 
-    def _draft_card(self, draft, user):
+    def _draft_card(self, draft, user, unread_messages=0):
         ident = self._group_aliased_data(
-            draft.data, PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION
+            {"aliased_data": draft.data},
+            PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
         )
         return ExternalDashboardCard(
             id=draft.id,
@@ -148,9 +156,9 @@ class ExternalDashboardService(BaseDashboardService):
             status="Submission Required",
             created_by_name=display_name(user),
             created_date=to_iso(draft.created),
+            updated_date=to_iso(draft.updated),
             project_name=self._display_text(ident.get(self.PA.PROJECT_NAME)),
             application_number=self._display_text(ident.get(self.PA.APPLICATION_ID)),
             submission_type=self._display_text(ident.get(self.PA.FILING_TYPE)),
-            # Not implemented for drafts yet.
-            unread_messages=0,
+            unread_messages=unread_messages,
         )

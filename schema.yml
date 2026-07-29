@@ -6342,6 +6342,9 @@ components:
         submission_date:
           type: string
           description: Permit application's submission date; empty for drafts.
+        updated_date:
+          type: string
+          description: ISO timestamp of the last save; only drafts carry one.
         project_name:
           type: string
           description: Permit application's project name.

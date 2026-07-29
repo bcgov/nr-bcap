@@ -10,20 +10,19 @@ import { useGettext } from 'vue3-gettext';
 import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import SortingBar from './SortingBar.vue';
 import {
-    fetchDrafts,
+    fetchDraftCards,
     fetchMyProjects,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import type { PermitApplicationDraft } from '@/bcap/types.ts';
 import type { ModuleProgress } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
 const { $gettext } = useGettext();
 const router = useRouter();
-const savedDrafts = ref<PermitApplicationDraft[]>([]);
+const savedDrafts = ref<DashboardProject[]>([]);
 const submittedProjects = ref<DashboardProject[]>([]);
 
 interface DashboardProject {
@@ -32,6 +31,7 @@ interface DashboardProject {
     status: string;
     created_by_name: string;
     created_date: string;
+    updated_date: string;
     project_name: string;
     application_number: string;
     submission_type: string;
@@ -51,6 +51,7 @@ const activeTab = ref(EXTERNAL_TABS.includes(storedTab) ? storedTab : 'drafts');
 watch(activeTab, (tab) => localStorage.setItem(EXTERNAL_TAB_KEY, tab));
 const searchQuery = ref('');
 const currentSort = ref('default');
+const messagesOnly = ref(false);
 const sortOrder = ref<'asc' | 'desc'>('desc');
 const lastUpdated = ref(new Date());
 
@@ -84,7 +85,7 @@ const loadDashboardData = async () => {
     isLoading.value = true;
     try {
         const [draftsData, projectsData] = await Promise.all([
-            fetchDrafts(),
+            fetchDraftCards(),
             fetchMyProjects(),
         ]);
 
@@ -102,27 +103,15 @@ onMounted(() => {
     loadDashboardData();
 });
 
-const DRAFT_WORKFLOWS: Record<string, { label: string; routeName: string }> = {
-    permit_application: {
-        label: 'Permit Application Draft',
-        routeName: routeNames.baseModule,
-    },
-    investigation: {
-        label: 'Investigation Draft',
-        routeName: routeNames.investigationModule,
-    },
-};
-
-const draftWorkflow = (draft: PermitApplicationDraft) =>
-    DRAFT_WORKFLOWS[draft.graph_slug] ?? DRAFT_WORKFLOWS.permit_application;
+const DRAFT_LABEL = 'Permit Application Draft';
 
 const deleteState = reactive<{
     visible: boolean;
     busy: boolean;
-    draft: PermitApplicationDraft | null;
+    draft: DashboardProject | null;
 }>({ visible: false, busy: false, draft: null });
 
-const confirmDelete = (draft: PermitApplicationDraft) => {
+const confirmDelete = (draft: DashboardProject) => {
     deleteState.draft = draft;
     deleteState.visible = true;
 };
@@ -132,7 +121,7 @@ const performDelete = async () => {
     if (!draft) return;
     deleteState.busy = true;
     try {
-        await deleteDraft(draft.graph_slug, draft.id);
+        await deleteDraft(GraphSlug.PermitApplication, draft.id);
         savedDrafts.value = savedDrafts.value.filter((d) => d.id !== draft.id);
         deleteState.visible = false;
     } catch (error) {
@@ -143,27 +132,29 @@ const performDelete = async () => {
 };
 
 const filteredDrafts = computed(() => {
-    // Only permit application drafts belong here; investigation drafts live on
-    // the permit's detail page.
-    const drafts = savedDrafts.value.filter(
-        (draft) => draft.graph_slug === GraphSlug.PermitApplication,
-    );
+    const drafts = messagesOnly.value
+        ? savedDrafts.value.filter((draft) => (draft.unread_messages || 0) > 0)
+        : savedDrafts.value;
     if (!searchQuery.value) return drafts;
     const lowerQuery = searchQuery.value.toLowerCase();
 
-    return drafts.filter((draft) => {
-        const title =
-            draft.data?.application_identification?.aliased_data?.project_name
-                ?.node_value?.en?.value || 'Untitled Application';
-        return title.toLowerCase().includes(lowerQuery);
-    });
+    return drafts.filter((draft) =>
+        (draft.project_name || 'Untitled Application')
+            .toLowerCase()
+            .includes(lowerQuery),
+    );
 });
 
 const filteredProjects = computed(() => {
-    if (!searchQuery.value) return submittedProjects.value;
+    const projects = messagesOnly.value
+        ? submittedProjects.value.filter(
+              (project) => (project.unread_messages || 0) > 0,
+          )
+        : submittedProjects.value;
+    if (!searchQuery.value) return projects;
     const lowerQuery = searchQuery.value.toLowerCase();
 
-    return submittedProjects.value.filter((project) =>
+    return projects.filter((project) =>
         [
             project.project_name || 'Untitled Application',
             project.application_number,
@@ -220,9 +211,11 @@ const openResourceReport = (resourceId: string) => {
                 v-model:search="searchQuery"
                 v-model:current-sort="currentSort"
                 v-model:sort-order="sortOrder"
+                v-model:messages-only="messagesOnly"
                 :tabs="dashboardTabs"
                 :last-updated="lastUpdated"
                 :sort-options="sortOptions"
+                messages-only-label="Only projects with unread messages"
                 @refresh="loadDashboardData"
             />
 
@@ -303,17 +296,20 @@ const openResourceReport = (resourceId: string) => {
                             >
                                 <Card
                                     :label="
-                                        draft.data?.application_identification
-                                            ?.aliased_data?.project_name
-                                            ?.node_value?.en?.value ||
+                                        draft.project_name ||
                                         'Untitled Application'
                                     "
-                                    :description="draftWorkflow(draft).label"
-                                    :subtitle="`Last updated: ${new Date(draft.updated || draft.created || '').toLocaleDateString()}`"
+                                    :description="
+                                        draft.submission_type || DRAFT_LABEL
+                                    "
+                                    :subtitle="`Last updated: ${cardDate(
+                                        draft.updated_date ||
+                                            draft.created_date,
+                                    )}`"
                                     icon="fa fa-file-pen"
                                     class="dashboard-card ipa"
                                     :route="{
-                                        name: draftWorkflow(draft).routeName,
+                                        name: routeNames.baseModule,
                                         query: { draftId: draft.id },
                                     }"
                                 />

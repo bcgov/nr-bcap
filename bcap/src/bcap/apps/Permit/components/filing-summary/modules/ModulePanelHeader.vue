@@ -226,7 +226,6 @@ const messageStore = useMessageStore();
     background: transparent;
     color: var(--bc-navy);
     font: inherit;
-    font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
     cursor: pointer;

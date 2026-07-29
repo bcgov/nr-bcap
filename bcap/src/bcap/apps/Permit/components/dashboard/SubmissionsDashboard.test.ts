@@ -15,11 +15,11 @@ vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
     },
 }));
 
-const fetchDrafts = vi.fn();
+const fetchDraftCards = vi.fn();
 const fetchMyProjects = vi.fn();
 const deleteDraft = vi.fn();
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
-    fetchDrafts: (...args: unknown[]) => fetchDrafts(...args),
+    fetchDraftCards: (...args: unknown[]) => fetchDraftCards(...args),
     fetchMyProjects: (...args: unknown[]) => fetchMyProjects(...args),
     deleteDraft: (...args: unknown[]) => deleteDraft(...args),
 }));
@@ -99,21 +99,17 @@ function makeProject(overrides: Record<string, unknown> = {}) {
     };
 }
 
+// A draft card as the external dashboard returns it.
 function makeDraft(overrides: Record<string, unknown> = {}) {
     return {
         id: 'draft-1',
-        graph_slug: 'permit_application',
-        created: '2026-03-01T00:00:00Z',
-        updated: '2026-03-02T00:00:00Z',
-        data: {
-            application_identification: {
-                aliased_data: {
-                    project_name: {
-                        node_value: { en: { value: 'Draft One' } },
-                    },
-                },
-            },
-        },
+        is_draft: true,
+        status: 'Submission Required',
+        project_name: 'Draft One',
+        submission_type: 'Permit Application - Standard',
+        created_date: '2026-03-01T00:00:00Z',
+        updated_date: '2026-03-02T00:00:00Z',
+        unread_messages: 0,
         ...overrides,
     };
 }
@@ -147,7 +143,7 @@ async function switchTab(
 
 beforeEach(() => {
     localStorage.clear();
-    fetchDrafts.mockReset().mockResolvedValue([]);
+    fetchDraftCards.mockReset().mockResolvedValue([]);
     fetchMyProjects.mockReset().mockResolvedValue([]);
     deleteDraft.mockReset().mockResolvedValue(undefined);
     push.mockReset();
@@ -159,7 +155,7 @@ afterEach(() => {
 
 describe('data loading', () => {
     it('shows the spinner until both requests resolve', async () => {
-        fetchDrafts.mockReturnValue(new Promise(() => {}));
+        fetchDraftCards.mockReturnValue(new Promise(() => {}));
         const wrapper = mount(SubmissionsDashboard, {
             global: { stubs: STUBS },
         });
@@ -252,23 +248,29 @@ describe('project cards', () => {
 });
 
 describe('drafts', () => {
-    it('shows only permit application drafts', async () => {
-        fetchDrafts.mockResolvedValue([
+    it('labels each draft card with its project name and filing type', async () => {
+        fetchDraftCards.mockResolvedValue([
             makeDraft(),
-            makeDraft({ id: 'draft-2', graph_slug: 'investigation' }),
+            makeDraft({ id: 'draft-2', project_name: 'Draft Two' }),
         ]);
         const wrapper = await mountDashboard();
 
-        const labels = wrapper
+        const cards = wrapper
             .findAllComponents(CardStub)
             // The first Card is the "start a new workflow" tile.
-            .slice(1)
-            .map((card) => card.props('label'));
-        expect(labels).toEqual(['Draft One']);
+            .slice(1);
+        expect(cards.map((card) => card.props('label'))).toEqual([
+            'Draft One',
+            'Draft Two',
+        ]);
+        // The filing type comes off the card, not a static draft label.
+        expect(cards[0].props('description')).toBe(
+            'Permit Application - Standard',
+        );
     });
 
     it('opens the confirmation dialog from the delete button', async () => {
-        fetchDrafts.mockResolvedValue([makeDraft()]);
+        fetchDraftCards.mockResolvedValue([makeDraft()]);
         const wrapper = await mountDashboard();
 
         await wrapper.find('.draft-delete-btn').trigger('click');
@@ -300,7 +302,7 @@ describe('tab persistence', () => {
 
     it('ignores an unrecognised stored tab', async () => {
         localStorage.setItem('bcap.externalDashboard.tab', 'nonsense');
-        fetchDrafts.mockResolvedValue([makeDraft()]);
+        fetchDraftCards.mockResolvedValue([makeDraft()]);
 
         const wrapper = await mountDashboard();
 

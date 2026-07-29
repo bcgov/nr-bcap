@@ -91,15 +91,18 @@ export const deleteDraft = async (
     });
 };
 
-export const fetchMyProjects = async () => {
+export const fetchMyProjects = async () => fetchDashboardCards('CREATED_BY_ME');
+export const fetchDraftCards = async () => fetchDashboardCards('DRAFTS');
+
+const fetchDashboardCards = async (status: string) => {
     try {
-        const url = `${arches.urls.dashboard_external}?status=CREATED_BY_ME`;
+        const url = `${arches.urls.dashboard_external}?status=${status}`;
 
         const response = await apiFetch(url);
         const data = await response.json();
         return data.results || data || [];
     } catch (error) {
-        console.error('Failed to load submitted projects:', error);
+        console.error(`Failed to load ${status} dashboard cards:`, error);
         return [];
     }
 };

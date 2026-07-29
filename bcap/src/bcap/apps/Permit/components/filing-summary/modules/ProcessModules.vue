@@ -472,7 +472,6 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     align-items: center;
     gap: 0.4rem;
     padding: 0.6rem 1.2rem;
-    font-size: 14px;
     font-weight: 700;
     color: #3a3f4b;
     background: #ffffff;
@@ -621,7 +620,6 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 14px;
     font-weight: 700;
     color: #3a3f4b;
     background: #ffffff;

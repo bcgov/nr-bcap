@@ -30,6 +30,12 @@
     --bc-text: #222222;
 }
 
+/* Buttons read at one size across the app; a component that needs another size
+   overrides it on its own class. */
+.p-button {
+    font-size: 14px !important;
+}
+
 /* BC Gov accessibility standard: a gold ring on keyboard focus. Mouse clicks
    don't trigger focus-visible, so this stays out of the way. */
 :focus-visible {

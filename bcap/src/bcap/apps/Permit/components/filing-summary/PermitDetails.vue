@@ -18,7 +18,6 @@ import { getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 import {
     fetchPermitDetails,
-    patchPermitSubmissionDate,
     fetchDrafts,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
@@ -196,40 +195,6 @@ const addableModules = computed(() =>
         })),
 );
 
-const submitPermit = async () => {
-    try {
-        const backendDate = new Date().toISOString();
-        const uiDate = new Date().toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        });
-
-        const adminPayload: {
-            tileid?: string;
-            aliased_data: { application_submission_date: string };
-        } = {
-            aliased_data: {
-                application_submission_date: backendDate,
-            },
-        };
-
-        if (state.adminTileMeta.tileid) {
-            adminPayload.tileid = state.adminTileMeta.tileid;
-        }
-
-        await patchPermitSubmissionDate(permitId.value, adminPayload);
-
-        state.permitData.submittedDate = uiDate;
-        await loadPermitDetails();
-    } catch (error) {
-        console.error('Error submitting permit:', error);
-        alert(
-            'Failed to submit permit. Check the console for the Django error.',
-        );
-    }
-};
-
 const deleteState = reactive<{
     visible: boolean;
     busy: boolean;
@@ -302,15 +267,7 @@ watch(activeModuleId, (id) => {
         class="full-height"
     >
         <template #header>
-            <PermitHeaderBand :header="state.permitData">
-                <template #actions>
-                    <Button
-                        class="header-submit-btn"
-                        label="Submit Permit"
-                        @click="submitPermit"
-                    />
-                </template>
-            </PermitHeaderBand>
+            <PermitHeaderBand :header="state.permitData" />
         </template>
 
         <div class="module-layout">
@@ -572,25 +529,6 @@ watch(activeModuleId, (id) => {
     border: none;
     border-radius: 0;
     background: transparent;
-}
-
-/* The header band lives in PermitHeaderBand; only its slotted Submit button is
-   styled here. */
-.header-submit-btn {
-    height: 3.1rem;
-    padding: 0 1.5rem;
-    font-size: 1.15rem;
-    font-weight: 700;
-    border-radius: 4px;
-    background-color: #ffffff;
-    border-color: #ffffff;
-    color: var(--bc-navy);
-    cursor: pointer;
-}
-
-.header-submit-btn:hover {
-    background-color: var(--bc-selected);
-    border-color: var(--bc-selected);
 }
 
 /* Layout */

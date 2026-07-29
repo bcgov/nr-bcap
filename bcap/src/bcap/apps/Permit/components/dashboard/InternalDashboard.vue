@@ -111,6 +111,7 @@ const state = reactive({
     currentSearch: '',
     lastUpdateDate: new Date(),
     currentSort: 'default',
+    messagesOnly: false,
     sortOrder: 'asc' as 'asc' | 'desc',
     page: 1,
     pageLimit: 100,
@@ -155,6 +156,10 @@ function handleSearch(searchTerm: string) {
 
 const displayedProjects = computed(() => {
     let filtered = state.rawProjects;
+
+    if (state.messagesOnly) {
+        filtered = filtered.filter((item) => item.unreadMessages > 0);
+    }
 
     if (state.currentSearch) {
         const query = state.currentSearch.toLowerCase().trim();
@@ -247,9 +252,11 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 v-model:active-tab="state.currentFilter"
                 v-model:current-sort="state.currentSort"
                 v-model:sort-order="state.sortOrder"
+                v-model:messages-only="state.messagesOnly"
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
+                messages-only-label="Only projects with unread messages"
                 @update:search="handleSearch"
                 @refresh="loadData"
             />

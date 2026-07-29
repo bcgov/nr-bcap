@@ -33,6 +33,15 @@ const props = defineProps({
         type: String as PropType<'asc' | 'desc'>,
         default: 'asc',
     },
+    // Opt-in checkbox beside the tabs; omit the label to leave it out.
+    messagesOnly: {
+        type: Boolean,
+        default: false,
+    },
+    messagesOnlyLabel: {
+        type: String,
+        default: '',
+    },
 });
 
 const emit = defineEmits([
@@ -40,6 +49,7 @@ const emit = defineEmits([
     'update:search',
     'update:currentSort',
     'update:sortOrder',
+    'update:messagesOnly',
     'refresh',
 ]);
 
@@ -141,6 +151,23 @@ const activeSortLabel = computed(() => {
             </Button>
         </div>
 
+        <label
+            v-if="props.messagesOnlyLabel"
+            class="messages-filter"
+        >
+            <input
+                type="checkbox"
+                :checked="props.messagesOnly"
+                @change="
+                    emit(
+                        'update:messagesOnly',
+                        ($event.target as HTMLInputElement).checked,
+                    )
+                "
+            />
+            {{ props.messagesOnlyLabel }}
+        </label>
+
         <div class="search-section">
             <div class="search-bar-wrapper">
                 <Button
@@ -238,6 +265,28 @@ const activeSortLabel = computed(() => {
     border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Sits beside the tabs, reading as a plain option rather than a fourth tab. */
+.messages-filter {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    /* Pushes the search section to the far end so it can't ride over the label. */
+    margin-right: auto;
+    gap: 0.6rem;
+    line-height: 1;
+    font-size: 1.425rem;
+    color: var(--bc-navy);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.messages-filter input {
+    width: 1.6rem;
+    height: 1.6rem;
+    accent-color: var(--bc-navy);
+    cursor: pointer;
 }
 
 .segment-btn {

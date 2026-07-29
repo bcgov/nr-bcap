@@ -183,6 +183,9 @@ class ExternalDashboardCard:
     submission_date: str = described(
         "Permit application's submission date; empty for drafts.", ""
     )
+    updated_date: str = described(
+        "ISO timestamp of the last save; only drafts carry one.", ""
+    )
     project_name: str = described("Permit application's project name.", "")
     application_number: str = described(
         "Permit application's human-readable application reference; not a GUID.", ""
