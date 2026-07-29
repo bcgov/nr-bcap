@@ -44,10 +44,12 @@ class WorkflowDraftSerializer(DataclassSerializer):
 
 
 class DraftWriteSerializer(serializers.Serializer):
-    """Request body for create/update: the whole draft blob, plus an optional
-    frontend version and parent resource stamped on create."""
+    """Request body for create/update: the whole draft blob, plus the step the
+    user is on and an optional frontend version and parent resource stamped on
+    create."""
 
     data = serializers.JSONField()
+    current_step = serializers.CharField(required=False, allow_blank=True)
     frontend_version = serializers.CharField(required=False, allow_blank=True)
     parent_resource_id = serializers.CharField(required=False, allow_blank=True)
 
@@ -81,6 +83,10 @@ class WorkflowDraftBaseView(APIView):
     def serialize(self, record):
         return WorkflowDraftSerializer(record).data
 
+    def respond(self, record, status=200):
+        """A draft record as its serialized response."""
+        return Response(self.serialize(record), status=status)
+
 
 @extend_schema(tags=["External: workflow_draft"])
 class WorkflowDraftListCreateView(WorkflowDraftBaseView):
@@ -105,7 +111,7 @@ class WorkflowDraftListCreateView(WorkflowDraftBaseView):
             frontend_version=body.get("frontend_version", ""),
             parent_resource_id=parent_resource_id,
         )
-        return Response(self.serialize(record), status=201)
+        return self.respond(record, status=201)
 
 
 @extend_schema(tags=["External: workflow_draft"])
@@ -124,22 +130,28 @@ class WorkflowDraftDetailView(WorkflowDraftBaseView):
     @extend_schema(responses=WorkflowDraftSerializer)
     def get(self, request, graph_slug, pk):
         record = self.store.to_record(self._get_or_404(request, pk))
-        return Response(self.serialize(record))
+        return self.respond(record)
+
+    def _save(self, resource, data, body):
+        """Store the blob plus whatever step the body carries, serialized."""
+        record = self.store.set_data(resource, data, body.get("current_step"))
+        return self.respond(record)
 
     @extend_schema(request=DraftWriteSerializer, responses=WorkflowDraftSerializer)
     def put(self, request, graph_slug, pk):
         resource = self._get_or_404(request, pk)
-        data = (request.data or {}).get("data") or {}
-        return Response(self.serialize(self.store.set_data(resource, data)))
+        body = request.data or {}
+        return self._save(resource, body.get("data") or {}, body)
 
     @extend_schema(request=DraftWriteSerializer, responses=WorkflowDraftSerializer)
     def patch(self, request, graph_slug, pk):
         resource = self._get_or_404(request, pk)
+        body = request.data or {}
         merged = {
             **self.store.to_record(resource).data,
-            **(request.data or {}).get("data", {}),
+            **body.get("data", {}),
         }
-        return Response(self.serialize(self.store.set_data(resource, merged)))
+        return self._save(resource, merged, body)
 
     @extend_schema(responses={204: None})
     def delete(self, request, graph_slug, pk):

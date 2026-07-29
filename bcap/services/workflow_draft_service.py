@@ -38,6 +38,7 @@ class DraftRecord:
     # its own drafts. Empty when the draft has no parent.
     parent_resource_id: str = ""
     data: dict = field(default_factory=dict)
+    current_step: str = ""
     created: datetime | None = None
     # Stamped in place on every save (drafts have no edit log to derive it from).
     updated: datetime | None = None
@@ -88,6 +89,7 @@ class WorkflowDraftService(BaseGraphService):
                 value(WorkflowDraftsAliases.PARENT_RESOURCE)
             ),
             data=json.loads(blob) if blob else {},
+            current_step=value(WorkflowDraftsAliases.CURRENT_STEP) or "",
             created=resource.createdtime,
             updated=datetime.fromisoformat(stamped) if stamped else None,
         )
@@ -130,23 +132,20 @@ class WorkflowDraftService(BaseGraphService):
         Resource.objects.get(pk=resource.pk).save_descriptors()
         return self.to_record(resource)
 
-    def set_data(self, resource, data):
+    def set_data(self, resource, data, current_step=None):
         """Replace a draft's blob with the caller's fully-merged data and
-        re-stamp the save time."""
+        re-stamp the save time. Pass current_step to move the step marker too;
+        omit it to leave the stored one alone."""
         now = timezone.now()
-        self._write(
-            resource,
-            {
-                WorkflowDraftsAliases.DRAFT_DATA: json.dumps(data),
-                WorkflowDraftsAliases.UPDATED_DATE: now.isoformat(),
-            },
-        )
-        # record() reads the resource's (now stale) prefetched tiles; only
-        # draft_data/updated_date changed, so set them from what we just wrote.
-        record = self.to_record(resource)
-        record.data = data
-        record.updated = now
-        return record
+        values = {
+            WorkflowDraftsAliases.DRAFT_DATA: json.dumps(data),
+            WorkflowDraftsAliases.UPDATED_DATE: now.isoformat(),
+        }
+        if current_step is not None:
+            values[WorkflowDraftsAliases.CURRENT_STEP] = current_step
+        self._write(resource, values)
+        resource.refresh_from_db()
+        return self.to_record(resource)
 
     @staticmethod
     def _resource_instance_value(resource_id):

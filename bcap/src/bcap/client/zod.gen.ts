@@ -87,6 +87,7 @@ export const zDraftRecord = z.object({
     frontend_version: z.string(),
     parent_resource_id: z.string().optional(),
     data: z.record(z.string(), z.unknown()).optional(),
+    current_step: z.string().optional(),
     created: z.iso.datetime({ offset: true, local: true }).nullish(),
     updated: z.iso.datetime({ offset: true, local: true }).nullish()
 });
@@ -97,6 +98,7 @@ export const zDraftRecord = z.object({
  */
 export const zDraftWrite = z.object({
     data: z.unknown(),
+    current_step: z.string().optional(),
     frontend_version: z.string().optional(),
     parent_resource_id: z.string().optional()
 });
@@ -4768,6 +4770,7 @@ export const zDraftRecordWritable = z.object({
     frontend_version: z.string(),
     parent_resource_id: z.string().optional(),
     data: z.record(z.string(), z.unknown()).optional(),
+    current_step: z.string().optional(),
     created: z.iso.datetime({ offset: true, local: true }).nullish(),
     updated: z.iso.datetime({ offset: true, local: true }).nullish()
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, onMounted } from 'vue';
+import { computed, reactive, ref, onMounted, watch } from 'vue';
 import type { Component, Ref } from 'vue';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { useRoute, useRouter } from 'vue-router';
@@ -86,9 +86,15 @@ const state = reactive({
     finalizedResourceData: null as PermitApplication | null,
 });
 
-// The content steps plus the always-present Review and Submitted steps.
-const reviewStepNumber = computed(() => props.steps.length + 1);
-const totalSteps = computed(() => props.steps.length + 2);
+// The rail's steps: the caller's, then the two this shell always appends.
+const stepNames = computed(() => [
+    ...props.steps.map((step) => step.label),
+    'Review Submission',
+    'Submission Complete',
+]);
+
+const reviewStepNumber = computed(() => stepNames.value.length - 1);
+const totalSteps = computed(() => stepNames.value.length);
 
 // The filing summary to return to: the parent permit while filing a module, or
 // the just-created permit on the base application's completion step.
@@ -117,6 +123,7 @@ const setCurrentStepValid = (isValid: boolean, stepNumber: number) => {
 const stepperProps: Ref<StepperProps | null> = ref(null);
 const stepperState: Ref<StepperState | null> = ref(null);
 const myStepper = ref();
+const resumeStep = ref(1);
 let lastStep = 1;
 
 const currentStep = computed(() => myStepper.value?.d_value);
@@ -223,6 +230,18 @@ const showPrevious = computed(
 
 const headingFor = (step: WorkflowStep) => step.heading ?? step.label;
 
+// The last step only follows a submission, so a draft is never left on it.
+const resumableStepNames = computed(() => stepNames.value.slice(0, -1));
+
+const currentStepName = computed(
+    () => resumableStepNames.value[currentStep.value - 1] ?? '',
+);
+
+watch(currentStepName, (name) => name && draft.setCurrentStep(name));
+
+const stepNumberOf = (name: string) =>
+    Math.max(1, resumableStepNames.value.indexOf(name) + 1);
+
 onMounted(async () => {
     try {
         // Only load an existing draft. A new one isn't created until the first
@@ -233,9 +252,15 @@ onMounted(async () => {
                 props.graphSlug,
                 targetDraftId as string,
             );
-            draft.loadDraft(loaded.id, (loaded.data || {}) as ArchesDraftData);
+            draft.loadDraft(
+                loaded.id,
+                (loaded.data || {}) as ArchesDraftData,
+                loaded.current_step || '',
+            );
             draft.parentPermitId =
                 loaded.parent_resource_id || draft.parentPermitId;
+            resumeStep.value = stepNumberOf(loaded.current_step || '');
+            lastStep = resumeStep.value;
         }
         state.isDataLoaded = true;
     } catch (error) {
@@ -265,7 +290,7 @@ onMounted(async () => {
             ref="myStepper"
             :state="stepperState"
             :props="stepperProps"
-            :value="1"
+            :value="resumeStep"
             linear
             @update:value="activateStep"
         >
@@ -274,14 +299,12 @@ onMounted(async () => {
                     <p class="bc-stepper-nav-label">Your progress</p>
                     <StepList>
                         <Step
-                            v-for="(step, i) in steps"
+                            v-for="(name, i) in stepNames"
                             :key="i"
                             :value="i + 1"
                         >
-                            {{ step.label }}
+                            {{ name }}
                         </Step>
-                        <Step :value="reviewStepNumber">Review Submission</Step>
-                        <Step :value="totalSteps">Submission Complete</Step>
                     </StepList>
                 </aside>
                 <div class="bc-stepper-main">

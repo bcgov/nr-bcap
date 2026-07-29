@@ -31,6 +31,7 @@ describe('draft store saveNow', () => {
             'draft-7',
             'investigation',
             store.draftData,
+            '',
         );
         // The debounce would otherwise fire a second, redundant save.
         await vi.advanceTimersByTimeAsync(2000);
@@ -50,6 +51,23 @@ describe('draft store saveNow', () => {
             'new-1',
             'investigation',
             store.draftData,
+            '',
+        );
+    });
+
+    it('saves the step the user moved to with the draft', async () => {
+        const store = useDraftStore();
+        store.initDraft('investigation');
+        store.loadDraft('draft-7', {});
+        store.setCurrentStep('Contacts');
+
+        await store.saveNow();
+
+        expect(saveDraftFieldToBackend).toHaveBeenCalledWith(
+            'draft-7',
+            'investigation',
+            store.draftData,
+            'Contacts',
         );
     });
 

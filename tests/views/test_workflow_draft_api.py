@@ -120,6 +120,23 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(self._read(draft.id).data, {"step3": {"z": 3}})
 
+    def test_patch_records_current_step_and_keeps_it_when_omitted(self):
+        draft = self._create_draft(data={"step1": {"x": 1}})
+        resp = self.client.patch(
+            self._detail_url(draft.id),
+            data=json.dumps({"data": {}, "current_step": "Contacts"}),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["current_step"], "Contacts")
+        # A later save that doesn't mention the step leaves it where it was.
+        self.client.patch(
+            self._detail_url(draft.id),
+            data=json.dumps({"data": {"step2": {"y": 2}}}),
+            content_type="application/json",
+        )
+        self.assertEqual(self._read(draft.id).current_step, "Contacts")
+
     def test_create_stamps_descriptors(self):
         # A draft is referenced by other resources (a message's resource_context
         # points at it), and arches dereferences descriptors when building those

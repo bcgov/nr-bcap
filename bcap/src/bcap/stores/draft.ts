@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { reactive, toRefs } from 'vue';
 import { defineStore } from 'pinia';
 import { debounce } from 'underscore';
 import { createDraft } from '@/bcap/apps/Permit/api.ts';
@@ -11,9 +11,10 @@ const debouncedSave = debounce(
         draftData: ArchesDraftData,
         graphSlug: string,
         ensureDraftId: () => Promise<string>,
+        currentStep: string,
     ) => {
         const id = await ensureDraftId();
-        if (id) saveDraftFieldToBackend(id, graphSlug, draftData);
+        if (id) saveDraftFieldToBackend(id, graphSlug, draftData, currentStep);
     },
     1000,
 );
@@ -75,41 +76,46 @@ function setDraftValue(
 // The draft a workflow module is currently editing. The store is global and
 // survives route changes, so each module resets it on mount via initDraft.
 export const useDraftStore = defineStore('draft', () => {
-    const draftId = ref<string | null>(null);
-    const draftData = ref<ArchesDraftData>({});
-    const graphSlug = ref('');
-    const parentPermitId = ref<string | null>(null);
+    const state = reactive({
+        draftId: null as string | null,
+        draftData: {} as ArchesDraftData,
+        graphSlug: '',
+        parentPermitId: null as string | null,
+        currentStep: '',
+    });
 
     let draftCreation: Promise<string> | null = null;
 
     function initDraft(slug: string, parent: string | null = null) {
-        graphSlug.value = slug;
-        parentPermitId.value = parent;
-        draftId.value = null;
-        draftData.value = {};
+        state.graphSlug = slug;
+        state.parentPermitId = parent;
+        state.draftId = null;
+        state.draftData = {};
+        state.currentStep = '';
         draftCreation = null;
     }
 
-    function loadDraft(id: string, data: ArchesDraftData) {
-        draftId.value = id;
-        draftData.value = data;
+    function loadDraft(id: string, data: ArchesDraftData, step = '') {
+        state.draftId = id;
+        state.draftData = data;
+        state.currentStep = step;
         draftCreation = null;
     }
 
     // Create the draft on first use, not on mount, so an abandoned form leaves
     // no empty draft behind. Memoized so rapid first saves don't duplicate.
     function ensureDraftId(): Promise<string> {
-        if (draftId.value) return Promise.resolve(draftId.value);
+        if (state.draftId) return Promise.resolve(state.draftId);
         // Assign the in-flight promise synchronously so concurrent first edits
         // dedupe to one createDraft call.
         if (!draftCreation) {
             draftCreation = (async () => {
                 try {
                     const draft = await createDraft(
-                        graphSlug.value,
-                        parentPermitId.value ?? undefined,
+                        state.graphSlug,
+                        state.parentPermitId ?? undefined,
                     );
-                    draftId.value = draft.id;
+                    state.draftId = draft.id;
                     return draft.id;
                 } catch (error) {
                     // Clear the memo so the next edit retries instead of
@@ -124,10 +130,26 @@ export const useDraftStore = defineStore('draft', () => {
 
     async function saveNow() {
         debouncedSave.cancel();
-        if (!draftId.value && !Object.keys(draftData.value).length) return;
+        if (!state.draftId && !Object.keys(state.draftData).length) return;
         const id = await ensureDraftId();
         if (id)
-            await saveDraftFieldToBackend(id, graphSlug.value, draftData.value);
+            await saveDraftFieldToBackend(
+                id,
+                state.graphSlug,
+                state.draftData,
+                state.currentStep,
+            );
+    }
+
+    function setCurrentStep(step: string) {
+        state.currentStep = step;
+        if (state.draftId)
+            debouncedSave(
+                state.draftData,
+                state.graphSlug,
+                ensureDraftId,
+                step,
+            );
     }
 
     function updateValue(
@@ -136,23 +158,26 @@ export const useDraftStore = defineStore('draft', () => {
         node_group_alias: string | string[],
     ) {
         setDraftValue(
-            draftData.value,
+            state.draftData,
             newValue,
             attribute_name,
             node_group_alias,
         );
-        debouncedSave(draftData.value, graphSlug.value, ensureDraftId);
+        debouncedSave(
+            state.draftData,
+            state.graphSlug,
+            ensureDraftId,
+            state.currentStep,
+        );
     }
 
     return {
-        draftId,
-        draftData,
-        graphSlug,
-        parentPermitId,
+        ...toRefs(state),
         initDraft,
         loadDraft,
         ensureDraftId,
         saveNow,
+        setCurrentStep,
         updateValue,
     };
 });

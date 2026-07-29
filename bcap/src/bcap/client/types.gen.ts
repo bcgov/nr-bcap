@@ -2093,16 +2093,19 @@ export type DraftRecord = {
     data?: {
         [key: string]: unknown;
     };
+    current_step?: string;
     created?: string | null;
     updated?: string | null;
 };
 
 /**
- * Request body for create/update: the whole draft blob, plus an optional
- * frontend version and parent resource stamped on create.
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
  */
 export type DraftWrite = {
     data: unknown;
+    current_step?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
