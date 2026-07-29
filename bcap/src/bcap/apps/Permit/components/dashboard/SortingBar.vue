@@ -274,10 +274,10 @@ const activeSortLabel = computed(() => {
     flex-shrink: 0;
     /* Pushes the search section to the far end so it can't ride over the label. */
     margin-right: auto;
-    gap: 0.6rem;
+    gap: 0.75rem;
     line-height: 1;
     font-size: 1.425rem;
-    color: var(--bc-navy);
+    color: #333333;
     white-space: nowrap;
     cursor: pointer;
 }
@@ -285,6 +285,7 @@ const activeSortLabel = computed(() => {
 .messages-filter input {
     width: 1.6rem;
     height: 1.6rem;
+    margin: 0;
     accent-color: var(--bc-navy);
     cursor: pointer;
 }

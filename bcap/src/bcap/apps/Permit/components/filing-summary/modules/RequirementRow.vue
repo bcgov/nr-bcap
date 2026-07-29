@@ -19,9 +19,7 @@ const props = defineProps<{
     permitId: string;
     isStaff?: boolean;
     applicationId?: string;
-    // Rides onto the checklist links so those tabs can come back to this view.
     staff?: unknown;
-    // The requirement whose satisfied toggle is mid-save, if any.
     toggling?: string | null;
     canViewSubmission?: boolean;
 }>();
@@ -39,7 +37,15 @@ const moreItems = computed(() => [
     {
         label: 'View in Arches',
         icon: 'fa-solid fa-share-from-square',
-        url: `/bcap/resource/${props.requirement.resourceId}`,
+        // A workflow/document requirement's subject is the resource it was filed
+        // against (the permit application itself for the submission module), not
+        // the requirement resource.
+        url: `/bcap/resource/${
+            hasSubmission(props.requirement.type)
+                ? props.requirement.hostResourceId ||
+                  props.requirement.resourceId
+                : props.requirement.resourceId
+        }`,
         target: '_blank',
     },
     ...(isChecklist(props.requirement.type)
