@@ -178,7 +178,7 @@ const siteBoundaryDescriptionColumns = computed(() => [
 
 const currentSpatialAccuracyColumns = computed(() => [
     { field: 'latest_edit_type', label: 'Edit Type' },
-    { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
+    { field: 'accuracy_remarks', label: 'Accuracy Remarks', isHtml: true },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
