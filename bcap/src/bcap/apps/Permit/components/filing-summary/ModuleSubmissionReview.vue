@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import ProgressSpinner from 'primevue/progressspinner';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
@@ -8,15 +8,23 @@ import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
 import { getReviewNav } from '@/bcap/apps/Permit/reviewNav.ts';
+import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const router = useRouter();
+const route = useRoute();
 const nav = getReviewNav();
 const title = nav?.title || 'Submission';
 
+// ?staff rides along from the permit view, so the crumb returns to the same
+// staff or external view rather than dropping the staff controls.
 const backLink = computed(() =>
     nav?.permitId
-        ? { name: routeNames.permitDetails, params: { id: nav.permitId } }
+        ? {
+              name: routeNames.permitDetails,
+              params: { id: nav.permitId },
+              query: route.query,
+          }
         : { name: routeNames.home },
 );
 
@@ -53,13 +61,12 @@ onMounted(async () => {
         </template>
 
         <div class="review-shell">
-            <RouterLink
-                :to="backLink"
-                class="back-link"
-            >
-                <i class="fa-solid fa-chevron-left"></i>
-                Back to Filing Summary
-            </RouterLink>
+            <PermitBreadcrumbs
+                :crumbs="[
+                    { label: 'Project Summary', to: backLink },
+                    { label: title },
+                ]"
+            />
 
             <h1 class="review-title">Submission · {{ title }}</h1>
 
@@ -88,22 +95,12 @@ onMounted(async () => {
     background: transparent;
 }
 
+/* Left-aligned and capped like the Filing Summary content area. */
 .review-shell {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 1.5rem 1rem 3rem;
+    width: 100%;
+    max-width: 1500px;
+    padding: 1.5rem 2rem 3rem;
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
-}
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--bc-navy, #003366);
-    font-weight: 700;
-    text-decoration: none;
-}
-.back-link:hover {
-    color: #1a5a96;
 }
 .review-title {
     margin: 1.25rem 0 1.5rem;

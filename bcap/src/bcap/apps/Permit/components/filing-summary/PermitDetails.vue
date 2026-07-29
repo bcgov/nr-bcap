@@ -11,8 +11,9 @@ import AccordionPanel from 'primevue/accordionpanel';
 import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
-import CompletedModules from './CompletedModules.vue';
+import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
+import { permitHeaderFrom } from '@/bcap/apps/Permit/components/common/permitHeader.ts';
 import { getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 import {
@@ -118,7 +119,7 @@ const basicInfoFields = computed<ReviewField[]>(() => {
     return getBasicInfoFields(state.rawPermitData);
 });
 
-// The permit's process_module tiles; CompletedModules filters these to the ones
+// The permit's process_module tiles; the modules panel filters these to the ones
 // with a submission date and renders them as a drag-reorderable accordion.
 const processModules = computed(
     () =>
@@ -138,8 +139,6 @@ const loadPermitDetails = async () => {
         state.rawPermitData = aliased;
 
         const appIdent = aliased.application_identification?.aliased_data;
-        const propProj = aliased.proposed_project?.aliased_data;
-        const devDetails = propProj?.development_project_details?.aliased_data;
         const appAdmin = aliased.application_admin;
 
         state.adminTileMeta = {
@@ -147,19 +146,7 @@ const loadPermitDetails = async () => {
             nodegroup: appAdmin?.nodegroup || '',
         };
 
-        state.permitData = {
-            projectName:
-                appIdent?.project_name?.display_value || 'Unnamed Project',
-            applicationNumber:
-                appIdent?.application_id?.display_value || 'Pending',
-            submissionType: appIdent?.filing_type?.display_value || '',
-            // Left empty when unset so the header can mute it rather than
-            // stating a sector that was never given.
-            sector: devDetails?.industrial_sector?.display_value || '',
-            submittedDate:
-                appAdmin?.aliased_data?.application_submission_date
-                    ?.display_value || null,
-        };
+        state.permitData = permitHeaderFrom(aliased);
 
         state.fetchedModuleData = {
             [GraphSlug.PermitApplication]: {
@@ -528,7 +515,7 @@ watch(activeModuleId, (id) => {
                             </Accordion>
                         </section>
 
-                        <CompletedModules
+                        <ProcessModules
                             :modules="processModules"
                             :permit-id="permitId"
                             :admin-tile-id="state.adminTileMeta.tileid"

@@ -41,12 +41,11 @@ vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
 // The submitted-modules panel is its own component (covered in its own test);
 // stub it so these tests stay focused on PermitDetails and its draft list.
 vi.mock(
-    '@/bcap/apps/Permit/components/filing-summary/CompletedModules.vue',
+    '@/bcap/apps/Permit/components/filing-summary/modules/ProcessModules.vue',
     () => ({
         default: {
             props: ['modules', 'permitId', 'isStaff'],
-            template:
-                '<div class="mock-completed-modules">{{ modules.length }}</div>',
+            template: '<div class="mock-modules">{{ modules.length }}</div>',
         },
     }),
 );
@@ -252,7 +251,7 @@ describe('PermitDetails.vue', () => {
         expect(wrapper.find('.draft-modules').exists()).toBe(false);
         expect(wrapper.findAll('.draft-panel')).toHaveLength(0);
         // Completed modules are delegated to the stubbed child.
-        expect(wrapper.find('.mock-completed-modules').exists()).toBe(true);
+        expect(wrapper.find('.mock-modules').exists()).toBe(true);
     });
 
     it('lists this permit drafts as accordion panels', async () => {

@@ -4,6 +4,11 @@ import { useRoute } from 'vue-router';
 import arches from 'arches';
 import Button from 'primevue/button';
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
+import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
+import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { loadPermitHeader } from '@/bcap/apps/Permit/components/common/permitHeader.ts';
+import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
 
@@ -23,6 +28,14 @@ const subRequirements = computed(
 
 const requirementName = computed(
     () => requirementData.value?.descriptors?.en?.name ?? '',
+);
+
+const crumbs = computed(() =>
+    permitCrumbs(
+        route.query.permit,
+        route.query.staff,
+        requirementName.value || 'Checklist',
+    ),
 );
 
 // Requirement-level status + notes (the assessment tile).
@@ -96,8 +109,11 @@ const loadData = async () => {
     }
 };
 
-onMounted(() => {
+const permitHeader = ref<PermitHeader | null>(null);
+
+onMounted(async () => {
     loadData();
+    permitHeader.value = await loadPermitHeader(route.query.permit);
 });
 
 // Derive start/completion dates from the checklist. Run on Save (not on each
@@ -168,7 +184,16 @@ const saveChanges = async () => {
 </script>
 
 <template>
+    <PermitHeaderBand
+        v-if="permitHeader"
+        :header="permitHeader"
+    />
     <div class="checklist-container">
+        <PermitBreadcrumbs
+            v-if="crumbs.length"
+            :crumbs="crumbs"
+            class="page-crumbs"
+        />
         <div class="title-row">
             <h2 class="page-title">
                 {{ requirementName || 'Process Requirement' }}
@@ -365,6 +390,10 @@ const saveChanges = async () => {
     padding: 2rem 1rem;
     font-family: Arial, sans-serif;
     color: #222;
+}
+
+.page-crumbs {
+    margin-bottom: 1rem;
 }
 
 .title-row {

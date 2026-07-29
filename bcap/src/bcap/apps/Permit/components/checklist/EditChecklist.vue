@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, onMounted, computed } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import arches from 'arches';
 import Button from 'primevue/button';
@@ -9,10 +9,23 @@ import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { readString } from '@/bcap/util.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
+import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
+import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { loadPermitHeader } from '@/bcap/apps/Permit/components/common/permitHeader.ts';
+import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 
 const route = useRoute();
 const processId = computed(() => route.query.id as string | undefined);
 const isEditing = computed(() => !!processId.value);
+
+const crumbs = computed(() =>
+    permitCrumbs(
+        route.query.permit,
+        route.query.staff,
+        state.requirementTitle || 'Edit Checklist',
+    ),
+);
 
 interface StepItem {
     // Present for steps loaded from the resource; absent for newly added ones,
@@ -103,7 +116,12 @@ const loadRequirement = async (withSpinner = true) => {
     }
 };
 
-onMounted(() => loadRequirement());
+const permitHeader = ref<PermitHeader | null>(null);
+
+onMounted(async () => {
+    loadRequirement();
+    permitHeader.value = await loadPermitHeader(route.query.permit);
+});
 
 const addStep = () => {
     state.steps.push({ ...blankStep(), sortOrder: state.steps.length + 1 });
@@ -147,7 +165,16 @@ const saveRequirements = async () => {
 </script>
 
 <template>
+    <PermitHeaderBand
+        v-if="permitHeader"
+        :header="permitHeader"
+    />
     <div class="checklist-container">
+        <PermitBreadcrumbs
+            v-if="crumbs.length"
+            :crumbs="crumbs"
+            class="page-crumbs"
+        />
         <div class="title-row">
             <h2 class="page-title">
                 {{ isEditing ? 'Edit' : 'Create' }} Process Requirement
@@ -282,6 +309,10 @@ const saveRequirements = async () => {
     padding: 2rem 1rem;
     font-family: Arial, sans-serif;
     color: #222;
+}
+
+.page-crumbs {
+    margin-bottom: 1rem;
 }
 
 .title-row {

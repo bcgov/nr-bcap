@@ -15,6 +15,7 @@ vi.mock('vue-router', () => ({
 vi.mock('arches', () => ({
     default: {
         urls: {
+            plugin: (slug: string) => `/plugins/${slug}`,
             api_process_requirements: (id: string) =>
                 `/bcap/api/process_requirements/${id}`,
         },

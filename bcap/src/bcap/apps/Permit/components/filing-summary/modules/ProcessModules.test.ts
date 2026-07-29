@@ -39,7 +39,7 @@ const api = vi.hoisted(() => ({
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => api);
 
-import CompletedModules from './CompletedModules.vue';
+import ProcessModules from './ProcessModules.vue';
 
 // PrimeVue accordion/dialog stubs that always render their slots, so content is
 // asserted without driving the real open/close behavior.
@@ -128,7 +128,7 @@ const requirementDetail = (opts: {
 });
 
 function mountModules(props: Record<string, unknown>) {
-    return mount(CompletedModules, {
+    return mount(ProcessModules, {
         props: {
             permitId: 'permit-1',
             adminTileId: 'admin-1',
@@ -152,7 +152,7 @@ beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
-describe('CompletedModules rendering', () => {
+describe('ProcessModules rendering', () => {
     it('renders nothing when there are no modules', () => {
         const wrapper = mountModules({ modules: [] });
         expect(wrapper.find('.submitted-modules').exists()).toBe(false);
@@ -222,7 +222,7 @@ describe('CompletedModules rendering', () => {
     });
 });
 
-describe('CompletedModules requirement detail loading', () => {
+describe('ProcessModules requirement detail loading', () => {
     it('fetches details for referenced requirements and links checklists', async () => {
         api.fetchRequirementDetails.mockResolvedValue({
             'r-1': requirementDetail({ type: 'Checklist', satisfied: true }),
@@ -248,7 +248,7 @@ describe('CompletedModules requirement detail loading', () => {
         // (also a .req-action) isn't picked up first.
         const fill = wrapper.find('.requirement-item a.req-action');
         expect(fill.attributes('href')).toBe(
-            '/plugins/internal-permit-dashboard/checklist?id=r-1',
+            '/plugins/internal-permit-dashboard/checklist?id=r-1&permit=permit-1',
         );
         // Satisfied status renders the ok icon.
         expect(wrapper.find('.status-icon').classes()).toContain('status-ok');
@@ -316,7 +316,7 @@ describe('CompletedModules requirement detail loading', () => {
     });
 });
 
-describe('CompletedModules staff controls', () => {
+describe('ProcessModules staff controls', () => {
     const staffModule = () =>
         moduleTile({
             tileid: 'm1',
