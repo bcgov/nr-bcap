@@ -31,10 +31,14 @@ from arches.app.models.models import TileModel
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.util.graph import get_node, node_id
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.services.process_requirement.template_specs import load
 from bcap.util.i18n import localized_string
 
 from tests.permit_fixtures import seed_requirement_templates
 from tests.views.helpers import AuthTestHelper
+
+# The permit module's child requirements, seeded by migration from the spec.
+PERMIT_REQUIREMENTS = len(load("permit")["requirements"])
 
 
 def _api_reference_value(slug, alias, label=None):
@@ -174,7 +178,10 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         }
         resp = self._post(payload)
         self.assertEqual(resp.status_code, 201)
-        self.assertEqual(len(self._requirements(resp.json()["resourceinstanceid"])), 3)
+        self.assertEqual(
+            len(self._requirements(resp.json()["resourceinstanceid"])),
+            PERMIT_REQUIREMENTS,
+        )
 
     def test_submission_via_put_attaches_requirements(self):
         pk = self._create()
@@ -185,7 +192,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             ALIASED_DATA: {aliases.APPLICATION_SUBMISSION_DATE: "2026-06-18"}
         }
         self.assertEqual(self._put(pk, body).status_code, 200)
-        self.assertEqual(len(self._requirements(pk)), 3)
+        self.assertEqual(len(self._requirements(pk)), PERMIT_REQUIREMENTS)
 
     def test_submission_stamps_module_and_requirement_ids(self):
         # The assign-module-ids hook mints the module id on save and stamps each
@@ -207,7 +214,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             ).filter(is_template_requirement=False)
         ]
         derived = [i for i in identifications if i.startswith(f"{module_id}-")]
-        self.assertEqual(len(derived), 3)
+        self.assertEqual(len(derived), PERMIT_REQUIREMENTS)
         for identification in derived:
             self.assertRegex(identification, r"-\d{3}$")
 
@@ -225,8 +232,10 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             self._permit(pk).aliased_data.application_admin.aliased_data.process_module
             or []
         )[0]
-        # The default module's grouping parent plus its three requirements.
-        self.assertEqual(self._non_template_requirement_count(), 4)
+        # The default module's grouping parent plus its requirements.
+        self.assertEqual(
+            self._non_template_requirement_count(), PERMIT_REQUIREMENTS + 1
+        )
 
         ProcessRequirementService(
             user=get_user_model().objects.get(username="admin")
@@ -252,8 +261,8 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         # no-op: neither permit's module is touched.
         ProcessRequirementService().remove_module(pk, module.tileid)
 
-        self.assertEqual(len(self._requirements(pk)), 3)
-        self.assertEqual(len(self._requirements(other)), 3)
+        self.assertEqual(len(self._requirements(pk)), PERMIT_REQUIREMENTS)
+        self.assertEqual(len(self._requirements(other)), PERMIT_REQUIREMENTS)
 
     def _module_tileid(self, pk):
         admin = self._permit(pk).aliased_data.application_admin
@@ -278,7 +287,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self._patch(pk, submission_payload())
         module_tileid = self._module_tileid(pk)
         ids = self._ordered_requirement_ids(module_tileid)
-        self.assertEqual(len(ids), 3)
+        self.assertEqual(len(ids), PERMIT_REQUIREMENTS)
 
         reversed_ids = list(reversed(ids))
         ProcessRequirementService().reorder_requirements(
@@ -295,25 +304,26 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ProcessRequirementService().remove_requirement(pk, module_tileid, target)
 
         remaining = self._ordered_requirement_ids(module_tileid)
-        self.assertEqual(len(remaining), 2)
+        self.assertEqual(len(remaining), PERMIT_REQUIREMENTS - 1)
         self.assertNotIn(target, remaining)
         self.assertFalse(ResourceTileTree.objects.filter(pk=target).exists())
-        # Grouping parent stays (shared): parent + 2 remaining = 3 non-templates.
-        self.assertEqual(self._non_template_requirement_count(), 3)
+        # Grouping parent stays (shared), as does the permit hosting its own
+        # submission: parent + the remaining requirements.
+        self.assertEqual(self._non_template_requirement_count(), PERMIT_REQUIREMENTS)
 
     def test_add_blank_requirement_appends_to_module(self):
         pk = self._create()
         self._patch(pk, submission_payload())
         module_tileid = self._module_tileid(pk)
         before = self._ordered_requirement_ids(module_tileid)
-        self.assertEqual(len(before), 3)
+        self.assertEqual(len(before), PERMIT_REQUIREMENTS)
 
         ProcessRequirementService().add_blank_requirement(
             pk, module_tileid, "Custom step"
         )
 
         after = self._ordered_requirement_ids(module_tileid)
-        self.assertEqual(len(after), 4)
+        self.assertEqual(len(after), PERMIT_REQUIREMENTS + 1)
         new_ids = set(after) - set(before)
         self.assertEqual(len(new_ids), 1)
         # Appended last, after the existing requirements.
@@ -363,10 +373,15 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         for body in self._nesting_variants(group):
             with self.subTest(body=body):
                 service = PermitApplicationService()
-                _parent, copies = service._inject_requirements_from_templates(body)
+                cloned = service._inject_requirements_from_templates(body)
                 admin = body[ALIASED_DATA][group][ALIASED_DATA]
                 module = admin[group_aliases.PROCESS_MODULE][0][ALIASED_DATA]
-                self.assertEqual(len(module[aliases.PROCESS_REQUIREMENT]), len(copies))
+                self.assertEqual(
+                    len(module[aliases.PROCESS_REQUIREMENT]), len(cloned.requirements)
+                )
+                # The permit's own-submission requirement is held back for the
+                # caller to link once the permit itself is saved.
+                self.assertIsNotNone(cloned.self_hosted)
 
     # HTTP-level coverage for the module and checklist endpoints. The tests above
     # drive the service directly; these go through the DRF views and the request
@@ -443,7 +458,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         resp = self._add_requirement(pk, module_tileid)
 
         self.assertEqual(resp.status_code, 201)
-        self.assertEqual(len(self._ordered_requirement_ids(module_tileid)), 4)
+        self.assertEqual(
+            len(self._ordered_requirement_ids(module_tileid)), PERMIT_REQUIREMENTS + 1
+        )
 
     def test_delete_requirement_endpoint_removes_child(self):
         pk = self._create()
@@ -542,10 +559,20 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
         self.assertIn(str(host.pk), [str(h.pk) for h in hosts])
 
-    def test_permit_module_tiles_is_empty_for_a_typeless_module(self):
-        # A permit type with no host graph has no hosts to list.
+    def test_permit_module_tiles_is_empty_before_submission(self):
+        # The permit module hosts itself, but nothing is attached until the
+        # submission date is set.
         service = ProcessRequirementService()
         self.assertEqual(service.permit_module_tiles(self._create(), "permit"), [])
+
+    def test_submission_links_the_permit_as_its_own_host(self):
+        # The permit module's own-submission requirement points back at the
+        # permit, linked after the save because the id exists only then.
+        pk = self._create()
+        self._patch(pk, submission_payload())
+
+        hosts = ProcessRequirementService().permit_module_tiles(pk, "permit")
+        self.assertEqual([str(host.pk) for host in hosts], [str(pk)])
 
     def test_module_host_endpoint_lists_attached_hosts(self):
         pk = self._create()
@@ -566,7 +593,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self._patch(pk, submission_payload())
 
         service = ProcessRequirementService()
-        self.assertEqual(service.permit_module_tiles(pk, "investigation"), [])
+        self.assertEqual(list(service.permit_module_tiles(pk, "investigation")), [])
 
     def test_reorder_ignores_a_module_from_another_permit(self):
         pk = self._create()

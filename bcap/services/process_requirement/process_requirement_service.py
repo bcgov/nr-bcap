@@ -26,7 +26,11 @@ from bcap.util.indexing import bulk_index
 from bcap.util.tiles import referenced_resource_ids, references_by_source
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.process_requirement.template_specs import host_graph, load
+from bcap.services.process_requirement.template_specs import (
+    host_graph,
+    load,
+    module_graph,
+)
 
 
 @dataclass
@@ -38,6 +42,10 @@ class ClonedModule:
     parent: object
     requirements: list
     name: str
+    # The child whose submission is the module's own resource. For the permit
+    # module that resource is the permit application itself, which doesn't exist
+    # yet at create time, so the caller links it once the permit is saved.
+    self_hosted: object = None
 
 
 class ProcessRequirementService:
@@ -112,6 +120,9 @@ class ProcessRequirementService:
             for ids in grouped.values():
                 to_delete.update(ids)
 
+        # The permit module hosts its own submission on the permit, which must
+        # outlive the module.
+        to_delete.discard(str(permit_id))
         Tile.objects.get(pk=module_tileid).delete()
         self._delete_resources(to_delete)
 
@@ -150,6 +161,7 @@ class ProcessRequirementService:
         to_delete = {str(requirement_id)}
         for hosts in self.host_ids_by_requirement({str(requirement_id)}).values():
             to_delete.update(hosts)
+        to_delete.discard(str(permit_id))
         Tile.objects.get(pk=child.pk).delete()
         self._delete_resources(to_delete)
 
@@ -300,20 +312,32 @@ class ProcessRequirementService:
         one) as it is cloned. The module and requirement ids are stamped later by
         the save hook."""
         parent_spec = load(permit_type)
+        graph = module_graph(permit_type)
         templates = self.builder.templates_by_id()
         parent = self.builder.clone_requirement(templates[parent_spec["id"]].pk)
         requirements = []
+        self_hosted = None
         for child in parent_spec["requirements"]:
             submission = None
-            if child["resource"] == permit_type:
+            own_submission = child["resource"] == graph
+            if own_submission:
                 submission = host
             elif child["resource"]:
                 submission = self.builder.make_resource(child["resource"])
             requirement = self.builder.clone_requirement(
                 templates[child["id"]].pk, parent=parent, submission=submission
             )
+            if own_submission and submission is None:
+                self_hosted = requirement
             requirements.append(requirement)
-        return ClonedModule(parent, requirements, parent_spec["name"])
+        return ClonedModule(parent, requirements, parent_spec["name"], self_hosted)
+
+    def link_submission(self, requirement_id, resource_id):
+        """Point a requirement's submission host at a resource that already
+        exists (the permit application links its own module this way)."""
+        self.builder.link(
+            requirement_id, submission=Resource.objects.get(pk=resource_id)
+        )
 
     def clone_by_id(self, template_id):
         return self.builder.clone_requirement(template_id)

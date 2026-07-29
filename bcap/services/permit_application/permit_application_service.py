@@ -63,21 +63,34 @@ class PermitApplicationService:
         the submission date."""
         if not self._first_submission(instance, data):
             return save()
-        return self._attach_requirements_and_save(data, save)
+        return self._attach_requirements_and_save(data, save, permit_id=instance.pk)
 
-    def _attach_requirements_and_save(self, data, save):
+    def _attach_requirements_and_save(self, data, save, permit_id=None):
         """Clone and attach the requirements, deleting every clone (the grouping
         parent included) if the save is rejected (the two saves can't share one
         transaction)."""
-        parent, requirements = self._inject_requirements_from_templates(data)
+        cloned = self._inject_requirements_from_templates(data)
         try:
             response = save()
-            self._index_requirements(requirements)
+            self._link_permit_to_itself(cloned, permit_id or self._saved_id(response))
+            self._index_requirements(cloned.requirements)
             return response
         except Exception:
-            for requirement in [parent, *requirements]:
+            for requirement in [cloned.parent, *cloned.requirements]:
                 requirement.delete()
             raise
+
+    def _link_permit_to_itself(self, cloned, permit_id):
+        """Point the module's own-submission requirement at the permit. Deferred
+        until here because on create the permit has no id until save returns."""
+        if cloned.self_hosted is None or permit_id is None:
+            return
+        self._requirements.link_submission(cloned.self_hosted.pk, permit_id)
+
+    @staticmethod
+    def _saved_id(response):
+        """The permit id out of the create response, or None if it carries none."""
+        return (getattr(response, "data", None) or {}).get("resourceinstanceid")
 
     def _first_submission(self, instance, data):
         """The submission date is being set now and wasn't already stored."""
@@ -100,10 +113,9 @@ class PermitApplicationService:
 
     def _inject_requirements_from_templates(self, data):
         """Clone a working copy of each requirement template, link the children
-        to the application in flow order, and return every created resource (the
-        grouping parent included) so a rejected save can delete them all. The
-        module id and requirement ids are filled in by the assign-module-ids
-        save hook."""
+        to the application in flow order, and return the cloned module so a
+        rejected save can delete everything it created. The module id and
+        requirement ids are filled in by the assign-module-ids save hook."""
         admin = (
             data.setdefault(ALIASED_DATA, {})
             .setdefault(group_aliases.APPLICATION_ADMIN, {ALIASED_DATA: {}})
@@ -128,4 +140,4 @@ class PermitApplicationService:
                 }
             }
         )
-        return cloned.parent, cloned.requirements
+        return cloned
