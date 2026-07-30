@@ -89,11 +89,15 @@ describe('QuestionDialogExternal.vue', () => {
         });
     };
 
-    it('loads contributors on mount and selects the first one', async () => {
+    it('loads contributors when opened, not on mount, and selects the first one', async () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        expect(getContributorsForResources).toHaveBeenCalledOnce();
+        expect(getContributorsForResources).not.toHaveBeenCalled();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
         expect(getContributorsForResources).toHaveBeenCalledWith('permit-999');
 
         expect((wrapper.vm as unknown).state.recipients.length).toBe(2);
@@ -104,7 +108,6 @@ describe('QuestionDialogExternal.vue', () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        // Threads load on mount so the unread badge is ready before opening.
         expect(getThreadsForResource).toHaveBeenCalledWith('permit-999', false);
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];

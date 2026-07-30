@@ -186,100 +186,114 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
                     />
                 </AccordionHeader>
                 <AccordionContent>
-                    <!-- The Submission Resource (first) carries the Project
+                    <!-- Mounted only while expanded: each requirement row opens
+                         a messages dialog that fetches on mount. -->
+                    <template v-if="ui.openPanels.includes(row.tileid)">
+                        <!-- The Submission Resource (first) carries the Project
                          Summary above its requirements. -->
-                    <div
-                        v-if="index === 0"
-                        class="module-summary"
-                    >
-                        <ReviewSummary :fields="summaryFields || []" />
-                    </div>
-                    <p
-                        v-if="isLoadingRequirements(row)"
-                        class="empty-note loading-note"
-                    >
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                        Loading requirements&hellip;
-                    </p>
-                    <ul
-                        v-else-if="visibleRequirements(row).length"
-                        class="requirement-list"
-                    >
-                        <li
-                            v-for="(
-                                requirement, reqIndex
-                            ) in visibleRequirements(row)"
-                            :key="requirement.resourceId || requirement.name"
-                            class="requirement-item"
-                            @dragover.prevent
-                            @drop="
-                                dnd.drop(
-                                    row.tileid,
-                                    reqIndex,
-                                    row.requirements,
-                                    () => persistReqOrder(row),
-                                )
-                            "
-                        >
-                            <span
-                                v-if="isStaff"
-                                class="req-drag-handle"
-                                title="Drag to reorder"
-                                draggable="true"
-                                @dragstart="dnd.start(row.tileid, reqIndex)"
-                                @dragend="dnd.end"
-                            >
-                                <i class="fa-solid fa-grip-vertical"></i>
-                            </span>
-                            <RequirementRow
-                                :requirement="requirement"
-                                :module-id="row.moduleId"
-                                :permit-id="permitId"
-                                :is-staff="isStaff"
-                                :application-id="applicationId"
-                                :staff="staffQuery"
-                                :toggling="ui.togglingRequirement"
-                                :can-view-submission="
-                                    !isLoadingRequirements(row)
-                                "
-                                @toggle="onToggleRequirement(requirement)"
-                                @remove="reqRemove.open({ row, requirement })"
-                                @view-submission="
-                                    onViewSubmission(row, index, requirement)
-                                "
-                            />
-                        </li>
-                    </ul>
-                    <p
-                        v-else
-                        class="empty-note"
-                    >
-                        No process requirements on this module.
-                    </p>
-
-                    <div class="module-footer-actions">
                         <div
-                            v-if="isStaff"
-                            class="add-req-row"
+                            v-if="index === 0"
+                            class="module-summary"
                         >
-                            <Button
-                                type="button"
-                                class="add-req-btn"
-                                :disabled="ui.addingRequirement === row.tileid"
-                                @click="onAddRequirement(row)"
-                            >
-                                <i
-                                    class="fa-solid"
-                                    :class="
-                                        ui.addingRequirement === row.tileid
-                                            ? 'fa-circle-notch fa-spin'
-                                            : 'fa-plus'
-                                    "
-                                ></i>
-                                Add Checklist
-                            </Button>
+                            <ReviewSummary :fields="summaryFields || []" />
                         </div>
-                    </div>
+                        <p
+                            v-if="isLoadingRequirements(row)"
+                            class="empty-note loading-note"
+                        >
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            Loading requirements&hellip;
+                        </p>
+                        <ul
+                            v-else-if="visibleRequirements(row).length"
+                            class="requirement-list"
+                        >
+                            <li
+                                v-for="(
+                                    requirement, reqIndex
+                                ) in visibleRequirements(row)"
+                                :key="
+                                    requirement.resourceId || requirement.name
+                                "
+                                class="requirement-item"
+                                @dragover.prevent
+                                @drop="
+                                    dnd.drop(
+                                        row.tileid,
+                                        reqIndex,
+                                        row.requirements,
+                                        () => persistReqOrder(row),
+                                    )
+                                "
+                            >
+                                <span
+                                    v-if="isStaff"
+                                    class="req-drag-handle"
+                                    title="Drag to reorder"
+                                    draggable="true"
+                                    @dragstart="dnd.start(row.tileid, reqIndex)"
+                                    @dragend="dnd.end"
+                                >
+                                    <i class="fa-solid fa-grip-vertical"></i>
+                                </span>
+                                <RequirementRow
+                                    :requirement="requirement"
+                                    :module-id="row.moduleId"
+                                    :permit-id="permitId"
+                                    :is-staff="isStaff"
+                                    :application-id="applicationId"
+                                    :staff="staffQuery"
+                                    :toggling="ui.togglingRequirement"
+                                    :can-view-submission="
+                                        !isLoadingRequirements(row)
+                                    "
+                                    @toggle="onToggleRequirement(requirement)"
+                                    @remove="
+                                        reqRemove.open({ row, requirement })
+                                    "
+                                    @view-submission="
+                                        onViewSubmission(
+                                            row,
+                                            index,
+                                            requirement,
+                                        )
+                                    "
+                                />
+                            </li>
+                        </ul>
+                        <p
+                            v-else
+                            class="empty-note"
+                        >
+                            No process requirements on this module.
+                        </p>
+
+                        <div class="module-footer-actions">
+                            <div
+                                v-if="isStaff"
+                                class="add-req-row"
+                            >
+                                <Button
+                                    type="button"
+                                    class="add-req-btn"
+                                    :disabled="
+                                        ui.addingRequirement === row.tileid
+                                    "
+                                    @click="onAddRequirement(row)"
+                                >
+                                    <i
+                                        class="fa-solid"
+                                        :class="
+                                            ui.addingRequirement === row.tileid
+                                                ? 'fa-circle-notch fa-spin'
+                                                : 'fa-plus'
+                                        "
+                                    ></i>
+                                    Add Checklist
+                                </Button>
+                            </div>
+                        </div>
+                    </template>
                 </AccordionContent>
             </AccordionPanel>
         </Accordion>

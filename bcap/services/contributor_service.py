@@ -162,7 +162,9 @@ class ContributorService(BaseGraphService):
             self._active(
                 TileModel.objects.filter(
                     nodegroup_id=self._contributor_ng,
-                    **{f"data__{name_node}__en__value": Groups.ARCHAEOLOGY_BRANCH},
+                    data__contains={
+                        name_node: {"en": {"value": Groups.ARCHAEOLOGY_BRANCH}}
+                    },
                 )
             )
             .values_list("resourceinstance_id", flat=True)
