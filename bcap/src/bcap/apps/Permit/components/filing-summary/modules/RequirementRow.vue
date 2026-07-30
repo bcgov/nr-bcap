@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
-import QuestionDialog from '@/bcap/apps/Permit/components/common/QuestionDialogExternal.vue';
+import MessageDialog from '@/bcap/apps/Permit/components/common/messages/MessageDialog.vue';
 import {
     STATUS_ICON,
     checklistHref,
@@ -114,7 +114,7 @@ const moreItems = computed(() => [
             v-if="applicationId && requirement.resourceId"
             class="req-messages"
         >
-            <QuestionDialog
+            <MessageDialog
                 :key="requirement.resourceId"
                 :application-id="applicationId"
                 :resource-id="requirement.resourceId"

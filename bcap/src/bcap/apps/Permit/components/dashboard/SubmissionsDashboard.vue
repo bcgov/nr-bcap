@@ -444,7 +444,7 @@ const openResourceReport = (resourceId: string) => {
     padding: 0.4rem;
     cursor: pointer;
     color: #6c757d;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     line-height: 1;
     transition: color 0.2s ease;
 }
@@ -474,20 +474,20 @@ const openResourceReport = (resourceId: string) => {
 }
 
 :deep(.bcgov-card-header) {
-    font-size: 1.2rem !important;
+    font-size: 1.25rem !important;
     font-weight: 600 !important;
     line-height: 1.2 !important;
 }
 
 :deep(.description) {
-    font-size: 1.15rem !important;
+    font-size: 1.25rem !important;
     font-weight: bold !important;
     color: #3b3bff !important;
 }
 
 :deep(.subtitle) {
     color: #1a1a1a !important;
-    font-size: 0.95rem !important;
+    font-size: 1.25rem !important;
 }
 
 :deep(.bodyTitle) {

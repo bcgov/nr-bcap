@@ -19,6 +19,13 @@ from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
 
+BRANCHES = [
+    "Material Collection",
+    "Methodology",
+    "Recordings",
+    "Requirement Checklist",
+]
+
 RESOURCE_MODELS = [
     "Alteration",
     "BCAP Message",
@@ -64,15 +71,24 @@ class Command(BaseCommand):
             self.reload_requirement_templates()
 
     def reload_graphs(self):
-        source = _pkg() / "graphs" / "resource_models"
+        branches = self._graph_paths("branches", BRANCHES)
+        models = self._graph_paths("resource_models", RESOURCE_MODELS)
+        PackagesCommand().import_graphs(branches + models)
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Imported {len(branches)} branches and {len(models)} resource models."
+            )
+        )
+
+    @staticmethod
+    def _graph_paths(subdir, names):
         paths = []
-        for name in RESOURCE_MODELS:
-            path = source / f"{name}.json"
+        for name in names:
+            path = _pkg() / "graphs" / subdir / f"{name}.json"
             if not path.exists():
-                raise FileNotFoundError(f"No graph file for resource model '{name}'.")
+                raise FileNotFoundError(f"No graph file for '{name}'.")
             paths.append(str(path))
-        PackagesCommand().import_graphs(paths)
-        self.stdout.write(self.style.SUCCESS(f"Imported {len(paths)} resource models."))
+        return paths
 
     def reload_lists(self):
         # Item ids are uuidv5s of their SKOS subject, so overwriting rebuilds the

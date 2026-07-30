@@ -1,6 +1,6 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import QuestionDialogExternal from './QuestionDialogExternal.vue';
+import MessageDialog from './MessageDialog.vue';
 import {
     createBcapMessage,
     markMessageAsRead,
@@ -32,7 +32,7 @@ vi.mock(
     }),
 );
 
-describe('QuestionDialogExternal.vue', () => {
+describe('MessageDialog.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
@@ -56,7 +56,7 @@ describe('QuestionDialogExternal.vue', () => {
 
     // Stub the PrimeVue components to avoid Teleport/DOM issues in tests.
     const mountComponent = (props = {}) => {
-        return mount(QuestionDialogExternal, {
+        return mount(MessageDialog, {
             props: {
                 applicationId: 'APP-1234',
                 resourceId: 'permit-999',

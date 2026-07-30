@@ -17,6 +17,12 @@ export const formatTimestamp = (iso: string | null | undefined): string =>
         minute: '2-digit',
     });
 
+export const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
 export const downloadFile = async (
     url: string,
     name: string,

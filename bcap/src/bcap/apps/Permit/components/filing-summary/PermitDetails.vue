@@ -28,7 +28,7 @@ import {
     permitModules as permitModuleCatalogue,
     modulesForFilingType,
 } from '../dashboard/permitModules.ts';
-import QuestionDialog from '../common/QuestionDialogExternal.vue';
+import MessageDialog from '../common/messages/MessageDialog.vue';
 import { useMessageStore } from '@/bcap/stores/message.ts';
 
 const messageStore = useMessageStore();
@@ -458,7 +458,7 @@ watch(activeModuleId, (id) => {
                                                 label="Remove"
                                                 @click="confirmDelete(draft)"
                                             />
-                                            <QuestionDialog
+                                            <MessageDialog
                                                 :application-id="
                                                     state.permitData
                                                         .applicationNumber

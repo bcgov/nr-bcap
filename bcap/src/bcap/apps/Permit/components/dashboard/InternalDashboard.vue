@@ -362,7 +362,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
 
 /* Results Counter Styling */
 .results-summary {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     color: #555555;
     margin-bottom: 1rem;
     padding-left: 0.5rem;

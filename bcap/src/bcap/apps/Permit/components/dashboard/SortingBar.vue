@@ -185,7 +185,7 @@ const activeSortLabel = computed(() => {
                                 ? 'fa-caret-up'
                                 : 'fa-caret-down',
                         ]"
-                        style="font-size: 0.8rem; margin-top: 2px"
+                        style="font-size: 1.25rem; margin-top: 2px"
                     ></i>
                 </Button>
 
@@ -385,7 +385,7 @@ const activeSortLabel = computed(() => {
     top: 100%;
     left: 1.5rem;
     margin-top: 0.5rem;
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     color: #555555;
     display: flex;
     align-items: center;
@@ -395,7 +395,7 @@ const activeSortLabel = computed(() => {
 .clear-sort {
     cursor: pointer;
     color: #999999;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     transition: color 0.2s ease;
 }
 
