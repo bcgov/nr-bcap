@@ -281,6 +281,18 @@ python3 manage.py clear_dashboard_data
 
 These are temporary developer aids and will be removed in a future release.
 
+### Reloading the permit package
+
+To bring a dev database back in line with the checked-in package files:
+
+```bash
+python3 manage.py reload_permit_package
+```
+
+Reimports the permit resource models (Alteration, BCAP Message, Document Submission, Inspection, Investigation, Notice of Project Intent, Permit Application, Process Requirement, Workflow Drafts), overwrites the controlled lists from `pkg/reference_data/skos/*.xml`, then deletes and reseeds the process-requirement templates from `pkg/reference_data/process_requirements/groups`.
+
+Overwriting the lists is safe to repeat: list item ids are derived from their SKOS subject, so out-of-date lists are replaced while tiles referencing their items keep working. Skip any step with `--skip-graphs`, `--skip-lists`, or `--skip-requirements`.
+
 ## Running Backend Unit Tests
 
 ```
