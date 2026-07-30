@@ -7,13 +7,14 @@ import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
-import { getReviewNav } from '@/bcap/apps/Permit/reviewNav.ts';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const router = useRouter();
 const route = useRoute();
-const nav = getReviewNav();
+const headerStore = usePermitHeaderStore();
+const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
 
 // ?staff rides along from the permit view, so the crumb returns to the same
@@ -28,7 +29,8 @@ const backLink = computed(() =>
         : { name: routeNames.home },
 );
 
-const header = nav?.permitHeader;
+// Set by the permit view; loaded here only if this page was opened cold.
+const header = computed(() => headerStore.state.header);
 
 const state = reactive({
     loading: true,
@@ -42,6 +44,7 @@ onMounted(async () => {
         return;
     }
     try {
+        headerStore.load(nav.permitId);
         state.data = await fetchResourceData(nav.graph, nav.resourceId);
     } catch (error) {
         console.error('Failed to load submission:', error);

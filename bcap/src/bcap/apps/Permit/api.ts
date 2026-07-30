@@ -11,9 +11,12 @@ import type {
     PermitAliasedData,
 } from '@/bcap/types.ts';
 import type {
+    ApiContributorsAssignableListResponse,
     BcapMessage,
     BcapMessageWritable,
     ChecklistStep,
+    ContributorSummary,
+    PatchedRequirementAssignee,
     DraftRecord,
     PatchedBcapMessagePatchWritable,
     PatchedPermitApplicationWritable,
@@ -380,6 +383,37 @@ export const removeRequirement = async (
         arches.urls.module_requirement(permitId, moduleTileId, requirementId),
         { method: HttpMethod.Delete },
     );
+};
+
+export const setRequirementAssignee = async (
+    permitId: string,
+    moduleTileId: string,
+    requirementId: string,
+    contributorId: string | null,
+): Promise<void> => {
+    const body: PatchedRequirementAssignee = { contributor_id: contributorId };
+    await apiFetch(
+        arches.urls.module_requirement(permitId, moduleTileId, requirementId),
+        { method: HttpMethod.Patch, body },
+    );
+};
+
+export const fetchAssignableContributors = async (): Promise<
+    ContributorSummary[]
+> =>
+    (await apiFetchJson<ApiContributorsAssignableListResponse>(
+        arches.urls.assignable_contributors,
+    )) ?? [];
+
+// Patch a process requirement's aliased data (the checklist page's save).
+export const patchProcessRequirement = async (
+    requirementId: string,
+    aliasedData: ProcessRequirement['aliased_data'],
+): Promise<void> => {
+    await apiFetch(arches.urls.api_process_requirements(requirementId), {
+        method: HttpMethod.Patch,
+        body: { aliased_data: aliasedData },
+    });
 };
 
 // Save a requirement's checklist: its name and the full ordered step list. The

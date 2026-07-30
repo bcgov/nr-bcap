@@ -93,8 +93,9 @@ export const zDraftRecord = z.object({
 });
 
 /**
- * Request body for create/update: the whole draft blob, plus an optional
- * frontend version and parent resource stamped on create.
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
  */
 export const zDraftWrite = z.object({
     data: z.unknown(),
@@ -398,11 +399,13 @@ export const zPatchedChecklistPatch = z.object({
 });
 
 /**
- * Request body for create/update: the whole draft blob, plus an optional
- * frontend version and parent resource stamped on create.
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
  */
 export const zPatchedDraftWrite = z.object({
     data: z.unknown().optional(),
+    current_step: z.string().optional(),
     frontend_version: z.string().optional(),
     parent_resource_id: z.string().optional()
 });
@@ -420,6 +423,13 @@ export const zPatchedModuleCompletion = z.object({
  */
 export const zPatchedReorderRequirements = z.object({
     order: z.array(z.uuid()).optional()
+});
+
+/**
+ * The assignee PATCH body: the Contributor to assign, or null to clear.
+ */
+export const zPatchedRequirementAssignee = z.object({
+    contributor_id: z.uuid().nullish()
 });
 
 /**
@@ -8945,6 +8955,8 @@ export const zApiContributorRetrievePath = z.object({
 
 export const zApiContributorRetrieveResponse = zContributor;
 
+export const zApiContributorsAssignableListResponse = z.array(zContributorSummary);
+
 export const zApiContributorsUnlinkedListResponse = z.array(zContributorSummary);
 
 export const zApiDashboardExternalRetrieveQuery = z.object({
@@ -9132,6 +9144,19 @@ export const zApiPermitApplicationModuleRequirementDestroyPath = z.object({
  * No response body
  */
 export const zApiPermitApplicationModuleRequirementDestroyResponse = z.void();
+
+export const zApiPermitApplicationModuleRequirementPartialUpdateBody = zPatchedRequirementAssignee;
+
+export const zApiPermitApplicationModuleRequirementPartialUpdatePath = z.object({
+    id: z.uuid(),
+    module_tileid: z.uuid(),
+    requirement_id: z.uuid()
+});
+
+/**
+ * No response body
+ */
+export const zApiPermitApplicationModuleRequirementPartialUpdateResponse = z.void();
 
 export const zApiPermitApplicationModuleRequirementsPartialUpdateBody = zPatchedReorderRequirements;
 

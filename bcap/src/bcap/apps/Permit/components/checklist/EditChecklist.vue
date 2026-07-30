@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted, computed } from 'vue';
+import { reactive, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import arches from 'arches';
 import Button from 'primevue/button';
@@ -11,8 +11,7 @@ import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
-import { loadPermitHeader } from '@/bcap/apps/Permit/components/common/permitHeader.ts';
-import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 
 const route = useRoute();
@@ -116,11 +115,13 @@ const loadRequirement = async (withSpinner = true) => {
     }
 };
 
-const permitHeader = ref<PermitHeader | null>(null);
+const headerStore = usePermitHeaderStore();
+const permitId = computed(() => String(route.query.permit ?? ''));
+const permitHeader = computed(() => headerStore.state.header);
 
-onMounted(async () => {
+onMounted(() => {
     loadRequirement();
-    permitHeader.value = await loadPermitHeader(route.query.permit);
+    headerStore.load(permitId.value);
 });
 
 const addStep = () => {

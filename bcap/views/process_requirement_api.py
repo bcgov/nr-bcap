@@ -31,6 +31,7 @@ from bcap.serializers.process_requirement_serializers import (
     HOST_SERIALIZERS,
     ModuleCompletionSerializer,
     ReorderRequirementsSerializer,
+    RequirementAssigneeSerializer,
     RequirementStatusSerializer,
     module_host_schema,
 )
@@ -239,7 +240,8 @@ class ModuleRequirementsView(APIView):
 @extend_schema(tags=["External: process_requirement"], responses={204: None})
 class ModuleRequirementView(APIView):
     """DELETE: remove one process requirement from a module by its resource id
-    (the child tile, the requirement resource, and its submission host)."""
+    (the child tile, the requirement resource, and its submission host).
+    PATCH: set or clear its ministry assignee."""
 
     authentication_classes = [SessionAuthentication]
     permission_classes = STAFF_MODULE_PERMISSIONS
@@ -248,6 +250,17 @@ class ModuleRequirementView(APIView):
         ProcessRequirementService(user=request.user).remove_requirement(
             pk, module_tileid, requirement_id
         )
+        return Response(status=204)
+
+    @extend_schema(request=RequirementAssigneeSerializer)
+    def patch(self, request, pk, module_tileid, requirement_id):
+        body = RequirementAssigneeSerializer(data=request.data)
+        body.is_valid(raise_exception=True)
+        found = ProcessRequirementService(user=request.user).set_ministry_assignee(
+            pk, module_tileid, requirement_id, body.validated_data["contributor_id"]
+        )
+        if not found:
+            raise Http404("No requirement matches the given id on this module.")
         return Response(status=204)
 
 

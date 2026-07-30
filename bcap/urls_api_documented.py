@@ -25,6 +25,10 @@ from bcap.views.permit_application_api import (
     PermitApplicationView,
     PermitApplicationCreateView,
 )
+from bcap.views.contributor_api import (
+    AssignableContributorsView,
+    UnlinkedContributorsView,
+)
 from bcap.views.process_requirement_api import (
     ModuleRequirementsView,
     ModuleRequirementView,
@@ -47,7 +51,6 @@ from bcap.views.user_api import UserProfile
 from bcap.views.registration_link_api import (
     AssignableGroupsView,
     RegistrationLinkView,
-    UnlinkedContributorsView,
 )
 
 # Hand-written routes that belong in the OpenAPI schema. Declared WITHOUT the
@@ -100,6 +103,12 @@ documented_api_patterns = [
         UnlinkedContributorsView.as_view(),
         name="unlinked_contributors",
     ),
+    # The Contributors work can be assigned to.
+    path(
+        "api/contributors/assignable",
+        AssignableContributorsView.as_view(),
+        name="assignable_contributors",
+    ),
     path(
         "api/assignable_groups",
         AssignableGroupsView.as_view(),
@@ -137,7 +146,7 @@ documented_api_patterns = [
         ModuleRequirementsView.as_view(),
         name="module_requirements",
     ),
-    # Remove one process requirement from a module.
+    # Remove one process requirement from a module, or set its assignee.
     path(
         "api/permit_application/<uuid:pk>/module/<uuid:module_tileid>"
         "/requirement/<uuid:requirement_id>",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
@@ -7,11 +7,11 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
+import Menu from 'primevue/menu';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { graphForModule } from '@/bcap/apps/Permit/components/dashboard/permitModules.ts';
-import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
-import { setReviewNav } from '@/bcap/apps/Permit/reviewNav.ts';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
 import { useModuleActions } from '@/bcap/apps/Permit/composables/useModuleActions.ts';
 import ReviewSummary, {
@@ -36,7 +36,6 @@ const props = defineProps<{
     addableModules?: AddableModule[];
     applicationId?: string;
     summaryFields?: ReviewField[];
-    permitHeader?: PermitHeader;
 }>();
 
 const emit = defineEmits<{
@@ -53,6 +52,8 @@ const {
     onAddRequirement,
     onToggleCompleted,
     onToggleRequirement,
+    onAssignRequirement,
+    loadAssignees,
     moduleRemove,
     reqRemove,
     persistOrder,
@@ -67,7 +68,11 @@ const {
 const dnd = useDragReorder();
 
 const messageStore = useMessageStore();
-onMounted(() => messageStore.loadModuleUnread(props.permitId));
+const headerStore = usePermitHeaderStore();
+onMounted(() => {
+    messageStore.loadModuleUnread(props.permitId);
+    if (props.isStaff) loadAssignees();
+});
 
 const router = useRouter();
 const route = useRoute();
@@ -91,17 +96,26 @@ const onViewSubmission = (
         graph = resolved;
         resourceId = host;
     }
-    setReviewNav({
+    headerStore.setReview({
         graph,
         resourceId,
         permitId: props.permitId,
         title: row.name,
-        permitHeader: props.permitHeader,
     });
     // Carry ?staff through so the review page's breadcrumb returns to the same
     // staff/external view of the permit.
     router.push({ name: routeNames.moduleReview, query: route?.query ?? {} });
 };
+
+const addModuleMenu = ref();
+
+const addModuleItems = computed(() =>
+    (props.addableModules ?? []).map((mod) => ({
+        label: mod.label,
+        icon: 'fa-solid fa-plus',
+        command: () => onAddModule(mod),
+    })),
+);
 
 // All requirements are shown, internal ones included.
 const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
@@ -136,24 +150,25 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
             class="add-module-bar"
         >
             <Button
-                v-for="mod in addableModules"
-                :key="mod.id"
                 type="button"
                 class="add-module-chip"
                 :disabled="ui.adding !== null"
-                :title="`Add ${mod.label} module`"
-                @click="onAddModule(mod)"
+                @click="addModuleMenu?.toggle($event)"
             >
                 <i
                     class="fa-solid"
-                    :class="
-                        ui.adding === mod.id
-                            ? 'fa-circle-notch fa-spin'
-                            : 'fa-plus'
-                    "
+                    :class="ui.adding ? 'fa-circle-notch fa-spin' : 'fa-plus'"
                 ></i>
-                {{ mod.label }}
+                Add module
+                <i class="fa-solid fa-chevron-down add-module-caret"></i>
             </Button>
+            <Menu
+                ref="addModuleMenu"
+                :model="addModuleItems"
+                popup
+                append-to="body"
+                class="req-more-menu"
+            />
         </div>
 
         <Accordion
@@ -204,63 +219,89 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
                             <i class="fa-solid fa-spinner fa-spin"></i>
                             Loading requirements&hellip;
                         </p>
-                        <ul
-                            v-else-if="visibleRequirements(row).length"
-                            class="requirement-list"
-                        >
-                            <li
-                                v-for="(
-                                    requirement, reqIndex
-                                ) in visibleRequirements(row)"
-                                :key="
-                                    requirement.resourceId || requirement.name
-                                "
-                                class="requirement-item"
-                                @dragover.prevent
-                                @drop="
-                                    dnd.drop(
-                                        row.tileid,
-                                        reqIndex,
-                                        row.requirements,
-                                        () => persistReqOrder(row),
-                                    )
-                                "
-                            >
+                        <template v-else-if="visibleRequirements(row).length">
+                            <div class="requirement-head">
+                                <span class="head-task">Task</span>
                                 <span
-                                    v-if="isStaff"
-                                    class="req-drag-handle"
-                                    title="Drag to reorder"
-                                    draggable="true"
-                                    @dragstart="dnd.start(row.tileid, reqIndex)"
-                                    @dragend="dnd.end"
+                                    class="req-right"
+                                    :class="{ 'is-readonly': !isStaff }"
                                 >
-                                    <i class="fa-solid fa-grip-vertical"></i>
+                                    <span>Assignee</span>
+                                    <span class="head-action">Task action</span>
                                 </span>
-                                <RequirementRow
-                                    :requirement="requirement"
-                                    :module-id="row.moduleId"
-                                    :permit-id="permitId"
-                                    :is-staff="isStaff"
-                                    :application-id="applicationId"
-                                    :staff="staffQuery"
-                                    :toggling="ui.togglingRequirement"
-                                    :can-view-submission="
-                                        !isLoadingRequirements(row)
+                            </div>
+                            <ul class="requirement-list">
+                                <li
+                                    v-for="(
+                                        requirement, reqIndex
+                                    ) in visibleRequirements(row)"
+                                    :key="
+                                        requirement.resourceId ||
+                                        requirement.name
                                     "
-                                    @toggle="onToggleRequirement(requirement)"
-                                    @remove="
-                                        reqRemove.open({ row, requirement })
-                                    "
-                                    @view-submission="
-                                        onViewSubmission(
-                                            row,
-                                            index,
-                                            requirement,
+                                    class="requirement-item"
+                                    @dragover.prevent
+                                    @drop="
+                                        dnd.drop(
+                                            row.tileid,
+                                            reqIndex,
+                                            row.requirements,
+                                            () => persistReqOrder(row),
                                         )
                                     "
-                                />
-                            </li>
-                        </ul>
+                                >
+                                    <span
+                                        v-if="isStaff"
+                                        class="req-drag-handle"
+                                        title="Drag to reorder"
+                                        draggable="true"
+                                        @dragstart="
+                                            dnd.start(row.tileid, reqIndex)
+                                        "
+                                        @dragend="dnd.end"
+                                    >
+                                        <i
+                                            class="fa-solid fa-grip-vertical"
+                                        ></i>
+                                    </span>
+                                    <RequirementRow
+                                        :requirement="requirement"
+                                        :module-id="row.moduleId"
+                                        :permit-id="permitId"
+                                        :is-staff="isStaff"
+                                        :application-id="applicationId"
+                                        :staff="staffQuery"
+                                        :toggling="ui.togglingRequirement"
+                                        :can-view-submission="
+                                            !isLoadingRequirements(row)
+                                        "
+                                        :assignees="state.assignees"
+                                        :position="reqIndex + 1"
+                                        @toggle="
+                                            onToggleRequirement(requirement)
+                                        "
+                                        @assign="
+                                            (contributorId) =>
+                                                onAssignRequirement(
+                                                    row,
+                                                    requirement,
+                                                    contributorId,
+                                                )
+                                        "
+                                        @remove="
+                                            reqRemove.open({ row, requirement })
+                                        "
+                                        @view-submission="
+                                            onViewSubmission(
+                                                row,
+                                                index,
+                                                requirement,
+                                            )
+                                        "
+                                    />
+                                </li>
+                            </ul>
+                        </template>
                         <p
                             v-else
                             class="empty-note"
@@ -379,9 +420,9 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
 
-/* Pale blue header so each module reads as a distinct, airy BC Gov card. */
+/* Neutral while collapsed; the pale blue band means "expanded". */
 .submitted-modules :deep(.p-accordionheader) {
-    background-color: #eef4fb;
+    background-color: #f6f7f9;
     color: var(--bc-navy);
     padding: 1.9rem 1.5rem 1.9rem 2.5rem;
     /* Match the panel's corners so the open-state outline follows them. */
@@ -416,6 +457,7 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
 .submitted-modules :deep(.p-accordionpanel-active .p-accordionheader) {
     outline: 2px solid var(--bc-link);
     outline-offset: -2px;
+    background-color: #eef4fb;
 }
 
 .submitted-modules :deep(.p-accordionheader:hover) {
@@ -460,11 +502,19 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
 
 .section-title {
     margin: 0 0 1.4rem;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--bc-navy);
+}
+
+.module-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.4rem;
     font-size: 1.3rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--bc-grey);
+    color: var(--bc-navy);
 }
 
 .saving-note {
@@ -500,6 +550,11 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
 .add-module-chip:hover:not(:disabled) {
     background: #3a3f4b;
     color: #ffffff;
+}
+
+.add-module-caret {
+    font-size: 0.85em;
+    margin-left: 0.2rem;
 }
 
 .add-module-chip:disabled {
@@ -550,6 +605,7 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     font-size: 1.25rem;
     padding-bottom: 0.75rem;
     margin-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 /* The summary is plain data, so labels and values both read as text even when
@@ -573,6 +629,49 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
 .module-summary :deep(.div-grid-cols dd) {
     padding: 0.9rem 1rem 0.9rem 0;
     border-bottom: 1px solid #e5e7eb;
+}
+
+/* Column labels over the rows. Uses the same trailing grid as a requirement row
+   (RequirementRow reads these vars), so the labels sit over their columns. */
+.requirement-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8fafc;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.head-task {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Lines up with the kebab column the rows leave room for. */
+.head-action {
+    padding-right: 3.5rem;
+}
+
+.requirement-head .req-right {
+    margin-left: auto;
+    display: grid;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+    grid-template-columns: minmax(0, 16rem) minmax(0, 46rem);
+}
+
+.requirement-head .req-right.is-readonly {
+    grid-template-columns: minmax(0, 16rem) minmax(0, 30rem);
+}
+
+.requirement-head .head-action {
+    justify-self: end;
 }
 
 .requirement-list {
@@ -629,26 +728,27 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     margin-top: 0;
 }
 
-/* Matches the add-module chips at the top of the panel. */
+/* Dashed outline so adding reads as an empty slot, not another row action. */
 .add-req-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
     font-weight: 700;
-    color: #3a3f4b;
-    background: #ffffff;
-    border: 1px solid #3a3f4b;
+    color: var(--bc-navy);
+    background: transparent;
+    border: 1px dashed #b6c2d1;
     border-radius: 4px;
-    padding: 0.6rem 1.2rem;
+    padding: 0.7rem 1.4rem;
     cursor: pointer;
     transition:
         background-color 0.15s ease,
-        color 0.15s ease;
+        border-color 0.15s ease;
 }
 
 .add-req-btn:hover {
-    background: #3a3f4b;
-    color: #ffffff;
+    background: var(--bc-panel);
+    border-color: var(--bc-navy);
+    color: var(--bc-navy);
 }
 
 .empty-note {

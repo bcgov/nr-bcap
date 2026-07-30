@@ -4121,11 +4121,13 @@ export type PatchedChecklistPatch = {
 };
 
 /**
- * Request body for create/update: the whole draft blob, plus an optional
- * frontend version and parent resource stamped on create.
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
  */
 export type PatchedDraftWrite = {
     data?: unknown;
+    current_step?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -4183,6 +4185,13 @@ export type PatchedProcessRequirement = {
  */
 export type PatchedReorderRequirements = {
     order?: Array<string>;
+};
+
+/**
+ * The assignee PATCH body: the Contributor to assign, or null to clear.
+ */
+export type PatchedRequirementAssignee = {
+    contributor_id?: string | null;
 };
 
 /**
@@ -8624,6 +8633,7 @@ export type DraftRecordWritable = {
     data?: {
         [key: string]: unknown;
     };
+    current_step?: string;
     created?: string | null;
     updated?: string | null;
 };
@@ -12732,6 +12742,20 @@ export type ApiContributorRetrieveResponses = {
 export type ApiContributorRetrieveResponse =
     ApiContributorRetrieveResponses[keyof ApiContributorRetrieveResponses];
 
+export type ApiContributorsAssignableListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/bcap/api/contributors/assignable';
+};
+
+export type ApiContributorsAssignableListResponses = {
+    200: Array<ContributorSummary>;
+};
+
+export type ApiContributorsAssignableListResponse =
+    ApiContributorsAssignableListResponses[keyof ApiContributorsAssignableListResponses];
+
 export type ApiContributorsUnlinkedListData = {
     body?: never;
     path?: never;
@@ -13228,6 +13252,27 @@ export type ApiPermitApplicationModuleRequirementDestroyResponses = {
 
 export type ApiPermitApplicationModuleRequirementDestroyResponse =
     ApiPermitApplicationModuleRequirementDestroyResponses[keyof ApiPermitApplicationModuleRequirementDestroyResponses];
+
+export type ApiPermitApplicationModuleRequirementPartialUpdateData = {
+    body?: PatchedRequirementAssignee;
+    path: {
+        id: string;
+        module_tileid: string;
+        requirement_id: string;
+    };
+    query?: never;
+    url: '/bcap/api/permit_application/{id}/module/{module_tileid}/requirement/{requirement_id}';
+};
+
+export type ApiPermitApplicationModuleRequirementPartialUpdateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type ApiPermitApplicationModuleRequirementPartialUpdateResponse =
+    ApiPermitApplicationModuleRequirementPartialUpdateResponses[keyof ApiPermitApplicationModuleRequirementPartialUpdateResponses];
 
 export type ApiPermitApplicationModuleRequirementsPartialUpdateData = {
     body?: PatchedReorderRequirements;

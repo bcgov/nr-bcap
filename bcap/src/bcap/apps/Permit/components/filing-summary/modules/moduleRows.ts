@@ -7,9 +7,11 @@ import type {
 
 export interface RequirementItem {
     name: string;
+    title: string;
     resourceId: string;
     type: string;
     ministryAssignee: string;
+    ministryAssigneeId: string;
     satisfied: boolean | null;
     internal: boolean | null;
     href: string;
@@ -72,12 +74,17 @@ const hrefFor = (type: string, id: string): string => {
 // resourceId -> type/satisfied/internal/host, so rows rebuilt after a reorder keep
 // their type/link/status without a fetch-driven flash.
 interface RequirementMeta {
+    name: string;
     type: string;
     satisfied: boolean;
     internal: boolean;
     hostResourceId: string;
 }
 const detailCache = new Map<string, RequirementMeta>();
+
+const requirementName = (requirement: ProcessRequirement): string =>
+    requirement.aliased_data?.requirement_identification?.aliased_data
+        ?.requirement_name?.display_value || '';
 
 const requirementType = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.requirement_identification?.aliased_data
@@ -120,18 +127,23 @@ const requirementItems = (
                     ?.resourceId || '',
             ministryAssignee:
                 child.aliased_data?.ministry_assignee?.display_value || '',
+            ministryAssigneeId:
+                child.aliased_data?.ministry_assignee?.node_value?.[0]
+                    ?.resourceId || '',
         }))
         .sort((a, b) => a.order - b.order)
-        .map(({ name, resourceId, ministryAssignee }) => {
-            // Seed type/status from the cache so a rebuild (e.g. after reorder)
-            // doesn't flash empty while the fetch re-runs.
+        .map(({ name, resourceId, ministryAssignee, ministryAssigneeId }) => {
+            // Seed name/type/status from the cache so a rebuild (e.g. after
+            // reorder) doesn't flash empty while the fetch re-runs.
             const meta = detailCache.get(resourceId);
             const type = meta?.type ?? '';
             return {
                 name,
+                title: meta?.name || name,
                 resourceId,
                 type,
                 ministryAssignee,
+                ministryAssigneeId,
                 satisfied: meta?.satisfied ?? null,
                 internal: meta?.internal ?? null,
                 href: hrefFor(type, resourceId),
@@ -183,6 +195,7 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
     const details = await fetchRequirementDetails(ids);
     for (const [id, detail] of Object.entries(details)) {
         detailCache.set(id, {
+            name: requirementName(detail),
             type: requirementType(detail),
             satisfied: requirementSatisfied(detail),
             internal: requirementInternal(detail),
@@ -193,6 +206,7 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
         for (const requirement of row.requirements) {
             const meta = detailCache.get(requirement.resourceId);
             if (meta === undefined) continue;
+            requirement.title = meta.name || requirement.name;
             requirement.type = meta.type;
             requirement.href = hrefFor(meta.type, requirement.resourceId);
             requirement.satisfied = meta.satisfied;

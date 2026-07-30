@@ -8,6 +8,8 @@ import {
     removeRequirement,
     setModuleCompleted,
     setRequirementSatisfied,
+    setRequirementAssignee,
+    fetchAssignableContributors,
 } from '@/bcap/apps/Permit/api.ts';
 import type { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
@@ -20,7 +22,10 @@ import {
     type ModuleRow,
     type RequirementItem,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
-import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
+import type {
+    ContributorSummary,
+    PermitApplicationProcessModuleTile,
+} from '@/bcap/client/types.gen.ts';
 
 // The module panel's rows and every write that changes them. The caller supplies
 // the permit it is editing, a getter for the tiles (so the rows rebuild when the
@@ -37,6 +42,7 @@ export const useModuleActions = (options: {
         rows: [] as ModuleRow[],
         saving: false,
         loading: [] as string[],
+        assignees: [] as ContributorSummary[],
     });
 
     const ui = reactive({
@@ -140,6 +146,41 @@ export const useModuleActions = (options: {
         }
     };
 
+    const loadAssignees = async () => {
+        if (state.assignees.length) {
+            return;
+        }
+        try {
+            state.assignees = await fetchAssignableContributors();
+        } catch (error) {
+            console.error('Failed to load assignable contributors:', error);
+        }
+    };
+
+    const onAssignRequirement = async (
+        row: ModuleRow,
+        requirement: RequirementItem,
+        contributorId: string | null,
+    ) => {
+        const previous = { ...requirement };
+        const assignee = state.assignees.find(
+            (one) => one.id === contributorId,
+        );
+        requirement.ministryAssigneeId = assignee?.id ?? '';
+        requirement.ministryAssignee = assignee?.name ?? '';
+        try {
+            await setRequirementAssignee(
+                permitId,
+                row.tileid,
+                requirement.resourceId,
+                contributorId,
+            );
+        } catch (error) {
+            console.error('Failed to set requirement assignee:', error);
+            Object.assign(requirement, previous);
+        }
+    };
+
     const onAddRequirement = async (row: ModuleRow) => {
         if (ui.addingRequirement) return;
         ui.addingRequirement = row.tileid;
@@ -208,6 +249,8 @@ export const useModuleActions = (options: {
         onAddRequirement,
         onToggleCompleted,
         onToggleRequirement,
+        onAssignRequirement,
+        loadAssignees,
         moduleRemove,
         reqRemove,
         persistOrder,

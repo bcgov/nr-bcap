@@ -112,23 +112,30 @@ class ContributorService(BaseGraphService):
         )
         return str(pk) if pk else None
 
-    def login_linked_contributor_ids(self, ids):
+    def login_linked_contributor_ids(self, ids=None):
         """Of the given resource ids, those that are active Contributors linked
-        to a login (a bcap_username set), so they can sign in to read messages."""
-        ids = [str(i) for i in ids]
-        if not ids:
-            return set()
-        pks = (
-            self._active(
-                TileModel.objects.filter(
-                    nodegroup_id=self._contributor_ng, resourceinstance_id__in=ids
-                )
+        to a login (a bcap_username set), so they can sign in to read messages.
+        Pass None for every login-linked Contributor."""
+        tiles = self._active(
+            TileModel.objects.filter(
+                nodegroup_id=self._contributor_ng,
+                data__has_key=self._username_node,
             )
-            .annotate(_username=KeyTextTransform(self._username_node, "data"))
+        )
+        if ids is not None:
+            tiles = tiles.filter(resourceinstance_id__in=ids)
+        pks = (
+            tiles.annotate(_username=KeyTextTransform(self._username_node, "data"))
             .exclude(Q(_username__isnull=True) | Q(_username=""))
             .values_list("resourceinstance_id", flat=True)
         )
         return {str(pk) for pk in pks}
+
+    def assignable_contributors(self) -> list[ContributorSummary]:
+        """The pool an assignee is picked from: every Contributor with a login.
+        Narrow to the ministry reviewer groups once role groups
+        land, so applicants aren't offered as assignees."""
+        return self.by_ids(self.login_linked_contributor_ids())
 
     def by_ids(self, ids) -> list[ContributorSummary]:
         """Load the given Contributors, name-sorted (id, "Last, First" name,

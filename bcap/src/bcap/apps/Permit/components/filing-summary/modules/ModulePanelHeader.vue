@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import Button from 'primevue/button';
+import Menu from 'primevue/menu';
 import { useMessageStore } from '@/bcap/stores/message.ts';
 import {
     STATUS_ICON,
@@ -13,7 +15,7 @@ defineProps<{
     toggling?: string | null;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
     (event: 'toggle'): void;
     (event: 'remove'): void;
     (event: 'dragstart'): void;
@@ -21,6 +23,17 @@ defineEmits<{
 }>();
 
 const messageStore = useMessageStore();
+
+const moreMenu = ref();
+
+const moreItems = [
+    {
+        label: 'Delete module',
+        icon: 'fa-solid fa-trash',
+        class: 'req-more-danger',
+        command: () => emit('remove'),
+    },
+];
 </script>
 
 <template>
@@ -44,8 +57,6 @@ const messageStore = useMessageStore();
             >
                 · {{ row.moduleId }}
             </span>
-        </span>
-        <span class="module-trailing">
             <span
                 class="module-state-pill"
                 :class="row.isCompleted ? 'state-complete' : 'state-progress'"
@@ -59,18 +70,12 @@ const messageStore = useMessageStore();
                 ></i>
                 {{ row.isCompleted ? 'Complete' : 'In progress' }}
             </span>
-            <span
-                v-if="row.completedDate"
-                class="module-date"
-            >
-                <i class="fa-regular fa-circle-check"></i>
-                Submitted {{ row.completedDate }}
-            </span>
+        </span>
+        <span class="module-trailing">
             <Button
                 v-if="isStaff"
                 type="button"
                 class="module-toggle"
-                :class="{ 'is-satisfied': row.isCompleted }"
                 :disabled="toggling === row.tileid"
                 :title="
                     row.isCompleted
@@ -94,10 +99,18 @@ const messageStore = useMessageStore();
             <Button
                 v-if="isStaff"
                 type="button"
-                class="module-remove"
-                icon="fa-solid fa-trash"
-                title="Remove module"
-                @click.stop="$emit('remove')"
+                class="module-more-toggle"
+                icon="fa-solid fa-ellipsis"
+                title="More actions"
+                @click.stop="moreMenu?.toggle($event)"
+            />
+            <Menu
+                ref="moreMenu"
+                :model="moreItems"
+                popup
+                append-to="body"
+                class="req-more-menu"
+                @click.stop
             />
         </span>
         <span
@@ -143,7 +156,7 @@ const messageStore = useMessageStore();
 
 .module-title {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     gap: 0.5rem;
 }
 
@@ -203,19 +216,6 @@ const messageStore = useMessageStore();
     white-space: nowrap;
 }
 
-.module-date {
-    font-size: 13px;
-    color: var(--bc-navy);
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    border: 1px solid var(--bc-border);
-    padding: 0.4rem 1rem;
-    border-radius: 999px;
-}
-
 .module-toggle {
     display: inline-flex;
     align-items: center;
@@ -223,8 +223,8 @@ const messageStore = useMessageStore();
     padding: 0.4rem 1rem;
     border: 1px solid var(--bc-navy);
     border-radius: 4px;
-    background: transparent;
-    color: var(--bc-navy);
+    background: var(--bc-navy);
+    color: #ffffff;
     font: inherit;
     font-weight: 700;
     white-space: nowrap;
@@ -232,16 +232,6 @@ const messageStore = useMessageStore();
 }
 
 .module-toggle:hover:not(:disabled) {
-    background: rgba(0, 51, 102, 0.08);
-}
-
-.module-toggle.is-satisfied {
-    background: var(--bc-navy);
-    border-color: var(--bc-navy);
-    color: #ffffff;
-}
-
-.module-toggle.is-satisfied:hover:not(:disabled) {
     background: var(--bc-navy-dark);
     border-color: var(--bc-navy-dark);
 }
@@ -251,19 +241,19 @@ const messageStore = useMessageStore();
     cursor: not-allowed;
 }
 
-.module-remove {
+.module-more-toggle {
     background: none;
-    border: none;
-    color: rgba(0, 51, 102, 0.5);
+    border: 1px solid var(--bc-border);
+    color: var(--bc-navy);
     cursor: pointer;
     font-size: 1rem;
-    padding: 0.35rem;
+    padding: 0.35rem 0.7rem;
     border-radius: 6px;
     transition: background-color 0.15s ease;
 }
 
-.module-remove:hover {
-    color: #ffffff;
-    background-color: rgba(200, 16, 46, 0.85);
+.module-more-toggle:hover {
+    background-color: var(--bc-panel);
+    border-color: var(--bc-navy);
 }
 </style>

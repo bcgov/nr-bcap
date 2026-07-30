@@ -73,6 +73,12 @@ class RequirementStatusSerializer(serializers.Serializer):
     satisfied = serializers.BooleanField()
 
 
+class RequirementAssigneeSerializer(serializers.Serializer):
+    """The assignee PATCH body: the Contributor to assign, or null to clear."""
+
+    contributor_id = serializers.UUIDField(allow_null=True)
+
+
 class ModuleCompletionSerializer(serializers.Serializer):
     """The module completion PATCH body: whether the module is completed."""
 

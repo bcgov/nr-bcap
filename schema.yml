@@ -361,6 +361,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Contributor'
           description: ''
+  /bcap/api/contributors/assignable:
+    get:
+      operationId: api_contributors_assignable_list
+      description: GET the Contributors work can be assigned to.
+      tags:
+      - 'Internal: contributor'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContributorSummary'
+          description: ''
   /bcap/api/contributors/unlinked:
     get:
       operationId: api_contributors_unlinked_list
@@ -1134,11 +1151,55 @@ paths:
         '204':
           description: No response body
   /bcap/api/permit_application/{id}/module/{module_tileid}/requirement/{requirement_id}:
+    patch:
+      operationId: api_permit_application_module_requirement_partial_update
+      description: |-
+        DELETE: remove one process requirement from a module by its resource id
+        (the child tile, the requirement resource, and its submission host).
+        PATCH: set or clear its ministry assignee.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: module_tileid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementAssignee'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementAssignee'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementAssignee'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     delete:
       operationId: api_permit_application_module_requirement_destroy
       description: |-
         DELETE: remove one process requirement from a module by its resource id
         (the child tile, the requirement resource, and its submission host).
+        PATCH: set or clear its ministry assignee.
       parameters:
       - in: path
         name: id
@@ -6290,6 +6351,8 @@ components:
         data:
           type: object
           additionalProperties: {}
+        current_step:
+          type: string
         created:
           type: string
           format: date-time
@@ -6307,10 +6370,13 @@ components:
     DraftWrite:
       type: object
       description: |-
-        Request body for create/update: the whole draft blob, plus an optional
-        frontend version and parent resource stamped on create.
+        Request body for create/update: the whole draft blob, plus the step the
+        user is on and an optional frontend version and parent resource stamped on
+        create.
       properties:
         data: {}
+        current_step:
+          type: string
         frontend_version:
           type: string
         parent_resource_id:
@@ -10402,10 +10468,13 @@ components:
     PatchedDraftWrite:
       type: object
       description: |-
-        Request body for create/update: the whole draft blob, plus an optional
-        frontend version and parent resource stamped on create.
+        Request body for create/update: the whole draft blob, plus the step the
+        user is on and an optional frontend version and parent resource stamped on
+        create.
       properties:
         data: {}
+        current_step:
+          type: string
         frontend_version:
           type: string
         parent_resource_id:
@@ -10537,6 +10606,15 @@ components:
           items:
             type: string
             format: uuid
+    PatchedRequirementAssignee:
+      type: object
+      description: 'The assignee PATCH body: the Contributor to assign, or null to
+        clear.'
+      properties:
+        contributor_id:
+          type: string
+          format: uuid
+          nullable: true
     PatchedRequirementStatus:
       type: object
       description: 'The status PATCH body: whether the requirement is satisfied.'

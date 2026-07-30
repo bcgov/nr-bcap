@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import arches from 'arches';
 import Button from 'primevue/button';
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
+import { patchProcessRequirement } from '@/bcap/apps/Permit/api.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
-import { loadPermitHeader } from '@/bcap/apps/Permit/components/common/permitHeader.ts';
-import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
@@ -109,11 +108,13 @@ const loadData = async () => {
     }
 };
 
-const permitHeader = ref<PermitHeader | null>(null);
+const headerStore = usePermitHeaderStore();
+const permitId = computed(() => String(route.query.permit ?? ''));
+const permitHeader = computed(() => headerStore.state.header);
 
-onMounted(async () => {
+onMounted(() => {
     loadData();
-    permitHeader.value = await loadPermitHeader(route.query.permit);
+    headerStore.load(permitId.value);
 });
 
 // Derive start/completion dates from the checklist. Run on Save (not on each
@@ -157,23 +158,10 @@ const saveChanges = async () => {
         );
     }
     try {
-        const response = await fetch(
-            arches.urls.api_process_requirements(idFromUrl),
-            {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken':
-                        document.cookie
-                            .split('; ')
-                            .find((row) => row.startsWith('csrftoken='))
-                            ?.split('=')[1] || '',
-                },
-                body: JSON.stringify(body),
-            },
+        await patchProcessRequirement(
+            idFromUrl as string,
+            requirementData.value.aliased_data,
         );
-
-        if (!response.ok) throw new Error('Failed to save');
         markPristine();
     } catch (error) {
         console.error('Save error:', error);

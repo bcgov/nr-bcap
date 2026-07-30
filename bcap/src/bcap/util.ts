@@ -17,6 +17,17 @@ export const formatTimestamp = (iso: string | null | undefined): string =>
         minute: '2-digit',
     });
 
+// Avatar initials. Names are stored "Last, First", so the parts are reversed to
+// read the way a person is addressed.
+export const initials = (name: string): string =>
+    name
+        .split(/[\s,.]+/)
+        .filter(Boolean)
+        .map((part) => part[0].toUpperCase())
+        .slice(0, 2)
+        .reverse()
+        .join('');
+
 export const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;

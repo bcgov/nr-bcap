@@ -13,7 +13,7 @@ import AccordionContent from 'primevue/accordioncontent';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
-import { permitHeaderFrom } from '@/bcap/apps/Permit/components/common/permitHeader.ts';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 import {
@@ -32,6 +32,7 @@ import MessageDialog from '../common/messages/MessageDialog.vue';
 import { useMessageStore } from '@/bcap/stores/message.ts';
 
 const messageStore = useMessageStore();
+const headerStore = usePermitHeaderStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -86,6 +87,8 @@ const state = reactive({
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as InvestigationDraft[],
 });
+
+const bandHeader = computed(() => headerStore.state.header);
 
 const modulesAllowedForFilingType = computed(() =>
     modulesForFilingType(
@@ -145,7 +148,7 @@ const loadPermitDetails = async () => {
             nodegroup: appAdmin?.nodegroup || '',
         };
 
-        state.permitData = permitHeaderFrom(aliased);
+        state.permitData = headerStore.setFromAliased(permitId.value, aliased);
 
         state.fetchedModuleData = {
             [GraphSlug.PermitApplication]: {
@@ -256,21 +259,27 @@ watch(activeModuleId, (id) => {
 </script>
 
 <template>
-    <div
-        v-if="state.isLoading"
-        class="permit-loading"
-    >
-        <ProgressSpinner />
-    </div>
-    <Panel
-        v-else
-        class="full-height"
-    >
-        <template #header>
-            <PermitHeaderBand :header="state.permitData" />
+    <Panel class="full-height">
+        <!-- Rendered from the store, so returning to the permit keeps the band
+             on screen instead of replacing it with the spinner. -->
+        <template
+            v-if="bandHeader"
+            #header
+        >
+            <PermitHeaderBand :header="bandHeader" />
         </template>
 
-        <div class="module-layout">
+        <div
+            v-if="state.isLoading"
+            class="permit-loading"
+        >
+            <ProgressSpinner />
+        </div>
+
+        <div
+            v-else
+            class="module-layout"
+        >
             <div
                 v-if="!isStaff"
                 class="side-menu"
@@ -480,7 +489,6 @@ watch(activeModuleId, (id) => {
                             :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
                             :application-id="state.permitData.applicationNumber"
-                            :permit-header="state.permitData"
                             @changed="loadPermitDetails"
                         />
                     </div>
@@ -751,13 +759,12 @@ watch(activeModuleId, (id) => {
 }
 
 /* Same group label as the submitted-modules section title. */
+/* Matches the Submitted modules heading so the two sections read as peers. */
 .investigation-lists .list-heading {
     margin: 0 0 1.4rem;
-    font-size: 1.3rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--bc-grey);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--bc-navy);
 }
 
 /* Draft modules accordion */

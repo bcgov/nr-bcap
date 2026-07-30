@@ -36,6 +36,8 @@ const api = vi.hoisted(() => ({
     removeRequirement: vi.fn(),
     setModuleCompleted: vi.fn(),
     setRequirementSatisfied: vi.fn(),
+    setRequirementAssignee: vi.fn(),
+    fetchAssignableContributors: vi.fn().mockResolvedValue([]),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => api);
 
