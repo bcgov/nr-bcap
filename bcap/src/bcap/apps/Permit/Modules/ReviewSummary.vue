@@ -121,8 +121,9 @@ const hasValue = (val: unknown): boolean => {
 .centered-map {
     resize: both;
     overflow: hidden;
-    width: 100%;
-    max-width: 100%;
+    width: calc(100% - 4rem);
+    max-width: calc(100% - 4rem);
+    margin: 0 2rem;
     height: 20rem;
     min-height: 10rem;
     --map-width: 100%;

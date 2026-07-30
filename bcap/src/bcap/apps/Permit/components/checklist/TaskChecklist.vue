@@ -37,6 +37,8 @@ const crumbs = computed(() =>
     ),
 );
 
+const backLink = computed(() => crumbs.value[0]?.to ?? '');
+
 // Requirement-level status + notes (the assessment tile).
 const assessment = computed(
     () => requirementData.value?.aliased_data?.sub_requirement_assessment_n1,
@@ -343,11 +345,17 @@ const saveChanges = async () => {
             </div>
         </div>
 
-        <div
-            v-if="isDirty"
-            class="actions-bar"
-        >
+        <div class="actions-bar">
+            <RouterLink
+                v-if="backLink"
+                class="action-btn back-btn"
+                :to="backLink"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Filing Summary
+            </RouterLink>
             <Button
+                v-if="isDirty"
                 type="button"
                 class="action-btn undo-btn"
                 icon="fa-solid fa-rotate-left"
@@ -467,6 +475,19 @@ const saveChanges = async () => {
     background-color: #003366;
     color: #ffffff;
     box-shadow: 0 2px 6px rgba(0, 51, 102, 0.25);
+}
+
+.back-btn {
+    margin-right: auto;
+    background-color: #ffffff;
+    border-color: #003366;
+    color: #003366;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background-color: #f3f4f6;
+    text-decoration: none;
 }
 
 .save-btn:hover {

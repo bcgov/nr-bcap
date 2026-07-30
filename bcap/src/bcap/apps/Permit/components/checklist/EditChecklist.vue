@@ -26,6 +26,8 @@ const crumbs = computed(() =>
     ),
 );
 
+const backLink = computed(() => crumbs.value[0]?.to ?? '');
+
 interface StepItem {
     // Present for steps loaded from the resource; absent for newly added ones,
     // so the save creates their tiles.
@@ -297,6 +299,17 @@ const saveRequirements = async () => {
                 />
             </div>
         </div>
+
+        <div class="actions-bar">
+            <RouterLink
+                v-if="backLink"
+                class="btn-secondary back-btn"
+                :to="backLink"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Filing Summary
+            </RouterLink>
+        </div>
     </div>
     <br />
     <br />
@@ -458,6 +471,26 @@ const saveRequirements = async () => {
 .btn-primary {
     background-color: #003366;
     color: white;
+}
+
+.actions-bar {
+    display: flex;
+    margin-top: 2rem;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1.5px solid #003366;
+    color: #003366;
+    background-color: #ffffff;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background-color: #f3f4f6;
+    text-decoration: none;
 }
 
 .btn-primary:hover {
