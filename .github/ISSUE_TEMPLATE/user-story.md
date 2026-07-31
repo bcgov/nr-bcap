@@ -12,8 +12,12 @@ type: Feature
 **When**
 **Then**
 
+**Rationale / Additional context**
+Add a business case for why someting is needed, context about how its used, or screenshots about the feature.
+
 **Acceptance Criteria**
 A checkbox list of measurable, quantifiable items that must be met before the story is considered Done.
+-[ ] 
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Test Cases**
+Potential test cases written by the BAs or PO to help with QA or UAT testing.

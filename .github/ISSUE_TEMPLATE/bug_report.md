@@ -8,24 +8,26 @@ type: Bug
 
 ---
 
-**Describe the bug**
+**Reported by:**
+
+**Bug Description**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+**Steps to Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-**Actual behavior**
-A clear and concise description of what you saw.
-
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+**Actual behavior**
+A clear and concise description of what you saw. 
+
+**Screenshots if applicable**
 If applicable, add screenshots to help explain your problem.
 
-**Additional context**
+**Additional context / rationale**
 Add any other context about the problem here.
