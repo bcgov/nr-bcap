@@ -38,23 +38,28 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
     types are built from, so these guard that it generates and covers the bcap
     endpoints."""
 
+    _document = None
+
     def setUp(self):
         super().setUp()
         admin = get_user_model().objects.get(username="admin")
         self.idir_login_simulate(admin)
 
-    def test_schema_endpoint_returns_openapi_document(self):
-        resp = self.client.get(reverse("schema"))
+    def schema(self):
+        if SchemaEndpointTests._document is None:
+            resp = self.client.get(reverse("schema"))
+            self.assertEqual(resp.status_code, 200)
+            SchemaEndpointTests._document = yaml.safe_load(resp.content)
+        return SchemaEndpointTests._document
 
-        self.assertEqual(resp.status_code, 200)
-        schema = yaml.safe_load(resp.content)
+    def test_schema_endpoint_returns_openapi_document(self):
+        schema = self.schema()
+
         self.assertEqual(schema["openapi"].split(".")[0], "3")
         self.assertEqual(schema["info"]["title"], "BCAP API")
 
     def test_schema_documents_the_bcap_endpoints(self):
-        schema = yaml.safe_load(self.client.get(reverse("schema")).content)
-
-        paths = schema["paths"]
+        paths = self.schema()["paths"]
         # SERVE_URLCONF limits the schema to the documented bcap routes.
         self.assertTrue(
             any(p.endswith("/api/dashboard/internal") for p in paths), paths
@@ -65,7 +70,7 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
         self.assertTrue(any(p.endswith("/user_profile") for p in paths), paths)
 
     def test_dashboard_response_schema_matches_the_page_dataclass(self):
-        schema = yaml.safe_load(self.client.get(reverse("schema")).content)
+        schema = self.schema()
 
         dashboard = next(
             body

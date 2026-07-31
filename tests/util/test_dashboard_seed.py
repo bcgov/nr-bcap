@@ -9,7 +9,11 @@ from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import reference_value
 from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
 
-from tests.controlled_list_fixtures import SeedControlledListsMixin
+from tests.builders import SmallDashboardBuilder
+from tests.controlled_list_fixtures import (
+    ControlledListFixtures,
+    SeedControlledListsMixin,
+)
 
 
 class LocalizedTests(SimpleTestCase):
@@ -50,8 +54,15 @@ class ReferenceValueTests(SeedControlledListsMixin, TestCase):
             reference_value("contributor", "contributor_type", "Nope")
 
 
-class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
-    """Integration test for the full builder."""
+class BuildDashboardDemoDataTests(TestCase):
+    """Integration test for the demo builder: one build, shared by every test
+    here, since they only read what it produced."""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        ControlledListFixtures.seed()
+        cls.data = SmallDashboardBuilder().build()
 
     def _slug(self, resource):
         return GraphModel.objects.get(pk=resource.graph_id).slug
@@ -63,7 +74,7 @@ class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
         }
 
     def test_creates_resources_on_the_expected_graphs(self):
-        data = DashboardDemoBuilder().build()
+        data = self.data
 
         self.assertEqual(self._slug(data.assignees[0]), "contributor")
         self.assertEqual(self._slug(data.holders[0]), "contributor")
@@ -85,7 +96,7 @@ class BuildDashboardDemoDataTests(SeedControlledListsMixin, TestCase):
         )
 
     def test_links_permit_to_its_related_resources(self):
-        data = DashboardDemoBuilder().build()
+        data = self.data
 
         # related_permit -> HCA permit, the application_admin's project_officer,
         # plus each application_admin child's process_requirement and

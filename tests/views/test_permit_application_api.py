@@ -106,6 +106,39 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         seed_requirement_templates(ProcessRequirementBuilder())
         cls.submitted_pk = cls._build_submitted_permit()
+        cls.other_submitted_pk = cls._build_submitted_permit()
+        (
+            cls.investigation_pk,
+            cls.investigation_host,
+            cls.investigation_requirements,
+        ) = cls._build_permit_with_investigation()
+
+    @classmethod
+    def _build_permit_with_investigation(cls):
+        """A permit with an investigation module attached, the way the
+        module-host submission does. Shared for the same reason as the
+        submitted permit: several tests need exactly this and nothing more."""
+        pk = cls._create_permit(cls._logged_in_client())
+        host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
+        service = ProcessRequirementService(
+            user=get_user_model().objects.get(username="admin")
+        )
+        return pk, host, service.attach_requirements(pk, "investigation", host)
+
+    @classmethod
+    def _logged_in_client(cls):
+        client = cls.client_class()
+        login_as(client, get_user_model().objects.get(username="admin"))
+        return client
+
+    @classmethod
+    def _create_permit(cls, client):
+        resp = client.post(
+            reverse("permit_application_create"),
+            data=json.dumps(create_payload()),
+            content_type="application/json",
+        )
+        return resp.json()["resourceinstanceid"]
 
     @classmethod
     def _build_submitted_permit(cls):
@@ -114,14 +147,8 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         Building it costs a create plus a submit (~3s), which most tests here
         need identically, so it is built once for the class instead of per test.
         Each test still runs in its own transaction, so mutations roll back."""
-        client = cls.client_class()
-        login_as(client, get_user_model().objects.get(username="admin"))
-        resp = client.post(
-            reverse("permit_application_create"),
-            data=json.dumps(create_payload()),
-            content_type="application/json",
-        )
-        pk = resp.json()["resourceinstanceid"]
+        client = cls._logged_in_client()
+        pk = cls._create_permit(client)
         client.patch(
             reverse("api_permit_application", args=[pk]),
             data=json.dumps(submission_payload()),
@@ -185,11 +212,14 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         return ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT).count()
 
     def test_create_seeds_distinct_ids_without_requirements(self):
-        first, second = self._create(), self._create()
-        self.assertRegex(self._application_id(first), r"^APP-\d+$")
-        self.assertRegex(self._application_id(second), r"^APP-\d+$")
-        self.assertNotEqual(self._application_id(first), self._application_id(second))
-        self.assertEqual(self._requirements(first), [])
+        draft = self._create()
+        self.assertRegex(self._application_id(draft), r"^APP-\d+$")
+        # The class-level permits came through the same endpoint, so the ids
+        # the seeder mints have to differ from theirs.
+        self.assertNotEqual(
+            self._application_id(draft), self._application_id(self.submitted_pk)
+        )
+        self.assertEqual(self._requirements(draft), [])
 
     def test_draft_without_submission_date_is_hidden_from_dashboard(self):
         pk = self._create()
@@ -255,10 +285,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             self._permit(pk).aliased_data.application_admin.aliased_data.process_module
             or []
         )[0]
-        # The default module's grouping parent plus its requirements.
-        self.assertEqual(
-            self._non_template_requirement_count(), PERMIT_REQUIREMENTS + 1
-        )
+        before = self._non_template_requirement_count()
 
         ProcessRequirementService(
             user=get_user_model().objects.get(username="admin")
@@ -266,12 +293,14 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
         admin = self._permit(pk).aliased_data.application_admin
         self.assertEqual(admin.aliased_data.process_module or [], [])
-        self.assertEqual(self._non_template_requirement_count(), 0)
+        # The module's requirements plus its grouping parent are gone.
+        self.assertEqual(
+            before - self._non_template_requirement_count(), PERMIT_REQUIREMENTS + 1
+        )
 
     def test_remove_module_ignores_a_tile_from_another_permit(self):
         pk = self.submitted_pk
-        other = self._create()
-        self._patch(other, submission_payload())
+        other = self.other_submitted_pk
         module = (
             self._permit(
                 other
@@ -320,6 +349,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         target = self._ordered_requirement_ids(module_tileid)[0]
+        before = self._non_template_requirement_count()
 
         ProcessRequirementService().remove_requirement(pk, module_tileid, target)
 
@@ -327,9 +357,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(len(remaining), PERMIT_REQUIREMENTS - 1)
         self.assertNotIn(target, remaining)
         self.assertFalse(ResourceTileTree.objects.filter(pk=target).exists())
-        # Grouping parent stays (shared), as does the permit hosting its own
-        # submission: parent + the remaining requirements.
-        self.assertEqual(self._non_template_requirement_count(), PERMIT_REQUIREMENTS)
+        # Only the target goes: the grouping parent stays (shared), as does the
+        # permit hosting its own submission.
+        self.assertEqual(before - self._non_template_requirement_count(), 1)
 
     def test_add_blank_requirement_appends_to_module(self):
         pk = self.submitted_pk
@@ -538,21 +568,10 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.status_code, 404)
 
-    def _attach_investigation(self, pk):
-        """Attach an investigation module (with a host resource) to the permit,
-        the way the module-host submission does."""
-        host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
-        service = ProcessRequirementService(
-            user=get_user_model().objects.get(username="admin")
-        )
-        requirements = service.attach_requirements(pk, "investigation", host)
-        return host, requirements
-
     def test_attach_requirements_adds_investigation_module(self):
-        pk = self._create()
-        _host, requirements = self._attach_investigation(pk)
+        pk = self.investigation_pk
 
-        self.assertTrue(requirements)
+        self.assertTrue(self.investigation_requirements)
         admin = self._permit(pk).aliased_data.application_admin
         names = [
             localized_string(module.aliased_data.module_name)
@@ -561,15 +580,12 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertIn("Investigation", names)
 
     def test_permit_module_tiles_lists_the_attached_host(self):
-        pk = self._create()
-        host, _requirements = self._attach_investigation(pk)
-
         service = ProcessRequirementService(
             user=get_user_model().objects.get(username="admin")
         )
-        hosts = service.permit_module_tiles(pk, "investigation")
+        hosts = service.permit_module_tiles(self.investigation_pk, "investigation")
 
-        self.assertIn(str(host.pk), [str(h.pk) for h in hosts])
+        self.assertIn(str(self.investigation_host.pk), [str(h.pk) for h in hosts])
 
     def test_permit_module_tiles_is_empty_before_submission(self):
         # The permit module hosts itself, but nothing is attached until the
@@ -586,16 +602,16 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual([str(host.pk) for host in hosts], [str(pk)])
 
     def test_module_host_endpoint_lists_attached_hosts(self):
-        pk = self._create()
-        host, _requirements = self._attach_investigation(pk)
-
         resp = self.client.get(
-            reverse("seed_process_requirements", args=[pk, "investigation"])
+            reverse(
+                "seed_process_requirements",
+                args=[self.investigation_pk, "investigation"],
+            )
         )
 
         self.assertEqual(resp.status_code, 200)
         ids = [host.get("resourceinstanceid") for host in resp.json()]
-        self.assertIn(str(host.pk), ids)
+        self.assertIn(str(self.investigation_host.pk), ids)
 
     def test_permit_module_tiles_empty_when_module_has_no_hosts(self):
         # The default module has requirements but no host resources, so an
@@ -607,9 +623,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_reorder_ignores_a_module_from_another_permit(self):
         pk = self.submitted_pk
-        other = self._create()
-        self._patch(other, submission_payload())
-        other_module = self._module_tileid(other)
+        other_module = self._module_tileid(self.other_submitted_pk)
         before = self._ordered_requirement_ids(other_module)
 
         # Reordering `other`'s module against `pk` is rejected as a no-op.

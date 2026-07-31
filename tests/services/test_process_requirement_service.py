@@ -55,6 +55,13 @@ def _module_children(module):
     }
 
 
+def _assignee_of(module, requirement_id):
+    """The requirement child's ministry_assignee id, or None."""
+    child = _module_children(module)[str(requirement_id)]
+    assignee = child.aliased_data.ministry_assignee
+    return str(assignee.pk) if assignee else None
+
+
 def _snapshot(module):
     """The module's card nodes plus every child's flow order: everything
     set_ministry_assignee must leave alone."""
@@ -103,39 +110,50 @@ class ProcessRequirementServiceTests(TestCase):
     def setUp(self):
         self.service = ProcessRequirementService()
 
-    def _identification(self, resource):
-        tree = ResourceTileTree.get_tiles(
-            GraphSlugs.PROCESS_REQUIREMENT, resource_ids=[resource.pk]
-        ).get()
+    def _trees(self, *resources):
+        """The requirement trees, in the order asked for. Building a tile tree
+        is the expensive part of these tests, so load them in one call and read
+        every assertion off the result."""
+        loaded = {
+            str(tree.pk): tree
+            for tree in ResourceTileTree.get_tiles(
+                GraphSlugs.PROCESS_REQUIREMENT,
+                resource_ids=[resource.pk for resource in resources],
+            )
+        }
+        return [loaded[str(resource.pk)] for resource in resources]
+
+    def _tree(self, resource):
+        return self._trees(resource)[0]
+
+    def _identification(self, tree):
         return tree.aliased_data.requirement_identification.aliased_data
 
-    def _is_template(self, resource):
-        flag = self._identification(resource).is_template_requirement
+    def _is_template(self, tree):
+        flag = self._identification(tree).is_template_requirement
         return flag.aliased_data.is_template_requirement
 
-    def _name(self, resource):
-        return localized_string(self._identification(resource).requirement_name)
+    def _name(self, tree):
+        return localized_string(self._identification(tree).requirement_name)
 
-    def _sub_requirements(self, resource):
-        tree = ResourceTileTree.get_tiles(
-            GraphSlugs.PROCESS_REQUIREMENT, resource_ids=[resource.pk]
-        ).get()
+    def _sub_requirements(self, tree):
         return tree.aliased_data.requirement_data.aliased_data.sub_requirement_n1
 
     def test_clone_makes_an_editable_non_template_copy(self):
         template = self.templates[0]
         copy = self.service.builder.clone_requirement(template.pk)
 
+        copy_tree, template_tree = self._trees(copy, template)
         self.assertNotIn(copy.pk, self.template_pks)
-        self.assertFalse(self._is_template(copy))
-        self.assertEqual(len(self._sub_requirements(copy)), 1)
+        self.assertFalse(self._is_template(copy_tree))
+        self.assertEqual(len(self._sub_requirements(copy_tree)), 1)
         # The source template is left intact for the next clone.
-        self.assertTrue(self._is_template(template))
+        self.assertTrue(self._is_template(template_tree))
 
     def test_clone_by_id_makes_a_non_template_copy(self):
         copy = self.service.clone_by_id(self.templates[0].pk)
         self.assertNotIn(copy.pk, self.template_pks)
-        self.assertFalse(self._is_template(copy))
+        self.assertFalse(self._is_template(self._tree(copy)))
 
     def test_templates_by_id_maps_the_seeded_templates(self):
         # Keyed by requirement identification; the values are the templates.
@@ -152,8 +170,8 @@ class ProcessRequirementServiceTests(TestCase):
 
         expected = load("investigation")["requirements"]
         self.assertEqual(len(children), len(expected))
-        for child in children:
-            self.assertFalse(self._is_template(child))
+        for tree in self._trees(*children):
+            self.assertFalse(self._is_template(tree))
 
     def test_create_working_copies_copies_every_template_in_flow_order(self):
         copies = self.service.create_working_copies().requirements
@@ -161,9 +179,10 @@ class ProcessRequirementServiceTests(TestCase):
         # The default module's child requirements, in flow order (seeded by
         # migration, so independent of this test's fixture templates).
         expected = [child["name"] for child in load("permit")["requirements"]]
-        self.assertEqual([self._name(copy) for copy in copies], expected)
-        for copy in copies:
-            self.assertFalse(self._is_template(copy))
+        trees = self._trees(*copies)
+        self.assertEqual([self._name(tree) for tree in trees], expected)
+        for tree in trees:
+            self.assertFalse(self._is_template(tree))
 
     def test_module_hosts_uses_first_hosted_requirement_else_default(self):
         # A module files its messages against its first requirement (in flow
@@ -201,7 +220,7 @@ class ProcessRequirementServiceTests(TestCase):
             ],
         )
 
-        steps = self._sub_requirements(requirement)
+        steps = self._sub_requirements(self._tree(requirement))
         self.assertEqual(len(steps), 2)
         kept_tileid = steps[0].tileid
         dropped_tileid = steps[1].tileid
@@ -216,7 +235,8 @@ class ProcessRequirementServiceTests(TestCase):
             ],
         )
 
-        after = self._sub_requirements(requirement)
+        tree = self._tree(requirement)
+        after = self._sub_requirements(tree)
         names = [localized_string(s.aliased_data.checklist_item_name) for s in after]
         self.assertEqual(names, ["First edited", "Third"])
         # The kept step is the same tile, updated in place (not recreated).
@@ -224,8 +244,8 @@ class ProcessRequirementServiceTests(TestCase):
         # The dropped step's tile is deleted, not orphaned.
         self.assertFalse(TileModel.objects.filter(pk=dropped_tileid).exists())
         # The partial save left the requirement's identification intact.
-        self.assertEqual(self._name(requirement), "Checklist v2")
-        self.assertFalse(self._is_template(requirement))
+        self.assertEqual(self._name(tree), "Checklist v2")
+        self.assertFalse(self._is_template(tree))
 
 
 class MinistryAssigneeTests(TestCase):
@@ -256,12 +276,8 @@ class MinistryAssigneeTests(TestCase):
         self.service = ProcessRequirementService()
 
     def _assignee(self, requirement_id, permit_id=None, module_index=0):
-        """The requirement child's ministry_assignee id, or None."""
         module = _load_module(permit_id or self.permit_id, module_index)
-        assignee = _module_children(module)[
-            str(requirement_id)
-        ].aliased_data.ministry_assignee
-        return str(assignee.pk) if assignee else None
+        return _assignee_of(module, requirement_id)
 
     def _assign(self, requirement_id, contributor_id):
         return self.service.set_ministry_assignee(
@@ -273,16 +289,16 @@ class MinistryAssigneeTests(TestCase):
 
         self.assertTrue(self._assign(self.assessment_id, self.ada_id))
 
-        self.assertEqual(_snapshot(_load_module(self.permit_id)), before)
-        self.assertEqual(self._assignee(self.assessment_id), self.ada_id)
-        # The sibling requirement's own assignee is untouched too.
-        self.assertEqual(self._assignee(self.review_id), self.ada_id)
+        module = _load_module(self.permit_id)
+        self.assertEqual(_snapshot(module), before)
+        self.assertEqual(_assignee_of(module, self.assessment_id), self.ada_id)
+        self.assertEqual(_assignee_of(module, self.review_id), self.ada_id)
 
-        # Clearing is the same narrowed load and partial save.
         self.assertTrue(self._assign(self.assessment_id, None))
 
-        self.assertIsNone(self._assignee(self.assessment_id))
-        self.assertEqual(_snapshot(_load_module(self.permit_id)), before)
+        module = _load_module(self.permit_id)
+        self.assertIsNone(_assignee_of(module, self.assessment_id))
+        self.assertEqual(_snapshot(module), before)
 
     def test_a_module_or_requirement_that_isnt_this_permits_is_rejected(self):
         # An unknown module, another permit's requirement, and another permit's
