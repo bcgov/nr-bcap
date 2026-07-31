@@ -240,9 +240,7 @@ const activeSortLabel = computed(() => {
                 v-if="props.currentSort !== 'default'"
                 :class="[
                     'fa-solid',
-                    props.sortOrder === 'asc'
-                        ? 'fa-caret-up'
-                        : 'fa-caret-down',
+                    props.sortOrder === 'asc' ? 'fa-caret-up' : 'fa-caret-down',
                 ]"
             ></i>
         </Button>
@@ -510,7 +508,6 @@ const activeSortLabel = computed(() => {
     color: #6c757d;
     font-size: 1.15rem;
 }
-
 </style>
 
 <style>

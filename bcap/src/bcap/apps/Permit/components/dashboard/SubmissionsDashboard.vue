@@ -230,7 +230,11 @@ const openResourceReport = (resourceId: string) => {
                         {{ $gettext('Start new workflow') }}
                     </p>
                     <p class="start-banner-subtitle">
-                        {{ $gettext('Your progress saves as a draft as you go.') }}
+                        {{
+                            $gettext(
+                                'Your progress saves as a draft as you go.',
+                            )
+                        }}
                     </p>
                 </div>
                 <router-link
