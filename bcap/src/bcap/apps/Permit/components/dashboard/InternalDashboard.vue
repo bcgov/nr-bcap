@@ -340,7 +340,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 1.5rem;
-    margin-bottom: 1rem;
+    margin: 0 -10px 1rem;
 }
 
 /* ProjectCard clamps its title to two lines with overflow:hidden at
@@ -365,7 +365,6 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     font-size: 1.25rem;
     color: #555555;
     margin-bottom: 1rem;
-    padding-left: 0.5rem;
 }
 
 .results-summary strong {

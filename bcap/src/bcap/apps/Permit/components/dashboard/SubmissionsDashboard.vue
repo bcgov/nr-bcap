@@ -7,7 +7,6 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useGettext } from 'vue3-gettext';
-import Card from '@/bcgov_arches_common/components/card/CenterCard.vue';
 import SortingBar from './SortingBar.vue';
 import {
     fetchDraftCards,
@@ -74,18 +73,6 @@ const dashboardTabs = [
     { label: 'Company Projects', value: 'company_projects' },
     { label: 'Drafts', value: 'drafts' },
 ];
-
-const workflowItems = ref([
-    {
-        id: 'base-module',
-        label: $gettext('Submit New Application'),
-        description: $gettext('New HCA Permit Application'),
-        subtitle: $gettext('Start a new HCA Permit Application'),
-        icon: 'fa fa-file-circle-plus',
-        class: 'dashboard-card ipa',
-        routeName: routeNames.baseModule,
-    },
-]);
 
 const isLoading = ref(true);
 
@@ -227,29 +214,26 @@ const openResourceReport = (resourceId: string) => {
 </script>
 
 <template>
-    <Panel
-        header="Start New Workflow"
-        class="full-height"
-        style="margin-bottom: 2rem"
-    >
-        <Fluid>
-            <div class="dashboard-div-flex">
-                <Card
-                    v-for="item in workflowItems"
-                    :key="item.id"
-                    :label="item.label"
-                    :description="item.description"
-                    :subtitle="item.subtitle"
-                    :icon="item.icon"
-                    :class="item.class"
-                    :route="{ name: item.routeName }"
-                />
-            </div>
-        </Fluid>
-    </Panel>
-
     <Panel class="full-height">
         <Fluid>
+            <div class="start-banner">
+                <div class="start-banner-text">
+                    <p class="start-banner-title">
+                        {{ $gettext('Start new workflow') }}
+                    </p>
+                    <p class="start-banner-subtitle">
+                        {{ $gettext('Your progress saves as a draft as you go.') }}
+                    </p>
+                </div>
+                <router-link
+                    class="start-banner-action"
+                    :to="{ name: routeNames.baseModule }"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    {{ $gettext('New HCA permit application') }}
+                </router-link>
+            </div>
+
             <SortingBar
                 v-model:active-tab="ui.activeTab"
                 v-model:search="ui.searchQuery"
@@ -442,6 +426,55 @@ const openResourceReport = (resourceId: string) => {
 </template>
 
 <style scoped>
+.start-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    margin: 0.5rem 0 2rem;
+    padding: 1.25rem 1.75rem;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-left: 6px solid var(--bc-navy, #003366);
+    border-radius: 4px;
+}
+
+.start-banner-title {
+    margin: 0;
+    color: var(--bc-navy, #003366);
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.start-banner-subtitle {
+    margin: 0.15rem 0 0;
+    color: #6c757d;
+    font-size: 1.4rem;
+}
+
+.start-banner-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    padding: 0.85rem 1.75rem;
+    border-radius: 4px;
+    background: var(--bc-navy, #003366);
+    color: #ffffff;
+    font-size: 1.45rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.start-banner-action:hover,
+.start-banner-action:focus {
+    background: #1d4b7d;
+    color: #ffffff;
+    text-decoration: none;
+}
+
 /* The whole card is the link, so the hover underline on its title reads as
    noise here. Beats the theme's .bcgov-main-content rule on specificity. */
 .full-height :deep(a:hover),
@@ -463,6 +496,7 @@ const openResourceReport = (resourceId: string) => {
     flex-wrap: wrap;
     gap: 1rem;
     padding-top: 1rem;
+    margin: 0 -10px;
 }
 
 .dashboard-card {

@@ -277,9 +277,11 @@ const activeSortLabel = computed(() => {
 .sorting-bar-container {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    padding: 0 0 1.25rem;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    padding: 1rem 0 1.25rem;
     width: 100%;
+    box-sizing: border-box;
     font-family: 'BCSans', 'Noto Sans', sans-serif;
 }
 
@@ -354,7 +356,10 @@ const activeSortLabel = computed(() => {
     border: 1.5px solid #d1d5db;
     border-radius: 4px;
     padding: 0.35rem 1rem;
-    width: 350px;
+    flex: 1 1 220px;
+    min-width: 0;
+    max-width: 350px;
+    box-sizing: border-box;
 }
 
 .search-bar-wrapper:focus-within {

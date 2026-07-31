@@ -291,17 +291,9 @@ watch(activeModuleId, (id) => {
                     :class="{ active: activeModuleId === mod.id }"
                     @click="activeModuleId = mod.id"
                 >
-                    <span class="menu-label">
-                        {{ mod.menuLabel }}
-                    </span>
-
                     <div class="status-icon-wrapper">
-                        <i
-                            v-if="getModuleStatus(mod.id) === 'completed'"
-                            class="fa-solid fa-check icon-completed"
-                        ></i>
                         <div
-                            v-else-if="getModuleStatus(mod.id) === 'review'"
+                            v-if="getModuleStatus(mod.id) === 'review'"
                             class="icon-review-wrapper"
                         >
                             <i
@@ -312,11 +304,18 @@ watch(activeModuleId, (id) => {
                              workflow: the add affordance takes the same slot,
                              so one icon column runs down the menu. -->
                         <i
-                            v-else-if="mod.id !== GraphSlug.PermitApplication"
+                            v-else-if="
+                                getModuleStatus(mod.id) !== 'completed' &&
+                                mod.id !== GraphSlug.PermitApplication
+                            "
                             class="fa-solid fa-plus menu-add"
                             title="Start this module"
                         ></i>
                     </div>
+
+                    <span class="menu-label">
+                        {{ mod.menuLabel }}
+                    </span>
                 </Button>
             </div>
 
@@ -604,7 +603,7 @@ watch(activeModuleId, (id) => {
 /* A bare plus, lighter than the circled status glyphs it shares the column
    with, so it reads as an affordance rather than a state. */
 .menu-add {
-    font-size: 0.95rem;
+    font-size: 1.2rem;
     color: var(--bc-muted);
 }
 
@@ -623,16 +622,6 @@ watch(activeModuleId, (id) => {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-/* Grey on the inactive (white) row; white on the navy active row. */
-.icon-completed {
-    color: var(--bc-grey);
-    font-size: 1.2rem;
-}
-
-.menu-item.active .icon-completed {
-    color: #ffffff;
 }
 
 .icon-review-wrapper {
