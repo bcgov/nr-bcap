@@ -22,7 +22,6 @@ const props = defineProps<{
     context?: string;
     // The resource's own id (e.g. a module id), appended to the title.
     contextId?: string;
-    recipientsResourceId?: string;
 }>();
 
 const messageStore = useMessageStore();
@@ -86,9 +85,7 @@ const showTab = async (archived: boolean) => {
 const loadRecipients = async () => {
     state.isLoadingRecipients = true;
     try {
-        state.recipients = await getContributorsForResources(
-            props.recipientsResourceId || props.resourceId,
-        );
+        state.recipients = await getContributorsForResources(props.resourceId);
         // A module resource may have no contributors of its own; the message
         // still files against it, unaddressed.
         state.selectedRecipient = state.recipients[0]?.value ?? '';

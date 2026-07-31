@@ -1,12 +1,7 @@
 import arches from 'arches';
-import { z } from 'zod';
 import {
-    zContributorSummary,
     zInternalDashboardPage,
-    zNewContributor,
     zProcessRequirement,
-    zRegistrationLinkRequest,
-    zRegistrationLinkResponse,
 } from '@/bcap/client/zod.gen.ts';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
@@ -17,8 +12,11 @@ import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedD
 
 import type { DashboardStatus } from '@/bcap/types.ts';
 import type {
-    ProcessRequirement,
+    ContributorSummary,
     InternalDashboardCard,
+    ProcessRequirement,
+    RegistrationLinkRequest,
+    RegistrationLinkResponse,
 } from '@/bcap/client/types.gen.ts';
 export type { DashboardStatus };
 
@@ -92,13 +90,6 @@ export const getProcessRequirementData = async (
     return json as ProcessRequirement;
 };
 
-export type UnlinkedContributor = z.infer<typeof zContributorSummary>;
-export type NewContributorInput = z.infer<typeof zNewContributor>;
-export type RegistrationLinkResult = z.infer<typeof zRegistrationLinkResponse>;
-export type IssueRegistrationLinkBody = z.infer<
-    typeof zRegistrationLinkRequest
->;
-
 const csrfToken = (): string =>
     document.cookie
         .split('; ')
@@ -129,7 +120,7 @@ const errorMessage = async (response: Response): Promise<string> => {
 
 export const getUnlinkedContributors = async (
     search?: string,
-): Promise<UnlinkedContributor[]> => {
+): Promise<ContributorSummary[]> => {
     const query = search ? `?search=${encodeURIComponent(search)}` : '';
     const response = await fetch(
         `${arches.urls.unlinked_contributors}${query}`,
@@ -149,8 +140,8 @@ export const getAssignableGroups = async (): Promise<string[]> => {
 };
 
 export const issueRegistrationLink = async (
-    body: IssueRegistrationLinkBody,
-): Promise<RegistrationLinkResult> => {
+    body: RegistrationLinkRequest,
+): Promise<RegistrationLinkResponse> => {
     const response = await fetch(arches.urls.registration_link, {
         method: 'POST',
         headers: {

@@ -5,7 +5,6 @@ from rest_framework import serializers
 
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
-from bcap.services.contributor_service import ContributorSummary
 from bcap.services.message.bcap_message_service import ModuleUnread
 from bcap.views.generated.bcap_message import BcapMessageSerializer
 
@@ -49,8 +48,3 @@ class ThreadMessageSerializer(BcapMessageSerializer):
 class ModuleUnreadSerializer(DataclassSerializer):
     class Meta:
         dataclass = ModuleUnread
-
-
-class ContributorSummarySerializer(DataclassSerializer):
-    class Meta:
-        dataclass = ContributorSummary

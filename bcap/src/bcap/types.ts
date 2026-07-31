@@ -4,7 +4,6 @@ import type {
     DraftRecord,
     InvestigationResourceAliasedDataWritable,
     PermitApplication,
-    PermitApplicationResourceAliasedDataWritable,
 } from '@/bcap/client/types.gen.ts';
 
 import type {
@@ -30,12 +29,6 @@ export type DashboardStatus = NonNullable<
 >['status'];
 
 export type PermitAliasedData = NonNullable<PermitApplication['aliased_data']>;
-
-// A permit application draft narrows the generic draft to the permit resource's
-// writable (POST) aliased data, which carries the graph's required fields.
-export type PermitApplicationDraft = DraftRecord & {
-    data?: PermitApplicationResourceAliasedDataWritable;
-};
 
 // An investigation draft narrows the generic draft to the investigation
 // resource's writable (POST) aliased data, which carries the graph's required
@@ -77,13 +70,6 @@ export interface MessageThread {
     hasUnread: boolean;
     unreadCount: number;
     isResolved?: boolean;
-}
-
-export interface TileReference {
-    resourceinstance_id: string;
-    tileid: string;
-    nodegroupid: string;
-    data: object;
 }
 
 export interface DetailsData {

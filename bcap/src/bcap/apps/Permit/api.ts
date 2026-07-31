@@ -6,7 +6,6 @@ import type {
     ArchesDraftData,
     DraftNode,
     FormattedMessage,
-    InvestigationDraft,
     NewBcapMessage,
     PermitAliasedData,
 } from '@/bcap/types.ts';
@@ -175,32 +174,6 @@ export const submitModule = async (
     } catch (error) {
         console.error('Module submission API failed:', error);
         throw error;
-    }
-};
-
-// The module host resources (eg investigations) already created on a permit,
-// shaped like drafts so the same list rendering works for both.
-export const fetchPermitModules = async (
-    permitId: string,
-    moduleSlug: GraphSlug,
-): Promise<InvestigationDraft[]> => {
-    try {
-        const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
-        const response = await apiFetch(url);
-        const hosts = (await response.json()) ?? [];
-        return hosts.map(
-            (host: {
-                resourceinstanceid?: string;
-                aliased_data?: unknown;
-            }) => ({
-                id: host.resourceinstanceid,
-                graph_slug: moduleSlug,
-                data: host.aliased_data,
-            }),
-        ) as InvestigationDraft[];
-    } catch (error) {
-        console.error('Failed to load permit module hosts:', error);
-        return [];
     }
 };
 

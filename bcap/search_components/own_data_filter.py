@@ -1,5 +1,4 @@
 from arches.app.search.components.base import BaseSearchFilter
-from arches.app.search.elasticsearch_dsl_builder import Bool, Terms
 
 details = {
     "searchcomponentid": "",
@@ -27,7 +26,6 @@ class OwnDataFilter(BaseSearchFilter):
     def append_dsl(
         self, search_results_object, permitted_nodegroups, include_provisional
     ):
-        search_query = Bool()
         if self.user_in_group("Local Government"):
             print("\tUser in Local Government... filter")
         else:

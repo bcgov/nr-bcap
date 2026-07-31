@@ -29,6 +29,7 @@ import {
     modulesForFilingType,
 } from '../dashboard/permitModules.ts';
 import MessageDialog from '../common/messages/MessageDialog.vue';
+import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import { useMessageStore } from '@/bcap/stores/message.ts';
 
 const messageStore = useMessageStore();
@@ -203,31 +204,14 @@ const addableModules = computed(() =>
         })),
 );
 
-const deleteState = reactive<{
-    visible: boolean;
-    busy: boolean;
-    draft: InvestigationDraft | null;
-}>({ visible: false, busy: false, draft: null });
-
-const confirmDelete = (draft: InvestigationDraft) => {
-    deleteState.draft = draft;
-    deleteState.visible = true;
-};
-
-const performDelete = async () => {
-    const draft = deleteState.draft;
-    if (!draft) return;
-    deleteState.busy = true;
-    try {
-        await deleteDraft(GraphSlug.Investigation, draft.id);
-        deleteState.visible = false;
-        await loadInvestigations();
-    } catch (error) {
-        console.error('Failed to delete draft:', error);
-    } finally {
-        deleteState.busy = false;
-    }
-};
+const {
+    state: deleteState,
+    open: confirmDelete,
+    confirm: performDelete,
+} = useConfirmAction<InvestigationDraft>(async (draft) => {
+    await deleteDraft(GraphSlug.Investigation, draft.id);
+    await loadInvestigations();
+});
 
 // This needs to be more generic in the future
 const loadInvestigations = async () => {

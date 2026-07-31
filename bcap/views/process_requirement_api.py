@@ -42,10 +42,7 @@ from bcap.schema import ArchesTileAutoSchema
 from bcap.services.process_requirement.template_specs import host_graph
 from bcap.util.indexing import bulk_index
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.views.generated.process_requirement import (
-    ProcessRequirementSerializer,
-    ProcessRequirementViewMixin,
-)
+from bcap.views.generated.process_requirement import ProcessRequirementViewMixin
 
 RESOURCE_EDITOR_GROUP = "Resource Editor"
 

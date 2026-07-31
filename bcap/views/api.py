@@ -2,7 +2,6 @@ import json
 from traceback import print_exception
 from packaging.version import Version
 
-from django.conf import settings
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from arches.app.views.api import APIBase, MVT as MVTBase
@@ -32,6 +31,7 @@ from bcap.util.register_type_api import RegisterTypeApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
 from bcap.util.map_attributes import inject_map_attributes
 from bcap.util.mvt_tiler import MVTTiler
+from arches.app.models.resource import Resource
 from arches.app.models.system_settings import settings
 from arches.app.search.components.base import SearchFilterFactory
 from arches.app.search.mappings import RESOURCES_INDEX
@@ -46,9 +46,6 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
-from arches.app.models.resource import Resource
-from arches.app.models.models import Tile
-import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -352,8 +349,6 @@ class TranslateToResourceTypeView(View):
     def _get_related_resources_with_sources(
         self, resource_ids: list, target_graph_id: str
     ) -> dict:
-        from arches.app.models.resource import Resource
-
         source_names = {}
 
         for rid in resource_ids:

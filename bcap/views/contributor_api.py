@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from bcap.serializers.registration_serializers import ContributorSummarySerializer
+from bcap.serializers.contributor_serializers import ContributorSummarySerializer
 from bcap.services.contributor_service import ContributorService
 from bcap.views.process_requirement_api import STAFF_MODULE_PERMISSIONS
 

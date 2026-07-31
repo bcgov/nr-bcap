@@ -9,6 +9,7 @@ import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
+import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const router = useRouter();
@@ -17,16 +18,8 @@ const headerStore = usePermitHeaderStore();
 const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
 
-// ?staff rides along from the permit view, so the crumb returns to the same
-// staff or external view rather than dropping the staff controls.
-const backLink = computed(() =>
-    nav?.permitId
-        ? {
-              name: routeNames.permitDetails,
-              params: { id: nav.permitId },
-              query: route.query,
-          }
-        : { name: routeNames.home },
+const crumbs = computed(() =>
+    permitCrumbs(nav?.permitId, route.query.staff, title),
 );
 
 // Set by the permit view; loaded here only if this page was opened cold.
@@ -40,7 +33,7 @@ const state = reactive({
 onMounted(async () => {
     // No nav means a refresh or direct hit; send them back to reopen it.
     if (!nav) {
-        router.replace(backLink.value);
+        router.replace({ name: routeNames.home });
         return;
     }
     try {
@@ -64,12 +57,7 @@ onMounted(async () => {
         </template>
 
         <div class="review-shell">
-            <PermitBreadcrumbs
-                :crumbs="[
-                    { label: 'Project Summary', to: backLink },
-                    { label: title },
-                ]"
-            />
+            <PermitBreadcrumbs :crumbs="crumbs" />
 
             <h1 class="review-title">Submission · {{ title }}</h1>
 

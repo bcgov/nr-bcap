@@ -19,6 +19,7 @@ import { permitModules } from './permitModules.ts';
 import type { ModuleProgress } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 
 const { $gettext } = useGettext();
 const router = useRouter();
@@ -143,34 +144,14 @@ const draftRoute = (draft: DashboardProject) =>
               query: { draftId: draft.id },
           };
 
-const deleteState = reactive<{
-    visible: boolean;
-    busy: boolean;
-    draft: DashboardProject | null;
-}>({ visible: false, busy: false, draft: null });
-
-const confirmDelete = (draft: DashboardProject) => {
-    deleteState.draft = draft;
-    deleteState.visible = true;
-};
-
-const performDelete = async () => {
-    const draft = deleteState.draft;
-    if (!draft) return;
-    deleteState.busy = true;
-    try {
-        await deleteDraft(
-            draft.graph_slug || GraphSlug.PermitApplication,
-            draft.id,
-        );
-        savedDrafts.value = savedDrafts.value.filter((d) => d.id !== draft.id);
-        deleteState.visible = false;
-    } catch (error) {
-        console.error('Failed to delete draft:', error);
-    } finally {
-        deleteState.busy = false;
-    }
-};
+const {
+    state: deleteState,
+    open: confirmDelete,
+    confirm: performDelete,
+} = useConfirmAction<DashboardProject>(async (draft) => {
+    await deleteDraft(draft.graph_slug || GraphSlug.PermitApplication, draft.id);
+    savedDrafts.value = savedDrafts.value.filter((d) => d.id !== draft.id);
+});
 
 const filteredDrafts = computed(() => {
     const drafts = ui.messagesOnly

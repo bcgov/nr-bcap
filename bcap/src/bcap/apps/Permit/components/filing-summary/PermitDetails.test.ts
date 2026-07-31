@@ -8,7 +8,6 @@ import type { PermitAliasedData } from '@/bcap/types.ts';
 // 1. Mock the API Service
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchPermitDetails: vi.fn(),
-    patchPermitSubmissionDate: vi.fn(),
     fetchDrafts: vi.fn(() => Promise.resolve([])),
     deleteDraft: vi.fn(),
     // Imported by the MessageDialog child; without them its error handlers log

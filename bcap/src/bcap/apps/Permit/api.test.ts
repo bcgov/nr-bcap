@@ -6,7 +6,6 @@ import {
     fetchMyProjects,
     submitApplication,
     submitModule,
-    fetchPermitModules,
     deleteDraft,
     getThreadsForResource,
     getMessagesForThread,
@@ -243,62 +242,6 @@ describe('Permit API', () => {
             ).rejects.toThrow('POST investigation failed');
             expect(console.error).toHaveBeenCalledWith(
                 'Module submission API failed:',
-                failure,
-            );
-        });
-    });
-
-    describe('fetchPermitModules', () => {
-        it('GETs the seed route and reshapes hosts like drafts', async () => {
-            apiFetch.mockResolvedValue(
-                okResponse([
-                    {
-                        resourceinstanceid: 'inv-1',
-                        aliased_data: { investigation_identification: {} },
-                    },
-                ]),
-            );
-
-            const result = await fetchPermitModules(
-                'permit-1',
-                GraphSlug.Investigation,
-            );
-
-            expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/seed/permit-1/investigation',
-            );
-            expect(result).toEqual([
-                {
-                    id: 'inv-1',
-                    graph_slug: GraphSlug.Investigation,
-                    data: { investigation_identification: {} },
-                },
-            ]);
-        });
-
-        it('returns an empty array on a null body', async () => {
-            apiFetch.mockResolvedValue(okResponse(null));
-
-            const result = await fetchPermitModules(
-                'permit-1',
-                GraphSlug.Investigation,
-            );
-
-            expect(result).toEqual([]);
-        });
-
-        it('returns an empty array and logs when the request fails', async () => {
-            const failure = new Error('boom');
-            apiFetch.mockRejectedValue(failure);
-
-            const result = await fetchPermitModules(
-                'permit-1',
-                GraphSlug.Investigation,
-            );
-
-            expect(result).toEqual([]);
-            expect(console.error).toHaveBeenCalledWith(
-                'Failed to load permit module hosts:',
                 failure,
             );
         });

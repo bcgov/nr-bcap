@@ -12,9 +12,7 @@ from rest_framework.serializers import (
     UUIDField,
     ValidationError,
 )
-from rest_framework_dataclasses.serializers import DataclassSerializer
-
-from bcap.services.contributor_service import ContributorService, ContributorSummary
+from bcap.services.contributor_service import ContributorService
 
 
 class NewContributorSerializer(Serializer):
@@ -67,10 +65,3 @@ class RegistrationLinkRequestSerializer(Serializer):
 class RegistrationLinkResponseSerializer(Serializer):
     signup_url = CharField(help_text="Single-use link to send to the invited user.")
     expires = DateTimeField(help_text="When the link stops being redeemable.")
-
-
-class ContributorSummarySerializer(DataclassSerializer):
-    """The contributor pick-list option shape, derived from the dataclass."""
-
-    class Meta:
-        dataclass = ContributorSummary

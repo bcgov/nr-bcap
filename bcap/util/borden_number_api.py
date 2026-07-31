@@ -51,10 +51,6 @@ class BordenNumberApi:
             raise MissingGeometryError(
                 "Site boundary must be created prior to generating a Borden Number"
             )
-        # print("Got tile: %s" % tile)
-        datatype = self._datatype_factory.get_instance(self.geom_node.datatype)
-        # geometry = datatype.get_display_value(tile, self.node)
-        # print("Tile data: %s" % tile.data)
         geometry = tile.data[str(self.geom_node.nodeid)]
         return self._get_borden_grid_for_geometry(geometry)
 
