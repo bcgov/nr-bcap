@@ -149,7 +149,10 @@ const {
     open: confirmDelete,
     confirm: performDelete,
 } = useConfirmAction<DashboardProject>(async (draft) => {
-    await deleteDraft(draft.graph_slug || GraphSlug.PermitApplication, draft.id);
+    await deleteDraft(
+        draft.graph_slug || GraphSlug.PermitApplication,
+        draft.id,
+    );
     savedDrafts.value = savedDrafts.value.filter((d) => d.id !== draft.id);
 });
 

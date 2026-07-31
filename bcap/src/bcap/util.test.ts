@@ -190,4 +190,3 @@ describe('isAliasedNodeData (type guard)', () => {
         ).toBe(true);
     });
 });
-
