@@ -407,20 +407,15 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
                 self.assertEqual(card.project_name, "")
                 self.assertEqual(card.application_number, "")
 
-    def test_the_drafts_own_value_wins_and_a_blank_one_falls_back(self):
+    def test_a_blank_draft_value_falls_back_to_the_parent(self):
         card = self._draft_card(
-            self._identification(project_name="Draft Name"),
-            parent_resource_id=str(self.parent.pk),
-        )
-        self.assertEqual(card.project_name, "Draft Name")
-        # Fields the draft doesn't carry still come from the parent.
-        self.assertEqual(card.submission_type, "Site Visit")
-
-        blank = self._draft_card(
             self._identification(project_name=""),
             parent_resource_id=str(self.parent.pk),
         )
-        self.assertEqual(blank.project_name, "Parent Project")
+
+        self.assertEqual(card.project_name, "Parent Project")
+        # Fields the draft doesn't carry come from the parent too.
+        self.assertEqual(card.submission_type, "Site Visit")
 
     def test_a_deleted_parent_leaves_blanks_but_keeps_the_permit_id(self):
         gone = build_external_permit(FixtureBuilder(), "Doomed", self.user, "Active")

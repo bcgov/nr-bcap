@@ -71,18 +71,11 @@ describe('tabs', () => {
 });
 
 describe('search', () => {
-    it('emits each keystroke', async () => {
+    it('emits the query, chips it, and clears it from the chip', async () => {
         const wrapper = mountBar();
-
         await wrapper.find('.search-input').setValue('quarry');
 
         expect(wrapper.emitted('update:search')).toEqual([['quarry']]);
-    });
-
-    it('surfaces the query as a chip and clears it when the chip is clicked', async () => {
-        const wrapper = mountBar();
-        await wrapper.find('.search-input').setValue('quarry');
-
         expect(chipLabels(wrapper)).toEqual(['Search: quarry']);
 
         await wrapper.find('.filter-chip').trigger('click');
@@ -168,8 +161,9 @@ describe('sort menu', () => {
 
 describe('results summary', () => {
     it('reports how many of the total are shown, and hides when empty', () => {
-        expect(mountBar({ shown: 2, total: 5 }).find('.results-summary').text())
-            .toMatch(/Showing\s*2\s*of\s*5/);
+        expect(
+            mountBar({ shown: 2, total: 5 }).find('.results-summary').text(),
+        ).toMatch(/Showing\s*2\s*of\s*5/);
         expect(
             mountBar({ shown: 0, total: 0 }).find('.results-summary').exists(),
         ).toBe(false);

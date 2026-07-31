@@ -202,3 +202,106 @@ class ModuleCompletionRouteTests(AuthTestHelper, TestCase):
     def test_requires_resource_editor(self):
         self.idir_login_simulate(self.user)  # not a Resource Editor
         self.assertEqual(self._patch({"completed": True}).status_code, 403)
+
+
+@override_settings(ROOT_URLCONF="tests.test_urls")
+class ModuleRequirementAssigneeRouteTests(AuthTestHelper, TestCase):
+    """PATCH .../module/<tileid>/requirement/<id> points a module requirement's
+    ministry_assignee at a Contributor, or clears it with null."""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.admin = get_user_model().objects.get(username="admin")
+
+        builder = FixtureBuilder()
+        requirement = _make_requirement(satisfied=False)
+        cls.requirement_id = str(requirement.pk)
+
+        permit = builder.new_resource("permit_application")
+        permit.append_tile("application_admin")
+        admin = permit.aliased_data.application_admin
+        builder.prune_blank_tiles(admin, pa_groups.PROCESS_MODULE, pa.MODULE_NAME)
+        module = builder.append_blank_tile_for_group(
+            admin,
+            pa_groups.PROCESS_MODULE,
+            {
+                pa.MODULE_NAME: builder.localized("Permit Application"),
+                pa.MODULE_ORDER: 1,
+            },
+        )
+        builder.prune_blank_tiles(module, pa.PROCESS_REQUIREMENT)
+        builder.append_blank_tile_for_group(
+            module,
+            pa.PROCESS_REQUIREMENT,
+            {
+                pa.PROCESS_REQUIREMENT: requirement,
+                pa.PROCESS_REQUIREMENT_ORDER: 1,
+            },
+        )
+        permit.save(**builder.save_kwargs)
+
+        cls.permit_id = str(permit.pk)
+        cls.module_tileid = str(module.pk)
+
+    def setUp(self):
+        super().setUp()
+        self.idir_login_simulate(self.admin)
+
+    def _url(self, requirement_id=None):
+        return reverse(
+            "module_requirement",
+            kwargs={
+                "pk": self.permit_id,
+                "module_tileid": self.module_tileid,
+                "requirement_id": requirement_id or self.requirement_id,
+            },
+        )
+
+    def _patch(self, payload, url=None):
+        return self.client.patch(
+            url or self._url(),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+
+    def _assignee(self):
+        """The stored ministry_assignee on the module's requirement child."""
+        node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.MINISTRY_ASSIGNEE)
+        tile = TileModel.objects.filter(parenttile_id=self.module_tileid).first()
+        return tile.data.get(node)
+
+    def test_patch_sets_then_clears_the_assignee(self):
+        contributor_id = str(uuid4())
+
+        resp = self._patch({"contributor_id": contributor_id})
+
+        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(
+            [ref["resourceId"] for ref in self._assignee()], [contributor_id]
+        )
+
+        resp = self._patch({"contributor_id": None})
+
+        self.assertEqual(resp.status_code, 204)
+        self.assertFalse(self._assignee())
+
+    def test_the_contributor_is_not_checked_against_real_ones(self):
+        # Current behaviour: any well-formed uuid is accepted. Tightening this
+        # should be a deliberate change, not a silent one.
+        self.assertEqual(self._patch({"contributor_id": str(uuid4())}).status_code, 204)
+
+    def test_a_missing_or_malformed_contributor_is_a_400(self):
+        self.assertEqual(self._patch({}).status_code, 400)
+        self.assertEqual(self._patch({"contributor_id": "not-a-uuid"}).status_code, 400)
+
+    def test_a_requirement_not_on_this_module_returns_404(self):
+        other = str(_make_requirement(satisfied=False).pk)
+
+        resp = self._patch({"contributor_id": str(uuid4())}, url=self._url(other))
+
+        self.assertEqual(resp.status_code, 404)
+
+    def test_requires_resource_editor(self):
+        self.idir_login_simulate(self.user)  # not a Resource Editor
+        self.assertEqual(self._patch({"contributor_id": str(uuid4())}).status_code, 403)

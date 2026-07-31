@@ -133,7 +133,8 @@ describe('MessageThreadSidebar', () => {
 
         expect(wrapper.emitted('select-tab')).toEqual([[true]]);
         expect(
-            mountSidebar({ showArchived: true }).findAll('.sidebar-tab')[1]
+            mountSidebar({ showArchived: true })
+                .findAll('.sidebar-tab')[1]
                 .classes(),
         ).toContain('active');
     });
@@ -182,7 +183,6 @@ describe('MessageThreadSidebar', () => {
 
         expect(wrapper.emitted('select-thread')).toEqual([['new']]);
     });
-
 });
 
 describe('MessageAttachmentsField', () => {
@@ -211,17 +211,13 @@ describe('MessageAttachmentsField', () => {
         expect(wrapper.emitted('update:files')).toEqual([[[plan]]]);
     });
 
-    it('lists each staged file with its size', () => {
-        const wrapper = mountField([file('plan.pdf', 2048)]);
-
-        expect(wrapper.find('.staged-name').text()).toBe('plan.pdf');
-        expect(wrapper.find('.staged-size').text()).toBe('2 KB');
-    });
-
-    it('emits the remaining files when one is removed', async () => {
-        const first = file('a.pdf');
+    it('lists each staged file with its size and drops the one removed', async () => {
+        const first = file('a.pdf', 2048);
         const second = file('b.pdf');
         const wrapper = mountField([first, second]);
+
+        expect(wrapper.find('.staged-name').text()).toBe('a.pdf');
+        expect(wrapper.find('.staged-size').text()).toBe('2 KB');
 
         await wrapper.findAll('.staged-remove')[0].trigger('click');
 

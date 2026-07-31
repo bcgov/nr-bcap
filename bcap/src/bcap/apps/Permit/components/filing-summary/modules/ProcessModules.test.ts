@@ -618,23 +618,15 @@ describe('ProcessModules assignment', () => {
             'r-9',
             'c-1',
         );
-    });
 
-    it('clears the row and sends null for the unassigned choice', async () => {
-        const vm = await mountStaff();
-        const requirement = {
-            resourceId: 'r-9',
-            ministryAssignee: 'Turing, Alan',
-            ministryAssigneeId: 'c-2',
-        };
-
+        // The unassigned choice sends null and empties the row.
         await vm.onAssignRequirement({ tileid: 'm1' }, requirement, null);
 
         expect(requirement).toMatchObject({
             ministryAssigneeId: '',
             ministryAssignee: '',
         });
-        expect(api.setRequirementAssignee).toHaveBeenCalledWith(
+        expect(api.setRequirementAssignee).toHaveBeenLastCalledWith(
             'permit-1',
             'm1',
             'r-9',

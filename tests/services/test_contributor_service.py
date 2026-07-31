@@ -10,6 +10,7 @@ from bcap.services.contributor_service import (
     NewContributor,
 )
 from bcap.util.aliases.contributor import ContributorAliases
+from bcap.util.auth.groups import Groups
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as pa,
@@ -382,7 +383,37 @@ class LinkedContributorIdsTests(TestCase):
         )
 
     def test_empty_input_returns_empty(self):
+        # The empty short-circuit was removed, so this now runs the query with
+        # an empty id filter rather than returning early.
         self.assertEqual(self.contributors.login_linked_contributor_ids([]), set())
+
+    def test_none_means_every_login_linked_contributor(self):
+        ids = self.contributors.login_linked_contributor_ids(None)
+
+        self.assertIn(str(self.linked.pk), ids)
+        self.assertNotIn(str(self.unlinked.pk), ids)
+        self.assertNotIn(str(self.inactive.pk), ids)
+
+    def test_assignable_contributors_are_the_login_linked_ones_by_name(self):
+        options = self.contributors.assignable_contributors()
+
+        self.assertEqual([o.id for o in options], [str(self.linked.pk)])
+        self.assertEqual(options[0].name, "Linked, Lee")
+
+    def test_archaeology_branch_id_resolves_the_seeded_organization(self):
+        # The lookup switched to data__contains, so the localized name has to
+        # match the stored {"en": {"value": ...}} shape exactly.
+        self.assertIsNone(self.contributors.archaeology_branch_id())
+
+        branch = FixtureBuilder().make_contributor(
+            ContributorSpec(
+                reference_value("contributor", "contributor_type"),
+                None,
+                Groups.ARCHAEOLOGY_BRANCH,
+            )
+        )
+
+        self.assertEqual(self.contributors.archaeology_branch_id(), str(branch.pk))
 
 
 class ContributorsForResourceTests(TestCase):

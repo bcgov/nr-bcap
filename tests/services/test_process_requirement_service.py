@@ -213,6 +213,14 @@ class MinistryAssigneeTests(TestCase):
         cls.grace_id = str(graph.grace.pk)
         cls.module_tileid = str(_load_module(cls.permit_id).tileid)
 
+        # A second permit, unassigned so its first assignment registers as an
+        # edit-log change, and foreign to the permit above.
+        other = build_unassigned_permit(FixtureBuilder(), "Other Permit")
+        other_module = _load_module(other.pk)
+        cls.other_permit_id = str(other.pk)
+        cls.other_module_tileid = str(other_module.tileid)
+        cls.other_requirement_id = next(iter(_module_children(other_module)))
+
     def setUp(self):
         self.service = ProcessRequirementService()
 
@@ -246,10 +254,6 @@ class MinistryAssigneeTests(TestCase):
         self.assertEqual(_snapshot(_load_module(self.permit_id)), before)
 
     def test_a_module_or_requirement_that_isnt_this_permits_is_rejected(self):
-        other = build_unassigned_permit(FixtureBuilder(), "Other Permit")
-        other_module = _load_module(other.pk)
-        foreign_requirement = next(iter(_module_children(other_module)))
-
         # An unknown module, another permit's requirement, and another permit's
         # module tile all fail rather than reaching across applications.
         self.assertFalse(
@@ -257,40 +261,38 @@ class MinistryAssigneeTests(TestCase):
                 self.permit_id, uuid4(), self.assessment_id, self.ada_id
             )
         )
-        self.assertFalse(self._assign(foreign_requirement, self.ada_id))
+        self.assertFalse(self._assign(self.other_requirement_id, self.ada_id))
         self.assertFalse(
             self.service.set_ministry_assignee(
                 self.permit_id,
-                str(other_module.tileid),
-                foreign_requirement,
+                self.other_module_tileid,
+                self.other_requirement_id,
                 self.ada_id,
             )
         )
-        self.assertIsNone(self._assignee(foreign_requirement, permit_id=other.pk))
+        self.assertIsNone(
+            self._assignee(self.other_requirement_id, permit_id=self.other_permit_id)
+        )
 
     def test_assignment_date_surfaces_on_the_internal_dashboard(self):
         # The date is derived from the edit log, so it only appears once the
         # assignee node's value has actually changed.
-        permit = build_unassigned_permit(FixtureBuilder(), "Needs Owner")
-        permit_id = str(permit.pk)
-        module = _load_module(permit_id)
-        requirement_id = next(iter(_module_children(module)))
-
-        self.assertTrue(
-            self.service.set_ministry_assignee(
-                permit_id, str(module.tileid), requirement_id, self.ada_id
+        def assign(contributor_id):
+            self.assertTrue(
+                self.service.set_ministry_assignee(
+                    self.other_permit_id,
+                    self.other_module_tileid,
+                    self.other_requirement_id,
+                    contributor_id,
+                )
             )
-        )
-        first = self._card(permit_id)
+            return self._card(self.other_permit_id)
+
+        first = assign(self.ada_id)
         self.assertEqual(first.ministry_assignee_id, self.ada_id)
         self.assertTrue(first.ministry_assignee_change_date)
 
-        self.assertTrue(
-            self.service.set_ministry_assignee(
-                permit_id, str(module.tileid), requirement_id, self.grace_id
-            )
-        )
-        second = self._card(permit_id)
+        second = assign(self.grace_id)
         self.assertEqual(second.ministry_assignee_id, self.grace_id)
         self.assertGreater(
             datetime.fromisoformat(second.ministry_assignee_change_date),
