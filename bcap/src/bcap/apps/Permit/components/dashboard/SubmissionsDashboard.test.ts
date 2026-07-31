@@ -319,6 +319,13 @@ describe('drafts', () => {
         const card = wrapper.findComponent(ProjectCardStub);
         expect(card.props('bodyTitle')).toBe('Investigation - Big Project');
         expect(card.props('body1')).toBe('Type: Investigation Draft');
+        // The permit exists, so the card opens its filing summary with the
+        // draft's own section expanded.
+        expect(card.props('route')).toEqual({
+            name: 'permitDetails',
+            params: { id: 'permit-1' },
+            query: { draft: 'draft-4' },
+        });
     });
 
     it('opens the confirmation dialog from the delete button', async () => {

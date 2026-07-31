@@ -105,6 +105,11 @@ const activeModuleId = ref(
         : modulesAllowedForFilingType.value[0].id,
 );
 
+// ?draft=<id> opens that draft's panel, so a dashboard card lands on its section.
+const expandedDrafts = ref(
+    typeof route.query.draft === 'string' ? [route.query.draft] : [],
+);
+
 watch(modulesAllowedForFilingType, (mods) => {
     if (mods.length && !mods.some((mod) => mod.id === activeModuleId.value)) {
         activeModuleId.value = mods[0].id;
@@ -385,6 +390,7 @@ watch(activeModuleId, (id) => {
                         >
                             <h2 class="list-heading">Draft modules</h2>
                             <Accordion
+                                v-model:value="expandedDrafts"
                                 multiple
                                 class="draft-accordion"
                             >

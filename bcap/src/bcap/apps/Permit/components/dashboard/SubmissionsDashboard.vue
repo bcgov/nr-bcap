@@ -117,23 +117,31 @@ const draftLabel = (draft: DashboardProject) =>
 const isModuleDraft = (draft: DashboardProject) =>
     !!draft.graph_slug && draft.graph_slug !== GraphSlug.PermitApplication;
 
-const draftTitle = (draft: DashboardProject) => {
-    const label = draftLabel(draft);
-    if (!draft.project_name) return `Untitled ${label}`;
-    return isModuleDraft(draft)
-        ? `${label} - ${draft.project_name}`
-        : draft.project_name;
-};
+// A module draft names the module alone; the permit it hangs off is already on
+// the card as the application number.
+const draftTitle = (draft: DashboardProject) =>
+    isModuleDraft(draft)
+        ? draftLabel(draft)
+        : draft.project_name || `Untitled ${draftLabel(draft)}`;
 
 const draftDescription = (draft: DashboardProject) =>
     isModuleDraft(draft)
         ? `${draftLabel(draft)} Draft`
         : draft.submission_type || 'Permit Application Draft';
 
-const draftRoute = (draft: DashboardProject) => ({
-    name: draftModule(draft)?.routeName || routeNames.baseModule,
-    query: { draftId: draft.id },
-});
+// A draft under a permit opens that permit's filing summary; one with no permit
+// yet has nothing to summarise, so it resumes its workflow instead.
+const draftRoute = (draft: DashboardProject) =>
+    draft.permit_application_id
+        ? {
+              name: routeNames.permitDetails,
+              params: { id: draft.permit_application_id },
+              query: { draft: draft.id },
+          }
+        : {
+              name: draftModule(draft)?.routeName || routeNames.baseModule,
+              query: { draftId: draft.id },
+          };
 
 const deleteState = reactive<{
     visible: boolean;
