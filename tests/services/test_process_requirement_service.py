@@ -2,12 +2,19 @@
 template -> one is_template_requirement=False working copy) and
 create_working_copies (a copy of every template, in flow order)."""
 
+from datetime import datetime
+from uuid import uuid4
+
 from django.test import TestCase
 
 from arches.app.models.models import TileModel
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.services.dashboard.dashboard_types import DashboardFilter
+from bcap.services.dashboard.internal_dashboard_service import (
+    InternalDashboardService,
+)
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
@@ -16,7 +23,44 @@ from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.services.process_requirement.template_specs import load
 from bcap.util.i18n import localized_string
 
+from tests.builders import FixtureBuilder
+from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import seed_requirement_templates
+from tests.services.test_internal_dashboard_service import (
+    build_permit_graph,
+    build_unassigned_permit,
+)
+
+
+def _load_module(permit_id, index=0):
+    """One of a permit's process_module tiles, fully hydrated."""
+    permit = ResourceTileTree.get_tiles(
+        GraphSlugs.PERMIT_APPLICATION, resource_ids=[str(permit_id)]
+    ).get()
+    return permit.aliased_data.application_admin.aliased_data.process_module[index]
+
+
+def _module_children(module):
+    """The module's process_requirement children that reference a requirement,
+    keyed by requirement id."""
+    return {
+        str(child.aliased_data.process_requirement.pk): child
+        for child in module.aliased_data.process_requirement or []
+        if child.aliased_data.process_requirement
+    }
+
+
+def _snapshot(module):
+    """The module's card nodes plus every child's flow order: everything
+    set_ministry_assignee must leave alone."""
+    return {
+        "name": localized_string(module.aliased_data.module_name),
+        "order": module.aliased_data.module_order,
+        "requirement_orders": {
+            requirement_id: child.aliased_data.process_requirement_order
+            for requirement_id, child in _module_children(module).items()
+        },
+    }
 
 
 class ProcessRequirementServiceTests(TestCase):
@@ -151,3 +195,117 @@ class ProcessRequirementServiceTests(TestCase):
         # The partial save left the requirement's identification intact.
         self.assertEqual(self._name(requirement), "Checklist v2")
         self.assertFalse(self._is_template(requirement))
+
+
+class MinistryAssigneeTests(TestCase):
+    """set_ministry_assignee loads only the requirement and assignee nodes and
+    then saves the permit partially, so the module's remaining nodes (its name,
+    its order, and every child's flow order) must survive untouched."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        graph = build_permit_graph()
+        cls.permit_id = str(graph.permit.pk)
+        cls.assessment_id = str(graph.assessment.pk)
+        cls.review_id = str(graph.review.pk)
+        cls.site_id = str(graph.site.pk)
+        cls.ada_id = str(graph.ada.pk)
+        cls.grace_id = str(graph.grace.pk)
+        cls.module_tileid = str(_load_module(cls.permit_id).tileid)
+
+    def setUp(self):
+        self.service = ProcessRequirementService()
+
+    def _assignee(self, requirement_id, permit_id=None, module_index=0):
+        """The requirement child's ministry_assignee id, or None."""
+        module = _load_module(permit_id or self.permit_id, module_index)
+        assignee = _module_children(module)[
+            str(requirement_id)
+        ].aliased_data.ministry_assignee
+        return str(assignee.pk) if assignee else None
+
+    def _assign(self, requirement_id, contributor_id):
+        return self.service.set_ministry_assignee(
+            self.permit_id, self.module_tileid, requirement_id, contributor_id
+        )
+
+    def test_assignment_leaves_the_modules_other_nodes_intact(self):
+        before = _snapshot(_load_module(self.permit_id))
+
+        self.assertTrue(self._assign(self.assessment_id, self.ada_id))
+
+        self.assertEqual(_snapshot(_load_module(self.permit_id)), before)
+        self.assertEqual(self._assignee(self.assessment_id), self.ada_id)
+        # The sibling requirement's own assignee is untouched too.
+        self.assertEqual(self._assignee(self.review_id), self.ada_id)
+
+    def test_assign_then_clear_round_trips(self):
+        self.assertTrue(self._assign(self.assessment_id, self.ada_id))
+        self.assertEqual(self._assignee(self.assessment_id), self.ada_id)
+
+        self.assertTrue(self._assign(self.assessment_id, None))
+        self.assertIsNone(self._assignee(self.assessment_id))
+        # Clearing is still a partial save over the same narrowed load.
+        self.assertEqual(
+            _snapshot(_load_module(self.permit_id))["requirement_orders"],
+            {self.review_id: 1, self.assessment_id: 2, self.site_id: 3},
+        )
+
+    def test_unknown_module_is_rejected(self):
+        self.assertFalse(
+            self.service.set_ministry_assignee(
+                self.permit_id, uuid4(), self.assessment_id, self.ada_id
+            )
+        )
+
+    def test_a_requirement_on_another_permits_module_is_rejected(self):
+        other = build_unassigned_permit(FixtureBuilder(), "Other Permit")
+        other_module = _load_module(other.pk)
+        foreign_requirement = next(iter(_module_children(other_module)))
+
+        # Neither this permit's module nor the other permit's tile id reaches it.
+        self.assertFalse(self._assign(foreign_requirement, self.ada_id))
+        self.assertFalse(
+            self.service.set_ministry_assignee(
+                self.permit_id,
+                str(other_module.tileid),
+                foreign_requirement,
+                self.ada_id,
+            )
+        )
+        self.assertIsNone(self._assignee(foreign_requirement, permit_id=other.pk))
+
+    def test_assignment_date_surfaces_on_the_internal_dashboard(self):
+        # The date is derived from the edit log, so it only appears once the
+        # assignee node's value has actually changed.
+        permit = build_unassigned_permit(FixtureBuilder(), "Needs Owner")
+        permit_id = str(permit.pk)
+        module = _load_module(permit_id)
+        requirement_id = next(iter(_module_children(module)))
+
+        self.assertTrue(
+            self.service.set_ministry_assignee(
+                permit_id, str(module.tileid), requirement_id, self.ada_id
+            )
+        )
+        first = self._card(permit_id)
+        self.assertEqual(first.ministry_assignee_id, self.ada_id)
+        self.assertTrue(first.ministry_assignee_change_date)
+
+        self.assertTrue(
+            self.service.set_ministry_assignee(
+                permit_id, str(module.tileid), requirement_id, self.grace_id
+            )
+        )
+        second = self._card(permit_id)
+        self.assertEqual(second.ministry_assignee_id, self.grace_id)
+        self.assertGreater(
+            datetime.fromisoformat(second.ministry_assignee_change_date),
+            datetime.fromisoformat(first.ministry_assignee_change_date),
+        )
+
+    @staticmethod
+    def _card(permit_id):
+        page = InternalDashboardService().get_cards(DashboardFilter())
+        return next(card for card in page.results if card.id == permit_id)

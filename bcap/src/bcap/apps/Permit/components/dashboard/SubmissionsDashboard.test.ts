@@ -17,10 +17,12 @@ vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
 
 const fetchDraftCards = vi.fn();
 const fetchMyProjects = vi.fn();
+const fetchCompanyProjects = vi.fn();
 const deleteDraft = vi.fn();
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchDraftCards: (...args: unknown[]) => fetchDraftCards(...args),
     fetchMyProjects: (...args: unknown[]) => fetchMyProjects(...args),
+    fetchCompanyProjects: (...args: unknown[]) => fetchCompanyProjects(...args),
     deleteDraft: (...args: unknown[]) => deleteDraft(...args),
 }));
 
@@ -151,6 +153,7 @@ beforeEach(() => {
     localStorage.clear();
     fetchDraftCards.mockReset().mockResolvedValue([]);
     fetchMyProjects.mockReset().mockResolvedValue([]);
+    fetchCompanyProjects.mockReset().mockResolvedValue([]);
     deleteDraft.mockReset().mockResolvedValue(undefined);
     push.mockReset();
 });
@@ -250,6 +253,75 @@ describe('project cards', () => {
             .findAllComponents(ProjectCardStub)
             .map((card) => card.props('bodyTitle'));
         expect(titles).toEqual(['Quarry Dig']);
+    });
+
+    it('searches the application number, permit number, type and sector too', async () => {
+        const matches = async (query: string) => {
+            fetchMyProjects.mockResolvedValue([
+                makeProject({
+                    id: 'a',
+                    project_name: 'Bridge Survey',
+                    application_number: 'APP-777',
+                    permit_number: 'PN-42',
+                    submission_type: 'Site Visit',
+                    industrial_sector: 'Forestry',
+                }),
+                makeProject({
+                    id: 'b',
+                    project_name: 'Unrelated',
+                    application_number: 'APP-000',
+                    permit_number: 'PN-0',
+                    submission_type: 'Alteration',
+                    industrial_sector: 'Mining',
+                }),
+            ]);
+            const wrapper = await mountDashboard();
+            await switchTab(wrapper, 'my_projects');
+            wrapper
+                .findComponent({ name: 'SortingBar' })
+                .vm.$emit('update:search', query);
+            await flushPromises();
+            return wrapper
+                .findAllComponents(ProjectCardStub)
+                .map((card) => card.props('bodyTitle'));
+        };
+
+        expect(await matches('app-777')).toEqual(['Bridge Survey']);
+        expect(await matches('PN-42')).toEqual(['Bridge Survey']);
+        expect(await matches('site visit')).toEqual(['Bridge Survey']);
+        expect(await matches('forestry')).toEqual(['Bridge Survey']);
+    });
+
+    it('shows the associated companies scope on the company tab', async () => {
+        fetchMyProjects.mockResolvedValue([
+            makeProject({ id: 'mine', project_name: 'Mine' }),
+            makeProject({ id: 'mine-2', project_name: 'Mine Two' }),
+        ]);
+        fetchCompanyProjects.mockResolvedValue([
+            makeProject({ id: 'theirs', project_name: 'Colleague App' }),
+        ]);
+        const wrapper = await mountDashboard();
+
+        await switchTab(wrapper, 'company_projects');
+
+        const titles = wrapper
+            .findAllComponents(ProjectCardStub)
+            .map((card) => card.props('bodyTitle'));
+        expect(titles).toEqual(['Colleague App']);
+        // The counts follow the tab, not whichever list loaded first.
+        const bar = wrapper.findComponent({ name: 'SortingBar' });
+        expect(bar.props('shown')).toBe(1);
+        expect(bar.props('total')).toBe(1);
+    });
+
+    it('names the empty state after the tab', async () => {
+        const wrapper = await mountDashboard();
+
+        await switchTab(wrapper, 'my_projects');
+        expect(wrapper.text()).toContain('No submitted projects found.');
+
+        await switchTab(wrapper, 'company_projects');
+        expect(wrapper.text()).toContain('No company projects found.');
     });
 });
 

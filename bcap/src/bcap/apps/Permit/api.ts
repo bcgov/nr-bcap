@@ -94,6 +94,8 @@ export const deleteDraft = async (
 };
 
 export const fetchMyProjects = async () => fetchDashboardCards('CREATED_BY_ME');
+export const fetchCompanyProjects = async () =>
+    fetchDashboardCards('CREATED_BY_ASSOCIATED_COMPANIES');
 export const fetchDraftCards = async () => fetchDashboardCards('DRAFTS');
 
 const fetchDashboardCards = async (status: string) => {

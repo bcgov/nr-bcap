@@ -471,16 +471,16 @@ describe('TaskChecklist', () => {
     });
 
     describe('isDirty and actions bar', () => {
-        it('hides actions bar before any edits', async () => {
+        it('hides the undo button before any edits', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({ subRequirements: [buildSubReq()] }),
             );
             const wrapper = mount(TaskChecklist);
             await flushPromises();
-            expect(wrapper.find('.actions-bar').exists()).toBe(false);
+            expect(wrapper.find('.undo-btn').exists()).toBe(false);
         });
 
-        it('shows actions bar after checking a sub-requirement checkbox', async () => {
+        it('shows the undo button after checking a sub-requirement checkbox', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     subRequirements: [buildSubReq({ satisfied: false })],
@@ -490,7 +490,7 @@ describe('TaskChecklist', () => {
             const wrapper = mount(TaskChecklist);
             await flushPromises();
             await check(wrapper.find<HTMLInputElement>('.req-checkbox'), true);
-            expect(wrapper.find('.actions-bar').exists()).toBe(true);
+            expect(wrapper.find('.undo-btn').exists()).toBe(true);
         });
 
         it('undo reverts a checkbox to its original state', async () => {
@@ -513,7 +513,7 @@ describe('TaskChecklist', () => {
             ).toBe(false);
         });
 
-        it('actions bar disappears after undo', async () => {
+        it('the undo button disappears after undo', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     subRequirements: [buildSubReq({ satisfied: false })],
@@ -525,10 +525,10 @@ describe('TaskChecklist', () => {
             await check(wrapper.find<HTMLInputElement>('.req-checkbox'), true);
             await wrapper.find('.undo-btn').trigger('click');
             await nextTick();
-            expect(wrapper.find('.actions-bar').exists()).toBe(false);
+            expect(wrapper.find('.undo-btn').exists()).toBe(false);
         });
 
-        it('shows actions bar after editing the assessment checkbox', async () => {
+        it('shows the undo button after editing the assessment checkbox', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     assessment: buildAssessment({ status: false }),
@@ -540,7 +540,7 @@ describe('TaskChecklist', () => {
                 wrapper.find<HTMLInputElement>('#requirement_satisfied'),
                 true,
             );
-            expect(wrapper.find('.actions-bar').exists()).toBe(true);
+            expect(wrapper.find('.undo-btn').exists()).toBe(true);
         });
     });
 
@@ -607,7 +607,7 @@ describe('TaskChecklist', () => {
             );
         });
 
-        it('hides actions bar after a successful save', async () => {
+        it('hides the undo button after a successful save', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     subRequirements: [buildSubReq({ satisfied: false })],
@@ -620,7 +620,7 @@ describe('TaskChecklist', () => {
             await check(wrapper.find<HTMLInputElement>('.req-checkbox'), true);
             await wrapper.find('.save-btn').trigger('click');
             await flushPromises();
-            expect(wrapper.find('.actions-bar').exists()).toBe(false);
+            expect(wrapper.find('.undo-btn').exists()).toBe(false);
         });
 
         it('handles a failed save response without throwing', async () => {

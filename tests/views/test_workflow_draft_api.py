@@ -257,6 +257,40 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.json()["parent_resource_id"], str(parent.pk))
 
+    def test_internal_staff_can_read_any_applicants_draft(self):
+        # Visibility is keyed on internal-group membership, not superuser: a
+        # plain Resource Editor reaches an applicant's draft.
+        draft = self._create_draft(user=self.applicant, data={"step1": {"x": 1}})
+        self.assertFalse(self.editor.is_superuser)
+
+        resp = self.client.get(self._detail_url(draft.id))
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["data"], {"step1": {"x": 1}})
+
+    def test_internal_staff_may_write_and_delete_an_applicants_draft(self):
+        # Pins current behaviour: the internal-user widening applies to every
+        # verb, so staff can overwrite and destroy an applicant's draft.
+        draft = self._create_draft(user=self.applicant, data={"step1": {"x": 1}})
+        resp = self.client.put(
+            self._detail_url(draft.id),
+            data=json.dumps({"data": {"step2": {"y": 2}}}),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(self._read(draft.id).data, {"step2": {"y": 2}})
+
+        self.assertEqual(
+            self.client.delete(self._detail_url(draft.id)).status_code, 204
+        )
+        self.assertIsNone(self.svc.get(self.admin, draft.id))
+
+    def test_an_applicant_cannot_read_another_applicants_draft(self):
+        self.idir_login_simulate(self.applicant)
+        others = self._create_draft(user=self.other_applicant)
+
+        self.assertEqual(self.client.get(self._detail_url(others.id)).status_code, 404)
+
     def test_drafts_need_no_role_but_do_need_a_login(self):
         # Any signed-in user may keep drafts; owner scoping is what separates
         # them, not a role.

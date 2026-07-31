@@ -3,7 +3,12 @@ import {
     fetchDraft,
     createDraft,
     fetchDrafts,
+    fetchCompanyProjects,
+    fetchDraftCards,
     fetchMyProjects,
+    fetchAssignableContributors,
+    patchProcessRequirement,
+    setRequirementAssignee,
     submitApplication,
     submitModule,
     deleteDraft,
@@ -34,6 +39,14 @@ vi.mock('arches', () => ({
                 `/mock/thread/${threadId}`,
             bcap_message_detail: (messageId: string) =>
                 `/mock/message/${messageId}`,
+            module_requirement: (
+                permitId: string,
+                moduleTileId: string,
+                requirementId: string,
+            ) => `/mock/${permitId}/module/${moduleTileId}/req/${requirementId}`,
+            assignable_contributors: '/mock/contributors/assignable',
+            api_process_requirements: (requirementId: string) =>
+                `/mock/process_requirement/${requirementId}`,
         },
     },
 }));
@@ -147,6 +160,116 @@ describe('Permit API', () => {
                 {
                     method: 'POST',
                     body: { data: {}, parent_resource_id: 'permit-1' },
+                },
+            );
+        });
+    });
+
+    describe('fetchCompanyProjects', () => {
+        it('asks for the associated-companies scope', async () => {
+            apiFetch.mockResolvedValue(
+                okResponse({ results: [{ id: 'theirs' }] }),
+            );
+
+            const result = await fetchCompanyProjects();
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/bcap/api/dashboard/external?status=CREATED_BY_ASSOCIATED_COMPANIES',
+            );
+            expect(result).toEqual([{ id: 'theirs' }]);
+        });
+    });
+
+    describe('fetchDraftCards', () => {
+        it('asks the external dashboard for the DRAFTS scope', async () => {
+            apiFetch.mockResolvedValue(
+                okResponse({ results: [{ id: 'draft-1', is_draft: true }] }),
+            );
+
+            const result = await fetchDraftCards();
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/bcap/api/dashboard/external?status=DRAFTS',
+            );
+            expect(result).toEqual([{ id: 'draft-1', is_draft: true }]);
+        });
+
+        it('returns an empty array on error', async () => {
+            apiFetch.mockRejectedValue(new Error('Forbidden'));
+
+            expect(await fetchDraftCards()).toEqual([]);
+        });
+    });
+
+    describe('setRequirementAssignee', () => {
+        it('PATCHes the contributor onto the module requirement', async () => {
+            apiFetch.mockResolvedValue(okResponse(null));
+
+            await setRequirementAssignee(
+                'permit-1',
+                'module-tile-1',
+                'req-1',
+                'contributor-1',
+            );
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/permit-1/module/module-tile-1/req/req-1',
+                {
+                    method: 'PATCH',
+                    body: { contributor_id: 'contributor-1' },
+                },
+            );
+        });
+
+        it('sends a null contributor to clear the assignment', async () => {
+            apiFetch.mockResolvedValue(okResponse(null));
+
+            await setRequirementAssignee(
+                'permit-1',
+                'module-tile-1',
+                'req-1',
+                null,
+            );
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/permit-1/module/module-tile-1/req/req-1',
+                { method: 'PATCH', body: { contributor_id: null } },
+            );
+        });
+    });
+
+    describe('fetchAssignableContributors', () => {
+        it('returns the assignable contributor list', async () => {
+            const contributors = [{ id: 'c-1', name: 'Hopper, Grace' }];
+            apiFetchJson.mockResolvedValue(contributors);
+
+            const result = await fetchAssignableContributors();
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/contributors/assignable',
+            );
+            expect(result).toEqual(contributors);
+        });
+
+        it('falls back to an empty list when the body is empty', async () => {
+            apiFetchJson.mockResolvedValue(null);
+
+            expect(await fetchAssignableContributors()).toEqual([]);
+        });
+    });
+
+    describe('patchProcessRequirement', () => {
+        it('PATCHes the aliased data under an aliased_data envelope', async () => {
+            apiFetch.mockResolvedValue(okResponse(null));
+            const aliasedData = { requirement_data: {} };
+
+            await patchProcessRequirement('req-1', aliasedData as never);
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/process_requirement/req-1',
+                {
+                    method: 'PATCH',
+                    body: { aliased_data: aliasedData },
                 },
             );
         });

@@ -56,6 +56,12 @@ const stubs = {
     AccordionHeader: slotStub('AccordionHeader'),
     AccordionContent: slotStub('AccordionContent'),
     Dialog: slotStub('Dialog'),
+    Select: defineComponent({
+        name: 'Select',
+        props: { modelValue: { type: String, default: '' } },
+        emits: ['update:modelValue'],
+        template: '<div class="req-assignee-select"></div>',
+    }),
 };
 
 // A module tile in the aliased_data shape the component reads. requirements is a
@@ -150,6 +156,10 @@ beforeEach(() => {
     api.patchModuleOrder.mockResolvedValue(undefined);
     api.setModuleCompleted.mockResolvedValue(undefined);
     api.setRequirementSatisfied.mockResolvedValue(undefined);
+    api.setRequirementAssignee.mockResolvedValue(undefined);
+    // The reset above drops the hoisted default; without a list the staff
+    // assignee control renders nothing and takes its requirement row with it.
+    api.fetchAssignableContributors.mockResolvedValue([]);
     sessionStorage.clear();
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -172,7 +182,7 @@ describe('ProcessModules rendering', () => {
         expect(wrapper.find('.module-name').text()).toBe('Good');
     });
 
-    it('orders modules by module_order and shows id and date', () => {
+    it('orders modules by module_order and shows the module id', () => {
         const wrapper = mountModules({
             modules: [
                 moduleTile({
@@ -188,7 +198,6 @@ describe('ProcessModules rendering', () => {
         const names = wrapper.findAll('.module-name').map((n) => n.text());
         expect(names).toEqual(['First', 'Second']);
         expect(wrapper.find('.module-id').text()).toContain('INV-2');
-        expect(wrapper.text()).toContain('Submitted 2026-02-02');
     });
 
     it('lists requirements sorted by order', async () => {
@@ -244,7 +253,7 @@ describe('ProcessModules requirement detail loading', () => {
         await flushPromises();
 
         expect(api.fetchRequirementDetails).toHaveBeenCalledWith(['r-1']);
-        expect(wrapper.find('.req-type').text()).toBe('Checklist');
+        expect(wrapper.find('.requirement-meta').text()).toContain('Checklist');
         // A checklist type surfaces the fill-out link built from arches.urls.
         // Scoped to the requirement so the summary's "View submission" link
         // (also a .req-action) isn't picked up first.
@@ -252,8 +261,11 @@ describe('ProcessModules requirement detail loading', () => {
         expect(fill.attributes('href')).toBe(
             '/plugins/internal-permit-dashboard/checklist?id=r-1&permit=permit-1',
         );
-        // Satisfied status renders the ok icon.
-        expect(wrapper.find('.status-icon').classes()).toContain('status-ok');
+        // A satisfied requirement reads as complete.
+        expect(wrapper.find('.requirement-status').classes()).toContain(
+            'is-complete',
+        );
+        expect(wrapper.find('.requirement-status').text()).toBe('Complete');
     });
 
     it('does not fetch when no requirement has a resource id', async () => {
@@ -337,7 +349,7 @@ describe('ProcessModules staff controls', () => {
         expect(wrapper.find('.add-req-btn').exists()).toBe(false);
     });
 
-    it('renders a chip for each addable module', () => {
+    it('offers the addable modules on one menu behind the add chip', () => {
         const wrapper = mountModules({
             modules: [staffModule()],
             isStaff: true,
@@ -346,12 +358,24 @@ describe('ProcessModules staff controls', () => {
                 { id: 'permit', label: 'Permit' },
             ],
         });
-        const chips = wrapper.findAll('.add-module-chip');
-        expect(chips).toHaveLength(2);
-        // Chips are enabled unless a submit is in flight; the parent decides
-        // which modules are offered.
-        expect((chips[0].element as HTMLButtonElement).disabled).toBe(false);
-        expect((chips[1].element as HTMLButtonElement).disabled).toBe(false);
+        const chip = wrapper.find('.add-module-chip');
+        // Enabled unless a submit is in flight; the parent decides which
+        // modules are offered, and they hang off the chip's menu.
+        expect((chip.element as HTMLButtonElement).disabled).toBe(false);
+        const items = wrapper.findComponent({ name: 'Menu' }).props('model');
+        expect(items.map((item: { label: string }) => item.label)).toEqual([
+            'Investigation',
+            'Permit',
+        ]);
+    });
+
+    it('hides the add bar when the parent offers no modules', () => {
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+            addableModules: [],
+        });
+        expect(wrapper.find('.add-module-bar').exists()).toBe(false);
     });
 
     it('add-module submits a blank host then emits changed', async () => {
@@ -511,5 +535,275 @@ describe('ProcessModules staff controls', () => {
                 { tileid: 'a', order: 2, name: 'A', moduleId: 'A-1' },
             ],
         );
+    });
+});
+
+describe('ProcessModules assignment', () => {
+    const staffModule = () =>
+        moduleTile({
+            tileid: 'm1',
+            name: 'Investigation',
+            requirements: [{ name: 'Req', resourceId: 'r-9', order: 1 }],
+        });
+
+    const GRACE = { id: 'c-1', name: 'Hopper, Grace' };
+    const ALAN = { id: 'c-2', name: 'Turing, Alan' };
+
+    type AssignVm = {
+        state: { assignees: { id: string; name: string }[] };
+        loadAssignees: () => Promise<void>;
+        onAssignRequirement: (
+            row: { tileid: string },
+            requirement: Record<string, unknown>,
+            contributorId: string | null,
+        ) => Promise<void>;
+    };
+
+    const mountStaff = async (assignees = [GRACE, ALAN]) => {
+        api.fetchAssignableContributors.mockResolvedValue(assignees);
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        await flushPromises();
+        return wrapper.vm as unknown as AssignVm;
+    };
+
+    it('loads the assignable contributors for staff on mount', async () => {
+        const vm = await mountStaff();
+
+        expect(api.fetchAssignableContributors).toHaveBeenCalledTimes(1);
+        expect(vm.state.assignees).toEqual([GRACE, ALAN]);
+    });
+
+    it('does not load contributors for an applicant', async () => {
+        mountModules({ modules: [staffModule()], isStaff: false });
+        await flushPromises();
+
+        expect(api.fetchAssignableContributors).not.toHaveBeenCalled();
+    });
+
+    it('names the assignee on the row before the request settles', async () => {
+        const vm = await mountStaff();
+        const requirement = {
+            resourceId: 'r-9',
+            ministryAssignee: '',
+            ministryAssigneeId: '',
+        };
+        let resolve: () => void = () => {};
+        api.setRequirementAssignee.mockReturnValue(
+            new Promise<void>((done) => {
+                resolve = done;
+            }),
+        );
+
+        const pending = vm.onAssignRequirement(
+            { tileid: 'm1' },
+            requirement,
+            'c-1',
+        );
+
+        // Updated optimistically: the row reads right before the PATCH returns.
+        expect(requirement).toMatchObject({
+            ministryAssigneeId: 'c-1',
+            ministryAssignee: 'Hopper, Grace',
+        });
+        resolve();
+        await pending;
+        expect(api.setRequirementAssignee).toHaveBeenCalledWith(
+            'permit-1',
+            'm1',
+            'r-9',
+            'c-1',
+        );
+    });
+
+    it('clears the row and sends null for the unassigned choice', async () => {
+        const vm = await mountStaff();
+        const requirement = {
+            resourceId: 'r-9',
+            ministryAssignee: 'Turing, Alan',
+            ministryAssigneeId: 'c-2',
+        };
+
+        await vm.onAssignRequirement({ tileid: 'm1' }, requirement, null);
+
+        expect(requirement).toMatchObject({
+            ministryAssigneeId: '',
+            ministryAssignee: '',
+        });
+        expect(api.setRequirementAssignee).toHaveBeenCalledWith(
+            'permit-1',
+            'm1',
+            'r-9',
+            null,
+        );
+    });
+
+    it('rolls the row back when the assignment fails', async () => {
+        const vm = await mountStaff();
+        api.setRequirementAssignee.mockRejectedValue(new Error('boom'));
+        const requirement = {
+            resourceId: 'r-9',
+            ministryAssignee: 'Turing, Alan',
+            ministryAssigneeId: 'c-2',
+        };
+
+        await vm.onAssignRequirement({ tileid: 'm1' }, requirement, 'c-1');
+
+        expect(requirement).toMatchObject({
+            ministryAssigneeId: 'c-2',
+            ministryAssignee: 'Turing, Alan',
+        });
+    });
+
+    it('fetches the contributor list only once', async () => {
+        const vm = await mountStaff();
+
+        await vm.loadAssignees();
+
+        expect(api.fetchAssignableContributors).toHaveBeenCalledTimes(1);
+    });
+
+    it('refetches while the contributor list is genuinely empty', async () => {
+        // Pins a known gap: the memo guards on length, so an empty list is
+        // indistinguishable from "not loaded yet".
+        const vm = await mountStaff([]);
+
+        await vm.loadAssignees();
+
+        expect(api.fetchAssignableContributors).toHaveBeenCalledTimes(2);
+    });
+
+    it('keeps the stale list when the contributor fetch fails', async () => {
+        const vm = await mountStaff();
+        api.fetchAssignableContributors.mockRejectedValue(new Error('boom'));
+
+        await vm.loadAssignees();
+
+        expect(vm.state.assignees).toEqual([GRACE, ALAN]);
+    });
+});
+
+describe('ProcessModules in-flight guards', () => {
+    const staffModule = () =>
+        moduleTile({
+            tileid: 'm1',
+            name: 'Investigation',
+            requirements: [{ name: 'Req', resourceId: 'r-9', order: 1 }],
+        });
+
+    // A write that never settles, so the second call hits the guard.
+    const pending = () => new Promise<void>(() => {});
+
+    it('ignores a second add-module while the first is in flight', async () => {
+        api.submitModule.mockReturnValue(pending());
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            onAddModule: (m: { id: string }) => Promise<void>;
+        };
+
+        vm.onAddModule({ id: 'investigation' });
+        vm.onAddModule({ id: 'investigation' });
+
+        expect(api.submitModule).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores a second add-requirement while the first is in flight', async () => {
+        api.addBlankRequirement.mockReturnValue(pending());
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            onAddRequirement: (row: { tileid: string }) => Promise<void>;
+        };
+
+        vm.onAddRequirement({ tileid: 'm1' });
+        vm.onAddRequirement({ tileid: 'm1' });
+
+        expect(api.addBlankRequirement).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores a second completion toggle while the first is in flight', async () => {
+        api.setModuleCompleted.mockReturnValue(pending());
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            state: { rows: { tileid: string; isCompleted: boolean }[] };
+            onToggleCompleted: (row: {
+                tileid: string;
+                isCompleted: boolean;
+            }) => Promise<void>;
+        };
+        const row = vm.state.rows[0];
+
+        vm.onToggleCompleted(row);
+        vm.onToggleCompleted(row);
+
+        expect(api.setModuleCompleted).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores a second requirement toggle while the first is in flight', async () => {
+        api.setRequirementSatisfied.mockReturnValue(pending());
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            onToggleRequirement: (r: {
+                resourceId: string;
+                satisfied: boolean | null;
+            }) => Promise<void>;
+        };
+        const requirement = { resourceId: 'r-9', satisfied: false };
+
+        vm.onToggleRequirement(requirement);
+        vm.onToggleRequirement(requirement);
+
+        expect(api.setRequirementSatisfied).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('ProcessModules default open panel', () => {
+    const named = (tileid: string, order: number) =>
+        moduleTile({ tileid, name: `Module ${order}`, order });
+
+    it('opens the top module on first load', async () => {
+        const wrapper = mountModules({
+            modules: [named('b', 2), named('a', 1)],
+        });
+        await flushPromises();
+        const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
+
+        expect(vm.ui.openPanels).toEqual(['a']);
+    });
+
+    it("leaves the user's choice alone once the tiles reload", async () => {
+        const wrapper = mountModules({
+            modules: [named('a', 1), named('b', 2)],
+        });
+        await flushPromises();
+        const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
+
+        // The user closes everything, then the parent reloads the tiles.
+        vm.ui.openPanels = [];
+        await wrapper.setProps({ modules: [named('a', 1), named('b', 2)] });
+        await flushPromises();
+
+        expect(vm.ui.openPanels).toEqual([]);
+    });
+
+    it('opens nothing when the permit has no modules yet', async () => {
+        const wrapper = mountModules({ modules: [] });
+        await flushPromises();
+        const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
+
+        expect(vm.ui.openPanels).toEqual([]);
     });
 });

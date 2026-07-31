@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import TestCase
 
 from arches.app.models.models import ResourceInstance
@@ -303,6 +304,20 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertRegex(card.application_number, r"^APP-\d+$")
         self.assertEqual(card.submission_type, "Site Visit")
 
+    def test_internal_staff_see_every_draft_but_the_card_names_the_requester(self):
+        # Draft visibility widened to all internal users, so staff get the
+        # applicant's draft back. Pins current behaviour: created_by_name is
+        # stamped from the requester, so it reads as staff's own draft.
+        staff = make_user("branch-staff")
+        staff.groups.add(Group.objects.get(name="Resource Editor"))
+
+        page = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), staff
+        )
+
+        card = next(c for c in page.results if c.id == str(self.draft.id))
+        self.assertEqual(card.created_by_name, "branch-staff")
+
     def test_a_drafts_own_identification_wins_over_its_parents(self):
         page = self.service.get_cards(
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
@@ -319,20 +334,39 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        ControlledListFixtures.seed()
         cls.service = ExternalDashboardService()
         cls.user = make_user("messy")
+        cls.parent = build_external_permit(
+            FixtureBuilder(), "Parent Project", cls.user, "Active"
+        )
 
-    def _draft_card(self, data):
+    def _draft_card(self, data, parent_resource_id=""):
         # The dashboard expects one draft, so clear the user's drafts first.
         ResourceInstance.objects.filter(
             graph__slug=GraphSlugs.WORKFLOW_DRAFTS, principaluser=self.user
         ).delete()
-        WorkflowDraftService().create(self.user, "permit_application", data)
+        WorkflowDraftService().create(
+            self.user,
+            "permit_application",
+            data,
+            parent_resource_id=parent_resource_id,
+        )
         page = self.service.get_cards(
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
         )
         self.assertEqual(page.count, 1)
         return page.results[0]
+
+    @staticmethod
+    def _identification(**values):
+        return {
+            "application_identification": {
+                "aliased_data": {
+                    alias: {"en": {"value": value}} for alias, value in values.items()
+                }
+            }
+        }
 
     def test_empty_data_yields_blank_identification(self):
         card = self._draft_card({})
@@ -369,6 +403,45 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
                 card = self._draft_card(data)
                 self.assertEqual(card.project_name, "")
                 self.assertEqual(card.application_number, "")
+
+    def test_a_pre_move_blob_shape_degrades_to_blank(self):
+        # The group keys moved to the blob's top level; a draft saved under the
+        # old nested shape must read as blank rather than raise.
+        card = self._draft_card(
+            {"aliased_data": self._identification(project_name="Old Shape")}
+        )
+
+        self.assertEqual(card.project_name, "")
+        self.assertEqual(card.application_number, "")
+
+    def test_the_drafts_own_value_wins_over_the_parents(self):
+        card = self._draft_card(
+            self._identification(project_name="Draft Name"),
+            parent_resource_id=str(self.parent.pk),
+        )
+
+        self.assertEqual(card.project_name, "Draft Name")
+        # Fields the draft doesn't carry still come from the parent.
+        self.assertEqual(card.submission_type, "Site Visit")
+
+    def test_a_blank_draft_value_falls_back_to_the_parent(self):
+        card = self._draft_card(
+            self._identification(project_name=""),
+            parent_resource_id=str(self.parent.pk),
+        )
+
+        self.assertEqual(card.project_name, "Parent Project")
+
+    def test_a_deleted_parent_leaves_blanks_but_keeps_the_permit_id(self):
+        gone = build_external_permit(FixtureBuilder(), "Doomed", self.user, "Active")
+        parent_id = str(gone.pk)
+        ResourceInstance.objects.filter(pk=parent_id).delete()
+
+        card = self._draft_card({}, parent_resource_id=parent_id)
+
+        self.assertEqual(card.permit_application_id, parent_id)
+        self.assertEqual(card.project_name, "")
+        self.assertEqual(card.application_number, "")
 
 
 class ExternalDashboardPaginationTests(TestCase):

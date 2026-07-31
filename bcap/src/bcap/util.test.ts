@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
     formatDateTime,
+    formatFileSize,
     getDisplayValue,
+    initials,
     isEmpty,
     isAliasedNodeData,
 } from './util';
@@ -29,6 +31,48 @@ describe('formatDateTime', () => {
         // Both en-CA and en-US locales yield "Invalid Date" for invalid Date objects.
         expect(out).toMatch(/^Invalid Date, /);
         expect(out!.toLowerCase()).toContain('invalid date');
+    });
+});
+
+describe('initials', () => {
+    it('reverses "Last, First" so the given name reads first', () => {
+        expect(initials('Hopper, Grace')).toBe('GH');
+    });
+
+    it('returns a single letter for a one-word name', () => {
+        expect(initials('Grace')).toBe('G');
+    });
+
+    it('returns an empty string for an empty name', () => {
+        expect(initials('')).toBe('');
+        expect(initials('   ')).toBe('');
+    });
+
+    it('takes the first two parts and only then reverses them', () => {
+        // Not the first and last: "Van Der Berg" yields D then V, never B.
+        expect(initials('Van Der Berg')).toBe('DV');
+    });
+
+    it('splits on commas and periods as well as spaces', () => {
+        expect(initials('Hopper,Grace')).toBe('GH');
+        expect(initials('G.B. Shaw')).toBe('BG');
+    });
+});
+
+describe('formatFileSize', () => {
+    it('reports bytes below 1 KB', () => {
+        expect(formatFileSize(0)).toBe('0 B');
+        expect(formatFileSize(1023)).toBe('1023 B');
+    });
+
+    it('switches to whole KB at the 1024-byte boundary', () => {
+        expect(formatFileSize(1024)).toBe('1 KB');
+        expect(formatFileSize(1024 * 1024 - 1)).toBe('1024 KB');
+    });
+
+    it('switches to one-decimal MB at the 1 MB boundary', () => {
+        expect(formatFileSize(1024 * 1024)).toBe('1.0 MB');
+        expect(formatFileSize(2.5 * 1024 * 1024)).toBe('2.5 MB');
     });
 });
 

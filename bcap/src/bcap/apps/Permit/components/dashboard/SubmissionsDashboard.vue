@@ -9,6 +9,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { useGettext } from 'vue3-gettext';
 import SortingBar from './SortingBar.vue';
 import {
+    fetchCompanyProjects,
     fetchDraftCards,
     fetchMyProjects,
     deleteDraft,
@@ -25,6 +26,7 @@ const { $gettext } = useGettext();
 const router = useRouter();
 const savedDrafts = ref<DashboardProject[]>([]);
 const submittedProjects = ref<DashboardProject[]>([]);
+const companyProjects = ref<DashboardProject[]>([]);
 
 interface DashboardProject {
     id: string;
@@ -47,11 +49,19 @@ interface DashboardProject {
     module_progress: ModuleProgress;
 }
 
+enum DashboardTab {
+    MyProjects = 'my_projects',
+    CompanyProjects = 'company_projects',
+    Drafts = 'drafts',
+}
+
 const EXTERNAL_TAB_KEY = 'bcap.externalDashboard.tab';
-const EXTERNAL_TABS = ['my_projects', 'company_projects', 'drafts'];
+const EXTERNAL_TABS: string[] = Object.values(DashboardTab);
 const storedTab = localStorage.getItem(EXTERNAL_TAB_KEY) ?? '';
 const ui = reactive({
-    activeTab: EXTERNAL_TABS.includes(storedTab) ? storedTab : 'drafts',
+    activeTab: EXTERNAL_TABS.includes(storedTab)
+        ? (storedTab as DashboardTab)
+        : DashboardTab.Drafts,
     searchQuery: '',
     currentSort: 'default',
     messagesOnly: false,
@@ -70,9 +80,9 @@ const sortOptions = [
 ];
 
 const dashboardTabs = [
-    { label: 'My Projects', value: 'my_projects' },
-    { label: 'Company Projects', value: 'company_projects' },
-    { label: 'Drafts', value: 'drafts' },
+    { label: 'My Projects', value: DashboardTab.MyProjects },
+    { label: 'Company Projects', value: DashboardTab.CompanyProjects },
+    { label: 'Drafts', value: DashboardTab.Drafts },
 ];
 
 const isLoading = ref(true);
@@ -80,13 +90,15 @@ const isLoading = ref(true);
 const loadDashboardData = async () => {
     isLoading.value = true;
     try {
-        const [draftsData, projectsData] = await Promise.all([
+        const [draftsData, projectsData, companyData] = await Promise.all([
             fetchDraftCards(),
             fetchMyProjects(),
+            fetchCompanyProjects(),
         ]);
 
         savedDrafts.value = draftsData;
         submittedProjects.value = projectsData;
+        companyProjects.value = companyData;
         ui.lastUpdated = new Date();
     } catch (error) {
         console.error('Failed to load dashboard data:', error);
@@ -168,12 +180,20 @@ const filteredDrafts = computed(() => {
     );
 });
 
+// The two project tabs share every card, filter and sort; only the source
+// differs.
+const tabProjects = computed(() =>
+    ui.activeTab === DashboardTab.CompanyProjects
+        ? companyProjects.value
+        : submittedProjects.value,
+);
+
 const filteredProjects = computed(() => {
     const projects = ui.messagesOnly
-        ? submittedProjects.value.filter(
+        ? tabProjects.value.filter(
               (project) => (project.unread_messages || 0) > 0,
           )
-        : submittedProjects.value;
+        : tabProjects.value;
     if (!ui.searchQuery) return projects;
     const lowerQuery = ui.searchQuery.toLowerCase();
 
@@ -192,11 +212,21 @@ const filteredProjects = computed(() => {
 });
 
 const shownCards = computed(() =>
-    ui.activeTab === 'drafts' ? filteredDrafts.value : filteredProjects.value,
+    ui.activeTab === DashboardTab.Drafts
+        ? filteredDrafts.value
+        : filteredProjects.value,
 );
 
 const totalCards = computed(() =>
-    ui.activeTab === 'drafts' ? savedDrafts.value : submittedProjects.value,
+    ui.activeTab === DashboardTab.Drafts
+        ? savedDrafts.value
+        : tabProjects.value,
+);
+
+const emptyProjectsNote = computed(() =>
+    ui.activeTab === DashboardTab.CompanyProjects
+        ? 'No company projects found.'
+        : 'No submitted projects found.',
 );
 
 const cardDate = (iso: string) =>
@@ -268,7 +298,7 @@ const openResourceReport = (resourceId: string) => {
                 v-else
                 class="tab-content-container"
             >
-                <div v-if="ui.activeTab === 'my_projects'">
+                <div v-if="ui.activeTab !== DashboardTab.Drafts">
                     <Fluid v-if="filteredProjects.length > 0">
                         <div class="dashboard-div-flex">
                             <ProjectCard
@@ -312,15 +342,11 @@ const openResourceReport = (resourceId: string) => {
                         v-else
                         class="text-muted"
                     >
-                        No submitted projects found.
+                        {{ emptyProjectsNote }}
                     </p>
                 </div>
 
-                <div v-if="ui.activeTab === 'company_projects'">
-                    <p class="text-muted">No company projects found.</p>
-                </div>
-
-                <div v-if="ui.activeTab === 'drafts'">
+                <div v-if="ui.activeTab === DashboardTab.Drafts">
                     <Fluid v-if="filteredDrafts.length > 0">
                         <div class="dashboard-div-flex">
                             <div
