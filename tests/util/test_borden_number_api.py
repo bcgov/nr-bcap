@@ -46,7 +46,6 @@ class BordenNumberApiTests(TestCase):
     def setUp(self):
         self.api = BordenNumberApi()
 
-        # Fake Arches ORM accessors
         self.mock_graph_qs = MagicMock()
         self.mock_node_qs = MagicMock()
         self.mock_tile_qs = MagicMock()
@@ -66,21 +65,17 @@ class BordenNumberApiTests(TestCase):
             }
         )
 
-        # .objects.filter(...).first() chains
         self.mock_graph_qs.filter.return_value.first.return_value = self.mock_graph
         self.mock_node_qs.filter.return_value.first.return_value = self.geom_node
         self.mock_tile_qs.filter.return_value.first.return_value = (
             self.tile_with_geometry
         )
 
-        # DataTypeFactory mock instance
         self.mock_datatype_factory = MagicMock()
         self.mock_datatype_factory.get_instance.return_value = MagicMock()
 
-        # Geo centroid
         self.centroid = {"coordinates": [-123.123456, 49.123456]}
 
-        # urllib3 fake response
         self.borden_grid_value = "EhRa"
         self.wfs_body = {
             "type": "FeatureCollection",
@@ -102,7 +97,6 @@ class BordenNumberApiTests(TestCase):
         Register all patches into the provided ExitStack and return a dict
         of the key mocks/handles the tests need to access.
         """
-        # Replace Arches models with simple objects that expose `.objects`
         graph_model = SimpleNamespace(objects=self.mock_graph_qs)
         node_model = SimpleNamespace(objects=self.mock_node_qs)
         tile_model = SimpleNamespace(objects=self.mock_tile_qs)
@@ -117,7 +111,6 @@ class BordenNumberApiTests(TestCase):
             patch("bcap.util.borden_number_api.models.TileModel", new=tile_model)
         )
 
-        # DataTypeFactory returns our mock factory
         dtf_patch = stack.enter_context(
             patch(
                 "bcap.util.borden_number_api.DataTypeFactory",
@@ -125,14 +118,11 @@ class BordenNumberApiTests(TestCase):
             )
         )
 
-        # GeoUtils class
         geo_utils_cls = stack.enter_context(
             patch("bcap.util.borden_number_api.geo_utils.GeoUtils")
         )
-        # Point class
         stack.enter_context(patch("bcap.util.borden_number_api.Point", new=_FakePoint))
 
-        # HTTP managers
         pool_mgr_cls = stack.enter_context(
             patch("bcap.util.borden_number_api.urllib3.PoolManager")
         )
@@ -140,7 +130,6 @@ class BordenNumberApiTests(TestCase):
             patch("bcap.util.borden_number_api.urllib3.ProxyManager")
         )
 
-        # Counter
         counter_cls = stack.enter_context(
             patch("bcap.util.borden_number_api.BordenNumberCounter")
         )
@@ -157,10 +146,8 @@ class BordenNumberApiTests(TestCase):
         with ExitStack() as stack:
             p = self._enter_patches(stack)
 
-            # centroid
             p["geo_utils_cls"].return_value.get_centroid.return_value = self.centroid
 
-            # no proxy path used
             pool = MagicMock()
             pool.request.return_value = self.mock_http_resp
             p["pool_mgr_cls"].return_value = pool
@@ -170,16 +157,13 @@ class BordenNumberApiTests(TestCase):
             result = self.api.get_next_borden_number(resourceinstanceid="ri-1")
             self.assertEqual(result, "EhRa-001")
 
-            # URL built with reprojected coords
             args, _kwargs = pool.request.call_args
             self.assertEqual(args[0], "GET")
             self.assertIn("POINT(100.0%20200.0)", args[1])
 
-            # ensure correct BORDGRID forwarded
             p["counter_cls"].peek_next_borden_number.assert_called_once_with(
                 self.borden_grid_value
             )
-            # proxy shouldn't be used
             p["proxy_mgr_cls"].assert_not_called()
 
     def test_get_next_borden_number_with_geometry_direct_calls_peek(self):
@@ -223,7 +207,6 @@ class BordenNumberApiTests(TestCase):
             with self.assertRaises(MissingGeometryError):
                 self.api.get_next_borden_number(resourceinstanceid="ri-no-tile")
 
-            # No HTTP calls should be made
             p["pool_mgr_cls"].assert_not_called()
             p["proxy_mgr_cls"].assert_not_called()
 
@@ -320,7 +303,6 @@ class BordenNumberApiReserveDbTests(TransactionTestCase):
 
     @staticmethod
     def _seq_from_borden_number(value: str) -> int:
-        # Expected format: "GRID-<int>"
         return int(str(value).rsplit("-", 1)[1])
 
     def test_reserve_borden_number_increments_each_call(self):
@@ -342,7 +324,6 @@ class BordenNumberApiReserveDbTests(TransactionTestCase):
         barrier = threading.Barrier(n_calls)
 
         def worker() -> str:
-            # Each thread should use a clean connection state.
             close_old_connections()
             try:
                 barrier.wait()
@@ -353,7 +334,6 @@ class BordenNumberApiReserveDbTests(TransactionTestCase):
         with ThreadPoolExecutor(max_workers=n_calls) as pool:
             results = list(pool.map(lambda _: worker(), range(n_calls)))
 
-        # Core property: no duplicates.
         self.assertEqual(len(results), n_calls)
         self.assertEqual(
             len(set(results)), n_calls, msg=f"Duplicates detected: {results}"

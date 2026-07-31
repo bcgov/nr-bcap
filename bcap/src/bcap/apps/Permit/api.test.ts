@@ -19,7 +19,6 @@ import {
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
 
-// 1. Mock the Arches URL generator
 vi.mock('arches', () => ({
     default: {
         urls: {
@@ -52,7 +51,7 @@ vi.mock('arches', () => ({
     },
 }));
 
-// 2. Mock the api layer. apiFetch returns a Response-like object (callers read
+// apiFetch returns a Response-like object (callers read
 // .json() themselves); apiFetchJson returns the parsed body directly. HttpMethod
 // mirrors the real string enum so method assertions stay readable.
 const { apiFetch, apiFetchJson } = vi.hoisted(() => ({

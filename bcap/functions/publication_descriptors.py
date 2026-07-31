@@ -87,6 +87,5 @@ class PublicationDescriptors(BCPrimaryDescriptorsFunction):
             resource,
         )
 
-        # print("Resource: %s, Title: %s, Parent: %s" % (resource, title, parent_publication_name))
         # This shouldn't be necessary but we have some cardinality violations
         return parent_publication_name + str(title)

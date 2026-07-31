@@ -16,14 +16,10 @@ from arches.app.search.es_mapping_modifier import EsMappingModifier
 
 
 class CustomSearchValue(EsMappingModifier):
-    # custom_search_path = "custom_values"
     initialized = False
     arch_site_proxy = None
     site_visit_proxy = None
     hria_discontinued_proxy = None
-
-    # def __init__(self):
-    #     pass
 
     @staticmethod
     def initialize():
@@ -39,11 +35,6 @@ class CustomSearchValue(EsMappingModifier):
         custom_values = set(())
 
         if resourceinstance.graph.slug == GraphSlugs.ARCHAEOLOGICAL_SITE:
-            # site_visits = CustomSearchValue.arch_site_proxy.get_related_resources(
-            #     resourceinstance, GraphSlugs.SITE_VISIT
-            # )
-            # site_visit_nodes=[sva.]
-            # CustomSearchValue.site_visit_proxy.get_value_from_node()
             hria_discontinued = CustomSearchValue.arch_site_proxy.get_related_resources(
                 resourceinstance, GraphSlugs.HRIA_DISCONTINUED_DATA
             )
@@ -85,44 +76,7 @@ class CustomSearchValue(EsMappingModifier):
                         custom_values |= set([f"{attribute}:{val}" for val in value])
                     elif value:
                         custom_values |= {f"{attribute}:{value}"}
-            # print(custom_values)
-            # sample_ids = CustomSearchValue.collection_event_proxy.get_sample_ids(
-            #     resourceinstance
-            # )
-            #
-            # custom_values |= set(
-            #     CustomSearchValue.fossil_sample_proxy.get_scientific_names_from_samples(
-            #         sample_ids
-            #     )
-            # )
-            # custom_values |= set(
-            #     CustomSearchValue.fossil_sample_proxy.get_common_names_from_samples(
-            #         sample_ids
-            #     )
-            # )
-            #
-            # custom_value_aliases = [
-            #     (fsa.MINIMUM_TIME, fsa.MINIMUM_TIME_UNCERTAIN),
-            #     (fsa.MAXIMUM_TIME, fsa.MAXIMUM_TIME_UNCERTAIN),
-            #     (fsa.GEOLOGICAL_GROUP, fsa.GEOLOGICAL_GROUP_UNCERTAIN),
-            #     (fsa.GEOLOGICAL_FORMATION, fsa.GEOLOGICAL_FORMATION_UNCERTAIN),
-            #     (fsa.GEOLOGICAL_MEMBER, fsa.GEOLOGICAL_MEMBER_UNCERTAIN),
-            #     (fsa.FOSSIL_ABUNDANCE, None),
-            #     (fsa.FOSSIL_SIZE_CATEGORY, None),
-            #     (fsa.FOSSIL_SAMPLE_SIGNIFICANT, None),
-            #     (fsa.STORAGE_REFERENCE, None),
-            # ]
-            # for alias in custom_value_aliases:
-            #     custom_values |= set(
-            #         CustomSearchValue.fossil_sample_proxy.get_values_from_samples(
-            #             samples=sample_ids,
-            #             node_alias=alias[0],
-            #             uncertainty_alias=alias[1],
-            #             flatten=True,
-            #         )
-            #     )
 
-        # print("Adding custom values: %s" % custom_values)
         if CustomSearchValue.custom_search_path not in document:
             document[CustomSearchValue.custom_search_path] = []
 
@@ -132,13 +86,10 @@ class CustomSearchValue(EsMappingModifier):
                     {"custom_value": custom_value}
                 )
 
-        # print("Document: %s" % document)
-
     @staticmethod
     def create_nested_custom_filter(term, original_element):
         if "nested" not in original_element:
             return original_element
-        # print("Original element: %s" % original_element)
         document_key = CustomSearchValue.custom_search_path
         custom_filter = Bool()
         custom_filter.should(
@@ -166,7 +117,6 @@ class CustomSearchValue(EsMappingModifier):
     def add_search_filter(
         search_query, term, permitted_nodegroups, include_provisional
     ):
-        # print("Search query before: %s" % search_query)
         original_must_filter = search_query.dsl["bool"]["must"]
         search_query.dsl["bool"]["must"] = []
         for must_element in original_must_filter:
@@ -180,7 +130,6 @@ class CustomSearchValue(EsMappingModifier):
             search_query.must_not(
                 CustomSearchValue.create_nested_custom_filter(term, must_element)
             )
-        # print("Search query after: %s" % search_query)
 
     @staticmethod
     def get_mapping_definition():

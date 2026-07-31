@@ -21,8 +21,6 @@ with patch("arches.app.datatypes.datatypes.DataTypeFactory"):
 
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as A
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
-
 
 def _make_node(alias, name, datatype="string", nodegroup_id="ng-1", nodeid="node-1"):
     node = MagicMock()
@@ -45,9 +43,6 @@ def _reset_class_state():
     ProcessRequirementDescriptors._initialized = False
     ProcessRequirementDescriptors._nodes = {}
     ProcessRequirementDescriptors._datatypes = {}
-
-
-# ── Tests: _format_value (pure static method, no mocking needed) ──────────────
 
 
 class TestFormatValue(TestCase):
@@ -81,9 +76,6 @@ class TestFormatValue(TestCase):
 
     def test_list_all_empty_returns_empty(self):
         assert self._call("L", ["", ""], show_name=False) == ""
-
-
-# ── Tests: _get_value_from_node ───────────────────────────────────────────────
 
 
 class TestGetValueFromNode(TestCase):
@@ -156,9 +148,6 @@ class TestGetValueFromNode(TestCase):
             A.REQUIREMENT_NAME, data_tile=_make_tile()
         )
         mock_models.TileModel.objects.filter.assert_not_called()
-
-
-# ── Tests: get_primary_descriptor_from_nodes ──────────────────────────────────
 
 
 class TestGetPrimaryDescriptorFromNodes(TestCase):
@@ -261,9 +250,6 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
             config={"type": "map_popup", "first_only": False, "show_name": True},
         )
         assert result == ""
-
-
-# ── Tests: _get_process_requirement_name ──────────────────────────────────────
 
 
 class TestGetProcessRequirementName(TestCase):
@@ -391,9 +377,6 @@ class TestGetProcessRequirementName(TestCase):
 
         result = self.fn._get_process_requirement_name(MagicMock())
         assert result == "My Requirement"
-
-
-# ── Tests: initialize ─────────────────────────────────────────────────────────
 
 
 class TestInitialize(TestCase):

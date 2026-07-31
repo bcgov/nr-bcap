@@ -41,8 +41,6 @@ import TaskChecklist from './TaskChecklist.vue';
 
 const mockedGet = vi.mocked(getProcessRequirementData);
 
-// --- Fixture helpers ---
-
 const buildDuration = (
     startDate: string | null = null,
     completedDate: string | null = null,

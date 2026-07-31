@@ -528,7 +528,6 @@ watch(activeModuleId, (id) => {
     background: transparent;
 }
 
-/* Layout */
 .module-layout {
     display: flex;
     gap: 1.25rem;
@@ -549,7 +548,6 @@ watch(activeModuleId, (id) => {
     opacity: 0;
 }
 
-/* Side Menu */
 .side-menu {
     display: flex;
     flex-direction: column;
@@ -606,7 +604,6 @@ watch(activeModuleId, (id) => {
     flex: 1;
 }
 
-/* Status Icons */
 .status-icon-wrapper {
     flex: 0 0 22px;
     display: flex;
@@ -629,7 +626,6 @@ watch(activeModuleId, (id) => {
     font-size: 0.75rem;
 }
 
-/* Content Area */
 .content-area {
     flex-grow: 1;
     width: 100%;
@@ -656,7 +652,6 @@ watch(activeModuleId, (id) => {
     color: #26292e;
 }
 
-/* Buttons */
 .print-btn {
     background-color: #007bff;
     color: #ffffff;
@@ -746,7 +741,6 @@ watch(activeModuleId, (id) => {
     color: var(--bc-navy);
 }
 
-/* Draft modules accordion */
 .draft-modules {
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
@@ -941,7 +935,6 @@ watch(activeModuleId, (id) => {
     padding: 0.5rem 0;
 }
 
-/* Print styling */
 @media print {
     .side-menu,
     .print-btn,

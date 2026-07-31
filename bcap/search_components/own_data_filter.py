@@ -18,10 +18,6 @@ details = {
 class OwnDataFilter(BaseSearchFilter):
     def user_in_group(self, group_name):
         return self.request.user.groups.filter(name=group_name).exists()
-        # for group in self.request.user.groups.all():
-        #     if group_name == group.name:
-        #         return True
-        # return False
 
     def append_dsl(
         self, search_results_object, permitted_nodegroups, include_provisional
@@ -30,15 +26,3 @@ class OwnDataFilter(BaseSearchFilter):
             print("\tUser in Local Government... filter")
         else:
             print("\tNo Local Government Filter applied")
-
-        # if include_provisional is not True:
-        #     provisional_resource_filter = Bool()
-        #
-        #     if include_provisional is False:
-        #         provisional_resource_filter.filter(Terms(field="provisional_resource", terms=["false", "partial"]))
-        #
-        #     elif include_provisional == "only provisional":
-        #         provisional_resource_filter.filter(Terms(field="provisional_resource", terms=["true", "partial"]))
-        #
-        #     search_query.must(provisional_resource_filter)
-        #     search_results_object["query"].add_query(search_query)

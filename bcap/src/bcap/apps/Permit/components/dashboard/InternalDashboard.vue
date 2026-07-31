@@ -184,7 +184,6 @@ const displayedProjects = computed(() => {
         });
     }
 
-    // Apply Dynamic Sorting
     const sorted = filtered.slice().sort((a, b) => {
         const field = state.currentSort;
 

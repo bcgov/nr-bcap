@@ -86,14 +86,12 @@ const handleSearchInput = () => {
     emit('update:search', searchQuery.value);
 };
 
-// Sort Menu Logic
 const sortMenu = ref();
 
 const toggleSortMenu = (event: Event) => {
     sortMenu.value.toggle(event);
 };
 
-// Generates the PrimeVue menu items from the passed props
 const sortMenuModel = computed(() => {
     return props.sortOptions.map((opt) => {
         const isActive = props.currentSort === opt.value;
@@ -159,7 +157,6 @@ const activeFilters = computed(() => {
     return filters;
 });
 
-// Displays what is currently being sorted
 const activeSortLabel = computed(() => {
     const found = props.sortOptions.find((o) => o.value === props.currentSort);
     return found ? found.label : 'Default';
@@ -292,7 +289,6 @@ const activeSortLabel = computed(() => {
 </template>
 
 <style scoped>
-/* Main Container */
 .sorting-bar-container {
     display: flex;
     align-items: center;
@@ -366,7 +362,6 @@ const activeSortLabel = computed(() => {
     font-weight: 600;
 }
 
-/* 2. Search Bar */
 .search-bar-wrapper {
     display: flex;
     align-items: center;
@@ -415,7 +410,6 @@ const activeSortLabel = computed(() => {
     color: #003366;
 }
 
-/* 3. Sort and refresh buttons, and the timestamp between them */
 .bar-btn {
     display: inline-flex;
     align-items: center;
@@ -449,7 +443,6 @@ const activeSortLabel = computed(() => {
     white-space: nowrap;
 }
 
-/* 4. Active filter row, under the bar */
 .filter-row {
     display: flex;
     align-items: center;
@@ -527,7 +520,6 @@ const activeSortLabel = computed(() => {
     -webkit-text-fill-color: #333333 !important;
 }
 
-/* Custom Sort Menu Styles, I hate primevue */
 .custom-sort-menu {
     --surface-hover: #003366 !important;
     --p-menu-item-focus-background: #003366 !important;

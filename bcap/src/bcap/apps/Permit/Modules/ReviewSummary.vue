@@ -24,7 +24,6 @@ const mapOverrides = {
 } satisfies Partial<CardXNodeXWidgetData>;
 
 const stripHtml = (html?: unknown) => {
-    // Ensure we only try to parse strings
     if (typeof html !== 'string' || !html) return '';
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || '';

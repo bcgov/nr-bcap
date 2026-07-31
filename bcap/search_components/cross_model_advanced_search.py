@@ -1049,7 +1049,6 @@ class Linker:
             if op in ("neq", "!eq"):
                 return not bool(filter_uris & tile_uris)
 
-        # Simple value comparisons
         if op == "eq":
             return tile_value == filter_val
 
@@ -1504,13 +1503,11 @@ class Intersector:
         graphs = filtered_graphs | intermediate_graphs
         adjacency = {graph: [] for graph in graphs}
 
-        # Build adjacency from link cache
         for source in graphs:
             for dest in graphs:
                 if source != dest and LinkCache.get(source, dest):
                     adjacency[source].append(dest)
 
-        # Add RXR-based adjacency
         graph_list = list(graphs)
 
         rxr_links = (
@@ -1779,7 +1776,6 @@ class Intersector:
         if not sections:
             return set()
 
-        # Group sections by graph
         by_graph = defaultdict(list)
         section_lookup = {}
 
@@ -1788,7 +1784,6 @@ class Intersector:
                 by_graph[section.graph].append(section)
                 section_lookup[section.graph] = section
 
-        # Run ES queries for all graphs in parallel
         es_matches = self._run_es_queries(by_graph)
 
         # Early exit if any graph has no matches (for intersect)
@@ -2114,7 +2109,6 @@ class CrossModelAdvancedSearch(BaseSearchFilter):
             if self.request.user.has_perm("read_nodegroup", card.nodegroup)
         ]
 
-        # Sort graphs alphabetically by name
         sorted_graphs = sorted(
             resource_graphs,
             key=lambda graph: (

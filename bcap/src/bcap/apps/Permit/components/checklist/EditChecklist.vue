@@ -345,7 +345,6 @@ const saveRequirements = async () => {
     font-weight: 700;
 }
 
-/* Updated main-settings padding and borders */
 .main-settings {
     background: #ffffff;
     padding: 1.5rem;
@@ -363,7 +362,6 @@ const saveRequirements = async () => {
     gap: 1rem;
 }
 
-/* Card Styling & Dragging */
 .requirement-item {
     background: #ffffff;
     border: 1px solid #d1d5db;
@@ -386,7 +384,6 @@ const saveRequirements = async () => {
     gap: 1.25rem;
 }
 
-/* Drag Handle */
 .drag-handle {
     cursor: grab;
     font-size: 2.5rem;
@@ -398,7 +395,6 @@ const saveRequirements = async () => {
     cursor: grabbing;
 }
 
-/* Inputs */
 .req-inputs {
     flex-grow: 1;
     display: flex;
@@ -456,7 +452,6 @@ const saveRequirements = async () => {
     font-weight: 600;
 }
 
-/* Buttons */
 .btn-primary,
 .btn-secondary {
     padding: 0.75rem 1.5rem;

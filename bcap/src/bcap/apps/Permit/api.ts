@@ -141,7 +141,6 @@ export const submitApplication = async (
             },
         });
 
-        // Delete the draft after successful submission
         const deleteUrl = `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`;
         await apiFetch(deleteUrl, { method: HttpMethod.Delete });
 

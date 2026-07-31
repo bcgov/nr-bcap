@@ -59,7 +59,6 @@ class BordenNumberBase:
             new_borden_number = self.api.get_next_borden_number(
                 resourceinstanceid=resourceinstanceid
             )
-            # print("Got borden grid: %s" % borden_grid)
             return_data = (
                 '{"status": "success", "borden_number": "%s"}' % new_borden_number
             )
@@ -148,7 +147,6 @@ class LegislativeAct(APIBase):
     def get(self, request, act_id):
         legislative_act_proxy = LegislativeActDataProxy()
         act = legislative_act_proxy.get_authorities(act_id)
-        # print("Scientific Names: %s" % names)
         return JSONResponse(JSONSerializer().serializeToPython(act))
 
 
@@ -205,7 +203,6 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
                     qs = qs.select_related("resource_instance_lifecycle_state")
             else:  # pragma: no cover
                 raise NotImplementedError
-            # print(f"Related Site Visits Queryset: {qs}")
             print(f"Returning related resources: {self.graph_slug}")
             return qs
         except FieldError:

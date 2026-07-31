@@ -430,7 +430,6 @@ const saveChanges = async () => {
     color: #374151;
 }
 
-/* Save / Undo action bar */
 .actions-bar {
     display: flex;
     justify-content: flex-end;
@@ -507,7 +506,6 @@ const saveChanges = async () => {
     color: #111827;
 }
 
-/* Requirement-level satisfied checkbox + note */
 .requirement-satisfied {
     margin-top: 2rem;
     padding-top: 1.5rem;
@@ -528,7 +526,6 @@ const saveChanges = async () => {
     color: #111827;
 }
 
-/* date pills */
 .date-metadata {
     display: flex;
     gap: 1rem;

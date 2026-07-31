@@ -5,7 +5,6 @@ import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { PermitAliasedData } from '@/bcap/types.ts';
 
-// 1. Mock the API Service
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchPermitDetails: vi.fn(),
     fetchDrafts: vi.fn(() => Promise.resolve([])),
@@ -45,7 +44,7 @@ vi.mock(
     }),
 );
 
-// 2. Mock Vue Router. The query is a ref so a test can open the page the way a
+// The query is a ref so a test can open the page the way a
 // dashboard card does (?draft=, ?staff=).
 const mockPush = vi.fn();
 const mockQuery = vi.hoisted(() => ({
@@ -61,7 +60,6 @@ vi.mock('vue-router', () => ({
     }),
 }));
 
-// 3. Setup Mock Data
 const mockPermitData = {
     application_identification: {
         aliased_data: {
@@ -88,7 +86,7 @@ const mockPermitData = {
 };
 
 describe('PermitDetails.vue', () => {
-    // NEW: Share the exact same stubs across all tests so slots are never dropped!
+    // Shared across all tests so slots are never dropped.
     const globalMountOptions = {
         global: {
             stubs: {
@@ -139,7 +137,6 @@ describe('PermitDetails.vue', () => {
 
         await flushPromises();
 
-        // The menu items will safely exist now!
         const menuItems = wrapper.findAll('.menu-item');
         await menuItems[2].trigger('click');
 
