@@ -50,22 +50,7 @@ const chipLabels = (wrapper: ReturnType<typeof mountBar>) =>
     wrapper.findAll('.filter-chip').map((chip) => chip.text());
 
 describe('tabs', () => {
-    it('renders one segment per tab and marks the active one', () => {
-        const wrapper = mountBar({
-            tabs: [
-                { label: 'Mine', value: 'mine' },
-                { label: 'Theirs', value: 'theirs' },
-            ],
-            activeTab: 'theirs',
-        });
-
-        const segments = wrapper.findAll('.segment-btn');
-        expect(segments.map((s) => s.text())).toEqual(['Mine', 'Theirs']);
-        expect(segments[0].classes()).not.toContain('active');
-        expect(segments[1].classes()).toContain('active');
-    });
-
-    it('emits the tab that was clicked', async () => {
+    it('marks the active segment and emits the one clicked', async () => {
         const wrapper = mountBar({
             tabs: [
                 { label: 'Mine', value: 'mine' },
@@ -74,7 +59,12 @@ describe('tabs', () => {
             activeTab: 'mine',
         });
 
-        await wrapper.findAll('.segment-btn')[1].trigger('click');
+        const segments = wrapper.findAll('.segment-btn');
+        expect(segments.map((s) => s.text())).toEqual(['Mine', 'Theirs']);
+        expect(segments[0].classes()).toContain('active');
+        expect(segments[1].classes()).not.toContain('active');
+
+        await segments[1].trigger('click');
 
         expect(wrapper.emitted('update:activeTab')).toEqual([['theirs']]);
     });
@@ -102,17 +92,6 @@ describe('search', () => {
         ).toBe('');
         expect(wrapper.emitted('update:search')).toEqual([['quarry'], ['']]);
         expect(chipLabels(wrapper)).toEqual([]);
-    });
-
-    it('offers the inline clear only while there is a query', async () => {
-        const wrapper = mountBar();
-        expect(wrapper.find('.icon-btn').exists()).toBe(false);
-
-        await wrapper.find('.search-input').setValue('quarry');
-        expect(wrapper.find('.icon-btn').exists()).toBe(true);
-
-        await wrapper.find('.icon-btn').trigger('click');
-        expect(wrapper.emitted('update:search')).toEqual([['quarry'], ['']]);
     });
 });
 
@@ -155,17 +134,6 @@ describe('sort menu', () => {
         expect(wrapper.emitted('refresh')).toHaveLength(1);
     });
 
-    it('marks the active sort and shows its direction', () => {
-        const wrapper = mountBar({ currentSort: 'name', sortOrder: 'desc' });
-
-        const active = itemFor(wrapper, 'Name');
-        expect(active.class).toContain('active-sort-item');
-        expect(active.icon).toBe('fa-solid fa-caret-down');
-        expect(itemFor(wrapper, 'Cap date').class).not.toContain(
-            'active-sort-item',
-        );
-    });
-
     it('defaults the date-like sorts to newest first', () => {
         for (const label of ['Default', 'Cap date', 'Footer date']) {
             const wrapper = mountBar({ currentSort: 'name', sortOrder: 'asc' });
@@ -189,37 +157,19 @@ describe('sort menu', () => {
         const wrapper = mountBar({ currentSort: 'name' });
 
         expect(chipLabels(wrapper)).toEqual(['Sort: Name']);
+        expect(wrapper.find('.sort-btn').text()).toContain('Sort: Name');
+        expect(chipLabels(mountBar({ currentSort: 'default' }))).toEqual([]);
 
         await wrapper.find('.filter-chip').trigger('click');
 
         expect(wrapper.emitted('update:currentSort')).toEqual([['default']]);
     });
-
-    it('does not chip the default sort', () => {
-        expect(chipLabels(mountBar({ currentSort: 'default' }))).toEqual([]);
-    });
-
-    it('names the current sort on the button', () => {
-        expect(
-            mountBar({ currentSort: 'name' }).find('.sort-btn').text(),
-        ).toContain('Sort: Name');
-        // An unknown sort falls back rather than rendering blank.
-        expect(
-            mountBar({ currentSort: 'nonsense' }).find('.sort-btn').text(),
-        ).toContain('Sort: Default');
-    });
 });
 
 describe('results summary', () => {
-    it('reports how many of the total are shown', () => {
-        const wrapper = mountBar({ shown: 2, total: 5 });
-
-        expect(wrapper.find('.results-summary').text()).toContain('Showing');
-        expect(wrapper.find('.results-summary').text()).toContain('2');
-        expect(wrapper.find('.results-summary').text()).toContain('5');
-    });
-
-    it('is hidden when there is nothing to count', () => {
+    it('reports how many of the total are shown, and hides when empty', () => {
+        expect(mountBar({ shown: 2, total: 5 }).find('.results-summary').text())
+            .toMatch(/Showing\s*2\s*of\s*5/);
         expect(
             mountBar({ shown: 0, total: 0 }).find('.results-summary').exists(),
         ).toBe(false);

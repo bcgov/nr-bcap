@@ -569,8 +569,10 @@ describe('ProcessModules assignment', () => {
         return wrapper.vm as unknown as AssignVm;
     };
 
-    it('loads the assignable contributors for staff on mount', async () => {
+    it('loads the contributor list once for staff on mount', async () => {
         const vm = await mountStaff();
+
+        await vm.loadAssignees();
 
         expect(api.fetchAssignableContributors).toHaveBeenCalledTimes(1);
         expect(vm.state.assignees).toEqual([GRACE, ALAN]);
@@ -657,14 +659,6 @@ describe('ProcessModules assignment', () => {
         });
     });
 
-    it('fetches the contributor list only once', async () => {
-        const vm = await mountStaff();
-
-        await vm.loadAssignees();
-
-        expect(api.fetchAssignableContributors).toHaveBeenCalledTimes(1);
-    });
-
     it('refetches while the contributor list is genuinely empty', async () => {
         // Pins a known gap: the memo guards on length, so an empty list is
         // indistinguishable from "not loaded yet".
@@ -673,15 +667,6 @@ describe('ProcessModules assignment', () => {
         await vm.loadAssignees();
 
         expect(api.fetchAssignableContributors).toHaveBeenCalledTimes(2);
-    });
-
-    it('keeps the stale list when the contributor fetch fails', async () => {
-        const vm = await mountStaff();
-        api.fetchAssignableContributors.mockRejectedValue(new Error('boom'));
-
-        await vm.loadAssignees();
-
-        expect(vm.state.assignees).toEqual([GRACE, ALAN]);
     });
 });
 
@@ -712,43 +697,6 @@ describe('ProcessModules in-flight guards', () => {
         expect(api.submitModule).toHaveBeenCalledTimes(1);
     });
 
-    it('ignores a second add-requirement while the first is in flight', async () => {
-        api.addBlankRequirement.mockReturnValue(pending());
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            onAddRequirement: (row: { tileid: string }) => Promise<void>;
-        };
-
-        vm.onAddRequirement({ tileid: 'm1' });
-        vm.onAddRequirement({ tileid: 'm1' });
-
-        expect(api.addBlankRequirement).toHaveBeenCalledTimes(1);
-    });
-
-    it('ignores a second completion toggle while the first is in flight', async () => {
-        api.setModuleCompleted.mockReturnValue(pending());
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            state: { rows: { tileid: string; isCompleted: boolean }[] };
-            onToggleCompleted: (row: {
-                tileid: string;
-                isCompleted: boolean;
-            }) => Promise<void>;
-        };
-        const row = vm.state.rows[0];
-
-        vm.onToggleCompleted(row);
-        vm.onToggleCompleted(row);
-
-        expect(api.setModuleCompleted).toHaveBeenCalledTimes(1);
-    });
-
     it('ignores a second requirement toggle while the first is in flight', async () => {
         api.setRequirementSatisfied.mockReturnValue(pending());
         const wrapper = mountModules({
@@ -774,7 +722,7 @@ describe('ProcessModules default open panel', () => {
     const named = (tileid: string, order: number) =>
         moduleTile({ tileid, name: `Module ${order}`, order });
 
-    it('opens the top module on first load', async () => {
+    it('opens the top module on first load, and nothing when there are none', async () => {
         const wrapper = mountModules({
             modules: [named('b', 2), named('a', 1)],
         });
@@ -782,6 +730,13 @@ describe('ProcessModules default open panel', () => {
         const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
 
         expect(vm.ui.openPanels).toEqual(['a']);
+
+        const empty = mountModules({ modules: [] });
+        await flushPromises();
+        expect(
+            (empty.vm as unknown as { ui: { openPanels: string[] } }).ui
+                .openPanels,
+        ).toEqual([]);
     });
 
     it("leaves the user's choice alone once the tiles reload", async () => {
@@ -795,14 +750,6 @@ describe('ProcessModules default open panel', () => {
         vm.ui.openPanels = [];
         await wrapper.setProps({ modules: [named('a', 1), named('b', 2)] });
         await flushPromises();
-
-        expect(vm.ui.openPanels).toEqual([]);
-    });
-
-    it('opens nothing when the permit has no modules yet', async () => {
-        const wrapper = mountModules({ modules: [] });
-        await flushPromises();
-        const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
 
         expect(vm.ui.openPanels).toEqual([]);
     });

@@ -397,6 +397,9 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
             "not-an-object",
             {"application_identification": "not-a-dict"},
             {"application_identification": {"aliased_data": []}},
+            # The group keys moved to the blob's top level, so a draft saved
+            # under the old nested shape reads as blank rather than raising.
+            {"aliased_data": self._identification(project_name="Old Shape")},
         ]
         for data in malformed:
             with self.subTest(data=data):
@@ -404,33 +407,20 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
                 self.assertEqual(card.project_name, "")
                 self.assertEqual(card.application_number, "")
 
-    def test_a_pre_move_blob_shape_degrades_to_blank(self):
-        # The group keys moved to the blob's top level; a draft saved under the
-        # old nested shape must read as blank rather than raise.
-        card = self._draft_card(
-            {"aliased_data": self._identification(project_name="Old Shape")}
-        )
-
-        self.assertEqual(card.project_name, "")
-        self.assertEqual(card.application_number, "")
-
-    def test_the_drafts_own_value_wins_over_the_parents(self):
+    def test_the_drafts_own_value_wins_and_a_blank_one_falls_back(self):
         card = self._draft_card(
             self._identification(project_name="Draft Name"),
             parent_resource_id=str(self.parent.pk),
         )
-
         self.assertEqual(card.project_name, "Draft Name")
         # Fields the draft doesn't carry still come from the parent.
         self.assertEqual(card.submission_type, "Site Visit")
 
-    def test_a_blank_draft_value_falls_back_to_the_parent(self):
-        card = self._draft_card(
+        blank = self._draft_card(
             self._identification(project_name=""),
             parent_resource_id=str(self.parent.pk),
         )
-
-        self.assertEqual(card.project_name, "Parent Project")
+        self.assertEqual(blank.project_name, "Parent Project")
 
     def test_a_deleted_parent_leaves_blanks_but_keeps_the_permit_id(self):
         gone = build_external_permit(FixtureBuilder(), "Doomed", self.user, "Active")

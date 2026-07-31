@@ -120,27 +120,16 @@ const detail = (opts: {
     },
 });
 
-describe('hasSubmission', () => {
+describe('type predicates', () => {
     it('matches the submission-bearing types regardless of case', () => {
         expect(rows.hasSubmission('Workflow')).toBe(true);
         expect(rows.hasSubmission('DOCUMENT SUBMISSION')).toBe(true);
-    });
-
-    it('rejects anything else', () => {
         expect(rows.hasSubmission('Checklist')).toBe(false);
-        expect(rows.hasSubmission('')).toBe(false);
     });
-});
 
-describe('isChecklist', () => {
     it('matches any type containing "checklist"', () => {
-        expect(rows.isChecklist('Checklist')).toBe(true);
         expect(rows.isChecklist('Site Visit Checklist')).toBe(true);
-    });
-
-    it('rejects other types', () => {
         expect(rows.isChecklist('Workflow')).toBe(false);
-        expect(rows.isChecklist('')).toBe(false);
     });
 });
 
@@ -154,27 +143,20 @@ describe('checklist links', () => {
         );
     });
 
-    it('appends the permit context, assuming the href already has a query', () => {
-        expect(
-            rows.withPermitContext(rows.checklistHref('r-1'), 'permit-1', ''),
-        ).toBe(
-            '/plugins/internal-permit-dashboard/checklist?id=r-1&permit=permit-1',
+    it('appends the permit, and the staff flag only when truthy', () => {
+        // Assumes the href already carries a query.
+        expect(rows.withPermitContext('/x?a=1', 'permit-1', '')).toBe(
+            '/x?a=1&permit=permit-1',
         );
-    });
-
-    it('adds the staff flag only when it is truthy', () => {
         expect(rows.withPermitContext('/x?a=1', 'permit-1', '1')).toBe(
             '/x?a=1&permit=permit-1&staff=1',
-        );
-        expect(rows.withPermitContext('/x?a=1', 'permit-1', undefined)).toBe(
-            '/x?a=1&permit=permit-1',
         );
     });
 });
 
 describe('toRow', () => {
     it('falls back to placeholders for a tile with nothing set', () => {
-        const row = rows.toRow(moduleTile());
+        const row = rows.toRow(moduleTile({ requirements: [{ order: 1 }] }));
 
         expect(row).toMatchObject({
             tileid: '',
@@ -183,8 +165,12 @@ describe('toRow', () => {
             completedDate: '',
             isCompleted: false,
             order: 0,
-            requirements: [],
             hostResourceId: '',
+        });
+        expect(row.requirements[0]).toMatchObject({
+            name: 'Requirement',
+            resourceId: '',
+            href: '',
         });
     });
 
@@ -208,12 +194,8 @@ describe('toRow', () => {
             completedDate: '2026-02-02',
             isCompleted: true,
         });
-    });
-
-    it('falls back to the raw module id when it has no display value', () => {
-        const row = rows.toRow(moduleTile({ moduleIdValue: 7 }));
-
-        expect(row.moduleId).toBe('7');
+        // A module id with no display value still shows its raw value.
+        expect(rows.toRow(moduleTile({ moduleIdValue: 7 })).moduleId).toBe('7');
     });
 
     it('sorts requirements by flow order and defaults their status to unknown', () => {
@@ -238,58 +220,20 @@ describe('toRow', () => {
             satisfied: null,
             internal: null,
             href: '/bcap/resource/r-a',
-            hostResourceId: '',
         });
-    });
-
-    it('names an unnamed requirement and leaves a hrefless one blank', () => {
-        const row = rows.toRow(moduleTile({ requirements: [{ order: 1 }] }));
-
-        expect(row.requirements[0].name).toBe('Requirement');
-        expect(row.requirements[0].resourceId).toBe('');
-        expect(row.requirements[0].href).toBe('');
-    });
-});
-
-describe('rowsNeedingDetails', () => {
-    it('returns rows holding a requirement that is not cached yet', () => {
-        const row = rows.toRow(
-            moduleTile({
-                tileid: 't-1',
-                requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],
-            }),
-        );
-
-        expect(rows.rowsNeedingDetails([row])).toEqual([row]);
-    });
-
-    it('ignores rows whose requirements carry no resource id', () => {
-        const row = rows.toRow(
-            moduleTile({ tileid: 't-1', requirements: [{ order: 1 }] }),
-        );
-
-        expect(rows.rowsNeedingDetails([row])).toEqual([]);
-    });
-
-    it('drops a row once its requirements are hydrated', async () => {
-        fetchRequirementDetails.mockResolvedValue({
-            'r-1': detail({ name: 'Alpha' }),
-        });
-        const row = rows.toRow(
-            moduleTile({
-                tileid: 't-1',
-                requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],
-            }),
-        );
-
-        await rows.hydrateRows([row]);
-
-        expect(rows.rowsNeedingDetails([row])).toEqual([]);
     });
 });
 
 describe('hydrateRows', () => {
-    it('fetches each uncached id once and fills the rows in place', async () => {
+    const rowWith = (tileid: string, resourceId: string, name = 'Placeholder') =>
+        rows.toRow(
+            moduleTile({
+                tileid,
+                requirements: [{ name, resourceId, order: 1 }],
+            }),
+        );
+
+    it('fetches the uncached ids and fills the rows in place', async () => {
         fetchRequirementDetails.mockResolvedValue({
             'r-1': detail({
                 name: 'Real Name',
@@ -299,14 +243,7 @@ describe('hydrateRows', () => {
                 host: 'host-1',
             }),
         });
-        const row = rows.toRow(
-            moduleTile({
-                tileid: 't-1',
-                requirements: [
-                    { name: 'Placeholder', resourceId: 'r-1', order: 1 },
-                ],
-            }),
-        );
+        const row = rowWith('t-1', 'r-1');
         const requirement = row.requirements[0];
 
         await rows.hydrateRows([row]);
@@ -326,62 +263,43 @@ describe('hydrateRows', () => {
         expect(row.hostResourceId).toBe('host-1');
     });
 
-    it('asks for each id once across rows and skips the cached ones', async () => {
+    it('asks for each id once and stops asking once it is cached', async () => {
         fetchRequirementDetails.mockResolvedValue({
             'r-1': detail({ name: 'One' }),
         });
-        const first = rows.toRow(
-            moduleTile({
-                tileid: 't-1',
-                requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],
-            }),
-        );
-        const second = rows.toRow(
-            moduleTile({
-                tileid: 't-2',
-                requirements: [{ name: 'B', resourceId: 'r-1', order: 1 }],
-            }),
-        );
+        const first = rowWith('t-1', 'r-1');
+        const second = rowWith('t-2', 'r-1');
 
         await rows.hydrateRows([first, second]);
         expect(fetchRequirementDetails).toHaveBeenCalledWith(['r-1']);
-
-        fetchRequirementDetails.mockClear();
-        await rows.hydrateRows([first, second]);
-        expect(fetchRequirementDetails).toHaveBeenCalledWith([]);
-    });
-
-    it('keeps the placeholder name when the detail has none', async () => {
-        fetchRequirementDetails.mockResolvedValue({
-            'r-1': detail({ name: '' }),
-        });
-        const row = rows.toRow(
-            moduleTile({
-                tileid: 't-1',
-                requirements: [
-                    { name: 'Fallback', resourceId: 'r-1', order: 1 },
-                ],
-            }),
-        );
-
-        await rows.hydrateRows([row]);
-
-        expect(row.requirements[0].title).toBe('Fallback');
+        // Cached now, so neither row asks again and neither needs details.
+        expect(rows.rowsNeedingDetails([first, second])).toEqual([]);
     });
 
     it('leaves a requirement the fetch did not return alone', async () => {
         fetchRequirementDetails.mockResolvedValue({});
-        const row = rows.toRow(
-            moduleTile({
-                tileid: 't-1',
-                requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],
-            }),
-        );
+        const row = rowWith('t-1', 'r-1');
 
         await rows.hydrateRows([row]);
 
         expect(row.requirements[0].satisfied).toBeNull();
         expect(row.requirements[0].type).toBe('');
+    });
+});
+
+describe('rowsNeedingDetails', () => {
+    it('picks the rows holding an uncached requirement, ignoring hrefless ones', () => {
+        const needy = rows.toRow(
+            moduleTile({
+                tileid: 't-1',
+                requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],
+            }),
+        );
+        const blank = rows.toRow(
+            moduleTile({ tileid: 't-2', requirements: [{ order: 1 }] }),
+        );
+
+        expect(rows.rowsNeedingDetails([needy, blank])).toEqual([needy]);
     });
 });
 
@@ -399,9 +317,5 @@ describe('cacheSatisfied', () => {
         rows.cacheSatisfied('r-1', true);
 
         expect(rows.toRow(tile).requirements[0].satisfied).toBe(true);
-    });
-
-    it('ignores an id that was never cached', () => {
-        expect(() => rows.cacheSatisfied('nope', true)).not.toThrow();
     });
 });

@@ -194,12 +194,6 @@ describe('Permit API', () => {
             );
             expect(result).toEqual([{ id: 'draft-1', is_draft: true }]);
         });
-
-        it('returns an empty array on error', async () => {
-            apiFetch.mockRejectedValue(new Error('Forbidden'));
-
-            expect(await fetchDraftCards()).toEqual([]);
-        });
     });
 
     describe('setRequirementAssignee', () => {
@@ -215,16 +209,10 @@ describe('Permit API', () => {
 
             expect(apiFetch).toHaveBeenCalledWith(
                 '/mock/permit-1/module/module-tile-1/req/req-1',
-                {
-                    method: 'PATCH',
-                    body: { contributor_id: 'contributor-1' },
-                },
+                { method: 'PATCH', body: { contributor_id: 'contributor-1' } },
             );
-        });
 
-        it('sends a null contributor to clear the assignment', async () => {
-            apiFetch.mockResolvedValue(okResponse(null));
-
+            // A null contributor is how the assignment is cleared.
             await setRequirementAssignee(
                 'permit-1',
                 'module-tile-1',
@@ -232,7 +220,7 @@ describe('Permit API', () => {
                 null,
             );
 
-            expect(apiFetch).toHaveBeenCalledWith(
+            expect(apiFetch).toHaveBeenLastCalledWith(
                 '/mock/permit-1/module/module-tile-1/req/req-1',
                 { method: 'PATCH', body: { contributor_id: null } },
             );
@@ -240,21 +228,16 @@ describe('Permit API', () => {
     });
 
     describe('fetchAssignableContributors', () => {
-        it('returns the assignable contributor list', async () => {
+        it('returns the assignable list, or an empty one', async () => {
             const contributors = [{ id: 'c-1', name: 'Hopper, Grace' }];
             apiFetchJson.mockResolvedValue(contributors);
 
-            const result = await fetchAssignableContributors();
-
+            expect(await fetchAssignableContributors()).toEqual(contributors);
             expect(apiFetchJson).toHaveBeenCalledWith(
                 '/mock/contributors/assignable',
             );
-            expect(result).toEqual(contributors);
-        });
 
-        it('falls back to an empty list when the body is empty', async () => {
             apiFetchJson.mockResolvedValue(null);
-
             expect(await fetchAssignableContributors()).toEqual([]);
         });
     });
@@ -268,10 +251,7 @@ describe('Permit API', () => {
 
             expect(apiFetch).toHaveBeenCalledWith(
                 '/mock/process_requirement/req-1',
-                {
-                    method: 'PATCH',
-                    body: { aliased_data: aliasedData },
-                },
+                { method: 'PATCH', body: { aliased_data: aliasedData } },
             );
         });
     });

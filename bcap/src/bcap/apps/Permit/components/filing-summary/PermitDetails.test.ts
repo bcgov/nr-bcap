@@ -288,7 +288,7 @@ describe('PermitDetails.vue', () => {
 
         type DraftVm = { expandedDrafts: string[] };
 
-        it('pre-expands the draft named on the url', async () => {
+        it('pre-expands the draft named on the url, and none without one', async () => {
             twoDrafts();
             mockQuery.value = { draft: 'd2' };
 
@@ -298,17 +298,11 @@ describe('PermitDetails.vue', () => {
             expect((wrapper.vm as unknown as DraftVm).expandedDrafts).toEqual([
                 'd2',
             ]);
-        });
 
-        it('leaves every panel closed without a draft on the url', async () => {
-            twoDrafts();
-
-            const wrapper = mount(PermitDetails, globalMountOptions);
+            mockQuery.value = {};
+            const plain = mount(PermitDetails, globalMountOptions);
             await flushPromises();
-
-            expect((wrapper.vm as unknown as DraftVm).expandedDrafts).toEqual(
-                [],
-            );
+            expect((plain.vm as unknown as DraftVm).expandedDrafts).toEqual([]);
         });
 
         it('lets an applicant resume and remove their draft', async () => {

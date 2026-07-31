@@ -84,19 +84,13 @@ describe('with a submission in the store', () => {
         expect(review.props('isSubmittedView')).toBe(true);
     });
 
-    it('titles the page after the submission', async () => {
+    it('titles the page and crumbs back to the permit it belongs to', async () => {
         const wrapper = mountReview();
         await flushPromises();
 
         expect(wrapper.find('.review-title').text()).toBe(
             'Submission · Investigation',
         );
-    });
-
-    it('crumbs back to the permit it belongs to', async () => {
-        const wrapper = mountReview();
-        await flushPromises();
-
         expect(wrapper.find('.crumb-link').text()).toBe('Project Summary');
         expect(wrapper.find('.crumb-current').text()).toBe('Investigation');
     });

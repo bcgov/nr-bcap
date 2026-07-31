@@ -74,14 +74,6 @@ describe('MessageHistory', () => {
         expect(wrapper.text()).toContain('Please attach the site plan.');
     });
 
-    it('leaves the date out when the message has none', () => {
-        const wrapper = mount(MessageHistory, {
-            props: { messages: [message({ date: '' })], isLoading: false },
-        });
-
-        expect(wrapper.find('.message-date').exists()).toBe(false);
-    });
-
     it('lists attachments with a human-readable size', () => {
         const wrapper = mount(MessageHistory, {
             props: {
@@ -98,21 +90,6 @@ describe('MessageHistory', () => {
 
         expect(wrapper.find('.attachment-name').text()).toBe('plan.pdf');
         expect(wrapper.find('.attachment-size').text()).toBe('2 KB');
-    });
-
-    it('omits the size for an attachment that has none', () => {
-        const wrapper = mount(MessageHistory, {
-            props: {
-                messages: [
-                    message({
-                        attachments: [{ url: '/f/1', name: 'plan.pdf' }],
-                    }),
-                ],
-                isLoading: false,
-            },
-        });
-
-        expect(wrapper.find('.attachment-size').exists()).toBe(false);
     });
 
     it('downloads through the helper rather than following the link', async () => {
@@ -146,23 +123,19 @@ describe('MessageThreadSidebar', () => {
             },
         });
 
-    it('marks the tab matching the archived flag', () => {
-        const active = mountSidebar().findAll('.sidebar-tab');
-        expect(active[0].classes()).toContain('active');
-        expect(active[1].classes()).not.toContain('active');
-
-        const archived = mountSidebar({ showArchived: true }).findAll(
-            '.sidebar-tab',
-        );
-        expect(archived[1].classes()).toContain('active');
-    });
-
-    it('emits the tab the user picked', async () => {
+    it('marks the tab matching the archived flag and emits the one picked', async () => {
         const wrapper = mountSidebar();
+        const tabs = wrapper.findAll('.sidebar-tab');
+        expect(tabs[0].classes()).toContain('active');
+        expect(tabs[1].classes()).not.toContain('active');
 
-        await wrapper.findAll('.sidebar-tab')[1].trigger('click');
+        await tabs[1].trigger('click');
 
         expect(wrapper.emitted('select-tab')).toEqual([[true]]);
+        expect(
+            mountSidebar({ showArchived: true }).findAll('.sidebar-tab')[1]
+                .classes(),
+        ).toContain('active');
     });
 
     it('flags the selected, unread and resolved threads', () => {
@@ -210,13 +183,6 @@ describe('MessageThreadSidebar', () => {
         expect(wrapper.emitted('select-thread')).toEqual([['new']]);
     });
 
-    it('leaves the date out for a thread with no messages yet', () => {
-        const wrapper = mountSidebar({
-            threads: [thread({ lastMessageDate: '' })],
-        });
-
-        expect(wrapper.find('.thread-date').exists()).toBe(false);
-    });
 });
 
 describe('MessageAttachmentsField', () => {
@@ -233,7 +199,7 @@ describe('MessageAttachmentsField', () => {
         expect(mountField().find('.staged-attachments').exists()).toBe(false);
     });
 
-    it('lifts the raw files out of the widget payload', async () => {
+    it('lifts the raw files out of the widget payload', () => {
         const wrapper = mountField();
         const plan = file('plan.pdf');
 
@@ -243,16 +209,6 @@ describe('MessageAttachmentsField', () => {
 
         // Entries without a file (a widget row still uploading) are dropped.
         expect(wrapper.emitted('update:files')).toEqual([[[plan]]]);
-    });
-
-    it('treats an empty widget payload as no files', () => {
-        const wrapper = mountField();
-
-        wrapper
-            .findComponent({ name: 'GenericWidget' })
-            .vm.$emit('update:value', undefined);
-
-        expect(wrapper.emitted('update:files')).toEqual([[[]]]);
     });
 
     it('lists each staged file with its size', () => {

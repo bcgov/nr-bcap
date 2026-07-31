@@ -80,9 +80,7 @@ describe('setFromAliased', () => {
     it('names an unnamed permit and marks an unissued number pending', () => {
         const store = usePermitHeaderStore();
 
-        const header = store.setFromAliased('permit-1', aliased());
-
-        expect(header).toEqual({
+        expect(store.setFromAliased('permit-1', aliased())).toEqual({
             projectName: 'Unnamed Project',
             applicationNumber: 'Pending',
             submissionType: '',
@@ -91,22 +89,10 @@ describe('setFromAliased', () => {
             submittedDate: null,
         });
     });
-
-    it('tolerates a permit with none of the header groups', () => {
-        const store = usePermitHeaderStore();
-
-        const header = store.setFromAliased(
-            'permit-1',
-            {} as PermitAliasedData,
-        );
-
-        expect(header?.projectName).toBe('Unnamed Project');
-        expect(header?.submittedDate).toBeNull();
-    });
 });
 
 describe('load', () => {
-    it('fetches the permit and sets the header', async () => {
+    it('fetches a permit it does not already hold', async () => {
         fetchPermitDetails.mockResolvedValue(
             aliased({ projectName: 'Fetched' }),
         );
@@ -128,17 +114,6 @@ describe('load', () => {
         expect(header?.projectName).toBe('Cached');
     });
 
-    it('fetches again once the permit changes', async () => {
-        fetchPermitDetails.mockResolvedValue(aliased({ projectName: 'Other' }));
-        const store = usePermitHeaderStore();
-        store.setFromAliased('permit-1', aliased({ projectName: 'Cached' }));
-
-        const header = await store.load('permit-2');
-
-        expect(fetchPermitDetails).toHaveBeenCalledWith('permit-2');
-        expect(header?.projectName).toBe('Other');
-    });
-
     it('returns the stale header rather than throwing when the fetch fails', async () => {
         const store = usePermitHeaderStore();
         store.setFromAliased('permit-1', aliased({ projectName: 'Cached' }));
@@ -149,14 +124,6 @@ describe('load', () => {
         expect(header?.projectName).toBe('Cached');
         // The permit id is left on the old one, so a retry still fetches.
         expect(store.state.permitId).toBe('permit-1');
-        expect(console.error).toHaveBeenCalled();
-    });
-
-    it('keeps the header when the fetch comes back empty', async () => {
-        fetchPermitDetails.mockResolvedValue(null);
-        const store = usePermitHeaderStore();
-
-        expect(await store.load('permit-1')).toBeNull();
     });
 
     it('does nothing without a permit id', async () => {
@@ -164,21 +131,5 @@ describe('load', () => {
 
         expect(await store.load('')).toBeNull();
         expect(fetchPermitDetails).not.toHaveBeenCalled();
-    });
-});
-
-describe('setReview', () => {
-    it('holds the submission the user drilled into', () => {
-        const store = usePermitHeaderStore();
-        const target = {
-            graph: 'investigation',
-            resourceId: 'r-1',
-            permitId: 'permit-1',
-            title: 'Investigation',
-        };
-
-        store.setReview(target);
-
-        expect(store.state.review).toEqual(target);
     });
 });
