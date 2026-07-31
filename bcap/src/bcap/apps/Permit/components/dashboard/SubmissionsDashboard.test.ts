@@ -293,7 +293,7 @@ describe('drafts', () => {
         const wrapper = await mountDashboard();
 
         const card = wrapper.findComponent(ProjectCardStub);
-        expect(card.props('bodyTitle')).toBe('Untitled Investigation');
+        expect(card.props('bodyTitle')).toBe('Investigation');
         expect(card.props('body1')).toBe('Type: Investigation Draft');
         // The permit it hangs off, so the card says what it belongs to.
         expect(card.props('bodySubtitle1')).toBe('APP-1');
@@ -317,7 +317,7 @@ describe('drafts', () => {
         const wrapper = await mountDashboard();
 
         const card = wrapper.findComponent(ProjectCardStub);
-        expect(card.props('bodyTitle')).toBe('Investigation - Big Project');
+        expect(card.props('bodyTitle')).toBe('Investigation');
         expect(card.props('body1')).toBe('Type: Investigation Draft');
         // The permit exists, so the card opens its filing summary with the
         // draft's own section expanded.
