@@ -43,7 +43,8 @@ vi.mock('arches', () => ({
                 permitId: string,
                 moduleTileId: string,
                 requirementId: string,
-            ) => `/mock/${permitId}/module/${moduleTileId}/req/${requirementId}`,
+            ) =>
+                `/mock/${permitId}/module/${moduleTileId}/req/${requirementId}`,
             assignable_contributors: '/mock/contributors/assignable',
             api_process_requirements: (requirementId: string) =>
                 `/mock/process_requirement/${requirementId}`,

@@ -26,6 +26,16 @@ vi.mock('@/bcap/components/pages/api.ts', () => ({
     getProcessRequirementData: vi.fn(),
 }));
 
+// Only the header fetch is stubbed; the save path still goes through the real
+// apiFetch so the PATCH assertions stay honest.
+const { fetchPermitDetails } = vi.hoisted(() => ({
+    fetchPermitDetails: vi.fn(),
+}));
+vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
+    fetchPermitDetails,
+}));
+
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
 import TaskChecklist from './TaskChecklist.vue';
 
@@ -136,6 +146,7 @@ const check = async (
 beforeEach(() => {
     mockRouteQuery.value = { id: 'res-1' };
     vi.clearAllMocks();
+    fetchPermitDetails.mockResolvedValue(null);
 });
 
 afterEach(() => {
@@ -175,6 +186,57 @@ describe('TaskChecklist', () => {
             mount(TaskChecklist);
             await flushPromises();
             expect(mockedGet).toHaveBeenCalledWith('resource-xyz');
+        });
+    });
+
+    describe('permit context', () => {
+        it('shows no crumbs and loads no header when opened standalone', async () => {
+            mockedGet.mockResolvedValue(buildRequirement());
+
+            const wrapper = mount(TaskChecklist);
+            await flushPromises();
+
+            expect(wrapper.find('.crumbs').exists()).toBe(false);
+            expect(fetchPermitDetails).not.toHaveBeenCalled();
+        });
+
+        it('crumbs back to the permit and loads its header band', async () => {
+            mockRouteQuery.value = {
+                id: 'res-1',
+                permit: 'permit-1',
+            };
+            mockedGet.mockResolvedValue(
+                buildRequirement({ name: 'Site Checklist' }),
+            );
+
+            const wrapper = mount(TaskChecklist);
+            await flushPromises();
+
+            expect(fetchPermitDetails).toHaveBeenCalledWith('permit-1');
+            expect(wrapper.find('.crumb-link').text()).toBe('Project Summary');
+            expect(wrapper.find('.crumb-current').text()).toBe(
+                'Site Checklist',
+            );
+        });
+
+        it('keeps the staff view on the return trip', async () => {
+            mockRouteQuery.value = {
+                id: 'res-1',
+                permit: 'permit-1',
+                staff: '1',
+            };
+            mockedGet.mockResolvedValue(buildRequirement());
+
+            const wrapper = mount(TaskChecklist);
+            await flushPromises();
+
+            expect(
+                wrapper.findComponent({ name: 'RouterLinkStub' }).props('to'),
+            ).toEqual({
+                name: 'permitDetails',
+                params: { id: 'permit-1' },
+                query: { staff: '1' },
+            });
         });
     });
 

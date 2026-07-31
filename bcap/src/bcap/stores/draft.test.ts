@@ -81,3 +81,50 @@ describe('draft store saveNow', () => {
         expect(saveDraftFieldToBackend).not.toHaveBeenCalled();
     });
 });
+
+describe('draft store step tracking', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        vi.useFakeTimers();
+        vi.mocked(createDraft).mockResolvedValue({ id: 'new-1' } as never);
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('records the step without saving before a draft exists', async () => {
+        const store = useDraftStore();
+        store.initDraft('investigation');
+
+        store.setCurrentStep('Contacts');
+
+        expect(store.currentStep).toBe('Contacts');
+        // No draft id yet, so nothing is created just by navigating steps.
+        await vi.advanceTimersByTimeAsync(2000);
+        expect(createDraft).not.toHaveBeenCalled();
+        expect(saveDraftFieldToBackend).not.toHaveBeenCalled();
+    });
+
+    it('clears the step when a new filing starts', () => {
+        const store = useDraftStore();
+        store.loadDraft('draft-7', { x: 1 } as never, 'Contacts');
+        expect(store.currentStep).toBe('Contacts');
+
+        store.initDraft('investigation', 'permit-1');
+
+        expect(store.currentStep).toBe('');
+        expect(store.draftId).toBeNull();
+        expect(store.draftData).toEqual({});
+        expect(store.parentPermitId).toBe('permit-1');
+    });
+
+    it('takes the step from the draft it loads', () => {
+        const store = useDraftStore();
+        store.initDraft('investigation');
+
+        store.loadDraft('draft-7', {}, 'Details');
+
+        expect(store.currentStep).toBe('Details');
+    });
+});

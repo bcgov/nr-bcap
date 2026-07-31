@@ -8,13 +8,13 @@ import SortingBar from './SortingBar.vue';
 // popup; both stand in as plain elements so clicks and the menu model are
 // readable.
 const ButtonStub = defineComponent({
-    name: 'Button',
+    name: 'ButtonStub',
     inheritAttrs: false,
     template: '<button v-bind="$attrs"><slot /></button>',
 });
 
 const MenuStub = defineComponent({
-    name: 'Menu',
+    name: 'MenuStub',
     props: { model: { type: Array, default: () => [] } },
     methods: { toggle: vi.fn() },
     template: '<div class="menu-stub"></div>',
@@ -200,9 +200,9 @@ describe('sort menu', () => {
     });
 
     it('names the current sort on the button', () => {
-        expect(mountBar({ currentSort: 'name' }).find('.sort-btn').text()).toContain(
-            'Sort: Name',
-        );
+        expect(
+            mountBar({ currentSort: 'name' }).find('.sort-btn').text(),
+        ).toContain('Sort: Name');
         // An unknown sort falls back rather than rendering blank.
         expect(
             mountBar({ currentSort: 'nonsense' }).find('.sort-btn').text(),
@@ -220,9 +220,9 @@ describe('results summary', () => {
     });
 
     it('is hidden when there is nothing to count', () => {
-        expect(mountBar({ shown: 0, total: 0 }).find('.results-summary').exists()).toBe(
-            false,
-        );
+        expect(
+            mountBar({ shown: 0, total: 0 }).find('.results-summary').exists(),
+        ).toBe(false);
     });
 });
 

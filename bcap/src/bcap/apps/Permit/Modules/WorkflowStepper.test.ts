@@ -172,6 +172,47 @@ describe('WorkflowStepper.vue', () => {
         expect(routerPush).toHaveBeenCalledWith({ name: 'root' });
     });
 
+    describe('resuming a draft', () => {
+        const resumeAt = async (currentStep: string) => {
+            routeQuery.value = { draftId: 'draft-7' };
+            fetchDraft.mockResolvedValue({
+                id: 'draft-7',
+                data: {},
+                current_step: currentStep,
+            });
+
+            const wrapper = mountStepper();
+            await flushPromises();
+            return (wrapper.vm as unknown as { resumeStep: number }).resumeStep;
+        };
+
+        it('reopens the step the draft was left on', async () => {
+            expect(await resumeAt('Details')).toBe(2);
+            expect(await resumeAt('Submission Information')).toBe(1);
+        });
+
+        it('falls back to the first step for a step name it no longer has', async () => {
+            // A renamed or removed step must not resume at 0.
+            expect(await resumeAt('Some Retired Step')).toBe(1);
+        });
+
+        it('starts at the first step when the draft never recorded one', async () => {
+            expect(await resumeAt('')).toBe(1);
+        });
+
+        it('starts at the first step for a fresh filing', async () => {
+            routeQuery.value = {};
+
+            const wrapper = mountStepper();
+            await flushPromises();
+
+            expect(
+                (wrapper.vm as unknown as { resumeStep: number }).resumeStep,
+            ).toBe(1);
+            expect(fetchDraft).not.toHaveBeenCalled();
+        });
+    });
+
     it('refuses to submit without an active draft', async () => {
         routeQuery.value = { permitId: 'permit-1' };
 

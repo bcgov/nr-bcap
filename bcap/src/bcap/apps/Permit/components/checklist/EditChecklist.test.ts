@@ -19,14 +19,19 @@ vi.mock('arches', () => ({
 }));
 
 vi.mock('@/bcap/api.ts', () => ({ apiFetchJson: vi.fn() }));
-vi.mock('@/bcap/apps/Permit/api.ts', () => ({ saveChecklist: vi.fn() }));
+vi.mock('@/bcap/apps/Permit/api.ts', () => ({
+    saveChecklist: vi.fn(),
+    // The header band loads through the permit header store.
+    fetchPermitDetails: vi.fn(),
+}));
 
 import { apiFetchJson } from '@/bcap/api.ts';
-import { saveChecklist } from '@/bcap/apps/Permit/api.ts';
+import { saveChecklist, fetchPermitDetails } from '@/bcap/apps/Permit/api.ts';
 import EditChecklist from './EditChecklist.vue';
 
 const mockFetchJson = vi.mocked(apiFetchJson);
 const mockSave = vi.mocked(saveChecklist);
+const mockPermitDetails = vi.mocked(fetchPermitDetails);
 
 const localized = (value: string) => ({ node_value: { en: { value } } });
 
@@ -68,6 +73,45 @@ beforeEach(() => {
     mockQuery.value = {};
     mockFetchJson.mockReset();
     mockSave.mockReset().mockResolvedValue(undefined);
+    mockPermitDetails.mockReset().mockResolvedValue(null as never);
+});
+
+describe('permit context', () => {
+    it('shows no crumbs and loads no header when opened standalone', () => {
+        const wrapper = mount(EditChecklist);
+
+        expect(wrapper.find('.crumbs').exists()).toBe(false);
+        expect(mockPermitDetails).not.toHaveBeenCalled();
+    });
+
+    it('crumbs back to the permit and loads its header band', async () => {
+        mockQuery.value = { id: 'req-1', permit: 'permit-1' };
+        mockFetchJson.mockResolvedValue(
+            requirementWith('My Checklist', [{ tileid: 't1', name: 'Step A' }]),
+        );
+
+        const wrapper = mount(EditChecklist);
+        await flushPromises();
+
+        expect(mockPermitDetails).toHaveBeenCalledWith('permit-1');
+        expect(wrapper.find('.crumb-link').text()).toBe('Project Summary');
+        expect(wrapper.find('.crumb-current').text()).toBe('My Checklist');
+    });
+
+    it('keeps the staff view on the return trip', async () => {
+        mockQuery.value = { permit: 'permit-1', staff: '1' };
+
+        const wrapper = mount(EditChecklist);
+        await flushPromises();
+
+        expect(
+            wrapper.findComponent({ name: 'RouterLinkStub' }).props('to'),
+        ).toEqual({
+            name: 'permitDetails',
+            params: { id: 'permit-1' },
+            query: { staff: '1' },
+        });
+    });
 });
 
 describe('create mode (no route id)', () => {

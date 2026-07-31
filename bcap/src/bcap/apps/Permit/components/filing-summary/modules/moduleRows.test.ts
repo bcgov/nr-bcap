@@ -27,16 +27,18 @@ beforeEach(async () => {
 
 type Req = { name?: string; resourceId?: string; order?: number };
 
-const moduleTile = (opts: {
-    tileid?: string;
-    name?: string;
-    moduleId?: string;
-    moduleIdValue?: number;
-    order?: number;
-    completedDate?: string;
-    isCompleted?: boolean;
-    requirements?: Req[];
-} = {}): PermitApplicationProcessModuleTile =>
+const moduleTile = (
+    opts: {
+        tileid?: string;
+        name?: string;
+        moduleId?: string;
+        moduleIdValue?: number;
+        order?: number;
+        completedDate?: string;
+        isCompleted?: boolean;
+        requirements?: Req[];
+    } = {},
+): PermitApplicationProcessModuleTile =>
     ({
         tileid: opts.tileid,
         aliased_data: {
@@ -49,7 +51,9 @@ const moduleTile = (opts: {
                       }
                     : undefined,
             module_order:
-                opts.order === undefined ? undefined : { node_value: opts.order },
+                opts.order === undefined
+                    ? undefined
+                    : { node_value: opts.order },
             module_completed_date: opts.completedDate
                 ? { display_value: opts.completedDate }
                 : undefined,
@@ -153,7 +157,9 @@ describe('checklist links', () => {
     it('appends the permit context, assuming the href already has a query', () => {
         expect(
             rows.withPermitContext(rows.checklistHref('r-1'), 'permit-1', ''),
-        ).toBe('/plugins/internal-permit-dashboard/checklist?id=r-1&permit=permit-1');
+        ).toBe(
+            '/plugins/internal-permit-dashboard/checklist?id=r-1&permit=permit-1',
+        );
     });
 
     it('adds the staff flag only when it is truthy', () => {
@@ -237,9 +243,7 @@ describe('toRow', () => {
     });
 
     it('names an unnamed requirement and leaves a hrefless one blank', () => {
-        const row = rows.toRow(
-            moduleTile({ requirements: [{ order: 1 }] }),
-        );
+        const row = rows.toRow(moduleTile({ requirements: [{ order: 1 }] }));
 
         expect(row.requirements[0].name).toBe('Requirement');
         expect(row.requirements[0].resourceId).toBe('');
@@ -354,7 +358,9 @@ describe('hydrateRows', () => {
         const row = rows.toRow(
             moduleTile({
                 tileid: 't-1',
-                requirements: [{ name: 'Fallback', resourceId: 'r-1', order: 1 }],
+                requirements: [
+                    { name: 'Fallback', resourceId: 'r-1', order: 1 },
+                ],
             }),
         );
 

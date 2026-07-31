@@ -57,7 +57,7 @@ const stubs = {
     AccordionContent: slotStub('AccordionContent'),
     Dialog: slotStub('Dialog'),
     Select: defineComponent({
-        name: 'Select',
+        name: 'SelectStub',
         props: { modelValue: { type: String, default: '' } },
         emits: ['update:modelValue'],
         template: '<div class="req-assignee-select"></div>',

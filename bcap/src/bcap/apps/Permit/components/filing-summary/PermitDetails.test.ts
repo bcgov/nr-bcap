@@ -45,12 +45,16 @@ vi.mock(
     }),
 );
 
-// 2. Mock Vue Router
+// 2. Mock Vue Router. The query is a ref so a test can open the page the way a
+// dashboard card does (?draft=, ?staff=).
 const mockPush = vi.fn();
+const mockQuery = vi.hoisted(() => ({
+    value: {} as Record<string, string>,
+}));
 vi.mock('vue-router', () => ({
     useRoute: () => ({
         params: { id: 'mock-permit-123' },
-        query: {},
+        query: mockQuery.value,
     }),
     useRouter: () => ({
         push: mockPush,
@@ -99,6 +103,7 @@ describe('PermitDetails.vue', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        mockQuery.value = {};
 
         vi.mocked(fetchPermitDetails).mockResolvedValue(
             mockPermitData as unknown as PermitAliasedData,
@@ -262,5 +267,73 @@ describe('PermitDetails.vue', () => {
         expect(wrapper.find('.draft-modules').text()).toContain(
             'Investigation - My Inv',
         );
+    });
+
+    describe('draft panels', () => {
+        const twoDrafts = () =>
+            vi.mocked(fetchDrafts).mockResolvedValue([
+                {
+                    id: 'd1',
+                    graph_slug: GraphSlug.Investigation,
+                    parent_resource_id: 'mock-permit-123',
+                    data: {},
+                },
+                {
+                    id: 'd2',
+                    graph_slug: GraphSlug.Investigation,
+                    parent_resource_id: 'mock-permit-123',
+                    data: {},
+                },
+            ] as never);
+
+        type DraftVm = { expandedDrafts: string[] };
+
+        it('pre-expands the draft named on the url', async () => {
+            twoDrafts();
+            mockQuery.value = { draft: 'd2' };
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect((wrapper.vm as unknown as DraftVm).expandedDrafts).toEqual([
+                'd2',
+            ]);
+        });
+
+        it('leaves every panel closed without a draft on the url', async () => {
+            twoDrafts();
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect((wrapper.vm as unknown as DraftVm).expandedDrafts).toEqual(
+                [],
+            );
+        });
+
+        it('lets an applicant resume and remove their draft', async () => {
+            twoDrafts();
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect(wrapper.find('.draft-resume').text()).toContain(
+                'Resume draft',
+            );
+            expect(wrapper.find('.draft-delete').exists()).toBe(true);
+        });
+
+        it('gives staff a read-only draft list', async () => {
+            twoDrafts();
+            mockQuery.value = { staff: 'true' };
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect(wrapper.find('.draft-resume').text()).toContain(
+                'View draft',
+            );
+            expect(wrapper.find('.draft-delete').exists()).toBe(false);
+        });
     });
 });

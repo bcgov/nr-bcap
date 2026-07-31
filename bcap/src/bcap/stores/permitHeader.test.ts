@@ -8,13 +8,15 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({ fetchPermitDetails }));
 
 import { usePermitHeaderStore } from './permitHeader.ts';
 
-const aliased = (opts: {
-    projectName?: string;
-    applicationNumber?: string;
-    submissionType?: string;
-    sector?: string;
-    submittedDate?: string;
-} = {}) =>
+const aliased = (
+    opts: {
+        projectName?: string;
+        applicationNumber?: string;
+        submissionType?: string;
+        sector?: string;
+        submittedDate?: string;
+    } = {},
+) =>
     ({
         application_identification: {
             aliased_data: {
@@ -93,7 +95,10 @@ describe('setFromAliased', () => {
     it('tolerates a permit with none of the header groups', () => {
         const store = usePermitHeaderStore();
 
-        const header = store.setFromAliased('permit-1', {} as PermitAliasedData);
+        const header = store.setFromAliased(
+            'permit-1',
+            {} as PermitAliasedData,
+        );
 
         expect(header?.projectName).toBe('Unnamed Project');
         expect(header?.submittedDate).toBeNull();
