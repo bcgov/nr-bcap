@@ -122,6 +122,34 @@ const sortMenuModel = computed(() => {
     });
 });
 
+// Each chip clears the one thing it names; the tab is a heading, not a chip,
+// since there is no "no tab" state to clear it to.
+const activeFilters = computed(() => {
+    const filters = [];
+    if (searchQuery.value)
+        filters.push({
+            key: 'search',
+            label: `Search: ${searchQuery.value}`,
+            clear: () => {
+                searchQuery.value = '';
+                handleSearchInput();
+            },
+        });
+    if (props.messagesOnly && props.messagesOnlyLabel)
+        filters.push({
+            key: 'messages',
+            label: props.messagesOnlyLabel,
+            clear: () => emit('update:messagesOnly', false),
+        });
+    if (props.currentSort !== 'default')
+        filters.push({
+            key: 'sort',
+            label: `Sort: ${activeSortLabel.value}`,
+            clear: () => emit('update:currentSort', 'default'),
+        });
+    return filters;
+});
+
 // Displays what is currently being sorted
 const activeSortLabel = computed(() => {
     const found = props.sortOptions.find((o) => o.value === props.currentSort);
@@ -168,78 +196,78 @@ const activeSortLabel = computed(() => {
             {{ props.messagesOnlyLabel }}
         </label>
 
-        <div class="search-section">
-            <div class="search-bar-wrapper">
-                <Button
-                    unstyled
-                    aria-label="Sort Options"
-                    class="icon-btn"
-                    style="display: flex; gap: 5px"
-                    @click="toggleSortMenu"
-                >
-                    <i class="fa-solid fa-bars"></i>
-                    <i
-                        :class="[
-                            'fa-solid',
-                            props.sortOrder === 'asc'
-                                ? 'fa-caret-up'
-                                : 'fa-caret-down',
-                        ]"
-                        style="font-size: 1.25rem; margin-top: 2px"
-                    ></i>
-                </Button>
-
-                <input
-                    v-model="searchQuery"
-                    type="text"
-                    class="search-input"
-                    placeholder="Search projects..."
-                    @input="handleSearchInput"
-                />
-
-                <Button
-                    unstyled
-                    class="icon-btn search-submit-btn"
-                    aria-label="Search"
-                >
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </Button>
-            </div>
-
-            <div
-                v-if="props.currentSort !== 'default'"
-                class="sort-indicator"
+        <div class="search-bar-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input
+                v-model="searchQuery"
+                type="text"
+                class="search-input"
+                placeholder="Search projects"
+                @input="handleSearchInput"
+            />
+            <Button
+                v-if="searchQuery"
+                unstyled
+                class="icon-btn"
+                aria-label="Clear search"
+                @click="
+                    searchQuery = '';
+                    handleSearchInput();
+                "
             >
-                <span>
-                    Sorted by:
-                    <strong>{{ activeSortLabel }}</strong>
-                </span>
-                <i
-                    :class="[
-                        'fa-solid',
-                        props.sortOrder === 'asc'
-                            ? 'fa-arrow-up-wide-short'
-                            : 'fa-arrow-down-wide-short',
-                    ]"
-                ></i>
-
-                <i
-                    class="fa-solid fa-circle-xmark clear-sort"
-                    title="Clear sort"
-                    @click="emit('update:currentSort', 'default')"
-                ></i>
-            </div>
+                <i class="fa-solid fa-xmark"></i>
+            </Button>
         </div>
+
+        <Button
+            unstyled
+            class="bar-btn sort-btn"
+            aria-label="Sort Options"
+            @click="toggleSortMenu"
+        >
+            <i class="fa-solid fa-filter"></i>
+            Sort: {{ activeSortLabel }}
+            <i
+                v-if="props.currentSort !== 'default'"
+                :class="[
+                    'fa-solid',
+                    props.sortOrder === 'asc'
+                        ? 'fa-caret-up'
+                        : 'fa-caret-down',
+                ]"
+            ></i>
+        </Button>
 
         <div class="flex-spacer"></div>
 
-        <div
-            role="button"
-            class="status-pill"
+        <span class="updated-text">Updated {{ formattedTime }}</span>
+
+        <Button
+            unstyled
+            class="bar-btn refresh-btn"
             @click="$emit('refresh')"
         >
-            <i class="fa-solid fa-rotate-right refresh-icon"></i>
-            Last Updated - {{ formattedTime }}
+            <i class="fa-solid fa-rotate-right"></i>
+            Refresh
+        </Button>
+    </div>
+
+    <div
+        v-if="activeFilters.length"
+        class="filter-row"
+    >
+        <div class="filter-chips">
+            <span class="filter-chips-label">Filters:</span>
+            <button
+                v-for="filter in activeFilters"
+                :key="filter.key"
+                type="button"
+                class="filter-chip"
+                @click="filter.clear()"
+            >
+                {{ filter.label }}
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
     </div>
 </template>
@@ -249,8 +277,8 @@ const activeSortLabel = computed(() => {
 .sorting-bar-container {
     display: flex;
     align-items: center;
-    gap: 2.25rem;
-    padding: 1.5rem 0;
+    gap: 1.5rem;
+    padding: 0 0 1.25rem;
     width: 100%;
     font-family: 'BCSans', 'Noto Sans', sans-serif;
 }
@@ -262,9 +290,9 @@ const activeSortLabel = computed(() => {
 .segmented-control {
     display: flex;
     background-color: #ffffff;
-    border-radius: 6px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Sits beside the tabs, reading as a plain option rather than a fourth tab. */
@@ -293,12 +321,14 @@ const activeSortLabel = computed(() => {
 .segment-btn {
     background: transparent;
     border: none;
-    padding: 0.9rem 1.875rem;
+    padding: 0.85rem 1.75rem;
     font-size: 1.425rem;
     color: #333333;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-    border-right: 1.5px solid #eeeeee;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+    border-right: 1.5px solid #d1d5db;
 }
 
 .segment-btn:last-child {
@@ -306,36 +336,41 @@ const activeSortLabel = computed(() => {
 }
 
 .segment-btn:hover {
-    background-color: #f9f9f9;
+    background-color: #f3f4f6;
 }
 
 .segment-btn.active {
-    background-color: #e2e2e2;
-    font-weight: 500;
+    background-color: var(--bc-navy, #003366);
+    color: #ffffff;
+    font-weight: 600;
 }
 
 /* 2. Search Bar */
-.search-section {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
 .search-bar-wrapper {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
     background-color: #ffffff;
-    border-radius: 75px;
-    padding: 0.45rem 1.5rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
+    padding: 0.35rem 1rem;
     width: 350px;
-    box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.05);
+}
+
+.search-bar-wrapper:focus-within {
+    border-color: var(--bc-navy, #003366);
+}
+
+.search-icon {
+    color: #6c757d;
+    font-size: 1.35rem;
 }
 
 .search-input {
     flex-grow: 1;
     border: none;
     background: transparent;
-    padding: 0.6rem 0.75rem;
+    padding: 0.5rem 0;
     font-size: 1.425rem;
     color: #333;
     outline: none;
@@ -357,51 +392,85 @@ const activeSortLabel = computed(() => {
     color: #003366;
 }
 
-/* 3. Status Pill */
-.status-pill {
+/* 3. Sort and refresh buttons, and the timestamp between them */
+.bar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.25rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 1.425rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.bar-btn:hover {
+    background-color: #f3f4f6;
+    border-color: var(--bc-navy, #003366);
+}
+
+.refresh-btn {
+    color: var(--bc-navy, #003366);
+    font-weight: 600;
+}
+
+.updated-text {
+    color: #6c757d;
+    font-size: 1.3rem;
+    white-space: nowrap;
+}
+
+/* 4. Active filter row, under the bar */
+.filter-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.6rem 1.5rem;
-    border-radius: 75px;
-    border: 1.5px solid #d1d5db;
-    color: #555555;
-    font-size: 1.35rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1.5px solid #e5e7eb;
+    font-family: 'BCSans', 'Noto Sans', sans-serif;
 }
 
-.status-pill:hover {
-    background-color: #f3f4f6;
-}
-
-.refresh-icon {
-    font-size: 1.275rem;
-}
-
-/* 4. Sort Additions */
-.sort-indicator {
-    position: absolute;
-    top: 100%;
-    left: 1.5rem;
-    margin-top: 0.5rem;
-    font-size: 1.25rem;
-    color: #555555;
+.filter-chips {
     display: flex;
     align-items: center;
     gap: 0.6rem;
 }
 
-.clear-sort {
-    cursor: pointer;
-    color: #999999;
-    font-size: 1.25rem;
-    transition: color 0.2s ease;
+.filter-chips-label {
+    color: #6c757d;
+    font-size: 1.3rem;
 }
 
-.clear-sort:hover {
-    color: #d90000;
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.3rem 0.9rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 999px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
 }
+
+.filter-chip:hover {
+    border-color: var(--bc-navy, #003366);
+}
+
+.filter-chip i {
+    color: #6c757d;
+    font-size: 1.15rem;
+}
+
 </style>
 
 <style>

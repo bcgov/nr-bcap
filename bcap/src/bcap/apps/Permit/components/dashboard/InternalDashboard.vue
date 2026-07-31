@@ -256,7 +256,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
-                messages-only-label="Only projects with unread messages"
+                messages-only-label="Unread messages only"
                 @update:search="handleSearch"
                 @refresh="loadData"
             />

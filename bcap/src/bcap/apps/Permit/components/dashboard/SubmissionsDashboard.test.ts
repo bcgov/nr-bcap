@@ -49,6 +49,8 @@ const ProjectCardStub = defineComponent({
         body3: { type: String, default: '' },
         footerName: { type: String, default: '' },
         footerDate: { type: String, default: '' },
+        unreadMessages: { type: Number, default: 0 },
+        route: { type: Object, default: () => ({}) },
     },
     template: '<div class="project-card-stub">{{ bodyTitle }}</div>',
 });
@@ -110,6 +112,7 @@ function makeDraft(overrides: Record<string, unknown> = {}) {
         status: 'Submission Required',
         project_name: 'Draft One',
         submission_type: 'Permit Application - Standard',
+        created_by_name: 'Test User',
         created_date: '2026-03-01T00:00:00Z',
         updated_date: '2026-03-02T00:00:00Z',
         unread_messages: 0,
@@ -258,18 +261,24 @@ describe('drafts', () => {
         ]);
         const wrapper = await mountDashboard();
 
-        const cards = wrapper
-            .findAllComponents(CardStub)
-            // The first Card is the "start a new workflow" tile.
-            .slice(1);
-        expect(cards.map((card) => card.props('label'))).toEqual([
+        const cards = wrapper.findAllComponents(ProjectCardStub);
+        expect(cards.map((card) => card.props('bodyTitle'))).toEqual([
             'Draft One',
             'Draft Two',
         ]);
         // The filing type comes off the card, not a static draft label.
-        expect(cards[0].props('description')).toBe(
-            'Permit Application - Standard',
+        expect(cards[0].props('body1')).toBe(
+            'Type: Permit Application - Standard',
         );
+    });
+
+    it('shows the unread message count on a draft card', async () => {
+        fetchDraftCards.mockResolvedValue([makeDraft({ unread_messages: 3 })]);
+        const wrapper = await mountDashboard();
+
+        expect(
+            wrapper.findComponent(ProjectCardStub).props('unreadMessages'),
+        ).toBe(3);
     });
 
     it('names and resumes a module draft through its own workflow', async () => {
@@ -283,11 +292,11 @@ describe('drafts', () => {
         ]);
         const wrapper = await mountDashboard();
 
-        const card = wrapper.findAllComponents(CardStub).slice(1)[0];
-        expect(card.props('label')).toBe('Untitled Investigation');
-        expect(card.props('description')).toBe('Investigation Draft');
+        const card = wrapper.findComponent(ProjectCardStub);
+        expect(card.props('bodyTitle')).toBe('Untitled Investigation');
+        expect(card.props('body1')).toBe('Type: Investigation Draft');
         // The permit it hangs off, so the card says what it belongs to.
-        expect(card.props('subtitle')).toContain('Permit APP-1');
+        expect(card.props('bodySubtitle1')).toBe('APP-1');
         expect(card.props('route')).toEqual({
             name: 'investigationModule',
             query: { draftId: 'draft-3' },
@@ -307,9 +316,9 @@ describe('drafts', () => {
         ]);
         const wrapper = await mountDashboard();
 
-        const card = wrapper.findAllComponents(CardStub).slice(1)[0];
-        expect(card.props('label')).toBe('Investigation - Big Project');
-        expect(card.props('description')).toBe('Investigation Draft');
+        const card = wrapper.findComponent(ProjectCardStub);
+        expect(card.props('bodyTitle')).toBe('Investigation - Big Project');
+        expect(card.props('body1')).toBe('Type: Investigation Draft');
     });
 
     it('opens the confirmation dialog from the delete button', async () => {

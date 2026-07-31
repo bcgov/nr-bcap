@@ -59,6 +59,9 @@ const showSubmission = computed(
 const assigneeName = (id: string) =>
     assigneeOptions.value.find((one) => one.id === id)?.name ?? '';
 
+const selectedAssignee = (id: string) =>
+    (id && (assigneeName(id) || props.requirement.ministryAssignee)) || '';
+
 // The secondary actions; the destructive one is separated and styled by class.
 const moreItems = computed(() => [
     {
@@ -153,12 +156,18 @@ const moreItems = computed(() => [
                     <span class="req-assignee-value">
                         <span
                             class="req-avatar"
-                            :class="{ 'is-empty': !value }"
+                            :class="{ 'is-empty': !selectedAssignee(value) }"
                         >
-                            {{ value ? initials(assigneeName(value)) : '+' }}
+                            {{
+                                selectedAssignee(value)
+                                    ? initials(selectedAssignee(value))
+                                    : '+'
+                            }}
                         </span>
-                        <span :class="{ 'is-unassigned': !value }">
-                            {{ value ? assigneeName(value) : 'Assign to…' }}
+                        <span
+                            :class="{ 'is-unassigned': !selectedAssignee(value) }"
+                        >
+                            {{ selectedAssignee(value) || 'Assign to…' }}
                         </span>
                     </span>
                 </template>

@@ -143,14 +143,6 @@ const draftDescription = (draft: DashboardProject) =>
         ? `${draftLabel(draft)} Draft`
         : draft.submission_type || 'Permit Application Draft';
 
-const draftSubtitle = (draft: DashboardProject) =>
-    [
-        draft.application_number && `Permit ${draft.application_number}`,
-        `Last updated: ${cardDate(draft.updated_date || draft.created_date)}`,
-    ]
-        .filter(Boolean)
-        .join(' · ');
-
 const draftRoute = (draft: DashboardProject) => ({
     name: draftModule(draft)?.routeName || routeNames.baseModule,
     query: { draftId: draft.id },
@@ -267,7 +259,7 @@ const openResourceReport = (resourceId: string) => {
                 :tabs="dashboardTabs"
                 :last-updated="ui.lastUpdated"
                 :sort-options="sortOptions"
-                messages-only-label="Only projects with unread messages"
+                messages-only-label="Unread messages only"
                 @refresh="loadDashboardData"
             />
 
@@ -346,19 +338,58 @@ const openResourceReport = (resourceId: string) => {
                                 :key="draft.id"
                                 class="draft-card-wrapper"
                             >
-                                <Card
-                                    :label="draftTitle(draft)"
-                                    :description="draftDescription(draft)"
-                                    :subtitle="draftSubtitle(draft)"
-                                    icon="fa fa-file-pen"
-                                    class="dashboard-card ipa"
+                                <ProjectCard
+                                    :cap-priority="
+                                        draft.priority_level === 'High'
+                                    "
+                                    :cap-label="draft.status || 'Draft'"
+                                    :cap-date="
+                                        cardDate(
+                                            draft.updated_date ||
+                                                draft.created_date,
+                                        )
+                                    "
+                                    icon="fa-solid fa-file-pen"
+                                    :body-title="draftTitle(draft)"
+                                    :body-subtitle1="
+                                        draft.application_number || 'No App #'
+                                    "
+                                    :body-subtitle2="draft.industrial_sector"
+                                    :body1="
+                                        labelled(
+                                            'Type',
+                                            draftDescription(draft),
+                                        )
+                                    "
+                                    :body2="
+                                        labelled(
+                                            'Updated',
+                                            cardDate(
+                                                draft.updated_date ||
+                                                    draft.created_date,
+                                            ),
+                                        )
+                                    "
+                                    :body3="
+                                        buildModuleSummary(
+                                            draft.module_progress,
+                                        )
+                                    "
+                                    :urgency="draft.urgency || 0"
+                                    :unread-messages="
+                                        draft.unread_messages || 0
+                                    "
+                                    :footer-date="cardDate(draft.created_date)"
+                                    :footer-name="draft.created_by_name"
+                                    :search-query="ui.searchQuery"
                                     :route="draftRoute(draft)"
                                 />
                                 <Button
                                     type="button"
                                     class="draft-delete-btn"
-                                    icon="fa fa-trash"
+                                    :label="$gettext('Remove')"
                                     :aria-label="$gettext('Delete draft')"
+                                    :fluid="false"
                                     @click="confirmDelete(draft)"
                                 />
                             </div>
@@ -475,23 +506,30 @@ const openResourceReport = (resourceId: string) => {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Bottom right, in the strip the card body reserves below its footer. */
 .draft-delete-btn {
     position: absolute;
-    bottom: 2.5rem;
-    right: 2.5rem;
+    bottom: 16px;
+    right: 1.5rem;
     z-index: 1;
-    border: none;
-    background: transparent;
-    padding: 0.4rem;
+    width: auto;
+    background: #ffffff;
+    padding: 0.4rem 1.1rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
     cursor: pointer;
-    color: #6c757d;
-    font-size: 1.25rem;
-    line-height: 1;
-    transition: color 0.2s ease;
+    color: var(--bc-navy, #003366);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .draft-delete-btn:hover {
     color: #c0392b;
+    border-color: #c0392b;
 }
 
 .tab-content-container {
@@ -503,6 +541,31 @@ const openResourceReport = (resourceId: string) => {
     color: #6c757d;
     font-style: italic;
     padding: 1rem 0;
+}
+
+/* Taller than a project card, with the card's own footer pulled up, so the
+   Remove button gets a strip of its own underneath. */
+.draft-card-wrapper :deep(.project-card-link) {
+    height: 310px;
+}
+
+.draft-card-wrapper :deep(.bcgov-card-body) {
+    padding-bottom: 4rem;
+}
+
+/* A rule between the card's own footer and the Remove strip below it. */
+.draft-card-wrapper :deep(.bcgov-card-footer) {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Drafts only: lighter than the navy on a submitted project's card. */
+.draft-card-wrapper :deep(.bcgov-card-cap) {
+    background-color: #385a8a;
+}
+
+.draft-card-wrapper :deep(.body-icon-class) {
+    color: #385a8a;
 }
 
 :deep(.bcgov-custom-card) {
