@@ -442,7 +442,7 @@ const openResourceReport = (resourceId: string) => {
     align-items: center;
     justify-content: space-between;
     gap: 1rem 1.5rem;
-    margin: 0.5rem 0 2rem;
+    margin: 1rem 0 2rem;
     padding: 1.25rem 1.75rem;
     box-sizing: border-box;
     background: #ffffff;

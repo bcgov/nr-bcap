@@ -457,8 +457,7 @@ const activeSortLabel = computed(() => {
     align-items: center;
     justify-content: flex-end;
     gap: 1rem;
-    /* Holds the chips' height whether or not any are showing. */
-    min-height: 2.4rem;
+    height: 2.4rem;
     padding-bottom: 1rem;
     /* Owns the gap down to the first card, so both dashboards match. */
     margin-bottom: 1rem;
@@ -492,7 +491,8 @@ const activeSortLabel = computed(() => {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.3rem 0.9rem;
+    height: 2.4rem;
+    padding: 0 0.9rem;
     border: 1.5px solid #d1d5db;
     border-radius: 999px;
     background-color: #ffffff;
@@ -516,10 +516,18 @@ const activeSortLabel = computed(() => {
 <style>
 /* The theme's yellow focus ring would sit inside the field; the wrapper's navy
    border (.search-bar-wrapper:focus-within) is the focus indicator instead. */
-.search-input:focus,
-.search-input:focus-visible {
+.sorting-bar-container .search-bar-wrapper input.search-input:focus,
+.sorting-bar-container .search-bar-wrapper input.search-input:focus-visible,
+.sorting-bar-container .search-bar-wrapper input.search-input:-webkit-autofill,
+.sorting-bar-container
+    .search-bar-wrapper
+    input.search-input:-webkit-autofill:focus {
     outline: none !important;
-    box-shadow: none !important;
+    border: none !important;
+    background-color: #ffffff !important;
+    /* Also paints over Chrome's yellow autofill fill, which ignores background. */
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #333333 !important;
 }
 
 /* Custom Sort Menu Styles, I hate primevue */
