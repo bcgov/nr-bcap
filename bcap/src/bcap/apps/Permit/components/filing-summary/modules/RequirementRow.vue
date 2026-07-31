@@ -165,7 +165,9 @@ const moreItems = computed(() => [
                             }}
                         </span>
                         <span
-                            :class="{ 'is-unassigned': !selectedAssignee(value) }"
+                            :class="{
+                                'is-unassigned': !selectedAssignee(value),
+                            }"
                         >
                             {{ selectedAssignee(value) || 'Assign to…' }}
                         </span>
