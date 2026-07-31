@@ -42,6 +42,15 @@ const props = defineProps({
         type: String,
         default: '',
     },
+    // Card counts for the results summary; omitted (or zero total) hides it.
+    shown: {
+        type: Number,
+        default: 0,
+    },
+    total: {
+        type: Number,
+        default: 0,
+    },
 });
 
 const emit = defineEmits([
@@ -252,11 +261,23 @@ const activeSortLabel = computed(() => {
         </Button>
     </div>
 
-    <div
-        v-if="activeFilters.length"
-        class="filter-row"
-    >
-        <div class="filter-chips">
+    <!-- Always rendered, so chips appearing don't push the cards down. -->
+    <div class="filter-row">
+        <div
+            v-if="props.total"
+            class="results-summary"
+        >
+            Showing
+            <strong>{{ props.shown }}</strong>
+            of
+            <strong>{{ props.total }}</strong>
+            cards
+        </div>
+
+        <div
+            v-if="activeFilters.length"
+            class="filter-chips"
+        >
             <span class="filter-chips-label">Filters:</span>
             <button
                 v-for="filter in activeFilters"
@@ -378,7 +399,6 @@ const activeSortLabel = computed(() => {
     padding: 0.5rem 0;
     font-size: 1.425rem;
     color: #333;
-    outline: none;
 }
 
 .icon-btn {
@@ -437,9 +457,24 @@ const activeSortLabel = computed(() => {
     align-items: center;
     justify-content: flex-end;
     gap: 1rem;
+    /* Holds the chips' height whether or not any are showing. */
+    min-height: 2.4rem;
     padding-bottom: 1rem;
+    /* Owns the gap down to the first card, so both dashboards match. */
+    margin-bottom: 1rem;
     border-bottom: 1.5px solid #e5e7eb;
     font-family: 'BCSans', 'Noto Sans', sans-serif;
+}
+
+.results-summary {
+    margin-right: auto;
+    color: #555555;
+    font-size: 1.25rem;
+}
+
+.results-summary strong {
+    color: var(--bc-navy, #003366);
+    font-weight: 700;
 }
 
 .filter-chips {
@@ -479,6 +514,14 @@ const activeSortLabel = computed(() => {
 </style>
 
 <style>
+/* The theme's yellow focus ring would sit inside the field; the wrapper's navy
+   border (.search-bar-wrapper:focus-within) is the focus indicator instead. */
+.search-input:focus,
+.search-input:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 /* Custom Sort Menu Styles, I hate primevue */
 .custom-sort-menu {
     --surface-hover: #003366 !important;

@@ -257,26 +257,11 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
                 messages-only-label="Unread messages only"
+                :shown="state.isLoading ? 0 : displayedProjects.length"
+                :total="state.isLoading ? 0 : state.rawProjects.length"
                 @update:search="handleSearch"
                 @refresh="loadData"
             />
-
-            <div
-                v-if="!state.isLoading"
-                class="results-summary"
-            >
-                Showing
-                <strong>{{ displayedProjects.length }}</strong>
-                of
-                <strong>{{ state.rawProjects.length }}</strong>
-                cards
-                <span
-                    v-if="state.currentSearch"
-                    class="active-search-label"
-                >
-                    (filtered by "{{ state.currentSearch }}")
-                </span>
-            </div>
 
             <div
                 v-if="state.isLoading"
@@ -330,11 +315,6 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     text-decoration: none;
 }
 
-.dashboard-div-flex {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
 .dash-row {
     display: flex;
     flex-direction: row;
@@ -358,23 +338,5 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     justify-content: center;
     padding: 3rem;
     color: #555;
-}
-
-/* Results Counter Styling */
-.results-summary {
-    font-size: 1.25rem;
-    color: #555555;
-    margin-bottom: 1rem;
-}
-
-.results-summary strong {
-    color: #003366;
-    font-weight: 700;
-}
-
-.active-search-label {
-    color: #777777;
-    font-style: italic;
-    margin-left: 0.5rem;
 }
 </style>

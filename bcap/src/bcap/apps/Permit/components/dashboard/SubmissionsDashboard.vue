@@ -199,6 +199,14 @@ const filteredProjects = computed(() => {
     );
 });
 
+const shownCards = computed(() =>
+    ui.activeTab === 'drafts' ? filteredDrafts.value : filteredProjects.value,
+);
+
+const totalCards = computed(() =>
+    ui.activeTab === 'drafts' ? savedDrafts.value : submittedProjects.value,
+);
+
 const cardDate = (iso: string) =>
     iso ? new Date(iso).toLocaleDateString() : '';
 
@@ -244,6 +252,8 @@ const openResourceReport = (resourceId: string) => {
                 :last-updated="ui.lastUpdated"
                 :sort-options="sortOptions"
                 messages-only-label="Unread messages only"
+                :shown="isLoading ? 0 : shownCards.length"
+                :total="isLoading ? 0 : totalCards.length"
                 @refresh="loadDashboardData"
             />
 
@@ -494,9 +504,8 @@ const openResourceReport = (resourceId: string) => {
 .dashboard-div-flex {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    padding-top: 1rem;
-    margin: 0 -10px;
+    gap: 1.5rem;
+    margin: 0 -10px 1rem;
 }
 
 .dashboard-card {
@@ -567,7 +576,6 @@ const openResourceReport = (resourceId: string) => {
 }
 
 .tab-content-container {
-    padding: 1rem 0;
     min-height: 300px;
 }
 
