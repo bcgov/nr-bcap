@@ -37,7 +37,7 @@ from bcap.services.process_requirement.template_specs import load
 from bcap.util.i18n import localized_string
 
 from tests.permit_fixtures import seed_requirement_templates
-from tests.views.helpers import AuthTestHelper
+from tests.views.helpers import AuthTestHelper, login_as
 
 # The permit module's child requirements, seeded by migration from the spec.
 PERMIT_REQUIREMENTS = len(load("permit")["requirements"])
@@ -105,6 +105,29 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         seed_requirement_templates(ProcessRequirementBuilder())
+        cls.submitted_pk = cls._build_submitted_permit()
+
+    @classmethod
+    def _build_submitted_permit(cls):
+        """A permit past its submission date, with its requirements attached.
+
+        Building it costs a create plus a submit (~3s), which most tests here
+        need identically, so it is built once for the class instead of per test.
+        Each test still runs in its own transaction, so mutations roll back."""
+        client = cls.client_class()
+        login_as(client, get_user_model().objects.get(username="admin"))
+        resp = client.post(
+            reverse("permit_application_create"),
+            data=json.dumps(create_payload()),
+            content_type="application/json",
+        )
+        pk = resp.json()["resourceinstanceid"]
+        client.patch(
+            reverse("api_permit_application", args=[pk]),
+            data=json.dumps(submission_payload()),
+            content_type="application/json",
+        )
+        return pk
 
     def setUp(self):
         super().setUp()
@@ -199,8 +222,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     def test_submission_stamps_module_and_requirement_ids(self):
         # The assign-module-ids hook mints the module id on save and stamps each
         # requirement id from it in post_save.
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
 
         admin = self._permit(pk).aliased_data.application_admin
         module = (admin.aliased_data.process_module or [])[0]
@@ -228,8 +250,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         )
 
     def test_remove_module_deletes_tile_and_working_copies(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module = (
             self._permit(pk).aliased_data.application_admin.aliased_data.process_module
             or []
@@ -248,8 +269,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._non_template_requirement_count(), 0)
 
     def test_remove_module_ignores_a_tile_from_another_permit(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         other = self._create()
         self._patch(other, submission_payload())
         module = (
@@ -285,8 +305,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         return [rid for _, rid in sorted(rows)]
 
     def test_reorder_requirements_renumbers_children(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         ids = self._ordered_requirement_ids(module_tileid)
         self.assertEqual(len(ids), PERMIT_REQUIREMENTS)
@@ -298,8 +317,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._ordered_requirement_ids(module_tileid), reversed_ids)
 
     def test_remove_requirement_deletes_child_and_resource_only(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         target = self._ordered_requirement_ids(module_tileid)[0]
 
@@ -314,8 +332,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._non_template_requirement_count(), PERMIT_REQUIREMENTS)
 
     def test_add_blank_requirement_appends_to_module(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         before = self._ordered_requirement_ids(module_tileid)
         self.assertEqual(len(before), PERMIT_REQUIREMENTS)
@@ -332,8 +349,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(after[-1], next(iter(new_ids)))
 
     def test_resubmission_does_not_reattach_requirements(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         before = self._requirement_count()
 
         # Already submitted, so a further submit clones nothing; it just saves.
@@ -418,8 +434,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         )
 
     def test_reorder_endpoint_renumbers_children(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         reversed_ids = list(reversed(self._ordered_requirement_ids(module_tileid)))
 
@@ -430,8 +445,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_reorder_endpoint_rejects_a_non_uuid_order_entry(self):
         # The reorder serializer requires the order entries to be UUIDs.
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
 
         resp = self._reorder(pk, module_tileid, ["not-a-uuid"])
@@ -439,8 +453,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 400)
 
     def test_add_requirement_endpoint_appends_named_requirement(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         before = self._ordered_requirement_ids(module_tileid)
 
@@ -453,8 +466,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_add_requirement_endpoint_defaults_the_name(self):
         # The add serializer makes name optional; the view supplies a default.
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
 
         resp = self._add_requirement(pk, module_tileid)
@@ -465,8 +477,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         )
 
     def test_delete_requirement_endpoint_removes_child(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         target = self._ordered_requirement_ids(module_tileid)[0]
 
@@ -476,8 +487,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertNotIn(target, self._ordered_requirement_ids(module_tileid))
 
     def test_delete_module_endpoint_removes_the_tile(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
 
         resp = self._delete_module(pk, module_tileid)
@@ -570,8 +580,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     def test_submission_links_the_permit_as_its_own_host(self):
         # The permit module's own-submission requirement points back at the
         # permit, linked after the save because the id exists only then.
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
 
         hosts = ProcessRequirementService().permit_module_tiles(pk, "permit")
         self.assertEqual([str(host.pk) for host in hosts], [str(pk)])
@@ -591,15 +600,13 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     def test_permit_module_tiles_empty_when_module_has_no_hosts(self):
         # The default module has requirements but no host resources, so an
         # investigation-host lookup finds no hosts.
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
 
         service = ProcessRequirementService()
         self.assertEqual(list(service.permit_module_tiles(pk, "investigation")), [])
 
     def test_reorder_ignores_a_module_from_another_permit(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         other = self._create()
         self._patch(other, submission_payload())
         other_module = self._module_tileid(other)
@@ -613,8 +620,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._ordered_requirement_ids(other_module), before)
 
     def test_reorder_with_empty_order_leaves_children_untouched(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         before = self._ordered_requirement_ids(module_tileid)
 
@@ -624,8 +630,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._ordered_requirement_ids(module_tileid), before)
 
     def test_remove_requirement_unknown_id_is_a_noop(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         before = len(self._ordered_requirement_ids(module_tileid))
 
@@ -636,8 +641,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(len(self._ordered_requirement_ids(module_tileid)), before)
 
     def test_add_blank_requirement_unknown_module_returns_none(self):
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
 
         result = ProcessRequirementService().add_blank_requirement(
             pk, "00000000-0000-0000-0000-000000000000", "x"
@@ -648,8 +652,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     def test_removing_the_permit_module_leaves_the_permit_itself_alive(self):
         # The permit hosts the module's own submission, so it lands in the
         # delete set until the guard discards it.
-        pk = self._create()
-        self._patch(pk, submission_payload())
+        pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         self_hosted = self._ordered_requirement_ids(module_tileid)[0]
 
