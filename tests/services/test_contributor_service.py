@@ -403,17 +403,12 @@ class LinkedContributorIdsTests(TestCase):
     def test_archaeology_branch_id_resolves_the_seeded_organization(self):
         # The lookup switched to data__contains, so the localized name has to
         # match the stored {"en": {"value": ...}} shape exactly.
-        self.assertIsNone(self.contributors.archaeology_branch_id())
+        branch_id = self.contributors.archaeology_branch_id()
 
-        branch = FixtureBuilder().make_contributor(
-            ContributorSpec(
-                reference_value("contributor", "contributor_type"),
-                None,
-                Groups.ARCHAEOLOGY_BRANCH,
-            )
+        self.assertIsNotNone(branch_id)
+        self.assertEqual(
+            self.contributors.by_ids([branch_id])[0].name, Groups.ARCHAEOLOGY_BRANCH
         )
-
-        self.assertEqual(self.contributors.archaeology_branch_id(), str(branch.pk))
 
 
 class ContributorsForResourceTests(TestCase):

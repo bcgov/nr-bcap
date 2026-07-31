@@ -3,6 +3,8 @@ application and seeds its id; the update that first sets the submission date
 attaches the process-requirement working copies."""
 
 import json
+from types import SimpleNamespace
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
@@ -642,3 +644,58 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         )
 
         self.assertIsNone(result)
+
+    def test_removing_the_permit_module_leaves_the_permit_itself_alive(self):
+        # The permit hosts the module's own submission, so it lands in the
+        # delete set until the guard discards it.
+        pk = self._create()
+        self._patch(pk, submission_payload())
+        module_tileid = self._module_tileid(pk)
+        self_hosted = self._ordered_requirement_ids(module_tileid)[0]
+
+        ProcessRequirementService().remove_requirement(pk, module_tileid, self_hosted)
+        self.assertTrue(ResourceTileTree.objects.filter(pk=pk).exists())
+
+        ProcessRequirementService().remove_module(pk, module_tileid)
+        self.assertTrue(ResourceTileTree.objects.filter(pk=pk).exists())
+
+    def test_saved_id_reads_the_create_response_or_none(self):
+        read = PermitApplicationService._saved_id
+        self.assertEqual(
+            read(SimpleNamespace(data={"resourceinstanceid": "abc"})), "abc"
+        )
+        # A response with no body, or one carrying no id, yields None.
+        self.assertIsNone(read(SimpleNamespace(data=None)))
+        self.assertIsNone(read(SimpleNamespace(data={})))
+        self.assertIsNone(read(SimpleNamespace()))
+
+    def test_a_permit_id_of_none_leaves_the_module_unlinked(self):
+        # What a create response carrying no id leads to: the link is skipped
+        # rather than raising, so the requirement is silently left unhosted.
+        requirements = ProcessRequirementService()
+        cloned = requirements._clone_module("permit")
+        self.assertIsNotNone(cloned.self_hosted)
+
+        PermitApplicationService()._link_permit_to_itself(cloned, None)
+
+        hosts = requirements.host_ids_by_requirement({str(cloned.self_hosted.pk)})
+        self.assertFalse(hosts.get(str(cloned.self_hosted.pk)))
+
+    def test_a_failed_link_rolls_the_clones_back_after_the_save(self):
+        # The link runs after the permit is saved, so a failure there still
+        # deletes every clone; the permit itself is already committed.
+        pk = self._create()
+        before = self._requirement_count()
+
+        with mock.patch.object(
+            ProcessRequirementService,
+            "link_submission",
+            side_effect=RuntimeError("boom"),
+        ):
+            with self.assertRaises(RuntimeError):
+                PermitApplicationService().submit(
+                    self._permit(pk), submission_payload(), lambda: None
+                )
+
+        self.assertEqual(self._requirement_count(), before)
+        self.assertTrue(ResourceTileTree.objects.filter(pk=pk).exists())

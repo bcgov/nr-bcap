@@ -225,7 +225,11 @@ describe('toRow', () => {
 });
 
 describe('hydrateRows', () => {
-    const rowWith = (tileid: string, resourceId: string, name = 'Placeholder') =>
+    const rowWith = (
+        tileid: string,
+        resourceId: string,
+        name = 'Placeholder',
+    ) =>
         rows.toRow(
             moduleTile({
                 tileid,

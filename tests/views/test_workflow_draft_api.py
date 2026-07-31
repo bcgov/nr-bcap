@@ -70,6 +70,14 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             user or self.editor, SLUG, data or {}, publication_id=publication_id
         )
 
+    def _save(self, pk, body):
+        """PATCH the draft with the given body (data defaults to empty)."""
+        return self.client.patch(
+            self._detail_url(pk),
+            data=json.dumps({"data": {}, **body}),
+            content_type="application/json",
+        )
+
     def _read(self, pk):
         """The stored draft as a fresh record (bypasses the request layer)."""
         return self.svc.to_record(self.svc.get(self.admin, pk))
@@ -136,6 +144,50 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
         self.assertEqual(self._read(draft.id).current_step, "Contacts")
+
+    def test_put_records_the_current_step_too(self):
+        draft = self._create_draft(data={"step1": {"x": 1}})
+
+        resp = self.client.put(
+            self._detail_url(draft.id),
+            data=json.dumps({"data": {"step2": {"y": 2}}, "current_step": "Review"}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["current_step"], "Review")
+        self.assertEqual(self._read(draft.id).current_step, "Review")
+
+    def test_a_blank_step_clears_it_but_an_omitted_one_does_not(self):
+        # Only None (an absent key) means "leave it alone"; "" is a real value
+        # the client can send to unset the marker.
+        draft = self._create_draft()
+        self._save(draft.id, {"current_step": "Contacts"})
+
+        self._save(draft.id, {})
+        self.assertEqual(self._read(draft.id).current_step, "Contacts")
+
+        self._save(draft.id, {"current_step": ""})
+        self.assertEqual(self._read(draft.id).current_step, "")
+
+    def test_post_accepts_a_current_step_but_never_stores_it(self):
+        # Pins current behaviour: the serializer allows the field, but create
+        # doesn't write it, so a draft always starts with no step. Likely a bug.
+        resp = self._post({"data": {}, "current_step": "Contacts"})
+
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.json()["current_step"], "")
+        self.assertEqual(self._read(resp.json()["id"]).current_step, "")
+
+    def test_a_non_string_step_is_stored_unvalidated(self):
+        # Pins current behaviour: put/patch read the body directly and never run
+        # DraftWriteSerializer, so whatever is sent lands in the tile.
+        draft = self._create_draft()
+
+        resp = self._save(draft.id, {"current_step": 7})
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(self._read(draft.id).current_step, 7)
 
     def test_create_stamps_descriptors(self):
         # A draft is referenced by other resources (a message's resource_context

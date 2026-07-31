@@ -5,7 +5,7 @@ create_working_copies (a copy of every template, in flow order)."""
 from datetime import datetime
 from uuid import uuid4
 
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 from arches.app.models.models import TileModel
 
@@ -20,7 +20,12 @@ from bcap.services.process_requirement.process_requirement_service import (
 )
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
-from bcap.services.process_requirement.template_specs import load
+from bcap.services.process_requirement.template_specs import (
+    host_graph,
+    load,
+    module_graph,
+    supported_permit_types,
+)
 from bcap.util.i18n import localized_string
 
 from tests.builders import FixtureBuilder
@@ -61,6 +66,32 @@ def _snapshot(module):
             for requirement_id, child in _module_children(module).items()
         },
     }
+
+
+class TemplateSpecTests(SimpleTestCase):
+    """The group-file lookups that decide where a module's own submission
+    lives. Plain JSON reads, so no database."""
+
+    def test_module_graph_defaults_to_the_permit_type(self):
+        # Only the permit group names a graph; the rest are their own type.
+        self.assertEqual(module_graph("permit"), GraphSlugs.PERMIT_APPLICATION)
+        self.assertEqual(module_graph("investigation"), GraphSlugs.INVESTIGATION)
+
+    def test_host_graph_is_the_child_matching_the_modules_graph(self):
+        # The permit module hosts its submission on the permit itself.
+        self.assertEqual(host_graph("permit"), GraphSlugs.PERMIT_APPLICATION)
+        self.assertEqual(host_graph("investigation"), GraphSlugs.INVESTIGATION)
+
+    def test_an_unsupported_permit_type_has_no_host_graph(self):
+        self.assertNotIn("nonsense", supported_permit_types())
+        self.assertIsNone(host_graph("nonsense"))
+
+    def test_every_supported_type_loads(self):
+        for permit_type in supported_permit_types():
+            with self.subTest(permit_type=permit_type):
+                spec = load(permit_type)
+                self.assertTrue(spec["name"])
+                self.assertTrue(spec["requirements"])
 
 
 class ProcessRequirementServiceTests(TestCase):
