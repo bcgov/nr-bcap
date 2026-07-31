@@ -241,40 +241,76 @@ class ExternalDashboardDraftsTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        ControlledListFixtures.seed()
         cls.service = ExternalDashboardService()
         cls.user = make_user("drafter")
         cls.other = make_user("other")
+        cls.permit = build_external_permit(
+            FixtureBuilder(), "Parent Project", cls.user, "Active"
+        )
         cls.draft = WorkflowDraftService().create(
             cls.user,
             "permit_application",
             {
-                "aliased_data": {
-                    "application_identification": {
-                        "aliased_data": {
-                            "project_name": {"en": {"value": "Draft Project"}},
-                            "application_id": {"en": {"value": "DRAFT-1"}},
-                        }
+                "application_identification": {
+                    "aliased_data": {
+                        "project_name": {"en": {"value": "Draft Project"}},
+                        "application_id": {"en": {"value": "DRAFT-1"}},
                     }
                 }
             },
         )
-        # A draft for another graph and another user -- neither should surface.
-        WorkflowDraftService().create(cls.user, "hca_permit", {})
+        cls.investigation_draft = WorkflowDraftService().create(
+            cls.user,
+            GraphSlugs.INVESTIGATION,
+            {},
+            parent_resource_id=str(cls.permit.pk),
+        )
+        # Another user's draft, which must not surface.
         WorkflowDraftService().create(cls.other, "permit_application", {})
 
-    def test_drafts_scope_returns_only_the_users_permit_application_drafts(self):
+    def test_drafts_scope_returns_only_the_users_drafts(self):
         page = self.service.get_cards(
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
         )
 
-        self.assertEqual(page.count, 1)
-        card = page.results[0]
-        self.assertEqual(card.id, str(self.draft.id))
+        self.assertEqual(page.count, 2)
+        card = next(c for c in page.results if c.id == str(self.draft.id))
         self.assertTrue(card.is_draft)
+        self.assertEqual(card.graph_slug, GraphSlugs.PERMIT_APPLICATION)
         self.assertEqual(card.status, "Submission Required")
         self.assertEqual(card.project_name, "Draft Project")
         self.assertEqual(card.application_number, "DRAFT-1")
         self.assertEqual(card.created_by_name, "drafter")
+
+    def test_module_drafts_get_a_card_carrying_their_graph(self):
+        page = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+        )
+
+        card = next(c for c in page.results if c.id == str(self.investigation_draft.id))
+        self.assertTrue(card.is_draft)
+        self.assertEqual(card.graph_slug, GraphSlugs.INVESTIGATION)
+
+    def test_module_draft_is_named_by_the_permit_it_was_started_from(self):
+        page = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+        )
+
+        card = next(c for c in page.results if c.id == str(self.investigation_draft.id))
+        self.assertEqual(card.permit_application_id, str(self.permit.pk))
+        self.assertEqual(card.project_name, "Parent Project")
+        self.assertRegex(card.application_number, r"^APP-\d+$")
+        self.assertEqual(card.submission_type, "Site Visit")
+
+    def test_a_drafts_own_identification_wins_over_its_parents(self):
+        page = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+        )
+
+        card = next(c for c in page.results if c.id == str(self.draft.id))
+        self.assertEqual(card.project_name, "Draft Project")
+        self.assertEqual(card.permit_application_id, "")
 
 
 class ExternalDashboardDraftRobustnessTests(TestCase):
@@ -309,11 +345,9 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
     def test_partial_identification_fills_only_present_fields(self):
         card = self._draft_card(
             {
-                "aliased_data": {
-                    "application_identification": {
-                        "aliased_data": {
-                            "project_name": {"en": {"value": "Only Name"}},
-                        }
+                "application_identification": {
+                    "aliased_data": {
+                        "project_name": {"en": {"value": "Only Name"}},
                     }
                 }
             }
@@ -327,9 +361,8 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         malformed = [
             [1, 2],
             "not-an-object",
-            {"aliased_data": "not-a-dict"},
-            {"aliased_data": {"application_identification": "not-a-dict"}},
-            {"aliased_data": {"application_identification": {"aliased_data": []}}},
+            {"application_identification": "not-a-dict"},
+            {"application_identification": {"aliased_data": []}},
         ]
         for data in malformed:
             with self.subTest(data=data):

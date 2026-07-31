@@ -104,6 +104,9 @@ function makeDraft(overrides: Record<string, unknown> = {}) {
     return {
         id: 'draft-1',
         is_draft: true,
+        graph_slug: 'permit_application',
+        permit_application_id: '',
+        application_number: 'APP-1',
         status: 'Submission Required',
         project_name: 'Draft One',
         submission_type: 'Permit Application - Standard',
@@ -267,6 +270,46 @@ describe('drafts', () => {
         expect(cards[0].props('description')).toBe(
             'Permit Application - Standard',
         );
+    });
+
+    it('names and resumes a module draft through its own workflow', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({
+                id: 'draft-3',
+                graph_slug: 'investigation',
+                project_name: '',
+                submission_type: '',
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+
+        const card = wrapper.findAllComponents(CardStub).slice(1)[0];
+        expect(card.props('label')).toBe('Untitled Investigation');
+        expect(card.props('description')).toBe('Investigation Draft');
+        // The permit it hangs off, so the card says what it belongs to.
+        expect(card.props('subtitle')).toContain('Permit APP-1');
+        expect(card.props('route')).toEqual({
+            name: 'investigationModule',
+            query: { draftId: 'draft-3' },
+        });
+    });
+
+    it('still names the module when the card carries its permit details', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({
+                id: 'draft-4',
+                graph_slug: 'investigation',
+                permit_application_id: 'permit-1',
+                // Both inherited from the parent permit application.
+                project_name: 'Big Project',
+                submission_type: 'Permit Application - Standard',
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+
+        const card = wrapper.findAllComponents(CardStub).slice(1)[0];
+        expect(card.props('label')).toBe('Investigation - Big Project');
+        expect(card.props('description')).toBe('Investigation Draft');
     });
 
     it('opens the confirmation dialog from the delete button', async () => {

@@ -16,6 +16,7 @@ import {
 } from '@/bcap/apps/Permit/api.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { permitModules } from './permitModules.ts';
 import type { ModuleProgress } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
@@ -28,6 +29,8 @@ const submittedProjects = ref<DashboardProject[]>([]);
 interface DashboardProject {
     id: string;
     is_draft: boolean;
+    graph_slug: string;
+    permit_application_id: string;
     status: string;
     created_by_name: string;
     created_date: string;
@@ -47,13 +50,18 @@ interface DashboardProject {
 const EXTERNAL_TAB_KEY = 'bcap.externalDashboard.tab';
 const EXTERNAL_TABS = ['my_projects', 'company_projects', 'drafts'];
 const storedTab = localStorage.getItem(EXTERNAL_TAB_KEY) ?? '';
-const activeTab = ref(EXTERNAL_TABS.includes(storedTab) ? storedTab : 'drafts');
-watch(activeTab, (tab) => localStorage.setItem(EXTERNAL_TAB_KEY, tab));
-const searchQuery = ref('');
-const currentSort = ref('default');
-const messagesOnly = ref(false);
-const sortOrder = ref<'asc' | 'desc'>('desc');
-const lastUpdated = ref(new Date());
+const ui = reactive({
+    activeTab: EXTERNAL_TABS.includes(storedTab) ? storedTab : 'drafts',
+    searchQuery: '',
+    currentSort: 'default',
+    messagesOnly: false,
+    sortOrder: 'desc' as 'asc' | 'desc',
+    lastUpdated: new Date(),
+});
+watch(
+    () => ui.activeTab,
+    (tab) => localStorage.setItem(EXTERNAL_TAB_KEY, tab),
+);
 
 const sortOptions = [
     { label: 'Name', value: 'name' },
@@ -91,7 +99,7 @@ const loadDashboardData = async () => {
 
         savedDrafts.value = draftsData;
         submittedProjects.value = projectsData;
-        lastUpdated.value = new Date();
+        ui.lastUpdated = new Date();
     } catch (error) {
         console.error('Failed to load dashboard data:', error);
     } finally {
@@ -103,7 +111,50 @@ onMounted(() => {
     loadDashboardData();
 });
 
-const DRAFT_LABEL = 'Permit Application Draft';
+const draftModule = (draft: DashboardProject) =>
+    permitModules.find((mod) => mod.id === draft.graph_slug);
+
+// The module list calls the application itself "Filing Summary", which reads
+// wrong on a draft card.
+const DRAFT_LABELS: Record<string, string> = {
+    [GraphSlug.PermitApplication]: 'Permit Application',
+};
+
+const draftLabel = (draft: DashboardProject) =>
+    DRAFT_LABELS[draft.graph_slug] ||
+    draftModule(draft)?.menuLabel ||
+    'Permit Application';
+
+// A module draft borrows its permit's name and filing type, so it has to say
+// which module it is; an application draft is the application.
+const isModuleDraft = (draft: DashboardProject) =>
+    !!draft.graph_slug && draft.graph_slug !== GraphSlug.PermitApplication;
+
+const draftTitle = (draft: DashboardProject) => {
+    const label = draftLabel(draft);
+    if (!draft.project_name) return `Untitled ${label}`;
+    return isModuleDraft(draft)
+        ? `${label} - ${draft.project_name}`
+        : draft.project_name;
+};
+
+const draftDescription = (draft: DashboardProject) =>
+    isModuleDraft(draft)
+        ? `${draftLabel(draft)} Draft`
+        : draft.submission_type || 'Permit Application Draft';
+
+const draftSubtitle = (draft: DashboardProject) =>
+    [
+        draft.application_number && `Permit ${draft.application_number}`,
+        `Last updated: ${cardDate(draft.updated_date || draft.created_date)}`,
+    ]
+        .filter(Boolean)
+        .join(' · ');
+
+const draftRoute = (draft: DashboardProject) => ({
+    name: draftModule(draft)?.routeName || routeNames.baseModule,
+    query: { draftId: draft.id },
+});
 
 const deleteState = reactive<{
     visible: boolean;
@@ -121,7 +172,10 @@ const performDelete = async () => {
     if (!draft) return;
     deleteState.busy = true;
     try {
-        await deleteDraft(GraphSlug.PermitApplication, draft.id);
+        await deleteDraft(
+            draft.graph_slug || GraphSlug.PermitApplication,
+            draft.id,
+        );
         savedDrafts.value = savedDrafts.value.filter((d) => d.id !== draft.id);
         deleteState.visible = false;
     } catch (error) {
@@ -132,27 +186,25 @@ const performDelete = async () => {
 };
 
 const filteredDrafts = computed(() => {
-    const drafts = messagesOnly.value
+    const drafts = ui.messagesOnly
         ? savedDrafts.value.filter((draft) => (draft.unread_messages || 0) > 0)
         : savedDrafts.value;
-    if (!searchQuery.value) return drafts;
-    const lowerQuery = searchQuery.value.toLowerCase();
+    if (!ui.searchQuery) return drafts;
+    const lowerQuery = ui.searchQuery.toLowerCase();
 
     return drafts.filter((draft) =>
-        (draft.project_name || 'Untitled Application')
-            .toLowerCase()
-            .includes(lowerQuery),
+        draftTitle(draft).toLowerCase().includes(lowerQuery),
     );
 });
 
 const filteredProjects = computed(() => {
-    const projects = messagesOnly.value
+    const projects = ui.messagesOnly
         ? submittedProjects.value.filter(
               (project) => (project.unread_messages || 0) > 0,
           )
         : submittedProjects.value;
-    if (!searchQuery.value) return projects;
-    const lowerQuery = searchQuery.value.toLowerCase();
+    if (!ui.searchQuery) return projects;
+    const lowerQuery = ui.searchQuery.toLowerCase();
 
     return projects.filter((project) =>
         [
@@ -207,13 +259,13 @@ const openResourceReport = (resourceId: string) => {
     <Panel class="full-height">
         <Fluid>
             <SortingBar
-                v-model:active-tab="activeTab"
-                v-model:search="searchQuery"
-                v-model:current-sort="currentSort"
-                v-model:sort-order="sortOrder"
-                v-model:messages-only="messagesOnly"
+                v-model:active-tab="ui.activeTab"
+                v-model:search="ui.searchQuery"
+                v-model:current-sort="ui.currentSort"
+                v-model:sort-order="ui.sortOrder"
+                v-model:messages-only="ui.messagesOnly"
                 :tabs="dashboardTabs"
-                :last-updated="lastUpdated"
+                :last-updated="ui.lastUpdated"
                 :sort-options="sortOptions"
                 messages-only-label="Only projects with unread messages"
                 @refresh="loadDashboardData"
@@ -234,7 +286,7 @@ const openResourceReport = (resourceId: string) => {
                 v-else
                 class="tab-content-container"
             >
-                <div v-if="activeTab === 'my_projects'">
+                <div v-if="ui.activeTab === 'my_projects'">
                     <Fluid v-if="filteredProjects.length > 0">
                         <div class="dashboard-div-flex">
                             <ProjectCard
@@ -269,7 +321,7 @@ const openResourceReport = (resourceId: string) => {
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
                                 :unread-messages="project.unread_messages || 0"
-                                :search-query="searchQuery"
+                                :search-query="ui.searchQuery"
                                 @click="openResourceReport(project.id)"
                             />
                         </div>
@@ -282,11 +334,11 @@ const openResourceReport = (resourceId: string) => {
                     </p>
                 </div>
 
-                <div v-if="activeTab === 'company_projects'">
+                <div v-if="ui.activeTab === 'company_projects'">
                     <p class="text-muted">No company projects found.</p>
                 </div>
 
-                <div v-if="activeTab === 'drafts'">
+                <div v-if="ui.activeTab === 'drafts'">
                     <Fluid v-if="filteredDrafts.length > 0">
                         <div class="dashboard-div-flex">
                             <div
@@ -295,23 +347,12 @@ const openResourceReport = (resourceId: string) => {
                                 class="draft-card-wrapper"
                             >
                                 <Card
-                                    :label="
-                                        draft.project_name ||
-                                        'Untitled Application'
-                                    "
-                                    :description="
-                                        draft.submission_type || DRAFT_LABEL
-                                    "
-                                    :subtitle="`Last updated: ${cardDate(
-                                        draft.updated_date ||
-                                            draft.created_date,
-                                    )}`"
+                                    :label="draftTitle(draft)"
+                                    :description="draftDescription(draft)"
+                                    :subtitle="draftSubtitle(draft)"
                                     icon="fa fa-file-pen"
                                     class="dashboard-card ipa"
-                                    :route="{
-                                        name: routeNames.baseModule,
-                                        query: { draftId: draft.id },
-                                    }"
+                                    :route="draftRoute(draft)"
                                 />
                                 <Button
                                     type="button"
