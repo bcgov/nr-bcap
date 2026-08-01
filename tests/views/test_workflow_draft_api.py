@@ -181,7 +181,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
 
     def test_a_non_string_step_is_stored_unvalidated(self):
         # Pins current behaviour: put/patch read the body directly and never run
-        # DraftWriteSerializer, so whatever is sent lands in the tile.
+        # DraftPayloadSerializer, so whatever is sent lands in the tile.
         draft = self._create_draft()
 
         resp = self._save(draft.id, {"current_step": 7})
@@ -233,6 +233,19 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual({row["id"] for row in resp.json()}, {mine})
         self.idir_login_simulate(self.editor)
         self.assertEqual(len(self.client.get(self.list_url).json()), 2)
+
+    def test_all_graphs_list_spans_graphs_and_stays_owner_scoped(self):
+        self.idir_login_simulate(self.applicant)
+        mine = self._create_draft(user=self.applicant)
+        investigation = self.svc.create(
+            self.applicant, GraphSlugs.INVESTIGATION, {"step1": {"x": 1}}
+        )
+        self._create_draft(user=self.other_applicant)
+        resp = self.client.get(reverse("workflow_draft_list_all"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            {row["id"] for row in resp.json()}, {mine.id, investigation.id}
+        )
 
     def test_non_owner_cannot_access_draft(self):
         self.idir_login_simulate(self.applicant)

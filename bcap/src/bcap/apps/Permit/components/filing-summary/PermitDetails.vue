@@ -15,7 +15,7 @@ import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { getBasicInfoFields } from '@/bcap/util.ts';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 import {
     fetchPermitDetails,
     fetchDrafts,
@@ -23,7 +23,8 @@ import {
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
-import type { InvestigationDraft } from '@/bcap/types.ts';
+import { isDraftOf } from '@/bcap/types.ts';
+import type { DraftOf } from '@/bcap/types.ts';
 import {
     permitModules as permitModuleCatalogue,
     modulesForFilingType,
@@ -46,11 +47,11 @@ const isStaff = computed(
 );
 
 // A draft resumes into its own module's workflow, chosen by its graph slug.
-const draftRouteName = (draft: InvestigationDraft): string =>
+const draftRouteName = (draft: DraftOf<GraphSlug.Investigation>): string =>
     permitModuleCatalogue.find((mod) => mod.id === draft.graph_slug)
         ?.routeName || routeNames.investigationModule;
 
-const draftTitle = (draft: InvestigationDraft) => {
+const draftTitle = (draft: DraftOf<GraphSlug.Investigation>) => {
     const ident = draft.data?.investigation_identification?.aliased_data
         ?.investigation_identification as
         | { node_value?: { en?: { value?: string } }; en?: { value?: string } }
@@ -83,10 +84,10 @@ const state = reactive({
     } as PermitHeaderData,
     adminTileMeta: { tileid: '', nodegroup: '' },
     fetchedModuleData: {} as Record<string, ModuleResponse>,
-    rawPermitData: null as PermitAliasedData | null,
-    investigationDrafts: [] as InvestigationDraft[],
+    rawPermitData: null as PermitApplicationResourceAliasedData | null,
+    investigationDrafts: [] as DraftOf<GraphSlug.Investigation>[],
     // Completed/existing investigations have no endpoint yet; wired in later.
-    completedInvestigations: [] as InvestigationDraft[],
+    completedInvestigations: [] as DraftOf<GraphSlug.Investigation>[],
 });
 
 const bandHeader = computed(() => headerStore.state.header);
@@ -208,7 +209,7 @@ const {
     state: deleteState,
     open: confirmDelete,
     confirm: performDelete,
-} = useConfirmAction<InvestigationDraft>(async (draft) => {
+} = useConfirmAction<DraftOf<GraphSlug.Investigation>>(async (draft) => {
     await deleteDraft(GraphSlug.Investigation, draft.id);
     await loadInvestigations();
 });
@@ -216,12 +217,9 @@ const {
 // This needs to be more generic in the future
 const loadInvestigations = async () => {
     const drafts = await fetchDrafts();
-    state.investigationDrafts = drafts.filter(
-        (d: InvestigationDraft) =>
-            d.graph_slug === GraphSlug.Investigation &&
-            !!d.parent_resource_id &&
-            d.parent_resource_id === permitId.value,
-    );
+    state.investigationDrafts = drafts
+        .filter(isDraftOf(GraphSlug.Investigation))
+        .filter((d) => d.parent_resource_id === permitId.value);
     // Load each draft's threads up front so its header can badge unread without
     // the dialog being opened. Drafts are few, so a fetch each is fine.
     for (const draft of state.investigationDrafts) {

@@ -17,37 +17,18 @@ import {
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { permitModules } from './permitModules.ts';
-import type { ModuleProgress } from '@/bcap/client/types.gen.ts';
+import type { ExternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 
 const { $gettext } = useGettext();
 const router = useRouter();
-const savedDrafts = ref<DashboardProject[]>([]);
-const submittedProjects = ref<DashboardProject[]>([]);
-const companyProjects = ref<DashboardProject[]>([]);
-
-interface DashboardProject {
-    id: string;
-    is_draft: boolean;
-    graph_slug: string;
-    permit_application_id: string;
-    status: string;
-    created_by_name: string;
-    created_date: string;
-    updated_date: string;
-    project_name: string;
-    application_number: string;
-    submission_type: string;
-    industrial_sector: string;
-    permit_id: string | null;
-    permit_number: string;
-    urgency: number;
-    priority_level: string;
-    unread_messages: number;
-    module_progress: ModuleProgress;
-}
+const cards = reactive({
+    savedDrafts: [] as ExternalDashboardCard[],
+    submittedProjects: [] as ExternalDashboardCard[],
+    companyProjects: [] as ExternalDashboardCard[],
+});
 
 enum DashboardTab {
     MyProjects = 'my_projects',
@@ -96,9 +77,9 @@ const loadDashboardData = async () => {
             fetchCompanyProjects(),
         ]);
 
-        savedDrafts.value = draftsData;
-        submittedProjects.value = projectsData;
-        companyProjects.value = companyData;
+        cards.savedDrafts = draftsData;
+        cards.submittedProjects = projectsData;
+        cards.companyProjects = companyData;
         ui.lastUpdated = new Date();
     } catch (error) {
         console.error('Failed to load dashboard data:', error);
@@ -111,7 +92,7 @@ onMounted(() => {
     loadDashboardData();
 });
 
-const draftModule = (draft: DashboardProject) =>
+const draftModule = (draft: ExternalDashboardCard) =>
     permitModules.find((mod) => mod.id === draft.graph_slug);
 
 // The module list calls the application itself "Filing Summary", which reads
@@ -120,31 +101,31 @@ const DRAFT_LABELS: Record<string, string> = {
     [GraphSlug.PermitApplication]: 'Permit Application',
 };
 
-const draftLabel = (draft: DashboardProject) =>
-    DRAFT_LABELS[draft.graph_slug] ||
+const draftLabel = (draft: ExternalDashboardCard) =>
+    DRAFT_LABELS[draft.graph_slug ?? ''] ||
     draftModule(draft)?.menuLabel ||
     'Permit Application';
 
 // A module draft borrows its permit's name and filing type, so it has to say
 // which module it is; an application draft is the application.
-const isModuleDraft = (draft: DashboardProject) =>
+const isModuleDraft = (draft: ExternalDashboardCard) =>
     !!draft.graph_slug && draft.graph_slug !== GraphSlug.PermitApplication;
 
 // A module draft names the module alone; the permit it hangs off is already on
 // the card as the application number.
-const draftTitle = (draft: DashboardProject) =>
+const draftTitle = (draft: ExternalDashboardCard) =>
     isModuleDraft(draft)
         ? draftLabel(draft)
         : draft.project_name || `Untitled ${draftLabel(draft)}`;
 
-const draftDescription = (draft: DashboardProject) =>
+const draftDescription = (draft: ExternalDashboardCard) =>
     isModuleDraft(draft)
         ? `${draftLabel(draft)} Draft`
         : draft.submission_type || 'Permit Application Draft';
 
 // A draft under a permit opens that permit's filing summary; one with no permit
 // yet has nothing to summarise, so it resumes its workflow instead.
-const draftRoute = (draft: DashboardProject) =>
+const draftRoute = (draft: ExternalDashboardCard) =>
     draft.permit_application_id
         ? {
               name: routeNames.permitDetails,
@@ -160,18 +141,18 @@ const {
     state: deleteState,
     open: confirmDelete,
     confirm: performDelete,
-} = useConfirmAction<DashboardProject>(async (draft) => {
+} = useConfirmAction<ExternalDashboardCard>(async (draft) => {
     await deleteDraft(
         draft.graph_slug || GraphSlug.PermitApplication,
         draft.id,
     );
-    savedDrafts.value = savedDrafts.value.filter((d) => d.id !== draft.id);
+    cards.savedDrafts = cards.savedDrafts.filter((d) => d.id !== draft.id);
 });
 
 const filteredDrafts = computed(() => {
     const drafts = ui.messagesOnly
-        ? savedDrafts.value.filter((draft) => (draft.unread_messages || 0) > 0)
-        : savedDrafts.value;
+        ? cards.savedDrafts.filter((draft) => (draft.unread_messages || 0) > 0)
+        : cards.savedDrafts;
     if (!ui.searchQuery) return drafts;
     const lowerQuery = ui.searchQuery.toLowerCase();
 
@@ -184,8 +165,8 @@ const filteredDrafts = computed(() => {
 // differs.
 const tabProjects = computed(() =>
     ui.activeTab === DashboardTab.CompanyProjects
-        ? companyProjects.value
-        : submittedProjects.value,
+        ? cards.companyProjects
+        : cards.submittedProjects,
 );
 
 const filteredProjects = computed(() => {
@@ -219,7 +200,7 @@ const shownCards = computed(() =>
 
 const totalCards = computed(() =>
     ui.activeTab === DashboardTab.Drafts
-        ? savedDrafts.value
+        ? cards.savedDrafts
         : tabProjects.value,
 );
 
@@ -229,10 +210,10 @@ const emptyProjectsNote = computed(() =>
         : 'No submitted projects found.',
 );
 
-const cardDate = (iso: string) =>
+const cardDate = (iso?: string) =>
     iso ? new Date(iso).toLocaleDateString() : '';
 
-const labelled = (label: string, value: string) =>
+const labelled = (label: string, value?: string) =>
     value ? `${label}: ${value}` : '';
 
 const openResourceReport = (resourceId: string) => {

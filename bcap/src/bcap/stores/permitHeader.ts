@@ -2,9 +2,11 @@ import { reactive } from 'vue';
 import { defineStore } from 'pinia';
 import { fetchPermitDetails } from '@/bcap/apps/Permit/api.ts';
 import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
-const headerFrom = (aliased: PermitAliasedData): PermitHeader => {
+const headerFrom = (
+    aliased: PermitApplicationResourceAliasedData,
+): PermitHeader => {
     const appIdent = aliased.application_identification?.aliased_data;
     const devDetails =
         aliased.proposed_project?.aliased_data?.development_project_details
@@ -50,7 +52,10 @@ export const usePermitHeaderStore = defineStore('bcapPermitHeader', () => {
 
     // The permit view already has the aliased data, so it sets the band rather
     // than making the other pages fetch it again.
-    function setFromAliased(permitId: string, aliased: PermitAliasedData) {
+    function setFromAliased(
+        permitId: string,
+        aliased: PermitApplicationResourceAliasedData,
+    ) {
         state.permitId = permitId;
         state.header = headerFrom(aliased);
         return state.header;

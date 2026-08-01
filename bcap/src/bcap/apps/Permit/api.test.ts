@@ -26,6 +26,7 @@ vi.mock('arches', () => ({
                 `/mock/blank/${graphSlug}`,
             api_workflow_draft: (graphSlug: string) =>
                 `/mock/draft/${graphSlug}`,
+            api_workflow_draft_all: '/mock/drafts',
             permit_application_create: '/mock/create/permit_application',
             seed_process_requirements: (permitId: string, slug: string) =>
                 `/mock/seed/${permitId}/${slug}`,
@@ -88,33 +89,25 @@ describe('Permit API', () => {
     });
 
     describe('fetchDrafts', () => {
-        it('fetches and merges drafts across every draft graph', async () => {
-            apiFetch
-                .mockResolvedValueOnce(
-                    okResponse({ results: [{ id: 'permit-1' }] }),
-                )
-                .mockResolvedValueOnce(okResponse([{ id: 'investigation-1' }]));
+        it('fetches every graph in one call', async () => {
+            const drafts = [
+                { id: 'permit-1', graph_slug: GraphSlug.PermitApplication },
+                { id: 'investigation-1', graph_slug: GraphSlug.Investigation },
+            ];
+            apiFetchJson.mockResolvedValue(drafts);
 
             const result = await fetchDrafts();
 
-            expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/draft/permit_application',
-            );
-            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation');
-            expect(result).toEqual([
-                { id: 'permit-1' },
-                { id: 'investigation-1' },
-            ]);
+            expect(apiFetchJson).toHaveBeenCalledWith('/mock/drafts');
+            expect(result).toEqual(drafts);
         });
 
-        it('skips a failing graph but keeps the others', async () => {
-            apiFetch
-                .mockResolvedValueOnce(okResponse([{ id: 'permit-1' }]))
-                .mockRejectedValueOnce(new Error('Server Error'));
+        it('returns nothing when the request fails', async () => {
+            apiFetchJson.mockRejectedValue(new Error('Server Error'));
 
             const result = await fetchDrafts();
 
-            expect(result).toEqual([{ id: 'permit-1' }]);
+            expect(result).toEqual([]);
             expect(console.error).toHaveBeenCalled();
         });
     });
@@ -167,13 +160,11 @@ describe('Permit API', () => {
 
     describe('fetchCompanyProjects', () => {
         it('asks for the associated-companies scope', async () => {
-            apiFetch.mockResolvedValue(
-                okResponse({ results: [{ id: 'theirs' }] }),
-            );
+            apiFetchJson.mockResolvedValue({ results: [{ id: 'theirs' }] });
 
             const result = await fetchCompanyProjects();
 
-            expect(apiFetch).toHaveBeenCalledWith(
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/bcap/api/dashboard/external?status=CREATED_BY_ASSOCIATED_COMPANIES',
             );
             expect(result).toEqual([{ id: 'theirs' }]);
@@ -182,13 +173,13 @@ describe('Permit API', () => {
 
     describe('fetchDraftCards', () => {
         it('asks the external dashboard for the DRAFTS scope', async () => {
-            apiFetch.mockResolvedValue(
-                okResponse({ results: [{ id: 'draft-1', is_draft: true }] }),
-            );
+            apiFetchJson.mockResolvedValue({
+                results: [{ id: 'draft-1', is_draft: true }],
+            });
 
             const result = await fetchDraftCards();
 
-            expect(apiFetch).toHaveBeenCalledWith(
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/bcap/api/dashboard/external?status=DRAFTS',
             );
             expect(result).toEqual([{ id: 'draft-1', is_draft: true }]);
@@ -256,25 +247,22 @@ describe('Permit API', () => {
     });
 
     describe('fetchMyProjects', () => {
-        it('returns results array when paginated', async () => {
-            apiFetch.mockResolvedValue(
-                okResponse({ results: [{ id: 'proj-1' }] }),
-            );
+        it('returns the page results', async () => {
+            apiFetchJson.mockResolvedValue({ results: [{ id: 'proj-1' }] });
             const result = await fetchMyProjects();
-            expect(apiFetch).toHaveBeenCalledWith(
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/bcap/api/dashboard/external?status=CREATED_BY_ME',
             );
             expect(result).toEqual([{ id: 'proj-1' }]);
         });
 
-        it('returns raw data when not paginated', async () => {
-            apiFetch.mockResolvedValue(okResponse([{ id: 'proj-2' }]));
-            const result = await fetchMyProjects();
-            expect(result).toEqual([{ id: 'proj-2' }]);
+        it('returns empty array when the page carries no results', async () => {
+            apiFetchJson.mockResolvedValue({ count: 0 });
+            expect(await fetchMyProjects()).toEqual([]);
         });
 
         it('returns empty array on error', async () => {
-            apiFetch.mockRejectedValue(new Error('Forbidden'));
+            apiFetchJson.mockRejectedValue(new Error('Forbidden'));
             const result = await fetchMyProjects();
             expect(result).toEqual([]);
         });

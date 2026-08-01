@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
 export const sanitizeHtml = (html: string | undefined): string => {
@@ -101,8 +102,14 @@ export const getCsrfToken = (): string => {
     );
 };
 
+// Reads a permit's basic-info tiles by alias, so it takes either the generated
+// resource shape (filing summary) or the loose draft shape (workflow review).
 export const getBasicInfoFields = (
-    aliased: PermitAliasedData | null | undefined,
+    aliased:
+        | PermitApplicationResourceAliasedData
+        | ArchesDraftData
+        | null
+        | undefined,
 ): ReviewField[] => {
     if (!aliased) return [];
 

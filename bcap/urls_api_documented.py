@@ -18,6 +18,7 @@ from bcap.views.dashboard_api import (
     ExternalDashboardView,
 )
 from bcap.views.workflow_draft_api import (
+    WorkflowDraftAllListView,
     WorkflowDraftListCreateView,
     WorkflowDraftDetailView,
 )
@@ -67,6 +68,12 @@ documented_api_patterns = [
         "api/dashboard/external",
         ExternalDashboardView.as_view(),
         name="dashboard_external",
+    ),
+    # Submitter - object level user filtering
+    path(
+        "api/workflow_draft",
+        WorkflowDraftAllListView.as_view(),
+        name="workflow_draft_list_all",
     ),
     # Submitter - object level user filtering
     path(

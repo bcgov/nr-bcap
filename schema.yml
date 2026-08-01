@@ -1831,13 +1831,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
         required: true
       security:
       - cookieAuth: []
@@ -1904,13 +1904,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
         required: true
       security:
       - cookieAuth: []
@@ -1946,13 +1946,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
+              $ref: '#/components/schemas/PatchedDraftPayload'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
+              $ref: '#/components/schemas/PatchedDraftPayload'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
+              $ref: '#/components/schemas/PatchedDraftPayload'
       security:
       - cookieAuth: []
       responses:
@@ -5738,6 +5738,7 @@ components:
       - resource_instance_lifecycle_state
     ContributorSummary:
       type: object
+      description: The contributor pick-list option shape, derived from the dataclass.
       properties:
         id:
           type: string
@@ -6330,9 +6331,44 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    DraftPayload:
+      type: object
+      description: |-
+        Request body for create/update: the whole draft blob, plus the step the
+        user is on and an optional frontend version and parent resource stamped on
+        create.
+      properties:
+        data:
+          oneOf:
+          - $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Document_Submission_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Permit_Application_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
+        current_step:
+          type: string
+        frontend_version:
+          type: string
+        parent_resource_id:
+          type: string
+      required:
+      - data
     DraftRecord:
       type: object
       properties:
+        data:
+          oneOf:
+          - $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Document_Submission_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Permit_Application_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
           description: True when the published graph has moved on since the draft
@@ -6348,9 +6384,6 @@ components:
           type: string
         parent_resource_id:
           type: string
-        data:
-          type: object
-          additionalProperties: {}
         current_step:
           type: string
         created:
@@ -6362,27 +6395,12 @@ components:
           format: date-time
           nullable: true
       required:
+      - data
       - frontend_version
       - graph_has_different_publication
       - graph_publication_id
       - graph_slug
       - id
-    DraftWrite:
-      type: object
-      description: |-
-        Request body for create/update: the whole draft blob, plus the step the
-        user is on and an optional frontend version and parent resource stamped on
-        create.
-      properties:
-        data: {}
-        current_step:
-          type: string
-        frontend_version:
-          type: string
-        parent_resource_id:
-          type: string
-      required:
-      - data
     ExternalDashboardCard:
       type: object
       properties:
@@ -6392,8 +6410,16 @@ components:
             the card's drill-in / resume GUID.
         is_draft:
           type: boolean
-          description: True when this card is an unsubmitted draft (from a ResourceDraft,
-            graph_slug=permit_application) rather than a saved application.
+          description: True when this card is an unsubmitted draft rather than a saved
+            application.
+        graph_slug:
+          type: string
+          description: Graph the draft belongs to, so the client can resume and delete
+            it against the right workflow; empty for saved applications.
+        permit_application_id:
+          type: string
+          description: Resourceinstanceid of the permit application a module draft
+            was started from; empty for an application draft or a saved application.
         status:
           type: string
           description: Applicant-facing workflow status, e.g. Permit Active, Under
@@ -9435,13 +9461,13 @@ components:
           nullable: true
     ModuleHost:
       oneOf:
-      - $ref: '#/components/schemas/Investigation'
       - $ref: '#/components/schemas/Alteration'
-      - $ref: '#/components/schemas/Inspection'
-      - $ref: '#/components/schemas/SiteVisit'
       - $ref: '#/components/schemas/DocumentSubmission'
       - $ref: '#/components/schemas/InformationRequest'
+      - $ref: '#/components/schemas/Inspection'
+      - $ref: '#/components/schemas/Investigation'
       - $ref: '#/components/schemas/NoticeOfProjectIntent'
+      - $ref: '#/components/schemas/SiteVisit'
     ModuleProgress:
       type: object
       properties:
@@ -10465,14 +10491,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ChecklistStep'
-    PatchedDraftWrite:
+    PatchedDraftPayload:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus the step the
         user is on and an optional frontend version and parent resource stamped on
         create.
       properties:
-        data: {}
+        data:
+          oneOf:
+          - $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Document_Submission_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Permit_Application_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
         current_step:
           type: string
         frontend_version:

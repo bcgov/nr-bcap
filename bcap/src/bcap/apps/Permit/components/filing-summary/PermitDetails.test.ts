@@ -3,7 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
 import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchPermitDetails: vi.fn(),
@@ -104,7 +104,7 @@ describe('PermitDetails.vue', () => {
         mockQuery.value = {};
 
         vi.mocked(fetchPermitDetails).mockResolvedValue(
-            mockPermitData as unknown as PermitAliasedData,
+            mockPermitData as unknown as PermitApplicationResourceAliasedData,
         );
         // Default to no drafts; tests that need them override per-case.
         // clearAllMocks resets calls but keeps implementations, so reset here.

@@ -1791,6 +1791,9 @@ export type Contributor = {
     readonly principaluser: number | null;
 };
 
+/**
+ * The contributor pick-list option shape, derived from the dataclass.
+ */
 export type ContributorSummary = {
     id: string;
     name: string;
@@ -2080,7 +2083,36 @@ export type DocumentSubmissionSubmissionPhotographsTile = {
     } | null;
 };
 
+/**
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
+ */
+export type DraftPayload = {
+    data:
+        | AlterationResourceAliasedData
+        | DocumentSubmissionResourceAliasedData
+        | InformationRequestResourceAliasedData
+        | InspectionResourceAliasedData
+        | InvestigationResourceAliasedData
+        | NoticeOfProjectIntentResourceAliasedData
+        | PermitApplicationResourceAliasedData
+        | SiteVisitResourceAliasedData;
+    current_step?: string;
+    frontend_version?: string;
+    parent_resource_id?: string;
+};
+
 export type DraftRecord = {
+    data:
+        | AlterationResourceAliasedData
+        | DocumentSubmissionResourceAliasedData
+        | InformationRequestResourceAliasedData
+        | InspectionResourceAliasedData
+        | InvestigationResourceAliasedData
+        | NoticeOfProjectIntentResourceAliasedData
+        | PermitApplicationResourceAliasedData
+        | SiteVisitResourceAliasedData;
     /**
      * True when the published graph has moved on since the draft was saved.
      */
@@ -2090,24 +2122,9 @@ export type DraftRecord = {
     graph_publication_id: string;
     frontend_version: string;
     parent_resource_id?: string;
-    data?: {
-        [key: string]: unknown;
-    };
     current_step?: string;
     created?: string | null;
     updated?: string | null;
-};
-
-/**
- * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
- */
-export type DraftWrite = {
-    data: unknown;
-    current_step?: string;
-    frontend_version?: string;
-    parent_resource_id?: string;
 };
 
 export type ExternalDashboardCard = {
@@ -2116,9 +2133,17 @@ export type ExternalDashboardCard = {
      */
     id: string;
     /**
-     * True when this card is an unsubmitted draft (from a ResourceDraft, graph_slug=permit_application) rather than a saved application.
+     * True when this card is an unsubmitted draft rather than a saved application.
      */
     is_draft?: boolean;
+    /**
+     * Graph the draft belongs to, so the client can resume and delete it against the right workflow; empty for saved applications.
+     */
+    graph_slug?: string;
+    /**
+     * Resourceinstanceid of the permit application a module draft was started from; empty for an application draft or a saved application.
+     */
+    permit_application_id?: string;
     /**
      * Applicant-facing workflow status, e.g. Permit Active, Under Review, Submit Documents, Submission Required.
      */
@@ -3673,13 +3698,13 @@ export type LocalGovernmentResourceAliasedData = {
 };
 
 export type ModuleHost =
-    | Investigation
     | Alteration
-    | Inspection
-    | SiteVisit
     | DocumentSubmission
     | InformationRequest
-    | NoticeOfProjectIntent;
+    | Inspection
+    | Investigation
+    | NoticeOfProjectIntent
+    | SiteVisit;
 
 export type ModuleProgress = {
     /**
@@ -4125,8 +4150,16 @@ export type PatchedChecklistPatch = {
  * user is on and an optional frontend version and parent resource stamped on
  * create.
  */
-export type PatchedDraftWrite = {
-    data?: unknown;
+export type PatchedDraftPayload = {
+    data?:
+        | AlterationResourceAliasedData
+        | DocumentSubmissionResourceAliasedData
+        | InformationRequestResourceAliasedData
+        | InspectionResourceAliasedData
+        | InvestigationResourceAliasedData
+        | NoticeOfProjectIntentResourceAliasedData
+        | PermitApplicationResourceAliasedData
+        | SiteVisitResourceAliasedData;
     current_step?: string;
     frontend_version?: string;
     parent_resource_id?: string;
@@ -8624,15 +8657,41 @@ export type DocumentSubmissionSubmissionPhotographsTileWritable = {
     } | null;
 };
 
+/**
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
+ */
+export type DraftPayloadWritable = {
+    data:
+        | AlterationResourceAliasedDataWritable
+        | DocumentSubmissionResourceAliasedDataWritable
+        | InformationRequestResourceAliasedDataWritable
+        | InspectionResourceAliasedDataWritable
+        | InvestigationResourceAliasedDataWritable
+        | NoticeOfProjectIntentResourceAliasedDataWritable
+        | PermitApplicationResourceAliasedDataWritable
+        | SiteVisitResourceAliasedDataWritable;
+    current_step?: string;
+    frontend_version?: string;
+    parent_resource_id?: string;
+};
+
 export type DraftRecordWritable = {
+    data:
+        | AlterationResourceAliasedDataWritable
+        | DocumentSubmissionResourceAliasedDataWritable
+        | InformationRequestResourceAliasedDataWritable
+        | InspectionResourceAliasedDataWritable
+        | InvestigationResourceAliasedDataWritable
+        | NoticeOfProjectIntentResourceAliasedDataWritable
+        | PermitApplicationResourceAliasedDataWritable
+        | SiteVisitResourceAliasedDataWritable;
     id: string;
     graph_slug: string;
     graph_publication_id: string;
     frontend_version: string;
     parent_resource_id?: string;
-    data?: {
-        [key: string]: unknown;
-    };
     current_step?: string;
     created?: string | null;
     updated?: string | null;
@@ -9907,13 +9966,13 @@ export type LocalGovernmentResourceAliasedDataWritable = {
 };
 
 export type ModuleHostWritable =
-    | InvestigationWritable
     | AlterationWritable
-    | InspectionWritable
-    | SiteVisitWritable
     | DocumentSubmissionWritable
     | InformationRequestWritable
-    | NoticeOfProjectIntentWritable;
+    | InspectionWritable
+    | InvestigationWritable
+    | NoticeOfProjectIntentWritable
+    | SiteVisitWritable;
 
 export type NonLocalizedStringAliasedNodeDataWritable = {
     node_value: string | null;
@@ -10244,6 +10303,26 @@ export type PatchedBcapMessagePatchWritable = {
      */
     archived?: boolean;
     graph?: string | null;
+};
+
+/**
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
+ */
+export type PatchedDraftPayloadWritable = {
+    data?:
+        | AlterationResourceAliasedDataWritable
+        | DocumentSubmissionResourceAliasedDataWritable
+        | InformationRequestResourceAliasedDataWritable
+        | InspectionResourceAliasedDataWritable
+        | InvestigationResourceAliasedDataWritable
+        | NoticeOfProjectIntentResourceAliasedDataWritable
+        | PermitApplicationResourceAliasedDataWritable
+        | SiteVisitResourceAliasedDataWritable;
+    current_step?: string;
+    frontend_version?: string;
+    parent_resource_id?: string;
 };
 
 export type PatchedPermitApplicationWritable = {
@@ -13621,7 +13700,7 @@ export type ApiWorkflowDraftListResponse =
     ApiWorkflowDraftListResponses[keyof ApiWorkflowDraftListResponses];
 
 export type ApiWorkflowDraftCreateData = {
-    body: DraftWrite;
+    body: DraftPayloadWritable;
     path: {
         graph_slug: string;
     };
@@ -13674,7 +13753,7 @@ export type ApiWorkflowDraftRetrieveResponse =
     ApiWorkflowDraftRetrieveResponses[keyof ApiWorkflowDraftRetrieveResponses];
 
 export type ApiWorkflowDraftPartialUpdateData = {
-    body?: PatchedDraftWrite;
+    body?: PatchedDraftPayloadWritable;
     path: {
         graph_slug: string;
         id: string;
@@ -13691,7 +13770,7 @@ export type ApiWorkflowDraftPartialUpdateResponse =
     ApiWorkflowDraftPartialUpdateResponses[keyof ApiWorkflowDraftPartialUpdateResponses];
 
 export type ApiWorkflowDraftUpdateData = {
-    body: DraftWrite;
+    body: DraftPayloadWritable;
     path: {
         graph_slug: string;
         id: string;

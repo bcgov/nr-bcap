@@ -3,8 +3,10 @@ import WorkflowStepper from '@/bcap/apps/Permit/Modules/WorkflowStepper.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { submitApplication } from '@/bcap/apps/Permit/api.ts';
-import type { DraftNode } from '@/bcap/types.ts';
-import type { PermitApplication } from '@/bcap/client/types.gen.ts';
+import type {
+    PermitApplication,
+    PermitApplicationResourceAliasedDataWritable as PermitApplicationDraftData,
+} from '@/bcap/client/types.gen.ts';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prelim.vue';
@@ -28,13 +30,14 @@ const submit = (): Promise<PermitApplication> => {
 
     // Stamp the submission date: the server treats application_submission_date
     // as the "submitted" signal. Temporary until the backend owns this.
-    draft.draftData.application_admin = {
-        ...draft.draftData.application_admin,
+    const permitDraft = draft.draftData as PermitApplicationDraftData;
+    permitDraft.application_admin = {
+        ...permitDraft.application_admin,
         aliased_data: {
-            ...draft.draftData.application_admin?.aliased_data,
+            ...permitDraft.application_admin?.aliased_data,
             application_submission_date: {
                 node_value: new Date().toISOString().slice(0, 10),
-            } as DraftNode,
+            },
         },
     };
 

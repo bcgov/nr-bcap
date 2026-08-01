@@ -2,15 +2,14 @@
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import GenericReviewSummary from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import { getBasicInfoFields } from '@/bcap/util.ts';
-import type { ArchesDraftData, PermitAliasedData } from '@/bcap/types.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
 
 defineProps<{
     isSubmittedView?: boolean;
     resourceData?: ArchesDraftData | null;
 }>();
 
-const fields = (data: ArchesDraftData) =>
-    getBasicInfoFields(data as unknown as PermitAliasedData);
+const fields = (data: ArchesDraftData) => getBasicInfoFields(data);
 
 const isValid = () => true;
 defineExpose({ isValid });

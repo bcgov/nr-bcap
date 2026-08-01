@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 const { fetchPermitDetails } = vi.hoisted(() => ({
     fetchPermitDetails: vi.fn(),
@@ -41,7 +41,7 @@ const aliased = (
                 },
             },
         },
-    }) as unknown as PermitAliasedData;
+    }) as unknown as PermitApplicationResourceAliasedData;
 
 beforeEach(() => {
     fetchPermitDetails.mockReset();

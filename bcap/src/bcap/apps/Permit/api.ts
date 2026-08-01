@@ -7,19 +7,23 @@ import type {
     DraftNode,
     FormattedMessage,
     NewBcapMessage,
-    PermitAliasedData,
+    WorkflowDraft,
 } from '@/bcap/types.ts';
 import type {
     ApiContributorsAssignableListResponse,
+    ApiDashboardExternalRetrieveData,
     BcapMessage,
     BcapMessageWritable,
     ChecklistStep,
     ContributorSummary,
+    ExternalDashboardCard,
+    ExternalDashboardPage,
     PatchedRequirementAssignee,
     DraftRecord,
     PatchedBcapMessagePatchWritable,
     PatchedPermitApplicationWritable,
     PermitApplication,
+    PermitApplicationResourceAliasedData,
     PermitApplicationApplicationAdminTileWritable,
     PermitApplicationProcessModuleTileWritable,
     ProcessRequirement,
@@ -56,32 +60,15 @@ export const createDraft = async (
     );
 };
 
-// Graphs that have a draft-backed workflow on the external dashboard. Each
-// draft response carries its own graph_slug, so the dashboard can label and
-// resume it into the right module.
-const DRAFT_GRAPHS = [
-    GraphSlug.PermitApplication,
-    GraphSlug.Investigation,
-    GraphSlug.Inspection,
-    GraphSlug.Alteration,
-];
-
-export const fetchDrafts = async () => {
-    const perGraph = await Promise.all(
-        DRAFT_GRAPHS.map(async (graphSlug) => {
-            try {
-                const response = await apiFetch(
-                    arches.urls.api_workflow_draft(graphSlug),
-                );
-                const data = await response.json();
-                return data.results || data || [];
-            } catch (error) {
-                console.error(`Failed to load ${graphSlug} drafts:`, error);
-                return [];
-            }
-        }),
-    );
-    return perGraph.flat();
+export const fetchDrafts = async (): Promise<WorkflowDraft[]> => {
+    try {
+        return await apiFetchJson<WorkflowDraft[]>(
+            arches.urls.api_workflow_draft_all,
+        );
+    } catch (error) {
+        console.error('Failed to load drafts:', error);
+        return [];
+    }
 };
 
 export const deleteDraft = async (
@@ -93,18 +80,25 @@ export const deleteDraft = async (
     });
 };
 
-export const fetchMyProjects = async () => fetchDashboardCards('CREATED_BY_ME');
-export const fetchCompanyProjects = async () =>
-    fetchDashboardCards('CREATED_BY_ASSOCIATED_COMPANIES');
-export const fetchDraftCards = async () => fetchDashboardCards('DRAFTS');
+type ExternalDashboardStatus = NonNullable<
+    ApiDashboardExternalRetrieveData['query']
+>['status'];
 
-const fetchDashboardCards = async (status: string) => {
+export const fetchMyProjects = async () =>
+    fetchExternalDashboardCards('CREATED_BY_ME');
+export const fetchCompanyProjects = async () =>
+    fetchExternalDashboardCards('CREATED_BY_ASSOCIATED_COMPANIES');
+export const fetchDraftCards = async () =>
+    fetchExternalDashboardCards('DRAFTS');
+
+const fetchExternalDashboardCards = async (
+    status: ExternalDashboardStatus,
+): Promise<ExternalDashboardCard[]> => {
     try {
         const url = `${arches.urls.dashboard_external}?status=${status}`;
 
-        const response = await apiFetch(url);
-        const data = await response.json();
-        return data.results || data || [];
+        const page = await apiFetchJson<ExternalDashboardPage>(url);
+        return page.results || [];
     } catch (error) {
         console.error(`Failed to load ${status} dashboard cards:`, error);
         return [];
@@ -131,7 +125,7 @@ export const submitApplication = async (
                     direction: 'ltr',
                 },
             },
-        } as unknown as DraftNode;
+        } as DraftNode;
 
         const finalResource = await apiFetchJson<PermitApplication>(submitUrl, {
             method: HttpMethod.Post,
@@ -201,7 +195,7 @@ export const fetchRequirementDetails = async (
 
 export const fetchPermitDetails = async (
     permitId: string,
-): Promise<PermitAliasedData | null | undefined> => {
+): Promise<PermitApplicationResourceAliasedData | null> => {
     const url = arches.urls.api_resource(GraphSlug.PermitApplication, permitId);
 
     const rawJson = await apiFetchJson<PermitApplication>(url);
@@ -211,7 +205,7 @@ export const fetchPermitDetails = async (
         return null;
     }
 
-    return rawJson.aliased_data as PermitAliasedData;
+    return rawJson.aliased_data;
 };
 
 export const fetchResourceData = async (
@@ -219,8 +213,8 @@ export const fetchResourceData = async (
     resourceId: string,
 ): Promise<ArchesDraftData | null> => {
     const url = arches.urls.api_resource(graphSlug, resourceId);
-    const rawJson = await apiFetchJson<PermitApplication>(url);
-    return (rawJson?.aliased_data as unknown as ArchesDraftData) ?? null;
+    const rawJson = await apiFetchJson<{ aliased_data?: ArchesDraftData }>(url);
+    return rawJson?.aliased_data ?? null;
 };
 
 export const patchPermitSubmissionDate = async (
@@ -465,11 +459,10 @@ export const createBcapMessage = async ({
         for (const file of files) {
             form.append('attachments', file);
         }
-        const response = await apiFetch(arches.urls.bcap_message_list_create, {
+        return apiFetchJson<BcapMessage>(arches.urls.bcap_message_list_create, {
             method: HttpMethod.Post,
             body: form,
         });
-        return response.json() as Promise<BcapMessage>;
     }
 
     return apiFetchJson<BcapMessage>(arches.urls.bcap_message_list_create, {
@@ -571,9 +564,9 @@ export const getMessagesForThread = async (
 export const getContributorsForResources = async (
     resourceId: string,
 ): Promise<Array<{ label: string; value: string }>> => {
-    const data = await apiFetchJson<
-        Array<{ id: string; name?: string; email?: string; type?: string }>
-    >(arches.urls.bcap_message_resource_contributors(resourceId));
+    const data = await apiFetchJson<ContributorSummary[]>(
+        arches.urls.bcap_message_resource_contributors(resourceId),
+    );
 
     return (data ?? []).map((item) => ({
         label: item.name || 'Unknown Contributor',

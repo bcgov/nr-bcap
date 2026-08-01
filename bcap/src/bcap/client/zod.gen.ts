@@ -66,6 +66,9 @@ export const zConceptAliasedNodeData = z.object({
     details: z.array(zConceptValueDetail).readonly().optional()
 });
 
+/**
+ * The contributor pick-list option shape, derived from the dataclass.
+ */
 export const zContributorSummary = z.object({
     id: z.string(),
     name: z.string(),
@@ -77,31 +80,6 @@ export const zDateAliasedNodeData = z.object({
     node_value: z.string().regex(/^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)?)?$/).nullable(),
     display_value: z.string().readonly().optional(),
     details: z.array(z.record(z.string(), z.unknown())).readonly().optional()
-});
-
-export const zDraftRecord = z.object({
-    graph_has_different_publication: z.boolean().readonly(),
-    id: z.string(),
-    graph_slug: z.string(),
-    graph_publication_id: z.string(),
-    frontend_version: z.string(),
-    parent_resource_id: z.string().optional(),
-    data: z.record(z.string(), z.unknown()).optional(),
-    current_step: z.string().optional(),
-    created: z.iso.datetime({ offset: true, local: true }).nullish(),
-    updated: z.iso.datetime({ offset: true, local: true }).nullish()
-});
-
-/**
- * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
- */
-export const zDraftWrite = z.object({
-    data: z.unknown(),
-    current_step: z.string().optional(),
-    frontend_version: z.string().optional(),
-    parent_resource_id: z.string().optional()
 });
 
 export const zFileListAliasedNodeData = z.object({
@@ -205,6 +183,8 @@ export const zModuleProgress = z.object({
 export const zExternalDashboardCard = z.object({
     id: z.string(),
     is_draft: z.boolean().optional(),
+    graph_slug: z.string().optional(),
+    permit_application_id: z.string().optional(),
     status: z.string().optional(),
     created_by_name: z.string().optional(),
     created_date: z.string().optional(),
@@ -396,18 +376,6 @@ export const zPaginatedInformationRequestList = z.object({
 export const zPatchedChecklistPatch = z.object({
     name: z.string().optional(),
     steps: z.array(zChecklistStep).optional()
-});
-
-/**
- * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
- */
-export const zPatchedDraftWrite = z.object({
-    data: z.unknown().optional(),
-    current_step: z.string().optional(),
-    frontend_version: z.string().optional(),
-    parent_resource_id: z.string().optional()
 });
 
 /**
@@ -4421,6 +4389,70 @@ export const zSiteVisitResourceAliasedData = z.object({
     related_documents: zSiteVisitRelatedDocumentsTile.nullish()
 });
 
+/**
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
+ */
+export const zDraftPayload = z.object({
+    data: z.union([
+        zAlterationResourceAliasedData,
+        zDocumentSubmissionResourceAliasedData,
+        zInformationRequestResourceAliasedData,
+        zInspectionResourceAliasedData,
+        zInvestigationResourceAliasedData,
+        zNoticeOfProjectIntentResourceAliasedData,
+        zPermitApplicationResourceAliasedData,
+        zSiteVisitResourceAliasedData
+    ]),
+    current_step: z.string().optional(),
+    frontend_version: z.string().optional(),
+    parent_resource_id: z.string().optional()
+});
+
+export const zDraftRecord = z.object({
+    data: z.union([
+        zAlterationResourceAliasedData,
+        zDocumentSubmissionResourceAliasedData,
+        zInformationRequestResourceAliasedData,
+        zInspectionResourceAliasedData,
+        zInvestigationResourceAliasedData,
+        zNoticeOfProjectIntentResourceAliasedData,
+        zPermitApplicationResourceAliasedData,
+        zSiteVisitResourceAliasedData
+    ]),
+    graph_has_different_publication: z.boolean().readonly(),
+    id: z.string(),
+    graph_slug: z.string(),
+    graph_publication_id: z.string(),
+    frontend_version: z.string(),
+    parent_resource_id: z.string().optional(),
+    current_step: z.string().optional(),
+    created: z.iso.datetime({ offset: true, local: true }).nullish(),
+    updated: z.iso.datetime({ offset: true, local: true }).nullish()
+});
+
+/**
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
+ */
+export const zPatchedDraftPayload = z.object({
+    data: z.union([
+        zAlterationResourceAliasedData,
+        zDocumentSubmissionResourceAliasedData,
+        zInformationRequestResourceAliasedData,
+        zInspectionResourceAliasedData,
+        zInvestigationResourceAliasedData,
+        zNoticeOfProjectIntentResourceAliasedData,
+        zPermitApplicationResourceAliasedData,
+        zSiteVisitResourceAliasedData
+    ]).optional(),
+    current_step: z.string().optional(),
+    frontend_version: z.string().optional(),
+    parent_resource_id: z.string().optional()
+});
+
 export const zSiteVisit = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zSiteVisitResourceAliasedData.optional(),
@@ -4442,13 +4474,13 @@ export const zSiteVisit = z.object({
 });
 
 export const zModuleHost = z.union([
-    zInvestigation,
     zAlteration,
-    zInspection,
-    zSiteVisit,
     zDocumentSubmission,
     zInformationRequest,
-    zNoticeOfProjectIntent
+    zInspection,
+    zInvestigation,
+    zNoticeOfProjectIntent,
+    zSiteVisit
 ]);
 
 export const zPaginatedSiteVisitList = z.object({
@@ -4771,18 +4803,6 @@ export const zConceptAliasedNodeDataWritable = z.object({
 
 export const zDateAliasedNodeDataWritable = z.object({
     node_value: z.string().regex(/^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)?)?$/).nullable()
-});
-
-export const zDraftRecordWritable = z.object({
-    id: z.string(),
-    graph_slug: z.string(),
-    graph_publication_id: z.string(),
-    frontend_version: z.string(),
-    parent_resource_id: z.string().optional(),
-    data: z.record(z.string(), z.unknown()).optional(),
-    current_step: z.string().optional(),
-    created: z.iso.datetime({ offset: true, local: true }).nullish(),
-    updated: z.iso.datetime({ offset: true, local: true }).nullish()
 });
 
 export const zFileListAliasedNodeDataWritable = z.object({
@@ -8630,6 +8650,69 @@ export const zSiteVisitResourceAliasedDataWritable = z.object({
     related_documents: zSiteVisitRelatedDocumentsTileWritable.nullish()
 });
 
+/**
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
+ */
+export const zDraftPayloadWritable = z.object({
+    data: z.union([
+        zAlterationResourceAliasedDataWritable,
+        zDocumentSubmissionResourceAliasedDataWritable,
+        zInformationRequestResourceAliasedDataWritable,
+        zInspectionResourceAliasedDataWritable,
+        zInvestigationResourceAliasedDataWritable,
+        zNoticeOfProjectIntentResourceAliasedDataWritable,
+        zPermitApplicationResourceAliasedDataWritable,
+        zSiteVisitResourceAliasedDataWritable
+    ]),
+    current_step: z.string().optional(),
+    frontend_version: z.string().optional(),
+    parent_resource_id: z.string().optional()
+});
+
+export const zDraftRecordWritable = z.object({
+    data: z.union([
+        zAlterationResourceAliasedDataWritable,
+        zDocumentSubmissionResourceAliasedDataWritable,
+        zInformationRequestResourceAliasedDataWritable,
+        zInspectionResourceAliasedDataWritable,
+        zInvestigationResourceAliasedDataWritable,
+        zNoticeOfProjectIntentResourceAliasedDataWritable,
+        zPermitApplicationResourceAliasedDataWritable,
+        zSiteVisitResourceAliasedDataWritable
+    ]),
+    id: z.string(),
+    graph_slug: z.string(),
+    graph_publication_id: z.string(),
+    frontend_version: z.string(),
+    parent_resource_id: z.string().optional(),
+    current_step: z.string().optional(),
+    created: z.iso.datetime({ offset: true, local: true }).nullish(),
+    updated: z.iso.datetime({ offset: true, local: true }).nullish()
+});
+
+/**
+ * Request body for create/update: the whole draft blob, plus the step the
+ * user is on and an optional frontend version and parent resource stamped on
+ * create.
+ */
+export const zPatchedDraftPayloadWritable = z.object({
+    data: z.union([
+        zAlterationResourceAliasedDataWritable,
+        zDocumentSubmissionResourceAliasedDataWritable,
+        zInformationRequestResourceAliasedDataWritable,
+        zInspectionResourceAliasedDataWritable,
+        zInvestigationResourceAliasedDataWritable,
+        zNoticeOfProjectIntentResourceAliasedDataWritable,
+        zPermitApplicationResourceAliasedDataWritable,
+        zSiteVisitResourceAliasedDataWritable
+    ]).optional(),
+    current_step: z.string().optional(),
+    frontend_version: z.string().optional(),
+    parent_resource_id: z.string().optional()
+});
+
 export const zSiteVisitWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zSiteVisitResourceAliasedDataWritable.optional(),
@@ -8637,13 +8720,13 @@ export const zSiteVisitWritable = z.object({
 });
 
 export const zModuleHostWritable = z.union([
-    zInvestigationWritable,
     zAlterationWritable,
-    zInspectionWritable,
-    zSiteVisitWritable,
     zDocumentSubmissionWritable,
     zInformationRequestWritable,
-    zNoticeOfProjectIntentWritable
+    zInspectionWritable,
+    zInvestigationWritable,
+    zNoticeOfProjectIntentWritable,
+    zSiteVisitWritable
 ]);
 
 export const zPaginatedSiteVisitListWritable = z.object({
@@ -9302,7 +9385,7 @@ export const zApiWorkflowDraftListPath = z.object({
 
 export const zApiWorkflowDraftListResponse = z.array(zDraftRecord);
 
-export const zApiWorkflowDraftCreateBody = zDraftWrite;
+export const zApiWorkflowDraftCreateBody = zDraftPayloadWritable;
 
 export const zApiWorkflowDraftCreatePath = z.object({
     graph_slug: z.string()
@@ -9327,7 +9410,7 @@ export const zApiWorkflowDraftRetrievePath = z.object({
 
 export const zApiWorkflowDraftRetrieveResponse = zDraftRecord;
 
-export const zApiWorkflowDraftPartialUpdateBody = zPatchedDraftWrite;
+export const zApiWorkflowDraftPartialUpdateBody = zPatchedDraftPayloadWritable;
 
 export const zApiWorkflowDraftPartialUpdatePath = z.object({
     graph_slug: z.string(),
@@ -9336,7 +9419,7 @@ export const zApiWorkflowDraftPartialUpdatePath = z.object({
 
 export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
 
-export const zApiWorkflowDraftUpdateBody = zDraftWrite;
+export const zApiWorkflowDraftUpdateBody = zDraftPayloadWritable;
 
 export const zApiWorkflowDraftUpdatePath = z.object({
     graph_slug: z.string(),

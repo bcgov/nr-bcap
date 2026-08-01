@@ -25,15 +25,14 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from arches_zod_validation.views.mixins import UserOwnedResourceMixin
 
+from bcap.serializers.graph_serializers import MODULE_SERIALIZERS, module_host_schema
 from bcap.serializers.process_requirement_serializers import (
     AddRequirementSerializer,
     ChecklistPatchSerializer,
-    HOST_SERIALIZERS,
     ModuleCompletionSerializer,
     ReorderRequirementsSerializer,
     RequirementAssigneeSerializer,
     RequirementStatusSerializer,
-    module_host_schema,
 )
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
@@ -119,7 +118,7 @@ class ProcessRequirementSeedView(APIView):
         """The serializer for the module's host resource. 400 when the type has
         no host; 404 when the permit application is unknown."""
         serializer_class = (
-            HOST_SERIALIZERS.get(permit_type) if host_graph(permit_type) else None
+            MODULE_SERIALIZERS.get(permit_type) if host_graph(permit_type) else None
         )
         if serializer_class is None:
             raise ValidationError(f"Module '{permit_type}' has no host resource.")

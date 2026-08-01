@@ -4,6 +4,7 @@ import type {
     ProcessRequirement,
     PermitApplicationProcessModuleTile,
 } from '@/bcap/client/types.gen.ts';
+import type { QueryParam } from '@/bcap/types.ts';
 
 export interface RequirementItem {
     name: string;
@@ -63,7 +64,7 @@ export const editChecklistHref = (id: string): string =>
 export const withPermitContext = (
     href: string,
     permitId: string,
-    staff: unknown,
+    staff: QueryParam,
 ): string => `${href}&permit=${permitId}${staff ? `&staff=${staff}` : ''}`;
 
 const hrefFor = (type: string, id: string): string => {

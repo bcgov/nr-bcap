@@ -4,6 +4,7 @@ import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import Select from 'primevue/select';
 import type { ContributorSummary } from '@/bcap/client/types.gen.ts';
+import type { QueryParam } from '@/bcap/types.ts';
 import { initials } from '@/bcap/util.ts';
 import MessageDialog from '@/bcap/apps/Permit/components/common/messages/MessageDialog.vue';
 import {
@@ -21,7 +22,7 @@ const props = defineProps<{
     permitId: string;
     isStaff?: boolean;
     applicationId?: string;
-    staff?: unknown;
+    staff?: QueryParam;
     toggling?: string | null;
     canViewSubmission?: boolean;
     assignees?: ContributorSummary[];
