@@ -12,6 +12,7 @@ from django.urls import reverse
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.dashboard.dashboard_types import DashboardFilter
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
@@ -28,7 +29,7 @@ from bcap.util.aliases.permit_application import (
 )
 from arches_controlled_lists.models import ListItem
 
-from arches.app.models.models import TileModel
+from arches.app.models.models import ResourceInstance, TileModel
 
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.util.graph import get_node, node_id
@@ -106,9 +107,8 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         seed_requirement_templates(ProcessRequirementBuilder())
         cls.submitted_pk = cls._build_submitted_permit()
-        cls.other_submitted_pk = cls._build_submitted_permit()
         (
-            cls.investigation_pk,
+            cls.draft_pk,
             cls.investigation_host,
             cls.investigation_requirements,
         ) = cls._build_permit_with_investigation()
@@ -116,8 +116,8 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     @classmethod
     def _build_permit_with_investigation(cls):
         """A permit with an investigation module attached, the way the
-        module-host submission does. Shared for the same reason as the
-        submitted permit: several tests need exactly this and nothing more."""
+        module-host submission does. Never submitted, so it doubles as the
+        draft for tests that just need an unsubmitted permit to read."""
         pk = cls._create_permit(cls._logged_in_client())
         host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
         service = ProcessRequirementService(
@@ -189,13 +189,24 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 201)
         return resp.json()["resourceinstanceid"]
 
-    def _permit(self, pk):
+    def _permit(self, pk, *node_aliases):
+        """The permit tree, narrowed to the given node aliases. Hydrating every
+        node of this graph is the most expensive thing these tests do, so pass
+        the ones being read; no aliases means the whole tree (what the save path
+        needs)."""
+        nodes = (
+            BaseGraphService.nodes(GraphSlugs.PERMIT_APPLICATION, node_aliases)
+            if node_aliases
+            else None
+        )
         return ResourceTileTree.get_tiles(
-            GraphSlugs.PERMIT_APPLICATION, resource_ids=[pk]
+            GraphSlugs.PERMIT_APPLICATION, resource_ids=[pk], nodes=nodes
         ).get()
 
     def _requirements(self, pk):
-        admin = self._permit(pk).aliased_data.application_admin
+        admin = self._permit(
+            pk, aliases.PROCESS_REQUIREMENT
+        ).aliased_data.application_admin
         if not admin:
             return []
         return [
@@ -205,11 +216,15 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ]
 
     def _application_id(self, pk):
-        ident = self._permit(pk).aliased_data.application_identification
+        ident = self._permit(
+            pk, aliases.APPLICATION_ID
+        ).aliased_data.application_identification
         return localized_string(ident.aliased_data.application_id) if ident else ""
 
     def _requirement_count(self):
-        return ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT).count()
+        return ResourceInstance.objects.filter(
+            graph__slug=GraphSlugs.PROCESS_REQUIREMENT
+        ).count()
 
     def test_create_seeds_distinct_ids_without_requirements(self):
         draft = self._create()
@@ -222,9 +237,8 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._requirements(draft), [])
 
     def test_draft_without_submission_date_is_hidden_from_dashboard(self):
-        pk = self._create()
         page = InternalDashboardService().get_cards(DashboardFilter())
-        self.assertNotIn(pk, [card.id for card in page.results])
+        self.assertNotIn(self.draft_pk, [card.id for card in page.results])
 
     def test_create_with_submission_date_attaches_requirements(self):
         payload = create_payload()
@@ -254,7 +268,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         # requirement id from it in post_save.
         pk = self.submitted_pk
 
-        admin = self._permit(pk).aliased_data.application_admin
+        admin = self._permit(pk, aliases.MODULE_ID).aliased_data.application_admin
         module = (admin.aliased_data.process_module or [])[0]
         module_id = module.aliased_data.module_id
         self.assertRegex(module_id, r"^PERMIT-APPLICATION-\d+$")
@@ -274,24 +288,26 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def _non_template_requirement_count(self):
         return (
-            ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT)
+            ResourceTileTree.get_tiles(
+                GraphSlugs.PROCESS_REQUIREMENT,
+                nodes=BaseGraphService.nodes(
+                    GraphSlugs.PROCESS_REQUIREMENT, ["is_template_requirement"]
+                ),
+            )
             .filter(is_template_requirement=False)
             .count()
         )
 
     def test_remove_module_deletes_tile_and_working_copies(self):
         pk = self.submitted_pk
-        module = (
-            self._permit(pk).aliased_data.application_admin.aliased_data.process_module
-            or []
-        )[0]
+        module = self._module_tile(pk)
         before = self._non_template_requirement_count()
 
         ProcessRequirementService(
             user=get_user_model().objects.get(username="admin")
         ).remove_module(pk, module.tileid)
 
-        admin = self._permit(pk).aliased_data.application_admin
+        admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
         self.assertEqual(admin.aliased_data.process_module or [], [])
         # The module's requirements plus its grouping parent are gone.
         self.assertEqual(
@@ -300,24 +316,22 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_remove_module_ignores_a_tile_from_another_permit(self):
         pk = self.submitted_pk
-        other = self.other_submitted_pk
-        module = (
-            self._permit(
-                other
-            ).aliased_data.application_admin.aliased_data.process_module
-            or []
-        )[0]
+        other = self.draft_pk
+        module = self._module_tile(other)
 
         # The module tile belongs to `other`, so removing it against `pk` is a
         # no-op: neither permit's module is touched.
         ProcessRequirementService().remove_module(pk, module.tileid)
 
         self.assertEqual(len(self._requirements(pk)), PERMIT_REQUIREMENTS)
-        self.assertEqual(len(self._requirements(other)), PERMIT_REQUIREMENTS)
+        self.assertEqual(self._module_tile(other).tileid, module.tileid)
+
+    def _module_tile(self, pk):
+        admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
+        return (admin.aliased_data.process_module or [])[0]
 
     def _module_tileid(self, pk):
-        admin = self._permit(pk).aliased_data.application_admin
-        return (admin.aliased_data.process_module or [])[0].tileid
+        return self._module_tile(pk).tileid
 
     def _ordered_requirement_ids(self, module_tileid):
         ref = node_id(GraphSlugs.PERMIT_APPLICATION, aliases.PROCESS_REQUIREMENT)
@@ -463,57 +477,42 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
 
-    def test_reorder_endpoint_renumbers_children(self):
-        pk = self.submitted_pk
-        module_tileid = self._module_tileid(pk)
-        reversed_ids = list(reversed(self._ordered_requirement_ids(module_tileid)))
-
-        resp = self._reorder(pk, module_tileid, reversed_ids)
-
-        self.assertEqual(resp.status_code, 204)
-        self.assertEqual(self._ordered_requirement_ids(module_tileid), reversed_ids)
-
-    def test_reorder_endpoint_rejects_a_non_uuid_order_entry(self):
-        # The reorder serializer requires the order entries to be UUIDs.
-        pk = self.submitted_pk
-        module_tileid = self._module_tileid(pk)
-
-        resp = self._reorder(pk, module_tileid, ["not-a-uuid"])
-
-        self.assertEqual(resp.status_code, 400)
-
-    def test_add_requirement_endpoint_appends_named_requirement(self):
+    def test_module_requirement_endpoints_reorder_add_and_delete(self):
+        """One pass over the module-requirement endpoints. They share a permit
+        and a module tile, and loading those per test cost more than the calls
+        themselves."""
         pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         before = self._ordered_requirement_ids(module_tileid)
 
-        resp = self._add_requirement(pk, module_tileid, "Custom step")
+        reversed_ids = list(reversed(before))
+        self.assertEqual(
+            self._reorder(pk, module_tileid, reversed_ids).status_code, 204
+        )
+        self.assertEqual(self._ordered_requirement_ids(module_tileid), reversed_ids)
 
-        self.assertEqual(resp.status_code, 201)
+        # The reorder serializer requires the order entries to be UUIDs.
+        self.assertEqual(
+            self._reorder(pk, module_tileid, ["not-a-uuid"]).status_code, 400
+        )
+
+        self.assertEqual(
+            self._add_requirement(pk, module_tileid, "Custom step").status_code, 201
+        )
         self.assertEqual(
             len(self._ordered_requirement_ids(module_tileid)), len(before) + 1
         )
 
-    def test_add_requirement_endpoint_defaults_the_name(self):
         # The add serializer makes name optional; the view supplies a default.
-        pk = self.submitted_pk
-        module_tileid = self._module_tileid(pk)
-
-        resp = self._add_requirement(pk, module_tileid)
-
-        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(self._add_requirement(pk, module_tileid).status_code, 201)
         self.assertEqual(
-            len(self._ordered_requirement_ids(module_tileid)), PERMIT_REQUIREMENTS + 1
+            len(self._ordered_requirement_ids(module_tileid)), len(before) + 2
         )
 
-    def test_delete_requirement_endpoint_removes_child(self):
-        pk = self.submitted_pk
-        module_tileid = self._module_tileid(pk)
         target = self._ordered_requirement_ids(module_tileid)[0]
-
-        resp = self._delete_requirement(pk, module_tileid, target)
-
-        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(
+            self._delete_requirement(pk, module_tileid, target).status_code, 204
+        )
         self.assertNotIn(target, self._ordered_requirement_ids(module_tileid))
 
     def test_delete_module_endpoint_removes_the_tile(self):
@@ -523,7 +522,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         resp = self._delete_module(pk, module_tileid)
 
         self.assertEqual(resp.status_code, 204)
-        admin = self._permit(pk).aliased_data.application_admin
+        admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
         self.assertEqual(admin.aliased_data.process_module or [], [])
 
     def test_checklist_endpoint_saves_name_and_steps(self):
@@ -544,124 +543,93 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
         self.assertEqual(resp.status_code, 204)
 
-    def test_checklist_endpoint_unknown_requirement_returns_404(self):
-        resp = self._patch_checklist(
-            "00000000-0000-0000-0000-000000000000",
-            {"name": "x", "steps": []},
-        )
-        self.assertEqual(resp.status_code, 404)
+    def test_endpoints_reject_unknown_ids_and_types(self):
+        unknown = "00000000-0000-0000-0000-000000000000"
 
-    def test_module_host_endpoint_unknown_type_returns_400(self):
+        self.assertEqual(
+            self._patch_checklist(unknown, {"name": "x", "steps": []}).status_code, 404
+        )
         # A permit type with no host graph is rejected before the serializer.
-        pk = self._create()
-        resp = self.client.get(
-            reverse("seed_process_requirements", args=[pk, "not_a_module"])
+        self.assertEqual(
+            self.client.get(
+                reverse(
+                    "seed_process_requirements", args=[self.draft_pk, "not_a_module"]
+                )
+            ).status_code,
+            400,
         )
-        self.assertEqual(resp.status_code, 400)
-
-    def test_module_host_endpoint_unknown_permit_returns_404(self):
-        resp = self.client.get(
-            reverse(
-                "seed_process_requirements",
-                args=["00000000-0000-0000-0000-000000000000", "investigation"],
-            )
+        self.assertEqual(
+            self.client.get(
+                reverse("seed_process_requirements", args=[unknown, "investigation"])
+            ).status_code,
+            404,
         )
-        self.assertEqual(resp.status_code, 404)
 
-    def test_attach_requirements_adds_investigation_module(self):
-        pk = self.investigation_pk
-
+    def test_attached_investigation_module_and_its_host(self):
+        """The attach puts an Investigation module on the permit, and both the
+        service and the endpoint surface its host resource."""
+        pk = self.draft_pk
         self.assertTrue(self.investigation_requirements)
-        admin = self._permit(pk).aliased_data.application_admin
+
+        admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
         names = [
             localized_string(module.aliased_data.module_name)
             for module in (admin.aliased_data.process_module or [])
         ]
         self.assertIn("Investigation", names)
 
-    def test_permit_module_tiles_lists_the_attached_host(self):
         service = ProcessRequirementService(
             user=get_user_model().objects.get(username="admin")
         )
-        hosts = service.permit_module_tiles(self.investigation_pk, "investigation")
-
+        hosts = service.permit_module_tiles(pk, "investigation")
         self.assertIn(str(self.investigation_host.pk), [str(h.pk) for h in hosts])
 
-    def test_permit_module_tiles_is_empty_before_submission(self):
-        # The permit module hosts itself, but nothing is attached until the
-        # submission date is set.
-        service = ProcessRequirementService()
-        self.assertEqual(service.permit_module_tiles(self._create(), "permit"), [])
-
-    def test_submission_links_the_permit_as_its_own_host(self):
-        # The permit module's own-submission requirement points back at the
-        # permit, linked after the save because the id exists only then.
-        pk = self.submitted_pk
-
-        hosts = ProcessRequirementService().permit_module_tiles(pk, "permit")
-        self.assertEqual([str(host.pk) for host in hosts], [str(pk)])
-
-    def test_module_host_endpoint_lists_attached_hosts(self):
         resp = self.client.get(
-            reverse(
-                "seed_process_requirements",
-                args=[self.investigation_pk, "investigation"],
-            )
+            reverse("seed_process_requirements", args=[pk, "investigation"])
         )
-
         self.assertEqual(resp.status_code, 200)
         ids = [host.get("resourceinstanceid") for host in resp.json()]
         self.assertIn(str(self.investigation_host.pk), ids)
 
-    def test_permit_module_tiles_empty_when_module_has_no_hosts(self):
-        # The default module has requirements but no host resources, so an
-        # investigation-host lookup finds no hosts.
-        pk = self.submitted_pk
-
+    def test_permit_module_hosts_only_what_is_attached(self):
+        """The permit module hosts the permit itself once submitted, and only
+        then: a permit with no module has no hosts, and a module with
+        requirements but no host resources has none for another type."""
         service = ProcessRequirementService()
-        self.assertEqual(list(service.permit_module_tiles(pk, "investigation")), [])
 
-    def test_reorder_ignores_a_module_from_another_permit(self):
-        pk = self.submitted_pk
-        other_module = self._module_tileid(self.other_submitted_pk)
-        before = self._ordered_requirement_ids(other_module)
+        self.assertEqual(service.permit_module_tiles(self._create(), "permit"), [])
 
-        # Reordering `other`'s module against `pk` is rejected as a no-op.
-        ProcessRequirementService().reorder_requirements(
-            pk, other_module, list(reversed(before))
+        # The own-submission requirement points back at the permit, linked after
+        # the save because the id exists only then.
+        hosts = service.permit_module_tiles(self.submitted_pk, "permit")
+        self.assertEqual([str(host.pk) for host in hosts], [str(self.submitted_pk)])
+
+        self.assertEqual(
+            list(service.permit_module_tiles(self.submitted_pk, "investigation")), []
         )
 
-        self.assertEqual(self._ordered_requirement_ids(other_module), before)
-
-    def test_reorder_with_empty_order_leaves_children_untouched(self):
+    def test_ids_that_dont_belong_to_the_permit_are_no_ops(self):
+        """Another permit's module, an empty order, an unknown requirement and
+        an unknown module all leave the permit's module exactly as it was."""
+        unknown = "00000000-0000-0000-0000-000000000000"
         pk = self.submitted_pk
         module_tileid = self._module_tileid(pk)
         before = self._ordered_requirement_ids(module_tileid)
+        service = ProcessRequirementService()
+
+        other_module = self._module_tileid(self.draft_pk)
+        other_before = self._ordered_requirement_ids(other_module)
+        service.reorder_requirements(pk, other_module, list(reversed(other_before)))
+        self.assertEqual(self._ordered_requirement_ids(other_module), other_before)
 
         # No id maps to a position, so every child is skipped.
-        ProcessRequirementService().reorder_requirements(pk, module_tileid, [])
-
+        service.reorder_requirements(pk, module_tileid, [])
         self.assertEqual(self._ordered_requirement_ids(module_tileid), before)
 
-    def test_remove_requirement_unknown_id_is_a_noop(self):
-        pk = self.submitted_pk
-        module_tileid = self._module_tileid(pk)
-        before = len(self._ordered_requirement_ids(module_tileid))
+        service.remove_requirement(pk, module_tileid, unknown)
+        self.assertEqual(self._ordered_requirement_ids(module_tileid), before)
 
-        ProcessRequirementService().remove_requirement(
-            pk, module_tileid, "00000000-0000-0000-0000-000000000000"
-        )
-
-        self.assertEqual(len(self._ordered_requirement_ids(module_tileid)), before)
-
-    def test_add_blank_requirement_unknown_module_returns_none(self):
-        pk = self.submitted_pk
-
-        result = ProcessRequirementService().add_blank_requirement(
-            pk, "00000000-0000-0000-0000-000000000000", "x"
-        )
-
-        self.assertIsNone(result)
+        self.assertIsNone(service.add_blank_requirement(pk, unknown, "x"))
 
     def test_removing_the_permit_module_leaves_the_permit_itself_alive(self):
         # The permit hosts the module's own submission, so it lands in the

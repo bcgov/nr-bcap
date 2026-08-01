@@ -9,7 +9,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date
 
-from arches.app.models.models import TileModel
+from arches.app.models.models import ResourceInstance, TileModel
 from arches.app.models.resource import Resource
 from arches.app.models.tile import Tile
 
@@ -291,10 +291,14 @@ class ProcessRequirementService:
             str(permit_id), set()
         )
         host_ids = set().union(*self.host_ids_by_requirement(requirement_ids).values())
+        host_ids = list(
+            ResourceInstance.objects.filter(
+                pk__in=host_ids, graph__slug=host_slug
+            ).values_list("pk", flat=True)
+        )
         if not host_ids:
             return []
-        # Loading by the host graph drops any submission ids of other graphs.
-        return ResourceTileTree.get_tiles(host_slug, resource_ids=list(host_ids))
+        return ResourceTileTree.get_tiles(host_slug, resource_ids=host_ids)
 
     def requirement_ids_by_permit(self, permit_ids):
         """Each permit id mapped to the process requirement ids attached to it."""

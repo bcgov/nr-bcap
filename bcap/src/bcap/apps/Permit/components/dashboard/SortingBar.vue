@@ -360,6 +360,7 @@ const activeSortLabel = computed(() => {
     background-color: var(--bc-navy, #003366);
     color: #ffffff;
     font-weight: 600;
+    transition: none;
 }
 
 .search-bar-wrapper {
