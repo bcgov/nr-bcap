@@ -1793,6 +1793,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteVisit'
           description: ''
+  /bcap/api/workflow_draft:
+    get:
+      operationId: api_workflow_draft_list_all
+      description: |-
+        GET the drafts the user can see, across graphs. Each carries its own
+        graph_slug, so the dashboard lists them all in one round trip. Narrow to one
+        permit's drafts with ?parent=<resourceinstanceid>: staff see every user's, so
+        an unfiltered call hands back every draft blob in the system.
+      parameters:
+      - in: query
+        name: parent
+        schema:
+          type: string
+          format: uuid
+        description: Only drafts started from this resource.
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DraftRecord'
+          description: ''
   /bcap/api/workflow_draft/{graph_slug}:
     get:
       operationId: api_workflow_draft_list

@@ -211,15 +211,15 @@ const {
     confirm: performDelete,
 } = useConfirmAction<DraftOf<GraphSlug.Investigation>>(async (draft) => {
     await deleteDraft(GraphSlug.Investigation, draft.id);
-    await loadInvestigations();
+    await loadDraftsForPermitApp();
 });
 
 // This needs to be more generic in the future
-const loadInvestigations = async () => {
-    const drafts = await fetchDrafts();
-    state.investigationDrafts = drafts
-        .filter(isDraftOf(GraphSlug.Investigation))
-        .filter((d) => d.parent_resource_id === permitId.value);
+const loadDraftsForPermitApp = async () => {
+    const drafts = await fetchDrafts(permitId.value);
+    state.investigationDrafts = drafts.filter(
+        isDraftOf(GraphSlug.Investigation),
+    );
     // Load each draft's threads up front so its header can badge unread without
     // the dialog being opened. Drafts are few, so a fetch each is fine.
     for (const draft of state.investigationDrafts) {
@@ -229,18 +229,18 @@ const loadInvestigations = async () => {
 
 onMounted(() => {
     loadPermitDetails();
-    loadInvestigations();
+    loadDraftsForPermitApp();
 });
 
 watch(permitId, () => {
     state.isLoading = true;
     loadPermitDetails();
-    loadInvestigations();
+    loadDraftsForPermitApp();
 });
 
 watch(activeModuleId, (id) => {
     if (id === GraphSlug.PermitApplication) {
-        loadInvestigations();
+        loadDraftsForPermitApp();
     }
 });
 </script>

@@ -9379,6 +9379,12 @@ export const zApiSiteVisitRetrievePath = z.object({
 
 export const zApiSiteVisitRetrieveResponse = zSiteVisit;
 
+export const zApiWorkflowDraftListAllQuery = z.object({
+    parent: z.uuid().optional()
+});
+
+export const zApiWorkflowDraftListAllResponse = z.array(zDraftRecord);
+
 export const zApiWorkflowDraftListPath = z.object({
     graph_slug: z.string()
 });

@@ -223,3 +223,5 @@ export const cacheSatisfied = (resourceId: string, satisfied: boolean) => {
     const meta = detailCache.get(resourceId);
     if (meta) meta.satisfied = satisfied;
 };
+
+export const clearRequirementCache = () => detailCache.clear();

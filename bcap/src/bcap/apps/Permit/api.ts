@@ -12,6 +12,7 @@ import type {
 import type {
     ApiContributorsAssignableListResponse,
     ApiDashboardExternalRetrieveData,
+    ApiWorkflowDraftListAllData,
     BcapMessage,
     BcapMessageWritable,
     ChecklistStep,
@@ -60,11 +61,18 @@ export const createDraft = async (
     );
 };
 
-export const fetchDrafts = async (): Promise<WorkflowDraft[]> => {
+export const fetchDrafts = async (
+    parentResourceId?: string,
+): Promise<WorkflowDraft[]> => {
+    let url = arches.urls.api_workflow_draft_all;
+    if (parentResourceId) {
+        const query: ApiWorkflowDraftListAllData['query'] = {
+            parent: parentResourceId,
+        };
+        url += `?${new URLSearchParams(query as Record<string, string>)}`;
+    }
     try {
-        return await apiFetchJson<WorkflowDraft[]>(
-            arches.urls.api_workflow_draft_all,
-        );
+        return await apiFetchJson<WorkflowDraft[]>(url);
     } catch (error) {
         console.error('Failed to load drafts:', error);
         return [];

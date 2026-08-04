@@ -323,3 +323,22 @@ describe('cacheSatisfied', () => {
         expect(rows.toRow(tile).requirements[0].satisfied).toBe(true);
     });
 });
+
+describe('clearRequirementCache', () => {
+    it('drops what was cached, so the next permit refetches', async () => {
+        fetchRequirementDetails.mockResolvedValue({
+            'r-1': detail({ name: 'Alpha', satisfied: true }),
+        });
+        const tile = moduleTile({
+            tileid: 't-1',
+            requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],
+        });
+        await rows.hydrateRows([rows.toRow(tile)]);
+
+        rows.clearRequirementCache();
+
+        const row = rows.toRow(tile);
+        expect(row.requirements[0].satisfied).toBeNull();
+        expect(rows.rowsNeedingDetails([row])).toEqual([row]);
+    });
+});

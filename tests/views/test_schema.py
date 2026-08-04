@@ -26,6 +26,10 @@ from bcap.schema import (
     _sort_properties_in_place,
     type_base_serializer_fields,
 )
+from bcap.serializers.graph_serializers import (
+    GRAPH_SERIALIZERS,
+    aliased_data_union_schema,
+)
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from tests.views.helpers import AuthTestHelper
@@ -88,6 +92,33 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
             {"count", "page", "limit", "results"},
         )
 
+    def test_aliased_data_union_refs_all_resolve(self):
+        """The draft blob's union names its components by string, so a rename in
+        the serializers would leave dangling refs that only surface as untyped
+        `unknown` in the generated client."""
+        schema = self.schema()
+        components = schema["components"]["schemas"]
+
+        refs = [option["$ref"] for option in aliased_data_union_schema()["oneOf"]]
+
+        self.assertEqual(len(refs), len(GRAPH_SERIALIZERS))
+        for ref in refs:
+            self.assertIn(ref.rsplit("/", 1)[-1], components, ref)
+
+    def test_aliased_data_union_reaches_the_draft_routes(self):
+        """The union is only worth keeping in step if the routes still carry it."""
+        schema = self.schema()
+
+        draft = next(
+            body
+            for path, body in schema["paths"].items()
+            if path.endswith("/api/workflow_draft")
+        )
+        record = schema["components"]["schemas"]["DraftRecord"]
+
+        self.assertIn("oneOf", record["properties"]["data"])
+        self.assertIn("get", draft)
+
 
 @override_settings(ROOT_URLCONF="tests.test_urls")
 class SchemaViewerTests(AuthTestHelper, TestCase):
@@ -107,6 +138,25 @@ class SchemaViewerTests(AuthTestHelper, TestCase):
         resp = self.client.get(reverse("redoc"))
         self.assertEqual(resp.status_code, 200)
         self.assertIn("text/html", resp["Content-Type"])
+
+
+class AliasedDataUnionNamingTests(SimpleTestCase):
+    """The union names its components by string rather than asking spectacular
+    for them, so the slug-to-component transform is pinned here; whether the
+    names it produces actually exist is asserted against the built document in
+    SchemaEndpointTests."""
+
+    def refs(self):
+        return {
+            option["$ref"].rsplit("/", 1)[-1]
+            for option in aliased_data_union_schema()["oneOf"]
+        }
+
+    def test_every_registered_graph_contributes_one_option(self):
+        self.assertEqual(
+            self.refs(),
+            {f"{slug.title()}_Resource_Aliased_Data" for slug in GRAPH_SERIALIZERS},
+        )
 
 
 class NodeValueFieldExtensionTests(SimpleTestCase):

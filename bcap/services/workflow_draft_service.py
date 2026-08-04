@@ -10,6 +10,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 from arches.app.models.models import (
@@ -45,28 +46,42 @@ class DraftRecord:
 
 
 class WorkflowDraftService(BaseGraphService):
-    """Owner-scoped CRUD over draft resources. All reads go through queryset() so
-    the dashboard can page the same rows the API returns."""
+    """CRUD over draft resources, scoped to the reader. All reads go through
+    queryset() so the dashboard can page the same rows the API returns."""
 
-    def queryset(self, user, graph_slug=None):
-        """The user's drafts, oldest first, or everyone's for branch staff.
-        Filters by the target graph in SQL so callers can page without loading
-        every draft."""
+    def queryset(self, user, graph_slug=None, parent_resource_id=None):
+        """An applicant's own drafts, oldest first; branch staff see everyone's.
+        Graph and parent filter in SQL, so no caller loads them all."""
         qs = ResourceInstance.objects.filter(graph__slug=GraphSlugs.WORKFLOW_DRAFTS)
         if not is_internal_user(user):
             qs = qs.filter(principaluser=user)
         if graph_slug is not None:
-            nodeid, ngid = self._node_info(
-                GraphSlugs.WORKFLOW_DRAFTS, WorkflowDraftsAliases.GRAPH_SLUG
-            )
+            qs = qs.filter(self._has_tile(WorkflowDraftsAliases.GRAPH_SLUG, graph_slug))
+        if parent_resource_id:
             qs = qs.filter(
-                tilemodel__nodegroup_id=ngid,
-                **{f"tilemodel__data__{nodeid}": graph_slug},
+                self._has_tile(
+                    WorkflowDraftsAliases.PARENT_RESOURCE,
+                    self._resource_instance_value(parent_resource_id),
+                    lookup="contains",
+                )
             )
-        return qs.order_by("createdtime").prefetch_related("tilemodel_set").distinct()
+        return qs.order_by("createdtime").prefetch_related("tilemodel_set")
+
+    def _has_tile(self, alias, value, lookup="exact"):
+        """Condition matching drafts whose tile for this alias holds the value.
+        A subquery rather than a join, so two of them don't multiply rows (and
+        the whole queryset needs no distinct() to put them back)."""
+        nodeid, ngid = self._node_info(GraphSlugs.WORKFLOW_DRAFTS, alias)
+        return Exists(
+            TileModel.objects.filter(
+                resourceinstance=OuterRef("pk"),
+                nodegroup_id=ngid,
+                **{f"data__{nodeid}__{lookup}": value},
+            )
+        )
 
     def get(self, user, pk):
-        """The user's draft with this id, or None if absent or not theirs."""
+        """The draft with this id as far as the user can see it, or None."""
         return self.queryset(user).filter(pk=pk).first()
 
     def to_record(self, resource) -> DraftRecord:

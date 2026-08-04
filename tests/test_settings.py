@@ -59,6 +59,14 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         "LOCATION": "user_permission_cache",
     },
+    # Declared because settings names them, dummy so a test's edits are never
+    # served from another test's cached copy.
+    "querysets_concepts": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+    },
+    "querysets_resource_instances": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+    },
 }
 
 LOGGING["loggers"]["arches"]["level"] = "ERROR"

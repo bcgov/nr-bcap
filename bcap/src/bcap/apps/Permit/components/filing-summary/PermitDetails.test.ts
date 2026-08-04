@@ -151,20 +151,20 @@ describe('PermitDetails.vue', () => {
         });
     });
 
-    it("fetches drafts on mount and keeps only this permit's", async () => {
+    it("fetches this permit's drafts on mount and keeps the investigations", async () => {
         vi.mocked(fetchDrafts).mockResolvedValue([
-            // This permit's investigation draft -- kept.
+            // The server returns this permit's drafts; the graph is what still
+            // has to be picked apart here.
             {
                 id: 'd1',
                 graph_slug: GraphSlug.Investigation,
                 parent_resource_id: 'mock-permit-123',
                 data: {},
             },
-            // Another permit's draft -- filtered out.
             {
                 id: 'd2',
-                graph_slug: GraphSlug.Investigation,
-                parent_resource_id: 'other-permit',
+                graph_slug: GraphSlug.PermitApplication,
+                parent_resource_id: 'mock-permit-123',
                 data: {},
             },
         ] as never);
@@ -172,12 +172,13 @@ describe('PermitDetails.vue', () => {
         const wrapper = mount(PermitDetails, globalMountOptions);
         await flushPromises();
 
-        expect(fetchDrafts).toHaveBeenCalled();
+        // Filtered by parent in SQL: staff see other users' drafts, so the
+        // unfiltered list is every draft in the system.
+        expect(fetchDrafts).toHaveBeenCalledWith('mock-permit-123');
 
         const vm = wrapper.vm as unknown as {
             state: { investigationDrafts: unknown[] };
         };
-        // Only the draft belonging to this permit survives the filter.
         expect(vm.state.investigationDrafts).toHaveLength(1);
     });
 

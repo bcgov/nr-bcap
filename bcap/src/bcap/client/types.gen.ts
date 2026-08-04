@@ -13683,6 +13683,25 @@ export type ApiSiteVisitRetrieveResponses = {
 export type ApiSiteVisitRetrieveResponse =
     ApiSiteVisitRetrieveResponses[keyof ApiSiteVisitRetrieveResponses];
 
+export type ApiWorkflowDraftListAllData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Only drafts started from this resource.
+         */
+        parent?: string;
+    };
+    url: '/bcap/api/workflow_draft';
+};
+
+export type ApiWorkflowDraftListAllResponses = {
+    200: Array<DraftRecord>;
+};
+
+export type ApiWorkflowDraftListAllResponse =
+    ApiWorkflowDraftListAllResponses[keyof ApiWorkflowDraftListAllResponses];
+
 export type ApiWorkflowDraftListData = {
     body?: never;
     path: {

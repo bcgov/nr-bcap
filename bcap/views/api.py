@@ -203,7 +203,6 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
                     qs = qs.select_related("resource_instance_lifecycle_state")
             else:  # pragma: no cover
                 raise NotImplementedError
-            print(f"Returning related resources: {self.graph_slug}")
             return qs
         except FieldError:
             msg = (

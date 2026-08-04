@@ -11,6 +11,13 @@ vi.mock('arches', () => ({
     },
 }));
 
+// The app mounts <Toast /> at its root; the composable only needs somewhere to
+// hand a failure to.
+const toastAdd = vi.hoisted(() => vi.fn());
+vi.mock('primevue/usetoast', () => ({
+    useToast: () => ({ add: toastAdd }),
+}));
+
 // ReviewSummary (a child) pulls in arches-component-lab, whose tsconfig has a
 // broken extends that crashes the esbuild transform. Mock the two entry points
 // so those files are never loaded.
@@ -499,6 +506,30 @@ describe('ProcessModules staff controls', () => {
         expect(api.setRequirementSatisfied).toHaveBeenCalledWith('r-9', true);
         // The row flips locally so the status icon updates without a reload.
         expect(requirement.satisfied).toBe(true);
+    });
+
+    it('tells the user when a write fails, leaving the row alone', async () => {
+        api.setRequirementSatisfied.mockRejectedValue(new Error('nope'));
+        const wrapper = mountModules({
+            modules: [staffModule()],
+            isStaff: true,
+        });
+        const vm = wrapper.vm as unknown as {
+            onToggleRequirement: (r: {
+                resourceId: string;
+                satisfied: boolean | null;
+            }) => Promise<void>;
+        };
+        const requirement = { resourceId: 'r-9', satisfied: false };
+        await vm.onToggleRequirement(requirement);
+
+        expect(requirement.satisfied).toBe(false);
+        expect(toastAdd).toHaveBeenCalledWith(
+            expect.objectContaining({
+                severity: 'error',
+                summary: 'Failed to change requirement status',
+            }),
+        );
     });
 
     it('persisting order renumbers rows and patches every tile', async () => {

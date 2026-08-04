@@ -247,6 +247,22 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             {row["id"] for row in resp.json()}, {mine.id, investigation.id}
         )
 
+    def test_all_graphs_list_narrows_to_one_parent(self):
+        permit = ResourceInstance.objects.create(
+            graph_id=get_current_graph(SLUG).pk, principaluser=self.editor
+        )
+        on_permit = self.svc.create(
+            self.editor, GraphSlugs.INVESTIGATION, {}, parent_resource_id=str(permit.pk)
+        )
+        self._create_draft(user=self.other_editor)
+
+        resp = self.client.get(
+            reverse("workflow_draft_list_all"), {"parent": str(permit.pk)}
+        )
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual({row["id"] for row in resp.json()}, {on_permit.id})
+
     def test_non_owner_cannot_access_draft(self):
         self.idir_login_simulate(self.applicant)
         others = self._create_draft(user=self.other_applicant, data={"step1": {"x": 1}})

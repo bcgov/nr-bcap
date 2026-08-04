@@ -102,6 +102,16 @@ describe('Permit API', () => {
             expect(result).toEqual(drafts);
         });
 
+        it('narrows to one permit when given a parent', async () => {
+            apiFetchJson.mockResolvedValue([]);
+
+            await fetchDrafts('permit-1');
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/drafts?parent=permit-1',
+            );
+        });
+
         it('returns nothing when the request fails', async () => {
             apiFetchJson.mockRejectedValue(new Error('Server Error'));
 

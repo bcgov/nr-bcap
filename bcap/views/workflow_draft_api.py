@@ -52,6 +52,15 @@ class WorkflowDraftSerializer(DataclassSerializer):
         return bool(graph) and str(graph.publication_id) != obj.graph_publication_id
 
 
+class DraftsQuerySerializer(serializers.Serializer):
+    """Query params for the all-graphs draft list."""
+
+    parent = serializers.UUIDField(
+        required=False,
+        help_text="Only drafts started from this resource.",
+    )
+
+
 class DraftPayloadSerializer(serializers.Serializer):
     """Request body for create/update: the whole draft blob, plus the step the
     user is on and an optional frontend version and parent resource stamped on
@@ -65,8 +74,9 @@ class DraftPayloadSerializer(serializers.Serializer):
 
 class WorkflowDraftBaseView(APIView):
     authentication_classes = [SessionAuthentication]
-    # Drafts are personal scratch data -- every verb (incl. GET) owner-scoping in
-    # WorkflowDraftService then limits an applicant to their own.
+    # Drafts are personal scratch data, so the route itself only asks for a login
+    # -- scoping in WorkflowDraftService then limits an applicant to their own,
+    # while branch staff reach the drafts on the permits they review.
     permission_classes = [IsAuthenticated]
 
     def __init__(self, *args, **kwargs):
@@ -99,12 +109,22 @@ class WorkflowDraftBaseView(APIView):
 
 @extend_schema(tags=["External: workflow_draft"])
 class WorkflowDraftAllListView(WorkflowDraftBaseView):
-    """GET every draft the user can see, across graphs. Each carries its own
-    graph_slug, so the dashboard lists them all in one round trip."""
+    """GET the drafts the user can see, across graphs. Each carries its own
+    graph_slug, so the dashboard lists them all in one round trip. Narrow to one
+    permit's drafts with ?parent=<resourceinstanceid>: staff see every user's, so
+    an unfiltered call hands back every draft blob in the system."""
 
-    @extend_schema(responses=WorkflowDraftSerializer(many=True))
+    @extend_schema(
+        operation_id="api_workflow_draft_list_all",
+        parameters=[DraftsQuerySerializer],
+        responses=WorkflowDraftSerializer(many=True),
+    )
     def get(self, request):
-        drafts = self.store.queryset(request.user)
+        params = DraftsQuerySerializer(data=request.query_params)
+        params.is_valid(raise_exception=True)
+        drafts = self.store.queryset(
+            request.user, parent_resource_id=params.validated_data.get("parent")
+        )
         return Response([self.serialize(self.store.to_record(d)) for d in drafts])
 
 
