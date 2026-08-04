@@ -453,27 +453,7 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
         "LOCATION": "user_permission_cache",
     },
-    # arches_querysets falls back to "default" without these, putting a Redis
-    # round trip on every reference a resource tree resolves. The win is within
-    # one request (a dashboard page resolves hundreds), so the timeout is kept
-    # short: nothing invalidates these, and it is the window a renamed
-    # resource's descriptor stays stale. Entries are ~900 bytes.
-    "querysets_concepts": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "querysets_concepts_cache",
-        "TIMEOUT": 10,
-        "OPTIONS": {"MAX_ENTRIES": 5000},
-    },
-    "querysets_resource_instances": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "querysets_resource_instances_cache",
-        "TIMEOUT": 10,
-        "OPTIONS": {"MAX_ENTRIES": 5000},
-    },
 }
-
-ARCHES_QUERYSETS_CONCEPT_CACHE = "querysets_concepts"
-ARCHES_QUERYSETS_RESOURCE_INSTANCE_CACHE = "querysets_resource_instances"
 
 # Hide nodes and cards in a report that have no data
 HIDE_EMPTY_NODES_IN_REPORT = True
