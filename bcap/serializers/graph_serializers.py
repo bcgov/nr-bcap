@@ -10,6 +10,7 @@ from drf_spectacular.utils import PolymorphicProxySerializer
 
 from arches_zod_validation.views.mixins import BCAPResourceSerializer
 
+from bcap.schema import resource_aliased_data_component
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.generated.document_submission import DocumentSubmissionSerializer
 from bcap.views.generated.information_request import InformationRequestSerializer
@@ -77,7 +78,7 @@ def aliased_data_union_schema():
     graphs again, which would mint a second set of same-named tile components."""
     return {
         "oneOf": [
-            {"$ref": f"#/components/schemas/{slug.title()}_Resource_Aliased_Data"}
+            {"$ref": "#/components/schemas/" + resource_aliased_data_component(slug)}
             for slug in GRAPH_SERIALIZERS
         ]
     }

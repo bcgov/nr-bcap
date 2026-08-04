@@ -140,25 +140,6 @@ class SchemaViewerTests(AuthTestHelper, TestCase):
         self.assertIn("text/html", resp["Content-Type"])
 
 
-class AliasedDataUnionNamingTests(SimpleTestCase):
-    """The union names its components by string rather than asking spectacular
-    for them, so the slug-to-component transform is pinned here; whether the
-    names it produces actually exist is asserted against the built document in
-    SchemaEndpointTests."""
-
-    def refs(self):
-        return {
-            option["$ref"].rsplit("/", 1)[-1]
-            for option in aliased_data_union_schema()["oneOf"]
-        }
-
-    def test_every_registered_graph_contributes_one_option(self):
-        self.assertEqual(
-            self.refs(),
-            {f"{slug.title()}_Resource_Aliased_Data" for slug in GRAPH_SERIALIZERS},
-        )
-
-
 class NodeValueFieldExtensionTests(SimpleTestCase):
     """The extension types the {node_value, display_value, details} envelope per
     Arches datatype. Driven directly to stay off the full-document path, which
