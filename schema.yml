@@ -5958,9 +5958,9 @@ components:
       type: object
       properties:
         node_value:
+          type: string
           nullable: true
           pattern: ^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)?)?$
-          type: string
         display_value:
           type: string
           readOnly: true
