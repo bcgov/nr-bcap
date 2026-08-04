@@ -28,6 +28,7 @@ RUN set -ex \
   python3-dev \
   media-types \
   libgdal-dev \
+  libpq-dev \
   postgresql-client-16 \
   python3 \
   python3-venv \
