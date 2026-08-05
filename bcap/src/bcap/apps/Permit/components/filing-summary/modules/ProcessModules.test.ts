@@ -122,34 +122,7 @@ const moduleTile = (opts: {
         },
     }) as unknown as PermitApplicationProcessModuleTile;
 
-// A loaded requirement resource, in the shape the detail-fetch reads.
-const requirementDetail = (opts: {
-    type?: string;
-    satisfied?: boolean;
-    internal?: boolean;
-}) => ({
-    aliased_data: {
-        requirement_identification: {
-            aliased_data: {
-                is_template_requirement: {
-                    aliased_data: {
-                        process_requirement_type: {
-                            display_value: opts.type ?? 'Standard',
-                        },
-                        is_internal_requirement: {
-                            node_value: opts.internal ?? false,
-                        },
-                    },
-                },
-            },
-        },
-        sub_requirement_assessment_n1: {
-            aliased_data: {
-                requirement_status: { node_value: opts.satisfied ?? false },
-            },
-        },
-    },
-});
+import { requirementDetail } from './testFixtures.ts';
 
 function mountModules(props: Record<string, unknown>) {
     return mount(ProcessModules, {

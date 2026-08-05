@@ -39,26 +39,7 @@ vi.mock('arches', () => ({
 
 import SubmissionsDashboard from './SubmissionsDashboard.vue';
 
-// Stand-in for ProjectCard so the props the dashboard computes are inspectable.
-const ProjectCardStub = defineComponent({
-    name: 'ProjectCard',
-    props: {
-        bodyTitle: { type: String, default: '' },
-        bodySubtitle1: { type: String, default: '' },
-        bodySubtitle2: { type: String, default: '' },
-        capLabel: { type: String, default: '' },
-        capDate: { type: String, default: '' },
-        capPriority: { type: Boolean, default: false },
-        body1: { type: String, default: '' },
-        body2: { type: String, default: '' },
-        body3: { type: String, default: '' },
-        footerName: { type: String, default: '' },
-        footerDate: { type: String, default: '' },
-        unreadMessages: { type: Number, default: 0 },
-        route: { type: Object, default: () => ({}) },
-    },
-    template: '<div class="project-card-stub">{{ bodyTitle }}</div>',
-});
+import { ProjectCardStub } from './testStubs.ts';
 
 const CardStub = defineComponent({
     name: 'CenterCard',

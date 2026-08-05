@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 
 // Route is read for ProjectCard navigation; name becomes the card route. A card
@@ -32,25 +31,7 @@ vi.mock('arches', () => ({
 }));
 
 import InternalDashboard from './InternalDashboard.vue';
-
-// Stand-in for ProjectCard so we can inspect the props it receives
-const ProjectCardStub = defineComponent({
-    name: 'ProjectCard',
-    props: {
-        bodyTitle: { type: String, default: '' },
-        bodySubtitle1: { type: String, default: '' },
-        bodySubtitle2: { type: String, default: '' },
-        capLabel: { type: String, default: '' },
-        capDate: { type: String, default: '' },
-        capPriority: { type: Boolean, default: false },
-        body1: { type: String, default: '' },
-        body2: { type: String, default: '' },
-        body3: { type: String, default: '' },
-        footerName: { type: String, default: '' },
-        footerDate: { type: String, default: '' },
-    },
-    template: '<div class="project-card-stub">{{ bodyTitle }}</div>',
-});
+import { ProjectCardStub } from './testStubs.ts';
 
 function mountDashboard() {
     return mount(InternalDashboard, {
