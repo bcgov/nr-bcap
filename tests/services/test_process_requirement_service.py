@@ -11,6 +11,7 @@ from arches.app.models.models import TileModel
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.serializers.process_requirement_serializers import ChecklistStep
 from bcap.services.dashboard.dashboard_types import DashboardFilter
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
@@ -215,8 +216,8 @@ class ProcessRequirementServiceTests(TestCase):
             requirement.pk,
             "Checklist",
             [
-                {"name": "First", "description": "one"},
-                {"name": "Second", "description": "two"},
+                ChecklistStep(name="First", description="one"),
+                ChecklistStep(name="Second", description="two"),
             ],
         )
 
@@ -230,8 +231,8 @@ class ProcessRequirementServiceTests(TestCase):
             requirement.pk,
             "Checklist v2",
             [
-                {"tileid": str(kept_tileid), "name": "First edited", "description": ""},
-                {"name": "Third", "description": "three"},
+                ChecklistStep(tileid=kept_tileid, name="First edited", description=""),
+                ChecklistStep(name="Third", description="three"),
             ],
         )
 

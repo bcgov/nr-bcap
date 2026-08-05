@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 
 from bcap.builders.contributor_builder import ContributorSpec
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     InternalMessageToExternal,
