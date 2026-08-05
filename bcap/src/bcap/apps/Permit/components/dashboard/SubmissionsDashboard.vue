@@ -378,7 +378,9 @@ const openResourceReport = (resourceId: string) => {
                                     :unread-messages="
                                         draft.unread_messages || 0
                                     "
-                                    :footer-date="formatDate(draft.created_date)"
+                                    :footer-date="
+                                        formatDate(draft.created_date)
+                                    "
                                     :footer-name="draft.created_by_name"
                                     :search-query="ui.searchQuery"
                                     :route="draftRoute(draft)"

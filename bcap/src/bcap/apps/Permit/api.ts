@@ -143,7 +143,10 @@ export const getInternalDashboardData = async (
             await apiFetchJson(apiUrl),
         );
         if (!result.success) {
-            console.warn('InternalDashboardPage failed validation:', result.error);
+            console.warn(
+                'InternalDashboardPage failed validation:',
+                result.error,
+            );
             return [];
         }
         return result.data.results ?? [];
