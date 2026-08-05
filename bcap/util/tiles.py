@@ -6,6 +6,19 @@ from collections import defaultdict
 from arches.app.models.models import ResourceXResource, TileModel
 
 
+def resource_instance_value(resource_id):
+    """The value a resource-instance node holds: a one-element list, or an empty
+    one when there is nothing to point at."""
+    return [{"resourceId": str(resource_id)}] if resource_id else []
+
+
+def resource_instance_id(node_value):
+    """The id out of a resource-instance node value, or "" when it points at
+    nothing. Reads the stored value, so a reference to a since-deleted resource
+    still yields its id."""
+    return node_value[0]["resourceId"] if node_value else ""
+
+
 def referenced_resource_ids(tiles, nodeid):
     """The resource ids referenced through a resource-instance node across the
     given tiles."""

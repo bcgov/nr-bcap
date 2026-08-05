@@ -7,6 +7,7 @@ class WorkflowDraftsAliases(AbstractAliases):
     FRONTEND_VERSION = "frontend_version"
     GRAPH_PUBLICATION_ID = "graph_publication_id"
     GRAPH_SLUG = "graph_slug"
+    OWNING_ORGANIZATION = "owning_organization"
     PARENT_RESOURCE = "parent_resource"
     UPDATED_DATE = "updated_date"
 
@@ -16,6 +17,8 @@ class WorkflowDraftsAliases(AbstractAliases):
 
 
 class WorkflowDraftsGroupAliases(AbstractAliases):
+    FILING_INFO = "filing_info"
+    SYSTEM_INFO = "system_info"
 
     @staticmethod
     def get_aliases():
