@@ -12,6 +12,7 @@ export enum HttpMethod {
 interface ApiFetchOptions {
     method?: HttpMethod;
     body?: unknown;
+    formatError?: (response: Response) => Promise<string>;
 }
 
 // Thin fetch wrapper: attaches JSON + CSRF headers, serializes the body, and
@@ -20,7 +21,7 @@ export const apiFetch = async (
     url: string,
     options: ApiFetchOptions = {},
 ): Promise<Response> => {
-    const { method = HttpMethod.Get, body } = options;
+    const { method = HttpMethod.Get, body, formatError } = options;
     const isForm = body instanceof FormData;
     const headers: Record<string, string> = {
         Accept: 'application/json',
@@ -38,6 +39,7 @@ export const apiFetch = async (
     });
 
     if (!response.ok) {
+        if (formatError) throw new Error(await formatError(response));
         const detail = await response.text().catch(() => response.statusText);
         throw new Error(
             `${method} ${url} failed (${response.status}): ${detail}`,

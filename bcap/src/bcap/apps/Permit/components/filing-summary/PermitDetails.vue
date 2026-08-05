@@ -14,7 +14,7 @@ import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
-import { getBasicInfoFields } from '@/bcap/util.ts';
+import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 import {
     fetchPermitDetails,
@@ -382,11 +382,10 @@ watch(activeModuleId, (id) => {
                                                 ></i>
                                                 Last updated
                                                 {{
-                                                    new Date(
+                                                    formatDate(
                                                         draft.updated ||
-                                                            draft.created ||
-                                                            '',
-                                                    ).toLocaleDateString()
+                                                            draft.created,
+                                                    )
                                                 }}
                                             </span>
                                             <span

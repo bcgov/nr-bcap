@@ -8,12 +8,11 @@ from django.db.models.fields.json import KeyTextTransform, KeyTransform
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 
-from arches.app.models.models import Node, TileModel
+from arches.app.models.models import TileModel
 from arches.app.models.resource import Resource
 
-from arches_controlled_lists.models import ListItemValue
-
 from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.util.controlled_list import reference_value
 from bcap.util.aliases.contributor import (
     ContributorAliases,
     ContributorGroupAliases,
@@ -303,15 +302,8 @@ class ContributorService(BaseGraphService):
     def _individual_type_id(self):
         """The contributor_type list-item id for individuals, the only type the
         invite flow creates."""
-        node = Node.objects.get(
-            graph__slug=GraphSlugs.CONTRIBUTOR,
-            alias=ContributorAliases.CONTRIBUTOR_TYPE,
-            source_identifier=None,
-        )
-        return str(
-            ListItemValue.objects.get(
-                list_item__list_id=node.config.get("controlledList"),
-                valuetype_id="prefLabel",
-                value="Individual",
-            ).list_item_id
-        )
+        return reference_value(
+            GraphSlugs.CONTRIBUTOR,
+            ContributorAliases.CONTRIBUTOR_TYPE,
+            label="Individual",
+        )[0]

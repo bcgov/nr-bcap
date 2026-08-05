@@ -7,7 +7,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 const getUnlinkedContributors = vi.fn();
 const getAssignableGroups = vi.fn();
 const issueRegistrationLink = vi.fn();
-vi.mock('@/bcap/components/pages/api.ts', () => ({
+vi.mock('@/bcap/apps/Admin/api.ts', () => ({
     getUnlinkedContributors: (...args: unknown[]) =>
         getUnlinkedContributors(...args),
     getAssignableGroups: (...args: unknown[]) => getAssignableGroups(...args),

@@ -2,6 +2,7 @@ import arches from 'arches';
 import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
 import { localized, formatTimestamp } from '@/bcap/util.ts';
 import type {
+    DashboardStatus,
     MessageThread,
     ArchesDraftData,
     DraftNode,
@@ -9,6 +10,7 @@ import type {
     NewBcapMessage,
     WorkflowDraft,
 } from '@/bcap/types.ts';
+export type { DashboardStatus };
 import type {
     ApiContributorsAssignableListResponse,
     ApiDashboardExternalRetrieveData,
@@ -19,6 +21,7 @@ import type {
     ContributorSummary,
     ExternalDashboardCard,
     ExternalDashboardPage,
+    InternalDashboardCard,
     PatchedRequirementAssignee,
     DraftRecord,
     PatchedBcapMessagePatchWritable,
@@ -30,7 +33,11 @@ import type {
     ProcessRequirement,
     ModuleUnread,
 } from '@/bcap/client/types.gen.ts';
-import { zApiDashboardExternalRetrieveQuery } from '@/bcap/client/zod.gen.ts';
+import {
+    zApiDashboardExternalRetrieveQuery,
+    zInternalDashboardPage,
+    zProcessRequirement,
+} from '@/bcap/client/zod.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export const fetchDraft = async (
@@ -121,6 +128,46 @@ const fetchExternalDashboardCards = async (
         console.error(`Failed to load ${status} dashboard cards:`, error);
         return [];
     }
+};
+
+export const getInternalDashboardData = async (
+    status?: DashboardStatus,
+    page: number = 1,
+    limit: number = 100,
+): Promise<InternalDashboardCard[]> => {
+    try {
+        // no status means all results -- omit the param entirely
+        const statusParam = status ? `&status=${status}` : '';
+        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${statusParam}`;
+        const result = zInternalDashboardPage.safeParse(
+            await apiFetchJson(apiUrl),
+        );
+        if (!result.success) {
+            console.warn('InternalDashboardPage failed validation:', result.error);
+            return [];
+        }
+        return result.data.results ?? [];
+    } catch (error) {
+        console.error('Error fetching projects from backend:', error);
+        return [];
+    }
+};
+
+export const getProcessRequirementData = async (
+    resource_id: string,
+): Promise<ProcessRequirement> => {
+    const json = await apiFetchJson<ProcessRequirement>(
+        arches.urls.api_process_requirements(resource_id),
+        {
+            formatError: async (response) =>
+                (await response.text()) || response.statusText,
+        },
+    );
+    const result = zProcessRequirement.safeParse(json);
+    if (!result.success) {
+        console.warn('ProcessRequirement failed validation:', result.error);
+    }
+    return json;
 };
 
 export const submitApplication = async (

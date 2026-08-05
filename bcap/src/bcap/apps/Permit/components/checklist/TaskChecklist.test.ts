@@ -22,21 +22,18 @@ vi.mock('arches', () => ({
     },
 }));
 
-vi.mock('@/bcap/components/pages/api.ts', () => ({
-    getProcessRequirementData: vi.fn(),
-}));
-
-// Only the header fetch is stubbed; the save path still goes through the real
-// apiFetch so the PATCH assertions stay honest.
+// Only the header and requirement fetches are stubbed; the save path still goes
+// through the real apiFetch so the PATCH assertions stay honest.
 const { fetchPermitDetails } = vi.hoisted(() => ({
     fetchPermitDetails: vi.fn(),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
     ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
+    getProcessRequirementData: vi.fn(),
     fetchPermitDetails,
 }));
 
-import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
+import { getProcessRequirementData } from '@/bcap/apps/Permit/api.ts';
 import TaskChecklist from './TaskChecklist.vue';
 
 const mockedGet = vi.mocked(getProcessRequirementData);

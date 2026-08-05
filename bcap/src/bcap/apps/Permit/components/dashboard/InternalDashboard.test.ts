@@ -16,7 +16,8 @@ vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
 
 // The dashboard data source is mocked so we control exactly what renders
 const getInternalDashboardData = vi.fn();
-vi.mock('@/bcap/components/pages/api.ts', () => ({
+vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
     getInternalDashboardData: (...args: unknown[]) =>
         getInternalDashboardData(...args),
 }));

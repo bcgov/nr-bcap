@@ -16,6 +16,7 @@ import {
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
+import { formatDate } from '@/bcap/util.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { permitModules } from './permitModules.ts';
 import type { ExternalDashboardCard } from '@/bcap/client/types.gen.ts';
@@ -212,9 +213,6 @@ const emptyProjectsNote = computed(() =>
         : 'No submitted projects found.',
 );
 
-const cardDate = (iso?: string) =>
-    iso ? new Date(iso).toLocaleDateString() : '';
-
 const labelled = (label: string, value?: string) =>
     value ? `${label}: ${value}` : '';
 
@@ -293,7 +291,7 @@ const openResourceReport = (resourceId: string) => {
                                     project.priority_level === 'High'
                                 "
                                 :cap-label="project.status || 'Submitted'"
-                                :cap-date="cardDate(project.created_date)"
+                                :cap-date="formatDate(project.created_date)"
                                 icon="fa-solid fa-folder-open"
                                 :body-title="
                                     project.project_name ||
@@ -314,7 +312,7 @@ const openResourceReport = (resourceId: string) => {
                                 :body3="
                                     buildModuleSummary(project.module_progress)
                                 "
-                                :footer-date="cardDate(project.created_date)"
+                                :footer-date="formatDate(project.created_date)"
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
                                 :unread-messages="project.unread_messages || 0"
@@ -345,7 +343,7 @@ const openResourceReport = (resourceId: string) => {
                                     "
                                     :cap-label="draft.status || 'Draft'"
                                     :cap-date="
-                                        cardDate(
+                                        formatDate(
                                             draft.updated_date ||
                                                 draft.created_date,
                                         )
@@ -365,7 +363,7 @@ const openResourceReport = (resourceId: string) => {
                                     :body2="
                                         labelled(
                                             'Updated',
-                                            cardDate(
+                                            formatDate(
                                                 draft.updated_date ||
                                                     draft.created_date,
                                             ),
@@ -380,7 +378,7 @@ const openResourceReport = (resourceId: string) => {
                                     :unread-messages="
                                         draft.unread_messages || 0
                                     "
-                                    :footer-date="cardDate(draft.created_date)"
+                                    :footer-date="formatDate(draft.created_date)"
                                     :footer-name="draft.created_by_name"
                                     :search-query="ui.searchQuery"
                                     :route="draftRoute(draft)"
