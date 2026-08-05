@@ -194,7 +194,7 @@ class PermitModuleView(APIView):
         body = ModuleCompletionSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         found = ProcessRequirementService(user=request.user).set_module_completed(
-            pk, module_tileid, body.validated_data["completed"]
+            pk, module_tileid, body.validated_data.completed
         )
         if not found:
             raise Http404("No module matches the given tile id.")
@@ -218,7 +218,7 @@ class ModuleRequirementsView(APIView):
         body = ReorderRequirementsSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         ProcessRequirementService(user=request.user).reorder_requirements(
-            pk, module_tileid, body.validated_data["order"]
+            pk, module_tileid, body.validated_data.order
         )
         return Response(status=204)
 
@@ -226,7 +226,7 @@ class ModuleRequirementsView(APIView):
     def post(self, request, pk, module_tileid):
         body = AddRequirementSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        name = body.validated_data.get("name") or "New requirement"
+        name = body.validated_data.name or "New requirement"
         ProcessRequirementService(user=request.user).add_blank_requirement(
             pk, module_tileid, name
         )
@@ -253,7 +253,7 @@ class ModuleRequirementView(APIView):
         body = RequirementAssigneeSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         found = ProcessRequirementService(user=request.user).set_ministry_assignee(
-            pk, module_tileid, requirement_id, body.validated_data["contributor_id"]
+            pk, module_tileid, requirement_id, body.validated_data.contributor_id
         )
         if not found:
             raise Http404("No requirement matches the given id on this module.")
@@ -282,7 +282,7 @@ class RequirementStatusView(APIView):
         body = RequirementStatusSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         ProcessRequirementService(user=request.user).set_requirement_status(
-            requirement_id, body.validated_data["satisfied"]
+            requirement_id, body.validated_data.satisfied
         )
         return Response(status=204)
 
@@ -311,7 +311,7 @@ class RequirementChecklistView(APIView):
         body.is_valid(raise_exception=True)
         ProcessRequirementService(user=request.user).save_checklist(
             requirement_id,
-            body.validated_data["name"],
-            body.validated_data["steps"],
+            body.validated_data.name,
+            body.validated_data.steps,
         )
         return Response(status=204)
