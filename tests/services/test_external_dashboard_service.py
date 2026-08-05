@@ -343,6 +343,91 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertEqual(card.permit_application_id, "")
 
 
+class ExternalDashboardCompanyDraftsTests(TestCase):
+    """The organization draft scope: a colleague's draft filed under a shared
+    organization, which the created-by-me scope leaves out."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = ExternalDashboardService()
+        builder = FixtureBuilder()
+        contributor_type = reference_value("contributor", "contributor_type")
+
+        cls.me = make_user("drafter-me")
+        cls.colleague = make_user("drafter-colleague")
+        cls.outsider = make_user("drafter-outsider")
+
+        acme = builder.make_contributor(
+            ContributorSpec(contributor_type, None, "Acme Corp")
+        )
+        for first, username in (
+            ("Grace", "drafter-me"),
+            ("Alan", "drafter-colleague"),
+        ):
+            builder.make_contributor(
+                ContributorSpec(
+                    contributor_type,
+                    first,
+                    "Hopper",
+                    bcap_username=username,
+                    associated_organization=acme,
+                )
+            )
+        cls.acme_id = str(acme.pk)
+
+        store = WorkflowDraftService()
+        cls.mine = store.create(
+            cls.me, "permit_application", {}, organization_id=cls.acme_id
+        )
+        cls.colleagues = store.create(
+            cls.colleague, "permit_application", {}, organization_id=cls.acme_id
+        )
+        cls.outsiders = store.create(cls.outsider, "permit_application", {})
+
+    def test_organization_scope_spans_the_organizations_drafts(self):
+        page = self.service.get_cards(
+            DashboardFilter(
+                status=ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS
+            ),
+            self.me,
+        )
+
+        ids = {card.id for card in page.results}
+        self.assertIn(str(self.mine.pk), ids)
+        self.assertIn(str(self.colleagues.pk), ids)
+        self.assertNotIn(str(self.outsiders.pk), ids)
+
+    def test_the_colleagues_card_names_its_own_creator(self):
+        page = self.service.get_cards(
+            DashboardFilter(
+                status=ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS
+            ),
+            self.me,
+        )
+
+        card = next(c for c in page.results if c.id == str(self.colleagues.pk))
+        self.assertEqual(card.created_by_name, "drafter-colleague")
+
+    def test_created_by_me_leaves_out_the_colleagues_draft(self):
+        page = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
+            self.me,
+        )
+
+        self.assertEqual([card.id for card in page.results], [str(self.mine.pk)])
+
+    def test_organization_scope_falls_back_to_own_without_a_contributor(self):
+        page = self.service.get_cards(
+            DashboardFilter(
+                status=ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS
+            ),
+            self.outsider,
+        )
+
+        self.assertEqual([card.id for card in page.results], [str(self.outsiders.pk)])
+
+
 class ExternalDashboardDraftRobustnessTests(TestCase):
     """Draft blobs are unvalidated, so the card builder must tolerate missing
     sections, missing fields, and malformed JSON without raising."""
