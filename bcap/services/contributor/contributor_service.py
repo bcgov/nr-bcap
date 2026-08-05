@@ -11,6 +11,7 @@ from django.utils import timezone
 from arches.app.models.models import TileModel
 from arches.app.models.resource import Resource
 
+from bcap.util.graph import node_id, nodegroup_id
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.controlled_list import reference_value
 from bcap.util.aliases.contributor import (
@@ -79,17 +80,15 @@ class ContributorService(BaseGraphService):
     # cache them so the read methods don't each re-resolve the same aliases.
     @cached_property
     def _username_node(self):
-        return self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME)
+        return node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME)
 
     @cached_property
     def _contributor_ng(self):
-        return self._nodegroup_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME
-        )
+        return nodegroup_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME)
 
     @cached_property
     def _inactive_node(self):
-        return self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.INACTIVE)
+        return node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.INACTIVE)
 
     def _active(self, queryset):
         """Drop tiles flagged inactive."""
@@ -161,9 +160,7 @@ class ContributorService(BaseGraphService):
     def archaeology_branch_id(self):
         """Resource id of the Archaeology Branch organization Contributor, or
         None when it hasn't been seeded."""
-        name_node = self.node_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME
-        )
+        name_node = node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME)
         pk = (
             self._active(
                 TileModel.objects.filter(
@@ -285,9 +282,7 @@ class ContributorService(BaseGraphService):
     def invitable_contributors(self, search=""):
         """Active, unlinked Contributors whose name matches the search, as
         name-sorted pick-list options for the invite picker."""
-        name_node = self.node_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME
-        )
+        name_node = node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME)
 
         tiles = (
             self._active(TileModel.objects.filter(nodegroup_id=self._contributor_ng))

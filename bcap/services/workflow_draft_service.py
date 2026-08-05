@@ -20,7 +20,7 @@ from bcap.util.aliases.workflow_drafts import (
     WorkflowDraftsGroupAliases,
 )
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.graph import get_current_graph
+from bcap.util.graph import get_current_graph, node_info
 from bcap.util.tiles import resource_instance_id, resource_instance_value
 
 
@@ -147,7 +147,7 @@ class WorkflowDraftService(BaseGraphService):
     def _write_blob_no_audit(cls, pk, data):
         """Store the blob straight onto its tile, past the audit: a tile save
         archives a copy of the whole form on every write."""
-        nodeid, ngid = cls._node_info(
+        nodeid, ngid = node_info(
             GraphSlugs.WORKFLOW_DRAFTS, WorkflowDraftsAliases.DRAFT_DATA
         )
         TileModel.objects.filter(resourceinstance_id=pk, nodegroup_id=ngid).update(

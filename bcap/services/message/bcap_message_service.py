@@ -18,6 +18,7 @@ from django.db.models import (
 from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.graph import node_info
 from bcap.util.bcap_aliases import RESOURCE_ID
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.contributor.contributor_service import ContributorService
@@ -128,9 +129,7 @@ class BcapMessageService(BaseGraphService):
             self._delete_tiles(existing)
             return
         if not existing.exists():
-            node_id, nodegroup_id = self._node_info(
-                MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY
-            )
+            node_id, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
             Tile(
                 resourceinstance_id=thread_id,
                 nodegroup_id=nodegroup_id,
@@ -141,7 +140,7 @@ class BcapMessageService(BaseGraphService):
         """Clear every viewer's archive of a message's thread so a new reply
         resurfaces it for all. A new root has no such tiles, so it no-ops."""
         thread_id = self._thread_id(message_id)
-        _, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
+        _, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
         self._delete_tiles(
             Tile.objects.filter(
                 nodegroup_id=nodegroup_id,
@@ -158,7 +157,7 @@ class BcapMessageService(BaseGraphService):
 
     def _archived_by_tiles(self, contributor_id, thread_id=None):
         """archived_by tiles naming this contributor, optionally scoped to one root."""
-        node_id, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
+        node_id, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
         tiles = Tile.objects.filter(
             nodegroup_id=nodegroup_id,
             **{f"data__{node_id}__contains": [{RESOURCE_ID: str(contributor_id)}]},
@@ -369,7 +368,7 @@ class BcapMessageService(BaseGraphService):
         """The multipart field key the create endpoint expects for attachment
         files: file-list_<attachments node id>, resolved from the graph so no
         node id is hard-coded on the client."""
-        node_id, _ = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ATTACHMENTS)
+        node_id, _ = node_info(MESSAGE_GRAPH_SLUG, self.A.ATTACHMENTS)
         return f"file-list_{node_id}"
 
     def unread_count_across(self, context_ids, username):

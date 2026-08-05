@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from arches.app.models.models import TileModel
 
+from bcap.util.graph import node_id, node_info
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.util.aliases.contributor import ContributorAliases
 from bcap.util.bcap_aliases import GraphSlugs
@@ -25,9 +26,9 @@ class OrganizationService(ContributorService):
 
     def _active_memberships(self):
         """Membership tiles in force today (an unset start/end bound left open)."""
-        start_node = self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.START_DATE)
-        end_node = self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.END_DATE)
-        membership_ng = self._node_info(
+        start_node = node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.START_DATE)
+        end_node = node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.END_DATE)
+        membership_ng = node_info(
             GraphSlugs.CONTRIBUTOR, ContributorAliases.ASSOCIATED_ORGANIZATION
         )[1]
         today = timezone.now().date().isoformat()
@@ -59,9 +60,7 @@ class OrganizationService(ContributorService):
         tiles = self._active_memberships().filter(resourceinstance_id=my_contributor_id)
         return referenced_resource_ids(
             tiles,
-            self.node_id(
-                GraphSlugs.CONTRIBUTOR, ContributorAliases.ASSOCIATED_ORGANIZATION
-            ),
+            node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.ASSOCIATED_ORGANIZATION),
         )
 
     def resolve_organization(self, user, organization_id=""):
