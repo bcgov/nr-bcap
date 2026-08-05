@@ -33,6 +33,16 @@ vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
     VIEW: 'view',
 }));
 
+// Mutated per test so a drill-in query can be simulated.
+const routerMock = vi.hoisted(() => ({
+    query: {} as Record<string, string>,
+    push: vi.fn(),
+}));
+vi.mock('vue-router', () => ({
+    useRoute: () => ({ query: routerMock.query }),
+    useRouter: () => ({ push: routerMock.push }),
+}));
+
 const api = vi.hoisted(() => ({
     patchModuleOrder: vi.fn(),
     fetchRequirementDetails: vi.fn(),
@@ -154,6 +164,8 @@ function mountModules(props: Record<string, unknown>) {
 }
 
 beforeEach(() => {
+    routerMock.query = {};
+    routerMock.push.mockReset();
     Object.values(api).forEach((fn) => fn.mockReset());
     api.fetchRequirementDetails.mockResolvedValue({});
     api.submitModule.mockResolvedValue(undefined);
@@ -760,6 +772,28 @@ describe('ProcessModules default open panel', () => {
             (empty.vm as unknown as { ui: { openPanels: string[] } }).ui
                 .openPanels,
         ).toEqual([]);
+    });
+
+    it('opens the module holding the drilled-in requirement instead of the top one', async () => {
+        routerMock.query = { requirement: 'r-9' };
+        const wrapper = mountModules({
+            modules: [
+                named('a', 1),
+                moduleTile({
+                    tileid: 'b',
+                    name: 'Module 2',
+                    order: 2,
+                    requirements: [
+                        { name: 'Req', resourceId: 'r-9', order: 1 },
+                    ],
+                }),
+            ],
+        });
+        await flushPromises();
+        const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
+
+        expect(vm.ui.openPanels).toEqual(['b']);
+        expect(wrapper.find('#req-r-9').classes()).toContain('is-focused');
     });
 
     it("leaves the user's choice alone once the tiles reload", async () => {

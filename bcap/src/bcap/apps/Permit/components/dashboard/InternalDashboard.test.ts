@@ -516,8 +516,23 @@ describe('onCardClick', () => {
         vi.restoreAllMocks();
     });
 
-    it('routes to the permit details view on a standard click', async () => {
+    it('routes to the permit details view on a standard click, drilling in on the card requirement', async () => {
         getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-1' })]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+        await wrapper.findComponent(ProjectCardStub).trigger('click');
+
+        expect(push).toHaveBeenCalledWith({
+            name: 'permitDetails',
+            params: { id: 'res-1' },
+            query: { requirement: 'req-1', staff: 'true' },
+        });
+    });
+
+    it('omits the requirement query when the card has no requirement', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'res-1', requirement_id: '' }),
+        ]);
         const wrapper = mountDashboard();
         await flushPromises();
         await wrapper.findComponent(ProjectCardStub).trigger('click');

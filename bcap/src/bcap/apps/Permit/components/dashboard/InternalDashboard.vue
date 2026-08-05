@@ -20,6 +20,7 @@ const router = useRouter();
 
 interface ProjectData {
     id: string;
+    requirementId: string;
     unreadMessages: number;
     capPriority: boolean;
     capLabel: string;
@@ -46,6 +47,7 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
     return {
         id: rawItem.id,
+        requirementId: rawItem.requirement_id || '',
         unreadMessages: rawItem.unread_messages || 0,
 
         capPriority: isPriority,
@@ -236,10 +238,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
         return;
     }
     // Staff open the permit view; isStaff enables the module edit controls.
+    // ?requirement is the one the card is showing, so the summary opens on it.
     router.push({
         name: routeNames.permitDetails,
         params: { id: item.id },
-        query: { staff: 'true' },
+        query: item.requirementId
+            ? { requirement: item.requirementId, staff: 'true' }
+            : { staff: 'true' },
     });
 };
 </script>

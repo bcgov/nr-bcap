@@ -41,8 +41,11 @@ export const useModuleActions = (options: {
     adminTileId: string;
     tiles: () => PermitApplicationProcessModuleTile[];
     onChanged: () => void;
+    // Requirement to open the view on, in place of the default first module.
+    focusRequirementId?: string;
 }) => {
-    const { permitId, adminTileId, tiles, onChanged } = options;
+    const { permitId, adminTileId, tiles, onChanged, focusRequirementId } =
+        options;
     const toast = useToast();
     clearRequirementCache();
     onScopeDispose(clearRequirementCache);
@@ -108,7 +111,16 @@ export const useModuleActions = (options: {
             if (!seededDefaultOpen) {
                 seededDefaultOpen = true;
                 if (!ui.openPanels.length && state.rows.length) {
-                    ui.openPanels = [state.rows[0].tileid];
+                    const focused = focusRequirementId
+                        ? state.rows.find((row) =>
+                              row.requirements.some(
+                                  (requirement) =>
+                                      requirement.resourceId ===
+                                      focusRequirementId,
+                              ),
+                          )
+                        : undefined;
+                    ui.openPanels = [(focused ?? state.rows[0]).tileid];
                 }
             }
             loadOpenModules(ui.openPanels);
