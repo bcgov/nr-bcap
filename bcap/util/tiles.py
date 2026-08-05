@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from arches.app.models.models import ResourceXResource, TileModel
 
-from bcap.util.bcap_aliases import ALIASED_DATA
+from bcap.util.bcap_aliases import ALIASED_DATA, RESOURCE_ID
 
 
 def group_data(payload, group):
@@ -21,14 +21,14 @@ def group_data(payload, group):
 def resource_instance_value(resource_id):
     """The value a resource-instance node holds: a one-element list, or an empty
     one when there is nothing to point at."""
-    return [{"resourceId": str(resource_id)}] if resource_id else []
+    return [{RESOURCE_ID: str(resource_id)}] if resource_id else []
 
 
 def resource_instance_id(node_value):
     """The id out of a resource-instance node value, or "" when it points at
     nothing. Reads the stored value, so a reference to a since-deleted resource
     still yields its id."""
-    return node_value[0]["resourceId"] if node_value else ""
+    return node_value[0][RESOURCE_ID] if node_value else ""
 
 
 def referenced_resource_ids(tiles, nodeid):
@@ -37,8 +37,8 @@ def referenced_resource_ids(tiles, nodeid):
     ids = set()
     for tile in tiles:
         for reference in tile.data.get(nodeid) or []:
-            if reference.get("resourceId"):
-                ids.add(reference["resourceId"])
+            if reference.get(RESOURCE_ID):
+                ids.add(reference[RESOURCE_ID])
     return ids
 
 

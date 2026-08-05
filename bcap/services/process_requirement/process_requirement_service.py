@@ -20,7 +20,7 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationGroupAliases as pa_groups,
 )
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as prq
-from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.bcap_aliases import GraphSlugs, RESOURCE_ID
 from bcap.util.graph import node_id
 from bcap.util.indexing import bulk_index
 from bcap.util.tiles import referenced_resource_ids, references_by_source
@@ -256,7 +256,7 @@ class ProcessRequirementService:
         return TileModel.objects.filter(
             parenttile_id=module_tileid,
             resourceinstance_id=permit_id,
-            data__contains={reference_node: [{"resourceId": str(requirement_id)}]},
+            data__contains={reference_node: [{RESOURCE_ID: str(requirement_id)}]},
         ).first()
 
     @staticmethod

@@ -30,7 +30,7 @@ from bcap.services.dashboard.dashboard_types import (
 )
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases
-from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.bcap_aliases import GraphSlugs, RESOURCE_ID
 from bcap.util.queryset import filter_or_empty
 
 
@@ -173,7 +173,7 @@ class InternalDashboardService(BaseDashboardService):
 
         def get_json_resource_id(node_id):
             return KeyTextTransform(
-                "resourceId", KeyTransform("0", KeyTransform(node_id, "data"))
+                RESOURCE_ID, KeyTransform("0", KeyTransform(node_id, "data"))
             )
 
         module_order = Subquery(

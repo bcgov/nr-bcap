@@ -18,6 +18,7 @@ from django.db.models import (
 from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.bcap_aliases import RESOURCE_ID
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.process_requirement.process_requirement_service import (
@@ -133,7 +134,7 @@ class BcapMessageService(BaseGraphService):
             Tile(
                 resourceinstance_id=thread_id,
                 nodegroup_id=nodegroup_id,
-                data={node_id: [{"resourceId": str(contributor_id)}]},
+                data={node_id: [{RESOURCE_ID: str(contributor_id)}]},
             ).save()
 
     def unarchive_thread_for_all(self, message_id):
@@ -160,7 +161,7 @@ class BcapMessageService(BaseGraphService):
         node_id, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
         tiles = Tile.objects.filter(
             nodegroup_id=nodegroup_id,
-            **{f"data__{node_id}__contains": [{"resourceId": str(contributor_id)}]},
+            **{f"data__{node_id}__contains": [{RESOURCE_ID: str(contributor_id)}]},
         )
         if thread_id is not None:
             tiles = tiles.filter(resourceinstance_id=str(thread_id))
@@ -195,7 +196,7 @@ class BcapMessageService(BaseGraphService):
         node_value = cls._payload_node_value(data, alias)
         if isinstance(node_value, list):
             node_value = node_value[0] if node_value else {}
-        return (node_value or {}).get("resourceId")
+        return (node_value or {}).get(RESOURCE_ID)
 
     @classmethod
     def _is_internal_payload(cls, data):
@@ -215,7 +216,7 @@ class BcapMessageService(BaseGraphService):
         contributor_id = ContributorService().username_contributor_id(username)
         if not contributor_id:
             raise NoAuthorContributor(username)
-        cls._set_node(data, cls.A.MESSAGE_AUTHOR, [{"resourceId": contributor_id}])
+        cls._set_node(data, cls.A.MESSAGE_AUTHOR, [{RESOURCE_ID: contributor_id}])
 
     @classmethod
     def _set_node(cls, data, alias, node_value):

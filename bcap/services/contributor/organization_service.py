@@ -9,7 +9,7 @@ from arches.app.models.models import TileModel
 
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.util.aliases.contributor import ContributorAliases
-from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.bcap_aliases import GraphSlugs, RESOURCE_ID
 from bcap.util.tiles import resource_instance_value
 
 
@@ -51,7 +51,7 @@ class OrganizationService(ContributorService):
                 ),
                 org=Cast(
                     KeyTextTransform(
-                        "resourceId", KeyTransform("0", KeyTransform(org_node, "data"))
+                        RESOURCE_ID, KeyTransform("0", KeyTransform(org_node, "data"))
                     ),
                     UUIDField(),
                 ),
