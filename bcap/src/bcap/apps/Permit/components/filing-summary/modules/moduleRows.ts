@@ -30,11 +30,6 @@ export interface ModuleRow {
     hostResourceId: string;
 }
 
-export interface AddableModule {
-    id: string;
-    label: string;
-}
-
 // Status glyphs, defined once so the legend, module pills, and requirement rows
 // stay in sync. The app loads only Font Awesome solid, so every class is solid.
 export const STATUS_ICON = {

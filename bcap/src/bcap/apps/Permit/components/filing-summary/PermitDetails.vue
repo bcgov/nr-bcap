@@ -194,17 +194,6 @@ const startNewModule = () => {
     }
 };
 
-// The module types a staff member can add from the submitted-modules panel,
-// each routing to that module's existing workflow (Project Summary excluded).
-const addableModules = computed(() =>
-    permitModuleCatalogue
-        .filter((mod) => mod.id !== GraphSlug.PermitApplication)
-        .map((mod) => ({
-            id: mod.id,
-            label: mod.menuLabel,
-        })),
-);
-
 const {
     state: deleteState,
     open: confirmDelete,
@@ -473,7 +462,6 @@ watch(activeModuleId, (id) => {
                             :permit-id="permitId"
                             :admin-tile-id="state.adminTileMeta.tileid"
                             :is-staff="isStaff"
-                            :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
                             :application-id="state.permitData.applicationNumber"
                             @changed="loadPermitDetails"

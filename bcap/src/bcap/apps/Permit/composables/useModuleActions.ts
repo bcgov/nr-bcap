@@ -7,7 +7,6 @@ import {
 import {
     patchModuleOrder,
     removeModuleAndRequirements,
-    submitModule,
     reorderModuleRequirements,
     addBlankRequirement,
     removeRequirement,
@@ -16,7 +15,6 @@ import {
     setRequirementAssignee,
     fetchAssignableContributors,
 } from '@/bcap/apps/Permit/api.ts';
-import type { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import {
     cacheSatisfied,
@@ -24,7 +22,6 @@ import {
     hydrateRows,
     rowsNeedingDetails,
     toRow,
-    type AddableModule,
     type ModuleRow,
     type RequirementItem,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
@@ -68,7 +65,6 @@ export const useModuleActions = (options: {
 
     const ui = reactive({
         openPanels: [] as string[],
-        adding: null as string | null,
         addingRequirement: null as string | null,
         togglingModule: null as string | null,
         togglingRequirement: null as string | null,
@@ -131,20 +127,6 @@ export const useModuleActions = (options: {
     watch(() => ui.openPanels, loadOpenModules, { deep: true });
 
     const hasModules = computed(() => state.rows.length > 0);
-
-    const onAddModule = async (mod: AddableModule) => {
-        if (ui.adding) return;
-        ui.adding = mod.id;
-        try {
-            // Blank host: staff fill it in afterward via the module's edit links.
-            await submitModule(permitId, undefined, mod.id as GraphSlug, {});
-            onChanged();
-        } catch (error) {
-            failed('Failed to add module', error);
-        } finally {
-            ui.adding = null;
-        }
-    };
 
     const onToggleCompleted = async (row: ModuleRow) => {
         if (ui.togglingModule) return;
@@ -275,7 +257,6 @@ export const useModuleActions = (options: {
         ui,
         hasModules,
         isLoadingRequirements,
-        onAddModule,
         onAddRequirement,
         onToggleCompleted,
         onToggleRequirement,

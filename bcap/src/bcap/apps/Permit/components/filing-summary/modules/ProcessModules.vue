@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, ref, watch } from 'vue';
+import { onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
@@ -7,7 +7,6 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
-import Menu from 'primevue/menu';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { graphForModule } from '@/bcap/apps/Permit/components/dashboard/permitModules.ts';
@@ -23,7 +22,6 @@ import ModulePanelHeader from '@/bcap/apps/Permit/components/filing-summary/modu
 import RequirementRow from '@/bcap/apps/Permit/components/filing-summary/modules/RequirementRow.vue';
 import {
     STATUS_ICON,
-    type AddableModule,
     type ModuleRow,
     type RequirementItem,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
@@ -33,7 +31,6 @@ const props = defineProps<{
     permitId: string;
     adminTileId: string;
     isStaff?: boolean;
-    addableModules?: AddableModule[];
     applicationId?: string;
     summaryFields?: ReviewField[];
 }>();
@@ -54,7 +51,6 @@ const {
     ui,
     hasModules,
     isLoadingRequirements,
-    onAddModule,
     onAddRequirement,
     onToggleCompleted,
     onToggleRequirement,
@@ -126,16 +122,6 @@ const onViewSubmission = (
     router.push({ name: routeNames.moduleReview, query: route?.query ?? {} });
 };
 
-const addModuleMenu = ref();
-
-const addModuleItems = computed(() =>
-    (props.addableModules ?? []).map((mod) => ({
-        label: mod.label,
-        icon: 'fa-solid fa-plus',
-        command: () => onAddModule(mod),
-    })),
-);
-
 // All requirements are shown, internal ones included.
 const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     row.requirements;
@@ -167,32 +153,6 @@ const archesResourceId = (row: ModuleRow, index: number): string =>
                 Complete
             </span>
         </div>
-        <div
-            v-if="isStaff && addableModules && addableModules.length"
-            class="add-module-bar"
-        >
-            <Button
-                type="button"
-                class="add-module-chip"
-                :disabled="ui.adding !== null"
-                @click="addModuleMenu?.toggle($event)"
-            >
-                <i
-                    class="fa-solid"
-                    :class="ui.adding ? 'fa-circle-notch fa-spin' : 'fa-plus'"
-                ></i>
-                Add module
-                <i class="fa-solid fa-chevron-down add-module-caret"></i>
-            </Button>
-            <Menu
-                ref="addModuleMenu"
-                :model="addModuleItems"
-                popup
-                append-to="body"
-                class="req-more-menu"
-            />
-        </div>
-
         <Accordion
             v-model:value="ui.openPanels"
             multiple
@@ -551,46 +511,6 @@ const archesResourceId = (row: ModuleRow, index: number): string =>
 .saving-note {
     font-size: 0.95rem;
     color: #2563eb;
-}
-
-.add-module-bar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: 2.5rem;
-}
-
-/* Outlined by default, filled on hover. */
-.add-module-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.6rem 1.2rem;
-    font-weight: 700;
-    color: #3a3f4b;
-    background: #ffffff;
-    border: 1px solid #3a3f4b;
-    border-radius: 4px;
-    cursor: pointer;
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
-}
-
-.add-module-chip:hover:not(:disabled) {
-    background: #3a3f4b;
-    color: #ffffff;
-}
-
-.add-module-caret {
-    font-size: 0.85em;
-    margin-left: 0.2rem;
-}
-
-.add-module-chip:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 .modules-accordion {

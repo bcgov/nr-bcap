@@ -47,7 +47,6 @@ const api = vi.hoisted(() => ({
     patchModuleOrder: vi.fn(),
     fetchRequirementDetails: vi.fn(),
     removeModuleAndRequirements: vi.fn(),
-    submitModule: vi.fn(),
     reorderModuleRequirements: vi.fn(),
     addBlankRequirement: vi.fn(),
     removeRequirement: vi.fn(),
@@ -168,7 +167,6 @@ beforeEach(() => {
     routerMock.push.mockReset();
     Object.values(api).forEach((fn) => fn.mockReset());
     api.fetchRequirementDetails.mockResolvedValue({});
-    api.submitModule.mockResolvedValue(undefined);
     api.removeModuleAndRequirements.mockResolvedValue(undefined);
     api.addBlankRequirement.mockResolvedValue(undefined);
     api.removeRequirement.mockResolvedValue(undefined);
@@ -366,55 +364,6 @@ describe('ProcessModules staff controls', () => {
         expect(wrapper.find('.drag-handle').exists()).toBe(false);
         expect(wrapper.find('.module-remove').exists()).toBe(false);
         expect(wrapper.find('.add-req-btn').exists()).toBe(false);
-    });
-
-    it('offers the addable modules on one menu behind the add chip', () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-            addableModules: [
-                { id: 'investigation', label: 'Investigation' },
-                { id: 'permit', label: 'Permit' },
-            ],
-        });
-        const chip = wrapper.find('.add-module-chip');
-        // Enabled unless a submit is in flight; the parent decides which
-        // modules are offered, and they hang off the chip's menu.
-        expect((chip.element as HTMLButtonElement).disabled).toBe(false);
-        const items = wrapper.findComponent({ name: 'Menu' }).props('model');
-        expect(items.map((item: { label: string }) => item.label)).toEqual([
-            'Investigation',
-            'Permit',
-        ]);
-    });
-
-    it('hides the add bar when the parent offers no modules', () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-            addableModules: [],
-        });
-        expect(wrapper.find('.add-module-bar').exists()).toBe(false);
-    });
-
-    it('add-module submits a blank host then emits changed', async () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            onAddModule: (m: { id: string }) => Promise<void>;
-        };
-
-        await vm.onAddModule({ id: 'investigation' });
-
-        expect(api.submitModule).toHaveBeenCalledWith(
-            'permit-1',
-            undefined,
-            'investigation',
-            {},
-        );
-        expect(wrapper.emitted('changed')).toHaveLength(1);
     });
 
     it('confirming module removal deletes it and emits changed', async () => {
@@ -715,22 +664,6 @@ describe('ProcessModules in-flight guards', () => {
 
     // A write that never settles, so the second call hits the guard.
     const pending = () => new Promise<void>(() => {});
-
-    it('ignores a second add-module while the first is in flight', async () => {
-        api.submitModule.mockReturnValue(pending());
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            onAddModule: (m: { id: string }) => Promise<void>;
-        };
-
-        vm.onAddModule({ id: 'investigation' });
-        vm.onAddModule({ id: 'investigation' });
-
-        expect(api.submitModule).toHaveBeenCalledTimes(1);
-    });
 
     it('ignores a second requirement toggle while the first is in flight', async () => {
         api.setRequirementSatisfied.mockReturnValue(pending());

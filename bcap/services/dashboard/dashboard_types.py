@@ -25,11 +25,15 @@ class ExternalDashboardStatus(TextChoices):
     may move to an applicant field on the application later.
     """
 
-    DRAFTS = "DRAFTS", "Drafts"
-    CREATED_BY_ME = "CREATED_BY_ME", "My Projects"
-    CREATED_BY_ASSOCIATED_COMPANIES = (
-        "CREATED_BY_ASSOCIATED_COMPANIES",
-        "Created by associated companies",
+    DRAFTS_CREATED_BY_ME = "DRAFTS_CREATED_BY_ME", "My drafts"
+    DRAFTS_BY_ASSOCIATED_ORGANIZATIONS = (
+        "DRAFTS_BY_ASSOCIATED_ORGANIZATIONS",
+        "Drafts of associated organizations",
+    )
+    FILINGS_CREATED_BY_ME = "FILINGS_CREATED_BY_ME", "My filings"
+    FILINGS_BY_ASSOCIATED_ORGANIZATIONS = (
+        "FILINGS_BY_ASSOCIATED_ORGANIZATIONS",
+        "Filings of associated organizations",
     )
 
 

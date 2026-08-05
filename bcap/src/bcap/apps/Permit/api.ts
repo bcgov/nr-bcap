@@ -30,6 +30,7 @@ import type {
     ProcessRequirement,
     ModuleUnread,
 } from '@/bcap/client/types.gen.ts';
+import { zApiDashboardExternalRetrieveQuery } from '@/bcap/client/zod.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export const fetchDraft = async (
@@ -92,12 +93,21 @@ type ExternalDashboardStatus = NonNullable<
     ApiDashboardExternalRetrieveData['query']
 >['status'];
 
+export const dashboardScope =
+    zApiDashboardExternalRetrieveQuery.shape.status.unwrap().enum;
+
 export const fetchMyProjects = async () =>
-    fetchExternalDashboardCards('CREATED_BY_ME');
+    fetchExternalDashboardCards(dashboardScope.FILINGS_CREATED_BY_ME);
 export const fetchCompanyProjects = async () =>
-    fetchExternalDashboardCards('CREATED_BY_ASSOCIATED_COMPANIES');
+    fetchExternalDashboardCards(
+        dashboardScope.FILINGS_BY_ASSOCIATED_ORGANIZATIONS,
+    );
 export const fetchDraftCards = async () =>
-    fetchExternalDashboardCards('DRAFTS');
+    fetchExternalDashboardCards(dashboardScope.DRAFTS_CREATED_BY_ME);
+export const fetchCompanyDraftCards = async () =>
+    fetchExternalDashboardCards(
+        dashboardScope.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS,
+    );
 
 const fetchExternalDashboardCards = async (
     status: ExternalDashboardStatus,
@@ -156,8 +166,7 @@ export const submitApplication = async (
 // Submit a permit module: the route creates the module's host resource from the
 // payload, clones the module's process requirements onto the permit, links the
 // workflow requirement to the host, and returns the created host resource. Pass
-// a draftId to submit from a draft (deleted after); omit it for a staff
-// quick-add that sends a placeholder payload directly.
+// a draftId to submit from a draft, which is deleted once the module lands.
 export const submitModule = async (
     permitId: string,
     draftId: string | undefined,

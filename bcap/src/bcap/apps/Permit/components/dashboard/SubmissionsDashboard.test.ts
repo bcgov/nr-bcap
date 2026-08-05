@@ -16,11 +16,14 @@ vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
 }));
 
 const fetchDraftCards = vi.fn();
+const fetchCompanyDraftCards = vi.fn();
 const fetchMyProjects = vi.fn();
 const fetchCompanyProjects = vi.fn();
 const deleteDraft = vi.fn();
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchDraftCards: (...args: unknown[]) => fetchDraftCards(...args),
+    fetchCompanyDraftCards: (...args: unknown[]) =>
+        fetchCompanyDraftCards(...args),
     fetchMyProjects: (...args: unknown[]) => fetchMyProjects(...args),
     fetchCompanyProjects: (...args: unknown[]) => fetchCompanyProjects(...args),
     deleteDraft: (...args: unknown[]) => deleteDraft(...args),
@@ -149,9 +152,20 @@ async function switchTab(
     await flushPromises();
 }
 
+// The checkbox that widens the active tab to the company's own cards.
+async function includeCompany(
+    wrapper: Awaited<ReturnType<typeof mountDashboard>>,
+) {
+    wrapper
+        .findComponent({ name: 'SortingBar' })
+        .vm.$emit('update:includeCompany', true);
+    await flushPromises();
+}
+
 beforeEach(() => {
     localStorage.clear();
     fetchDraftCards.mockReset().mockResolvedValue([]);
+    fetchCompanyDraftCards.mockReset().mockResolvedValue([]);
     fetchMyProjects.mockReset().mockResolvedValue([]);
     fetchCompanyProjects.mockReset().mockResolvedValue([]);
     deleteDraft.mockReset().mockResolvedValue(undefined);
@@ -189,7 +203,7 @@ describe('project cards', () => {
     it('maps a submitted project onto the card props', async () => {
         fetchMyProjects.mockResolvedValue([makeProject()]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         const card = wrapper.findComponent(ProjectCardStub);
         expect(card.props('bodyTitle')).toBe('My Project');
@@ -203,7 +217,7 @@ describe('project cards', () => {
     it('labels the submission type, permit and module progress', async () => {
         fetchMyProjects.mockResolvedValue([makeProject()]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         const card = wrapper.findComponent(ProjectCardStub);
         expect(card.props('body1')).toBe('Type: Site Visit');
@@ -216,7 +230,7 @@ describe('project cards', () => {
             makeProject({ submission_type: '', permit_number: '' }),
         ]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         const card = wrapper.findComponent(ProjectCardStub);
         expect(card.props('body1')).toBe('');
@@ -226,7 +240,7 @@ describe('project cards', () => {
     it('routes to the permit details view on click', async () => {
         fetchMyProjects.mockResolvedValue([makeProject()]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         await wrapper.findComponent(ProjectCardStub).trigger('click');
 
@@ -242,7 +256,7 @@ describe('project cards', () => {
             makeProject({ id: 'b', project_name: 'Quarry Dig' }),
         ]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         wrapper
             .findComponent({ name: 'SortingBar' })
@@ -276,7 +290,7 @@ describe('project cards', () => {
                 }),
             ]);
             const wrapper = await mountDashboard();
-            await switchTab(wrapper, 'my_projects');
+            await switchTab(wrapper, 'filings');
             wrapper
                 .findComponent({ name: 'SortingBar' })
                 .vm.$emit('update:search', query);
@@ -292,35 +306,36 @@ describe('project cards', () => {
         expect(await matches('forestry')).toEqual(['Bridge Survey']);
     });
 
-    it('shows the associated companies scope on the company tab', async () => {
+    it('swaps in the company scope when the company checkbox is on', async () => {
         fetchMyProjects.mockResolvedValue([
             makeProject({ id: 'mine', project_name: 'Mine' }),
-            makeProject({ id: 'mine-2', project_name: 'Mine Two' }),
         ]);
+        // The company scope already carries the user's own cards back.
         fetchCompanyProjects.mockResolvedValue([
+            makeProject({ id: 'mine', project_name: 'Mine' }),
             makeProject({ id: 'theirs', project_name: 'Colleague App' }),
         ]);
         const wrapper = await mountDashboard();
+        await switchTab(wrapper, 'filings');
 
-        await switchTab(wrapper, 'company_projects');
+        await includeCompany(wrapper);
 
         const titles = wrapper
             .findAllComponents(ProjectCardStub)
             .map((card) => card.props('bodyTitle'));
-        expect(titles).toEqual(['Colleague App']);
-        // The counts follow the tab, not whichever list loaded first.
+        expect(titles).toEqual(['Mine', 'Colleague App']);
         const bar = wrapper.findComponent({ name: 'SortingBar' });
-        expect(bar.props('shown')).toBe(1);
-        expect(bar.props('total')).toBe(1);
+        expect(bar.props('shown')).toBe(2);
+        expect(bar.props('total')).toBe(2);
     });
 
-    it('names the empty state after the tab', async () => {
+    it('names the empty state after the scope', async () => {
         const wrapper = await mountDashboard();
 
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
         expect(wrapper.text()).toContain('No submitted projects found.');
 
-        await switchTab(wrapper, 'company_projects');
+        await includeCompany(wrapper);
         expect(wrapper.text()).toContain('No company projects found.');
     });
 });
@@ -415,15 +430,15 @@ describe('drafts', () => {
 describe('tab persistence', () => {
     it('starts on drafts and remembers the chosen tab', async () => {
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         expect(localStorage.getItem('bcap.externalDashboard.tab')).toBe(
-            'my_projects',
+            'filings',
         );
     });
 
     it('restores a stored tab on mount', async () => {
-        localStorage.setItem('bcap.externalDashboard.tab', 'my_projects');
+        localStorage.setItem('bcap.externalDashboard.tab', 'filings');
         fetchMyProjects.mockResolvedValue([makeProject()]);
 
         const wrapper = await mountDashboard();

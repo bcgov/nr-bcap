@@ -48,14 +48,16 @@ class WorkflowDraftService(BaseGraphService):
     lookups behind the writes both go through queryset(), so a colleague can
     resume and delete a draft as well as see it."""
 
-    def queryset(self, user, graph_slug=None, parent_resource_id=None):
+    def queryset(self, user, graph_slug=None, parent_resource_id=None, own_only=False):
         """An applicant's drafts and their associated companies', oldest first;
-        branch staff see everyone's. Graph and parent filter in SQL, so no caller
-        loads them all."""
+        branch staff see everyone's. own_only narrows to the ones the user
+        created. Graph and parent filter in SQL, so no caller loads them all."""
         qs = ResourceTileTree.get_tiles(
             GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
         )
-        if not is_internal_user(user):
+        if own_only:
+            qs = qs.filter(principaluser=user)
+        elif not is_internal_user(user):
             qs = qs.filter(
                 OrganizationService().visible_to(
                     user, WorkflowDraftsAliases.OWNING_ORGANIZATION
@@ -71,7 +73,7 @@ class WorkflowDraftService(BaseGraphService):
                     )
                 }
             )
-        return qs.order_by("createdtime")
+        return qs.select_related("principaluser").order_by("createdtime")
 
     def get(self, user, pk):
         """The draft with this id as far as the user can see it, or None."""

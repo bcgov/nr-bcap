@@ -9062,9 +9062,10 @@ export const zApiDashboardExternalRetrieveQuery = z.object({
     limit: z.int().gte(1).lte(100).optional(),
     page: z.int().gte(1).optional(),
     status: z.enum([
-        'DRAFTS',
-        'CREATED_BY_ME',
-        'CREATED_BY_ASSOCIATED_COMPANIES'
+        'DRAFTS_CREATED_BY_ME',
+        'DRAFTS_BY_ASSOCIATED_ORGANIZATIONS',
+        'FILINGS_CREATED_BY_ME',
+        'FILINGS_BY_ASSOCIATED_ORGANIZATIONS'
     ]).optional()
 });
 

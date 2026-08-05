@@ -159,7 +159,8 @@ class ExternalDashboardServiceTests(TestCase):
 
     def test_created_by_me_returns_only_the_users_own_applications(self):
         page = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.CREATED_BY_ME), self.me
+            DashboardFilter(status=ExternalDashboardStatus.FILINGS_CREATED_BY_ME),
+            self.me,
         )
 
         self.assertEqual(page.count, 2)
@@ -210,7 +211,7 @@ class ExternalDashboardServiceTests(TestCase):
     def test_associated_companies_scope_includes_colleagues_applications(self):
         page = self.service.get_cards(
             DashboardFilter(
-                status=ExternalDashboardStatus.CREATED_BY_ASSOCIATED_COMPANIES
+                status=ExternalDashboardStatus.FILINGS_BY_ASSOCIATED_ORGANIZATIONS
             ),
             self.me,
         )
@@ -227,18 +228,17 @@ class ExternalDashboardServiceTests(TestCase):
 
         self.assertEqual([card.id for card in page.results], [str(self.outsiders.pk)])
 
-    def test_associated_companies_scope_empty_without_a_linked_contributor(self):
-        # The outsider has no Contributor, so there are no company usernames to
-        # scope by: the page is empty rather than erroring.
+    def test_associated_companies_scope_falls_back_to_own_without_a_contributor(self):
+        # The outsider has no Contributor, so there are no organizations to
+        # widen to: the scope is their own applications rather than an error.
         page = self.service.get_cards(
             DashboardFilter(
-                status=ExternalDashboardStatus.CREATED_BY_ASSOCIATED_COMPANIES
+                status=ExternalDashboardStatus.FILINGS_BY_ASSOCIATED_ORGANIZATIONS
             ),
             self.outsider,
         )
 
-        self.assertEqual(page.count, 0)
-        self.assertEqual(page.results, [])
+        self.assertEqual([card.id for card in page.results], [str(self.outsiders.pk)])
 
 
 class ExternalDashboardDraftsTests(TestCase):
@@ -276,7 +276,8 @@ class ExternalDashboardDraftsTests(TestCase):
 
     def test_drafts_scope_returns_only_the_users_drafts(self):
         page = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
+            self.user,
         )
 
         self.assertEqual(page.count, 2)
@@ -290,7 +291,8 @@ class ExternalDashboardDraftsTests(TestCase):
 
     def test_module_drafts_get_a_card_carrying_their_graph(self):
         page = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
+            self.user,
         )
 
         card = next(c for c in page.results if c.id == str(self.investigation_draft.pk))
@@ -299,7 +301,8 @@ class ExternalDashboardDraftsTests(TestCase):
 
     def test_module_draft_is_named_by_the_permit_it_was_started_from(self):
         page = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
+            self.user,
         )
 
         card = next(c for c in page.results if c.id == str(self.investigation_draft.pk))
@@ -308,23 +311,31 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertRegex(card.application_number, r"^APP-\d+$")
         self.assertEqual(card.submission_type, "Site Visit")
 
-    def test_internal_staff_see_every_draft_but_the_card_names_the_requester(self):
-        # Draft visibility widened to all internal users, so staff get the
-        # applicant's draft back. Pins current behaviour: created_by_name is
-        # stamped from the requester, so it reads as staff's own draft.
+    def test_internal_staff_see_every_draft_named_after_its_creator(self):
+        # Draft visibility is widened to all internal users on the organization
+        # scope; the created-by-me scope stays the requester's own drafts.
         staff = make_user("branch-staff")
         staff.groups.add(Group.objects.get(name="Resource Editor"))
 
         page = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), staff
+            DashboardFilter(
+                status=ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS
+            ),
+            staff,
         )
 
         card = next(c for c in page.results if c.id == str(self.draft.pk))
-        self.assertEqual(card.created_by_name, "branch-staff")
+        self.assertEqual(card.created_by_name, self.user.username)
+
+        own = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME), staff
+        )
+        self.assertEqual(own.results, [])
 
     def test_a_drafts_own_identification_wins_over_its_parents(self):
         page = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
+            self.user,
         )
 
         card = next(c for c in page.results if c.id == str(self.draft.pk))
@@ -357,7 +368,8 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
             parent_resource_id=parent_resource_id,
         )
         page = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
+            self.user,
         )
         self.assertEqual(page.count, 1)
         return page.results[0]

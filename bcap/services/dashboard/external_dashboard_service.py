@@ -34,9 +34,12 @@ class ExternalDashboardService(BaseDashboardService):
     def get_cards(self, query: DashboardFilter, user) -> ExternalDashboardPage:
         """Cards for the requesting user, one scope per request: drafts, own
         applications, or associated companies'. Status defaults to own
-        applications (the serializer supplies CREATED_BY_ME; _filter_by_status
+        applications (the serializer supplies FILINGS_CREATED_BY_ME; _filter_by_status
         falls back to the same scope for an unset/unrecognized one)."""
-        if query.status == ExternalDashboardStatus.DRAFTS:
+        if query.status in (
+            ExternalDashboardStatus.DRAFTS_CREATED_BY_ME,
+            ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS,
+        ):
             count, results = self._draft_cards(user, query)
         else:
             count, results = self._application_cards(query, user)
@@ -93,11 +96,13 @@ class ExternalDashboardService(BaseDashboardService):
         """Created-by scoping. The seam for a future applicant-field match:
         only this method knows how a user/company maps to applications."""
         match status:
-            case ExternalDashboardStatus.CREATED_BY_ME:
+            case ExternalDashboardStatus.FILINGS_CREATED_BY_ME:
                 return queryset.filter(principaluser=user)
-            case ExternalDashboardStatus.CREATED_BY_ASSOCIATED_COMPANIES:
+            case ExternalDashboardStatus.FILINGS_BY_ASSOCIATED_ORGANIZATIONS:
+                # Inclusive: the organizations' filings plus the user's own, so
+                # the client swaps one list for the other rather than merging.
                 return queryset.filter(
-                    OrganizationService().stamped_for(user, self.PA.OWNING_ORGANIZATION)
+                    OrganizationService().visible_to(user, self.PA.OWNING_ORGANIZATION)
                 )
             case _:
                 # Unrecognized/unset status: scope to own applications.
@@ -136,7 +141,8 @@ class ExternalDashboardService(BaseDashboardService):
 
     def _draft_cards(self, user, query):
         store = WorkflowDraftService()
-        count, drafts = self._page(store.queryset(user), query)
+        own_only = query.status == ExternalDashboardStatus.DRAFTS_CREATED_BY_ME
+        count, drafts = self._page(store.queryset(user, own_only=own_only), query)
         unread = BcapMessageService().unread_counts_by_context(
             {str(draft.pk) for draft in drafts}, user.username
         )
@@ -192,7 +198,7 @@ class ExternalDashboardService(BaseDashboardService):
             graph_slug=field(WorkflowDraftsAliases.GRAPH_SLUG),
             permit_application_id=WorkflowDraftService.parent_id(draft),
             status="Submission Required",
-            created_by_name=display_name(user),
+            created_by_name=display_name(draft.principaluser or user),
             created_date=to_iso(draft.createdtime),
             updated_date=field(WorkflowDraftsAliases.UPDATED_DATE),
             project_name=identification(self.PA.PROJECT_NAME, parent.project_name),

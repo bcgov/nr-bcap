@@ -422,16 +422,18 @@ paths:
         name: status
         schema:
           enum:
-          - DRAFTS
-          - CREATED_BY_ME
-          - CREATED_BY_ASSOCIATED_COMPANIES
+          - DRAFTS_CREATED_BY_ME
+          - DRAFTS_BY_ASSOCIATED_ORGANIZATIONS
+          - FILINGS_CREATED_BY_ME
+          - FILINGS_BY_ASSOCIATED_ORGANIZATIONS
           type: string
-          default: CREATED_BY_ME
+          default: FILINGS_CREATED_BY_ME
           minLength: 1
         description: |-
-          * `DRAFTS` - Drafts
-          * `CREATED_BY_ME` - My Projects
-          * `CREATED_BY_ASSOCIATED_COMPANIES` - Created by associated companies
+          * `DRAFTS_CREATED_BY_ME` - My drafts
+          * `DRAFTS_BY_ASSOCIATED_ORGANIZATIONS` - Drafts of associated organizations
+          * `FILINGS_CREATED_BY_ME` - My filings
+          * `FILINGS_BY_ASSOCIATED_ORGANIZATIONS` - Filings of associated organizations
       tags:
       - 'External: dashboard'
       security:

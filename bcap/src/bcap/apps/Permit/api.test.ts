@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
+    dashboardScope,
     fetchDraft,
     createDraft,
     fetchDrafts,
@@ -175,14 +176,14 @@ describe('Permit API', () => {
             const result = await fetchCompanyProjects();
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/bcap/api/dashboard/external?status=CREATED_BY_ASSOCIATED_COMPANIES',
+                `/bcap/api/dashboard/external?status=${dashboardScope.FILINGS_BY_ASSOCIATED_ORGANIZATIONS}`,
             );
             expect(result).toEqual([{ id: 'theirs' }]);
         });
     });
 
     describe('fetchDraftCards', () => {
-        it('asks the external dashboard for the DRAFTS scope', async () => {
+        it('asks the external dashboard for the drafts scope', async () => {
             apiFetchJson.mockResolvedValue({
                 results: [{ id: 'draft-1', is_draft: true }],
             });
@@ -190,7 +191,7 @@ describe('Permit API', () => {
             const result = await fetchDraftCards();
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/bcap/api/dashboard/external?status=DRAFTS',
+                `/bcap/api/dashboard/external?status=${dashboardScope.DRAFTS_CREATED_BY_ME}`,
             );
             expect(result).toEqual([{ id: 'draft-1', is_draft: true }]);
         });
@@ -261,7 +262,7 @@ describe('Permit API', () => {
             apiFetchJson.mockResolvedValue({ results: [{ id: 'proj-1' }] });
             const result = await fetchMyProjects();
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/bcap/api/dashboard/external?status=CREATED_BY_ME',
+                `/bcap/api/dashboard/external?status=${dashboardScope.FILINGS_CREATED_BY_ME}`,
             );
             expect(result).toEqual([{ id: 'proj-1' }]);
         });

@@ -42,6 +42,15 @@ const props = defineProps({
         type: String,
         default: '',
     },
+    // Second opt-in checkbox, same deal as messagesOnly.
+    includeCompany: {
+        type: Boolean,
+        default: false,
+    },
+    includeCompanyLabel: {
+        type: String,
+        default: '',
+    },
     // Card counts for the results summary; omitted (or zero total) hides it.
     shown: {
         type: Number,
@@ -59,6 +68,7 @@ const emit = defineEmits([
     'update:currentSort',
     'update:sortOrder',
     'update:messagesOnly',
+    'update:includeCompany',
     'refresh',
 ]);
 
@@ -148,6 +158,12 @@ const activeFilters = computed(() => {
             label: props.messagesOnlyLabel,
             clear: () => emit('update:messagesOnly', false),
         });
+    if (props.includeCompany && props.includeCompanyLabel)
+        filters.push({
+            key: 'company',
+            label: props.includeCompanyLabel,
+            clear: () => emit('update:includeCompany', false),
+        });
     if (props.currentSort !== 'default')
         filters.push({
             key: 'sort',
@@ -200,6 +216,23 @@ const activeSortLabel = computed(() => {
                 "
             />
             {{ props.messagesOnlyLabel }}
+        </label>
+
+        <label
+            v-if="props.includeCompanyLabel"
+            class="messages-filter"
+        >
+            <input
+                type="checkbox"
+                :checked="props.includeCompany"
+                @change="
+                    emit(
+                        'update:includeCompany',
+                        ($event.target as HTMLInputElement).checked,
+                    )
+                "
+            />
+            {{ props.includeCompanyLabel }}
         </label>
 
         <div class="search-bar-wrapper">
@@ -317,14 +350,17 @@ const activeSortLabel = computed(() => {
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    /* Pushes the search section to the far end so it can't ride over the label. */
-    margin-right: auto;
+    margin-right: 1.25rem;
     gap: 0.75rem;
     line-height: 1;
     font-size: 1.425rem;
     color: #333333;
     white-space: nowrap;
     cursor: pointer;
+}
+
+.messages-filter:has(+ :not(.messages-filter)) {
+    margin-right: auto;
 }
 
 .messages-filter input {

@@ -12884,11 +12884,16 @@ export type ApiDashboardExternalRetrieveData = {
         limit?: number;
         page?: number;
         /**
-         * * `DRAFTS` - Drafts
-         * * `CREATED_BY_ME` - My Projects
-         * * `CREATED_BY_ASSOCIATED_COMPANIES` - Created by associated companies
+         * * `DRAFTS_CREATED_BY_ME` - My drafts
+         * * `DRAFTS_BY_ASSOCIATED_ORGANIZATIONS` - Drafts of associated organizations
+         * * `FILINGS_CREATED_BY_ME` - My filings
+         * * `FILINGS_BY_ASSOCIATED_ORGANIZATIONS` - Filings of associated organizations
          */
-        status?: 'DRAFTS' | 'CREATED_BY_ME' | 'CREATED_BY_ASSOCIATED_COMPANIES';
+        status?:
+            | 'DRAFTS_CREATED_BY_ME'
+            | 'DRAFTS_BY_ASSOCIATED_ORGANIZATIONS'
+            | 'FILINGS_CREATED_BY_ME'
+            | 'FILINGS_BY_ASSOCIATED_ORGANIZATIONS';
     };
     url: '/bcap/api/dashboard/external';
 };

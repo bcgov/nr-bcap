@@ -196,7 +196,9 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         )
 
     def test_drafts_scope_returns_the_users_drafts(self):
-        resp = self.client.get(self.url, {"status": ExternalDashboardStatus.DRAFTS})
+        resp = self.client.get(
+            self.url, {"status": ExternalDashboardStatus.DRAFTS_CREATED_BY_ME}
+        )
 
         self.assertEqual(resp.status_code, 200)
         body = resp.json()
