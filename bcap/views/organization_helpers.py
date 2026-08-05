@@ -33,10 +33,12 @@ def organization_to_stamp(user, picked="", field="organization_id"):
     field when they belong to several and picked none."""
     try:
         return OrganizationService().resolve_organization(user, picked or "")
-    except PermissionError as not_a_member:
-        raise PermissionDenied(str(not_a_member))
-    except ValueError as unresolved:
-        raise ValidationError({field: [str(unresolved)]})
+    except PermissionError:
+        raise PermissionDenied("You do not belong to that organization.")
+    except ValueError:
+        raise ValidationError(
+            {field: ["Choose which organization to file this under."]}
+        )
 
 
 def stamp_organization(request, group, alias):
