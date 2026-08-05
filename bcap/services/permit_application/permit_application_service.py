@@ -14,6 +14,7 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationGroupAliases as group_aliases,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA
+from bcap.util.tiles import group_data
 from bcap.util.indexing import bulk_index
 
 
@@ -116,11 +117,7 @@ class PermitApplicationService:
         to the application in flow order, and return the cloned module so a
         rejected save can delete everything it created. The module id and
         requirement ids are filled in by the assign-module-ids save hook."""
-        admin = (
-            data.setdefault(ALIASED_DATA, {})
-            .setdefault(group_aliases.APPLICATION_ADMIN, {ALIASED_DATA: {}})
-            .setdefault(ALIASED_DATA, {})
-        )
+        admin = group_data(data, group_aliases.APPLICATION_ADMIN)
         cloned = self._requirements.create_working_copies()
         modules = admin.setdefault(group_aliases.PROCESS_MODULE, [])
         modules.append(

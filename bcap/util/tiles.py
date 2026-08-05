@@ -5,6 +5,18 @@ from collections import defaultdict
 
 from arches.app.models.models import ResourceXResource, TileModel
 
+from bcap.util.bcap_aliases import ALIASED_DATA
+
+
+def group_data(payload, group):
+    """The aliased data of a group within a payload body, creating the path down
+    to it. What callers write node values into."""
+    return (
+        payload.setdefault(ALIASED_DATA, {})
+        .setdefault(group, {})
+        .setdefault(ALIASED_DATA, {})
+    )
+
 
 def resource_instance_value(resource_id):
     """The value a resource-instance node holds: a one-element list, or an empty

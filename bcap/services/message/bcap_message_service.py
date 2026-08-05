@@ -26,6 +26,7 @@ from bcap.services.process_requirement.process_requirement_service import (
 from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.util.auth.groups import is_internal_user
 from bcap.util.dates import parse_iso_or_set_value
+from bcap.util.tiles import group_data
 
 logger = logging.getLogger(__name__)
 
@@ -219,10 +220,7 @@ class BcapMessageService(BaseGraphService):
     @classmethod
     def _set_node(cls, data, alias, node_value):
         """Set a node's value in the payload's message_content group, creating the path."""
-        content = data.setdefault("aliased_data", {}).setdefault(
-            cls.A.MESSAGE_CONTENT, {}
-        )
-        content.setdefault("aliased_data", {})[alias] = {"node_value": node_value}
+        group_data(data, cls.A.MESSAGE_CONTENT)[alias] = {"node_value": node_value}
 
     def validate_internal_recipient(self, data):
         """Refuse an internal-only message whose recipient is not staff."""
