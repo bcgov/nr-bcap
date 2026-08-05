@@ -139,6 +139,9 @@ const addModuleItems = computed(() =>
 // All requirements are shown, internal ones included.
 const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     row.requirements;
+
+const archesResourceId = (row: ModuleRow, index: number): string =>
+    row.hostResourceId || (index === 0 ? props.permitId : '');
 </script>
 
 <template>
@@ -212,6 +215,7 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
                     <ModulePanelHeader
                         :row="row"
                         :is-staff="isStaff"
+                        :resource-id="archesResourceId(row, index)"
                         :toggling="ui.togglingModule"
                         @toggle="onToggleCompleted(row)"
                         @remove="moduleRemove.open(row)"
