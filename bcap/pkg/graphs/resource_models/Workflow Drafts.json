@@ -60,6 +60,35 @@
                     "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "6b0f92d4-1c37-4a85-b2e6-7d94f3a08c51",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "The draft blob, alone so its edits are not audited"
+                    },
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Draft Payload"
+                    },
+                    "nodegroup_id": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -202,7 +231,7 @@
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
-                    "card_id": "e04b6d18-9a72-4c35-b6ef-1d8305f7ac29",
+                    "card_id": "6b0f92d4-1c37-4a85-b2e6-7d94f3a08c51",
                     "config": {
                         "defaultValue": "",
                         "i18n_properties": ["placeholder"],
@@ -288,16 +317,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "b7d2e419-6c33-4f88-a0d5-91e4c6b8a742",
-                    "edgeid": "5ecdc123-2a5c-49e3-bfe2-40a0af75657d",
-                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
-                    "name": null,
-                    "ontologyproperty": null,
-                    "rangenode_id": "a3c46923-df6c-4b00-92e8-3ff30e7c670c",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "3f1c8a26-8d4b-4a51-9c26-5a1b7f0e2d31",
                     "edgeid": "8ce565c3-2923-49ca-a9cb-e722a2ccf82f",
                     "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
@@ -355,6 +374,26 @@
                     "ontologyproperty": null,
                     "rangenode_id": "b7d2e419-6c33-4f88-a0d5-91e4c6b8a742",
                     "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e85bfcaa-72e5-4b01-88b6-0d2259d5379f",
+                    "edgeid": "af38c105-9e42-4b7d-8163-52c9e0a7d4b6",
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
+                    "edgeid": "17d6e83b-4a90-4c52-bf71-8e30d95c26af",
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "a3c46923-df6c-4b00-92e8-3ff30e7c670c",
+                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [],
@@ -382,6 +421,13 @@
                     "grouping_node_id": "b7d2e419-6c33-4f88-a0d5-91e4c6b8a742",
                     "legacygroupid": null,
                     "nodegroupid": "b7d2e419-6c33-4f88-a0d5-91e4c6b8a742",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
+                    "legacygroupid": null,
+                    "nodegroupid": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
                     "parentnodegroup_id": null
                 }
             ],
@@ -474,7 +520,7 @@
                     "issearchable": false,
                     "istopnode": false,
                     "name": "Draft Data",
-                    "nodegroup_id": "b7d2e419-6c33-4f88-a0d5-91e4c6b8a742",
+                    "nodegroup_id": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
                     "nodeid": "a3c46923-df6c-4b00-92e8-3ff30e7c670c",
                     "ontologyclass": null,
                     "parentproperty": null,
@@ -646,6 +692,29 @@
                     "ontologyclass": null,
                     "parentproperty": null,
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "draft_payload",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "The draft blob, alone so its edits are not audited",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": false,
+                    "istopnode": false,
+                    "name": "Draft Payload",
+                    "nodegroup_id": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
+                    "nodeid": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }

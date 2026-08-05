@@ -17,6 +17,7 @@ class WorkflowDraftsAliases(AbstractAliases):
 
 
 class WorkflowDraftsGroupAliases(AbstractAliases):
+    DRAFT_PAYLOAD = "draft_payload"
     FILING_INFO = "filing_info"
     SYSTEM_INFO = "system_info"
 
