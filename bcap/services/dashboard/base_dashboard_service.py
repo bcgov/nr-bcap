@@ -22,6 +22,20 @@ class BaseDashboardService(BaseGraphService):
 
     PA = PermitApplicationAliases
 
+    CARD_NODES = [
+        PA.PROJECT_NAME,
+        PA.APPLICATION_ID,
+        PA.FILING_TYPE,
+        PA.INDUSTRIAL_SECTOR,
+        PA.APPLICATION_PRIORITY_LEVEL,
+        PA.RELATED_PERMIT,
+        PA.MODULE_ID,
+        PA.MODULE_NAME,
+        PA.MODULE_ORDER,
+        PA.MODULE_COMPLETED_DATE,
+        PA.IS_MODULE_COMPLETED,
+    ]
+
     def __init__(self):
         self.contributors = ContributorService()
 

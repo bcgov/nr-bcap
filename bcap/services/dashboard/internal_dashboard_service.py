@@ -87,18 +87,8 @@ class InternalDashboardService(BaseDashboardService):
                 GraphSlugs.PERMIT_APPLICATION,
                 nodes=self.nodes(
                     GraphSlugs.PERMIT_APPLICATION,
-                    [
-                        self.PA.PROJECT_NAME,
-                        self.PA.APPLICATION_ID,
-                        self.PA.FILING_TYPE,
-                        self.PA.INDUSTRIAL_SECTOR,
-                        self.PA.APPLICATION_PRIORITY_LEVEL,
-                        self.PA.RELATED_PERMIT,
-                        self.PA.MODULE_ID,
-                        self.PA.MODULE_NAME,
-                        self.PA.MODULE_ORDER,
-                        self.PA.MODULE_COMPLETED_DATE,
-                        self.PA.IS_MODULE_COMPLETED,
+                    self.CARD_NODES
+                    + [
                         self.PA.PROCESS_REQUIREMENT,
                         self.PA.PROCESS_REQUIREMENT_ORDER,
                         self.PA.MINISTRY_ASSIGNEE,
