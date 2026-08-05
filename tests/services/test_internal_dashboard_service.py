@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from itertools import chain
 from types import SimpleNamespace
 from uuid import uuid4
@@ -22,53 +21,19 @@ from bcap.services.dashboard.dashboard_types import (
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
-from bcap.util.aliases.permit_application import (
-    PermitApplicationAliases as pa,
-    PermitApplicationGroupAliases as pa_groups,
-)
+from bcap.util.aliases.permit_application import PermitApplicationAliases as pa
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
+from tests.services.contributor_fixtures import make_contributor
+from tests.permit_fixtures import (
+    RequirementRow,
+    build_permit,
+    make_requirement,
+)
 from tests.services.test_bcap_message_service import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
-
-
-@dataclass
-class RequirementRow:
-    """A process_requirement child to nest under a module: the requirement
-    resource (None for a blank child), its order, and its ministry assignee."""
-
-    requirement: object = None
-    order: int = 1
-    assignee: object = None
-
-
-def _attach_module(builder, admin, rows, name="Permit Review", order=1):
-    """Attach a process_module tile under the admin group, nesting one
-    process_requirement child per RequirementRow."""
-    builder.prune_blank_tiles(admin, pa_groups.PROCESS_MODULE, pa.MODULE_NAME)
-    module = builder.append_blank_tile_for_group(
-        admin,
-        pa_groups.PROCESS_MODULE,
-        {
-            pa.MODULE_NAME: builder.localized(name),
-            pa.MODULE_ID: str(uuid4()),
-            pa.MODULE_ORDER: order,
-        },
-    )
-    builder.prune_blank_tiles(module, pa.PROCESS_REQUIREMENT)
-    for row in rows:
-        values = {pa.PROCESS_REQUIREMENT_ORDER: row.order}
-        if row.requirement is not None:
-            values[pa.PROCESS_REQUIREMENT] = row.requirement
-        child = builder.append_blank_tile_for_group(
-            module, pa.PROCESS_REQUIREMENT, values
-        )
-        if row.assignee is not None:
-            child.aliased_data.ministry_assignee = row.assignee
-    return module
 
 
 def build_permit_graph():
@@ -79,24 +44,19 @@ def build_permit_graph():
     lowest-order outstanding requirement, "Field Assessment". Returns the
     created resources."""
     builder = FixtureBuilder()
-    contributor_type = reference_value("contributor", "contributor_type")
 
-    ada = builder.make_contributor(ContributorSpec(contributor_type, "Ada", "Lovelace"))
-    acme = builder.make_contributor(
-        ContributorSpec(contributor_type, None, "Acme Corp")
-    )
+    ada = make_contributor(builder, "Lovelace", "Ada")
+    acme = make_contributor(builder, "Acme Corp")
     # Grace maps to the test user (bcap_username) and belongs to Acme, so she is
     # the ASSIGNED_TO_ME match and Acme is her ASSIGNED_TO_ASSOCIATED_COMPANIES.
-    grace = builder.make_contributor(
-        ContributorSpec(
-            contributor_type,
-            "Grace",
-            "Hopper",
-            bcap_username="testuser",
-            associated_organization=acme,
-        )
+    grace = make_contributor(
+        builder,
+        "Hopper",
+        "Grace",
+        bcap_username="testuser",
+        associated_organization=acme,
     )
-    alan = builder.make_contributor(ContributorSpec(contributor_type, "Alan", "Turing"))
+    alan = make_contributor(builder, "Turing", "Alan")
 
     hca_permit = builder.new_resource("hca_permit")
     builder.append_blank_tile_for_group(
@@ -163,42 +123,23 @@ def build_permit_graph():
         }
     )
 
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized("My Project"),
-            "application_id": builder.localized("APP-1"),
-            # Pinned by label so the card's submission_type is assertable.
-            "filing_type": reference_value(
-                "permit_application", "filing_type", "Site Visit"
-            ),
-        },
-    )
-    builder.append_blank_tile_for_group(
-        permit,
-        "related_permit",
-        {"related_permit": hca_permit, "is_related_permit": True},
-    )
-    permit.append_tile("application_admin")
-    admin = permit.aliased_data.application_admin
-    admin.aliased_data.project_officer = alan
-    admin.aliased_data.application_submission_date = "2026-01-01"
     # One process_requirement per (requirement, order, assignee), all under a
     # single module. "Site Inspection" (order 3) precedes "Field Assessment"
     # (order 2) in tile order, so the card surfaces the right row by lowest
     # order, not position.
-    _attach_module(
+    permit = build_permit(
         builder,
-        admin,
+        "My Project",
         [
             RequirementRow(review, 1, ada),
             RequirementRow(site, 3, ada),
             RequirementRow(assessment, 2, grace),
         ],
+        # Pinned by label so the card's submission_type is assertable.
+        filing_type="Site Visit",
+        related_permit=hca_permit,
+        admin_values={pa.PROJECT_OFFICER: alan},
     )
-    permit.save(**builder.save_kwargs)
 
     return SimpleNamespace(
         permit=permit,
@@ -213,187 +154,26 @@ def build_permit_graph():
     )
 
 
-def build_minimal_permit(builder, name):
-    """A permit_application with only the tiles a card needs (identification,
-    admin priority, and one outstanding requirement so it isn't hidden), so
-    pagination tests can cheaply create several visible permits. Returns the
-    created resource."""
-    requirement = builder.make_process_requirement(
-        {
-            "id": f"REQ-{name}",
-            "name": "Outstanding",
-            "due": "2026-03-01",
-            "notes": "",
-            "satisfied": False,
-            "sub_requirements": [],
-        }
-    )
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
-        },
-    )
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_admin",
-        {
-            "application_priority_level": reference_value(
-                "permit_application", "application_priority_level"
-            ),
-            "application_submission_date": "2026-01-01",
-        },
-    )
-    _attach_module(
+def build_minimal_permit(builder, name, satisfied=False, submitted=True):
+    """A permit_application with only the tiles a card needs: identification,
+    admin, and one process requirement under a single module. Unsatisfied and
+    submitted, it is the cheapest permit the dashboard shows."""
+    return build_permit(
         builder,
-        permit.aliased_data.application_admin,
-        [RequirementRow(requirement, 1)],
+        name,
+        [RequirementRow(make_requirement(builder, name, satisfied))],
+        submission_date="2026-01-01" if submitted else None,
     )
-    permit.save(**builder.save_kwargs)
-    return permit
 
 
-def build_permit_with_investigation(builder, name, host_graph=GraphSlugs.INVESTIGATION):
+def build_permit_with_investigation(builder, name):
     """A dashboard-visible permit whose outstanding requirement's
     submission_data points at an Investigation host -- the linkage the
     unread-message roll-up follows. Returns the permit and the host resource."""
-    host = builder.make_resource(host_graph)
-    requirement = builder.make_process_requirement(
-        {
-            "id": f"REQ-{name}",
-            "name": "Outstanding",
-            "due": "2026-03-01",
-            "notes": "",
-            "satisfied": False,
-            "sub_requirements": [],
-        }
-    )
+    host = builder.make_resource(GraphSlugs.INVESTIGATION)
+    requirement = make_requirement(builder, name)
     builder.link(str(requirement.pk), submission=host)
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
-        },
-    )
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_admin",
-        {
-            "application_priority_level": reference_value(
-                "permit_application", "application_priority_level"
-            ),
-            "application_submission_date": "2026-01-01",
-        },
-    )
-    _attach_module(
-        builder,
-        permit.aliased_data.application_admin,
-        [RequirementRow(requirement, 1)],
-    )
-    permit.save(**builder.save_kwargs)
-    return permit, host
-
-
-def build_all_satisfied_permit(builder, name):
-    """A permit_application whose only process requirement is satisfied, so the
-    card has none to surface. Returns the created resource."""
-    requirement = builder.make_process_requirement(
-        {
-            "id": "REQ-DONE",
-            "name": "Review",
-            "due": "2026-01-02",
-            "notes": "done",
-            "satisfied": True,
-            "sub_requirements": [],
-        }
-    )
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
-        },
-    )
-    permit.append_tile("application_admin")
-    _attach_module(
-        builder,
-        permit.aliased_data.application_admin,
-        [RequirementRow(requirement, 1)],
-    )
-    admin = permit.aliased_data.application_admin
-    admin.aliased_data.application_submission_date = "2026-01-01"
-    permit.save(**builder.save_kwargs)
-    return permit
-
-
-def build_unassigned_permit(builder, name):
-    """A permit_application whose active (unsatisfied) requirement has no
-    ministry_assignee. Returns the created resource."""
-    requirement = builder.make_process_requirement(
-        {
-            "id": "REQ-UNASSIGNED",
-            "name": "Needs Owner",
-            "due": "2026-03-01",
-            "notes": "nobody assigned",
-            "satisfied": False,
-            "sub_requirements": [],
-        }
-    )
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
-        },
-    )
-    permit.append_tile("application_admin")
-    _attach_module(
-        builder,
-        permit.aliased_data.application_admin,
-        [RequirementRow(requirement, 1)],
-    )
-    admin = permit.aliased_data.application_admin
-    admin.aliased_data.application_submission_date = "2026-01-01"
-    permit.save(**builder.save_kwargs)
-    return permit
-
-
-def build_blank_requirement_permit(builder, name):
-    """A permit_application whose module holds only a blank process_requirement
-    child -- no requirement assigned (the shape an externally-created application
-    has before any requirement is added). It has nothing actionable, so the
-    dashboard must hide it rather than surface a card with no requirement.
-    Returns the resource."""
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
-        },
-    )
-    permit.append_tile("application_admin")
-    admin = permit.aliased_data.application_admin
-    admin.aliased_data.application_submission_date = "2026-01-01"
-    _attach_module(builder, admin, [RequirementRow(order=1)])
-    permit.save(**builder.save_kwargs)
-    return permit
+    return build_permit(builder, name, [RequirementRow(requirement)]), host
 
 
 def build_groupless_requirement_permit(builder, name):
@@ -402,60 +182,8 @@ def build_groupless_requirement_permit(builder, name):
     the permit and the requirement id."""
     requirement = builder.new_resource("process_requirement")
     requirement.save(**builder.save_kwargs)
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
-        },
-    )
-    permit.append_tile("application_admin")
-    _attach_module(
-        builder,
-        permit.aliased_data.application_admin,
-        [RequirementRow(requirement, 1)],
-    )
-    admin = permit.aliased_data.application_admin
-    admin.aliased_data.application_submission_date = "2026-01-01"
-    permit.save(**builder.save_kwargs)
+    permit = build_permit(builder, name, [RequirementRow(requirement)])
     return permit, str(requirement.pk)
-
-
-def build_unsubmitted_permit(builder, name):
-    """A permit with an actionable requirement but no submission date -- a draft
-    the dashboard hides until it is submitted. Returns the created resource."""
-    requirement = builder.make_process_requirement(
-        {
-            "id": f"REQ-{name}",
-            "name": "Outstanding",
-            "due": "2026-03-01",
-            "notes": "",
-            "satisfied": False,
-            "sub_requirements": [],
-        }
-    )
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            "filing_type": reference_value("permit_application", "filing_type"),
-        },
-    )
-    permit.append_tile("application_admin")
-    _attach_module(
-        builder,
-        permit.aliased_data.application_admin,
-        [RequirementRow(requirement, 1)],
-    )
-    # deliberately no application_submission_date
-    permit.save(**builder.save_kwargs)
-    return permit
 
 
 def _tile(**leaves):
@@ -548,7 +276,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         # The graph permit's active requirement ("Field Assessment") is assigned
         # to Grace, so it is excluded; add a permit whose active requirement has
         # no assignee, which is the only UNASSIGNED match.
-        unassigned_id = str(build_unassigned_permit(FixtureBuilder(), "Orphan").pk)
+        unassigned_id = str(build_minimal_permit(FixtureBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(
             DashboardFilter(status=InternalDashboardStatus.UNASSIGNED)
@@ -559,7 +287,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
     def test_no_status_returns_all_actionable_permits_regardless_of_assignee(self):
         # No status means the assignment filter is not applied: both the
         # assigned graph permit and an unassigned one are returned.
-        unassigned_id = str(build_unassigned_permit(FixtureBuilder(), "Orphan").pk)
+        unassigned_id = str(build_minimal_permit(FixtureBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(DashboardFilter())
 
@@ -798,9 +526,9 @@ class DashboardServiceVisibilityTests(TestCase):
         ControlledListFixtures.seed()
         builder = FixtureBuilder()
         cls.submitted_id = str(build_minimal_permit(builder, "Submitted").pk)
-        build_unsubmitted_permit(builder, "Draft")
-        build_all_satisfied_permit(builder, "Done")
-        build_blank_requirement_permit(builder, "Blank")
+        build_minimal_permit(builder, "Draft", submitted=False)
+        build_minimal_permit(builder, "Done", satisfied=True)
+        build_permit(builder, "Blank", [RequirementRow()])
         cls.service = InternalDashboardService()
 
     def test_only_the_submitted_actionable_permit_appears(self):
@@ -901,10 +629,7 @@ class DashboardUnreadRollupTests(TestCase):
 
     def test_card_count_rolls_up_messages_on_the_permit_and_the_host(self):
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
-        reader = builder.make_contributor(
-            ContributorSpec(contributor_type, "Ray", "Reader", bcap_username="roller")
-        )
+        reader = make_contributor(builder, "Reader", "Ray", bcap_username="roller")
         # One unread on the permit, one on its submission host, and one already
         # read that must not count.
         make_message(builder, context=self.permit, recipient=reader, subject="p")

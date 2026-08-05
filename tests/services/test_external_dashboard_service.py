@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
 
@@ -13,13 +12,14 @@ from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     ExternalDashboardStatus,
 )
-from bcap.builders.contributor_builder import ContributorSpec
-from bcap.util.aliases.permit_application import (
-    PermitApplicationAliases as pa,
-    PermitApplicationGroupAliases as pa_groups,
-)
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
+from tests.permit_fixtures import build_permit
+from tests.services.contributor_fixtures import (
+    make_contributor,
+    make_party,
+    make_user,
+)
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -31,53 +31,22 @@ LIFECYCLE_STATE_IDS = {
 }
 
 
-def make_user(username):
-    return get_user_model().objects.create_user(username=username, password="pass")
-
-
 def build_external_permit(
     builder, name, owner, lifecycle="Active", hca_permit=None, organization=None
 ):
     """A permit_application owned by ``owner`` in the given lifecycle state, with
     an optional related HCA permit. Pass organization to stamp the company whose
-    members may see it, as the create route does."""
-    permit = builder.new_resource("permit_application")
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_identification",
-        {
-            "project_name": builder.localized(name),
-            "application_id": builder.localized(name),
-            # Pinned by label so the card's submission_type is assertable.
-            "filing_type": reference_value(
-                "permit_application", "filing_type", "Site Visit"
-            ),
-            "owning_organization": organization,
-        },
+    members may see it, as the create route does. External permits carry no
+    modules, so it is built without requirement rows."""
+    permit = build_permit(
+        builder,
+        name,
+        submission_date="2026-06-18",
+        # Pinned by label so the card's submission_type is assertable.
+        filing_type="Site Visit",
+        organization=organization,
+        related_permit=hca_permit,
     )
-    builder.append_blank_tile_for_group(
-        permit,
-        "application_admin",
-        {
-            "application_priority_level": reference_value(
-                "permit_application", "application_priority_level"
-            ),
-            "application_submission_date": "2026-06-18",
-        },
-    )
-    # External permits carry no modules; drop the blank one append_tile creates.
-    builder.prune_blank_tiles(
-        permit.aliased_data.application_admin,
-        pa_groups.PROCESS_MODULE,
-        pa.MODULE_NAME,
-    )
-    if hca_permit is not None:
-        builder.append_blank_tile_for_group(
-            permit,
-            "related_permit",
-            {"related_permit": hca_permit, "is_related_permit": True},
-        )
-    permit.save(**builder.save_kwargs)
     # The builder sets neither, so stamp them directly.
     ResourceInstance.objects.filter(pk=permit.pk).update(
         principaluser=owner,
@@ -112,35 +81,17 @@ class ExternalDashboardServiceTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = ExternalDashboardService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
         # Grace (user "me") and Alan (user "colleague") both belong to Acme, so
         # the associated-companies scope spans both their applications.
-        cls.me = make_user("me")
-        cls.colleague = make_user("colleague")
+        acme = make_contributor(builder, "Acme Corp")
+        cls.me, _ = make_party(
+            builder, "me", "Grace", "Hopper", associated_organization=acme
+        )
+        cls.colleague, _ = make_party(
+            builder, "colleague", "Alan", "Turing", associated_organization=acme
+        )
         cls.outsider = make_user("outsider")
-
-        acme = builder.make_contributor(
-            ContributorSpec(contributor_type, None, "Acme Corp")
-        )
-        builder.make_contributor(
-            ContributorSpec(
-                contributor_type,
-                "Grace",
-                "Hopper",
-                bcap_username="me",
-                associated_organization=acme,
-            )
-        )
-        builder.make_contributor(
-            ContributorSpec(
-                contributor_type,
-                "Alan",
-                "Turing",
-                bcap_username="colleague",
-                associated_organization=acme,
-            )
-        )
 
         hca = build_hca_permit(builder, "HCA-001", acme)
         cls.mine_active = build_external_permit(
@@ -360,28 +311,19 @@ class ExternalDashboardCompanyDraftsTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = ExternalDashboardService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
-        cls.me = make_user("drafter-me")
-        cls.colleague = make_user("drafter-colleague")
-        cls.outsider = make_user("drafter-outsider")
-
-        acme = builder.make_contributor(
-            ContributorSpec(contributor_type, None, "Acme Corp")
+        acme = make_contributor(builder, "Acme Corp")
+        cls.me, _ = make_party(
+            builder, "drafter-me", "Grace", "Hopper", associated_organization=acme
         )
-        for first, username in (
-            ("Grace", "drafter-me"),
-            ("Alan", "drafter-colleague"),
-        ):
-            builder.make_contributor(
-                ContributorSpec(
-                    contributor_type,
-                    first,
-                    "Hopper",
-                    bcap_username=username,
-                    associated_organization=acme,
-                )
-            )
+        cls.colleague, _ = make_party(
+            builder,
+            "drafter-colleague",
+            "Alan",
+            "Hopper",
+            associated_organization=acme,
+        )
+        cls.outsider = make_user("drafter-outsider")
         cls.acme_id = str(acme.pk)
 
         store = WorkflowDraftService()

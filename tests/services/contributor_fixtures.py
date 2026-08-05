@@ -2,10 +2,42 @@
 
 from datetime import date, timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
 
 from tests.builders import FixtureBuilder
+
+
+def make_contributor(builder, name, first_name=None, **kwargs):
+    """A Contributor; first_name=None makes an organization."""
+    return builder.make_contributor(
+        ContributorSpec(
+            reference_value("contributor", "contributor_type"),
+            first_name,
+            name,
+            **kwargs,
+        )
+    )
+
+
+def make_user(username, internal=False):
+    """A user, in the Resource Editor group when internal."""
+    user = get_user_model().objects.create_user(username=username, password="pass")
+    if internal:
+        user.groups.add(Group.objects.get(name="Resource Editor"))
+    return user
+
+
+def make_party(builder, username, first_name, name, internal=False, **kwargs):
+    """A user and the Contributor that links to them by bcap_username -- the
+    pairing every message/dashboard fixture needs, since party membership and
+    assignment are both looked up through the Contributor."""
+    return make_user(username, internal), make_contributor(
+        builder, name, first_name, bcap_username=username, **kwargs
+    )
 
 
 def days_from_today(days):
