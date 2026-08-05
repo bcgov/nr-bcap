@@ -326,26 +326,19 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertRegex(card.application_number, r"^APP-\d+$")
         self.assertEqual(card.submission_type, "Site Visit")
 
-    def test_internal_staff_see_every_draft_named_after_its_creator(self):
-        # Draft visibility is widened to all internal users on the organization
-        # scope; the created-by-me scope stays the requester's own drafts.
+    def test_internal_staff_get_no_widening_on_someone_elses_draft(self):
+        # An unsubmitted form is its author's business, so branch staff are
+        # scoped like anyone else: their own drafts and their companies'.
         staff = make_user("branch-staff")
         staff.groups.add(Group.objects.get(name="Resource Editor"))
 
-        page = self.service.get_cards(
-            DashboardFilter(
-                status=ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS
-            ),
-            staff,
-        )
-
-        card = next(c for c in page.results if c.id == str(self.draft.pk))
-        self.assertEqual(card.created_by_name, self.user.username)
-
-        own = self.service.get_cards(
-            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME), staff
-        )
-        self.assertEqual(own.results, [])
+        for status in (
+            ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS,
+            ExternalDashboardStatus.DRAFTS_CREATED_BY_ME,
+        ):
+            with self.subTest(status=status):
+                page = self.service.get_cards(DashboardFilter(status=status), staff)
+                self.assertEqual(page.results, [])
 
     def test_a_drafts_own_identification_wins_over_its_parents(self):
         page = self.service.get_cards(

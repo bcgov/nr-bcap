@@ -16,6 +16,8 @@ from django.urls import reverse
 
 from arches.app.models.models import ResourceInstance
 
+from arches_querysets.models import ResourceTileTree
+
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.workflow_draft_service import WorkflowDraftService
@@ -100,8 +102,13 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
 
     def _read(self, pk):
-        """The stored draft as a fresh record (bypasses the request layer)."""
-        return WorkflowDraftService.record(self.svc.get(self.admin, pk))
+        """The stored draft as a fresh record. Bypasses the request layer and
+        the visibility scoping, so it can assert on anyone's draft."""
+        return WorkflowDraftService.record(
+            ResourceTileTree.get_tiles(
+                GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
+            ).get(pk=pk)
+        )
 
     def _make_resource(self, owner):
         """A bare resource of the draft's graph, owned by the given user. Saved
@@ -243,18 +250,19 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(datetime.fromisoformat(self._read(draft_id).updated), t2)
 
-    def test_applicant_list_is_owner_scoped_but_staff_see_all(self):
+    def test_the_list_is_owner_scoped_for_staff_and_applicants_alike(self):
         self.idir_login_simulate(self.applicant)
         resp = self._post({"data": {"step1": {"x": 1}}})
         self.assertEqual(resp.status_code, 201)
         mine = resp.json()["id"]
         self._create_draft(user=self.other_applicant)
-        # The applicant sees only their own draft; staff see both.
+
         resp = self.client.get(self.list_url)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual({row["id"] for row in resp.json()}, {mine})
+        # An unfinished form is its author's business, so staff get no widening.
         self.idir_login_simulate(self.editor)
-        self.assertEqual(len(self.client.get(self.list_url).json()), 2)
+        self.assertEqual(self.client.get(self.list_url).json(), [])
 
     def test_drafts_stamped_for_my_organization_are_visible(self):
         """The stamp, not today's membership, is what a colleague matches on. Who
@@ -415,29 +423,20 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.json()["parent_resource_id"], str(parent.pk))
 
-    def test_internal_staff_reach_every_verb_on_an_applicants_draft(self):
-        # Visibility is keyed on internal-group membership, not superuser, and
-        # the widening applies to every verb. Pins current behaviour: a plain
-        # Resource Editor can read, overwrite and destroy an applicant's draft.
+    def test_internal_staff_reach_no_verb_on_an_applicants_draft(self):
+        # No internal-group widening on drafts: a Resource Editor is as walled
+        # off from an applicant's unsubmitted form as another applicant is.
         draft = self._create_draft(user=self.applicant, data={"step1": {"x": 1}})
-        self.assertFalse(self.editor.is_superuser)
+        url = self._detail_url(draft.id)
+        body = json.dumps({"data": {"step2": {"y": 2}}})
 
-        resp = self.client.get(self._detail_url(draft.id))
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["data"], {"step1": {"x": 1}})
-
-        resp = self.client.put(
-            self._detail_url(draft.id),
-            data=json.dumps({"data": {"step2": {"y": 2}}}),
-            content_type="application/json",
-        )
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(self._read(draft.id).data, {"step2": {"y": 2}})
-
-        self.assertEqual(
-            self.client.delete(self._detail_url(draft.id)).status_code, 204
-        )
-        self.assertIsNone(self.svc.get(self.admin, draft.id))
+        for resp in (
+            self.client.get(url),
+            self.client.put(url, data=body, content_type="application/json"),
+            self.client.delete(url),
+        ):
+            self.assertEqual(resp.status_code, 404)
+        self.assertEqual(self._read(draft.id).data, {"step1": {"x": 1}})
 
     def test_drafts_need_no_role_but_do_need_a_login(self):
         # Any signed-in user may keep drafts; owner scoping is what separates

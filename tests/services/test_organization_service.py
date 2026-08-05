@@ -77,6 +77,21 @@ class OrganizationServiceTest(ContributorFixtureMixin, TestCase):
             self.service.organization_ids("gh"), {str(acme.pk), str(globex.pk)}
         )
 
+    def test_one_membership_tile_may_name_several_organizations(self):
+        # The node holds a list, so a single window can cover more than one org.
+        acme = self.make("Acme Corp")
+        globex = self.make("Globex")
+        self.make_with_orgs(
+            "Hopper",
+            [([acme, globex], ACTIVE)],
+            first_name="Grace",
+            bcap_username="gh",
+        )
+
+        self.assertEqual(
+            self.service.organization_ids("gh"), {str(acme.pk), str(globex.pk)}
+        )
+
     def test_half_open_memberships_count(self):
         # One bound left unset means open in that direction, not excluded.
         open_end = self.make("Open End Corp")

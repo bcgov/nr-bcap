@@ -1,16 +1,16 @@
 """Company visibility: which organization's members may see a resource."""
 
-from django.db.models import Q, TextField, UUIDField, Value
-from django.db.models.fields.json import KeyTextTransform, KeyTransform
-from django.db.models.functions import Cast, Coalesce
+from django.db.models import Q, TextField, Value
+from django.db.models.fields.json import KeyTextTransform
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from arches.app.models.models import TileModel
 
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.util.aliases.contributor import ContributorAliases
-from bcap.util.bcap_aliases import GraphSlugs, RESOURCE_ID
-from bcap.util.tiles import resource_instance_value
+from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.tiles import referenced_resource_ids, resource_instance_value
 
 
 class OrganizationService(ContributorService):
@@ -24,11 +24,7 @@ class OrganizationService(ContributorService):
     """
 
     def _active_memberships(self):
-        """Membership tiles in force today (an unset start/end bound left open),
-        each annotated with the org it points at."""
-        org_node = self.node_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.ASSOCIATED_ORGANIZATION
-        )
+        """Membership tiles in force today (an unset start/end bound left open)."""
         start_node = self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.START_DATE)
         end_node = self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.END_DATE)
         membership_ng = self._node_info(
@@ -49,24 +45,24 @@ class OrganizationService(ContributorService):
                     Value("9999-12-31"),
                     output_field=TextField(),
                 ),
-                org=Cast(
-                    KeyTextTransform(
-                        RESOURCE_ID, KeyTransform("0", KeyTransform(org_node, "data"))
-                    ),
-                    UUIDField(),
-                ),
             )
             .filter(_start__lte=today, _end__gte=today)
         )
 
     def organization_ids(self, username):
         """Ids of the organizations the user belongs to today. The set a
-        resource's stamped owning_organization is checked against."""
+        resource's stamped owning_organization is checked against. A membership
+        tile naming several organizations counts for all of them."""
         my_contributor_id = self.username_contributor_id(username) if username else None
         if not my_contributor_id:
             return set()
-        orgs = self._active_memberships().filter(resourceinstance_id=my_contributor_id)
-        return {str(org) for org in orgs.values_list("org", flat=True) if org}
+        tiles = self._active_memberships().filter(resourceinstance_id=my_contributor_id)
+        return referenced_resource_ids(
+            tiles,
+            self.node_id(
+                GraphSlugs.CONTRIBUTOR, ContributorAliases.ASSOCIATED_ORGANIZATION
+            ),
+        )
 
     def resolve_organization(self, user, organization_id=""):
         """The organization id to stamp on something this user is creating.

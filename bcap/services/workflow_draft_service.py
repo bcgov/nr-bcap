@@ -19,7 +19,6 @@ from bcap.util.aliases.workflow_drafts import (
     WorkflowDraftsAliases,
     WorkflowDraftsGroupAliases,
 )
-from bcap.util.auth.groups import is_internal_user
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import get_current_graph
 from bcap.util.tiles import resource_instance_id, resource_instance_value
@@ -49,15 +48,15 @@ class WorkflowDraftService(BaseGraphService):
     resume and delete a draft as well as see it."""
 
     def queryset(self, user, graph_slug=None, parent_resource_id=None, own_only=False):
-        """An applicant's drafts and their associated companies', oldest first;
-        branch staff see everyone's. own_only narrows to the ones the user
-        created. Graph and parent filter in SQL, so no caller loads them all."""
+        """A user's drafts and their associated companies', oldest first; branch
+        staff get no widening. own_only narrows to the ones the user created.
+        Graph and parent filter in SQL, so no caller loads them all."""
         qs = ResourceTileTree.get_tiles(
             GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
         )
         if own_only:
             qs = qs.filter(principaluser=user)
-        elif not is_internal_user(user):
+        else:
             qs = qs.filter(
                 OrganizationService().visible_to(
                     user, WorkflowDraftsAliases.OWNING_ORGANIZATION
@@ -123,7 +122,7 @@ class WorkflowDraftService(BaseGraphService):
         draft.save(user=user, force_admin=True, partial=False, index=True)
         ResourceInstance.objects.filter(pk=draft.pk).update(principaluser=user)
         self._write_blob_no_audit(draft.pk, data or {})
-        return self.get(user, draft.pk)
+        return self.queryset(user, own_only=True).filter(pk=draft.pk).first()
 
     def set_data(self, user, pk, data, current_step=None):
         """Replace a draft's blob with the caller's fully-merged data and
