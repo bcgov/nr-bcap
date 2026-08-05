@@ -1748,9 +1748,9 @@ export type BordenNumberDatatypeAliasedNodeDataMax13 = {
 };
 
 export type ChecklistStep = {
-    tileid?: string;
     name: string;
     description: string;
+    tileid?: string | null;
 };
 
 export type ConceptAliasedNodeData = {
@@ -2085,8 +2085,8 @@ export type DocumentSubmissionSubmissionPhotographsTile = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type DraftPayload = {
     data:
@@ -2099,10 +2099,19 @@ export type DraftPayload = {
         | PermitApplicationResourceAliasedData
         | SiteVisitResourceAliasedData;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
 
+/**
+ * A saved draft: the stored form blob plus the metadata needed to resume it
+ * -- which graph it belongs to, the step the user left off on, when it was last
+ * saved, and whether that graph has been republished since.
+ */
 export type DraftRecord = {
     data:
         | AlterationResourceAliasedData
@@ -2124,7 +2133,7 @@ export type DraftRecord = {
     parent_resource_id?: string;
     current_step?: string;
     created?: string | null;
-    updated?: string | null;
+    updated?: string;
 };
 
 export type ExternalDashboardCard = {
@@ -4138,7 +4147,7 @@ export type PatchedBcapMessagePatch = {
 
 /**
  * The checklist PATCH body: a requirement's name and its full ordered step
- * list. Declared as a serializer so the shape reaches the generated client.
+ * list.
  */
 export type PatchedChecklistPatch = {
     name?: string;
@@ -4147,8 +4156,8 @@ export type PatchedChecklistPatch = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type PatchedDraftPayload = {
     data?:
@@ -4161,6 +4170,10 @@ export type PatchedDraftPayload = {
         | PermitApplicationResourceAliasedData
         | SiteVisitResourceAliasedData;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -4339,6 +4352,7 @@ export type PermitApplicationApplicationIdentificationAliasedData = {
     map_or_hip?: ReferenceAliasedNodeData | null;
     is_replacement?: BooleanAliasedNodeData | null;
     supplemental_information?: FileListAliasedNodeData | null;
+    owning_organization?: ResourceInstanceAliasedNodeData | null;
 };
 
 export type PermitApplicationApplicationIdentificationTile = {
@@ -8659,8 +8673,8 @@ export type DocumentSubmissionSubmissionPhotographsTileWritable = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type DraftPayloadWritable = {
     data:
@@ -8673,10 +8687,19 @@ export type DraftPayloadWritable = {
         | PermitApplicationResourceAliasedDataWritable
         | SiteVisitResourceAliasedDataWritable;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
 
+/**
+ * A saved draft: the stored form blob plus the metadata needed to resume it
+ * -- which graph it belongs to, the step the user left off on, when it was last
+ * saved, and whether that graph has been republished since.
+ */
 export type DraftRecordWritable = {
     data:
         | AlterationResourceAliasedDataWritable
@@ -8694,7 +8717,7 @@ export type DraftRecordWritable = {
     parent_resource_id?: string;
     current_step?: string;
     created?: string | null;
-    updated?: string | null;
+    updated?: string;
 };
 
 export type FileListAliasedNodeDataWritable = {
@@ -10307,8 +10330,8 @@ export type PatchedBcapMessagePatchWritable = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type PatchedDraftPayloadWritable = {
     data?:
@@ -10321,6 +10344,10 @@ export type PatchedDraftPayloadWritable = {
         | PermitApplicationResourceAliasedDataWritable
         | SiteVisitResourceAliasedDataWritable;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -10428,6 +10455,7 @@ export type PermitApplicationApplicationIdentificationAliasedDataWritable = {
     map_or_hip?: ReferenceAliasedNodeDataWritable | null;
     is_replacement?: BooleanAliasedNodeDataWritable | null;
     supplemental_information?: FileListAliasedNodeDataWritable | null;
+    owning_organization?: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
 export type PermitApplicationApplicationIdentificationTileWritable = {

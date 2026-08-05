@@ -963,11 +963,15 @@ paths:
     get:
       operationId: api_permit_application_retrieve
       description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles.
 
         The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
+        the application id and attaches the requirement working copies.
+
+        Reads and partial edits only. A PUT resets every node the body leaves out,
+        the owning organization an applicant may not set included, and nothing
+        deletes a permit through the API; both are re-addable when something needs
+        them.
       parameters:
       - in: path
         name: id
@@ -989,11 +993,11 @@ paths:
     put:
       operationId: api_permit_application_update
       description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
+        Detail endpoint for a single Permit Application resource and its nested tiles.
 
-        The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1026,11 +1030,15 @@ paths:
     patch:
       operationId: api_permit_application_partial_update
       description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles.
 
         The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
+        the application id and attaches the requirement working copies.
+
+        Reads and partial edits only. A PUT resets every node the body leaves out,
+        the owning organization an applicant may not set included, and nothing
+        deletes a permit through the API; both are re-addable when something needs
+        them.
       parameters:
       - in: path
         name: id
@@ -1063,11 +1071,11 @@ paths:
     delete:
       operationId: api_permit_application_destroy
       description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
+        Detail endpoint for a single Permit Application resource and its nested tiles.
 
-        The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
+        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -5648,13 +5656,14 @@ components:
     ChecklistStep:
       type: object
       properties:
-        tileid:
-          type: string
-          format: uuid
         name:
           type: string
         description:
           type: string
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
       required:
       - description
       - name
@@ -6363,8 +6372,8 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus the step the
-        user is on and an optional frontend version and parent resource stamped on
-        create.
+        user is on and an optional frontend version, parent resource and owning
+        organization stamped on create.
       properties:
         data:
           oneOf:
@@ -6378,6 +6387,10 @@ components:
           - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
         current_step:
           type: string
+        organization_id:
+          type: string
+          description: Organization to file the draft under, so colleagues can pick
+            it up. Must be one the user belongs to.
         frontend_version:
           type: string
         parent_resource_id:
@@ -6386,6 +6399,10 @@ components:
       - data
     DraftRecord:
       type: object
+      description: |-
+        A saved draft: the stored form blob plus the metadata needed to resume it
+        -- which graph it belongs to, the step the user left off on, when it was last
+        saved, and whether that graph has been republished since.
       properties:
         data:
           oneOf:
@@ -6420,8 +6437,6 @@ components:
           nullable: true
         updated:
           type: string
-          format: date-time
-          nullable: true
       required:
       - data
       - frontend_version
@@ -10511,7 +10526,7 @@ components:
       type: object
       description: |-
         The checklist PATCH body: a requirement's name and its full ordered step
-        list. Declared as a serializer so the shape reaches the generated client.
+        list.
       properties:
         name:
           type: string
@@ -10523,8 +10538,8 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus the step the
-        user is on and an optional frontend version and parent resource stamped on
-        create.
+        user is on and an optional frontend version, parent resource and owning
+        organization stamped on create.
       properties:
         data:
           oneOf:
@@ -10538,6 +10553,10 @@ components:
           - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
         current_step:
           type: string
+        organization_id:
+          type: string
+          description: Organization to file the draft under, so colleagues can pick
+            it up. Must be one the user belongs to.
         frontend_version:
           type: string
         parent_resource_id:
@@ -10921,6 +10940,10 @@ components:
         supplemental_information:
           allOf:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+        owning_organization:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
       required:
       - filing_type
