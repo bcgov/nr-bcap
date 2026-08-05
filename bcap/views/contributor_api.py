@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from bcap.serializers.contributor_serializers import ContributorSummarySerializer
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.views.process_requirement_api import STAFF_MODULE_PERMISSIONS
 
 
