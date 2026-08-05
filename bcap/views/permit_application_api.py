@@ -10,7 +10,9 @@ first, so they shadow them.
 from drf_spectacular.utils import extend_schema
 
 from arches_querysets.rest_framework.permissions import ResourceEditor
+from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
+from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
@@ -32,6 +34,15 @@ class PermitApplicationView(GeneratedPermitApplicationView):
     The update that first sets the submission date is the submission: it assigns
     the application id and attaches the requirement working copies.
     """
+
+    def get_queryset(self):
+        """Own filings plus the company's, matching what the dashboard lists.
+        Replaces UserOwnedResourceMixin's creator-only filter rather than adding
+        to it, which would 404 a colleague opening what their company tab shows.
+        """
+        return ArchesModelAPIMixin.get_queryset(self).filter(
+            OrganizationService().visible_to(self.request.user, PA.OWNING_ORGANIZATION)
+        )
 
     def update(self, request, *args, **kwargs):
         block_organization(

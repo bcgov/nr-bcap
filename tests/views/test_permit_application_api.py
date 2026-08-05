@@ -45,7 +45,12 @@ from bcap.views.organization_helpers import block_organization
 
 from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
-from tests.permit_fixtures import seed_requirement_templates
+from tests.permit_fixtures import build_permit, seed_requirement_templates
+from tests.services.contributor_fixtures import (
+    make_contributor,
+    make_party,
+    make_user,
+)
 from tests.views.helpers import AuthTestHelper, login_as
 
 # The permit module's child requirements, seeded by migration from the spec.
@@ -824,3 +829,61 @@ class PermitApplicationOrganizationTests(AuthTestHelper, TestCase):
         )
 
         self.assertEqual(body, {ALIASED_DATA: {}})
+
+
+class PermitApplicationCompanyVisibilityTests(TestCase):
+    """The detail route's scoping. The dashboard lists a colleague's filing under
+    the company scope, so opening it has to resolve rather than 404 -- the two
+    read the same organization stamp."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = FixtureBuilder()
+
+        acme = make_contributor(builder, "Acme Corp")
+        rival = make_contributor(builder, "Rival Corp")
+        cls.me, _ = make_party(
+            builder, "colleague-me", "Grace", "Hopper", associated_organization=acme
+        )
+        cls.colleague, _ = make_party(
+            builder, "colleague-them", "Alan", "Turing", associated_organization=acme
+        )
+        cls.outsider, _ = make_party(
+            builder, "rival", "Ada", "Lovelace", associated_organization=rival
+        )
+
+        # Created by the colleague, filed under the organization we share.
+        cls.company_permit = build_permit(
+            builder, "Colleague Filing", organization=acme
+        )
+        ResourceInstance.objects.filter(pk=cls.company_permit.pk).update(
+            principaluser=cls.colleague
+        )
+
+        # Created by the colleague, filed under an organization we do not share.
+        cls.rival_permit = build_permit(builder, "Rival Filing", organization=rival)
+        ResourceInstance.objects.filter(pk=cls.rival_permit.pk).update(
+            principaluser=cls.outsider
+        )
+
+    def _get(self, user, permit):
+        login_as(self.client, user)
+        return self.client.get(reverse("api_permit_application", args=[permit.pk]))
+
+    def test_creator_can_open_their_own_filing(self):
+        self.assertEqual(
+            self._get(self.colleague, self.company_permit).status_code, 200
+        )
+
+    def test_colleague_can_open_a_filing_filed_under_a_shared_organization(self):
+        # The regression: creator-only scoping 404s the card the company
+        # dashboard tab just listed.
+        self.assertEqual(self._get(self.me, self.company_permit).status_code, 200)
+
+    def test_another_organizations_filing_stays_hidden(self):
+        self.assertEqual(self._get(self.me, self.rival_permit).status_code, 404)
+
+    def test_a_user_with_no_organization_sees_only_their_own(self):
+        loner = make_user("loner")
+        self.assertEqual(self._get(loner, self.company_permit).status_code, 404)
