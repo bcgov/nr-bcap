@@ -2,6 +2,7 @@
 organization a new resource is stamped for, and which rows that makes visible."""
 
 from datetime import datetime, timedelta
+from types import SimpleNamespace
 from unittest import mock
 
 from django.test import TestCase
@@ -122,3 +123,43 @@ class OrganizationServiceTest(ContributorFixtureMixin, TestCase):
             result = self.service.organization_ids("gh")
 
         self.assertEqual(result, {str(starts_today.pk), str(ends_today.pk)})
+
+    def test_resolve_organization_takes_their_only_one(self):
+        acme = self.make("Acme Corp")
+        globex = self.make("Globex")
+        self.make_with_orgs(
+            "Hopper", [(acme, ACTIVE)], first_name="Grace", bcap_username="gh"
+        )
+        member = SimpleNamespace(username="gh")
+
+        self.assertEqual(self.service.resolve_organization(member), str(acme.pk))
+        # An explicit pick is honoured, but only for one they belong to.
+        self.assertEqual(
+            self.service.resolve_organization(member, str(acme.pk)), str(acme.pk)
+        )
+        with self.assertRaises(PermissionError):
+            self.service.resolve_organization(member, str(globex.pk))
+
+    def test_resolve_organization_refuses_to_guess_between_several(self):
+        acme = self.make("Acme Corp")
+        globex = self.make("Globex")
+        self.make_with_orgs(
+            "Hopper",
+            [(acme, ACTIVE), (globex, ACTIVE)],
+            first_name="Grace",
+            bcap_username="gh",
+        )
+        member = SimpleNamespace(username="gh")
+
+        with self.assertRaises(ValueError):
+            self.service.resolve_organization(member)
+        self.assertEqual(
+            self.service.resolve_organization(member, str(globex.pk)), str(globex.pk)
+        )
+
+    def test_someone_in_no_organization_files_unstamped(self):
+        nobody = SimpleNamespace(username="nobody")
+
+        self.assertEqual(self.service.resolve_organization(nobody), "")
+        with self.assertRaises(PermissionError):
+            self.service.resolve_organization(nobody, str(self.make("Acme Corp").pk))

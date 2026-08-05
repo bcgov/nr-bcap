@@ -240,6 +240,21 @@ class ExternalDashboardServiceTests(TestCase):
 
         self.assertEqual([card.id for card in page.results], [str(self.outsiders.pk)])
 
+    def test_limit_caps_page_size_but_not_count(self):
+        page = self.service.get_cards(DashboardFilter(limit=1, page=1), self.me)
+
+        self.assertEqual(page.count, 2)
+        self.assertEqual(len(page.results), 1)
+
+    def test_pages_partition_every_application_without_overlap(self):
+        first = self.service.get_cards(DashboardFilter(limit=1, page=1), self.me)
+        second = self.service.get_cards(DashboardFilter(limit=1, page=2), self.me)
+
+        seen = {card.id for card in first.results + second.results}
+        self.assertEqual(
+            seen, {str(self.mine_active.pk), str(self.mine_draft_state.pk)}
+        )
+
 
 class ExternalDashboardDraftsTests(TestCase):
     """The DRAFTS scope reads ResourceDrafts, not saved resources."""
@@ -528,34 +543,3 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         self.assertEqual(card.permit_application_id, parent_id)
         self.assertEqual(card.project_name, "")
         self.assertEqual(card.application_number, "")
-
-
-class ExternalDashboardPaginationTests(TestCase):
-    """limit/page slicing for the external dashboard."""
-
-    @classmethod
-    def setUpTestData(cls):
-        ControlledListFixtures.seed()
-        cls.service = ExternalDashboardService()
-        cls.user = make_user("pager")
-        builder = FixtureBuilder()
-        permits = [
-            build_external_permit(builder, f"App {i}", cls.user, "Active")
-            for i in range(3)
-        ]
-        cls.permit_ids = {str(p.pk) for p in permits}
-
-    def test_limit_caps_page_size_but_not_count(self):
-        page = self.service.get_cards(DashboardFilter(limit=2, page=1), self.user)
-
-        self.assertEqual(page.count, 3)
-        self.assertEqual(len(page.results), 2)
-
-    def test_pages_partition_every_application_without_overlap(self):
-        first = self.service.get_cards(DashboardFilter(limit=2, page=1), self.user)
-        second = self.service.get_cards(DashboardFilter(limit=2, page=2), self.user)
-
-        self.assertEqual(len(first.results), 2)
-        self.assertEqual(len(second.results), 1)
-        seen = {card.id for card in first.results + second.results}
-        self.assertEqual(seen, self.permit_ids)

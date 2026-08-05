@@ -787,43 +787,27 @@ class DashboardServiceNoPermitsTests(TestCase):
         self.assertEqual(page.results, [])
 
 
-class DashboardServiceAllSatisfiedTests(TestCase):
-    """A permit whose requirements are all satisfied has nothing actionable, so
-    it is hidden from the dashboard entirely."""
+class DashboardServiceVisibilityTests(TestCase):
+    """Which permits reach the dashboard, against one build of every shape that
+    must not: unsubmitted (still a draft), all requirements satisfied (nothing
+    actionable), and a blank process_requirement tile (nothing a card could
+    surface, which would otherwise build a card from None)."""
 
     @classmethod
     def setUpTestData(cls):
         ControlledListFixtures.seed()
         builder = FixtureBuilder()
-        cls.permit_id = str(build_all_satisfied_permit(builder, "Done").pk)
+        cls.submitted_id = str(build_minimal_permit(builder, "Submitted").pk)
+        build_unsubmitted_permit(builder, "Draft")
+        build_all_satisfied_permit(builder, "Done")
+        build_blank_requirement_permit(builder, "Blank")
         cls.service = InternalDashboardService()
 
-    def test_all_satisfied_permit_is_hidden(self):
+    def test_only_the_submitted_actionable_permit_appears(self):
         page = self.service.get_cards(DashboardFilter())
 
-        self.assertEqual(page.count, 0)
-        self.assertEqual(page.results, [])
-
-
-class DashboardServiceBlankRequirementTests(TestCase):
-    """A permit whose only process_requirement tile is blank (no requirement
-    assigned) has nothing the card could surface, so the dashboard hides it.
-    Guards against the active-requirement filter and _choose_requirements
-    diverging: an included permit with no choosable requirement would build a
-    card from None."""
-
-    @classmethod
-    def setUpTestData(cls):
-        ControlledListFixtures.seed()
-        builder = FixtureBuilder()
-        cls.permit_id = str(build_blank_requirement_permit(builder, "Blank").pk)
-        cls.service = InternalDashboardService()
-
-    def test_permit_with_only_a_blank_requirement_tile_is_hidden(self):
-        page = self.service.get_cards(DashboardFilter())
-
-        self.assertEqual(page.count, 0)
-        self.assertEqual(page.results, [])
+        self.assertEqual(page.count, 1)
+        self.assertEqual([card.id for card in page.results], [self.submitted_id])
 
 
 class RequirementsByIdTests(TestCase):
@@ -888,26 +872,6 @@ class RequirementsByIdTests(TestCase):
         )
 
         self.assertEqual(self._by_id([str(satisfied.pk)]), {})
-
-
-class DashboardServiceSubmissionDateTests(TestCase):
-    """Only submitted applications reach the internal dashboard: a permit with
-    an actionable requirement but no submission date is a draft and is hidden,
-    while an otherwise-identical submitted permit appears."""
-
-    @classmethod
-    def setUpTestData(cls):
-        ControlledListFixtures.seed()
-        builder = FixtureBuilder()
-        cls.submitted_id = str(build_minimal_permit(builder, "Submitted").pk)
-        cls.draft_id = str(build_unsubmitted_permit(builder, "Draft").pk)
-        cls.service = InternalDashboardService()
-
-    def test_only_the_submitted_permit_appears(self):
-        page = self.service.get_cards(DashboardFilter())
-
-        self.assertEqual(page.count, 1)
-        self.assertEqual([card.id for card in page.results], [self.submitted_id])
 
 
 class DashboardUnreadRollupTests(TestCase):

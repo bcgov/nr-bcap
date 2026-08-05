@@ -5,6 +5,7 @@ attaches the process-requirement working copies."""
 import json
 from types import SimpleNamespace
 from unittest import mock
+from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
@@ -32,11 +33,18 @@ from arches_controlled_lists.models import ListItem
 from arches.app.models.models import ResourceInstance, TileModel
 
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
+from bcap.util.controlled_list import reference_value
 from bcap.util.graph import get_node, node_id
+from bcap.util.tiles import resource_instance_id, resource_instance_value
+from bcap.builders.contributor_builder import ContributorSpec
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.process_requirement.template_specs import load
 from bcap.util.i18n import localized_string
+from bcap.views.organization_helpers import block_organization
 
+from tests.builders import FixtureBuilder
+from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import seed_requirement_templates
 from tests.views.helpers import AuthTestHelper, login_as
 
@@ -687,3 +695,132 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
         self.assertEqual(self._requirement_count(), before)
         self.assertTrue(ResourceTileTree.objects.filter(pk=pk).exists())
+
+
+@override_settings(ROOT_URLCONF="tests.test_urls")
+class PermitApplicationOrganizationTests(AuthTestHelper, TestCase):
+    """The owning-organization stamp: create records the creator's company, and
+    only branch staff may set or move it on an update."""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        ControlledListFixtures.seed()
+        cls.org = FixtureBuilder().make_contributor(
+            ContributorSpec(
+                reference_value("contributor", "contributor_type"), None, "Acme Corp"
+            )
+        )
+        cls.org_id = str(cls.org.pk)
+
+    def setUp(self):
+        super().setUp()
+        self.idir_login_simulate(get_user_model().objects.get(username="admin"))
+
+    def _owning_organization(self, pk):
+        node = node_id(GraphSlugs.PERMIT_APPLICATION, aliases.OWNING_ORGANIZATION)
+        tile = TileModel.objects.filter(
+            resourceinstance_id=pk, data__has_key=node
+        ).first()
+        return resource_instance_id(tile.data[node]) if tile else ""
+
+    def _post_as_member_of(self, orgs, payload=None):
+        with mock.patch.object(
+            OrganizationService, "organization_ids", return_value=orgs
+        ):
+            return self.client.post(
+                reverse("permit_application_create"),
+                data=json.dumps(payload or create_payload()),
+                content_type="application/json",
+            )
+
+    def test_create_stamps_the_creators_only_organization(self):
+        resp = self._post_as_member_of({self.org_id})
+
+        self.assertEqual(resp.status_code, 201)
+        pk = resp.json()["resourceinstanceid"]
+        self.assertEqual(self._owning_organization(pk), self.org_id)
+
+    def test_a_member_of_no_organization_creates_an_unstamped_application(self):
+        resp = self._post_as_member_of(set())
+
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(
+            self._owning_organization(resp.json()["resourceinstanceid"]), ""
+        )
+
+    def test_a_member_of_several_organizations_has_to_pick_one(self):
+        both = {self.org_id, str(uuid4())}
+
+        resp = self._post_as_member_of(both)
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("organization_id", resp.json())
+
+        payload = {**create_payload(), "organization_id": self.org_id}
+        self.assertEqual(self._post_as_member_of(both, payload).status_code, 201)
+
+    def test_an_application_cannot_be_filed_under_someone_elses_organization(self):
+        payload = {**create_payload(), "organization_id": self.org_id}
+
+        self.assertEqual(self._post_as_member_of(set(), payload).status_code, 403)
+
+    def test_an_external_update_cannot_move_the_application(self):
+        # block_organization strips the node before the save ever sees it, so
+        # the stamp an applicant sends on submission is simply dropped.
+        body = {
+            ALIASED_DATA: {
+                group_aliases.APPLICATION_IDENTIFICATION: {
+                    ALIASED_DATA: {
+                        aliases.PROJECT_NAME: "Renamed",
+                        aliases.OWNING_ORGANIZATION: resource_instance_value(
+                            self.org_id
+                        ),
+                    }
+                }
+            }
+        }
+        request = SimpleNamespace(user=self.user, data=body)
+
+        block_organization(
+            request,
+            group_aliases.APPLICATION_IDENTIFICATION,
+            aliases.OWNING_ORGANIZATION,
+        )
+
+        identification = body[ALIASED_DATA][group_aliases.APPLICATION_IDENTIFICATION]
+        self.assertNotIn(aliases.OWNING_ORGANIZATION, identification[ALIASED_DATA])
+        self.assertEqual(identification[ALIASED_DATA][aliases.PROJECT_NAME], "Renamed")
+
+    def test_branch_staff_keep_the_organization_they_send(self):
+        admin = get_user_model().objects.get(username="admin")
+        body = {
+            ALIASED_DATA: {
+                group_aliases.APPLICATION_IDENTIFICATION: {
+                    ALIASED_DATA: {
+                        aliases.OWNING_ORGANIZATION: resource_instance_value(
+                            self.org_id
+                        )
+                    }
+                }
+            }
+        }
+
+        block_organization(
+            SimpleNamespace(user=admin, data=body),
+            group_aliases.APPLICATION_IDENTIFICATION,
+            aliases.OWNING_ORGANIZATION,
+        )
+
+        identification = body[ALIASED_DATA][group_aliases.APPLICATION_IDENTIFICATION]
+        self.assertIn(aliases.OWNING_ORGANIZATION, identification[ALIASED_DATA])
+
+    def test_a_body_that_never_mentions_the_group_is_left_alone(self):
+        body = {ALIASED_DATA: {}}
+
+        block_organization(
+            SimpleNamespace(user=self.user, data=body),
+            group_aliases.APPLICATION_IDENTIFICATION,
+            aliases.OWNING_ORGANIZATION,
+        )
+
+        self.assertEqual(body, {ALIASED_DATA: {}})
