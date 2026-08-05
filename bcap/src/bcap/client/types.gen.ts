@@ -13264,22 +13264,6 @@ export type ApiPermitApplicationPartialUpdateResponses = {
 export type ApiPermitApplicationPartialUpdateResponse =
     ApiPermitApplicationPartialUpdateResponses[keyof ApiPermitApplicationPartialUpdateResponses];
 
-export type ApiPermitApplicationUpdateData = {
-    body?: PermitApplicationWritable;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/bcap/api/permit_application/{id}/';
-};
-
-export type ApiPermitApplicationUpdateResponses = {
-    200: PermitApplication;
-};
-
-export type ApiPermitApplicationUpdateResponse =
-    ApiPermitApplicationUpdateResponses[keyof ApiPermitApplicationUpdateResponses];
-
 export type ApiPermitApplicationModuleDestroyData = {
     body?: never;
     path: {

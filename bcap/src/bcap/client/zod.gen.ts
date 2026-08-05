@@ -9194,14 +9194,6 @@ export const zApiPermitApplicationPartialUpdatePath = z.object({
 
 export const zApiPermitApplicationPartialUpdateResponse = zPermitApplication;
 
-export const zApiPermitApplicationUpdateBody = zPermitApplicationWritable;
-
-export const zApiPermitApplicationUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiPermitApplicationUpdateResponse = zPermitApplication;
-
 export const zApiPermitApplicationModuleDestroyPath = z.object({
     id: z.uuid(),
     module_tileid: z.uuid()

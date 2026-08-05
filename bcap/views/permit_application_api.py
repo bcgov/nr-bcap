@@ -33,11 +33,6 @@ class PermitApplicationView(GeneratedPermitApplicationView):
     the application id and attaches the requirement working copies.
     """
 
-    # Partial edits only: a PUT resets every node the body leaves out, the owning
-    # organization an applicant may not set included. The generated base still
-    # carries a put handler, so blocking it here is what makes it a 405.
-    http_method_names = ["get", "patch", "head", "options"]
-
     def update(self, request, *args, **kwargs):
         block_organization(
             request,

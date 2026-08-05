@@ -12,7 +12,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -45,7 +46,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -309,7 +311,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -342,7 +345,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -485,7 +489,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -518,7 +523,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -545,7 +551,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -578,7 +585,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -605,7 +613,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -638,7 +647,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -665,7 +675,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -698,7 +709,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -725,7 +737,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -758,7 +771,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -785,7 +799,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -818,7 +833,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -845,7 +861,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -878,7 +895,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -905,7 +923,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET, PATCH, POST (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -967,11 +986,6 @@ paths:
 
         The update that first sets the submission date is the submission: it assigns
         the application id and attaches the requirement working copies.
-
-        Reads and partial edits only. A PUT resets every node the body leaves out,
-        the owning organization an applicant may not set included, and nothing
-        deletes a permit through the API; both are re-addable when something needs
-        them.
       parameters:
       - in: path
         name: id
@@ -981,43 +995,6 @@ paths:
         required: true
       tags:
       - 'External: permit_application'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PermitApplication'
-          description: ''
-    put:
-      operationId: api_permit_application_update
-      description: |-
-        Detail endpoint for a single Permit Application resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PATCH, POST (from generated/generate.json); the
-        RetrieveUpdateAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: permit_application'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
       security:
       - cookieAuth: []
       responses:
@@ -1034,11 +1011,6 @@ paths:
 
         The update that first sets the submission date is the submission: it assigns
         the application id and attaches the requirement working copies.
-
-        Reads and partial edits only. A PUT resets every node the body leaves out,
-        the owning organization an applicant may not set included, and nothing
-        deletes a permit through the API; both are re-addable when something needs
-        them.
       parameters:
       - in: path
         name: id
@@ -1581,7 +1553,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -1614,7 +1587,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -1667,7 +1641,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -1700,7 +1675,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -1727,7 +1703,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -1760,7 +1737,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id

@@ -41,9 +41,11 @@ class PermitApplicationListView(
 
     Owner-scoped: only the resources the user created. Declared verbs:
     GET, PATCH, POST (from generated/generate.json); the ListCreateAPIView base
-    class serves the collection subset (GET/POST).
+    class serves the collection subset (GET/POST), narrowed to the declared
+    verbs by http_method_names.
     """
 
+    http_method_names = ["get", "post", "head", "options"]
     permission_classes = [IsAuthenticated]
     pagination_class = ArchesLimitOffsetPagination
 
@@ -59,7 +61,9 @@ class PermitApplicationView(
 
     Owner-scoped: requesting one created by another user returns 404. Declared
     verbs: GET, PATCH, POST (from generated/generate.json); the
-    RetrieveUpdateAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+    RetrieveUpdateAPIView base class serves the detail subset
+    (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
     """
 
+    http_method_names = ["get", "patch", "head", "options"]
     permission_classes = [IsAuthenticated]
