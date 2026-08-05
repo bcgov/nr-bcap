@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, reactive, ref, onMounted } from 'vue';
+import { computed, reactive, ref, onMounted, watch } from 'vue';
 import type { Component, Ref } from 'vue';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
 import Stepper from 'primevue/stepper';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
@@ -67,6 +69,7 @@ const defaultSubmit = async (): Promise<PermitApplication | null> => {
 };
 
 const route = useRoute();
+const router = useRouter();
 const draft = useDraftStore();
 // The permit this filing was started from. From the URL when starting fresh, or
 // the loaded draft's parent_resource_id when resuming.
@@ -76,14 +79,22 @@ const state = reactive({
     submissionErrors: [] as ErrorMessage[],
     submitted: false,
     submitting: false,
+    savingDraft: false,
+    confirmingExit: false,
     devMode: true,
     isDataLoaded: false,
     finalizedResourceData: null as PermitApplication | null,
 });
 
-// The content steps plus the always-present Review and Submitted steps.
-const reviewStepNumber = computed(() => props.steps.length + 1);
-const totalSteps = computed(() => props.steps.length + 2);
+// The rail's steps: the caller's, then the two this shell always appends.
+const stepNames = computed(() => [
+    ...props.steps.map((step) => step.label),
+    'Review Submission',
+    'Submission Complete',
+]);
+
+const reviewStepNumber = computed(() => stepNames.value.length - 1);
+const totalSteps = computed(() => stepNames.value.length);
 
 // The filing summary to return to: the parent permit while filing a module, or
 // the just-created permit on the base application's completion step.
@@ -112,6 +123,7 @@ const setCurrentStepValid = (isValid: boolean, stepNumber: number) => {
 const stepperProps: Ref<StepperProps | null> = ref(null);
 const stepperState: Ref<StepperState | null> = ref(null);
 const myStepper = ref();
+const resumeStep = ref(1);
 let lastStep = 1;
 
 const currentStep = computed(() => myStepper.value?.d_value);
@@ -153,6 +165,22 @@ const submitFiling = async (): Promise<boolean> => {
 };
 
 const print = () => window.print();
+
+// Leave the form with the draft written: flush the pending autosave, then go
+// back to the filing summary this was started from, or the dashboard when the
+// filing has no parent permit yet.
+const saveAndExit = async () => {
+    state.savingDraft = true;
+    try {
+        await draft.saveNow();
+    } catch (error) {
+        console.error('Failed to save draft before exit:', error);
+    } finally {
+        state.savingDraft = false;
+        state.confirmingExit = false;
+    }
+    router.push(permitBackLink.value ?? { name: routeNames.home });
+};
 
 const activateNextStep = async () => {
     if (currentStep.value === totalSteps.value) {
@@ -202,6 +230,18 @@ const showPrevious = computed(
 
 const headingFor = (step: WorkflowStep) => step.heading ?? step.label;
 
+// The last step only follows a submission, so a draft is never left on it.
+const resumableStepNames = computed(() => stepNames.value.slice(0, -1));
+
+const currentStepName = computed(
+    () => resumableStepNames.value[currentStep.value - 1] ?? '',
+);
+
+watch(currentStepName, (name) => name && draft.setCurrentStep(name));
+
+const stepNumberOf = (name: string) =>
+    Math.max(1, resumableStepNames.value.indexOf(name) + 1);
+
 onMounted(async () => {
     try {
         // Only load an existing draft. A new one isn't created until the first
@@ -212,9 +252,15 @@ onMounted(async () => {
                 props.graphSlug,
                 targetDraftId as string,
             );
-            draft.loadDraft(loaded.id, (loaded.data || {}) as ArchesDraftData);
+            draft.loadDraft(
+                loaded.id,
+                (loaded.data || {}) as ArchesDraftData,
+                loaded.current_step || '',
+            );
             draft.parentPermitId =
                 loaded.parent_resource_id || draft.parentPermitId;
+            resumeStep.value = stepNumberOf(loaded.current_step || '');
+            lastStep = resumeStep.value;
         }
         state.isDataLoaded = true;
     } catch (error) {
@@ -244,7 +290,7 @@ onMounted(async () => {
             ref="myStepper"
             :state="stepperState"
             :props="stepperProps"
-            :value="1"
+            :value="resumeStep"
             linear
             @update:value="activateStep"
         >
@@ -253,14 +299,12 @@ onMounted(async () => {
                     <p class="bc-stepper-nav-label">Your progress</p>
                     <StepList>
                         <Step
-                            v-for="(step, i) in steps"
+                            v-for="(name, i) in stepNames"
                             :key="i"
                             :value="i + 1"
                         >
-                            {{ step.label }}
+                            {{ name }}
                         </Step>
-                        <Step :value="reviewStepNumber">Review Submission</Step>
-                        <Step :value="totalSteps">Submission Complete</Step>
                     </StepList>
                 </aside>
                 <div class="bc-stepper-main">
@@ -279,14 +323,37 @@ onMounted(async () => {
                             </p>
                             <h1 class="bc-step-title">{{ title }}</h1>
                         </div>
-                        <StepperNavigation
-                            :step-number="currentStep"
-                            :is-valid="currentStepIsValid"
-                            :show-previous="false"
-                            :next-label="nextLabel"
-                            @next-click="activateNextStep"
-                            @previous-click="activatePreviousStep"
-                        ></StepperNavigation>
+                        <div class="bc-step-actions">
+                            <Button
+                                v-if="
+                                    currentStep > 1 && currentStep < totalSteps
+                                "
+                                type="button"
+                                class="save-exit"
+                                severity="secondary"
+                                outlined
+                                :disabled="state.savingDraft"
+                                @click="state.confirmingExit = true"
+                            >
+                                <i
+                                    class="fa-solid"
+                                    :class="
+                                        state.savingDraft
+                                            ? 'fa-circle-notch fa-spin'
+                                            : 'fa-floppy-disk'
+                                    "
+                                ></i>
+                                Save &amp; exit
+                            </Button>
+                            <StepperNavigation
+                                :step-number="currentStep"
+                                :is-valid="currentStepIsValid"
+                                :show-previous="false"
+                                :next-label="nextLabel"
+                                @next-click="activateNextStep"
+                                @previous-click="activatePreviousStep"
+                            ></StepperNavigation>
+                        </div>
                     </header>
                     <div
                         v-if="state.submissionErrors.length > 0"
@@ -377,6 +444,32 @@ onMounted(async () => {
             </div>
         </Stepper>
     </Panel>
+
+    <Dialog
+        v-model:visible="state.confirmingExit"
+        modal
+        :closable="false"
+        header="Save and exit?"
+        :style="{ width: '30rem' }"
+    >
+        <p>
+            Your answers are saved as a draft and this filing stays unsubmitted.
+            You can pick it up again from the Draft modules list.
+        </p>
+        <template #footer>
+            <Button
+                label="Keep editing"
+                text
+                :disabled="state.savingDraft"
+                @click="state.confirmingExit = false"
+            />
+            <Button
+                label="Save & exit"
+                :loading="state.savingDraft"
+                @click="saveAndExit"
+            />
+        </template>
+    </Dialog>
     <br />
     <br />
     <br />

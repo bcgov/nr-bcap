@@ -1,9 +1,14 @@
+import type { LocationQueryValue } from 'vue-router';
+
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import type {
+    AlterationResourceAliasedDataWritable,
     ApiDashboardInternalRetrieveData,
     DraftRecord,
+    InspectionResourceAliasedDataWritable,
     InvestigationResourceAliasedDataWritable,
-    PermitApplication,
     PermitApplicationResourceAliasedDataWritable,
 } from '@/bcap/client/types.gen.ts';
 
@@ -29,19 +34,33 @@ export type DashboardStatus = NonNullable<
     ApiDashboardInternalRetrieveData['query']
 >['status'];
 
-export type PermitAliasedData = NonNullable<PermitApplication['aliased_data']>;
+export type QueryParam = LocationQueryValue | LocationQueryValue[] | undefined;
 
-// A permit application draft narrows the generic draft to the permit resource's
-// writable (POST) aliased data, which carries the graph's required fields.
-export type PermitApplicationDraft = DraftRecord & {
-    data?: PermitApplicationResourceAliasedDataWritable;
+type Draft<S extends GraphSlug, D> = Omit<
+    DraftRecord,
+    'data' | 'graph_slug'
+> & {
+    graph_slug: S;
+    data?: D;
 };
 
-// An investigation draft narrows the generic draft to the investigation
-// resource's writable (POST) aliased data, which carries the graph's required
-// fields.
-export type InvestigationDraft = DraftRecord & {
-    data?: InvestigationResourceAliasedDataWritable;
+export type WorkflowDraft =
+    | Draft<
+          GraphSlug.PermitApplication,
+          PermitApplicationResourceAliasedDataWritable
+      >
+    | Draft<GraphSlug.Investigation, InvestigationResourceAliasedDataWritable>
+    | Draft<GraphSlug.Inspection, InspectionResourceAliasedDataWritable>
+    | Draft<GraphSlug.Alteration, AlterationResourceAliasedDataWritable>;
+
+export type DraftOf<S extends WorkflowDraft['graph_slug']> = Extract<
+    WorkflowDraft,
+    { graph_slug: S }
+>;
+
+export const isDraftOf = <S extends WorkflowDraft['graph_slug']>(slug: S) => {
+    return (draft: WorkflowDraft): draft is DraftOf<S> =>
+        draft.graph_slug === slug;
 };
 
 export interface NewBcapMessage {
@@ -77,13 +96,6 @@ export interface MessageThread {
     hasUnread: boolean;
     unreadCount: number;
     isResolved?: boolean;
-}
-
-export interface TileReference {
-    resourceinstance_id: string;
-    tileid: string;
-    nodegroupid: string;
-    data: object;
 }
 
 export interface DetailsData {

@@ -93,11 +93,13 @@ router.beforeEach(async (to, _from, next) => {
 <style scoped>
 main {
     font-family: sans-serif;
-    height: 100vh;
-    width: 100vw;
+    min-height: 100%;
+    width: 100%;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
+    /* Breathing room under the last row when scrolled to the bottom. */
+    padding-bottom: 30px;
 }
 
 .full-height {
@@ -107,6 +109,12 @@ main {
 
 <style>
 @import url('@/bcap/styles/bc-theme.css');
+
+/* The arches plugin panel is a fixed calc(100vh - 50px) box, so a permit page
+   taller than the viewport is cut off. Let it scroll. */
+.content-panel {
+    overflow-y: auto;
+}
 
 /* bc-theme forces BCSans on .bc-form *, and only restores the FA4/5 class names
    (.fa/.fas/.far). This app uses Font Awesome 6 style classes, so restore those

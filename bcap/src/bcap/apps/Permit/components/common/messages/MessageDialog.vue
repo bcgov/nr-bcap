@@ -5,9 +5,11 @@ import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import { getContributorsForResources } from '@/bcap/apps/Permit/api.ts';
-import { formatTimestamp, downloadFile } from '@/bcap/util.ts';
 import { useMessageStore } from '@/bcap/stores/message.ts';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import MessageThreadSidebar from '@/bcap/apps/Permit/components/common/messages/MessageThreadSidebar.vue';
+import MessageHistory from '@/bcap/apps/Permit/components/common/messages/MessageHistory.vue';
+import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messages/MessageAttachmentsField.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 // The dialog shows the threads on one resource, scoped by its id: the permit for
@@ -48,24 +50,6 @@ const threadContainer = ref<HTMLElement | null>(null);
 // The widget emits the Message Type list item's display label, single-select.
 const onTopicSelected = (displayValues: string[]) => {
     state.selectedTopic = displayValues[0] ?? '';
-};
-
-// The file widget emits an entry per staged file; the raw File rides in .file.
-// Keep those, so createBcapMessage can post them as multipart.
-const onFilesSelected = (value: Array<{ file?: File }>) => {
-    state.files = (value ?? [])
-        .map((entry) => entry.file)
-        .filter((file): file is File => Boolean(file));
-};
-
-const removeFile = (index: number) => {
-    state.files.splice(index, 1);
-};
-
-const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
 const visibleThreads = computed(() =>
@@ -117,6 +101,7 @@ const loadRecipients = async () => {
 const openDialog = () => {
     state.selectedThreadId = 'new';
     state.visible = true;
+    loadRecipients();
     messageStore.load(props.resourceId, state.showArchived);
 };
 
@@ -212,7 +197,6 @@ const markAsResolved = async () => {
 };
 
 onMounted(() => {
-    loadRecipients();
     // To show the counts.
     messageStore.load(props.resourceId, state.showArchived);
 });
@@ -263,75 +247,15 @@ onMounted(() => {
             <i class="fa-solid fa-xmark custom-close-icon"></i>
         </template>
 
-        <!-- SPLIT LAYOUT CONTAINER -->
         <div class="dialog-body-split">
-            <!-- SIDEBAR -->
-            <div class="thread-sidebar">
-                <div class="sidebar-tabs">
-                    <button
-                        type="button"
-                        class="sidebar-tab"
-                        :class="{ active: !state.showArchived }"
-                        @click="showTab(false)"
-                    >
-                        Active
-                    </button>
-                    <button
-                        type="button"
-                        class="sidebar-tab"
-                        :class="{ active: state.showArchived }"
-                        @click="showTab(true)"
-                    >
-                        Archived
-                    </button>
-                </div>
+            <MessageThreadSidebar
+                :threads="visibleThreads"
+                :show-archived="state.showArchived"
+                :selected-thread-id="state.selectedThreadId"
+                @select-tab="showTab"
+                @select-thread="selectThread"
+            />
 
-                <div class="thread-list">
-                    <div
-                        v-for="thread in visibleThreads"
-                        :key="thread.id"
-                        class="sidebar-item"
-                        :class="{
-                            active: state.selectedThreadId === thread.id,
-                            unread: thread.hasUnread,
-                            resolved: thread.isResolved,
-                        }"
-                        @click="selectThread(thread.id)"
-                    >
-                        <span class="thread-topic-label">
-                            {{ thread.topic }}
-                        </span>
-                        <span class="thread-started-by">
-                            {{ thread.startedBy }}
-                        </span>
-                        <span
-                            v-if="thread.lastMessageDate"
-                            class="thread-date"
-                        >
-                            {{ formatTimestamp(thread.lastMessageDate) }}
-                        </span>
-                    </div>
-
-                    <div
-                        v-if="visibleThreads.length === 0"
-                        class="sidebar-item empty-note"
-                    >
-                        {{
-                            state.showArchived
-                                ? 'No archived messages.'
-                                : 'No messages.'
-                        }}
-                    </div>
-                </div>
-
-                <div
-                    class="sidebar-item new-message-item"
-                    :class="{ active: state.selectedThreadId === 'new' }"
-                    @click="selectThread('new')"
-                >
-                    + New Message
-                </div>
-            </div>
             <div class="thread-content">
                 <!-- NEW MESSAGE VIEW -->
                 <div
@@ -447,46 +371,10 @@ onMounted(() => {
                         />
                     </div>
 
-                    <div class="field-block attachments-field">
-                        <label class="field-label">
-                            Attachments
-                            <span class="field-optional">(optional)</span>
-                        </label>
-                        <div class="attachments-widget">
-                            <GenericWidget
-                                :key="state.selectedThreadId"
-                                :graph-slug="GraphSlug.BcapMessage"
-                                node-alias="attachments"
-                                mode="edit"
-                                should-emit-simplified-value
-                                @update:value="onFilesSelected"
-                            />
-                        </div>
-
-                        <ul
-                            v-if="state.files.length"
-                            class="staged-attachments"
-                        >
-                            <li
-                                v-for="(file, index) in state.files"
-                                :key="`${file.name}-${index}`"
-                            >
-                                <i class="fa-regular fa-paperclip"></i>
-                                <span class="staged-name">{{ file.name }}</span>
-                                <span class="staged-size">
-                                    {{ formatFileSize(file.size) }}
-                                </span>
-                                <button
-                                    type="button"
-                                    class="staged-remove"
-                                    aria-label="Remove attachment"
-                                    @click="removeFile(index)"
-                                >
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                    <MessageAttachmentsField
+                        v-model:files="state.files"
+                        :reset-key="state.selectedThreadId"
+                    />
 
                     <div class="action-footer">
                         <Button
@@ -504,77 +392,11 @@ onMounted(() => {
                     v-else
                     class="reply-view"
                 >
-                    <div
+                    <MessageHistory
                         ref="threadContainer"
-                        class="message-thread"
-                    >
-                        <div
-                            v-if="state.isLoadingMessages"
-                            class="messages-loading"
-                        >
-                            <i class="fa-solid fa-spinner fa-spin"></i>
-                            Loading messages…
-                        </div>
-                        <template v-else>
-                            <div
-                                v-for="(
-                                    msg, index
-                                ) in messageStore.openMessages"
-                                :key="index"
-                                class="historical-message"
-                            >
-                                <div class="message-header">
-                                    <strong>{{ msg.author }}:</strong>
-                                    <span
-                                        v-if="msg.date"
-                                        class="message-date"
-                                    >
-                                        {{ msg.date }}
-                                    </span>
-                                </div>
-                                <p>{{ msg.text }}</p>
-                                <div
-                                    v-if="msg.attachments?.length"
-                                    class="message-attachments"
-                                >
-                                    <ul class="attachment-list">
-                                        <li
-                                            v-for="file in msg.attachments"
-                                            :key="file.url"
-                                        >
-                                            <a
-                                                :href="file.url"
-                                                :download="file.name"
-                                                @click.prevent="
-                                                    downloadFile(
-                                                        file.url,
-                                                        file.name,
-                                                    )
-                                                "
-                                            >
-                                                <i
-                                                    class="fa-regular fa-paperclip"
-                                                ></i>
-                                                <span class="attachment-name">
-                                                    {{ file.name }}
-                                                </span>
-                                                <span
-                                                    v-if="file.size"
-                                                    class="attachment-size"
-                                                >
-                                                    {{
-                                                        formatFileSize(
-                                                            file.size,
-                                                        )
-                                                    }}
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
+                        :messages="messageStore.openMessages"
+                        :is-loading="state.isLoadingMessages"
+                    />
 
                     <div class="field-container textarea-wrapper">
                         <label class="field-label">Write a Reply:</label>
@@ -586,46 +408,10 @@ onMounted(() => {
                         />
                     </div>
 
-                    <div class="field-block attachments-field">
-                        <label class="field-label">
-                            Attachments
-                            <span class="field-optional">(optional)</span>
-                        </label>
-                        <div class="attachments-widget">
-                            <GenericWidget
-                                :key="state.selectedThreadId"
-                                :graph-slug="GraphSlug.BcapMessage"
-                                node-alias="attachments"
-                                mode="edit"
-                                should-emit-simplified-value
-                                @update:value="onFilesSelected"
-                            />
-                        </div>
-
-                        <ul
-                            v-if="state.files.length"
-                            class="staged-attachments"
-                        >
-                            <li
-                                v-for="(file, index) in state.files"
-                                :key="`${file.name}-${index}`"
-                            >
-                                <i class="fa-regular fa-paperclip"></i>
-                                <span class="staged-name">{{ file.name }}</span>
-                                <span class="staged-size">
-                                    {{ formatFileSize(file.size) }}
-                                </span>
-                                <button
-                                    type="button"
-                                    class="staged-remove"
-                                    aria-label="Remove attachment"
-                                    @click="removeFile(index)"
-                                >
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                    <MessageAttachmentsField
+                        v-model:files="state.files"
+                        :reset-key="state.selectedThreadId"
+                    />
 
                     <div class="action-footer">
                         <Button
@@ -747,108 +533,6 @@ onMounted(() => {
     background-color: #f8f9fa;
 }
 
-.thread-sidebar {
-    width: 320px;
-    background-color: #ffffff;
-    border-right: 1px solid #e0e0e0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.thread-list {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.sidebar-item {
-    padding: 1.2rem 1.5rem;
-    border-bottom: 1px solid #f0f0f0;
-    cursor: pointer;
-    font-size: 1.35rem;
-    color: #333;
-    transition: background-color 0.2s ease;
-}
-
-.sidebar-item:hover {
-    background-color: #f1f3f5;
-}
-
-.thread-topic-label {
-    text-transform: capitalize;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    overflow-wrap: anywhere;
-}
-
-.thread-started-by {
-    display: block;
-    margin-top: 0.2rem;
-    font-size: 1.15rem;
-    color: #495057;
-}
-
-.sidebar-item.active .thread-started-by {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.thread-date {
-    display: block;
-    margin-top: 0.3rem;
-    font-size: 1.1rem;
-    color: #6c757d;
-}
-
-.sidebar-item.active .thread-date {
-    color: rgba(255, 255, 255, 0.85);
-}
-
-.sidebar-item.unread .thread-topic-label {
-    font-weight: 700;
-    color: #000;
-}
-
-.sidebar-item.resolved {
-    color: #a0a0a0;
-}
-
-.sidebar-item.active {
-    background-color: #1a6ab0;
-    color: #ffffff;
-    border-bottom-color: #1a6ab0;
-}
-
-.sidebar-item.active.unread .thread-topic-label,
-.sidebar-item.active.resolved {
-    color: #ffffff;
-}
-
-.new-message-item {
-    flex-shrink: 0;
-    margin: 0.75rem;
-    padding: 1.1rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: #ffffff;
-    background-color: #003366;
-    border: none;
-    border-radius: 6px;
-}
-
-.new-message-item.active {
-    background-color: #003366;
-    color: #ffffff;
-}
-
-.new-message-item:hover {
-    background-color: var(--bc-navy-dark);
-    color: #ffffff;
-}
-
 .thread-content {
     flex: 1;
     padding: 1.5rem 1.5rem 0;
@@ -896,14 +580,6 @@ onMounted(() => {
     display: none !important;
 }
 
-.attachments-widget label {
-    display: none !important;
-}
-
-.attachments-widget input[type='file'] {
-    display: none;
-}
-
 /* The message-type widget is a PrimeVue TreeSelect; match the Recipient
    dropdown's height, radius and font so the two columns line up. */
 .type-widget .p-treeselect {
@@ -926,10 +602,6 @@ onMounted(() => {
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-}
-
-.attachments-field {
-    margin-top: 1.25rem;
 }
 
 .field-optional {
@@ -998,170 +670,6 @@ onMounted(() => {
     font-size: 1.25rem;
 }
 
-.message-thread {
-    flex: 1 1 auto;
-    min-height: 10rem;
-    overflow-y: auto;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background-color: #fafafa;
-}
-
-.messages-loading {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-content: center;
-    padding: 1rem;
-    color: #6c757d;
-}
-
-.historical-message {
-    margin-bottom: 1rem;
-    color: #333;
-    padding-bottom: 1rem;
-}
-
-.message-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.5rem;
-}
-
-.historical-message strong {
-    color: #000;
-    font-weight: 600;
-    margin: 0;
-    font-size: 1.3rem;
-}
-
-.message-date {
-    font-size: 1.1rem;
-    color: #6c757d;
-}
-
-.historical-message p {
-    margin: 0;
-    line-height: 1.5;
-    font-size: 1.25rem;
-}
-
-.message-attachments {
-    margin-top: 0.7rem;
-}
-
-.attachment-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.attachment-list a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    max-width: 100%;
-    padding: 0.4rem 0.9rem;
-    background-color: #eef2f7;
-    border: 1px solid #d6dee8;
-    border-radius: 16px;
-    color: var(--bc-navy);
-    font-size: 1.15rem;
-    text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.attachment-list a:hover {
-    background-color: var(--bc-selected);
-    border-color: var(--bc-navy);
-}
-
-.attachment-list i {
-    flex-shrink: 0;
-    font-size: 1.1rem;
-}
-
-.attachment-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.attachment-size {
-    flex-shrink: 0;
-    color: #6c757d;
-    font-size: 0.95em;
-}
-
-.attachments-widget .file-list {
-    display: none !important;
-}
-
-.attachments-widget .p-fileupload,
-.attachments-widget .p-fileupload-content {
-    padding: 0;
-    border: none;
-    background: transparent;
-}
-
-.staged-attachments {
-    list-style: none;
-    margin: 0.6rem 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    flex: 0 0 auto;
-}
-
-.staged-attachments li {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    flex-shrink: 0;
-    padding: 0.5rem 0.9rem;
-    background-color: #eef2f7;
-    border: 1px solid #d6dee8;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    color: var(--bc-navy);
-}
-
-.staged-name {
-    flex: 1 1 auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.staged-size {
-    flex: 0 0 auto;
-    font-size: 1.05rem;
-    color: #6c757d;
-}
-
-.staged-remove {
-    flex: 0 0 auto;
-    border: none;
-    background: none;
-    cursor: pointer;
-    padding: 0.2rem 0.4rem;
-    font-size: 1.2rem;
-    color: #6c757d;
-}
-
-.staged-remove:hover {
-    color: #d32f2f;
-}
-
 .action-footer {
     display: flex;
     justify-content: flex-end;
@@ -1221,33 +729,5 @@ onMounted(() => {
 
 .dropdown-value-template i {
     font-size: 1.3rem;
-}
-
-.sidebar-tabs {
-    flex-shrink: 0;
-    display: flex;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.sidebar-tab {
-    flex: 1;
-    padding: 1.25rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #6c757d;
-}
-
-.sidebar-tab.active {
-    color: var(--bc-navy);
-    font-weight: 700;
-    box-shadow: inset 0 -3px 0 var(--bc-navy);
-}
-
-.sidebar-item.empty-note {
-    color: #6c757d;
-    cursor: default;
 }
 </style>

@@ -1005,6 +1005,14 @@
                     "config": {
                         "graphs": [
                             {
+                                "graphid": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Permit Application",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            },
+                            {
                                 "graphid": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                                 "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
                                 "name": "Site Visit",

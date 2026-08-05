@@ -2,6 +2,7 @@ from bcap.util.bcap_aliases import AbstractAliases
 
 
 class WorkflowDraftsAliases(AbstractAliases):
+    CURRENT_STEP = "current_step"
     DRAFT_DATA = "draft_data"
     FRONTEND_VERSION = "frontend_version"
     GRAPH_PUBLICATION_ID = "graph_publication_id"

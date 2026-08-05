@@ -1,21 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
-import {
-    fetchPermitDetails,
-    patchPermitSubmissionDate,
-    fetchDrafts,
-} from '@/bcap/apps/Permit/api.ts';
+import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
-// 1. Mock the API Service
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchPermitDetails: vi.fn(),
-    patchPermitSubmissionDate: vi.fn(),
     fetchDrafts: vi.fn(() => Promise.resolve([])),
     deleteDraft: vi.fn(),
-    // Imported by the QuestionDialog child; without them its error handlers log
+    // Imported by the MessageDialog child; without them its error handlers log
     // "Error loading threads/recipients".
     getThreadsForResource: vi.fn(() => Promise.resolve([])),
     getContributorsForResources: vi.fn(() => Promise.resolve([])),
@@ -25,7 +19,7 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     setThreadArchived: vi.fn(),
 }));
 
-// The QuestionDialog's topic picker; the real widget's package cannot be
+// The MessageDialog's topic picker; the real widget's package cannot be
 // transformed under vitest.
 vi.mock(
     '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
@@ -41,29 +35,31 @@ vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
 // The submitted-modules panel is its own component (covered in its own test);
 // stub it so these tests stay focused on PermitDetails and its draft list.
 vi.mock(
-    '@/bcap/apps/Permit/components/filing-summary/CompletedModules.vue',
+    '@/bcap/apps/Permit/components/filing-summary/modules/ProcessModules.vue',
     () => ({
         default: {
             props: ['modules', 'permitId', 'isStaff'],
-            template:
-                '<div class="mock-completed-modules">{{ modules.length }}</div>',
+            template: '<div class="mock-modules">{{ modules.length }}</div>',
         },
     }),
 );
 
-// 2. Mock Vue Router
+// The query is a ref so a test can open the page the way a
+// dashboard card does (?draft=, ?staff=).
 const mockPush = vi.fn();
+const mockQuery = vi.hoisted(() => ({
+    value: {} as Record<string, string>,
+}));
 vi.mock('vue-router', () => ({
     useRoute: () => ({
         params: { id: 'mock-permit-123' },
-        query: {},
+        query: mockQuery.value,
     }),
     useRouter: () => ({
         push: mockPush,
     }),
 }));
 
-// 3. Setup Mock Data
 const mockPermitData = {
     application_identification: {
         aliased_data: {
@@ -90,7 +86,7 @@ const mockPermitData = {
 };
 
 describe('PermitDetails.vue', () => {
-    // NEW: Share the exact same stubs across all tests so slots are never dropped!
+    // Shared across all tests so slots are never dropped.
     const globalMountOptions = {
         global: {
             stubs: {
@@ -105,9 +101,10 @@ describe('PermitDetails.vue', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        mockQuery.value = {};
 
         vi.mocked(fetchPermitDetails).mockResolvedValue(
-            mockPermitData as unknown as PermitAliasedData,
+            mockPermitData as unknown as PermitApplicationResourceAliasedData,
         );
         // Default to no drafts; tests that need them override per-case.
         // clearAllMocks resets calls but keeps implementations, so reset here.
@@ -126,26 +123,13 @@ describe('PermitDetails.vue', () => {
         expect(wrapper.find('.permit-meta').text()).toBe('APP-001 · Forestry');
     });
 
-    it('calls patchPermitSubmissionDate when the Submit Permit button is clicked', async () => {
+    it('has no submit action in the header band', async () => {
         const wrapper = mount(PermitDetails, globalMountOptions);
 
         await flushPromises();
 
-        // The button will safely exist now!
-        const submitBtn = wrapper.find('.header-submit-btn');
-        expect(submitBtn.exists()).toBe(true);
-        expect(submitBtn.text()).toBe('Submit Permit');
-
-        await submitBtn.trigger('click');
-        await flushPromises();
-
-        expect(patchPermitSubmissionDate).toHaveBeenCalledWith(
-            'mock-permit-123',
-            expect.objectContaining({
-                tileid: 'mock-tile-123',
-                aliased_data: expect.any(Object),
-            }),
-        );
+        // Submitting happens in the workflow, not from the permit header.
+        expect(wrapper.find('.header-submit-btn').exists()).toBe(false);
     });
 
     it('navigates to a new module when "Add module" is clicked', async () => {
@@ -153,7 +137,6 @@ describe('PermitDetails.vue', () => {
 
         await flushPromises();
 
-        // The menu items will safely exist now!
         const menuItems = wrapper.findAll('.menu-item');
         await menuItems[2].trigger('click');
 
@@ -168,20 +151,20 @@ describe('PermitDetails.vue', () => {
         });
     });
 
-    it("fetches drafts on mount and keeps only this permit's", async () => {
+    it("fetches this permit's drafts on mount and keeps the investigations", async () => {
         vi.mocked(fetchDrafts).mockResolvedValue([
-            // This permit's investigation draft -- kept.
+            // The server returns this permit's drafts; the graph is what still
+            // has to be picked apart here.
             {
                 id: 'd1',
                 graph_slug: GraphSlug.Investigation,
                 parent_resource_id: 'mock-permit-123',
                 data: {},
             },
-            // Another permit's draft -- filtered out.
             {
                 id: 'd2',
-                graph_slug: GraphSlug.Investigation,
-                parent_resource_id: 'other-permit',
+                graph_slug: GraphSlug.PermitApplication,
+                parent_resource_id: 'mock-permit-123',
                 data: {},
             },
         ] as never);
@@ -189,12 +172,13 @@ describe('PermitDetails.vue', () => {
         const wrapper = mount(PermitDetails, globalMountOptions);
         await flushPromises();
 
-        expect(fetchDrafts).toHaveBeenCalled();
+        // Filtered by parent in SQL: staff see other users' drafts, so the
+        // unfiltered list is every draft in the system.
+        expect(fetchDrafts).toHaveBeenCalledWith('mock-permit-123');
 
         const vm = wrapper.vm as unknown as {
             state: { investigationDrafts: unknown[] };
         };
-        // Only the draft belonging to this permit survives the filter.
         expect(vm.state.investigationDrafts).toHaveLength(1);
     });
 
@@ -252,7 +236,7 @@ describe('PermitDetails.vue', () => {
         expect(wrapper.find('.draft-modules').exists()).toBe(false);
         expect(wrapper.findAll('.draft-panel')).toHaveLength(0);
         // Completed modules are delegated to the stubbed child.
-        expect(wrapper.find('.mock-completed-modules').exists()).toBe(true);
+        expect(wrapper.find('.mock-modules').exists()).toBe(true);
     });
 
     it('lists this permit drafts as accordion panels', async () => {
@@ -281,5 +265,67 @@ describe('PermitDetails.vue', () => {
         expect(wrapper.find('.draft-modules').text()).toContain(
             'Investigation - My Inv',
         );
+    });
+
+    describe('draft panels', () => {
+        const twoDrafts = () =>
+            vi.mocked(fetchDrafts).mockResolvedValue([
+                {
+                    id: 'd1',
+                    graph_slug: GraphSlug.Investigation,
+                    parent_resource_id: 'mock-permit-123',
+                    data: {},
+                },
+                {
+                    id: 'd2',
+                    graph_slug: GraphSlug.Investigation,
+                    parent_resource_id: 'mock-permit-123',
+                    data: {},
+                },
+            ] as never);
+
+        type DraftVm = { expandedDrafts: string[] };
+
+        it('pre-expands the draft named on the url, and none without one', async () => {
+            twoDrafts();
+            mockQuery.value = { draft: 'd2' };
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect((wrapper.vm as unknown as DraftVm).expandedDrafts).toEqual([
+                'd2',
+            ]);
+
+            mockQuery.value = {};
+            const plain = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+            expect((plain.vm as unknown as DraftVm).expandedDrafts).toEqual([]);
+        });
+
+        it('lets an applicant resume and remove their draft', async () => {
+            twoDrafts();
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect(wrapper.find('.draft-resume').text()).toContain(
+                'Resume draft',
+            );
+            expect(wrapper.find('.draft-delete').exists()).toBe(true);
+        });
+
+        it('gives staff a read-only draft list', async () => {
+            twoDrafts();
+            mockQuery.value = { staff: 'true' };
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect(wrapper.find('.draft-resume').text()).toContain(
+                'View draft',
+            );
+            expect(wrapper.find('.draft-delete').exists()).toBe(false);
+        });
     });
 });

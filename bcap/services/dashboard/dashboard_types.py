@@ -163,9 +163,19 @@ class ExternalDashboardCard:
         "card's drill-in / resume GUID."
     )
     is_draft: bool = described(
-        "True when this card is an unsubmitted draft (from a ResourceDraft, "
-        "graph_slug=permit_application) rather than a saved application.",
+        "True when this card is an unsubmitted draft rather than a saved "
+        "application.",
         False,
+    )
+    graph_slug: str = described(
+        "Graph the draft belongs to, so the client can resume and delete it "
+        "against the right workflow; empty for saved applications.",
+        "",
+    )
+    permit_application_id: str = described(
+        "Resourceinstanceid of the permit application a module draft was "
+        "started from; empty for an application draft or a saved application.",
+        "",
     )
     status: str = described(
         "Applicant-facing workflow status, e.g. Permit Active, Under Review, "
@@ -182,6 +192,9 @@ class ExternalDashboardCard:
     )
     submission_date: str = described(
         "Permit application's submission date; empty for drafts.", ""
+    )
+    updated_date: str = described(
+        "ISO timestamp of the last save; only drafts carry one.", ""
     )
     project_name: str = described("Permit application's project name.", "")
     application_number: str = described(

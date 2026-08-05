@@ -15,6 +15,7 @@ vi.mock('vue-router', () => ({
 vi.mock('arches', () => ({
     default: {
         urls: {
+            plugin: (slug: string) => `/plugins/${slug}`,
             api_process_requirements: (id: string) =>
                 `/bcap/api/process_requirements/${id}`,
         },
@@ -25,12 +26,20 @@ vi.mock('@/bcap/components/pages/api.ts', () => ({
     getProcessRequirementData: vi.fn(),
 }));
 
+// Only the header fetch is stubbed; the save path still goes through the real
+// apiFetch so the PATCH assertions stay honest.
+const { fetchPermitDetails } = vi.hoisted(() => ({
+    fetchPermitDetails: vi.fn(),
+}));
+vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
+    fetchPermitDetails,
+}));
+
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
 import TaskChecklist from './TaskChecklist.vue';
 
 const mockedGet = vi.mocked(getProcessRequirementData);
-
-// --- Fixture helpers ---
 
 const buildDuration = (
     startDate: string | null = null,
@@ -135,6 +144,7 @@ const check = async (
 beforeEach(() => {
     mockRouteQuery.value = { id: 'res-1' };
     vi.clearAllMocks();
+    fetchPermitDetails.mockResolvedValue(null);
 });
 
 afterEach(() => {
@@ -174,6 +184,57 @@ describe('TaskChecklist', () => {
             mount(TaskChecklist);
             await flushPromises();
             expect(mockedGet).toHaveBeenCalledWith('resource-xyz');
+        });
+    });
+
+    describe('permit context', () => {
+        it('shows no crumbs and loads no header when opened standalone', async () => {
+            mockedGet.mockResolvedValue(buildRequirement());
+
+            const wrapper = mount(TaskChecklist);
+            await flushPromises();
+
+            expect(wrapper.find('.crumbs').exists()).toBe(false);
+            expect(fetchPermitDetails).not.toHaveBeenCalled();
+        });
+
+        it('crumbs back to the permit and loads its header band', async () => {
+            mockRouteQuery.value = {
+                id: 'res-1',
+                permit: 'permit-1',
+            };
+            mockedGet.mockResolvedValue(
+                buildRequirement({ name: 'Site Checklist' }),
+            );
+
+            const wrapper = mount(TaskChecklist);
+            await flushPromises();
+
+            expect(fetchPermitDetails).toHaveBeenCalledWith('permit-1');
+            expect(wrapper.find('.crumb-link').text()).toBe('Project Summary');
+            expect(wrapper.find('.crumb-current').text()).toBe(
+                'Site Checklist',
+            );
+        });
+
+        it('keeps the staff view on the return trip', async () => {
+            mockRouteQuery.value = {
+                id: 'res-1',
+                permit: 'permit-1',
+                staff: '1',
+            };
+            mockedGet.mockResolvedValue(buildRequirement());
+
+            const wrapper = mount(TaskChecklist);
+            await flushPromises();
+
+            expect(
+                wrapper.findComponent({ name: 'RouterLinkStub' }).props('to'),
+            ).toEqual({
+                name: 'permitDetails',
+                params: { id: 'permit-1' },
+                query: { staff: '1' },
+            });
         });
     });
 
@@ -470,16 +531,16 @@ describe('TaskChecklist', () => {
     });
 
     describe('isDirty and actions bar', () => {
-        it('hides actions bar before any edits', async () => {
+        it('hides the undo button before any edits', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({ subRequirements: [buildSubReq()] }),
             );
             const wrapper = mount(TaskChecklist);
             await flushPromises();
-            expect(wrapper.find('.actions-bar').exists()).toBe(false);
+            expect(wrapper.find('.undo-btn').exists()).toBe(false);
         });
 
-        it('shows actions bar after checking a sub-requirement checkbox', async () => {
+        it('shows the undo button after checking a sub-requirement checkbox', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     subRequirements: [buildSubReq({ satisfied: false })],
@@ -489,7 +550,7 @@ describe('TaskChecklist', () => {
             const wrapper = mount(TaskChecklist);
             await flushPromises();
             await check(wrapper.find<HTMLInputElement>('.req-checkbox'), true);
-            expect(wrapper.find('.actions-bar').exists()).toBe(true);
+            expect(wrapper.find('.undo-btn').exists()).toBe(true);
         });
 
         it('undo reverts a checkbox to its original state', async () => {
@@ -512,7 +573,7 @@ describe('TaskChecklist', () => {
             ).toBe(false);
         });
 
-        it('actions bar disappears after undo', async () => {
+        it('the undo button disappears after undo', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     subRequirements: [buildSubReq({ satisfied: false })],
@@ -524,10 +585,10 @@ describe('TaskChecklist', () => {
             await check(wrapper.find<HTMLInputElement>('.req-checkbox'), true);
             await wrapper.find('.undo-btn').trigger('click');
             await nextTick();
-            expect(wrapper.find('.actions-bar').exists()).toBe(false);
+            expect(wrapper.find('.undo-btn').exists()).toBe(false);
         });
 
-        it('shows actions bar after editing the assessment checkbox', async () => {
+        it('shows the undo button after editing the assessment checkbox', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     assessment: buildAssessment({ status: false }),
@@ -539,7 +600,7 @@ describe('TaskChecklist', () => {
                 wrapper.find<HTMLInputElement>('#requirement_satisfied'),
                 true,
             );
-            expect(wrapper.find('.actions-bar').exists()).toBe(true);
+            expect(wrapper.find('.undo-btn').exists()).toBe(true);
         });
     });
 
@@ -606,7 +667,7 @@ describe('TaskChecklist', () => {
             );
         });
 
-        it('hides actions bar after a successful save', async () => {
+        it('hides the undo button after a successful save', async () => {
             mockedGet.mockResolvedValue(
                 buildRequirement({
                     subRequirements: [buildSubReq({ satisfied: false })],
@@ -619,7 +680,7 @@ describe('TaskChecklist', () => {
             await check(wrapper.find<HTMLInputElement>('.req-checkbox'), true);
             await wrapper.find('.save-btn').trigger('click');
             await flushPromises();
-            expect(wrapper.find('.actions-bar').exists()).toBe(false);
+            expect(wrapper.find('.undo-btn').exists()).toBe(false);
         });
 
         it('handles a failed save response without throwing', async () => {

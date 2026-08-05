@@ -111,6 +111,7 @@ const state = reactive({
     currentSearch: '',
     lastUpdateDate: new Date(),
     currentSort: 'default',
+    messagesOnly: false,
     sortOrder: 'asc' as 'asc' | 'desc',
     page: 1,
     pageLimit: 100,
@@ -156,6 +157,10 @@ function handleSearch(searchTerm: string) {
 const displayedProjects = computed(() => {
     let filtered = state.rawProjects;
 
+    if (state.messagesOnly) {
+        filtered = filtered.filter((item) => item.unreadMessages > 0);
+    }
+
     if (state.currentSearch) {
         const query = state.currentSearch.toLowerCase().trim();
 
@@ -179,7 +184,6 @@ const displayedProjects = computed(() => {
         });
     }
 
-    // Apply Dynamic Sorting
     const sorted = filtered.slice().sort((a, b) => {
         const field = state.currentSort;
 
@@ -247,29 +251,16 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 v-model:active-tab="state.currentFilter"
                 v-model:current-sort="state.currentSort"
                 v-model:sort-order="state.sortOrder"
+                v-model:messages-only="state.messagesOnly"
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
+                messages-only-label="Unread messages only"
+                :shown="state.isLoading ? 0 : displayedProjects.length"
+                :total="state.isLoading ? 0 : state.rawProjects.length"
                 @update:search="handleSearch"
                 @refresh="loadData"
             />
-
-            <div
-                v-if="!state.isLoading"
-                class="results-summary"
-            >
-                Showing
-                <strong>{{ displayedProjects.length }}</strong>
-                of
-                <strong>{{ state.rawProjects.length }}</strong>
-                cards
-                <span
-                    v-if="state.currentSearch"
-                    class="active-search-label"
-                >
-                    (filtered by "{{ state.currentSearch }}")
-                </span>
-            </div>
 
             <div
                 v-if="state.isLoading"
@@ -323,17 +314,12 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     text-decoration: none;
 }
 
-.dashboard-div-flex {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
 .dash-row {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 1.5rem;
-    margin-bottom: 1rem;
+    margin: 0 -10px 1rem;
 }
 
 /* ProjectCard clamps its title to two lines with overflow:hidden at
@@ -351,24 +337,5 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
     justify-content: center;
     padding: 3rem;
     color: #555;
-}
-
-/* Results Counter Styling */
-.results-summary {
-    font-size: 1.1rem;
-    color: #555555;
-    margin-bottom: 1rem;
-    padding-left: 0.5rem;
-}
-
-.results-summary strong {
-    color: #003366;
-    font-weight: 700;
-}
-
-.active-search-label {
-    color: #777777;
-    font-style: italic;
-    margin-left: 0.5rem;
 }
 </style>

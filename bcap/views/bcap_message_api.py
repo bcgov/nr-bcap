@@ -22,12 +22,12 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
-    ContributorSummarySerializer,
     ModuleUnreadSerializer,
     ThreadMessageSerializer,
     ThreadRootSerializer,
     ThreadsQuerySerializer,
 )
+from bcap.serializers.contributor_serializers import ContributorSummarySerializer
 from bcap.services.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,

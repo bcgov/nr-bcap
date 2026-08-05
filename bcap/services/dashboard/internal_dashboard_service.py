@@ -246,35 +246,7 @@ class InternalDashboardService(BaseDashboardService):
         are the referenced requirements to resolve statuses for."""
         # Resolve the referenced requirements first, dropping satisfied ones so
         # membership in `requirements` is the "is unsatisfied?" test below.
-        requirements = {}
-        if requirement_ids:
-            resources = self._tiles(
-                GraphSlugs.PROCESS_REQUIREMENT,
-                requirement_ids,
-                [
-                    self.PR.REQUIREMENT_STATUS,
-                    self.PR.REQUIREMENT_NAME,
-                    self.PR.REQUIREMENT_PROCESS_DUE_DATE,
-                    self.PR.ASSESSMENT_NOTES,
-                ],
-            )
-            for requirement in resources:
-                data = requirement.aliased_data
-                if self._raw_value(data, self.PR.REQUIREMENT_STATUS):
-                    continue
-                requirements[str(requirement.pk)] = Requirement(
-                    name=self._display_text(
-                        self._node_value(data, self.PR.REQUIREMENT_NAME)
-                    ),
-                    due_date=self._display_text(
-                        self._node_value(data, self.PR.REQUIREMENT_PROCESS_DUE_DATE)
-                    ),
-                    # The card drills in to the unsatisfied requirement itself.
-                    route=str(requirement.pk),
-                    notes=self._display_text(
-                        self._node_value(data, self.PR.ASSESSMENT_NOTES)
-                    ),
-                )
+        requirements = self._requirements_by_id(requirement_ids)
 
         chosen = {}
         for permit_id, tiles in requirements_by_permit.items():
@@ -290,6 +262,47 @@ class InternalDashboardService(BaseDashboardService):
                     chosen[permit_id] = replace(requirement, tile=tile)
                     break
         return chosen
+
+    def _requirements_by_id(self, requirement_ids):
+        """Map requirement resource id -> Requirement, for the unsatisfied ones.
+        Read straight off the tiles' JSON: all four fields are plain string,
+        boolean and date nodes, so building the aliased resource tree would cost
+        seconds of related-resource resolution for values already in hand."""
+        node_ids, nodegroups = {}, set()
+        for alias in (
+            self.PR.REQUIREMENT_STATUS,
+            self.PR.REQUIREMENT_NAME,
+            self.PR.REQUIREMENT_PROCESS_DUE_DATE,
+            self.PR.ASSESSMENT_NOTES,
+        ):
+            node_ids[alias], nodegroup = self._node_info(
+                GraphSlugs.PROCESS_REQUIREMENT, alias
+            )
+            nodegroups.add(nodegroup)
+
+        # Seeded so a requirement with no tiles still surfaces as unsatisfied;
+        # the nodes span nodegroups, so merge each resource's tiles together.
+        data_by_requirement = {str(rid): {} for rid in requirement_ids}
+        rows = TileModel.objects.filter(
+            resourceinstance_id__in=requirement_ids, nodegroup_id__in=nodegroups
+        ).values_list("resourceinstance_id", "data")
+        for resource_id, data in rows:
+            data_by_requirement[str(resource_id)].update(data)
+
+        def text(data, alias):
+            return self._display_text(data.get(node_ids[alias]))
+
+        return {
+            requirement_id: Requirement(
+                name=text(data, self.PR.REQUIREMENT_NAME),
+                due_date=text(data, self.PR.REQUIREMENT_PROCESS_DUE_DATE),
+                # The card drills in to the unsatisfied requirement itself.
+                route=requirement_id,
+                notes=text(data, self.PR.ASSESSMENT_NOTES),
+            )
+            for requirement_id, data in data_by_requirement.items()
+            if not data.get(node_ids[self.PR.REQUIREMENT_STATUS])
+        }
 
     @staticmethod
     def _order_value(value):

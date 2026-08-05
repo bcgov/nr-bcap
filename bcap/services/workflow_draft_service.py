@@ -10,6 +10,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 from arches.app.models.models import (
@@ -21,6 +22,7 @@ from arches.app.models.resource import Resource
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.workflow_drafts import WorkflowDraftsAliases
+from bcap.util.auth.groups import is_internal_user
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import get_current_graph
 
@@ -37,33 +39,49 @@ class DraftRecord:
     # its own drafts. Empty when the draft has no parent.
     parent_resource_id: str = ""
     data: dict = field(default_factory=dict)
+    current_step: str = ""
     created: datetime | None = None
     # Stamped in place on every save (drafts have no edit log to derive it from).
     updated: datetime | None = None
 
 
 class WorkflowDraftService(BaseGraphService):
-    """Owner-scoped CRUD over draft resources. All reads go through queryset() so
-    the dashboard can page the same rows the API returns."""
+    """CRUD over draft resources, scoped to the reader. All reads go through
+    queryset() so the dashboard can page the same rows the API returns."""
 
-    def queryset(self, user, graph_slug=None):
-        """The user's drafts (superusers see all), oldest first. Filters by the
-        target graph in SQL so callers can page without loading every draft."""
+    def queryset(self, user, graph_slug=None, parent_resource_id=None):
+        """An applicant's own drafts, oldest first; branch staff see everyone's.
+        Graph and parent filter in SQL, so no caller loads them all."""
         qs = ResourceInstance.objects.filter(graph__slug=GraphSlugs.WORKFLOW_DRAFTS)
-        if not user.is_superuser:
+        if not is_internal_user(user):
             qs = qs.filter(principaluser=user)
         if graph_slug is not None:
-            nodeid, ngid = self._node_info(
-                GraphSlugs.WORKFLOW_DRAFTS, WorkflowDraftsAliases.GRAPH_SLUG
-            )
+            qs = qs.filter(self._has_tile(WorkflowDraftsAliases.GRAPH_SLUG, graph_slug))
+        if parent_resource_id:
             qs = qs.filter(
-                tilemodel__nodegroup_id=ngid,
-                **{f"tilemodel__data__{nodeid}": graph_slug},
+                self._has_tile(
+                    WorkflowDraftsAliases.PARENT_RESOURCE,
+                    self._resource_instance_value(parent_resource_id),
+                    lookup="contains",
+                )
             )
-        return qs.order_by("createdtime").prefetch_related("tilemodel_set").distinct()
+        return qs.order_by("createdtime").prefetch_related("tilemodel_set")
+
+    def _has_tile(self, alias, value, lookup="exact"):
+        """Condition matching drafts whose tile for this alias holds the value.
+        A subquery rather than a join, so two of them don't multiply rows (and
+        the whole queryset needs no distinct() to put them back)."""
+        nodeid, ngid = self._node_info(GraphSlugs.WORKFLOW_DRAFTS, alias)
+        return Exists(
+            TileModel.objects.filter(
+                resourceinstance=OuterRef("pk"),
+                nodegroup_id=ngid,
+                **{f"data__{nodeid}__{lookup}": value},
+            )
+        )
 
     def get(self, user, pk):
-        """The user's draft with this id, or None if absent or not theirs."""
+        """The draft with this id as far as the user can see it, or None."""
         return self.queryset(user).filter(pk=pk).first()
 
     def to_record(self, resource) -> DraftRecord:
@@ -86,6 +104,7 @@ class WorkflowDraftService(BaseGraphService):
                 value(WorkflowDraftsAliases.PARENT_RESOURCE)
             ),
             data=json.loads(blob) if blob else {},
+            current_step=value(WorkflowDraftsAliases.CURRENT_STEP) or "",
             created=resource.createdtime,
             updated=datetime.fromisoformat(stamped) if stamped else None,
         )
@@ -128,23 +147,20 @@ class WorkflowDraftService(BaseGraphService):
         Resource.objects.get(pk=resource.pk).save_descriptors()
         return self.to_record(resource)
 
-    def set_data(self, resource, data):
+    def set_data(self, resource, data, current_step=None):
         """Replace a draft's blob with the caller's fully-merged data and
-        re-stamp the save time."""
+        re-stamp the save time. Pass current_step to move the step marker too;
+        omit it to leave the stored one alone."""
         now = timezone.now()
-        self._write(
-            resource,
-            {
-                WorkflowDraftsAliases.DRAFT_DATA: json.dumps(data),
-                WorkflowDraftsAliases.UPDATED_DATE: now.isoformat(),
-            },
-        )
-        # record() reads the resource's (now stale) prefetched tiles; only
-        # draft_data/updated_date changed, so set them from what we just wrote.
-        record = self.to_record(resource)
-        record.data = data
-        record.updated = now
-        return record
+        values = {
+            WorkflowDraftsAliases.DRAFT_DATA: json.dumps(data),
+            WorkflowDraftsAliases.UPDATED_DATE: now.isoformat(),
+        }
+        if current_step is not None:
+            values[WorkflowDraftsAliases.CURRENT_STEP] = current_step
+        self._write(resource, values)
+        resource.refresh_from_db()
+        return self.to_record(resource)
 
     @staticmethod
     def _resource_instance_value(resource_id):

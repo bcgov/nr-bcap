@@ -11,27 +11,30 @@ import AccordionPanel from 'primevue/accordionpanel';
 import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
-import CompletedModules from './CompletedModules.vue';
+import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { getBasicInfoFields } from '@/bcap/util.ts';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 import {
     fetchPermitDetails,
-    patchPermitSubmissionDate,
     fetchDrafts,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
-import type { InvestigationDraft } from '@/bcap/types.ts';
+import { isDraftOf } from '@/bcap/types.ts';
+import type { DraftOf } from '@/bcap/types.ts';
 import {
     permitModules as permitModuleCatalogue,
     modulesForFilingType,
 } from '../dashboard/permitModules.ts';
-import QuestionDialog from '../common/QuestionDialogExternal.vue';
+import MessageDialog from '../common/messages/MessageDialog.vue';
+import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import { useMessageStore } from '@/bcap/stores/message.ts';
 
 const messageStore = useMessageStore();
+const headerStore = usePermitHeaderStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -44,11 +47,11 @@ const isStaff = computed(
 );
 
 // A draft resumes into its own module's workflow, chosen by its graph slug.
-const draftRouteName = (draft: InvestigationDraft): string =>
+const draftRouteName = (draft: DraftOf<GraphSlug.Investigation>): string =>
     permitModuleCatalogue.find((mod) => mod.id === draft.graph_slug)
         ?.routeName || routeNames.investigationModule;
 
-const draftTitle = (draft: InvestigationDraft) => {
+const draftTitle = (draft: DraftOf<GraphSlug.Investigation>) => {
     const ident = draft.data?.investigation_identification?.aliased_data
         ?.investigation_identification as
         | { node_value?: { en?: { value?: string } }; en?: { value?: string } }
@@ -81,11 +84,13 @@ const state = reactive({
     } as PermitHeaderData,
     adminTileMeta: { tileid: '', nodegroup: '' },
     fetchedModuleData: {} as Record<string, ModuleResponse>,
-    rawPermitData: null as PermitAliasedData | null,
-    investigationDrafts: [] as InvestigationDraft[],
+    rawPermitData: null as PermitApplicationResourceAliasedData | null,
+    investigationDrafts: [] as DraftOf<GraphSlug.Investigation>[],
     // Completed/existing investigations have no endpoint yet; wired in later.
-    completedInvestigations: [] as InvestigationDraft[],
+    completedInvestigations: [] as DraftOf<GraphSlug.Investigation>[],
 });
+
+const bandHeader = computed(() => headerStore.state.header);
 
 const modulesAllowedForFilingType = computed(() =>
     modulesForFilingType(
@@ -100,6 +105,11 @@ const activeModuleId = ref(
         modulesAllowedForFilingType.value.some((m) => m.id === moduleFromQuery)
         ? moduleFromQuery
         : modulesAllowedForFilingType.value[0].id,
+);
+
+// ?draft=<id> opens that draft's panel, so a dashboard card lands on its section.
+const expandedDrafts = ref(
+    typeof route.query.draft === 'string' ? [route.query.draft] : [],
 );
 
 watch(modulesAllowedForFilingType, (mods) => {
@@ -118,7 +128,7 @@ const basicInfoFields = computed<ReviewField[]>(() => {
     return getBasicInfoFields(state.rawPermitData);
 });
 
-// The permit's process_module tiles; CompletedModules filters these to the ones
+// The permit's process_module tiles; the modules panel filters these to the ones
 // with a submission date and renders them as a drag-reorderable accordion.
 const processModules = computed(
     () =>
@@ -138,8 +148,6 @@ const loadPermitDetails = async () => {
         state.rawPermitData = aliased;
 
         const appIdent = aliased.application_identification?.aliased_data;
-        const propProj = aliased.proposed_project?.aliased_data;
-        const devDetails = propProj?.development_project_details?.aliased_data;
         const appAdmin = aliased.application_admin;
 
         state.adminTileMeta = {
@@ -147,19 +155,7 @@ const loadPermitDetails = async () => {
             nodegroup: appAdmin?.nodegroup || '',
         };
 
-        state.permitData = {
-            projectName:
-                appIdent?.project_name?.display_value || 'Unnamed Project',
-            applicationNumber:
-                appIdent?.application_id?.display_value || 'Pending',
-            submissionType: appIdent?.filing_type?.display_value || '',
-            // Left empty when unset so the header can mute it rather than
-            // stating a sector that was never given.
-            sector: devDetails?.industrial_sector?.display_value || '',
-            submittedDate:
-                appAdmin?.aliased_data?.application_submission_date
-                    ?.display_value || null,
-        };
+        state.permitData = headerStore.setFromAliased(permitId.value, aliased);
 
         state.fetchedModuleData = {
             [GraphSlug.PermitApplication]: {
@@ -209,74 +205,20 @@ const addableModules = computed(() =>
         })),
 );
 
-const submitPermit = async () => {
-    try {
-        const backendDate = new Date().toISOString();
-        const uiDate = new Date().toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        });
-
-        const adminPayload: {
-            tileid?: string;
-            aliased_data: { application_submission_date: string };
-        } = {
-            aliased_data: {
-                application_submission_date: backendDate,
-            },
-        };
-
-        if (state.adminTileMeta.tileid) {
-            adminPayload.tileid = state.adminTileMeta.tileid;
-        }
-
-        await patchPermitSubmissionDate(permitId.value, adminPayload);
-
-        state.permitData.submittedDate = uiDate;
-        await loadPermitDetails();
-    } catch (error) {
-        console.error('Error submitting permit:', error);
-        alert(
-            'Failed to submit permit. Check the console for the Django error.',
-        );
-    }
-};
-
-const deleteState = reactive<{
-    visible: boolean;
-    busy: boolean;
-    draft: InvestigationDraft | null;
-}>({ visible: false, busy: false, draft: null });
-
-const confirmDelete = (draft: InvestigationDraft) => {
-    deleteState.draft = draft;
-    deleteState.visible = true;
-};
-
-const performDelete = async () => {
-    const draft = deleteState.draft;
-    if (!draft) return;
-    deleteState.busy = true;
-    try {
-        await deleteDraft(GraphSlug.Investigation, draft.id);
-        deleteState.visible = false;
-        await loadInvestigations();
-    } catch (error) {
-        console.error('Failed to delete draft:', error);
-    } finally {
-        deleteState.busy = false;
-    }
-};
+const {
+    state: deleteState,
+    open: confirmDelete,
+    confirm: performDelete,
+} = useConfirmAction<DraftOf<GraphSlug.Investigation>>(async (draft) => {
+    await deleteDraft(GraphSlug.Investigation, draft.id);
+    await loadDraftsForPermitApp();
+});
 
 // This needs to be more generic in the future
-const loadInvestigations = async () => {
-    const drafts = await fetchDrafts();
+const loadDraftsForPermitApp = async () => {
+    const drafts = await fetchDrafts(permitId.value);
     state.investigationDrafts = drafts.filter(
-        (d: InvestigationDraft) =>
-            d.graph_slug === GraphSlug.Investigation &&
-            !!d.parent_resource_id &&
-            d.parent_resource_id === permitId.value,
+        isDraftOf(GraphSlug.Investigation),
     );
     // Load each draft's threads up front so its header can badge unread without
     // the dialog being opened. Drafts are few, so a fetch each is fine.
@@ -287,46 +229,44 @@ const loadInvestigations = async () => {
 
 onMounted(() => {
     loadPermitDetails();
-    loadInvestigations();
+    loadDraftsForPermitApp();
 });
 
 watch(permitId, () => {
     state.isLoading = true;
     loadPermitDetails();
-    loadInvestigations();
+    loadDraftsForPermitApp();
 });
 
 watch(activeModuleId, (id) => {
     if (id === GraphSlug.PermitApplication) {
-        loadInvestigations();
+        loadDraftsForPermitApp();
     }
 });
 </script>
 
 <template>
-    <div
-        v-if="state.isLoading"
-        class="permit-loading"
-    >
-        <ProgressSpinner />
-    </div>
-    <Panel
-        v-else
-        class="full-height"
-    >
-        <template #header>
-            <PermitHeaderBand :header="state.permitData">
-                <template #actions>
-                    <Button
-                        class="header-submit-btn"
-                        label="Submit Permit"
-                        @click="submitPermit"
-                    />
-                </template>
-            </PermitHeaderBand>
+    <Panel class="full-height">
+        <!-- Rendered from the store, so returning to the permit keeps the band
+             on screen instead of replacing it with the spinner. -->
+        <template
+            v-if="bandHeader"
+            #header
+        >
+            <PermitHeaderBand :header="bandHeader" />
         </template>
 
-        <div class="module-layout">
+        <div
+            v-if="state.isLoading"
+            class="permit-loading"
+        >
+            <ProgressSpinner />
+        </div>
+
+        <div
+            v-else
+            class="module-layout"
+        >
             <div
                 v-if="!isStaff"
                 class="side-menu"
@@ -338,17 +278,9 @@ watch(activeModuleId, (id) => {
                     :class="{ active: activeModuleId === mod.id }"
                     @click="activeModuleId = mod.id"
                 >
-                    <span class="menu-label">
-                        {{ mod.menuLabel }}
-                    </span>
-
                     <div class="status-icon-wrapper">
-                        <i
-                            v-if="getModuleStatus(mod.id) === 'completed'"
-                            class="fa-solid fa-check icon-completed"
-                        ></i>
                         <div
-                            v-else-if="getModuleStatus(mod.id) === 'review'"
+                            v-if="getModuleStatus(mod.id) === 'review'"
                             class="icon-review-wrapper"
                         >
                             <i
@@ -359,11 +291,18 @@ watch(activeModuleId, (id) => {
                              workflow: the add affordance takes the same slot,
                              so one icon column runs down the menu. -->
                         <i
-                            v-else-if="mod.id !== GraphSlug.PermitApplication"
+                            v-else-if="
+                                getModuleStatus(mod.id) !== 'completed' &&
+                                mod.id !== GraphSlug.PermitApplication
+                            "
                             class="fa-solid fa-plus menu-add"
                             title="Start this module"
                         ></i>
                     </div>
+
+                    <span class="menu-label">
+                        {{ mod.menuLabel }}
+                    </span>
                 </Button>
             </div>
 
@@ -428,13 +367,12 @@ watch(activeModuleId, (id) => {
                         class="investigation-lists"
                     >
                         <section
-                            v-if="
-                                !isStaff && state.investigationDrafts.length > 0
-                            "
+                            v-if="state.investigationDrafts.length > 0"
                             class="draft-modules"
                         >
                             <h2 class="list-heading">Draft modules</h2>
                             <Accordion
+                                v-model:value="expandedDrafts"
                                 multiple
                                 class="draft-accordion"
                             >
@@ -495,16 +433,28 @@ watch(activeModuleId, (id) => {
                                                     },
                                                 }"
                                             >
-                                                <i class="fa-solid fa-pen"></i>
-                                                Resume draft
+                                                <i
+                                                    class="fa-solid"
+                                                    :class="
+                                                        isStaff
+                                                            ? 'fa-eye'
+                                                            : 'fa-pen'
+                                                    "
+                                                ></i>
+                                                {{
+                                                    isStaff
+                                                        ? 'View draft'
+                                                        : 'Resume draft'
+                                                }}
                                             </router-link>
                                             <Button
+                                                v-if="!isStaff"
                                                 class="draft-delete"
                                                 icon="fa-solid fa-trash"
                                                 label="Remove"
                                                 @click="confirmDelete(draft)"
                                             />
-                                            <QuestionDialog
+                                            <MessageDialog
                                                 :application-id="
                                                     state.permitData
                                                         .applicationNumber
@@ -518,7 +468,7 @@ watch(activeModuleId, (id) => {
                             </Accordion>
                         </section>
 
-                        <CompletedModules
+                        <ProcessModules
                             :modules="processModules"
                             :permit-id="permitId"
                             :admin-tile-id="state.adminTileMeta.tileid"
@@ -526,7 +476,6 @@ watch(activeModuleId, (id) => {
                             :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
                             :application-id="state.permitData.applicationNumber"
-                            :permit-header="state.permitData"
                             @changed="loadPermitDetails"
                         />
                     </div>
@@ -577,26 +526,6 @@ watch(activeModuleId, (id) => {
     background: transparent;
 }
 
-/* The header band lives in PermitHeaderBand; only its slotted Submit button is
-   styled here. */
-.header-submit-btn {
-    height: 3.1rem;
-    padding: 0 1.5rem;
-    font-size: 1.15rem;
-    font-weight: 700;
-    border-radius: 4px;
-    background-color: #ffffff;
-    border-color: #ffffff;
-    color: var(--bc-navy);
-    cursor: pointer;
-}
-
-.header-submit-btn:hover {
-    background-color: var(--bc-selected);
-    border-color: var(--bc-selected);
-}
-
-/* Layout */
 .module-layout {
     display: flex;
     gap: 1.25rem;
@@ -617,7 +546,6 @@ watch(activeModuleId, (id) => {
     opacity: 0;
 }
 
-/* Side Menu */
 .side-menu {
     display: flex;
     flex-direction: column;
@@ -661,7 +589,7 @@ watch(activeModuleId, (id) => {
 /* A bare plus, lighter than the circled status glyphs it shares the column
    with, so it reads as an affordance rather than a state. */
 .menu-add {
-    font-size: 0.95rem;
+    font-size: 1.2rem;
     color: var(--bc-muted);
 }
 
@@ -674,22 +602,11 @@ watch(activeModuleId, (id) => {
     flex: 1;
 }
 
-/* Status Icons */
 .status-icon-wrapper {
     flex: 0 0 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-/* Grey on the inactive (white) row; white on the navy active row. */
-.icon-completed {
-    color: var(--bc-grey);
-    font-size: 1.2rem;
-}
-
-.menu-item.active .icon-completed {
-    color: #ffffff;
 }
 
 .icon-review-wrapper {
@@ -707,7 +624,6 @@ watch(activeModuleId, (id) => {
     font-size: 0.75rem;
 }
 
-/* Content Area */
 .content-area {
     flex-grow: 1;
     width: 100%;
@@ -734,7 +650,6 @@ watch(activeModuleId, (id) => {
     color: #26292e;
 }
 
-/* Buttons */
 .print-btn {
     background-color: #007bff;
     color: #ffffff;
@@ -816,16 +731,14 @@ watch(activeModuleId, (id) => {
 }
 
 /* Same group label as the submitted-modules section title. */
+/* Matches the Submitted modules heading so the two sections read as peers. */
 .investigation-lists .list-heading {
     margin: 0 0 1.4rem;
-    font-size: 1.3rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--bc-grey);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--bc-navy);
 }
 
-/* Draft modules accordion */
 .draft-modules {
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
@@ -1020,7 +933,6 @@ watch(activeModuleId, (id) => {
     padding: 0.5rem 0;
 }
 
-/* Print styling */
 @media print {
     .side-menu,
     .print-btn,

@@ -49,7 +49,6 @@ class BordenNumberDataType(NonLocalizedStringDataType):
             return
 
         borden_grid = re.sub("-.*", "", value)
-        # print("Saving %s:%s" % (tile.resourceinstance_id, value))
         logger.debug(
             "Trying to reserve borden number %s for %s"
             % (value, tile.resourceinstance_id)

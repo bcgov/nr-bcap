@@ -55,11 +55,6 @@ def _mocked_io(mock_subprocess=None, mock_regen=False):
         yield ns
 
 
-# ---------------------------------------------------------------------------
-# _render_spec
-# ---------------------------------------------------------------------------
-
-
 class TestRenderSpec(SimpleTestCase):
     _GID = "aaaa-0000-bbbb-1111"
     _SCHEMA = "my_schema"
@@ -150,11 +145,6 @@ class TestRenderSpec(SimpleTestCase):
         self.assertIn(f"GRAPH_ID = '{self._GID}'", output)
 
 
-# ---------------------------------------------------------------------------
-# _date_format
-# ---------------------------------------------------------------------------
-
-
 class TestDateFormat(SimpleTestCase):
     def _node(self, config):
         return Mock(config=config)
@@ -194,11 +184,6 @@ class TestDateFormat(SimpleTestCase):
         )
 
 
-# ---------------------------------------------------------------------------
-# _format_with_black
-# ---------------------------------------------------------------------------
-
-
 class TestFormatWithBlack(SimpleTestCase):
     def test_no_stderr_output_on_success(self):
         cmd = _cmd()
@@ -232,11 +217,6 @@ class TestFormatWithBlack(SimpleTestCase):
         self.assertIn("/path/to/spec.py", argv)
 
 
-# ---------------------------------------------------------------------------
-# _load_existing_spec
-# ---------------------------------------------------------------------------
-
-
 class TestLoadExistingSpec(SimpleTestCase):
     def test_returns_empty_dict_when_file_missing(self):
         result = _cmd()._load_existing_spec("sv", "/nonexistent/dir")
@@ -263,11 +243,6 @@ class TestLoadExistingSpec(SimpleTestCase):
             result = _cmd()._load_existing_spec("sv", tmpdir)
         self.assertEqual(result["SLUG"], "sv")
         self.assertEqual(result["FLAT_GRAINS"], [])
-
-
-# ---------------------------------------------------------------------------
-# _regenerate_spec — _format_with_black is called after the file is written
-# ---------------------------------------------------------------------------
 
 
 class TestRegenerateSpecCallsBlack(SimpleTestCase):
@@ -401,11 +376,6 @@ class TestRegenerateSpecCallsBlack(SimpleTestCase):
         self.assertIn(black_path, opened_paths)
 
 
-# ---------------------------------------------------------------------------
-# Command.handle — orchestration
-# ---------------------------------------------------------------------------
-
-
 class TestGenerateDatabcViewsCommand(TestCase):
     """
     Tests for the generate_databc_views management command.
@@ -414,8 +384,6 @@ class TestGenerateDatabcViewsCommand(TestCase):
     _regenerate_spec is patched where the test is about orchestration rather
     than spec-generation logic (which is covered by TestRegenerateSpecCallsBlack).
     """
-
-    # --- error cases -------------------------------------------------------
 
     def test_unknown_slug_raises_command_error(self):
         with self.assertRaises(CommandError):
@@ -430,8 +398,6 @@ class TestGenerateDatabcViewsCommand(TestCase):
         with _mocked_io(mock_subprocess=failing):
             with self.assertRaises(CommandError):
                 call_command("generate_databc_views", "sv")
-
-    # --- single graph argument ---------------------------------------------
 
     def test_single_graph_calls_generate_script_once(self):
         with _mocked_io() as m:
@@ -449,8 +415,6 @@ class TestGenerateDatabcViewsCommand(TestCase):
             call_command("generate_databc_views", "sv", "as")
         self.assertEqual(m.run.call_count, 2)
 
-    # --- default: all known graphs -----------------------------------------
-
     def test_default_processes_every_known_graph(self):
         with _mocked_io() as m:
             call_command("generate_databc_views")
@@ -463,8 +427,6 @@ class TestGenerateDatabcViewsCommand(TestCase):
         for slug in GRAPH_SLUGS:
             self.assertIn(f"{slug}_spec", spec_args)
 
-    # --- stdout summary ----------------------------------------------------
-
     def test_stdout_reports_output_written(self):
         out = StringIO()
         with _mocked_io():
@@ -476,8 +438,6 @@ class TestGenerateDatabcViewsCommand(TestCase):
         with _mocked_io():
             call_command("generate_databc_views", "sv", stdout=out)
         self.assertIn("Next steps", out.getvalue())
-
-    # --- --from-db flag: _regenerate_spec orchestration -------------------
 
     def test_from_db_calls_regenerate_spec_for_requested_graph(self):
         with _mocked_io(mock_regen=True) as m:

@@ -24,7 +24,6 @@ const mapOverrides = {
 } satisfies Partial<CardXNodeXWidgetData>;
 
 const stripHtml = (html?: unknown) => {
-    // Ensure we only try to parse strings
     if (typeof html !== 'string' || !html) return '';
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || '';
@@ -114,5 +113,28 @@ const hasValue = (val: unknown): boolean => {
     padding-top: 2rem;
     width: 100%;
     display: block;
+}
+
+/* Drag the corner to resize; the widget sizes off these vars, so they follow
+   the box instead of its 750x500 defaults. */
+.centered-map {
+    resize: both;
+    overflow: hidden;
+    width: calc(100% - 4rem);
+    max-width: calc(100% - 4rem);
+    margin: 0 2rem;
+    height: 20rem;
+    min-height: 10rem;
+    --map-width: 100%;
+    --map-max-width: 100%;
+    --map-max-height: 100%;
+}
+
+/* The widget's map div only carries a min-height, so it ignored the box being
+   dragged. Filling the box makes maplibre's own resize tracking kick in and
+   keep the geometry centred. */
+.centered-map :deep(.map-wrap),
+.centered-map :deep(.map) {
+    height: 100%;
 }
 </style>

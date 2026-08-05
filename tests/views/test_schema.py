@@ -26,6 +26,10 @@ from bcap.schema import (
     _sort_properties_in_place,
     type_base_serializer_fields,
 )
+from bcap.serializers.graph_serializers import (
+    GRAPH_SERIALIZERS,
+    aliased_data_union_schema,
+)
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from tests.views.helpers import AuthTestHelper
@@ -38,23 +42,28 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
     types are built from, so these guard that it generates and covers the bcap
     endpoints."""
 
+    _document = None
+
     def setUp(self):
         super().setUp()
         admin = get_user_model().objects.get(username="admin")
         self.idir_login_simulate(admin)
 
-    def test_schema_endpoint_returns_openapi_document(self):
-        resp = self.client.get(reverse("schema"))
+    def schema(self):
+        if SchemaEndpointTests._document is None:
+            resp = self.client.get(reverse("schema"))
+            self.assertEqual(resp.status_code, 200)
+            SchemaEndpointTests._document = yaml.safe_load(resp.content)
+        return SchemaEndpointTests._document
 
-        self.assertEqual(resp.status_code, 200)
-        schema = yaml.safe_load(resp.content)
+    def test_schema_endpoint_returns_openapi_document(self):
+        schema = self.schema()
+
         self.assertEqual(schema["openapi"].split(".")[0], "3")
         self.assertEqual(schema["info"]["title"], "BCAP API")
 
     def test_schema_documents_the_bcap_endpoints(self):
-        schema = yaml.safe_load(self.client.get(reverse("schema")).content)
-
-        paths = schema["paths"]
+        paths = self.schema()["paths"]
         # SERVE_URLCONF limits the schema to the documented bcap routes.
         self.assertTrue(
             any(p.endswith("/api/dashboard/internal") for p in paths), paths
@@ -65,7 +74,7 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
         self.assertTrue(any(p.endswith("/user_profile") for p in paths), paths)
 
     def test_dashboard_response_schema_matches_the_page_dataclass(self):
-        schema = yaml.safe_load(self.client.get(reverse("schema")).content)
+        schema = self.schema()
 
         dashboard = next(
             body
@@ -82,6 +91,33 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
             set(page["properties"]) & {"count", "page", "limit", "results"},
             {"count", "page", "limit", "results"},
         )
+
+    def test_aliased_data_union_refs_all_resolve(self):
+        """The draft blob's union names its components by string, so a rename in
+        the serializers would leave dangling refs that only surface as untyped
+        `unknown` in the generated client."""
+        schema = self.schema()
+        components = schema["components"]["schemas"]
+
+        refs = [option["$ref"] for option in aliased_data_union_schema()["oneOf"]]
+
+        self.assertEqual(len(refs), len(GRAPH_SERIALIZERS))
+        for ref in refs:
+            self.assertIn(ref.rsplit("/", 1)[-1], components, ref)
+
+    def test_aliased_data_union_reaches_the_draft_routes(self):
+        """The union is only worth keeping in step if the routes still carry it."""
+        schema = self.schema()
+
+        draft = next(
+            body
+            for path, body in schema["paths"].items()
+            if path.endswith("/api/workflow_draft")
+        )
+        record = schema["components"]["schemas"]["DraftRecord"]
+
+        self.assertIn("oneOf", record["properties"]["data"])
+        self.assertIn("get", draft)
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")

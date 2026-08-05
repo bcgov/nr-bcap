@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import arches from 'arches';
 import Button from 'primevue/button';
 import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
+import { patchProcessRequirement } from '@/bcap/apps/Permit/api.ts';
+import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
+import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
+import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
 
@@ -24,6 +28,16 @@ const subRequirements = computed(
 const requirementName = computed(
     () => requirementData.value?.descriptors?.en?.name ?? '',
 );
+
+const crumbs = computed(() =>
+    permitCrumbs(
+        route.query.permit,
+        route.query.staff,
+        requirementName.value || 'Checklist',
+    ),
+);
+
+const backLink = computed(() => crumbs.value[0]?.to ?? '');
 
 // Requirement-level status + notes (the assessment tile).
 const assessment = computed(
@@ -96,8 +110,13 @@ const loadData = async () => {
     }
 };
 
+const headerStore = usePermitHeaderStore();
+const permitId = computed(() => String(route.query.permit ?? ''));
+const permitHeader = computed(() => headerStore.state.header);
+
 onMounted(() => {
     loadData();
+    headerStore.load(permitId.value);
 });
 
 // Derive start/completion dates from the checklist. Run on Save (not on each
@@ -141,23 +160,10 @@ const saveChanges = async () => {
         );
     }
     try {
-        const response = await fetch(
-            arches.urls.api_process_requirements(idFromUrl),
-            {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken':
-                        document.cookie
-                            .split('; ')
-                            .find((row) => row.startsWith('csrftoken='))
-                            ?.split('=')[1] || '',
-                },
-                body: JSON.stringify(body),
-            },
+        await patchProcessRequirement(
+            idFromUrl as string,
+            requirementData.value.aliased_data,
         );
-
-        if (!response.ok) throw new Error('Failed to save');
         markPristine();
     } catch (error) {
         console.error('Save error:', error);
@@ -168,7 +174,16 @@ const saveChanges = async () => {
 </script>
 
 <template>
+    <PermitHeaderBand
+        v-if="permitHeader"
+        :header="permitHeader"
+    />
     <div class="checklist-container">
+        <PermitBreadcrumbs
+            v-if="crumbs.length"
+            :crumbs="crumbs"
+            class="page-crumbs"
+        />
         <div class="title-row">
             <h2 class="page-title">
                 {{ requirementName || 'Process Requirement' }}
@@ -330,11 +345,17 @@ const saveChanges = async () => {
             </div>
         </div>
 
-        <div
-            v-if="isDirty"
-            class="actions-bar"
-        >
+        <div class="actions-bar">
+            <RouterLink
+                v-if="backLink"
+                class="action-btn back-btn"
+                :to="backLink"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Filing Summary
+            </RouterLink>
             <Button
+                v-if="isDirty"
                 type="button"
                 class="action-btn undo-btn"
                 icon="fa-solid fa-rotate-left"
@@ -365,6 +386,10 @@ const saveChanges = async () => {
     padding: 2rem 1rem;
     font-family: Arial, sans-serif;
     color: #222;
+}
+
+.page-crumbs {
+    margin-bottom: 1rem;
 }
 
 .title-row {
@@ -405,7 +430,6 @@ const saveChanges = async () => {
     color: #374151;
 }
 
-/* Save / Undo action bar */
 .actions-bar {
     display: flex;
     justify-content: flex-end;
@@ -452,6 +476,19 @@ const saveChanges = async () => {
     box-shadow: 0 2px 6px rgba(0, 51, 102, 0.25);
 }
 
+.back-btn {
+    margin-right: auto;
+    background-color: #ffffff;
+    border-color: #003366;
+    color: #003366;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background-color: #f3f4f6;
+    text-decoration: none;
+}
+
 .save-btn:hover {
     background-color: #00264d;
     box-shadow: 0 4px 10px rgba(0, 51, 102, 0.3);
@@ -469,7 +506,6 @@ const saveChanges = async () => {
     color: #111827;
 }
 
-/* Requirement-level satisfied checkbox + note */
 .requirement-satisfied {
     margin-top: 2rem;
     padding-top: 1.5rem;
@@ -490,7 +526,6 @@ const saveChanges = async () => {
     color: #111827;
 }
 
-/* date pills */
 .date-metadata {
     display: flex;
     gap: 1rem;

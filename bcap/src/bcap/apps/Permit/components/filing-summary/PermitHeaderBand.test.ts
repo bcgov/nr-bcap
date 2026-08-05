@@ -46,15 +46,6 @@ describe('PermitHeaderBand', () => {
         expect(wrapper.find('.meta-unset').exists()).toBe(true);
     });
 
-    it('shows the submitted pill with the date and no actions', () => {
-        const wrapper = mount(PermitHeaderBand, {
-            props: { header: makeHeader() },
-            slots: { actions: '<button class="slotted">Submit</button>' },
-        });
-        expect(wrapper.find('.submitted-text').text()).toContain('2026-07-23');
-        expect(wrapper.find('.slotted').exists()).toBe(false);
-    });
-
     it('renders the actions slot when not yet submitted', () => {
         const wrapper = mount(PermitHeaderBand, {
             props: { header: makeHeader({ submittedDate: null }) },

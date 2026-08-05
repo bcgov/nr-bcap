@@ -2,7 +2,6 @@ import json
 from traceback import print_exception
 from packaging.version import Version
 
-from django.conf import settings
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from arches.app.views.api import APIBase, MVT as MVTBase
@@ -32,6 +31,7 @@ from bcap.util.register_type_api import RegisterTypeApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
 from bcap.util.map_attributes import inject_map_attributes
 from bcap.util.mvt_tiler import MVTTiler
+from arches.app.models.resource import Resource
 from arches.app.models.system_settings import settings
 from arches.app.search.components.base import SearchFilterFactory
 from arches.app.search.mappings import RESOURCES_INDEX
@@ -46,9 +46,6 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
-from arches.app.models.resource import Resource
-from arches.app.models.models import Tile
-import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +59,6 @@ class BordenNumberBase:
             new_borden_number = self.api.get_next_borden_number(
                 resourceinstanceid=resourceinstanceid
             )
-            # print("Got borden grid: %s" % borden_grid)
             return_data = (
                 '{"status": "success", "borden_number": "%s"}' % new_borden_number
             )
@@ -151,7 +147,6 @@ class LegislativeAct(APIBase):
     def get(self, request, act_id):
         legislative_act_proxy = LegislativeActDataProxy()
         act = legislative_act_proxy.get_authorities(act_id)
-        # print("Scientific Names: %s" % names)
         return JSONResponse(JSONSerializer().serializeToPython(act))
 
 
@@ -208,8 +203,6 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
                     qs = qs.select_related("resource_instance_lifecycle_state")
             else:  # pragma: no cover
                 raise NotImplementedError
-            # print(f"Related Site Visits Queryset: {qs}")
-            print(f"Returning related resources: {self.graph_slug}")
             return qs
         except FieldError:
             msg = (
@@ -352,8 +345,6 @@ class TranslateToResourceTypeView(View):
     def _get_related_resources_with_sources(
         self, resource_ids: list, target_graph_id: str
     ) -> dict:
-        from arches.app.models.resource import Resource
-
         source_names = {}
 
         for rid in resource_ids:

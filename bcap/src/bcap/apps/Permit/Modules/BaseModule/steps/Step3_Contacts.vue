@@ -7,7 +7,7 @@ import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
 const { draftData, isValid, updateValue } = useDraftStep();
 
-// 1. Define the exact shapes Arches might return for this field
+// The shapes Arches might return for this field.
 type ArchesNode =
     | {
           display_value?: string;

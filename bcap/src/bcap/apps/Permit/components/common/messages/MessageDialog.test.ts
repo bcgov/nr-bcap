@@ -1,6 +1,6 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import QuestionDialogExternal from './QuestionDialogExternal.vue';
+import MessageDialog from './MessageDialog.vue';
 import {
     createBcapMessage,
     markMessageAsRead,
@@ -32,7 +32,7 @@ vi.mock(
     }),
 );
 
-describe('QuestionDialogExternal.vue', () => {
+describe('MessageDialog.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
@@ -56,7 +56,7 @@ describe('QuestionDialogExternal.vue', () => {
 
     // Stub the PrimeVue components to avoid Teleport/DOM issues in tests.
     const mountComponent = (props = {}) => {
-        return mount(QuestionDialogExternal, {
+        return mount(MessageDialog, {
             props: {
                 applicationId: 'APP-1234',
                 resourceId: 'permit-999',
@@ -89,11 +89,15 @@ describe('QuestionDialogExternal.vue', () => {
         });
     };
 
-    it('loads contributors on mount and selects the first one', async () => {
+    it('loads contributors when opened, not on mount, and selects the first one', async () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        expect(getContributorsForResources).toHaveBeenCalledOnce();
+        expect(getContributorsForResources).not.toHaveBeenCalled();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
         expect(getContributorsForResources).toHaveBeenCalledWith('permit-999');
 
         expect((wrapper.vm as unknown).state.recipients.length).toBe(2);
@@ -104,7 +108,6 @@ describe('QuestionDialogExternal.vue', () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        // Threads load on mount so the unread badge is ready before opening.
         expect(getThreadsForResource).toHaveBeenCalledWith('permit-999', false);
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];

@@ -243,9 +243,9 @@ describe('default "my_projects" filter', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        const summary = wrapper.find('.results-summary').text();
-        expect(summary).toContain('Showing');
-        expect(summary).toMatch(/2[\s\S]*of[\s\S]*2/);
+        const bar = wrapper.findComponent({ name: 'SortingBar' });
+        expect(bar.props('shown')).toBe(2);
+        expect(bar.props('total')).toBe(2);
     });
 });
 
@@ -353,18 +353,6 @@ describe('search filtering', () => {
         const cards = wrapper.findAllComponents(ProjectCardStub);
         expect(cards).toHaveLength(1);
         expect(cards[0].props('capPriority')).toBe(true);
-    });
-
-    it('labels the results summary with the active search term', async () => {
-        getInternalDashboardData.mockResolvedValue([makeCard()]);
-        const wrapper = mountDashboard();
-        await flushPromises();
-
-        await emitFromToolbar(wrapper, 'update:search', 'project');
-
-        expect(wrapper.find('.active-search-label').text()).toContain(
-            'filtered by "project"',
-        );
     });
 
     it('shows the empty state when the search matches nothing', async () => {

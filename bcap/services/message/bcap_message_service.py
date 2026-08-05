@@ -15,7 +15,7 @@ from django.db.models import (
     When,
 )
 
-from arches.app.models.models import TileModel
+from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
@@ -123,32 +123,41 @@ class BcapMessageService(BaseGraphService):
         thread_id = self._thread_id(message_id)
         existing = self._archived_by_tiles(contributor_id, thread_id)
         if not data["archived"]:
-            existing.delete()
+            self._delete_tiles(existing)
             return
         if not existing.exists():
             node_id, nodegroup_id = self._node_info(
                 MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY
             )
-            TileModel.objects.create(
+            Tile(
                 resourceinstance_id=thread_id,
                 nodegroup_id=nodegroup_id,
                 data={node_id: [{"resourceId": str(contributor_id)}]},
-            )
+            ).save()
 
     def unarchive_thread_for_all(self, message_id):
         """Clear every viewer's archive of a message's thread so a new reply
         resurfaces it for all. A new root has no such tiles, so it no-ops."""
         thread_id = self._thread_id(message_id)
         _, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
-        TileModel.objects.filter(
-            nodegroup_id=nodegroup_id,
-            resourceinstance_id=str(thread_id),
-        ).delete()
+        self._delete_tiles(
+            Tile.objects.filter(
+                nodegroup_id=nodegroup_id,
+                resourceinstance_id=str(thread_id),
+            )
+        )
+
+    @staticmethod
+    def _delete_tiles(tiles):
+        """Delete one at a time through the proxy, so each deindexes and lands in
+        the edit log. A queryset delete would do neither."""
+        for tile in tiles:
+            tile.delete()
 
     def _archived_by_tiles(self, contributor_id, thread_id=None):
         """archived_by tiles naming this contributor, optionally scoped to one root."""
         node_id, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
-        tiles = TileModel.objects.filter(
+        tiles = Tile.objects.filter(
             nodegroup_id=nodegroup_id,
             **{f"data__{node_id}__contains": [{"resourceId": str(contributor_id)}]},
         )

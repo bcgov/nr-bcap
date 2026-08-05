@@ -28,8 +28,10 @@ vi.mock(
 
 // The component reads route.query; let each test set it.
 const routeQuery = vi.hoisted(() => ({ value: {} as Record<string, string> }));
+const routerPush = vi.fn();
 vi.mock('vue-router', () => ({
     useRoute: () => ({ query: routeQuery.value }),
+    useRouter: () => ({ push: routerPush }),
 }));
 
 const StubStep = { template: '<div />' };
@@ -49,6 +51,7 @@ const mountStepper = () =>
 
 type StepperVm = {
     submitFiling: () => Promise<boolean>;
+    saveAndExit: () => Promise<void>;
     state: {
         isDataLoaded: boolean;
         finalizedResourceData: unknown;
@@ -137,6 +140,77 @@ describe('WorkflowStepper.vue', () => {
         expect(submitModule).toHaveBeenCalled();
         expect(vm.state.submissionErrors).toHaveLength(1);
         expect(vm.state.submissionErrors[0].message).toBe('nope');
+    });
+
+    it('saves the draft and returns to the parent permit on save and exit', async () => {
+        routeQuery.value = { permitId: 'permit-1' };
+
+        const wrapper = mountStepper();
+        await flushPromises();
+        const store = useDraftStore();
+        store.loadDraft('draft-7', { x: 1 });
+        const saveNow = vi.spyOn(store, 'saveNow').mockResolvedValue();
+
+        await (wrapper.vm as unknown as StepperVm).saveAndExit();
+
+        expect(saveNow).toHaveBeenCalled();
+        expect(routerPush).toHaveBeenCalledWith({
+            name: 'permitDetails',
+            params: { id: 'permit-1' },
+        });
+    });
+
+    it('exits to the dashboard when the filing has no parent permit', async () => {
+        routeQuery.value = {};
+
+        const wrapper = mountStepper();
+        await flushPromises();
+        vi.spyOn(useDraftStore(), 'saveNow').mockResolvedValue();
+
+        await (wrapper.vm as unknown as StepperVm).saveAndExit();
+
+        expect(routerPush).toHaveBeenCalledWith({ name: 'root' });
+    });
+
+    describe('resuming a draft', () => {
+        const resumeAt = async (currentStep: string) => {
+            routeQuery.value = { draftId: 'draft-7' };
+            fetchDraft.mockResolvedValue({
+                id: 'draft-7',
+                data: {},
+                current_step: currentStep,
+            });
+
+            const wrapper = mountStepper();
+            await flushPromises();
+            return (wrapper.vm as unknown as { resumeStep: number }).resumeStep;
+        };
+
+        it('reopens the step the draft was left on', async () => {
+            expect(await resumeAt('Details')).toBe(2);
+            expect(await resumeAt('Submission Information')).toBe(1);
+        });
+
+        it('falls back to the first step for a step name it no longer has', async () => {
+            // A renamed or removed step must not resume at 0.
+            expect(await resumeAt('Some Retired Step')).toBe(1);
+        });
+
+        it('starts at the first step when the draft never recorded one', async () => {
+            expect(await resumeAt('')).toBe(1);
+        });
+
+        it('starts at the first step for a fresh filing', async () => {
+            routeQuery.value = {};
+
+            const wrapper = mountStepper();
+            await flushPromises();
+
+            expect(
+                (wrapper.vm as unknown as { resumeStep: number }).resumeStep,
+            ).toBe(1);
+            expect(fetchDraft).not.toHaveBeenCalled();
+        });
     });
 
     it('refuses to submit without an active draft', async () => {

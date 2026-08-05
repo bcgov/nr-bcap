@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import type { PermitAliasedData } from '@/bcap/types.ts';
+import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
 export const sanitizeHtml = (html: string | undefined): string => {
@@ -16,6 +17,23 @@ export const formatTimestamp = (iso: string | null | undefined): string =>
         hour: '2-digit',
         minute: '2-digit',
     });
+
+// Avatar initials. Names are stored "Last, First", so the parts are reversed to
+// read the way a person is addressed.
+export const initials = (name: string): string =>
+    name
+        .split(/[\s,.]+/)
+        .filter(Boolean)
+        .map((part) => part[0].toUpperCase())
+        .slice(0, 2)
+        .reverse()
+        .join('');
+
+export const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
 
 export const downloadFile = async (
     url: string,
@@ -59,28 +77,8 @@ export const formatDateTime = (isoString: string | null): string | null => {
     return `${dateStr}, ${timeStr}`;
 };
 
-/** Resolve a key (inside aliased_data) to an AliasedNodeData */
-function getNode(row: unknown, key: string): AliasedNodeData | null {
-    if (!row || typeof row !== 'object') return null;
-
-    const aliased = (row as Record<string, unknown>)?.['aliased_data'];
-    if (!aliased || typeof aliased !== 'object') return null;
-
-    const cur = (aliased as Record<string, unknown>)?.[key];
-    if (!cur || typeof cur !== 'object') return null;
-
-    const maybe = cur as Partial<AliasedNodeData>;
-    return 'display_value' in maybe && 'node_value' in maybe
-        ? (maybe as AliasedNodeData)
-        : null;
-}
-
 export const getDisplayValue = (value: AliasedNodeData | null | undefined) => {
     return value?.node_value ? value.display_value : '';
-};
-
-export const getNodeDisplayValue = (row: unknown, path: string) => {
-    return getDisplayValue(getNode(row, path));
 };
 
 export const isEmpty = (value: AliasedNodeData | null | undefined): boolean => {
@@ -95,15 +93,6 @@ export function isAliasedNodeData(value: unknown): value is AliasedNodeData {
     );
 }
 
-export const currentDateValue = function () {
-    const now = new Date().toISOString().split('T')[0];
-    return {
-        display_value: now,
-        node_value: now,
-        details: [] as never[],
-    };
-};
-
 export const getCsrfToken = (): string => {
     return (
         document.cookie
@@ -113,8 +102,14 @@ export const getCsrfToken = (): string => {
     );
 };
 
+// Reads a permit's basic-info tiles by alias, so it takes either the generated
+// resource shape (filing summary) or the loose draft shape (workflow review).
 export const getBasicInfoFields = (
-    aliased: PermitAliasedData | null | undefined,
+    aliased:
+        | PermitApplicationResourceAliasedData
+        | ArchesDraftData
+        | null
+        | undefined,
 ): ReviewField[] => {
     if (!aliased) return [];
 

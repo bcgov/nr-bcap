@@ -6,6 +6,18 @@ from django.utils import timezone
 from oauth2_provider.models import AccessToken, get_application_model
 
 
+def login_as(client, user, login_source="IDIR"):
+    """Log the client in the way an IDIR session looks. Takes the client so
+    class-level fixture setup can use it too."""
+    client.force_login(user)
+    session = client.session
+    session["oauth_token"] = {
+        "expires_at": (timezone.now() + timedelta(hours=1)).timestamp(),
+        "userinfo": {"loginSource": login_source},
+    }
+    session.save()
+
+
 class AuthTestHelper:
     """Sets up cls.user, cls.application, cls.access_token for auth tests.
 
@@ -39,11 +51,4 @@ class AuthTestHelper:
         )
 
     def idir_login_simulate(self, user=None, login_source="IDIR"):
-        self.client.force_login(user or self.user)
-        session = self.client.session
-        expires_at = (timezone.now() + timedelta(hours=1)).timestamp()
-        session["oauth_token"] = {
-            "expires_at": expires_at,
-            "userinfo": {"loginSource": login_source},
-        }
-        session.save()
+        login_as(self.client, user or self.user, login_source)

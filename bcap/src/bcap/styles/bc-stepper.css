@@ -131,6 +131,11 @@
     border-bottom: 2px solid var(--bc-gold);
 }
 
+.bc-step-actions .save-exit {
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
 .bc-step-eyebrow {
     /* Same fixed line box as the rail label so the two line up when the eyebrow
        is the header's first line (every step past the first). */
@@ -284,8 +289,7 @@
 /* Buttons. Scoped to the stepper so they don't collide with a host app's own
    button styles; the PrimeVue selectors cover the shared StepperNavigation. */
 
-.bc-stepper-layout .p-button,
-.bc-btn {
+.bc-stepper-layout .p-button {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
@@ -297,10 +301,7 @@
     cursor: pointer;
 }
 
-/* Two classes deep on purpose: these render as <a>, so a bare .bc-btn-primary
-   loses to the theme's `.bcgov-main-content a` link colour. */
-.bc-stepper-layout .next-button,
-.bc-stepper-layout .bc-btn-primary {
+.bc-stepper-layout .next-button {
     background: var(--bc-navy);
     border: 2px solid var(--bc-navy);
     color: #ffffff;
@@ -315,60 +316,13 @@
     font-size: 13px;
 }
 
-/* The last step's button isn't a "next" -- it prints -- so it loses the arrow
-   and the primary fill. Print sits at the left of the row; the primary action,
-   going back to the filing, is pushed to the far right. */
-.bc-step-actions.is-final .next-button::after {
-    content: none;
-}
-
-.bc-step-actions.is-final .next-button::before {
-    content: '\f02f';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    font-size: 13px;
-}
-
-.bc-step-actions.is-final .next-button {
-    background: #ffffff;
-    border: 2px solid var(--bc-navy);
-    color: var(--bc-navy);
-}
-
-.bc-step-actions.is-final .next-button:not(:disabled):hover {
-    background: var(--bc-selected);
-    color: var(--bc-navy);
-}
-
-/* Regular weight to match the nav buttons, which the PrimeVue preset renders
-   unbolded. */
-.bc-stepper-layout .bc-btn-back {
-    font-weight: 400;
-}
-
-.bc-stepper-layout .bc-btn-back::after {
-    content: '\f061';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    font-size: 13px;
-}
-
-/* The theme underlines links on hover; these render as buttons, so they don't.
-   Scoped to the stepper to outrank .bcgov-main-content a:hover. */
-.bc-stepper-layout .bc-btn:hover,
-.bc-stepper-layout .bc-btn:focus {
-    text-decoration: none;
-}
-
-.bc-stepper-layout .next-button:not(:disabled):hover,
-.bc-stepper-layout .bc-btn-primary:hover {
+.bc-stepper-layout .next-button:not(:disabled):hover {
     background: var(--bc-navy-dark);
     border-color: var(--bc-navy-dark);
     color: #ffffff;
 }
 
-.bc-stepper-layout .previous-button,
-.bc-btn-secondary {
+.bc-stepper-layout .previous-button {
     background: #ffffff;
     border: 2px solid var(--bc-navy);
     color: var(--bc-navy);
@@ -381,8 +335,7 @@
     font-size: 13px;
 }
 
-.bc-stepper-layout .previous-button:not(:disabled):hover,
-.bc-btn-secondary:hover {
+.bc-stepper-layout .previous-button:not(:disabled):hover {
     background: var(--bc-selected);
 }
 

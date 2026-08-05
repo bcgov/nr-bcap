@@ -1,4 +1,4 @@
-from guardian.shortcuts import get_perms, assign_perm, remove_perm
+from guardian.shortcuts import assign_perm, remove_perm
 from bcap.functions.admin_only_access import AdminOnlyAccess
 from bcap.util.business_data_proxy import ArchaeologicalSiteDataProxy
 

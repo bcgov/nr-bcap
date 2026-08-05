@@ -30,11 +30,99 @@
     --bc-text: #222222;
 }
 
-/* BC Gov accessibility standard: a gold ring on keyboard focus. Mouse clicks
-   don't trigger focus-visible, so this stays out of the way. */
-:focus-visible {
-    outline: 2px solid var(--bc-gold);
-    outline-offset: 2px;
+/* ---------------------------------------------------------------------------
+   PrimeVue overrides: applied app-wide so components don't each repeat them.
+   --------------------------------------------------------------------------- */
+
+* :focus,
+* :focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+/* PrimeVue's own ring is off in the preset (see primevue-bcgov-preset.ts). What
+   remains here is the browser's default focus ring on the widgets and popups it
+   lands on. Controls that need a focus indicator draw their own. */
+.p-select:focus-visible,
+.p-select *:focus-visible,
+.p-multiselect *:focus-visible,
+.p-menu *:focus-visible,
+.p-select-overlay *:focus-visible,
+.p-multiselect-overlay *:focus-visible {
+    outline: none !important;
+}
+
+/* A popup menu focuses its list (it carries the tabindex), so the ring lands on
+   the list and reads as a box around the whole panel. */
+.p-menu-list,
+.p-menu-list:focus,
+.p-menu-list:focus-visible,
+.p-select-list,
+.p-select-list:focus,
+.p-select-list:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* A popup takes focus when it opens, so the container itself draws a ring
+   around the whole panel. The items inside show their own hover/focus state. */
+.p-menu,
+.p-menu:focus,
+.p-menu:focus-visible,
+.p-select-overlay,
+.p-select-overlay:focus,
+.p-select-overlay:focus-visible,
+.p-treeselect-overlay,
+.p-treeselect-overlay:focus,
+.p-treeselect-overlay:focus-visible,
+.p-multiselect-overlay,
+.p-multiselect-overlay:focus,
+.p-multiselect-overlay:focus-visible {
+    outline: none !important;
+}
+
+/* The select's chevron button ships with its own background and border, which
+   read as a coloured block beside the value. */
+.p-select-dropdown,
+.p-select-dropdown:hover,
+.p-select-dropdown:focus,
+.p-select-dropdown:focus-visible {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: inherit !important;
+}
+
+/* Focused inputs (the select's filter box included) keep the form's border
+   rather than switching to the theme's primary colour, which reads as a ring
+   around the field. */
+.p-inputtext:focus,
+.p-inputtext:focus-visible,
+.p-select-overlay .p-inputtext:focus,
+.p-multiselect-overlay .p-inputtext:focus,
+.p-iconfield:focus-within .p-inputtext {
+    border-color: var(--bc-border) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Open or focused, a select keeps the form's border rather than switching to
+   the theme's primary colour. */
+.p-select.p-focus,
+.p-select.p-select-open,
+.p-select:focus,
+.p-select:focus-within {
+    border-color: var(--bc-border) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* --------------------------- end PrimeVue overrides --------------------- */
+
+/* Buttons read at one size across the app; a component that needs another size
+   overrides it on its own class. */
+.p-button {
+    font-size: 14px !important;
 }
 
 /* Scoped to the app's content root: a bare `a` selector reaches the Arches

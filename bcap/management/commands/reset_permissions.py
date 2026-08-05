@@ -1,10 +1,6 @@
-from django.db import connection
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 import logging
-from bcap.util.business_permission_manager import (
-    AdminOnlyPermissionManager,
-    HeritageSitePermissionManager,
-)
+from bcap.util.business_permission_manager import AdminOnlyPermissionManager
 from arches.app.models import models
 from arches.app.utils.index_database import index_resources_by_type
 from arches.app.models.system_settings import settings
@@ -44,10 +40,6 @@ class Command(BaseCommand):
         processed_slugs = AdminOnlyPermissionManager().reset_all_permissions(
             graph_slugs=slugs, clear_all_permissions=options["clear_existing"]
         )
-        processed_slugs += HeritageSitePermissionManager().reset_all_permissions(
-            graph_slugs=slugs, clear_all_permissions=options["clear_existing"]
-        )
-
         print("Processed graphs: %s" % processed_slugs)
         resource_types_uuid = (
             models.GraphModel.objects.filter(slug__in=processed_slugs)

@@ -5,10 +5,15 @@ from uuid import uuid4
 
 from django.test import TestCase
 
+from arches.app.models.resource import Resource
+
 from arches_querysets.models import TileTree
 
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
+)
+from bcap.services.process_requirement.process_requirement_service import (
+    ProcessRequirementService,
 )
 from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
@@ -819,6 +824,70 @@ class DashboardServiceBlankRequirementTests(TestCase):
 
         self.assertEqual(page.count, 0)
         self.assertEqual(page.results, [])
+
+
+class RequirementsByIdTests(TestCase):
+    """_requirements_by_id reads the four card fields straight off the tiles'
+    JSON, seeding a blank Requirement per id so one with no tiles still counts
+    as unsatisfied."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = InternalDashboardService()
+        builder = FixtureBuilder()
+        cls.permit = build_minimal_permit(builder, "Reader")
+        cls.permit_id = str(cls.permit.pk)
+        attached = ProcessRequirementService().requirement_ids_by_permit(
+            [cls.permit_id]
+        )
+        cls.requirement_id = next(iter(attached[cls.permit_id]))
+
+    def _by_id(self, ids):
+        return self.service._requirements_by_id(ids)
+
+    def test_reads_the_card_fields_off_the_tiles(self):
+        requirement = self._by_id([self.requirement_id])[self.requirement_id]
+
+        self.assertEqual(requirement.name, "Outstanding")
+        # The raw tile value, not an Arches-formatted display value.
+        self.assertEqual(requirement.due_date, "2026-03-01")
+        self.assertEqual(requirement.route, self.requirement_id)
+
+    def test_a_requirement_with_no_tiles_is_still_unsatisfied(self):
+        # A deleted requirement leaves the permit's reference dangling; it now
+        # seeds a blank entry rather than vanishing from the lookup.
+        gone = str(uuid4())
+
+        requirement = self._by_id([gone])[gone]
+
+        self.assertEqual(requirement.name, "")
+        self.assertEqual(requirement.due_date, "")
+        self.assertEqual(requirement.route, gone)
+
+    def test_deleting_the_requirement_drops_the_permit_off_the_dashboard(self):
+        # Arches scrubs the reference out of the permit's child tile on delete,
+        # so the permit has no active requirement left to surface -- the blank
+        # seeding above only covers an id that outlives its tiles.
+        Resource.objects.get(pk=self.requirement_id).delete()
+
+        page = self.service.get_cards(DashboardFilter())
+
+        self.assertNotIn(self.permit_id, [card.id for card in page.results])
+
+    def test_a_satisfied_requirement_is_left_out(self):
+        satisfied = FixtureBuilder().make_process_requirement(
+            {
+                "id": "REQ-DONE",
+                "name": "Done",
+                "due": "2026-01-01",
+                "notes": "",
+                "satisfied": True,
+                "sub_requirements": [],
+            }
+        )
+
+        self.assertEqual(self._by_id([str(satisfied.pk)]), {})
 
 
 class DashboardServiceSubmissionDateTests(TestCase):

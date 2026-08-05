@@ -361,6 +361,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Contributor'
           description: ''
+  /bcap/api/contributors/assignable:
+    get:
+      operationId: api_contributors_assignable_list
+      description: GET the Contributors work can be assigned to.
+      tags:
+      - 'Internal: contributor'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContributorSummary'
+          description: ''
   /bcap/api/contributors/unlinked:
     get:
       operationId: api_contributors_unlinked_list
@@ -1134,11 +1151,55 @@ paths:
         '204':
           description: No response body
   /bcap/api/permit_application/{id}/module/{module_tileid}/requirement/{requirement_id}:
+    patch:
+      operationId: api_permit_application_module_requirement_partial_update
+      description: |-
+        DELETE: remove one process requirement from a module by its resource id
+        (the child tile, the requirement resource, and its submission host).
+        PATCH: set or clear its ministry assignee.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: module_tileid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: requirement_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: process_requirement'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementAssignee'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementAssignee'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRequirementAssignee'
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
     delete:
       operationId: api_permit_application_module_requirement_destroy
       description: |-
         DELETE: remove one process requirement from a module by its resource id
         (the child tile, the requirement resource, and its submission host).
+        PATCH: set or clear its ministry assignee.
       parameters:
       - in: path
         name: id
@@ -1732,6 +1793,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteVisit'
           description: ''
+  /bcap/api/workflow_draft:
+    get:
+      operationId: api_workflow_draft_list_all
+      description: |-
+        GET the drafts the user can see, across graphs. Each carries its own
+        graph_slug, so the dashboard lists them all in one round trip. Narrow to one
+        permit's drafts with ?parent=<resourceinstanceid>: staff see every user's, so
+        an unfiltered call hands back every draft blob in the system.
+      parameters:
+      - in: query
+        name: parent
+        schema:
+          type: string
+          format: uuid
+        description: Only drafts started from this resource.
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DraftRecord'
+          description: ''
   /bcap/api/workflow_draft/{graph_slug}:
     get:
       operationId: api_workflow_draft_list
@@ -1770,13 +1859,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
         required: true
       security:
       - cookieAuth: []
@@ -1843,13 +1932,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/DraftWrite'
+              $ref: '#/components/schemas/DraftPayload'
         required: true
       security:
       - cookieAuth: []
@@ -1885,13 +1974,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
+              $ref: '#/components/schemas/PatchedDraftPayload'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
+              $ref: '#/components/schemas/PatchedDraftPayload'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedDraftWrite'
+              $ref: '#/components/schemas/PatchedDraftPayload'
       security:
       - cookieAuth: []
       responses:
@@ -5677,6 +5766,7 @@ components:
       - resource_instance_lifecycle_state
     ContributorSummary:
       type: object
+      description: The contributor pick-list option shape, derived from the dataclass.
       properties:
         id:
           type: string
@@ -5868,9 +5958,9 @@ components:
       type: object
       properties:
         node_value:
+          type: string
           nullable: true
           pattern: ^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)?)?$
-          type: string
         display_value:
           type: string
           readOnly: true
@@ -6269,9 +6359,44 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    DraftPayload:
+      type: object
+      description: |-
+        Request body for create/update: the whole draft blob, plus the step the
+        user is on and an optional frontend version and parent resource stamped on
+        create.
+      properties:
+        data:
+          oneOf:
+          - $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Document_Submission_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Permit_Application_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
+        current_step:
+          type: string
+        frontend_version:
+          type: string
+        parent_resource_id:
+          type: string
+      required:
+      - data
     DraftRecord:
       type: object
       properties:
+        data:
+          oneOf:
+          - $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Document_Submission_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Permit_Application_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
           description: True when the published graph has moved on since the draft
@@ -6287,9 +6412,8 @@ components:
           type: string
         parent_resource_id:
           type: string
-        data:
-          type: object
-          additionalProperties: {}
+        current_step:
+          type: string
         created:
           type: string
           format: date-time
@@ -6299,24 +6423,12 @@ components:
           format: date-time
           nullable: true
       required:
+      - data
       - frontend_version
       - graph_has_different_publication
       - graph_publication_id
       - graph_slug
       - id
-    DraftWrite:
-      type: object
-      description: |-
-        Request body for create/update: the whole draft blob, plus an optional
-        frontend version and parent resource stamped on create.
-      properties:
-        data: {}
-        frontend_version:
-          type: string
-        parent_resource_id:
-          type: string
-      required:
-      - data
     ExternalDashboardCard:
       type: object
       properties:
@@ -6326,8 +6438,16 @@ components:
             the card's drill-in / resume GUID.
         is_draft:
           type: boolean
-          description: True when this card is an unsubmitted draft (from a ResourceDraft,
-            graph_slug=permit_application) rather than a saved application.
+          description: True when this card is an unsubmitted draft rather than a saved
+            application.
+        graph_slug:
+          type: string
+          description: Graph the draft belongs to, so the client can resume and delete
+            it against the right workflow; empty for saved applications.
+        permit_application_id:
+          type: string
+          description: Resourceinstanceid of the permit application a module draft
+            was started from; empty for an application draft or a saved application.
         status:
           type: string
           description: Applicant-facing workflow status, e.g. Permit Active, Under
@@ -6342,6 +6462,9 @@ components:
         submission_date:
           type: string
           description: Permit application's submission date; empty for drafts.
+        updated_date:
+          type: string
+          description: ISO timestamp of the last save; only drafts carry one.
         project_name:
           type: string
           description: Permit application's project name.
@@ -9366,13 +9489,13 @@ components:
           nullable: true
     ModuleHost:
       oneOf:
-      - $ref: '#/components/schemas/Investigation'
       - $ref: '#/components/schemas/Alteration'
-      - $ref: '#/components/schemas/Inspection'
-      - $ref: '#/components/schemas/SiteVisit'
       - $ref: '#/components/schemas/DocumentSubmission'
       - $ref: '#/components/schemas/InformationRequest'
+      - $ref: '#/components/schemas/Inspection'
+      - $ref: '#/components/schemas/Investigation'
       - $ref: '#/components/schemas/NoticeOfProjectIntent'
+      - $ref: '#/components/schemas/SiteVisit'
     ModuleProgress:
       type: object
       properties:
@@ -10396,13 +10519,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ChecklistStep'
-    PatchedDraftWrite:
+    PatchedDraftPayload:
       type: object
       description: |-
-        Request body for create/update: the whole draft blob, plus an optional
-        frontend version and parent resource stamped on create.
+        Request body for create/update: the whole draft blob, plus the step the
+        user is on and an optional frontend version and parent resource stamped on
+        create.
       properties:
-        data: {}
+        data:
+          oneOf:
+          - $ref: '#/components/schemas/Alteration_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Document_Submission_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Information_Request_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Inspection_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Investigation_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Permit_Application_Resource_Aliased_Data'
+          - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
+        current_step:
+          type: string
         frontend_version:
           type: string
         parent_resource_id:
@@ -10534,6 +10669,15 @@ components:
           items:
             type: string
             format: uuid
+    PatchedRequirementAssignee:
+      type: object
+      description: 'The assignee PATCH body: the Contributor to assign, or null to
+        clear.'
+      properties:
+        contributor_id:
+          type: string
+          format: uuid
+          nullable: true
     PatchedRequirementStatus:
       type: object
       description: 'The status PATCH body: whether the requirement is satisfied.'

@@ -3,9 +3,9 @@ from django.test import TestCase
 
 from arches.app.models.models import ResourceInstance
 
-from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
 from bcap.builders.resource_builder import SEED_LEGACYID_PREFIX
 
+from tests.builders import SmallDashboardBuilder
 from tests.controlled_list_fixtures import SeedControlledListsMixin
 
 
@@ -13,7 +13,7 @@ class ClearDashboardDataCommandTests(SeedControlledListsMixin, TestCase):
     """clear_dashboard_data deletes only the seeder-tagged resources."""
 
     def test_deletes_seed_tagged_resources_and_keeps_others(self):
-        data = DashboardDemoBuilder().build()
+        data = SmallDashboardBuilder().build()
 
         # An untagged resource on the same graph must survive the clear.
         untagged = ResourceInstance.objects.get(pk=data.holders[0].pk)

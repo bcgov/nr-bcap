@@ -1,17 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
     formatDateTime,
+    formatFileSize,
     getDisplayValue,
-    getNodeDisplayValue,
+    initials,
     isEmpty,
     isAliasedNodeData,
-    currentDateValue,
 } from './util';
-
-// Helper to build rows like the app does
-function rowWithAliased(key: string, value: unknown) {
-    return { aliased_data: { [key]: value } } as const;
-}
 
 describe('formatDateTime', () => {
     it('returns null for null input', () => {
@@ -36,6 +31,31 @@ describe('formatDateTime', () => {
         // Both en-CA and en-US locales yield "Invalid Date" for invalid Date objects.
         expect(out).toMatch(/^Invalid Date, /);
         expect(out!.toLowerCase()).toContain('invalid date');
+    });
+});
+
+describe('initials', () => {
+    it('reverses "Last, First" so the given name reads first', () => {
+        expect(initials('Hopper, Grace')).toBe('GH');
+    });
+
+    it('takes the first two parts and only then reverses them', () => {
+        // Not the first and last: "Van Der Berg" yields D then V, never B.
+        expect(initials('Van Der Berg')).toBe('DV');
+    });
+
+    it('handles a one-word and an empty name', () => {
+        expect(initials('Grace')).toBe('G');
+        expect(initials('')).toBe('');
+    });
+});
+
+describe('formatFileSize', () => {
+    it('switches unit at each boundary', () => {
+        expect(formatFileSize(1023)).toBe('1023 B');
+        expect(formatFileSize(1024)).toBe('1 KB');
+        expect(formatFileSize(1024 * 1024 - 1)).toBe('1024 KB');
+        expect(formatFileSize(1024 * 1024)).toBe('1.0 MB');
     });
 });
 
@@ -98,63 +118,6 @@ describe('getDisplayValue', () => {
                 details: [],
             } as unknown),
         ).toBe('Shown');
-    });
-});
-
-describe('getNodeDisplayValue (integration with getNode)', () => {
-    it('returns empty string if row is null or not an object', () => {
-        expect(getNodeDisplayValue(null as unknown, 'k')).toBe('');
-        expect(getNodeDisplayValue(42 as unknown, 'k')).toBe('');
-    });
-
-    it('returns empty when aliased_data is missing or not an object', () => {
-        expect(getNodeDisplayValue({} as unknown, 'k')).toBe('');
-        expect(
-            getNodeDisplayValue({ aliased_data: 'nope' } as unknown, 'k'),
-        ).toBe('');
-    });
-
-    it('returns empty when key is missing or not an object', () => {
-        expect(getNodeDisplayValue(rowWithAliased('k', undefined), 'k')).toBe(
-            '',
-        );
-        expect(
-            getNodeDisplayValue(rowWithAliased('k', 'not-an-object'), 'k'),
-        ).toBe('');
-    });
-
-    it('returns empty when object is missing required AliasedNodeData props', () => {
-        expect(
-            getNodeDisplayValue(
-                rowWithAliased('k', { node_value: 'v', details: [] }),
-                'k',
-            ),
-        ).toBe(''); // missing display_value
-
-        expect(
-            getNodeDisplayValue(
-                rowWithAliased('k', { display_value: 'X', details: [] }),
-                'k',
-            ),
-        ).toBe(''); // missing node_value
-    });
-
-    it('returns display_value when a valid AliasedNodeData object has truthy node_value', () => {
-        const row = rowWithAliased('path.to.thing', {
-            display_value: 'Pretty',
-            node_value: 'raw',
-            details: [],
-        });
-        expect(getNodeDisplayValue(row, 'path.to.thing')).toBe('Pretty');
-    });
-
-    it('returns empty when a valid AliasedNodeData object has falsy node_value', () => {
-        const row = rowWithAliased('x', {
-            display_value: 'Hidden',
-            node_value: '',
-            details: [],
-        });
-        expect(getNodeDisplayValue(row, 'x')).toBe('');
     });
 });
 
@@ -252,21 +215,5 @@ describe('isAliasedNodeData (type guard)', () => {
                 details: [],
             }),
         ).toBe(true);
-    });
-});
-
-describe('currentDateValue', () => {
-    it('returns date object', () => {
-        expect(currentDateValue()).not.toBeNull();
-    });
-
-    it('returns formatted date in display value', () => {
-        const now = new Date().toISOString().split('T')[0];
-        expect(currentDateValue().display_value).toBe(now);
-    });
-
-    it('returns formatted date in the node value', () => {
-        const now = new Date().toISOString().split('T')[0];
-        expect(currentDateValue().node_value).toBe(now);
     });
 });

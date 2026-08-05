@@ -176,6 +176,35 @@
                     "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "ee3ffbe0-9e14-4fbe-aadc-2b124e59a138",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "Name of the workflow step the draft was last left on"
+                    },
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Current Step"
+                    },
+                    "nodegroup_id": "037d4b29-6a24-402b-8f36-f81ad981e3da",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -313,6 +342,29 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "ee3ffbe0-9e14-4fbe-aadc-2b124e59a138",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Current Step",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "fc8a7c10-7c9c-4320-93a2-bd02b197cb7e",
+                    "label": {
+                        "en": "Current Step"
+                    },
+                    "node_id": "037d4b29-6a24-402b-8f36-f81ad981e3da",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 }
             ],
             "color": null,
@@ -382,6 +434,16 @@
                     "ontologyproperty": null,
                     "rangenode_id": "19c1c1cb-11e3-463e-a6d9-ae9ca44be242",
                     "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e85bfcaa-72e5-4b01-88b6-0d2259d5379f",
+                    "edgeid": "63f2b7cf-684d-400c-b045-41d23997bb81",
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "037d4b29-6a24-402b-8f36-f81ad981e3da",
+                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [],
@@ -437,6 +499,13 @@
                     "grouping_node_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
                     "legacygroupid": null,
                     "nodegroupid": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "037d4b29-6a24-402b-8f36-f81ad981e3da",
+                    "legacygroupid": null,
+                    "nodegroupid": "037d4b29-6a24-402b-8f36-f81ad981e3da",
                     "parentnodegroup_id": null
                 }
             ],
@@ -602,6 +671,29 @@
                     "name": "Updated Date",
                     "nodegroup_id": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
                     "nodeid": "f33cdcf4-87b2-46b1-a0f6-a410e635f312",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "current_step",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": "Name of the workflow step the draft was last left on",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": false,
+                    "istopnode": false,
+                    "name": "Current Step",
+                    "nodegroup_id": "037d4b29-6a24-402b-8f36-f81ad981e3da",
+                    "nodeid": "037d4b29-6a24-402b-8f36-f81ad981e3da",
                     "ontologyclass": null,
                     "parentproperty": null,
                     "sortorder": 0,

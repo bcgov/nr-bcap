@@ -17,9 +17,9 @@ import {
 } from '@/bcap/components/pages/api.ts';
 
 import type {
-    RegistrationLinkResult,
-    UnlinkedContributor,
-} from '@/bcap/components/pages/api.ts';
+    ContributorSummary,
+    RegistrationLinkResponse,
+} from '@/bcap/client/types.gen.ts';
 
 const toast = useToast();
 
@@ -32,7 +32,7 @@ const modeOptions = [
 // New contributors are always individuals; the server defaults the type.
 const state = reactive({
     mode: MODE.existing,
-    contributors: [] as UnlinkedContributor[],
+    contributors: [] as ContributorSummary[],
     contributorId: null as string | null,
     newContributor: {
         name: '',
@@ -44,7 +44,7 @@ const state = reactive({
     groups: [] as string[],
     externalApplicant: false,
     submitting: false,
-    result: null as RegistrationLinkResult | null,
+    result: null as RegistrationLinkResponse | null,
     error: null as string | null,
 });
 

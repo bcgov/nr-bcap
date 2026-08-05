@@ -38,18 +38,7 @@ const meta = computed(() =>
             </p>
         </div>
         <div class="header-actions">
-            <div
-                v-if="header.submittedDate"
-                class="submitted-text"
-            >
-                <i class="fa-regular fa-calendar-check"></i>
-                Submitted
-                <strong>{{ header.submittedDate }}</strong>
-            </div>
-            <slot
-                v-else
-                name="actions"
-            />
+            <slot name="actions" />
         </div>
     </div>
 </template>
@@ -117,20 +106,5 @@ const meta = computed(() =>
     gap: 1rem;
     flex-shrink: 0;
     font-size: 1.15rem;
-}
-
-.submitted-text {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    height: 3.1rem;
-    padding: 0 1.1rem;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 6px;
-    color: #ffffff;
-}
-
-.submitted-text strong {
-    font-weight: 700;
 }
 </style>

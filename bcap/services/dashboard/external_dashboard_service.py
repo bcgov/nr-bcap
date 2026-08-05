@@ -1,8 +1,10 @@
 from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
+from bcap.services.message.bcap_message_service import BcapMessageService
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
+    ApplicationCore,
     DashboardFilter,
     ExternalDashboardCard,
     ExternalDashboardPage,
@@ -133,24 +135,73 @@ class ExternalDashboardService(BaseDashboardService):
 
     def _draft_cards(self, user, query):
         store = WorkflowDraftService()
-        count, page = self._page(
-            store.queryset(user, GraphSlugs.PERMIT_APPLICATION), query
+        count, page = self._page(store.queryset(user), query)
+        drafts = [store.to_record(draft) for draft in page]
+        unread = BcapMessageService().unread_counts_by_context(
+            {draft.id for draft in drafts}, user.username
         )
-        return count, [self._draft_card(store.to_record(r), user) for r in page]
+        parents = self._draft_parents(drafts)
+        return count, [
+            self._draft_card(
+                draft,
+                user,
+                unread.get(draft.id, 0),
+                parents.get(draft.parent_resource_id),
+            )
+            for draft in drafts
+        ]
 
-    def _draft_card(self, draft, user):
-        ident = self._group_aliased_data(
-            draft.data, PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION
+    def _draft_parents(self, drafts):
+        """Identification of the permit applications the drafts were started
+        from, keyed by id, so a module draft can name the permit it belongs to.
+        A draft's own blob holds nothing about its parent beyond the id."""
+        ids = {draft.parent_resource_id for draft in drafts if draft.parent_resource_id}
+        if not ids:
+            return {}
+        permits = self._tiles(
+            GraphSlugs.PERMIT_APPLICATION,
+            ids,
+            [self.PA.PROJECT_NAME, self.PA.APPLICATION_ID, self.PA.FILING_TYPE],
         )
+        return {
+            str(permit.pk): ApplicationCore(
+                project_name=self._display_text(
+                    self._node_value(permit.aliased_data, self.PA.PROJECT_NAME)
+                ),
+                application_number=self._display_text(
+                    self._node_value(permit.aliased_data, self.PA.APPLICATION_ID)
+                ),
+                submission_type=self._display_text(
+                    self._node_value(permit.aliased_data, self.PA.FILING_TYPE)
+                ),
+            )
+            for permit in permits
+        }
+
+    def _draft_card(self, draft, user, unread_messages=0, parent=None):
+        parent = parent or ApplicationCore()
+        ident = self._group_aliased_data(
+            {"aliased_data": draft.data},
+            PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
+        )
+
+        def identification(alias, from_parent):
+            """The draft's own value, falling back to the permit it hangs off."""
+            return self._display_text(ident.get(alias)) or from_parent
+
         return ExternalDashboardCard(
             id=draft.id,
             is_draft=True,
+            graph_slug=draft.graph_slug,
+            permit_application_id=draft.parent_resource_id,
             status="Submission Required",
             created_by_name=display_name(user),
             created_date=to_iso(draft.created),
-            project_name=self._display_text(ident.get(self.PA.PROJECT_NAME)),
-            application_number=self._display_text(ident.get(self.PA.APPLICATION_ID)),
-            submission_type=self._display_text(ident.get(self.PA.FILING_TYPE)),
-            # Not implemented for drafts yet.
-            unread_messages=0,
+            updated_date=to_iso(draft.updated),
+            project_name=identification(self.PA.PROJECT_NAME, parent.project_name),
+            application_number=identification(
+                self.PA.APPLICATION_ID, parent.application_number
+            ),
+            submission_type=identification(self.PA.FILING_TYPE, parent.submission_type),
+            unread_messages=unread_messages,
         )

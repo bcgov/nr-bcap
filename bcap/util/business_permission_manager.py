@@ -2,7 +2,6 @@ from arches.app.models.graph import Graph
 from arches.app.models.models import Group, User
 from arches.app.models.resource import Resource
 import logging
-from .business_data_proxy import ArchaeologicalSiteDataProxy
 from guardian.shortcuts import (
     assign_perm,
     get_perms,
@@ -95,14 +94,3 @@ class AdminOnlyPermissionManager:
         ):
             for perm in get_perms(user_or_group=entity, obj=obj):
                 remove_perm(user_or_group=entity, obj=obj, perm=perm)
-
-
-class HeritageSitePermissionManager(AdminOnlyPermissionManager):
-
-    def __init__(self):
-        super().__init__()
-        self.admin_only_graph_slugs = ["heritage_site"]
-        self._populate_restricted_objects()
-
-    def _is_resource_restricted(self, obj):
-        return not ArchaeologicalSiteDataProxy().is_site_public(obj)

@@ -93,7 +93,6 @@ class Command(BaseCommand):
                 f"Known: {', '.join(self.KNOWN_GRAPHS)}"
             )
 
-        # Locate directories
         cmd_dir = os.path.dirname(os.path.abspath(__file__))
         app_dir = os.path.dirname(os.path.dirname(cmd_dir))
         mig_dir = os.path.join(app_dir, "migrations")

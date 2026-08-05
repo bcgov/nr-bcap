@@ -2,6 +2,7 @@
     "id": "REQ-PERMIT-TEMPLATE-000",
     "name": "Permit Application",
     "type": "Module",
+    "graph": "permit_application",
     "internal": true,
     "resource": null,
     "due": null,
@@ -9,6 +10,18 @@
     "satisfied": false,
     "sub_requirements": [],
     "requirements": [
+        {
+            "id": "REQ-PERMIT-TEMPLATE-001",
+            "name": "Initial Submission",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
         {
             "id": "REQ-2026-001",
             "name": "Recommend Referral",

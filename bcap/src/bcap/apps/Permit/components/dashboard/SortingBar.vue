@@ -33,6 +33,24 @@ const props = defineProps({
         type: String as PropType<'asc' | 'desc'>,
         default: 'asc',
     },
+    // Opt-in checkbox beside the tabs; omit the label to leave it out.
+    messagesOnly: {
+        type: Boolean,
+        default: false,
+    },
+    messagesOnlyLabel: {
+        type: String,
+        default: '',
+    },
+    // Card counts for the results summary; omitted (or zero total) hides it.
+    shown: {
+        type: Number,
+        default: 0,
+    },
+    total: {
+        type: Number,
+        default: 0,
+    },
 });
 
 const emit = defineEmits([
@@ -40,6 +58,7 @@ const emit = defineEmits([
     'update:search',
     'update:currentSort',
     'update:sortOrder',
+    'update:messagesOnly',
     'refresh',
 ]);
 
@@ -67,14 +86,12 @@ const handleSearchInput = () => {
     emit('update:search', searchQuery.value);
 };
 
-// Sort Menu Logic
 const sortMenu = ref();
 
 const toggleSortMenu = (event: Event) => {
     sortMenu.value.toggle(event);
 };
 
-// Generates the PrimeVue menu items from the passed props
 const sortMenuModel = computed(() => {
     return props.sortOptions.map((opt) => {
         const isActive = props.currentSort === opt.value;
@@ -112,7 +129,34 @@ const sortMenuModel = computed(() => {
     });
 });
 
-// Displays what is currently being sorted
+// Each chip clears the one thing it names; the tab is a heading, not a chip,
+// since there is no "no tab" state to clear it to.
+const activeFilters = computed(() => {
+    const filters = [];
+    if (searchQuery.value)
+        filters.push({
+            key: 'search',
+            label: `Search: ${searchQuery.value}`,
+            clear: () => {
+                searchQuery.value = '';
+                handleSearchInput();
+            },
+        });
+    if (props.messagesOnly && props.messagesOnlyLabel)
+        filters.push({
+            key: 'messages',
+            label: props.messagesOnlyLabel,
+            clear: () => emit('update:messagesOnly', false),
+        });
+    if (props.currentSort !== 'default')
+        filters.push({
+            key: 'sort',
+            label: `Sort: ${activeSortLabel.value}`,
+            clear: () => emit('update:currentSort', 'default'),
+        });
+    return filters;
+});
+
 const activeSortLabel = computed(() => {
     const found = props.sortOptions.find((o) => o.value === props.currentSort);
     return found ? found.label : 'Default';
@@ -141,90 +185,118 @@ const activeSortLabel = computed(() => {
             </Button>
         </div>
 
-        <div class="search-section">
-            <div class="search-bar-wrapper">
-                <Button
-                    unstyled
-                    aria-label="Sort Options"
-                    class="icon-btn"
-                    style="display: flex; gap: 5px"
-                    @click="toggleSortMenu"
-                >
-                    <i class="fa-solid fa-bars"></i>
-                    <i
-                        :class="[
-                            'fa-solid',
-                            props.sortOrder === 'asc'
-                                ? 'fa-caret-up'
-                                : 'fa-caret-down',
-                        ]"
-                        style="font-size: 0.8rem; margin-top: 2px"
-                    ></i>
-                </Button>
+        <label
+            v-if="props.messagesOnlyLabel"
+            class="messages-filter"
+        >
+            <input
+                type="checkbox"
+                :checked="props.messagesOnly"
+                @change="
+                    emit(
+                        'update:messagesOnly',
+                        ($event.target as HTMLInputElement).checked,
+                    )
+                "
+            />
+            {{ props.messagesOnlyLabel }}
+        </label>
 
-                <input
-                    v-model="searchQuery"
-                    type="text"
-                    class="search-input"
-                    placeholder="Search projects..."
-                    @input="handleSearchInput"
-                />
-
-                <Button
-                    unstyled
-                    class="icon-btn search-submit-btn"
-                    aria-label="Search"
-                >
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </Button>
-            </div>
-
-            <div
-                v-if="props.currentSort !== 'default'"
-                class="sort-indicator"
+        <div class="search-bar-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input
+                v-model="searchQuery"
+                type="text"
+                class="search-input"
+                placeholder="Search projects"
+                @input="handleSearchInput"
+            />
+            <Button
+                v-if="searchQuery"
+                unstyled
+                class="icon-btn"
+                aria-label="Clear search"
+                @click="
+                    searchQuery = '';
+                    handleSearchInput();
+                "
             >
-                <span>
-                    Sorted by:
-                    <strong>{{ activeSortLabel }}</strong>
-                </span>
-                <i
-                    :class="[
-                        'fa-solid',
-                        props.sortOrder === 'asc'
-                            ? 'fa-arrow-up-wide-short'
-                            : 'fa-arrow-down-wide-short',
-                    ]"
-                ></i>
-
-                <i
-                    class="fa-solid fa-circle-xmark clear-sort"
-                    title="Clear sort"
-                    @click="emit('update:currentSort', 'default')"
-                ></i>
-            </div>
+                <i class="fa-solid fa-xmark"></i>
+            </Button>
         </div>
+
+        <Button
+            unstyled
+            class="bar-btn sort-btn"
+            aria-label="Sort Options"
+            @click="toggleSortMenu"
+        >
+            <i class="fa-solid fa-filter"></i>
+            Sort: {{ activeSortLabel }}
+            <i
+                v-if="props.currentSort !== 'default'"
+                :class="[
+                    'fa-solid',
+                    props.sortOrder === 'asc' ? 'fa-caret-up' : 'fa-caret-down',
+                ]"
+            ></i>
+        </Button>
 
         <div class="flex-spacer"></div>
 
-        <div
-            role="button"
-            class="status-pill"
+        <span class="updated-text">Updated {{ formattedTime }}</span>
+
+        <Button
+            unstyled
+            class="bar-btn refresh-btn"
             @click="$emit('refresh')"
         >
-            <i class="fa-solid fa-rotate-right refresh-icon"></i>
-            Last Updated - {{ formattedTime }}
+            <i class="fa-solid fa-rotate-right"></i>
+            Refresh
+        </Button>
+    </div>
+
+    <!-- Always rendered, so chips appearing don't push the cards down. -->
+    <div class="filter-row">
+        <div
+            v-if="props.total"
+            class="results-summary"
+        >
+            Showing
+            <strong>{{ props.shown }}</strong>
+            of
+            <strong>{{ props.total }}</strong>
+            cards
+        </div>
+
+        <div
+            v-if="activeFilters.length"
+            class="filter-chips"
+        >
+            <span class="filter-chips-label">Filters:</span>
+            <button
+                v-for="filter in activeFilters"
+                :key="filter.key"
+                type="button"
+                class="filter-chip"
+                @click="filter.clear()"
+            >
+                {{ filter.label }}
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
     </div>
 </template>
 
 <style scoped>
-/* Main Container */
 .sorting-bar-container {
     display: flex;
     align-items: center;
-    gap: 2.25rem;
-    padding: 1.5rem 0;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    padding: 1rem 0 1.25rem;
     width: 100%;
+    box-sizing: border-box;
     font-family: 'BCSans', 'Noto Sans', sans-serif;
 }
 
@@ -235,20 +307,45 @@ const activeSortLabel = computed(() => {
 .segmented-control {
     display: flex;
     background-color: #ffffff;
-    border-radius: 6px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Sits beside the tabs, reading as a plain option rather than a fourth tab. */
+.messages-filter {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    /* Pushes the search section to the far end so it can't ride over the label. */
+    margin-right: auto;
+    gap: 0.75rem;
+    line-height: 1;
+    font-size: 1.425rem;
+    color: #333333;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.messages-filter input {
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: 0;
+    accent-color: var(--bc-navy);
+    cursor: pointer;
 }
 
 .segment-btn {
     background: transparent;
     border: none;
-    padding: 0.9rem 1.875rem;
+    padding: 0.85rem 1.75rem;
     font-size: 1.425rem;
     color: #333333;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-    border-right: 1.5px solid #eeeeee;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+    border-right: 1.5px solid #d1d5db;
 }
 
 .segment-btn:last-child {
@@ -256,39 +353,46 @@ const activeSortLabel = computed(() => {
 }
 
 .segment-btn:hover {
-    background-color: #f9f9f9;
+    background-color: #f3f4f6;
 }
 
 .segment-btn.active {
-    background-color: #e2e2e2;
-    font-weight: 500;
-}
-
-/* 2. Search Bar */
-.search-section {
-    position: relative;
-    display: flex;
-    flex-direction: column;
+    background-color: var(--bc-navy, #003366);
+    color: #ffffff;
+    font-weight: 600;
+    transition: none;
 }
 
 .search-bar-wrapper {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
     background-color: #ffffff;
-    border-radius: 75px;
-    padding: 0.45rem 1.5rem;
-    width: 350px;
-    box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.05);
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
+    padding: 0.35rem 1rem;
+    flex: 1 1 220px;
+    min-width: 0;
+    max-width: 350px;
+    box-sizing: border-box;
+}
+
+.search-bar-wrapper:focus-within {
+    border-color: var(--bc-navy, #003366);
+}
+
+.search-icon {
+    color: #6c757d;
+    font-size: 1.35rem;
 }
 
 .search-input {
     flex-grow: 1;
     border: none;
     background: transparent;
-    padding: 0.6rem 0.75rem;
+    padding: 0.5rem 0;
     font-size: 1.425rem;
     color: #333;
-    outline: none;
 }
 
 .icon-btn {
@@ -307,55 +411,116 @@ const activeSortLabel = computed(() => {
     color: #003366;
 }
 
-/* 3. Status Pill */
-.status-pill {
+.bar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.25rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 1.425rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.bar-btn:hover {
+    background-color: #f3f4f6;
+    border-color: var(--bc-navy, #003366);
+}
+
+.refresh-btn {
+    color: var(--bc-navy, #003366);
+    font-weight: 600;
+}
+
+.updated-text {
+    color: #6c757d;
+    font-size: 1.3rem;
+    white-space: nowrap;
+}
+
+.filter-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.6rem 1.5rem;
-    border-radius: 75px;
-    border: 1.5px solid #d1d5db;
+    justify-content: flex-end;
+    gap: 1rem;
+    height: 2.4rem;
+    padding-bottom: 1rem;
+    /* Owns the gap down to the first card, so both dashboards match. */
+    margin-bottom: 1rem;
+    border-bottom: 1.5px solid #e5e7eb;
+    font-family: 'BCSans', 'Noto Sans', sans-serif;
+}
+
+.results-summary {
+    margin-right: auto;
     color: #555555;
-    font-size: 1.35rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    font-size: 1.25rem;
 }
 
-.status-pill:hover {
-    background-color: #f3f4f6;
+.results-summary strong {
+    color: var(--bc-navy, #003366);
+    font-weight: 700;
 }
 
-.refresh-icon {
-    font-size: 1.275rem;
-}
-
-/* 4. Sort Additions */
-.sort-indicator {
-    position: absolute;
-    top: 100%;
-    left: 1.5rem;
-    margin-top: 0.5rem;
-    font-size: 1.15rem;
-    color: #555555;
+.filter-chips {
     display: flex;
     align-items: center;
     gap: 0.6rem;
 }
 
-.clear-sort {
-    cursor: pointer;
-    color: #999999;
-    font-size: 1.2rem;
-    transition: color 0.2s ease;
+.filter-chips-label {
+    color: #6c757d;
+    font-size: 1.3rem;
 }
 
-.clear-sort:hover {
-    color: #d90000;
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 2.4rem;
+    padding: 0 0.9rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 999px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.filter-chip:hover {
+    border-color: var(--bc-navy, #003366);
+}
+
+.filter-chip i {
+    color: #6c757d;
+    font-size: 1.15rem;
 }
 </style>
 
 <style>
-/* Custom Sort Menu Styles, I hate primevue */
+/* The theme's yellow focus ring would sit inside the field; the wrapper's navy
+   border (.search-bar-wrapper:focus-within) is the focus indicator instead. */
+.sorting-bar-container .search-bar-wrapper input.search-input:focus,
+.sorting-bar-container .search-bar-wrapper input.search-input:focus-visible,
+.sorting-bar-container .search-bar-wrapper input.search-input:-webkit-autofill,
+.sorting-bar-container
+    .search-bar-wrapper
+    input.search-input:-webkit-autofill:focus {
+    outline: none !important;
+    border: none !important;
+    background-color: #ffffff !important;
+    /* Also paints over Chrome's yellow autofill fill, which ignores background. */
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #333333 !important;
+}
+
 .custom-sort-menu {
     --surface-hover: #003366 !important;
     --p-menu-item-focus-background: #003366 !important;

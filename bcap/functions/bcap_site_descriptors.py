@@ -273,34 +273,8 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
         return address if address else None
 
     def _get_site_name(self, resource):
-        # name_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME]
-        # name_type_datatype = BCAPSiteDescriptors._datatypes[aliases.NAME_TYPE]
         borden_number_datatype = BCAPSiteDescriptors._datatypes[aliases.BORDEN_NUMBER]
         display_value = ""
-        #
-        # for tile in (
-        #     models.TileModel.objects.filter(
-        #         nodegroup_id=BCAPSiteDescriptors._nodes[aliases.NAME].nodegroup_id
-        #     )
-        #     .filter(resourceinstance_id=resource.resourceinstanceid)
-        #     .all()
-        # ):
-        #     if (
-        #         name_type_datatype.get_display_value(
-        #             tile, BCAPSiteDescriptors._nodes[aliases.NAME_TYPE]
-        #         )
-        #         == "Common"
-        #     ):
-        #         name = name_datatype.get_display_value(
-        #             tile, BCAPSiteDescriptors._nodes[aliases.NAME]
-        #         )
-        #         if display_value and name:
-        #             display_value = display_value + ",<br>"
-        #         if name:
-        #             display_value = display_value + name
-        #
-        # if not display_value:
-        #     display_value = self._empty_name_value
 
         borden_number_tile = models.TileModel.objects.filter(
             nodegroup_id=BCAPSiteDescriptors._nodes[aliases.BORDEN_NUMBER].nodegroup_id,

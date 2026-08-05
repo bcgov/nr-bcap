@@ -50,14 +50,21 @@ def flatten(permit_type):
     return [parent, *children]
 
 
+def module_graph(permit_type):
+    """The graph slug a module's own submission lives on, defaulting to the
+    permit type."""
+    return load(permit_type).get("graph", permit_type)
+
+
 def host_graph(permit_type):
     """The graph a module populates from the submit payload: the child whose
-    resource matches the module slug, or None when the type has no group file or
-    no such host child."""
+    resource matches the module's graph, or None when the type has no group file
+    or no such host child."""
     if permit_type not in supported_permit_types():
         return None
+    graph = module_graph(permit_type)
     children = load(permit_type)["requirements"]
     return next(
-        (c["resource"] for c in children if c["resource"] == permit_type),
+        (c["resource"] for c in children if c["resource"] == graph),
         None,
     )

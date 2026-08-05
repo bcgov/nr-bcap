@@ -7,6 +7,7 @@ are mocked with @patch so no database access is required.
 
 from __future__ import annotations
 
+from collections import defaultdict
 from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
@@ -20,8 +21,6 @@ with patch("arches.app.datatypes.datatypes.DataTypeFactory"):
     )
 
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as A
-
-# ── Helpers ────────────────────────────────────────────────────────────────────
 
 
 def _make_node(alias, name, datatype="string", nodegroup_id="ng-1", nodeid="node-1"):
@@ -45,9 +44,6 @@ def _reset_class_state():
     ProcessRequirementDescriptors._initialized = False
     ProcessRequirementDescriptors._nodes = {}
     ProcessRequirementDescriptors._datatypes = {}
-
-
-# ── Tests: _format_value (pure static method, no mocking needed) ──────────────
 
 
 class TestFormatValue(TestCase):
@@ -83,9 +79,6 @@ class TestFormatValue(TestCase):
         assert self._call("L", ["", ""], show_name=False) == ""
 
 
-# ── Tests: _get_value_from_node ───────────────────────────────────────────────
-
-
 class TestGetValueFromNode(TestCase):
     def setUp(self):
         _reset_class_state()
@@ -102,9 +95,7 @@ class TestGetValueFromNode(TestCase):
         node = _make_node(A.REQUIREMENT_NAME, "Name")
         ProcessRequirementDescriptors._nodes[A.REQUIREMENT_NAME] = node
         ProcessRequirementDescriptors._datatypes[A.REQUIREMENT_NAME] = MagicMock()
-        mock_models.TileModel.objects.filter.return_value.filter.return_value.all.return_value = (
-            []
-        )
+        mock_models.TileModel.objects.filter.return_value = []
 
         result = ProcessRequirementDescriptors._get_value_from_node(
             A.REQUIREMENT_NAME, resourceinstanceid="res-1"
@@ -135,10 +126,7 @@ class TestGetValueFromNode(TestCase):
         ProcessRequirementDescriptors._datatypes[A.REQUIREMENT_STATUS] = datatype
 
         tile1, tile2 = _make_tile(), _make_tile()
-        mock_models.TileModel.objects.filter.return_value.filter.return_value.all.return_value = [
-            tile1,
-            tile2,
-        ]
+        mock_models.TileModel.objects.filter.return_value = [tile1, tile2]
         result = ProcessRequirementDescriptors._get_value_from_node(
             A.REQUIREMENT_STATUS, resourceinstanceid="res-1"
         )
@@ -158,14 +146,20 @@ class TestGetValueFromNode(TestCase):
         mock_models.TileModel.objects.filter.assert_not_called()
 
 
-# ── Tests: get_primary_descriptor_from_nodes ──────────────────────────────────
-
-
 class TestGetPrimaryDescriptorFromNodes(TestCase):
     def setUp(self):
         _reset_class_state()
         ProcessRequirementDescriptors._initialized = True  # skip initialize()
         self.fn = ProcessRequirementDescriptors()
+        # The descriptor loads the resource's tiles once up front; these drive
+        # the logic off mocked values instead.
+        tiles = patch.object(
+            ProcessRequirementDescriptors,
+            "_tiles_by_nodegroup",
+            return_value=defaultdict(list),
+        )
+        tiles.start()
+        self.addCleanup(tiles.stop)
 
     def tearDown(self):
         _reset_class_state()
@@ -178,7 +172,7 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
             result = self.fn.get_primary_descriptor_from_nodes(
                 resource, config={"type": "name"}
             )
-        mock_name.assert_called_once_with(resource)
+        assert mock_name.call_args.args[0] is resource
         assert result == "Req Name"
 
     def test_description_with_no_matching_values_returns_empty_string(self):
@@ -210,7 +204,7 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
         with patch.object(
             ProcessRequirementDescriptors,
             "_get_value_from_node",
-            side_effect=lambda alias, resource: values.get(alias),
+            side_effect=lambda alias, resource, **kwargs: values.get(alias),
         ):
             result = self.fn.get_primary_descriptor_from_nodes(
                 MagicMock(),
@@ -233,7 +227,7 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
 
         call_log: list[str] = []
 
-        def side_effect(alias, resource):
+        def side_effect(alias, resource, **kwargs):
             call_log.append(alias)
             return (
                 "First Value"
@@ -261,9 +255,6 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
             config={"type": "map_popup", "first_only": False, "show_name": True},
         )
         assert result == ""
-
-
-# ── Tests: _get_process_requirement_name ──────────────────────────────────────
 
 
 class TestGetProcessRequirementName(TestCase):
@@ -302,14 +293,40 @@ class TestGetProcessRequirementName(TestCase):
             A.IS_TEMPLATE_REQUIREMENT: MagicMock(),
         }
 
-    @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_no_name_tile_no_permit_returns_empty_name_value(self, mock_models):
-        mock_models.TileModel.objects.filter.return_value.first.return_value = None
-        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
-            None
+    @staticmethod
+    def _permit_lookup(mock_models, permit):
+        """What the permit-reference query returns; it select_relateds the
+        permit so the descriptor reads its name without a second query."""
+        objects = mock_models.ResourceXResource.objects
+        objects.filter.return_value.select_related.return_value.first.return_value = (
+            permit
         )
 
-        result = self.fn._get_process_requirement_name(MagicMock())
+    @staticmethod
+    def _module_child_tile(mock_models, child):
+        """What the module-id lookup returns: the process_module child tile,
+        with its parent already joined."""
+        objects = mock_models.TileModel.objects
+        objects.filter.return_value.select_related.return_value.first.return_value = (
+            child
+        )
+
+    @staticmethod
+    def _tiles(name_tile=None, template_tile=None):
+        """The resource's tiles by nodegroup, as the caller now hands them over."""
+        return defaultdict(
+            list,
+            {
+                "ng-name": [name_tile] if name_tile else [],
+                "ng-tmpl": [template_tile] if template_tile else [],
+            },
+        )
+
+    @patch("bcap.functions.process_requirement_descriptors.models")
+    def test_no_name_tile_no_permit_returns_empty_name_value(self, mock_models):
+        self._permit_lookup(mock_models, None)
+
+        result = self.fn._get_process_requirement_name(MagicMock(), self._tiles())
 
         # No name and no permit: nothing to show, fall back to the placeholder.
         assert result == "(Unknown)"
@@ -319,12 +336,10 @@ class TestGetProcessRequirementName(TestCase):
         self.name_datatype.get_display_value.return_value = "My Requirement"
         name_tile = _make_tile()
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: True})
-        mock_models.TileModel.objects.filter.return_value.first.side_effect = [
-            name_tile,
-            tmpl_tile,
-        ]
 
-        result = self.fn._get_process_requirement_name(MagicMock())
+        result = self.fn._get_process_requirement_name(
+            MagicMock(), self._tiles(name_tile, tmpl_tile)
+        )
         assert result == "My Requirement (Template)"
 
     @patch("bcap.functions.process_requirement_descriptors.models")
@@ -334,18 +349,14 @@ class TestGetProcessRequirementName(TestCase):
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: False})
         permit = MagicMock()
         permit.from_resource.descriptors = {"en": {"name": "Permit ABC"}}
-        # name tile, template tile, then the module-id lookup finds no
-        # process_module tile referencing this requirement (no module prefix).
-        mock_models.TileModel.objects.filter.return_value.first.side_effect = [
-            name_tile,
-            tmpl_tile,
-            None,
-        ]
-        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
-            permit
-        )
+        # The module-id lookup finds no process_module tile referencing this
+        # requirement, so there is no module prefix.
+        self._module_child_tile(mock_models, None)
+        self._permit_lookup(mock_models, permit)
 
-        result = self.fn._get_process_requirement_name(MagicMock())
+        result = self.fn._get_process_requirement_name(
+            MagicMock(), self._tiles(name_tile, tmpl_tile)
+        )
         assert result == "Permit ABC - My Requirement"
 
     @patch("bcap.functions.process_requirement_descriptors.models")
@@ -357,20 +368,14 @@ class TestGetProcessRequirementName(TestCase):
         permit.from_resource.descriptors = {"en": {"name": "APP-107"}}
         # The module-id lookup: a process_module child tile references this
         # requirement; its parent module tile carries the module id.
-        child_tile = MagicMock(parenttile_id="parent-1")
         parent_tile = MagicMock()
         parent_tile.data.get.return_value = "PERMIT-APPLICATION-1"
-        mock_models.TileModel.objects.filter.return_value.first.side_effect = [
-            name_tile,
-            tmpl_tile,
-            child_tile,
-            parent_tile,
-        ]
-        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
-            permit
-        )
+        self._module_child_tile(mock_models, MagicMock(parenttile=parent_tile))
+        self._permit_lookup(mock_models, permit)
 
-        result = self.fn._get_process_requirement_name(MagicMock())
+        result = self.fn._get_process_requirement_name(
+            MagicMock(), self._tiles(name_tile, tmpl_tile)
+        )
         assert result == "APP-107 - PERMIT-APPLICATION-1 - My Requirement"
 
     @patch("bcap.functions.process_requirement_descriptors.models")
@@ -378,22 +383,13 @@ class TestGetProcessRequirementName(TestCase):
         self.name_datatype.get_display_value.return_value = "My Requirement"
         name_tile = _make_tile()
         tmpl_tile = _make_tile(data={self.TMPL_NODE_ID: False})
-        # name tile, template tile, then no process_module tile for the module id.
-        mock_models.TileModel.objects.filter.return_value.first.side_effect = [
-            name_tile,
-            tmpl_tile,
-            None,
-        ]
         # A grouping parent has no permit reference, so no permit prefix.
-        mock_models.ResourceXResource.objects.filter.return_value.first.return_value = (
-            None
+        self._permit_lookup(mock_models, None)
+
+        result = self.fn._get_process_requirement_name(
+            MagicMock(), self._tiles(name_tile, tmpl_tile)
         )
-
-        result = self.fn._get_process_requirement_name(MagicMock())
         assert result == "My Requirement"
-
-
-# ── Tests: initialize ─────────────────────────────────────────────────────────
 
 
 class TestInitialize(TestCase):

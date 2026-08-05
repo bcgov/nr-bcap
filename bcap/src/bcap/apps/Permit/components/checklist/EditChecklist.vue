@@ -9,10 +9,24 @@ import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { readString } from '@/bcap/util.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
+import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
+import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
+import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 
 const route = useRoute();
 const processId = computed(() => route.query.id as string | undefined);
 const isEditing = computed(() => !!processId.value);
+
+const crumbs = computed(() =>
+    permitCrumbs(
+        route.query.permit,
+        route.query.staff,
+        state.requirementTitle || 'Edit Checklist',
+    ),
+);
+
+const backLink = computed(() => crumbs.value[0]?.to ?? '');
 
 interface StepItem {
     // Present for steps loaded from the resource; absent for newly added ones,
@@ -103,7 +117,14 @@ const loadRequirement = async (withSpinner = true) => {
     }
 };
 
-onMounted(() => loadRequirement());
+const headerStore = usePermitHeaderStore();
+const permitId = computed(() => String(route.query.permit ?? ''));
+const permitHeader = computed(() => headerStore.state.header);
+
+onMounted(() => {
+    loadRequirement();
+    headerStore.load(permitId.value);
+});
 
 const addStep = () => {
     state.steps.push({ ...blankStep(), sortOrder: state.steps.length + 1 });
@@ -147,7 +168,16 @@ const saveRequirements = async () => {
 </script>
 
 <template>
+    <PermitHeaderBand
+        v-if="permitHeader"
+        :header="permitHeader"
+    />
     <div class="checklist-container">
+        <PermitBreadcrumbs
+            v-if="crumbs.length"
+            :crumbs="crumbs"
+            class="page-crumbs"
+        />
         <div class="title-row">
             <h2 class="page-title">
                 {{ isEditing ? 'Edit' : 'Create' }} Process Requirement
@@ -269,6 +299,17 @@ const saveRequirements = async () => {
                 />
             </div>
         </div>
+
+        <div class="actions-bar">
+            <RouterLink
+                v-if="backLink"
+                class="btn-secondary back-btn"
+                :to="backLink"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Filing Summary
+            </RouterLink>
+        </div>
     </div>
     <br />
     <br />
@@ -282,6 +323,10 @@ const saveRequirements = async () => {
     padding: 2rem 1rem;
     font-family: Arial, sans-serif;
     color: #222;
+}
+
+.page-crumbs {
+    margin-bottom: 1rem;
 }
 
 .title-row {
@@ -300,7 +345,6 @@ const saveRequirements = async () => {
     font-weight: 700;
 }
 
-/* Updated main-settings padding and borders */
 .main-settings {
     background: #ffffff;
     padding: 1.5rem;
@@ -318,7 +362,6 @@ const saveRequirements = async () => {
     gap: 1rem;
 }
 
-/* Card Styling & Dragging */
 .requirement-item {
     background: #ffffff;
     border: 1px solid #d1d5db;
@@ -341,7 +384,6 @@ const saveRequirements = async () => {
     gap: 1.25rem;
 }
 
-/* Drag Handle */
 .drag-handle {
     cursor: grab;
     font-size: 2.5rem;
@@ -353,7 +395,6 @@ const saveRequirements = async () => {
     cursor: grabbing;
 }
 
-/* Inputs */
 .req-inputs {
     flex-grow: 1;
     display: flex;
@@ -411,7 +452,6 @@ const saveRequirements = async () => {
     font-weight: 600;
 }
 
-/* Buttons */
 .btn-primary,
 .btn-secondary {
     padding: 0.75rem 1.5rem;
@@ -426,6 +466,26 @@ const saveRequirements = async () => {
 .btn-primary {
     background-color: #003366;
     color: white;
+}
+
+.actions-bar {
+    display: flex;
+    margin-top: 2rem;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1.5px solid #003366;
+    color: #003366;
+    background-color: #ffffff;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background-color: #f3f4f6;
+    text-decoration: none;
 }
 
 .btn-primary:hover {

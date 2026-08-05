@@ -1,6 +1,6 @@
 """Admin registration-link API plus the invitee's claim entry point.
 
-Issuing links and the two lookup lists are admin-only JSON endpoints.
+Issuing links and the role-group lookup are admin-only JSON endpoints.
 Claiming is an anonymous GET that stashes the token in the session and
 bounces the visitor into login; redemption happens server-side on the
 user_logged_in signal."""
@@ -17,14 +17,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from bcap.serializers.registration_serializers import (
-    ContributorSummarySerializer,
     RegistrationLinkRequestSerializer,
     RegistrationLinkResponseSerializer,
 )
-from bcap.services.contributor_service import (
-    ContributorService,
-    NewContributor,
-)
+from bcap.services.contributor_service import NewContributor
 from bcap.services.registration.invitation_registration_service import (
     PENDING_REGISTRATION_SESSION_KEY,
     InvitationRegistrationService,
@@ -57,22 +53,6 @@ class RegistrationLinkView(APIView):
         path = f"{reverse('registration_claim')}?token={link.id}"
         signup_url = f"{origin.scheme}://{origin.netloc}{path}"
         return Response({"signup_url": signup_url, "expires": link.expires}, status=201)
-
-
-@extend_schema(tags=["Admin: registration"])
-class UnlinkedContributorsView(APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAdminUser]
-
-    @extend_schema(
-        responses=ContributorSummarySerializer(many=True),
-        description="Contributors not yet linked to a user account.",
-    )
-    def get(self, request):
-        options = ContributorService().invitable_contributors(
-            request.GET.get("search", "")
-        )
-        return Response(ContributorSummarySerializer(options, many=True).data)
 
 
 @extend_schema(tags=["Admin: registration"])

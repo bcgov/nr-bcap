@@ -25,14 +25,14 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from arches_zod_validation.views.mixins import UserOwnedResourceMixin
 
+from bcap.serializers.graph_serializers import MODULE_SERIALIZERS, module_host_schema
 from bcap.serializers.process_requirement_serializers import (
     AddRequirementSerializer,
     ChecklistPatchSerializer,
-    HOST_SERIALIZERS,
     ModuleCompletionSerializer,
     ReorderRequirementsSerializer,
+    RequirementAssigneeSerializer,
     RequirementStatusSerializer,
-    module_host_schema,
 )
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
@@ -41,10 +41,7 @@ from bcap.schema import ArchesTileAutoSchema
 from bcap.services.process_requirement.template_specs import host_graph
 from bcap.util.indexing import bulk_index
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.views.generated.process_requirement import (
-    ProcessRequirementSerializer,
-    ProcessRequirementViewMixin,
-)
+from bcap.views.generated.process_requirement import ProcessRequirementViewMixin
 
 RESOURCE_EDITOR_GROUP = "Resource Editor"
 
@@ -121,7 +118,7 @@ class ProcessRequirementSeedView(APIView):
         """The serializer for the module's host resource. 400 when the type has
         no host; 404 when the permit application is unknown."""
         serializer_class = (
-            HOST_SERIALIZERS.get(permit_type) if host_graph(permit_type) else None
+            MODULE_SERIALIZERS.get(permit_type) if host_graph(permit_type) else None
         )
         if serializer_class is None:
             raise ValidationError(f"Module '{permit_type}' has no host resource.")
@@ -239,7 +236,8 @@ class ModuleRequirementsView(APIView):
 @extend_schema(tags=["External: process_requirement"], responses={204: None})
 class ModuleRequirementView(APIView):
     """DELETE: remove one process requirement from a module by its resource id
-    (the child tile, the requirement resource, and its submission host)."""
+    (the child tile, the requirement resource, and its submission host).
+    PATCH: set or clear its ministry assignee."""
 
     authentication_classes = [SessionAuthentication]
     permission_classes = STAFF_MODULE_PERMISSIONS
@@ -248,6 +246,17 @@ class ModuleRequirementView(APIView):
         ProcessRequirementService(user=request.user).remove_requirement(
             pk, module_tileid, requirement_id
         )
+        return Response(status=204)
+
+    @extend_schema(request=RequirementAssigneeSerializer)
+    def patch(self, request, pk, module_tileid, requirement_id):
+        body = RequirementAssigneeSerializer(data=request.data)
+        body.is_valid(raise_exception=True)
+        found = ProcessRequirementService(user=request.user).set_ministry_assignee(
+            pk, module_tileid, requirement_id, body.validated_data["contributor_id"]
+        )
+        if not found:
+            raise Http404("No requirement matches the given id on this module.")
         return Response(status=204)
 
 

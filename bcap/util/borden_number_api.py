@@ -51,28 +51,19 @@ class BordenNumberApi:
             raise MissingGeometryError(
                 "Site boundary must be created prior to generating a Borden Number"
             )
-        # print("Got tile: %s" % tile)
-        datatype = self._datatype_factory.get_instance(self.geom_node.datatype)
-        # geometry = datatype.get_display_value(tile, self.node)
-        # print("Tile data: %s" % tile.data)
         geometry = tile.data[str(self.geom_node.nodeid)]
         return self._get_borden_grid_for_geometry(geometry)
 
     def _get_borden_grid_for_geometry(self, geometry):
 
-        # print('Geometry: %s %s' % (geometry, type(geometry)))
         utils = geo_utils.GeoUtils()
         centroid = utils.get_centroid(geometry)
-        # print('Centroid: %s %s' % (centroid, type(centroid)))
 
         pnt = Point(centroid["coordinates"][0], centroid["coordinates"][1], srid=4326)
         desired_srid = 3005
         pnt.transform(desired_srid)
-        # print("Translated: %s" % pnt.ewkt)
-        # print("Points: %s, %s" % (pnt.x, pnt.y))
 
         url = BordenNumberApi._url % (pnt.x, pnt.y)
-        # print(url)
         if (
             hasattr(settings, "TILESERVER_OUTBOUND_PROXY")
             and settings.TILESERVER_OUTBOUND_PROXY

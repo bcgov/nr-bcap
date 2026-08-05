@@ -3,10 +3,14 @@ import {
     fetchDraft,
     createDraft,
     fetchDrafts,
+    fetchCompanyProjects,
+    fetchDraftCards,
     fetchMyProjects,
+    fetchAssignableContributors,
+    patchProcessRequirement,
+    setRequirementAssignee,
     submitApplication,
     submitModule,
-    fetchPermitModules,
     deleteDraft,
     getThreadsForResource,
     getMessagesForThread,
@@ -15,7 +19,6 @@ import {
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
 
-// 1. Mock the Arches URL generator
 vi.mock('arches', () => ({
     default: {
         urls: {
@@ -23,6 +26,7 @@ vi.mock('arches', () => ({
                 `/mock/blank/${graphSlug}`,
             api_workflow_draft: (graphSlug: string) =>
                 `/mock/draft/${graphSlug}`,
+            api_workflow_draft_all: '/mock/drafts',
             permit_application_create: '/mock/create/permit_application',
             seed_process_requirements: (permitId: string, slug: string) =>
                 `/mock/seed/${permitId}/${slug}`,
@@ -35,11 +39,20 @@ vi.mock('arches', () => ({
                 `/mock/thread/${threadId}`,
             bcap_message_detail: (messageId: string) =>
                 `/mock/message/${messageId}`,
+            module_requirement: (
+                permitId: string,
+                moduleTileId: string,
+                requirementId: string,
+            ) =>
+                `/mock/${permitId}/module/${moduleTileId}/req/${requirementId}`,
+            assignable_contributors: '/mock/contributors/assignable',
+            api_process_requirements: (requirementId: string) =>
+                `/mock/process_requirement/${requirementId}`,
         },
     },
 }));
 
-// 2. Mock the api layer. apiFetch returns a Response-like object (callers read
+// apiFetch returns a Response-like object (callers read
 // .json() themselves); apiFetchJson returns the parsed body directly. HttpMethod
 // mirrors the real string enum so method assertions stay readable.
 const { apiFetch, apiFetchJson } = vi.hoisted(() => ({
@@ -76,33 +89,35 @@ describe('Permit API', () => {
     });
 
     describe('fetchDrafts', () => {
-        it('fetches and merges drafts across every draft graph', async () => {
-            apiFetch
-                .mockResolvedValueOnce(
-                    okResponse({ results: [{ id: 'permit-1' }] }),
-                )
-                .mockResolvedValueOnce(okResponse([{ id: 'investigation-1' }]));
+        it('fetches every graph in one call', async () => {
+            const drafts = [
+                { id: 'permit-1', graph_slug: GraphSlug.PermitApplication },
+                { id: 'investigation-1', graph_slug: GraphSlug.Investigation },
+            ];
+            apiFetchJson.mockResolvedValue(drafts);
 
             const result = await fetchDrafts();
 
-            expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/draft/permit_application',
-            );
-            expect(apiFetch).toHaveBeenCalledWith('/mock/draft/investigation');
-            expect(result).toEqual([
-                { id: 'permit-1' },
-                { id: 'investigation-1' },
-            ]);
+            expect(apiFetchJson).toHaveBeenCalledWith('/mock/drafts');
+            expect(result).toEqual(drafts);
         });
 
-        it('skips a failing graph but keeps the others', async () => {
-            apiFetch
-                .mockResolvedValueOnce(okResponse([{ id: 'permit-1' }]))
-                .mockRejectedValueOnce(new Error('Server Error'));
+        it('narrows to one permit when given a parent', async () => {
+            apiFetchJson.mockResolvedValue([]);
+
+            await fetchDrafts('permit-1');
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/drafts?parent=permit-1',
+            );
+        });
+
+        it('returns nothing when the request fails', async () => {
+            apiFetchJson.mockRejectedValue(new Error('Server Error'));
 
             const result = await fetchDrafts();
 
-            expect(result).toEqual([{ id: 'permit-1' }]);
+            expect(result).toEqual([]);
             expect(console.error).toHaveBeenCalled();
         });
     });
@@ -153,26 +168,111 @@ describe('Permit API', () => {
         });
     });
 
-    describe('fetchMyProjects', () => {
-        it('returns results array when paginated', async () => {
-            apiFetch.mockResolvedValue(
-                okResponse({ results: [{ id: 'proj-1' }] }),
+    describe('fetchCompanyProjects', () => {
+        it('asks for the associated-companies scope', async () => {
+            apiFetchJson.mockResolvedValue({ results: [{ id: 'theirs' }] });
+
+            const result = await fetchCompanyProjects();
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/dashboard/external?status=CREATED_BY_ASSOCIATED_COMPANIES',
             );
-            const result = await fetchMyProjects();
+            expect(result).toEqual([{ id: 'theirs' }]);
+        });
+    });
+
+    describe('fetchDraftCards', () => {
+        it('asks the external dashboard for the DRAFTS scope', async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [{ id: 'draft-1', is_draft: true }],
+            });
+
+            const result = await fetchDraftCards();
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/dashboard/external?status=DRAFTS',
+            );
+            expect(result).toEqual([{ id: 'draft-1', is_draft: true }]);
+        });
+    });
+
+    describe('setRequirementAssignee', () => {
+        it('PATCHes the contributor onto the module requirement', async () => {
+            apiFetch.mockResolvedValue(okResponse(null));
+
+            await setRequirementAssignee(
+                'permit-1',
+                'module-tile-1',
+                'req-1',
+                'contributor-1',
+            );
+
             expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/permit-1/module/module-tile-1/req/req-1',
+                { method: 'PATCH', body: { contributor_id: 'contributor-1' } },
+            );
+
+            // A null contributor is how the assignment is cleared.
+            await setRequirementAssignee(
+                'permit-1',
+                'module-tile-1',
+                'req-1',
+                null,
+            );
+
+            expect(apiFetch).toHaveBeenLastCalledWith(
+                '/mock/permit-1/module/module-tile-1/req/req-1',
+                { method: 'PATCH', body: { contributor_id: null } },
+            );
+        });
+    });
+
+    describe('fetchAssignableContributors', () => {
+        it('returns the assignable list, or an empty one', async () => {
+            const contributors = [{ id: 'c-1', name: 'Hopper, Grace' }];
+            apiFetchJson.mockResolvedValue(contributors);
+
+            expect(await fetchAssignableContributors()).toEqual(contributors);
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/mock/contributors/assignable',
+            );
+
+            apiFetchJson.mockResolvedValue(null);
+            expect(await fetchAssignableContributors()).toEqual([]);
+        });
+    });
+
+    describe('patchProcessRequirement', () => {
+        it('PATCHes the aliased data under an aliased_data envelope', async () => {
+            apiFetch.mockResolvedValue(okResponse(null));
+            const aliasedData = { requirement_data: {} };
+
+            await patchProcessRequirement('req-1', aliasedData as never);
+
+            expect(apiFetch).toHaveBeenCalledWith(
+                '/mock/process_requirement/req-1',
+                { method: 'PATCH', body: { aliased_data: aliasedData } },
+            );
+        });
+    });
+
+    describe('fetchMyProjects', () => {
+        it('returns the page results', async () => {
+            apiFetchJson.mockResolvedValue({ results: [{ id: 'proj-1' }] });
+            const result = await fetchMyProjects();
+            expect(apiFetchJson).toHaveBeenCalledWith(
                 '/bcap/api/dashboard/external?status=CREATED_BY_ME',
             );
             expect(result).toEqual([{ id: 'proj-1' }]);
         });
 
-        it('returns raw data when not paginated', async () => {
-            apiFetch.mockResolvedValue(okResponse([{ id: 'proj-2' }]));
-            const result = await fetchMyProjects();
-            expect(result).toEqual([{ id: 'proj-2' }]);
+        it('returns empty array when the page carries no results', async () => {
+            apiFetchJson.mockResolvedValue({ count: 0 });
+            expect(await fetchMyProjects()).toEqual([]);
         });
 
         it('returns empty array on error', async () => {
-            apiFetch.mockRejectedValue(new Error('Forbidden'));
+            apiFetchJson.mockRejectedValue(new Error('Forbidden'));
             const result = await fetchMyProjects();
             expect(result).toEqual([]);
         });
@@ -243,62 +343,6 @@ describe('Permit API', () => {
             ).rejects.toThrow('POST investigation failed');
             expect(console.error).toHaveBeenCalledWith(
                 'Module submission API failed:',
-                failure,
-            );
-        });
-    });
-
-    describe('fetchPermitModules', () => {
-        it('GETs the seed route and reshapes hosts like drafts', async () => {
-            apiFetch.mockResolvedValue(
-                okResponse([
-                    {
-                        resourceinstanceid: 'inv-1',
-                        aliased_data: { investigation_identification: {} },
-                    },
-                ]),
-            );
-
-            const result = await fetchPermitModules(
-                'permit-1',
-                GraphSlug.Investigation,
-            );
-
-            expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/seed/permit-1/investigation',
-            );
-            expect(result).toEqual([
-                {
-                    id: 'inv-1',
-                    graph_slug: GraphSlug.Investigation,
-                    data: { investigation_identification: {} },
-                },
-            ]);
-        });
-
-        it('returns an empty array on a null body', async () => {
-            apiFetch.mockResolvedValue(okResponse(null));
-
-            const result = await fetchPermitModules(
-                'permit-1',
-                GraphSlug.Investigation,
-            );
-
-            expect(result).toEqual([]);
-        });
-
-        it('returns an empty array and logs when the request fails', async () => {
-            const failure = new Error('boom');
-            apiFetch.mockRejectedValue(failure);
-
-            const result = await fetchPermitModules(
-                'permit-1',
-                GraphSlug.Investigation,
-            );
-
-            expect(result).toEqual([]);
-            expect(console.error).toHaveBeenCalledWith(
-                'Failed to load permit module hosts:',
                 failure,
             );
         });

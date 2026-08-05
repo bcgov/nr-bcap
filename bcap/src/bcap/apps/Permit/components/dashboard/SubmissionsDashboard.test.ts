@@ -15,12 +15,14 @@ vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
     },
 }));
 
-const fetchDrafts = vi.fn();
+const fetchDraftCards = vi.fn();
 const fetchMyProjects = vi.fn();
+const fetchCompanyProjects = vi.fn();
 const deleteDraft = vi.fn();
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
-    fetchDrafts: (...args: unknown[]) => fetchDrafts(...args),
+    fetchDraftCards: (...args: unknown[]) => fetchDraftCards(...args),
     fetchMyProjects: (...args: unknown[]) => fetchMyProjects(...args),
+    fetchCompanyProjects: (...args: unknown[]) => fetchCompanyProjects(...args),
     deleteDraft: (...args: unknown[]) => deleteDraft(...args),
 }));
 
@@ -49,6 +51,8 @@ const ProjectCardStub = defineComponent({
         body3: { type: String, default: '' },
         footerName: { type: String, default: '' },
         footerDate: { type: String, default: '' },
+        unreadMessages: { type: Number, default: 0 },
+        route: { type: Object, default: () => ({}) },
     },
     template: '<div class="project-card-stub">{{ bodyTitle }}</div>',
 });
@@ -99,21 +103,21 @@ function makeProject(overrides: Record<string, unknown> = {}) {
     };
 }
 
+// A draft card as the external dashboard returns it.
 function makeDraft(overrides: Record<string, unknown> = {}) {
     return {
         id: 'draft-1',
+        is_draft: true,
         graph_slug: 'permit_application',
-        created: '2026-03-01T00:00:00Z',
-        updated: '2026-03-02T00:00:00Z',
-        data: {
-            application_identification: {
-                aliased_data: {
-                    project_name: {
-                        node_value: { en: { value: 'Draft One' } },
-                    },
-                },
-            },
-        },
+        permit_application_id: '',
+        application_number: 'APP-1',
+        status: 'Submission Required',
+        project_name: 'Draft One',
+        submission_type: 'Permit Application - Standard',
+        created_by_name: 'Test User',
+        created_date: '2026-03-01T00:00:00Z',
+        updated_date: '2026-03-02T00:00:00Z',
+        unread_messages: 0,
         ...overrides,
     };
 }
@@ -147,8 +151,9 @@ async function switchTab(
 
 beforeEach(() => {
     localStorage.clear();
-    fetchDrafts.mockReset().mockResolvedValue([]);
+    fetchDraftCards.mockReset().mockResolvedValue([]);
     fetchMyProjects.mockReset().mockResolvedValue([]);
+    fetchCompanyProjects.mockReset().mockResolvedValue([]);
     deleteDraft.mockReset().mockResolvedValue(undefined);
     push.mockReset();
 });
@@ -159,7 +164,7 @@ afterEach(() => {
 
 describe('data loading', () => {
     it('shows the spinner until both requests resolve', async () => {
-        fetchDrafts.mockReturnValue(new Promise(() => {}));
+        fetchDraftCards.mockReturnValue(new Promise(() => {}));
         const wrapper = mount(SubmissionsDashboard, {
             global: { stubs: STUBS },
         });
@@ -249,26 +254,154 @@ describe('project cards', () => {
             .map((card) => card.props('bodyTitle'));
         expect(titles).toEqual(['Quarry Dig']);
     });
-});
 
-describe('drafts', () => {
-    it('shows only permit application drafts', async () => {
-        fetchDrafts.mockResolvedValue([
-            makeDraft(),
-            makeDraft({ id: 'draft-2', graph_slug: 'investigation' }),
+    it('searches the application number, permit number, type and sector too', async () => {
+        const matches = async (query: string) => {
+            fetchMyProjects.mockResolvedValue([
+                makeProject({
+                    id: 'a',
+                    project_name: 'Bridge Survey',
+                    application_number: 'APP-777',
+                    permit_number: 'PN-42',
+                    submission_type: 'Site Visit',
+                    industrial_sector: 'Forestry',
+                }),
+                makeProject({
+                    id: 'b',
+                    project_name: 'Unrelated',
+                    application_number: 'APP-000',
+                    permit_number: 'PN-0',
+                    submission_type: 'Alteration',
+                    industrial_sector: 'Mining',
+                }),
+            ]);
+            const wrapper = await mountDashboard();
+            await switchTab(wrapper, 'my_projects');
+            wrapper
+                .findComponent({ name: 'SortingBar' })
+                .vm.$emit('update:search', query);
+            await flushPromises();
+            return wrapper
+                .findAllComponents(ProjectCardStub)
+                .map((card) => card.props('bodyTitle'));
+        };
+
+        expect(await matches('app-777')).toEqual(['Bridge Survey']);
+        expect(await matches('PN-42')).toEqual(['Bridge Survey']);
+        expect(await matches('site visit')).toEqual(['Bridge Survey']);
+        expect(await matches('forestry')).toEqual(['Bridge Survey']);
+    });
+
+    it('shows the associated companies scope on the company tab', async () => {
+        fetchMyProjects.mockResolvedValue([
+            makeProject({ id: 'mine', project_name: 'Mine' }),
+            makeProject({ id: 'mine-2', project_name: 'Mine Two' }),
+        ]);
+        fetchCompanyProjects.mockResolvedValue([
+            makeProject({ id: 'theirs', project_name: 'Colleague App' }),
         ]);
         const wrapper = await mountDashboard();
 
-        const labels = wrapper
-            .findAllComponents(CardStub)
-            // The first Card is the "start a new workflow" tile.
-            .slice(1)
-            .map((card) => card.props('label'));
-        expect(labels).toEqual(['Draft One']);
+        await switchTab(wrapper, 'company_projects');
+
+        const titles = wrapper
+            .findAllComponents(ProjectCardStub)
+            .map((card) => card.props('bodyTitle'));
+        expect(titles).toEqual(['Colleague App']);
+        // The counts follow the tab, not whichever list loaded first.
+        const bar = wrapper.findComponent({ name: 'SortingBar' });
+        expect(bar.props('shown')).toBe(1);
+        expect(bar.props('total')).toBe(1);
+    });
+
+    it('names the empty state after the tab', async () => {
+        const wrapper = await mountDashboard();
+
+        await switchTab(wrapper, 'my_projects');
+        expect(wrapper.text()).toContain('No submitted projects found.');
+
+        await switchTab(wrapper, 'company_projects');
+        expect(wrapper.text()).toContain('No company projects found.');
+    });
+});
+
+describe('drafts', () => {
+    it('labels each draft card with its project name and filing type', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft(),
+            makeDraft({ id: 'draft-2', project_name: 'Draft Two' }),
+        ]);
+        const wrapper = await mountDashboard();
+
+        const cards = wrapper.findAllComponents(ProjectCardStub);
+        expect(cards.map((card) => card.props('bodyTitle'))).toEqual([
+            'Draft One',
+            'Draft Two',
+        ]);
+        // The filing type comes off the card, not a static draft label.
+        expect(cards[0].props('body1')).toBe(
+            'Type: Permit Application - Standard',
+        );
+    });
+
+    it('shows the unread message count on a draft card', async () => {
+        fetchDraftCards.mockResolvedValue([makeDraft({ unread_messages: 3 })]);
+        const wrapper = await mountDashboard();
+
+        expect(
+            wrapper.findComponent(ProjectCardStub).props('unreadMessages'),
+        ).toBe(3);
+    });
+
+    it('names and resumes a module draft through its own workflow', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({
+                id: 'draft-3',
+                graph_slug: 'investigation',
+                project_name: '',
+                submission_type: '',
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+
+        const card = wrapper.findComponent(ProjectCardStub);
+        expect(card.props('bodyTitle')).toBe('Investigation');
+        expect(card.props('body1')).toBe('Type: Investigation Draft');
+        // The permit it hangs off, so the card says what it belongs to.
+        expect(card.props('bodySubtitle1')).toBe('APP-1');
+        expect(card.props('route')).toEqual({
+            name: 'investigationModule',
+            query: { draftId: 'draft-3' },
+        });
+    });
+
+    it('still names the module when the card carries its permit details', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({
+                id: 'draft-4',
+                graph_slug: 'investigation',
+                permit_application_id: 'permit-1',
+                // Both inherited from the parent permit application.
+                project_name: 'Big Project',
+                submission_type: 'Permit Application - Standard',
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+
+        const card = wrapper.findComponent(ProjectCardStub);
+        expect(card.props('bodyTitle')).toBe('Investigation');
+        expect(card.props('body1')).toBe('Type: Investigation Draft');
+        // The permit exists, so the card opens its filing summary with the
+        // draft's own section expanded.
+        expect(card.props('route')).toEqual({
+            name: 'permitDetails',
+            params: { id: 'permit-1' },
+            query: { draft: 'draft-4' },
+        });
     });
 
     it('opens the confirmation dialog from the delete button', async () => {
-        fetchDrafts.mockResolvedValue([makeDraft()]);
+        fetchDraftCards.mockResolvedValue([makeDraft()]);
         const wrapper = await mountDashboard();
 
         await wrapper.find('.draft-delete-btn').trigger('click');
@@ -300,7 +433,7 @@ describe('tab persistence', () => {
 
     it('ignores an unrecognised stored tab', async () => {
         localStorage.setItem('bcap.externalDashboard.tab', 'nonsense');
-        fetchDrafts.mockResolvedValue([makeDraft()]);
+        fetchDraftCards.mockResolvedValue([makeDraft()]);
 
         const wrapper = await mountDashboard();
 

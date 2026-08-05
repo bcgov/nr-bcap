@@ -12,6 +12,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from arches.app.datatypes.datatypes import DataTypeFactory
+from arches.app.models.models import TileModel
 from arches.app.models.resource import Resource
 from arches.app.models.tile import Tile
 
@@ -173,7 +174,11 @@ class ProcessRequirementBuilder(ResourceBuilder):
         a cloned-and-attached requirement costs one insert rather than a clone
         followed by a full re-save."""
         source = Resource.objects.get(pk=template_id)
-        source.load_tiles()
+        source.tiles = list(
+            TileModel.objects.filter(resourceinstance=source).select_related(
+                "nodegroup"
+            )
+        )
         copy = self.copy_resource(source)
         self._clear_template_flag(copy)
         reference_tiles = self._write_link_references(copy, parent, submission)

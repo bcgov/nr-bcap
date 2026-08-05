@@ -1,26 +1,29 @@
 <script setup lang="ts">
 import { reactive, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import ProgressSpinner from 'primevue/progressspinner';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
-import { getReviewNav } from '@/bcap/apps/Permit/reviewNav.ts';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
+import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
+import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
 const router = useRouter();
-const nav = getReviewNav();
+const route = useRoute();
+const headerStore = usePermitHeaderStore();
+const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
 
-const backLink = computed(() =>
-    nav?.permitId
-        ? { name: routeNames.permitDetails, params: { id: nav.permitId } }
-        : { name: routeNames.home },
+const crumbs = computed(() =>
+    permitCrumbs(nav?.permitId, route.query.staff, title),
 );
 
-const header = nav?.permitHeader;
+// Set by the permit view; loaded here only if this page was opened cold.
+const header = computed(() => headerStore.state.header);
 
 const state = reactive({
     loading: true,
@@ -30,10 +33,11 @@ const state = reactive({
 onMounted(async () => {
     // No nav means a refresh or direct hit; send them back to reopen it.
     if (!nav) {
-        router.replace(backLink.value);
+        router.replace({ name: routeNames.home });
         return;
     }
     try {
+        headerStore.load(nav.permitId);
         state.data = await fetchResourceData(nav.graph, nav.resourceId);
     } catch (error) {
         console.error('Failed to load submission:', error);
@@ -53,13 +57,7 @@ onMounted(async () => {
         </template>
 
         <div class="review-shell">
-            <RouterLink
-                :to="backLink"
-                class="back-link"
-            >
-                <i class="fa-solid fa-chevron-left"></i>
-                Back to Filing Summary
-            </RouterLink>
+            <PermitBreadcrumbs :crumbs="crumbs" />
 
             <h1 class="review-title">Submission · {{ title }}</h1>
 
@@ -88,22 +86,12 @@ onMounted(async () => {
     background: transparent;
 }
 
+/* Left-aligned and capped like the Filing Summary content area. */
 .review-shell {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 1.5rem 1rem 3rem;
+    width: 100%;
+    max-width: 1500px;
+    padding: 1.5rem 2rem 3rem;
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
-}
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--bc-navy, #003366);
-    font-weight: 700;
-    text-decoration: none;
-}
-.back-link:hover {
-    color: #1a5a96;
 }
 .review-title {
     margin: 1.25rem 0 1.5rem;

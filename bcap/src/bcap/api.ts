@@ -61,13 +61,20 @@ export const saveDraftFieldToBackend = async (
     draftId: string,
     graphSlug: string,
     fullDraftData: ArchesDraftData,
+    currentStep?: string,
 ) => {
     try {
         const patchUrl = `/bcap/api/workflow_draft/${graphSlug}/${draftId}`;
+        const payload: { data: ArchesDraftData; current_step?: string } = {
+            data: fullDraftData,
+        };
+        if (currentStep) {
+            payload.current_step = currentStep;
+        }
 
         await apiFetch(patchUrl, {
             method: HttpMethod.Patch,
-            body: { data: fullDraftData },
+            body: payload,
         });
 
         console.log('Successfully auto-saved full draft data.');
