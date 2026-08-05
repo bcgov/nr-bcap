@@ -19,7 +19,7 @@ from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )

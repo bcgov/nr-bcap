@@ -16,7 +16,7 @@ from arches_querysets.models import ResourceTileTree
 from bcap.builders.contributor_builder import ContributorBuilder, ContributorSpec
 from bcap.builders.resource_builder import ResourceBuilder
 from bcap.management.commands._dashboard_seed_base import _bulk_index
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )

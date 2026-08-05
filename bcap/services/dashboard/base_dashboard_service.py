@@ -1,7 +1,7 @@
 from itertools import chain
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.dashboard.dashboard_types import (
     ApplicationCore,
     HcaPermit,
