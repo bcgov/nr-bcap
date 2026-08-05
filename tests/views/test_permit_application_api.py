@@ -252,16 +252,19 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             PERMIT_REQUIREMENTS,
         )
 
-    def test_submission_via_put_attaches_requirements(self):
+    def test_put_and_delete_are_not_allowed(self):
+        # A whole-resource replace would reset every node the body omits, the
+        # owning organization included. Submission goes through PATCH, and
+        # nothing deletes a permit through the API.
         pk = self._create()
-        # Round-trip the resource (so tile ids are preserved), set the date,
-        # and PUT it back.
-        body = self._get(pk)
-        body[ALIASED_DATA][group_aliases.APPLICATION_ADMIN] = {
-            ALIASED_DATA: {aliases.APPLICATION_SUBMISSION_DATE: "2026-06-18"}
-        }
-        self.assertEqual(self._put(pk, body).status_code, 200)
-        self.assertEqual(len(self._requirements(pk)), PERMIT_REQUIREMENTS)
+
+        self.assertEqual(self._put(pk, self._get(pk)).status_code, 405)
+        self.assertEqual(
+            self.client.delete(
+                reverse("api_permit_application", args=[pk])
+            ).status_code,
+            405,
+        )
 
     def test_submission_stamps_module_and_requirement_ids(self):
         # The assign-module-ids hook mints the module id on save and stamps each

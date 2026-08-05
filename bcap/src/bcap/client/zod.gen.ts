@@ -9180,15 +9180,6 @@ export const zApiPermitApplicationCreateBody = zPermitApplicationWritable;
 
 export const zApiPermitApplicationCreateResponse = zPermitApplication;
 
-export const zApiPermitApplicationDestroyPath = z.object({
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiPermitApplicationDestroyResponse = z.void();
-
 export const zApiPermitApplicationRetrievePath = z.object({
     id: z.uuid()
 });

@@ -13232,25 +13232,6 @@ export type ApiPermitApplicationCreateResponses = {
 export type ApiPermitApplicationCreateResponse =
     ApiPermitApplicationCreateResponses[keyof ApiPermitApplicationCreateResponses];
 
-export type ApiPermitApplicationDestroyData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/bcap/api/permit_application/{id}/';
-};
-
-export type ApiPermitApplicationDestroyResponses = {
-    /**
-     * No response body
-     */
-    204: void;
-};
-
-export type ApiPermitApplicationDestroyResponse =
-    ApiPermitApplicationDestroyResponses[keyof ApiPermitApplicationDestroyResponses];
-
 export type ApiPermitApplicationRetrieveData = {
     body?: never;
     path: {

@@ -200,7 +200,7 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
 
         self.assertEqual(resp.status_code, 200)
         body = resp.json()
-        self.assertEqual([c["id"] for c in body["results"]], [str(self.draft.id)])
+        self.assertEqual([c["id"] for c in body["results"]], [str(self.draft.pk)])
         self.assertTrue(body["results"][0]["is_draft"])
 
     def test_invalid_status_returns_400(self):

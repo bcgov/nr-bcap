@@ -904,7 +904,7 @@ paths:
         Collection endpoint for the requesting user's Permit Application resources.
 
         Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
+        GET, PATCH, POST (from generated/generate.json); the ListCreateAPIView base
         class serves the collection subset (GET/POST).
       parameters:
       - name: limit
@@ -996,8 +996,8 @@ paths:
         Detail endpoint for a single Permit Application resource and its nested tiles.
 
         Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        verbs: GET, PATCH, POST (from generated/generate.json); the
+        RetrieveUpdateAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
       parameters:
       - in: path
         name: id
@@ -1068,28 +1068,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PermitApplication'
           description: ''
-    delete:
-      operationId: api_permit_application_destroy
-      description: |-
-        Detail endpoint for a single Permit Application resource and its nested tiles.
-
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the
-        RetrieveUpdateDestroyAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: permit_application'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/permit_application/{id}/module/{module_tileid}:
     patch:
       operationId: api_permit_application_module_partial_update

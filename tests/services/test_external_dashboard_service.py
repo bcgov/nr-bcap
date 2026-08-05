@@ -35,9 +35,12 @@ def make_user(username):
     return get_user_model().objects.create_user(username=username, password="pass")
 
 
-def build_external_permit(builder, name, owner, lifecycle="Active", hca_permit=None):
+def build_external_permit(
+    builder, name, owner, lifecycle="Active", hca_permit=None, organization=None
+):
     """A permit_application owned by ``owner`` in the given lifecycle state, with
-    an optional related HCA permit."""
+    an optional related HCA permit. Pass organization to stamp the company whose
+    members may see it, as the create route does."""
     permit = builder.new_resource("permit_application")
     builder.append_blank_tile_for_group(
         permit,
@@ -49,6 +52,7 @@ def build_external_permit(builder, name, owner, lifecycle="Active", hca_permit=N
             "filing_type": reference_value(
                 "permit_application", "filing_type", "Site Visit"
             ),
+            "owning_organization": organization,
         },
     )
     builder.append_blank_tile_for_group(
@@ -140,13 +144,13 @@ class ExternalDashboardServiceTests(TestCase):
 
         hca = build_hca_permit(builder, "HCA-001", acme)
         cls.mine_active = build_external_permit(
-            builder, "Mine Active", cls.me, "Active", hca_permit=hca
+            builder, "Mine Active", cls.me, "Active", hca_permit=hca, organization=acme
         )
         cls.mine_draft_state = build_external_permit(
-            builder, "Mine Draft", cls.me, "Draft"
+            builder, "Mine Draft", cls.me, "Draft", organization=acme
         )
         cls.colleagues = build_external_permit(
-            builder, "Colleague App", cls.colleague, "Active"
+            builder, "Colleague App", cls.colleague, "Active", organization=acme
         )
         cls.outsiders = build_external_permit(
             builder, "Outsider App", cls.outsider, "Active"
@@ -276,7 +280,7 @@ class ExternalDashboardDraftsTests(TestCase):
         )
 
         self.assertEqual(page.count, 2)
-        card = next(c for c in page.results if c.id == str(self.draft.id))
+        card = next(c for c in page.results if c.id == str(self.draft.pk))
         self.assertTrue(card.is_draft)
         self.assertEqual(card.graph_slug, GraphSlugs.PERMIT_APPLICATION)
         self.assertEqual(card.status, "Submission Required")
@@ -289,7 +293,7 @@ class ExternalDashboardDraftsTests(TestCase):
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
         )
 
-        card = next(c for c in page.results if c.id == str(self.investigation_draft.id))
+        card = next(c for c in page.results if c.id == str(self.investigation_draft.pk))
         self.assertTrue(card.is_draft)
         self.assertEqual(card.graph_slug, GraphSlugs.INVESTIGATION)
 
@@ -298,7 +302,7 @@ class ExternalDashboardDraftsTests(TestCase):
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
         )
 
-        card = next(c for c in page.results if c.id == str(self.investigation_draft.id))
+        card = next(c for c in page.results if c.id == str(self.investigation_draft.pk))
         self.assertEqual(card.permit_application_id, str(self.permit.pk))
         self.assertEqual(card.project_name, "Parent Project")
         self.assertRegex(card.application_number, r"^APP-\d+$")
@@ -315,7 +319,7 @@ class ExternalDashboardDraftsTests(TestCase):
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), staff
         )
 
-        card = next(c for c in page.results if c.id == str(self.draft.id))
+        card = next(c for c in page.results if c.id == str(self.draft.pk))
         self.assertEqual(card.created_by_name, "branch-staff")
 
     def test_a_drafts_own_identification_wins_over_its_parents(self):
@@ -323,7 +327,7 @@ class ExternalDashboardDraftsTests(TestCase):
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS), self.user
         )
 
-        card = next(c for c in page.results if c.id == str(self.draft.id))
+        card = next(c for c in page.results if c.id == str(self.draft.pk))
         self.assertEqual(card.project_name, "Draft Project")
         self.assertEqual(card.permit_application_id, "")
 

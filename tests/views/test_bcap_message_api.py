@@ -170,7 +170,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
                 "message_content": {
                     "aliased_data": {
                         "resource_context": {
-                            "node_value": [{"resourceId": str(draft.id)}]
+                            "node_value": [{"resourceId": str(draft.pk)}]
                         },
                         "message_content": {
                             "node_value": {"en": {"value": "hi", "direction": "ltr"}}
