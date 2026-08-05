@@ -264,7 +264,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         # A whole-resource replace would reset every node the body omits, the
         # owning organization included. Submission goes through PATCH, and
         # nothing deletes a permit through the API.
-        pk = self._create()
+        pk = self.draft_pk
 
         self.assertEqual(self._put(pk, self._get(pk)).status_code, 405)
         self.assertEqual(
@@ -416,7 +416,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._requirement_count(), before)
 
     def test_failed_submission_rolls_back_requirements(self):
-        pk = self._create()
+        pk = self.draft_pk
         before = self._requirement_count()
         # Sets the submission date (so requirements clone) but nulls the
         # required project_name, so the save is rejected.
@@ -604,11 +604,11 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_permit_module_hosts_only_what_is_attached(self):
         """The permit module hosts the permit itself once submitted, and only
-        then: a permit with no module has no hosts, and a module with
+        then: a permit carrying no permit module has no hosts, and a module with
         requirements but no host resources has none for another type."""
         service = ProcessRequirementService()
 
-        self.assertEqual(service.permit_module_tiles(self._create(), "permit"), [])
+        self.assertEqual(service.permit_module_tiles(self.draft_pk, "permit"), [])
 
         # The own-submission requirement points back at the permit, linked after
         # the save because the id exists only then.
@@ -680,7 +680,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     def test_a_failed_link_rolls_the_clones_back_after_the_save(self):
         # The link runs after the permit is saved, so a failure there still
         # deletes every clone; the permit itself is already committed.
-        pk = self._create()
+        pk = self.draft_pk
         before = self._requirement_count()
 
         with mock.patch.object(
