@@ -6,14 +6,6 @@ vi.mock('vue-router', () => ({
     useRouter: () => ({ push }),
 }));
 
-vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
-    routeNames: {
-        baseModule: 'baseModule',
-        investigationModule: 'investigationModule',
-        permitDetails: 'permitDetails',
-    },
-}));
-
 const fetchDraftCards = vi.fn();
 const fetchCompanyDraftCards = vi.fn();
 const fetchMyProjects = vi.fn();

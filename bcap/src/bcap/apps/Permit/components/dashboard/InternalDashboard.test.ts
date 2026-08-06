@@ -8,10 +8,6 @@ vi.mock('vue-router', () => ({
     useRouter: () => ({ push }),
 }));
 
-vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
-    routeNames: { permitDetails: 'permitDetails' },
-}));
-
 // The dashboard data source is mocked so we control exactly what renders
 const getInternalDashboardData = vi.fn();
 vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({

@@ -9,6 +9,10 @@ const props = defineProps({
         type: String,
         default: 'my_projects',
     },
+    search: {
+        type: String,
+        default: '',
+    },
     tabs: {
         type: Array as PropType<Array<{ label: string; value: string }>>,
         default: () => [
@@ -72,8 +76,6 @@ const emit = defineEmits([
     'refresh',
 ]);
 
-const searchQuery = ref('');
-
 const formattedTime = computed(() => {
     if (!props.lastUpdated) return '';
     return new Intl.DateTimeFormat('en-US', {
@@ -92,8 +94,8 @@ const selectTab = (tabId: string) => {
     emit('update:activeTab', tabId);
 };
 
-const handleSearchInput = () => {
-    emit('update:search', searchQuery.value);
+const setSearch = (value: string) => {
+    emit('update:search', value);
 };
 
 const sortMenu = ref();
@@ -143,14 +145,11 @@ const sortMenuModel = computed(() => {
 // since there is no "no tab" state to clear it to.
 const activeFilters = computed(() => {
     const filters = [];
-    if (searchQuery.value)
+    if (props.search)
         filters.push({
             key: 'search',
-            label: `Search: ${searchQuery.value}`,
-            clear: () => {
-                searchQuery.value = '';
-                handleSearchInput();
-            },
+            label: `Search: ${props.search}`,
+            clear: () => setSearch(''),
         });
     if (props.messagesOnly && props.messagesOnlyLabel)
         filters.push({
@@ -238,21 +237,18 @@ const activeSortLabel = computed(() => {
         <div class="search-bar-wrapper">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <input
-                v-model="searchQuery"
+                :value="props.search"
                 type="text"
                 class="search-input"
                 placeholder="Search projects"
-                @input="handleSearchInput"
+                @input="setSearch(($event.target as HTMLInputElement).value)"
             />
             <Button
-                v-if="searchQuery"
+                v-if="props.search"
                 unstyled
                 class="icon-btn"
                 aria-label="Clear search"
-                @click="
-                    searchQuery = '';
-                    handleSearchInput();
-                "
+                @click="setSearch('')"
             >
                 <i class="fa-solid fa-xmark"></i>
             </Button>
