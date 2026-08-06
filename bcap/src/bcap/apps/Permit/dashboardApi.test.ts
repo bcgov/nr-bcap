@@ -1,16 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
 // Stand in for the runtime-injected `arches.urls` so these tests don't depend
 // on the real arches.js bundle resolving. Mirrors the patterns in bcap/urls.py.
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            api_process_requirements: (resource_id: string) =>
-                `/bcap/api/resource/process_requirement/${resource_id}`,
-            dashboard: '/bcap/api/dashboard',
-        },
-    },
-}));
 
 import {
     getProcessRequirementData,
@@ -61,7 +50,7 @@ describe('getProcessRequirementData', () => {
         const result = await getProcessRequirementData('p1');
 
         expect(fetch).toHaveBeenCalledWith(
-            '/bcap/api/resource/process_requirement/p1',
+            '/bcap/api/process_requirement/p1',
             expect.anything(),
         );
         expect(result).toEqual(data);

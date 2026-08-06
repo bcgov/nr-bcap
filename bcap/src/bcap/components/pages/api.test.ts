@@ -1,20 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
 // Stand in for the runtime-injected `arches.urls` so these tests don't depend
 // on the real arches.js bundle resolving. Mirrors the patterns in bcap/urls.py.
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            api_resource: (graph_slug: string, resource_id: string) =>
-                `/bcap/api/resource/${graph_slug}/${resource_id}`,
-            api_site_related_resources: (
-                graph_slug: string,
-                resource_id: string,
-            ) =>
-                `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
-        },
-    },
-}));
 
 import { getResourceData, getRelatedResourceData } from './api';
 

@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { ref, nextTick } from 'vue';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
@@ -10,16 +9,6 @@ const mockRouteQuery = ref<Record<string, string | undefined>>({
 
 vi.mock('vue-router', () => ({
     useRoute: () => ({ query: mockRouteQuery.value }),
-}));
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-            api_process_requirements: (id: string) =>
-                `/bcap/api/process_requirements/${id}`,
-        },
-    },
 }));
 
 // Only the header and requirement fetches are stubbed; the save path still goes
@@ -618,7 +607,7 @@ describe('TaskChecklist', () => {
             await wrapper.find('.save-btn').trigger('click');
             await flushPromises();
             expect(fetchMock.mock.calls[0][0]).toContain(
-                '/bcap/api/process_requirements/my-resource',
+                '/bcap/api/process_requirement/my-resource',
             );
             expect(fetchMock.mock.calls[0][1].method).toBe('PATCH');
         });

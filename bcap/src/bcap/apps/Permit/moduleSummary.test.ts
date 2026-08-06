@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 
 describe('buildModuleSummary', () => {

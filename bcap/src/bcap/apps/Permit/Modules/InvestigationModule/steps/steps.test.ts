@@ -1,22 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
-import { defineComponent } from 'vue';
 import { shallowMount } from '@vue/test-utils';
-
-// The steps embed arches widgets that pull in heavy runtime deps we don't need
-// for a render smoke test; stub them so shallowMount only exercises step markup.
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: defineComponent({
-            name: 'GenericWidget',
-            template: '<div />',
-        }),
-    }),
-);
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-    EDIT: 'edit',
-    VIEW: 'view',
-}));
 
 import Step1 from './Step1_About.vue';
 import Step2 from './Step2_Overview.vue';

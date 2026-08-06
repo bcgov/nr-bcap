@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 
 // Route is read for ProjectCard navigation; name becomes the card route. A card
@@ -22,13 +21,6 @@ vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
 }));
 
 // arches.urls.plugin() builds the checklist URL navigateToReport opens
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-        },
-    },
-}));
 
 import InternalDashboard from './InternalDashboard.vue';
 import { ProjectCardStub } from './testStubs.ts';

@@ -1,16 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
 // Stand in for the runtime-injected `arches.urls` so these tests don't depend
 // on the real arches.js bundle resolving. Mirrors the patterns in bcap/urls.py.
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            unlinked_contributors: '/bcap/api/unlinked_contributors',
-            assignable_groups: '/bcap/api/assignable_groups',
-            registration_link: '/bcap/api/registration_link',
-        },
-    },
-}));
 
 import {
     getUnlinkedContributors,

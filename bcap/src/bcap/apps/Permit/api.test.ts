@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
     dashboardScope,
     fetchDraft,
@@ -19,39 +18,6 @@ import {
     markMessageAsRead,
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            api_resource_blank: (graphSlug: string) =>
-                `/mock/blank/${graphSlug}`,
-            api_workflow_draft: (graphSlug: string) =>
-                `/mock/draft/${graphSlug}`,
-            api_workflow_draft_all: '/mock/drafts',
-            permit_application_create: '/mock/create/permit_application',
-            seed_process_requirements: (permitId: string, slug: string) =>
-                `/mock/seed/${permitId}/${slug}`,
-            dashboard_external: '/bcap/api/dashboard/external',
-            api_resource: (graph: string, pk: string) =>
-                `/bcap/api/resource/${graph}/${pk}`,
-            bcap_message_resource_threads: (resourceId: string) =>
-                `/mock/threads/${resourceId}`,
-            bcap_message_thread_messages: (threadId: string) =>
-                `/mock/thread/${threadId}`,
-            bcap_message_detail: (messageId: string) =>
-                `/mock/message/${messageId}`,
-            module_requirement: (
-                permitId: string,
-                moduleTileId: string,
-                requirementId: string,
-            ) =>
-                `/mock/${permitId}/module/${moduleTileId}/req/${requirementId}`,
-            assignable_contributors: '/mock/contributors/assignable',
-            api_process_requirements: (requirementId: string) =>
-                `/mock/process_requirement/${requirementId}`,
-        },
-    },
-}));
 
 // apiFetch returns a Response-like object (callers read
 // .json() themselves); apiFetchJson returns the parsed body directly. HttpMethod
@@ -99,7 +65,9 @@ describe('Permit API', () => {
 
             const result = await fetchDrafts();
 
-            expect(apiFetchJson).toHaveBeenCalledWith('/mock/drafts');
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/workflow_draft',
+            );
             expect(result).toEqual(drafts);
         });
 
@@ -109,7 +77,7 @@ describe('Permit API', () => {
             await fetchDrafts('permit-1');
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/drafts?parent=permit-1',
+                '/bcap/api/workflow_draft?parent=permit-1',
             );
         });
 
@@ -131,7 +99,7 @@ describe('Permit API', () => {
             const result = await fetchDraft('investigation', 'draft-1');
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/draft/investigation/draft-1',
+                '/bcap/api/workflow_draft/investigation/draft-1',
             );
             expect(result).toEqual(draft);
         });
@@ -145,7 +113,7 @@ describe('Permit API', () => {
             const result = await createDraft('investigation');
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/draft/investigation',
+                '/bcap/api/workflow_draft/investigation',
                 {
                     method: 'POST',
                     body: { data: {} },
@@ -160,7 +128,7 @@ describe('Permit API', () => {
             await createDraft('investigation', 'permit-1');
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/draft/investigation',
+                '/bcap/api/workflow_draft/investigation',
                 {
                     method: 'POST',
                     body: { data: {}, parent_resource_id: 'permit-1' },
@@ -209,7 +177,7 @@ describe('Permit API', () => {
             );
 
             expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/permit-1/module/module-tile-1/req/req-1',
+                '/bcap/api/permit_application/permit-1/module/module-tile-1/requirement/req-1',
                 { method: 'PATCH', body: { contributor_id: 'contributor-1' } },
             );
 
@@ -222,7 +190,7 @@ describe('Permit API', () => {
             );
 
             expect(apiFetch).toHaveBeenLastCalledWith(
-                '/mock/permit-1/module/module-tile-1/req/req-1',
+                '/bcap/api/permit_application/permit-1/module/module-tile-1/requirement/req-1',
                 { method: 'PATCH', body: { contributor_id: null } },
             );
         });
@@ -235,7 +203,7 @@ describe('Permit API', () => {
 
             expect(await fetchAssignableContributors()).toEqual(contributors);
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/contributors/assignable',
+                '/bcap/api/contributors/assignable',
             );
 
             apiFetchJson.mockResolvedValue(null);
@@ -251,7 +219,7 @@ describe('Permit API', () => {
             await patchProcessRequirement('req-1', aliasedData as never);
 
             expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/process_requirement/req-1',
+                '/bcap/api/process_requirement/req-1',
                 { method: 'PATCH', body: { aliased_data: aliasedData } },
             );
         });
@@ -286,7 +254,7 @@ describe('Permit API', () => {
             await deleteDraft('investigation', 'draft-9');
 
             expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/draft/investigation/draft-9',
+                '/bcap/api/workflow_draft/investigation/draft-9',
                 { method: 'DELETE' },
             );
         });
@@ -306,14 +274,14 @@ describe('Permit API', () => {
             );
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/seed/permit-1/investigation',
+                '/bcap/api/permit_application/permit-1/process_requirement/investigation',
                 {
                     method: 'POST',
                     body: { aliased_data: { a: 1 } },
                 },
             );
             expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/draft/investigation/draft-7',
+                '/bcap/api/workflow_draft/investigation/draft-7',
                 { method: 'DELETE' },
             );
             expect(result).toEqual(finalResource);
@@ -360,7 +328,7 @@ describe('Permit API', () => {
             const result = await submitApplication('draft-123', payload);
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/create/permit_application',
+                '/bcap/api/permit_application',
                 {
                     method: 'POST',
                     body: {
@@ -385,7 +353,7 @@ describe('Permit API', () => {
             );
 
             expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/draft/permit_application/draft-123',
+                '/bcap/api/workflow_draft/permit_application/draft-123',
                 { method: 'DELETE' },
             );
 
@@ -428,7 +396,7 @@ describe('Permit API', () => {
             const threads = await getThreadsForResource('res-1');
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/threads/res-1?archived=false',
+                '/bcap/api/bcap_message/resource/res-1/threads?archived=false',
             );
             expect(threads).toEqual([
                 {
@@ -448,7 +416,7 @@ describe('Permit API', () => {
             await getThreadsForResource('res-1', true);
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/mock/threads/res-1?archived=true',
+                '/bcap/api/bcap_message/resource/res-1/threads?archived=true',
             );
         });
 
@@ -504,7 +472,9 @@ describe('Permit API', () => {
 
             const messages = await getMessagesForThread('t1');
 
-            expect(apiFetchJson).toHaveBeenCalledWith('/mock/thread/t1');
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/bcap_message/thread/t1',
+            );
             expect(messages.map((m) => m.id)).toEqual(['m1', 'm2']);
             expect(messages[0]).toMatchObject({
                 author: 'Amy',
@@ -525,7 +495,7 @@ describe('Permit API', () => {
 
             await setThreadArchived('m1', true);
 
-            expect(apiFetch).toHaveBeenCalledWith('/mock/message/m1', {
+            expect(apiFetch).toHaveBeenCalledWith('/bcap/api/bcap_message/m1', {
                 method: 'PATCH',
                 body: { archived: true },
             });
@@ -539,7 +509,7 @@ describe('Permit API', () => {
             await markMessageAsRead('m1');
 
             expect(apiFetch).toHaveBeenCalledWith(
-                '/mock/message/m1',
+                '/bcap/api/bcap_message/m1',
                 expect.objectContaining({ method: 'PATCH' }),
             );
             const body = apiFetch.mock.calls[0][1].body;

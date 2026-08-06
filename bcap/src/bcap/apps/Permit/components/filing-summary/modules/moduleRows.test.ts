@@ -1,13 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-        },
-    },
-}));
 
 const { fetchRequirementDetails } = vi.hoisted(() => ({
     fetchRequirementDetails: vi.fn(),

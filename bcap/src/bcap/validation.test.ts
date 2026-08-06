@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import * as z from 'zod';
 import { isFilled, buildTileValidation } from './validation';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';

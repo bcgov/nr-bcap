@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 
@@ -27,14 +26,6 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchMyProjects: (...args: unknown[]) => fetchMyProjects(...args),
     fetchCompanyProjects: (...args: unknown[]) => fetchCompanyProjects(...args),
     deleteDraft: (...args: unknown[]) => deleteDraft(...args),
-}));
-
-vi.mock('vue3-gettext', () => ({
-    useGettext: () => ({ $gettext: (text: string) => text }),
-}));
-
-vi.mock('arches', () => ({
-    default: { urls: { plugin: (slug: string) => `/plugins/${slug}` } },
 }));
 
 import SubmissionsDashboard from './SubmissionsDashboard.vue';

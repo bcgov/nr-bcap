@@ -1,36 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-        },
-    },
-}));
 
 // The app mounts <Toast /> at its root; the composable only needs somewhere to
 // hand a failure to.
 const toastAdd = vi.hoisted(() => vi.fn());
 vi.mock('primevue/usetoast', () => ({
     useToast: () => ({ add: toastAdd }),
-}));
-
-// ReviewSummary (a child) pulls in arches-component-lab, whose tsconfig has a
-// broken extends that crashes the esbuild transform. Mock the two entry points
-// so those files are never loaded.
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: { name: 'GenericWidget', template: '<div />' },
-    }),
-);
-
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-    EDIT: 'edit',
-    VIEW: 'view',
 }));
 
 // Mutated per test so a drill-in query can be simulated.

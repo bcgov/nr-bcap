@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
 import { apiFetch } from './api';
 
 describe('apiFetch', () => {
