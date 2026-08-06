@@ -1,4 +1,3 @@
-import type { ArchesDraftData } from '@/bcap/types.ts';
 import { getCsrfToken } from '@/bcap/util.ts';
 
 export enum HttpMethod {
@@ -57,30 +56,4 @@ export const apiFetchJson = async <T>(
 ): Promise<T> => {
     const response = await apiFetch(url, options);
     return (await response.json()) as T;
-};
-
-export const saveDraftFieldToBackend = async (
-    draftId: string,
-    graphSlug: string,
-    fullDraftData: ArchesDraftData,
-    currentStep?: string,
-) => {
-    try {
-        const patchUrl = `/bcap/api/workflow_draft/${graphSlug}/${draftId}`;
-        const payload: { data: ArchesDraftData; current_step?: string } = {
-            data: fullDraftData,
-        };
-        if (currentStep) {
-            payload.current_step = currentStep;
-        }
-
-        await apiFetch(patchUrl, {
-            method: HttpMethod.Patch,
-            body: payload,
-        });
-
-        console.log('Successfully auto-saved full draft data.');
-    } catch (error) {
-        console.error('Failed to auto-save draft data:', error);
-    }
 };

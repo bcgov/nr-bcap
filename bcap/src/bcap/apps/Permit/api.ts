@@ -96,6 +96,26 @@ export const deleteDraft = async (
     });
 };
 
+export const saveDraftFieldToBackend = async (
+    draftId: string,
+    graphSlug: string,
+    fullDraftData: ArchesDraftData,
+    currentStep?: string,
+): Promise<void> => {
+    const payload: { data: ArchesDraftData; current_step?: string } = {
+        data: fullDraftData,
+    };
+    if (currentStep) payload.current_step = currentStep;
+    try {
+        await apiFetch(
+            `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`,
+            { method: HttpMethod.Patch, body: payload },
+        );
+    } catch (error) {
+        console.error('Failed to auto-save draft data:', error);
+    }
+};
+
 type ExternalDashboardStatus = NonNullable<
     ApiDashboardExternalRetrieveData['query']
 >['status'];
