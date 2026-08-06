@@ -327,6 +327,21 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
 
         self.assertEqual({row["id"] for row in resp.json()}, {mine.id})
 
+    def test_a_draft_left_at_a_former_organization_is_no_longer_visible(self):
+        """Creating it is not enough: the stamp hands the draft to the company,
+        so leaving takes the author's own access with them."""
+        org_id = str(self.org.pk)
+        with patch.object(
+            OrganizationService, "organization_ids", return_value={org_id}
+        ):
+            self._create_draft(user=self.lister, organization_id=org_id)
+        with patch.object(OrganizationService, "organization_ids", return_value=set()):
+            mine = self._create_draft(user=self.lister)
+            self.idir_login_simulate(self.lister)
+            resp = self.client.get(self.list_url)
+
+        self.assertEqual({row["id"] for row in resp.json()}, {mine.id})
+
     def test_a_member_of_several_organizations_has_to_pick_one(self):
         both = {str(self.org.pk), str(uuid.uuid4())}
         with patch.object(OrganizationService, "organization_ids", return_value=both):

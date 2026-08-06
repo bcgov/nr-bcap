@@ -49,19 +49,20 @@ class WorkflowDraftService(BaseGraphService):
 
     def queryset(self, user, graph_slug=None, parent_resource_id=None, own_only=False):
         """A user's drafts and their associated companies', oldest first; branch
-        staff get no widening. own_only narrows to the ones the user created.
-        Graph and parent filter in SQL, so no caller loads them all."""
+        staff get no widening. own_only narrows to the ones the user created,
+        within what they may see rather than instead of it, so a draft left at a
+        former company stays hidden. Graph and parent filter in SQL, so no caller
+        loads them all."""
         qs = ResourceTileTree.get_tiles(
             GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
         )
+        qs = qs.filter(
+            OrganizationService().visible_to(
+                user, WorkflowDraftsAliases.OWNING_ORGANIZATION
+            )
+        )
         if own_only:
             qs = qs.filter(principaluser=user)
-        else:
-            qs = qs.filter(
-                OrganizationService().visible_to(
-                    user, WorkflowDraftsAliases.OWNING_ORGANIZATION
-                )
-            )
         if graph_slug is not None:
             qs = qs.filter(**{WorkflowDraftsAliases.GRAPH_SLUG: graph_slug})
         if parent_resource_id:

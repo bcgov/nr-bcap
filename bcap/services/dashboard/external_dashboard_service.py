@@ -85,18 +85,17 @@ class ExternalDashboardService(BaseDashboardService):
     def _filter_by_status(self, queryset, status, user):
         """Created-by scoping. The seam for a future applicant-field match:
         only this method knows how a user/company maps to applications."""
+        visible = OrganizationService().visible_to(user, self.PA.OWNING_ORGANIZATION)
         match status:
-            case ExternalDashboardStatus.FILINGS_CREATED_BY_ME:
-                return queryset.filter(principaluser=user)
             case ExternalDashboardStatus.FILINGS_BY_ASSOCIATED_ORGANIZATIONS:
                 # Inclusive: the organizations' filings plus the user's own, so
                 # the client swaps one list for the other rather than merging.
-                return queryset.filter(
-                    OrganizationService().visible_to(user, self.PA.OWNING_ORGANIZATION)
-                )
+                return queryset.filter(visible)
             case _:
-                # Unrecognized/unset status: scope to own applications.
-                return queryset.filter(principaluser=user)
+                # Created by me, and anything unrecognized. Narrows what they may
+                # see rather than replacing it, so a filing left behind at a
+                # former company doesn't come back on this tab.
+                return queryset.filter(visible, principaluser=user)
 
     def _application_card(self, permit, hca_permits, unread_messages=0):
         core = self._application_core(permit.aliased_data)

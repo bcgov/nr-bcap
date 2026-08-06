@@ -106,6 +106,14 @@ class ExternalDashboardServiceTests(TestCase):
         cls.outsiders = build_external_permit(
             builder, "Outsider App", cls.outsider, "Active"
         )
+        # Filed by Grace under a company she has since left.
+        cls.left_behind = build_external_permit(
+            builder,
+            "Former Company App",
+            cls.me,
+            "Active",
+            organization=make_contributor(builder, "Former Corp"),
+        )
         cls.hca_id = str(hca.pk)
 
     def test_created_by_me_returns_only_the_users_own_applications(self):
@@ -119,6 +127,15 @@ class ExternalDashboardServiceTests(TestCase):
             {card.id for card in page.results},
             {str(self.mine_active.pk), str(self.mine_draft_state.pk)},
         )
+
+    def test_created_by_me_drops_a_filing_left_at_a_former_company(self):
+        # Creating it is not enough: the stamp handed it to that company.
+        page = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.FILINGS_CREATED_BY_ME),
+            self.me,
+        )
+
+        self.assertNotIn(str(self.left_behind.pk), {card.id for card in page.results})
 
     def test_no_status_defaults_to_created_by_me(self):
         page = self.service.get_cards(DashboardFilter(), self.me)
