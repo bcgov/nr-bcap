@@ -1,5 +1,6 @@
 import arches from 'arches';
 import type { RouteNamesType } from '@/bcgov_arches_common/routes.ts';
+
 const routes = [
     {
         path: arches.urls.plugin('submissions'),
@@ -108,6 +109,16 @@ const routes = [
         },
     },
     {
+        path: arches.urls.plugin('submissions/documentSubmission'),
+        name: 'documentSubmission',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/DocumentSubmissionModule/DocumentSubmissionModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
+    {
         path: arches.urls.plugin('internal-permit-dashboard/checklist'),
         name: 'Checklist',
         component: () =>
@@ -134,6 +145,7 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
     investigationModule: string;
     methodsModule: string;
     recordingsModule: string;
+    documentSubmission: string;
 };
 
 const routeNames: ExternalPermitRouteNamesType = {
@@ -150,6 +162,8 @@ const routeNames: ExternalPermitRouteNamesType = {
     investigationModule: 'investigationModule',
     methodsModule: 'methodsModule',
     recordingsModule: 'recordingsModule',
+    documentSubmission: 'documentSubmission',
 };
+
 export { routes, routeNames };
 export type { ExternalPermitRouteNamesType };
