@@ -157,6 +157,16 @@ class Command(BaseCommand):
             if not source_graph.get_draft_graph():
                 source_graph.create_draft_graph()
             source_graph.promote_draft_graph_to_active_graph()
+            # delete_associated_entities() only removes widgets present in
+            # self.widgets, which is loaded from the published snapshot via
+            # should_use_published_graph(). CNW rows in the live table that
+            # were absent from the snapshot survive the promote and cause PK
+            # collisions when import_graphs tries to INSERT changed combinations.
+            # Delete all source CNW rows directly from the live table.
+            arches_models.CardXNodeXWidget.objects.filter(
+                card__graph_id=graphid,
+                source_identifier__isnull=True,
+            ).delete()
             self.stdout.write(f"  prepared: {slug}")
 
     def _publish_and_sync_resources(self, paths):
