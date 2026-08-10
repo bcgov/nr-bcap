@@ -11,6 +11,7 @@ import MessageThreadSidebar from '@/bcap/apps/Permit/components/common/messages/
 import MessageHistory from '@/bcap/apps/Permit/components/common/messages/MessageHistory.vue';
 import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messages/MessageAttachmentsField.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 // The dialog shows the threads on one resource, scoped by its id: the permit for
 // the permit view, or a module's own resource for that module's view. context is a
@@ -47,9 +48,10 @@ const state = reactive({
 const messageInput = ref();
 const threadContainer = ref<HTMLElement | null>(null);
 
-// The widget emits the Message Type list item's display label, single-select.
-const onTopicSelected = (displayValues: string[]) => {
-    state.selectedTopic = displayValues[0] ?? '';
+// The topic is used as a label, so read display_value: node_value is a list of
+// reference objects, not strings.
+const onTopicSelected = (node: AliasedNodeData) => {
+    state.selectedTopic = node.display_value ?? '';
 };
 
 const visibleThreads = computed(() =>
@@ -340,9 +342,7 @@ onMounted(() => {
                                     :graph-slug="GraphSlug.BcapMessage"
                                     node-alias="message_type"
                                     mode="edit"
-                                    @update:value="
-                                        onTopicSelected($event as string[])
-                                    "
+                                    @update:aliased-node-data="onTopicSelected"
                                 />
                             </div>
                         </div>

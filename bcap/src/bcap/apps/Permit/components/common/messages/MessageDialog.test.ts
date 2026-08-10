@@ -31,6 +31,16 @@ describe('MessageDialog.vue', () => {
         vi.mocked(getMessagesForThread).mockResolvedValue([]);
     });
 
+    // node_value carries reference objects, not labels, so a topic that reads
+    // back as the label proves the dialog took it from display_value.
+    const topicNode = (label: string) => ({
+        display_value: label,
+        node_value: [
+            { list_id: 'list-1', uri: 'https://example.org/1', labels: [] },
+        ],
+        details: [],
+    });
+
     // The dialog loads its own threads; the archived tab loads a second list.
     const withThreads = (active: unknown[], archived: unknown[] = []) => {
         vi.mocked(getThreadsForResource).mockImplementation(
@@ -255,7 +265,7 @@ describe('MessageDialog.vue', () => {
 
         await wrapper
             .findComponent({ name: 'GenericWidget' })
-            .vm.$emit('update:value', ['General Question']);
+            .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
         await wrapper.find('textarea').setValue('This is my question.');
 
         await wrapper.findAll('.mock-button')[1].trigger('click');
@@ -330,7 +340,7 @@ describe('MessageDialog.vue', () => {
 
         await wrapper
             .findComponent({ name: 'GenericWidget' })
-            .vm.$emit('update:value', ['General Question']);
+            .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
         await wrapper.find('textarea').setValue('A question.');
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
@@ -375,9 +385,16 @@ describe('MessageDialog.vue', () => {
 
         // Topic widget first, attachments widget second.
         const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
-        await widgets[0].vm.$emit('update:value', ['General Question']);
+        await widgets[0].vm.$emit(
+            'update:aliasedNodeData',
+            topicNode('General Question'),
+        );
         const file = new File(['x'], 'plan.pdf');
-        await widgets[1].vm.$emit('update:value', [{ name: 'plan.pdf', file }]);
+        await widgets[1].vm.$emit('update:aliasedNodeData', {
+            display_value: 'plan.pdf',
+            node_value: [{ name: 'plan.pdf', file }],
+            details: [],
+        });
         await wrapper.find('textarea').setValue('See attached.');
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();

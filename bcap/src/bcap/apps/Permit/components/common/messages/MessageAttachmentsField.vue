@@ -2,6 +2,7 @@
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import { formatFileSize } from '@/bcap/util.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 const props = defineProps<{
     files: File[];
@@ -11,11 +12,12 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update:files', files: File[]): void }>();
 
-// The file widget emits an entry per staged file; the raw File rides in .file.
-const onFilesSelected = (value: Array<{ file?: File }>) => {
+// One node_value entry per staged file. The raw File rides in .file, which the
+// widget's own FileReference type doesn't declare, hence the cast.
+const onFilesSelected = (node: AliasedNodeData) => {
     emit(
         'update:files',
-        (value ?? [])
+        ((node.node_value ?? []) as Array<{ file?: File }>)
             .map((entry) => entry.file)
             .filter((file): file is File => Boolean(file)),
     );
@@ -40,9 +42,7 @@ const removeFile = (index: number) => {
                 :graph-slug="GraphSlug.BcapMessage"
                 node-alias="attachments"
                 mode="edit"
-                @update:value="
-                    onFilesSelected($event as Array<{ file?: File }>)
-                "
+                @update:aliased-node-data="onFilesSelected"
             />
         </div>
 

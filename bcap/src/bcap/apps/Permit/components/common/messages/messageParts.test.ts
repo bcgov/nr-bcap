@@ -193,7 +193,11 @@ describe('MessageAttachmentsField', () => {
 
         wrapper
             .findComponent({ name: 'GenericWidget' })
-            .vm.$emit('update:value', [{ file: plan }, { file: undefined }]);
+            .vm.$emit('update:aliasedNodeData', {
+                display_value: 'plan.pdf',
+                node_value: [{ file: plan }, { file: undefined }],
+                details: [],
+            });
 
         // Entries without a file (a widget row still uploading) are dropped.
         expect(wrapper.emitted('update:files')).toEqual([[[plan]]]);
