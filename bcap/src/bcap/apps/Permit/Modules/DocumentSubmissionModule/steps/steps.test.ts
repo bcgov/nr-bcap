@@ -207,7 +207,9 @@ describe('DocumentSubmissionModule extended coverage', () => {
         }
 
         // Expose save method check
-        expect(await (wrapper.vm as any).save()).toBe(true);
+        expect(
+            await (wrapper.vm as { save: () => Promise<boolean> }).save(),
+        ).toBe(true);
     });
 
     // Tests lines 34-35, 46, 55-56, 62 in Step 99
@@ -371,5 +373,7 @@ it('Step4_Photographs full component interaction', async () => {
         if (deleteIcon.exists()) await deleteIcon.trigger('click');
     }
 
-    expect(await (wrapper.vm as any).save()).toBe(true);
+    expect(await (wrapper.vm as { save: () => Promise<boolean> }).save()).toBe(
+        true,
+    );
 });
