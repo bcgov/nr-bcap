@@ -7,7 +7,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleTracker = require("webpack-bundle-tracker");
 
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const { VueLoaderPlugin } = require("vue-loader");
+
+const {
+    requireVueLoaderWithTypeResolutionPatch,
+} = require("./webpack-utils/patch-vue-compiler-sfc-type-resolution");
+const { VueLoaderPlugin } = requireVueLoaderWithTypeResolutionPatch();
 
 const {
     buildFilepathLookup,
