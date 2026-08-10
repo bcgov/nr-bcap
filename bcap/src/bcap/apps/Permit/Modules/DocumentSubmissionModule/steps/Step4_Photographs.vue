@@ -91,6 +91,7 @@ const updateCurrentValue = (
         newValue &&
         typeof newValue.node_value === 'string'
     ) {
+        // correcting date format
         const val = newValue.node_value;
         if (/^\d{4}$/.test(val)) {
             newValue.node_value = `${val}-01-01T00:00:00Z`;
