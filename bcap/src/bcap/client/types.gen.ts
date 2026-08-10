@@ -13786,23 +13786,6 @@ export type ApiWorkflowDraftPartialUpdateResponses = {
 export type ApiWorkflowDraftPartialUpdateResponse =
     ApiWorkflowDraftPartialUpdateResponses[keyof ApiWorkflowDraftPartialUpdateResponses];
 
-export type ApiWorkflowDraftUpdateData = {
-    body: DraftPayloadWritable;
-    path: {
-        graph_slug: string;
-        id: string;
-    };
-    query?: never;
-    url: '/bcap/api/workflow_draft/{graph_slug}/{id}';
-};
-
-export type ApiWorkflowDraftUpdateResponses = {
-    200: DraftRecord;
-};
-
-export type ApiWorkflowDraftUpdateResponse =
-    ApiWorkflowDraftUpdateResponses[keyof ApiWorkflowDraftUpdateResponses];
-
 export type UserProfileRetrieveData = {
     body?: never;
     path?: never;

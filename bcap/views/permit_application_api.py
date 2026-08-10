@@ -50,7 +50,7 @@ class PermitApplicationView(GeneratedPermitApplicationView):
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
             PA.OWNING_ORGANIZATION,
         )
-        return PermitApplicationService().submit(
+        return PermitApplicationService(request).submit(
             self.get_object(),
             request.data,
             save=lambda: super(PermitApplicationView, self).update(
@@ -76,7 +76,7 @@ class PermitApplicationCreateView(GeneratedPermitApplicationListView):
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
             PA.OWNING_ORGANIZATION,
         )
-        return PermitApplicationService().create(
+        return PermitApplicationService(request).create(
             request.data,
             save=lambda: super(PermitApplicationCreateView, self).create(
                 request, *args, **kwargs

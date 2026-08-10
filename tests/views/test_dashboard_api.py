@@ -8,7 +8,7 @@ from bcap.services.dashboard.dashboard_types import (
 )
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.test_internal_dashboard_service import build_permit_graph
 from tests.services.test_external_dashboard_service import (
@@ -153,7 +153,7 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
             builder, "My App", cls.user, "Active", hca_permit=hca
         )
         cls.draft = WorkflowDraftService().create(
-            cls.user,
+            request_as(cls.user),
             "permit_application",
             {
                 "aliased_data": {

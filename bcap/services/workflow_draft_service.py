@@ -81,7 +81,7 @@ class WorkflowDraftService(BaseGraphService):
 
     def create(
         self,
-        user,
+        request,
         graph_slug,
         data,
         publication_id="",
@@ -91,7 +91,9 @@ class WorkflowDraftService(BaseGraphService):
     ):
         """Create a draft owned by the user, stamping the graph publication, the
         organization whose members may see it, and the save time. The caller
-        settles which organization that is (see organization_to_stamp)."""
+        settles which organization that is (see organization_to_stamp). Takes the
+        request so the edit log records who saved."""
+        user = request.user
         draft = ResourceTileTree(
             graph_id=get_current_graph(GraphSlugs.WORKFLOW_DRAFTS).pk,
             **{
@@ -120,15 +122,16 @@ class WorkflowDraftService(BaseGraphService):
                 },
             },
         )
-        draft.save(user=user, force_admin=True, partial=False, index=True)
+        draft.save(request=request, partial=False, index=True)
         ResourceInstance.objects.filter(pk=draft.pk).update(principaluser=user)
         self._write_blob_no_audit(draft.pk, data or {})
         return self.queryset(user, own_only=True).filter(pk=draft.pk).first()
 
-    def set_data(self, user, pk, data, current_step=None):
+    def set_data(self, request, pk, data, current_step=None):
         """Replace a draft's blob with the caller's fully-merged data and
         re-stamp the save time. Pass current_step to move the step marker too;
-        omit it to leave the stored one alone."""
+        omit it to leave the stored one alone. Takes the request so the edit log
+        records who saved."""
         tile = TileTree.get_tiles(
             GraphSlugs.WORKFLOW_DRAFTS,
             WorkflowDraftsGroupAliases.FILING_INFO,
@@ -139,10 +142,10 @@ class WorkflowDraftService(BaseGraphService):
         filing.updated_date = datetime.now(timezone.utc).isoformat()
         if current_step is not None:
             filing.current_step = current_step
-        tile.save(user=user, force_admin=True, partial=True, index=True)
+        tile.save(request=request, partial=True, index=True)
 
         self._write_blob_no_audit(pk, data)
-        return self.get(user, pk)
+        return self.get(request.user, pk)
 
     @classmethod
     def _write_blob_no_audit(cls, pk, data):

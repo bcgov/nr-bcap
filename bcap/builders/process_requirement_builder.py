@@ -143,7 +143,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
         kept = {str(tile.tileid) for tile in reconciled}
         removed = [tile for tileid, tile in existing.items() if tileid not in kept]
         data.aliased_data.sub_requirement_n1 = reconciled
-        requirement.save(force_admin=True, partial=True, index=False)
+        requirement.save(**self._save_as, partial=True, index=False)
         for tile in removed:
             Tile.objects.get(pk=tile.tileid).delete()
         return requirement
@@ -162,7 +162,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
             )
         else:
             assessment.aliased_data.requirement_status = satisfied
-        requirement.save(force_admin=True, partial=True, index=False)
+        requirement.save(**self._save_as, partial=True, index=False)
         return requirement
 
     def clone_requirement(self, template_id, parent=None, submission=None):

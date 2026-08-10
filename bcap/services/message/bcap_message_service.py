@@ -93,8 +93,9 @@ class BcapMessageService(BaseGraphService):
         )
         return str(context_id) if context_id else None
 
-    def set_read_state(self, message_id, data):
-        """Set (a datetime) or clear (None) a message's read date from a PATCH body."""
+    def set_read_state(self, request, message_id, data):
+        """Set (a datetime) or clear (None) a message's read date from a PATCH
+        body. Takes the request so the edit log records who saved."""
         if not self._payload_has(data, self.A.MESSAGE_READ_DATE):
             return None
         read_date = self._payload_node_value(data, self.A.MESSAGE_READ_DATE)
@@ -103,8 +104,7 @@ class BcapMessageService(BaseGraphService):
         ).get()
         content = message.aliased_data.message_content.aliased_data
         content.message_read_date = parse_iso_or_set_value(read_date)
-        # Save as a reviewer (admin): provisional edit applies if not?
-        message.save(request=None, force_admin=True, partial=True)
+        message.save(request=request, partial=True)
         return message
 
     def set_archived_state(self, message_id, data, username):

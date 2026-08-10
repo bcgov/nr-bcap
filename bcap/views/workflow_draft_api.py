@@ -183,7 +183,7 @@ class WorkflowDraftListCreateView(WorkflowDraftBaseView):
         self.verify_parent_resource_access(body.parent_resource_id)
         graph = get_current_graph(graph_slug)
         draft = self.store.create(
-            request.user,
+            request,
             graph_slug,
             body.data,
             publication_id=graph.publication_id if graph else "",
@@ -196,10 +196,10 @@ class WorkflowDraftListCreateView(WorkflowDraftBaseView):
 
 @extend_schema(tags=["External: workflow_draft"])
 class WorkflowDraftDetailView(WorkflowDraftBaseView):
-    """GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-    shallow-merges by section key -- untouched sections are kept, but a section
-    present in the body is replaced wholesale (no deep merge), so the client must
-    send the complete section, not just changed fields within it."""
+    """GET/PATCH/DELETE a single draft. PATCH shallow-merges by section key --
+    untouched sections are kept, but a section present in the body is replaced
+    wholesale (no deep merge), so the client sends the complete section, not just
+    the fields that changed within it, and clears one by sending it empty."""
 
     def _get_or_404(self, request, pk):
         resource = self.store.get(request.user, pk)
@@ -211,23 +211,13 @@ class WorkflowDraftDetailView(WorkflowDraftBaseView):
     def get(self, request, graph_slug, pk):
         return self.respond(self._get_or_404(request, pk))
 
-    def _save(self, request, pk, data, body):
-        """Store the blob plus whatever step the body carries, serialized."""
-        draft = self.store.set_data(request.user, pk, data, body.current_step)
-        return self.respond(draft)
-
-    @extend_schema(request=DraftPayloadSerializer, responses=WorkflowDraftSerializer)
-    def put(self, request, graph_slug, pk):
-        self._get_or_404(request, pk)
-        body = self.payload(request)
-        return self._save(request, pk, body.data, body)
-
     @extend_schema(request=DraftPayloadSerializer, responses=WorkflowDraftSerializer)
     def patch(self, request, graph_slug, pk):
         resource = self._get_or_404(request, pk)
         body = self.payload(request)
         merged = {**self.store.blob(resource), **body.data}
-        return self._save(request, pk, merged, body)
+        draft = self.store.set_data(request, pk, merged, body.current_step)
+        return self.respond(draft)
 
     @extend_schema(responses={204: None})
     def delete(self, request, graph_slug, pk):

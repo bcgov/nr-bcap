@@ -13,7 +13,7 @@ from bcap.services.message.bcap_message_service import (
     NoAuthorContributor,
 )
 from bcap.util.aliases.bcap_message import BcapMessageAliases as A
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.contributor_fixtures import (
     make_contributor,
@@ -459,7 +459,9 @@ class BcapMessageArchiveTests(TestCase):
     def test_read_setter_noops_without_its_node(self):
         # A body carrying no read date (e.g. an archive-only PATCH) leaves the
         # read state untouched, so read and archive share one endpoint safely.
-        self.assertIsNone(self.service.set_read_state(self.root.pk, {}))
+        self.assertIsNone(
+            self.service.set_read_state(request_as(self.staff), self.root.pk, {})
+        )
 
 
 class BcapMessagePartyAndPayloadTests(TestCase):

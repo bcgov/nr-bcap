@@ -13,7 +13,7 @@ from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
 )
 from bcap.util.controlled_list import reference_value
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.permit_fixtures import build_permit
 from tests.services.contributor_fixtures import (
     make_contributor,
@@ -237,7 +237,7 @@ class ExternalDashboardDraftsTests(TestCase):
             FixtureBuilder(), "Parent Project", cls.user, "Active"
         )
         cls.draft = WorkflowDraftService().create(
-            cls.user,
+            request_as(cls.user),
             "permit_application",
             {
                 "application_identification": {
@@ -249,13 +249,13 @@ class ExternalDashboardDraftsTests(TestCase):
             },
         )
         cls.investigation_draft = WorkflowDraftService().create(
-            cls.user,
+            request_as(cls.user),
             GraphSlugs.INVESTIGATION,
             {},
             parent_resource_id=str(cls.permit.pk),
         )
         # Another user's draft, which must not surface.
-        WorkflowDraftService().create(cls.other, "permit_application", {})
+        WorkflowDraftService().create(request_as(cls.other), "permit_application", {})
 
     def test_drafts_scope_returns_only_the_users_drafts(self):
         page = self.service.get_cards(
@@ -345,12 +345,15 @@ class ExternalDashboardCompanyDraftsTests(TestCase):
 
         store = WorkflowDraftService()
         cls.mine = store.create(
-            cls.me, "permit_application", {}, organization_id=cls.acme_id
+            request_as(cls.me), "permit_application", {}, organization_id=cls.acme_id
         )
         cls.colleagues = store.create(
-            cls.colleague, "permit_application", {}, organization_id=cls.acme_id
+            request_as(cls.colleague),
+            "permit_application",
+            {},
+            organization_id=cls.acme_id,
         )
-        cls.outsiders = store.create(cls.outsider, "permit_application", {})
+        cls.outsiders = store.create(request_as(cls.outsider), "permit_application", {})
 
     def test_organization_scope_spans_the_organizations_drafts(self):
         page = self.service.get_cards(
@@ -414,7 +417,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
             graph__slug=GraphSlugs.WORKFLOW_DRAFTS, principaluser=self.user
         ).delete()
         WorkflowDraftService().create(
-            self.user,
+            request_as(self.user),
             "permit_application",
             data,
             parent_resource_id=parent_resource_id,

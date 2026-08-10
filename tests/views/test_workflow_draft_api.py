@@ -1,5 +1,5 @@
 """Tests for the generic per-user draft endpoints: a resource editor can POST a
-draft, PATCH-merge sections into it, PUT-replace the whole blob, and DELETE it;
+draft, PATCH-merge sections into it, and DELETE it;
 drafts are owner-scoped for external applicants (ministry staff see all), and the
 graph publication is stamped on create so a stale draft can be detected. Drafts are stored as
 resources of the 'drafts' graph (see WorkflowDraftService), not a bespoke table."""
@@ -25,7 +25,7 @@ from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import reference_value
 from bcap.util.graph import get_current_graph
 
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.views.helpers import AuthTestHelper
 
@@ -86,7 +86,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
     def _seed_draft(cls, user, data=None, publication_id=""):
         return WorkflowDraftService.record(
             WorkflowDraftService().create(
-                user, SLUG, data or {}, publication_id=publication_id
+                request_as(user), SLUG, data or {}, publication_id=publication_id
             )
         )
 
@@ -113,7 +113,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
     ):
         return WorkflowDraftService.record(
             self.svc.create(
-                user or self.editor,
+                request_as(user or self.editor),
                 SLUG,
                 data or {},
                 publication_id=publication_id,
@@ -166,7 +166,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             ResourceInstance.objects.get(pk=body["id"]).principaluser, self.editor
         )
 
-    def test_patch_merges_sections_then_put_replaces_blob(self):
+    def test_patch_merges_sections_and_an_empty_one_clears_it(self):
         draft = self.draft
         # PATCH merges, leaving siblings intact.
         resp = self.client.patch(
@@ -178,14 +178,15 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(
             self._read(draft.id).data, {"step1": {"x": 1}, "step2": {"y": 2}}
         )
-        # PUT replaces the whole blob.
-        resp = self.client.put(
+        # A section sent empty replaces what was there, which is how a caller
+        # clears one without a whole-blob replace.
+        resp = self.client.patch(
             self._detail_url(draft.id),
-            data=json.dumps({"data": {"step3": {"z": 3}}}),
+            data=json.dumps({"data": {"step1": {}}}),
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(self._read(draft.id).data, {"step3": {"z": 3}})
+        self.assertEqual(self._read(draft.id).data, {"step1": {}, "step2": {"y": 2}})
 
     def test_patch_records_current_step_and_keeps_it_when_omitted(self):
         draft = self.draft
@@ -203,19 +204,6 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
         self.assertEqual(self._read(draft.id).current_step, "Contacts")
-
-    def test_put_records_the_current_step_too(self):
-        draft = self.draft
-
-        resp = self.client.put(
-            self._detail_url(draft.id),
-            data=json.dumps({"data": {"step2": {"y": 2}}, "current_step": "Review"}),
-            content_type="application/json",
-        )
-
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["current_step"], "Review")
-        self.assertEqual(self._read(draft.id).current_step, "Review")
 
     def test_a_blank_step_clears_it_but_an_omitted_one_does_not(self):
         # Only None (an absent key) means "leave it alone"; "" is a real value
@@ -361,7 +349,11 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.lister)
         mine = self._create_draft(user=self.lister)
         investigation = WorkflowDraftService.record(
-            self.svc.create(self.lister, GraphSlugs.INVESTIGATION, {"step1": {"x": 1}})
+            self.svc.create(
+                request_as(self.lister),
+                GraphSlugs.INVESTIGATION,
+                {"step1": {"x": 1}},
+            )
         )
         self._create_draft(user=self.other_lister)
         resp = self.client.get(reverse("workflow_draft_list_all"))
@@ -374,7 +366,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         permit = self._make_resource(self.editor)
         on_permit = WorkflowDraftService.record(
             self.svc.create(
-                self.editor,
+                request_as(self.editor),
                 GraphSlugs.INVESTIGATION,
                 {},
                 parent_resource_id=str(permit.pk),
@@ -397,7 +389,6 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         for resp in (
             self.client.get(url),
             self.client.patch(url, data=body, content_type="application/json"),
-            self.client.put(url, data=body, content_type="application/json"),
             self.client.delete(url),
         ):
             self.assertEqual(resp.status_code, 404)
@@ -449,12 +440,12 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         resp = self._post({"data": {}, "parent_resource_id": str(parent.pk)})
         self.assertEqual(resp.status_code, 201)
 
-    def test_put_keeps_the_parent_resource(self):
+    def test_saving_keeps_the_parent_resource(self):
         parent = self._make_resource(self.editor)
         draft_id = (
             self._post({"data": {}, "parent_resource_id": str(parent.pk)}).json()
         )["id"]
-        resp = self.client.put(
+        resp = self.client.patch(
             self._detail_url(draft_id),
             data=json.dumps({"data": {"step1": {"x": 1}}}),
             content_type="application/json",
@@ -470,7 +461,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
 
         for resp in (
             self.client.get(url),
-            self.client.put(url, data=body, content_type="application/json"),
+            self.client.patch(url, data=body, content_type="application/json"),
             self.client.delete(url),
         ):
             self.assertEqual(resp.status_code, 404)
