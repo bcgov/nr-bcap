@@ -21,7 +21,7 @@ import {
 } from '@/bcap/composables/useResourceData.ts';
 import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 
 const props = withDefaults(
     defineProps<{

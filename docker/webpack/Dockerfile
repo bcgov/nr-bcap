@@ -4,7 +4,7 @@ ENV WEB_ROOT=/web_root
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV APP_ROOT=${WEB_ROOT}/bcap
 ENV ARCHES_COMMON=${WEB_ROOT}/bcgov-arches-common
-ENV ARCHES_COMPONENT_LAB=${WEB_ROOT}/arches-component-lab
+ENV ARCHES_VUE_COMPONENTS=${WEB_ROOT}/arches-vue-components
 ENV NODE_MAJOR=20
 RUN mkdir -p ${APP_ROOT}/bcap/webpack
 
@@ -45,7 +45,7 @@ RUN pip install -e .
 WORKDIR ${ARCHES_COMMON}
 RUN pip install -e .
 
-WORKDIR ${ARCHES_COMPONENT_LAB}
+WORKDIR ${ARCHES_VUE_COMPONENTS}
 RUN pip install -e .
 
 COPY /nr-bcap/docker/webpack/entrypoint.sh ${WEB_ROOT}/entrypoint.sh

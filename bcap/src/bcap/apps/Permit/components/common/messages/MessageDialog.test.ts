@@ -19,19 +19,6 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     setThreadArchived: vi.fn(),
 }));
 
-// The topic picker fetches the Message Type controlled list itself; stand in
-// for it and emit the display label it would emit.
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: {
-            name: 'GenericWidget',
-            template:
-                '<select class="mock-topic" @change="$emit(\'update:value\', [$event.target.value])"></select>',
-        },
-    }),
-);
-
 describe('MessageDialog.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();

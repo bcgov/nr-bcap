@@ -235,7 +235,7 @@ INSTALLED_APPS = (
     "storages",
     "bcap",
     "arches_querysets",
-    "arches_component_lab",
+    "arches_vue_components",
     "arches_controlled_lists",
     "rest_framework",
     "drf_spectacular",

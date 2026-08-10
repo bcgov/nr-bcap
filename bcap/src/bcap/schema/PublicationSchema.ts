@@ -1,17 +1,17 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
-import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
+} from '@/arches_vue_components/types.ts';
+import type { FileListAliasedNodeData } from '@/arches_vue_components/datatypes/file-list/types.ts';
 import type { ArchesResourceInstanceData } from '@/bcgov_arches_common/types.ts';
-import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
-import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
-import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
+import type { ReferenceSelectAliasedNodeData } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
+import type { DateAliasedNodeData } from '@/arches_vue_components/datatypes/date/types.ts';
+import type { StringAliasedNodeData } from '@/arches_vue_components/datatypes/string/types.ts';
 
 export interface AuthorsTile extends AliasedTileData {
     aliased_data: {
-        authors?: ReferenceSelectValue;
-        other_authors_unlisted?: StringValue;
+        authors?: ReferenceSelectAliasedNodeData;
+        other_authors_unlisted?: StringAliasedNodeData;
     };
 }
 
@@ -26,7 +26,7 @@ export interface CopyrightTypeTile extends AliasedTileData {
 
 export interface InformationCarrierTile extends AliasedTileData {
     aliased_data: {
-        information_carrier?: FileListValue;
+        information_carrier?: FileListAliasedNodeData;
     };
 }
 
@@ -39,13 +39,13 @@ export interface KeywordTile extends AliasedTileData {
 export interface PublicationDetailsTile extends AliasedTileData {
     aliased_data: {
         publication_type?: AliasedNodeData;
-        title?: StringValue;
-        year_of_publication?: DateValue;
+        title?: StringAliasedNodeData;
+        year_of_publication?: DateAliasedNodeData;
         page_range_start?: AliasedNodeData;
         page_range_end?: AliasedNodeData;
-        publication_remarks?: StringValue;
+        publication_remarks?: StringAliasedNodeData;
         journal_or_volume_name?: AliasedNodeData;
-        other_journal_or_volume_name?: StringValue;
+        other_journal_or_volume_name?: StringAliasedNodeData;
     };
 }
 export interface ReferenceLinkTile extends AliasedTileData {

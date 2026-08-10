@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zInvestigationInvestigationIdentificationAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -30,7 +30,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="investigation_identification"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'investigation_identification',
@@ -46,7 +46,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="hip_study_details"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'hip_study_details',
@@ -62,7 +62,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="assessment_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'assessment_approach',
@@ -78,7 +78,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="mitigation_measures"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'mitigation_measures',
@@ -94,7 +94,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="are_chance_finds_expected"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'are_chance_finds_expected',
@@ -109,7 +109,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="hip_objectives"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'hip_objectives', 'section_1_overview')
                 "
             />
@@ -121,7 +121,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="are_ancestral_remains_anticipated"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'are_ancestral_remains_anticipated',
@@ -137,7 +137,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="arch_workplans_and_schedule_a"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'arch_workplans_and_schedule_a',
@@ -152,7 +152,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="affected_sites"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'affected_sites', 'section_1_overview')
                 "
             />
@@ -164,7 +164,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="relevant_arch_studies"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'relevant_arch_studies',
@@ -180,7 +180,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="related_assessments"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'related_assessments',

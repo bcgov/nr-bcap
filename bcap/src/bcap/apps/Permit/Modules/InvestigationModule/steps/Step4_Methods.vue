@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zInvestigationMethodologyAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -29,7 +29,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_pre_field_research"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_pre_field_research', 'methodology')
                 "
             />
@@ -40,7 +40,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="methods_alignment"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'methods_alignment', 'methodology')
                 "
             />
@@ -51,7 +51,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_survey_coverage"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_survey_coverage', 'methodology')
                 "
             />
@@ -63,7 +63,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="survey_coverage_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'survey_coverage_approach',
@@ -78,7 +78,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_arch_potential"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_arch_potential', 'methodology')
                 "
             />
@@ -90,7 +90,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="arch_potential_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'arch_potential_approach',
@@ -105,7 +105,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="arch_bearing_sediment"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'arch_bearing_sediment', 'methodology')
                 "
             />
@@ -116,7 +116,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_subsurface_testing"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_subsurface_testing', 'methodology')
                 "
             />
@@ -128,7 +128,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="subsurface_testing_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'subsurface_testing_approach',
@@ -144,7 +144,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_machine_assisted_inspection"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'has_machine_assisted_inspection',
@@ -160,7 +160,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="machine_assisted_inspection_methods"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'machine_assisted_inspection_methods',
@@ -176,7 +176,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="machine_assisted_inspection_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'machine_assisted_inspection_approach',
@@ -191,7 +191,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_winter_assessments"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_winter_assessments', 'methodology')
                 "
             />
@@ -203,7 +203,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="winter_assessment_methods"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'winter_assessment_methods',
@@ -219,7 +219,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="field_transport_and_lab_methods"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'field_transport_and_lab_methods',
@@ -234,7 +234,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="data_analysis_methods"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'data_analysis_methods', 'methodology')
                 "
             />
@@ -245,7 +245,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="other_field_methods"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'other_field_methods', 'methodology')
                 "
             />

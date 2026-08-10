@@ -8,7 +8,7 @@ ENV APP_ROOT=${WEB_ROOT}/${PROJECT_NAME}
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV COMMON_ROOT=${WEB_ROOT}/bcgov-arches-common
 ENV CONTROLLED_LISTS_ROOT=${WEB_ROOT}/arches-controlled-lists
-ENV COMPONENT_LAB_ROOT=${WEB_ROOT}/arches-component-lab
+ENV VUE_COMPONENTS_ROOT=${WEB_ROOT}/arches-vue-components
 ENV QUERYSETS_ROOT=${WEB_ROOT}/arches-querysets
 ENV WORKFLOW_STEPPER_ROOT=${WEB_ROOT}/arches-workflow-stepper
 ENV ZOD_VALIDATION_ROOT=${WEB_ROOT}/arches-zod-validation
@@ -76,8 +76,8 @@ COPY ./arches-controlled-lists ${CONTROLLED_LISTS_ROOT}
 WORKDIR ${CONTROLLED_LISTS_ROOT}
 RUN pip install -e .
 
-COPY ./arches-component-lab ${COMPONENT_LAB_ROOT}
-WORKDIR ${COMPONENT_LAB_ROOT}
+COPY ./arches-vue-components ${VUE_COMPONENTS_ROOT}
+WORKDIR ${VUE_COMPONENTS_ROOT}
 RUN pip install -e .
 
 COPY ./arches-querysets ${QUERYSETS_ROOT}

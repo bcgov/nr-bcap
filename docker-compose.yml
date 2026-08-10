@@ -17,7 +17,7 @@ services:
       - ../arches/:/web_root/arches
       - ./:/web_root/bcap
       - ../bcgov-arches-common/:/web_root/bcgov-arches-common
-      - ../arches-component-lab/:/web_root/arches-component-lab
+      - ../arches-vue-components/:/web_root/arches-vue-components
       - ../arches-controlled-lists/:/web_root/arches-controlled-lists
       - ../arches-querysets/:/web_root/arches-querysets
       - ../arches-workflow-stepper/:/web_root/arches-workflow-stepper
@@ -77,7 +77,7 @@ services:
       - ../arches/:/web_root/arches
       - ./:/web_root/bcap
       - ../bcgov-arches-common/:/web_root/bcgov-arches-common
-      - ../arches-component-lab/:/web_root/arches-component-lab
+      - ../arches-vue-components/:/web_root/arches-vue-components
       - ../arches-querysets/:/web_root/arches-querysets
     env_file:
       - ./.env

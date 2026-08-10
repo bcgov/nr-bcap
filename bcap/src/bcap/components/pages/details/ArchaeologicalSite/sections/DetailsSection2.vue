@@ -10,7 +10,7 @@ import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type {

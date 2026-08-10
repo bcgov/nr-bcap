@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';

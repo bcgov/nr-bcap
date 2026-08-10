@@ -6,7 +6,7 @@ import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import { getContributorsForResources } from '@/bcap/apps/Permit/api.ts';
 import { useMessageStore } from '@/bcap/stores/message.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import MessageThreadSidebar from '@/bcap/apps/Permit/components/common/messages/MessageThreadSidebar.vue';
 import MessageHistory from '@/bcap/apps/Permit/components/common/messages/MessageHistory.vue';
 import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messages/MessageAttachmentsField.vue';
@@ -340,8 +340,9 @@ onMounted(() => {
                                     :graph-slug="GraphSlug.BcapMessage"
                                     node-alias="message_type"
                                     mode="edit"
-                                    should-emit-simplified-value
-                                    @update:value="onTopicSelected"
+                                    @update:value="
+                                        onTopicSelected($event as string[])
+                                    "
                                 />
                             </div>
                         </div>

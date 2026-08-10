@@ -2,7 +2,7 @@
 import { computed, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
-import { VIEW } from '@/arches_component_lab/widgets/constants.ts';
+import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
 import 'primeicons/primeicons.css';
 import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts';
 

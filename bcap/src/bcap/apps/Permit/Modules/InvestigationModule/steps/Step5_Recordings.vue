@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zInvestigationRecordingsAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -30,7 +30,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="alternate_historical_sites_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'alternate_historical_sites_approach',
@@ -45,7 +45,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_cmt_survey"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_cmt_survey', 'recordings')
                 "
             />
@@ -57,7 +57,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="is_rock_art_recording_compliant"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'is_rock_art_recording_compliant',
@@ -73,7 +73,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="alternate_rock_art_recording_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'alternate_rock_art_recording_approach',
@@ -89,7 +89,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="alternate_site_flagging_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'alternate_site_flagging_approach',
@@ -104,7 +104,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_wet_sites"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_wet_sites', 'recordings')
                 "
             />
@@ -116,7 +116,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="is_excavation_approach_compliant"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'is_excavation_approach_compliant',
@@ -132,7 +132,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="additional_recording_information"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'additional_recording_information',
@@ -147,7 +147,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_historical_sites"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_historical_sites', 'recordings')
                 "
             />
@@ -158,7 +158,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_site_flagging"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'has_site_flagging', 'recordings')
                 "
             />
@@ -170,7 +170,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="other_recording_approaches"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'other_recording_approaches',
@@ -186,7 +186,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="alternate_wet_sites_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'alternate_wet_sites_approach',
@@ -202,7 +202,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="alternate_excavation_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'alternate_excavation_approach',
@@ -217,7 +217,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="alternate_cmt_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'alternate_cmt_approach', 'recordings')
                 "
             />

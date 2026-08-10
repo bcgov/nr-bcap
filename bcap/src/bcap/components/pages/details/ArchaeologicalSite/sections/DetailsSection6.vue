@@ -10,7 +10,7 @@ import type { ArchaeologicalDataTile } from '@/bcap/schema/ArchaeologySiteSchema
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import { isAliasedNodeData } from '@/bcap/util.ts';
 import 'primeicons/primeicons.css';
 

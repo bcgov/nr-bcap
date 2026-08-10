@@ -4,7 +4,7 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import { isEmpty } from '@/bcap/util.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';

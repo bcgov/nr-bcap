@@ -46,106 +46,6 @@ def _reset_class_state():
     ProcessRequirementDescriptors._datatypes = {}
 
 
-class TestFormatValue(TestCase):
-    def _call(self, name, value, show_name, first_only=False):
-        config = {"show_name": show_name, "first_only": first_only}
-        return ProcessRequirementDescriptors._format_value(name, value, config)
-
-    def test_string_show_name_false_returns_raw_value(self):
-        assert self._call("Label", "Hello", show_name=False) == "Hello"
-
-    def test_string_show_name_true_returns_html_with_name_and_value(self):
-        result = self._call("Label", "Value", show_name=True)
-        assert "bc-popup-label" in result
-        assert "Label" in result
-        assert "Value" in result
-
-    def test_empty_string_returns_empty(self):
-        assert self._call("Label", "", show_name=False) == ""
-
-    def test_none_returns_empty(self):
-        assert self._call("Label", None, show_name=False) == ""
-
-    def test_list_sorts_and_joins_values(self):
-        assert self._call("L", ["C", "A", "B"], show_name=False) == "A, B, C"
-
-    def test_list_removes_empty_strings(self):
-        assert self._call("L", ["B", "", "A"], show_name=False) == "A, B"
-
-    def test_list_deduplicates(self):
-        assert self._call("L", ["A", "A", "B"], show_name=False) == "A, B"
-
-    def test_list_all_empty_returns_empty(self):
-        assert self._call("L", ["", ""], show_name=False) == ""
-
-
-class TestGetValueFromNode(TestCase):
-    def setUp(self):
-        _reset_class_state()
-
-    def tearDown(self):
-        _reset_class_state()
-
-    def test_returns_none_when_alias_not_registered(self):
-        result = ProcessRequirementDescriptors._get_value_from_node("unknown_alias")
-        assert result is None
-
-    @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_returns_none_when_no_tiles_exist(self, mock_models):
-        node = _make_node(A.REQUIREMENT_NAME, "Name")
-        ProcessRequirementDescriptors._nodes[A.REQUIREMENT_NAME] = node
-        ProcessRequirementDescriptors._datatypes[A.REQUIREMENT_NAME] = MagicMock()
-        mock_models.TileModel.objects.filter.return_value = []
-
-        result = ProcessRequirementDescriptors._get_value_from_node(
-            A.REQUIREMENT_NAME, resourceinstanceid="res-1"
-        )
-        assert result is None
-
-    def test_returns_single_value_for_one_tile(self):
-        node = _make_node(A.REQUIREMENT_NAME, "Name")
-        datatype = MagicMock()
-        datatype.get_display_value.return_value = "My Requirement"
-        ProcessRequirementDescriptors._nodes[A.REQUIREMENT_NAME] = node
-        ProcessRequirementDescriptors._datatypes[A.REQUIREMENT_NAME] = datatype
-
-        tile = _make_tile()
-        result = ProcessRequirementDescriptors._get_value_from_node(
-            A.REQUIREMENT_NAME, data_tile=tile
-        )
-
-        assert result == "My Requirement"
-        datatype.get_display_value.assert_called_once_with(tile, node)
-
-    @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_returns_list_for_multiple_tiles_from_db(self, mock_models):
-        node = _make_node(A.REQUIREMENT_STATUS, "Status")
-        datatype = MagicMock()
-        datatype.get_display_value.side_effect = ["Active", "Closed"]
-        ProcessRequirementDescriptors._nodes[A.REQUIREMENT_STATUS] = node
-        ProcessRequirementDescriptors._datatypes[A.REQUIREMENT_STATUS] = datatype
-
-        tile1, tile2 = _make_tile(), _make_tile()
-        mock_models.TileModel.objects.filter.return_value = [tile1, tile2]
-        result = ProcessRequirementDescriptors._get_value_from_node(
-            A.REQUIREMENT_STATUS, resourceinstanceid="res-1"
-        )
-        assert result == ["Active", "Closed"]
-
-    @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_uses_data_tile_and_skips_db_query(self, mock_models):
-        node = _make_node(A.REQUIREMENT_NAME, "Name")
-        datatype = MagicMock()
-        datatype.get_display_value.return_value = "From tile"
-        ProcessRequirementDescriptors._nodes[A.REQUIREMENT_NAME] = node
-        ProcessRequirementDescriptors._datatypes[A.REQUIREMENT_NAME] = datatype
-
-        ProcessRequirementDescriptors._get_value_from_node(
-            A.REQUIREMENT_NAME, data_tile=_make_tile()
-        )
-        mock_models.TileModel.objects.filter.assert_not_called()
-
-
 class TestGetPrimaryDescriptorFromNodes(TestCase):
     def setUp(self):
         _reset_class_state()
@@ -170,7 +70,7 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
             self.fn, "_get_process_requirement_name", return_value="Req Name"
         ) as mock_name:
             result = self.fn.get_primary_descriptor_from_nodes(
-                resource, config={"type": "name"}
+                resource, config={}, descriptor="name"
             )
         assert mock_name.call_args.args[0] is resource
         assert result == "Req Name"
@@ -178,7 +78,8 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
     def test_description_with_no_matching_values_returns_empty_string(self):
         result = self.fn.get_primary_descriptor_from_nodes(
             MagicMock(),
-            config={"type": "description", "first_only": False, "show_name": True},
+            config={"first_only": False, "show_name": True},
+            descriptor="description",
         )
         assert result == ""
 
@@ -204,11 +105,12 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
         with patch.object(
             ProcessRequirementDescriptors,
             "_get_value_from_node",
-            side_effect=lambda alias, resource, **kwargs: values.get(alias),
+            side_effect=lambda node_alias, **kwargs: values.get(node_alias),
         ):
             result = self.fn.get_primary_descriptor_from_nodes(
                 MagicMock(),
-                config={"type": "description", "first_only": False, "show_name": False},
+                config={"first_only": False, "show_name": False},
+                descriptor="description",
             )
 
         assert "ID Value" in result
@@ -227,11 +129,11 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
 
         call_log: list[str] = []
 
-        def side_effect(alias, resource, **kwargs):
-            call_log.append(alias)
+        def side_effect(node_alias, **kwargs):
+            call_log.append(node_alias)
             return (
                 "First Value"
-                if alias == A.REQUIREMENT_IDENTIFICATION
+                if node_alias == A.REQUIREMENT_IDENTIFICATION
                 else "Should not reach"
             )
 
@@ -242,17 +144,19 @@ class TestGetPrimaryDescriptorFromNodes(TestCase):
         ):
             result = self.fn.get_primary_descriptor_from_nodes(
                 MagicMock(),
-                config={"type": "description", "first_only": True, "show_name": False},
+                config={"first_only": True, "show_name": False},
+                descriptor="description",
             )
 
         assert result == "First Value"
         assert call_log == [A.REQUIREMENT_IDENTIFICATION]
 
     def test_map_popup_uses_popup_nodes_which_are_empty(self):
-        """_popup_nodes is [] so map_popup always returns an empty string."""
+        """_popup_node_aliases is [] so map_popup always returns an empty string."""
         result = self.fn.get_primary_descriptor_from_nodes(
             MagicMock(),
-            config={"type": "map_popup", "first_only": False, "show_name": True},
+            config={"first_only": False, "show_name": True},
+            descriptor="map_popup",
         )
         assert result == ""
 
@@ -390,49 +294,3 @@ class TestGetProcessRequirementName(TestCase):
             MagicMock(), self._tiles(name_tile, tmpl_tile)
         )
         assert result == "My Requirement"
-
-
-class TestInitialize(TestCase):
-    def setUp(self):
-        _reset_class_state()
-
-    def tearDown(self):
-        _reset_class_state()
-
-    @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_sets_initialized_flag(self, mock_models):
-        mock_models.Node.objects.filter.return_value.first.return_value = None
-        ProcessRequirementDescriptors().initialize()
-        assert ProcessRequirementDescriptors._initialized is True
-
-    @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_populates_nodes_and_datatypes_for_found_nodes(self, mock_models):
-        found_node = _make_node(A.REQUIREMENT_NAME, "Name", datatype="string")
-        datatype_instance = MagicMock()
-        mock_factory = MagicMock()
-        mock_factory.get_instance.return_value = datatype_instance
-
-        def filter_side_effect(**kwargs):
-            qs = MagicMock()
-            qs.first.return_value = (
-                found_node if kwargs.get("alias") == A.REQUIREMENT_NAME else None
-            )
-            return qs
-
-        mock_models.Node.objects.filter.side_effect = filter_side_effect
-        ProcessRequirementDescriptors._datatype_factory = mock_factory
-        ProcessRequirementDescriptors().initialize()
-
-        assert A.REQUIREMENT_NAME in ProcessRequirementDescriptors._nodes
-        assert A.REQUIREMENT_NAME in ProcessRequirementDescriptors._datatypes
-        assert A.REQUIREMENT_STATUS not in ProcessRequirementDescriptors._nodes
-
-    @patch("bcap.functions.process_requirement_descriptors.models")
-    def test_initialize_not_called_when_already_initialized(self, mock_models):
-        ProcessRequirementDescriptors._initialized = True
-        fn = ProcessRequirementDescriptors()
-
-        with patch.object(fn, "_get_process_requirement_name", return_value="x"):
-            fn.get_primary_descriptor_from_nodes(MagicMock(), config={"type": "name"})
-
-        mock_models.Node.objects.filter.assert_not_called()

@@ -14,18 +14,6 @@ vi.mock('@primevue/forms', () => ({
     FormField: { template: '<div />' },
 }));
 
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: { name: 'GenericWidget', template: '<div />' },
-    }),
-);
-
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-    EDIT: 'edit',
-    VIEW: 'view',
-}));
-
 vi.mock('vue-router', () => ({
     useRoute: vi.fn(() => ({
         query: {}, // Simulate an empty query (no draftId)

@@ -23,13 +23,13 @@ classifiers = [
 ]
 dependencies = [
     "arches @ git+https://github.com/bcgov/arches@stable/8.1.2_bcgov_12776",
-    "arches-component-lab==0.0.1a13",
-    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@dev/1.1.x",
+    "arches-vue-components==2.0.2",
+    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@1.2.0",
     "arches-querysets @ git+https://github.com/bcgov/arches-querysets@performance_fix_geojson",
     "arches-workflow-stepper @ git+https://github.com/bferguso/arches-workflow-stepper@main",
     "arches-zod-validation @ git+https://github.com/bcgov/arches-zod-validation@expose_resource_alias_function",
     "authlib",
-    "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@release/2.1.x",
+    "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@update_to_arches_vue_components",
     "boto3==1.26",
     "django-captcha",
     "django-migrate-sql-deux==1.1.1",

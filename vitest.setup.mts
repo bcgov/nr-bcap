@@ -30,6 +30,20 @@ beforeAll(() => {
             $gettext: (text: string) => (text)
         })
     }));
+
+    // The real GenericWidget needs an active pinia and a live
+    // card_x_node_x_widget fetch. Drive the stub with `.vm.$emit(...)`:
+    // `update:value` is the bare node_value, `update:aliasedNodeData` the node.
+    vi.mock(
+        '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue',
+        () => ({
+            default: {
+                name: 'GenericWidget',
+                emits: ['update:value', 'update:aliasedNodeData'],
+                template: '<div class="mock-widget" />',
+            },
+        }),
+    );
 });
 
 // Fresh Pinia per test so stores start empty and never leak state across tests.

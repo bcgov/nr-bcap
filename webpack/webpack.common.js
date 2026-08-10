@@ -537,6 +537,10 @@ module.exports = () => {
                 modules: [
                     Path.resolve(__dirname, PROJECT_RELATIVE_NODE_MODULES_PATH),
                 ],
+                // arches-controlled-lists imports the '@/arches_vue_components/application'
+                // directory, which needs index.ts. This replaces webpack's
+                // defaults, so they are repeated here.
+                extensions: ['.js', '.json', '.wasm', '.ts'],
                 alias: {
                     ...javascriptRelativeFilepathToAbsoluteFilepathLookup,
                     ...templateFilepathLookup,

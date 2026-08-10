@@ -1,22 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { defineComponent } from 'vue';
-import { shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 
-// The steps embed arches widgets that pull in heavy runtime deps we don't need
-// for a render smoke test; stub them so shallowMount only exercises step markup.
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: defineComponent({
-            name: 'GenericWidget',
-            template: '<div />',
-        }),
-    }),
-);
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-    EDIT: 'edit',
-    VIEW: 'view',
-}));
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 import Step1 from './Step1_About.vue';
 import Step2 from './Step2_Overview.vue';
@@ -52,4 +38,32 @@ describe('InvestigationModule steps', () => {
             ).toBe('boolean');
         });
     }
+
+    // Binding the wrong GenericWidget event still compiles and renders; the
+    // edit just never reaches the draft store.
+    it('routes a widget edit into the draft store via update:aliasedNodeData', () => {
+        // shallowMount would stub <Form> and never render its slot, so the
+        // widgets inside it would not exist to emit from.
+        const passthrough = { template: '<div><slot /></div>' };
+        const wrapper = mount(Step2, {
+            global: { stubs: { Form: passthrough, FieldSet: passthrough } },
+        });
+        const store = useDraftStore();
+        const updateValue = vi.spyOn(store, 'updateValue');
+
+        const edit = {
+            display_value: 'Field survey',
+            node_value: 'Field survey',
+            details: [],
+        } as AliasedNodeData;
+        wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:aliasedNodeData', edit);
+
+        expect(updateValue).toHaveBeenCalledWith(
+            edit,
+            'investigation_identification',
+            'investigation_identification',
+        );
+    });
 });

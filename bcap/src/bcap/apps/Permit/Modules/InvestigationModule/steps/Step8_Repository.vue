@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zInvestigationSection7RepositoryAndCurationAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -30,7 +30,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_repository_been_contacted"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'has_repository_been_contacted',
@@ -46,7 +46,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="has_repository_agreement"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'has_repository_agreement',
@@ -62,7 +62,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="is_repository_required"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'is_repository_required',
@@ -78,7 +78,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="destination_repository"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'destination_repository',
@@ -94,7 +94,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="additional_repository_and_curation_comments"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'additional_repository_and_curation_comments',

@@ -2,7 +2,7 @@ import type { LocationQueryValue } from 'vue-router';
 
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type {
     AlterationResourceAliasedDataWritable,
     ApiDashboardInternalRetrieveData,
@@ -11,12 +11,6 @@ import type {
     InvestigationResourceAliasedDataWritable,
     PermitApplicationResourceAliasedDataWritable,
 } from '@/bcap/client/types.gen.ts';
-
-import type {
-    ReferenceSelectValue,
-    ReferenceSelectNodeValue,
-    ReferenceSelectDetails,
-} from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
 export type DraftNode = AliasedNodeData & {
     aliased_data?: Record<string, DraftNode | null>;
@@ -103,34 +97,6 @@ export interface DetailsData {
     displayname: string;
     graph_slug: string;
 }
-
-export interface NumberValue extends AliasedNodeData {
-    display_value: string;
-    node_value: number | null;
-    details: never[];
-}
-
-export interface BooleanValue extends AliasedNodeData {
-    display_value: string;
-    node_value: boolean | null;
-    details: never[];
-}
-
-export interface GeoJSONFeatureCollectionValue extends AliasedNodeData {
-    display_value: string;
-    node_value: {
-        type: 'FeatureCollection';
-        features: unknown[];
-    } | null;
-    details: never[];
-}
-
-export type NullableReferenceSelectValue =
-    | ReferenceSelectValue
-    | (Omit<ReferenceSelectValue, 'node_value'> & {
-          node_value: ReferenceSelectNodeValue[] | null;
-          details: ReferenceSelectDetails[] | [];
-      });
 
 export interface BcapURLs {
     add_resource: (graphid: string) => string;

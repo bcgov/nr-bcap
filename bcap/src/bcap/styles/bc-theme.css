@@ -7,16 +7,6 @@
      class="bc-form" to a form's root to opt in, and overlay-class="bc-overlay"
      on teleported Select/MultiSelect panels. */
 
-/* The plugin page doesn't load bcgov_arches_common's project.css, so the face
-   is declared here against a bundled copy of the font. */
-@font-face {
-    font-family: BCSans;
-    font-weight: 400 599;
-    font-style: normal;
-    font-display: swap;
-    src: url('../../../media/fonts/BCSans-Regular.woff2') format('woff2');
-}
-
 :root {
     --bc-navy: #003366;
     --bc-navy-dark: #00264d;

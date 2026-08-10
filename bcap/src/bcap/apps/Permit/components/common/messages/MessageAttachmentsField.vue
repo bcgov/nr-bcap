@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import { formatFileSize } from '@/bcap/util.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
@@ -40,8 +40,9 @@ const removeFile = (index: number) => {
                 :graph-slug="GraphSlug.BcapMessage"
                 node-alias="attachments"
                 mode="edit"
-                should-emit-simplified-value
-                @update:value="onFilesSelected"
+                @update:value="
+                    onFilesSelected($event as Array<{ file?: File }>)
+                "
             />
         </div>
 

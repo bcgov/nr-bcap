@@ -1,14 +1,14 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
-import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
+} from '@/arches_vue_components/types.ts';
+import type { FileListAliasedNodeData } from '@/arches_vue_components/datatypes/file-list/types.ts';
 import type { ArchesResourceInstanceData } from '@/bcgov_arches_common/types.ts';
 import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts';
-import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
-import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
-import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
-import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
+import type { ReferenceSelectAliasedNodeData } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
+import type { DateAliasedNodeData } from '@/arches_vue_components/datatypes/date/types.ts';
+import type { StringAliasedNodeData } from '@/arches_vue_components/datatypes/string/types.ts';
+import type { ResourceInstanceListAliasedNodeData } from '@/arches_vue_components/datatypes/resource-instance-list/types.ts';
 
 export interface SpatialAccuracyEntry extends AliasedTileData {
     aliased_data: {
@@ -208,15 +208,15 @@ export interface SiteLocationTile extends AliasedTileData {
 
 export interface GeneralRemarkTile extends AliasedTileData {
     aliased_data: {
-        general_remark_source?: ReferenceSelectValue;
-        general_remark_date?: DateValue;
-        general_remark?: StringValue;
+        general_remark_source?: ReferenceSelectAliasedNodeData;
+        general_remark_date?: DateAliasedNodeData;
+        general_remark?: StringAliasedNodeData;
     };
 }
 
 export interface RestrictedRemarkTile extends AliasedTileData {
     aliased_data: {
-        restricted_remark?: StringValue;
+        restricted_remark?: StringAliasedNodeData;
     };
 }
 
@@ -250,7 +250,7 @@ export interface RemarksAndRestrictedInformationTile extends AliasedTileData {
 
 export interface PublicationReferenceTile extends AliasedTileData {
     aliased_data: {
-        publication?: ResourceInstanceListValue;
+        publication?: ResourceInstanceListAliasedNodeData;
         reference_type?: AliasedNodeData;
         reference_title?: AliasedNodeData;
         reference_year?: AliasedNodeData;
@@ -269,7 +269,7 @@ export interface RelatedSiteDocumentsTile extends AliasedTileData {
 
 export interface SiteImagesTile extends AliasedTileData {
     aliased_data: {
-        site_images?: FileListValue;
+        site_images?: FileListAliasedNodeData;
         image_type?: AliasedNodeData;
         repository?: AliasedNodeData;
         photographer?: AliasedNodeData;

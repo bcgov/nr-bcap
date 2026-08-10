@@ -8,18 +8,6 @@ vi.mock('@/bcap/util.ts', async (importOriginal) => ({
     downloadFile,
 }));
 
-// The real file widget's package cannot be transformed under vitest.
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: {
-            name: 'GenericWidget',
-            emits: ['update:value'],
-            template: '<div class="mock-widget" />',
-        },
-    }),
-);
-
 import MessageHistory from './MessageHistory.vue';
 import MessageThreadSidebar from './MessageThreadSidebar.vue';
 import MessageAttachmentsField from './MessageAttachmentsField.vue';

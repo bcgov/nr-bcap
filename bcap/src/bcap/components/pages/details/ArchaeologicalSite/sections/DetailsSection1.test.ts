@@ -21,7 +21,7 @@ vi.mock(
     },
 );
 
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
+vi.mock('@/arches_vue_components/widgets/constants.ts', () => ({
     VIEW: 'view',
 }));
 
