@@ -8,7 +8,7 @@ from django.db.models.fields.json import KeyTextTransform, KeyTransform
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 
-from arches.app.models.models import TileModel
+from arches.app.models.models import ResourceXResource, TileModel
 from arches.app.models.resource import Resource
 
 from bcap.util.graph import node_id, nodegroup_id
@@ -180,8 +180,14 @@ class ContributorService(BaseGraphService):
         have a login (ministry assignees included), name-sorted. Falls back to
         the Archaeology Branch when nobody is assigned, so there is always
         someone to address."""
+        # A requirement resource references nobody; its assignees are on the
+        # permit application pointing at it.
+        permits = ResourceXResource.objects.filter(
+            to_resource_id=resource_id,
+            from_resource__graph__slug=GraphSlugs.PERMIT_APPLICATION,
+        ).values_list("from_resource_id", flat=True)
         ids = self.login_linked_contributor_ids(
-            all_referenced_resource_ids(resource_id)
+            all_referenced_resource_ids(resource_id, *permits)
         )
         if not ids:
             branch = self.archaeology_branch_id()

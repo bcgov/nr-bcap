@@ -56,13 +56,13 @@ def references_by_source(source_ids, nodeid):
     return grouped
 
 
-def all_referenced_resource_ids(resourceinstance_id):
-    """Every resource this one points at through a resource-instance node, from
-    the resource_x_resource table Arches maintains on tile save (indexed, so no
-    tile scan and no per-node knowledge needed)."""
+def all_referenced_resource_ids(*resourceinstance_ids):
+    """Every resource these point at through a resource-instance node, from the
+    resource_x_resource table Arches maintains on tile save (indexed, so no tile
+    scan and no per-node knowledge needed)."""
     return {
         str(to_id)
         for to_id in ResourceXResource.objects.filter(
-            from_resource_id=resourceinstance_id
+            from_resource_id__in=resourceinstance_ids
         ).values_list("to_resource_id", flat=True)
     }
