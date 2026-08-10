@@ -1,9 +1,13 @@
+import logging
+
 from arches.app.models import models
 from bcgov_arches_common.functions.abstract_primary_descriptors import (
     AbstractPrimaryDescriptors,
 )
 from bcap.util.aliases.archaeological_site import ArchaeologicalSiteAliases as aliases
 from bcap.util.controlled_list import get_hierarchy_for_list_item
+
+logger = logging.getLogger(__name__)
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001002",
@@ -63,77 +67,83 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
         aliases.NAME,
         "typologies",
     ]
-    _address_nodes = [
-        [aliases.STREET_NUMBER, aliases.STREET_NAME],
-        [aliases.CITY, "postal_code"],
-    ]
 
     @classmethod
     def get_all_nodes(cls):
-        """Also loads the significant-event and address nodes, which are read by
-        the typology and address descriptors rather than by alias order."""
-        return (
-            super().get_all_nodes() + cls._sig_event_nodes + sum(cls._address_nodes, [])
-        )
+        """Also loads the significant-event nodes, which the typology descriptor
+        reads directly rather than by alias order."""
+        return super().get_all_nodes() + cls._sig_event_nodes
 
-    def get_primary_descriptor_from_nodes(
-        self, resource, config, context=None, descriptor=None
-    ):
-        self.ensure_initialized()
+    def get_name_descriptor(self, resource, config, context):
+        return self._get_site_name(resource)
 
+    def get_search_card_descriptor(self, resource, config, context):
+        return self._descriptor_for(self._card_node_aliases, resource, config)
+
+    def get_map_popup_descriptor(self, resource, config, context):
+        return self._descriptor_for(self._popup_node_aliases, resource, config)
+
+    def _descriptor_for(self, alias_order, resource, config):
+        """Card and popup share one body. Not the base's get_values_in_order:
+        typologies is a pseudo-alias assembled from two derived values, and the
+        registration status is relabelled."""
         return_value = ""
         display_values = {}
 
         try:
-            if config["type"] == "name":
-                return self._get_site_name(resource)
-
-            _description_order = (
-                self._popup_node_aliases
-                if config["type"] == "map_popup"
-                else self._card_node_aliases
-            )
-
-            nodes = self._nodes
-
-            for node_alias in _description_order:
+            for node_alias in alias_order:
+                # A pseudo-alias has no node, so this returns None and it falls
+                # through to its own branch below.
                 value = self._get_value_from_node(node_alias, resource)
                 if value:
                     if config["first_only"]:
-                        return self._format_value(nodes[node_alias].name, value, config)
+                        return self._format_value(
+                            self._nodes[node_alias].name,
+                            value,
+                            config,
+                            node_alias in self._html_nodes,
+                        )
                     display_values[node_alias] = value
 
-            for alias in _description_order:
-                if alias == "address":
-                    return_value += self._format_value(
-                        "Address", self._get_address(resource), config
-                    )
-                elif alias == "typologies":
+            for alias in alias_order:
+                if alias == "typologies":
                     typology_classes, typology_values = self._get_typologies(
                         resource.resourceinstanceid
                     )
+                    # The base's _format_value wraps even an empty value in the
+                    # label template, so an absent typology would render as a
+                    # stray empty label. Every other branch is already guarded
+                    # by only storing truthy values in display_values.
+                    if typology_classes:
+                        return_value += self._format_value(
+                            "Site Class", typology_classes, config
+                        )
+                    if typology_values:
+                        return_value += self._format_value(
+                            "Descriptor", typology_values, config
+                        )
+                elif alias not in display_values:
+                    continue
+                elif alias == aliases.DECISION_REGISTRATION_STATUS:
                     return_value += self._format_value(
-                        "Site Class", typology_classes, config
+                        "Registration Status",
+                        display_values[alias],
+                        config,
+                        alias in self._html_nodes,
                     )
+                else:
                     return_value += self._format_value(
-                        "Descriptor", typology_values, config
-                    )
-                elif (
-                    alias == aliases.DECISION_REGISTRATION_STATUS
-                    and alias in display_values
-                ):
-                    return_value += self._format_value(
-                        "Registration Status", display_values[alias], config
-                    )
-                elif alias in display_values:
-                    return_value += self._format_value(
-                        nodes[alias].name, display_values[alias], config
+                        self._nodes[alias].name,
+                        display_values[alias],
+                        config,
+                        alias in self._html_nodes,
                     )
 
             return return_value
 
-        except ValueError as e:
-            print(e, "invalid nodegroupid participating in descriptor function.")
+        except ValueError:
+            logger.exception("invalid nodegroupid participating in descriptor function")
+            return ""
 
     @classmethod
     def _get_typologies(cls, resourceinstanceid):
@@ -166,36 +176,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
         return list(typology_classes), typology_values
 
     @classmethod
-    def _get_address(cls, resource):
-        address = ""
-        nodes = cls._nodes
-
-        for address_line_nodes in cls._address_nodes:
-            if address:
-                address += "<br>"
-            line = ""
-            for address_node_alias in address_line_nodes:
-                tile = (
-                    models.TileModel.objects.filter(
-                        nodegroup_id=nodes[address_node_alias].nodegroup_id
-                    )
-                    .filter(resourceinstance_id=resource.resourceinstanceid)
-                    .first()
-                )
-                if line:
-                    line += " "
-                display_value = cls._get_value_from_node(
-                    node_alias=address_node_alias, data_tile=tile
-                )
-                display_value = (
-                    display_value[0] if type(display_value) is list else display_value
-                )
-                line += display_value if display_value is not None else ""
-            if line:
-                address += line
-        return address if address else None
-
-    def _get_site_name(self, resource):
+    def _get_site_name(cls, resource):
         borden_number_datatype = cls._datatypes[aliases.BORDEN_NUMBER]
         display_value = ""
 
@@ -209,4 +190,4 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
                 borden_number_tile, cls._nodes[aliases.BORDEN_NUMBER]
             )
 
-        return display_value if display_value else self._empty_name_value
+        return display_value if display_value else cls._empty_name_value
