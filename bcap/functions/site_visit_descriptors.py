@@ -1,5 +1,6 @@
 from arches.app.models import models
 from bcap.util.aliases.site_visit import SiteVisitAliases as aliases
+from bcap.util.bcap_aliases import GraphSlugs
 from bcgov_arches_common.functions.abstract_primary_descriptors import (
     AbstractPrimaryDescriptors as AbstractDescriptors,
 )
@@ -47,7 +48,7 @@ class SiteVisitDescriptors(AbstractDescriptors):
 
     # Declared on this class, not the base: sibling descriptors for other graphs
     # inherit from the same base and would otherwise share these.
-    _graph_slug = "site_visit"
+    _graph_slug = GraphSlugs.SITE_VISIT
 
     _name_node_aliases = [
         aliases.ASSOCIATED_PERMIT,

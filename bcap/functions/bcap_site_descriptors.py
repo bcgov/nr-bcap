@@ -5,6 +5,7 @@ from bcgov_arches_common.functions.abstract_primary_descriptors import (
     AbstractPrimaryDescriptors,
 )
 from bcap.util.aliases.archaeological_site import ArchaeologicalSiteAliases as aliases
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import get_hierarchy_for_list_item
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ details = {
 
 
 class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
-    _graph_slug = "archaeological_site"
+    _graph_slug = GraphSlugs.ARCHAEOLOGICAL_SITE
 
     _empty_name_value = "(No official name)"
 
@@ -57,15 +58,15 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
         aliases.DECISION_REGISTRATION_STATUS,
         aliases.TYPOLOGY_CLASS,
     ]
+    # Real node aliases only: the base looks every one of these up on the graph.
+    # The typology block is appended after them, in _descriptor_for.
     _popup_node_aliases = [
         aliases.DECISION_REGISTRATION_STATUS,
         aliases.NAME,
-        "typologies",
     ]
     _card_node_aliases = [
         aliases.DECISION_REGISTRATION_STATUS,
         aliases.NAME,
-        "typologies",
     ]
 
     @classmethod
@@ -85,59 +86,43 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
 
     def _descriptor_for(self, alias_order, resource, config):
         """Card and popup share one body. Not the base's get_values_in_order:
-        typologies is a pseudo-alias assembled from two derived values, and the
-        registration status is relabelled."""
+        the registration status is relabelled, and the typology block is
+        derived from tiles rather than read off a node."""
         return_value = ""
-        display_values = {}
 
         try:
-            for node_alias in alias_order:
-                # A pseudo-alias has no node, so this returns None and it falls
-                # through to its own branch below.
-                value = self._get_value_from_node(node_alias, resource)
-                if value:
-                    if config["first_only"]:
-                        return self._format_value(
-                            self._nodes[node_alias].name,
-                            value,
-                            config,
-                            node_alias in self._html_nodes,
-                        )
-                    display_values[node_alias] = value
-
             for alias in alias_order:
-                if alias == "typologies":
-                    typology_classes, typology_values = self._get_typologies(
-                        resource.resourceinstanceid
-                    )
-                    # The base's _format_value wraps even an empty value in the
-                    # label template, so an absent typology would render as a
-                    # stray empty label. Every other branch is already guarded
-                    # by only storing truthy values in display_values.
-                    if typology_classes:
-                        return_value += self._format_value(
-                            "Site Class", typology_classes, config
-                        )
-                    if typology_values:
-                        return_value += self._format_value(
-                            "Descriptor", typology_values, config
-                        )
-                elif alias not in display_values:
+                value = self._get_value_from_node(alias, resource)
+                if not value:
                     continue
-                elif alias == aliases.DECISION_REGISTRATION_STATUS:
-                    return_value += self._format_value(
-                        "Registration Status",
-                        display_values[alias],
-                        config,
-                        alias in self._html_nodes,
-                    )
-                else:
-                    return_value += self._format_value(
-                        self._nodes[alias].name,
-                        display_values[alias],
-                        config,
-                        alias in self._html_nodes,
-                    )
+                label = (
+                    "Registration Status"
+                    if alias == aliases.DECISION_REGISTRATION_STATUS
+                    else self._nodes[alias].name
+                )
+                formatted = self._format_value(
+                    label, value, config, alias in self._html_nodes
+                )
+                if config["first_only"]:
+                    return formatted
+                return_value += formatted
+
+            typology_classes, typology_values = self._get_typologies(
+                resource.resourceinstanceid
+            )
+            for label, values in (
+                ("Site Class", typology_classes),
+                ("Descriptor", typology_values),
+            ):
+                # The base's _format_value wraps even an empty value in the
+                # label template, so an absent typology would otherwise render
+                # as a stray empty label.
+                if not values:
+                    continue
+                formatted = self._format_value(label, values, config)
+                if config["first_only"]:
+                    return formatted
+                return_value += formatted
 
             return return_value
 
@@ -147,47 +132,38 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
 
     @classmethod
     def _get_typologies(cls, resourceinstanceid):
+        node = cls._nodes[aliases.TYPOLOGY_CLASS]
         datatype = cls._datatypes[aliases.TYPOLOGY_CLASS]
         typology_values = []
         typology_classes = set()
-        tiles = (
-            models.TileModel.objects.filter(
-                nodegroup_id=cls._nodes[aliases.TYPOLOGY_CLASS].nodegroup_id
-            )
-            .filter(resourceinstance_id=resourceinstanceid)
-            .all()
+
+        tiles = models.TileModel.objects.filter(
+            nodegroup_id=node.nodegroup_id,
+            resourceinstance_id=resourceinstanceid,
         )
 
         for tile in tiles:
-            if tile:
-                ref_value = datatype.to_python(
-                    tile.data[str(cls._nodes[aliases.TYPOLOGY_CLASS].nodeid)]
-                )
-                typology_values.append(
-                    datatype.get_display_value(tile, cls._nodes[aliases.TYPOLOGY_CLASS])
-                )
-                typology_class = get_hierarchy_for_list_item(
-                    ref_value[0].labels[0].list_item_id
-                )
-                typology_classes.add(
-                    typology_class[0] if len(typology_class) > 0 else None
-                )
+            ref_value = datatype.to_python(tile.data[str(node.nodeid)])
+            typology_values.append(datatype.get_display_value(tile, node))
+            hierarchy = get_hierarchy_for_list_item(ref_value[0].labels[0].list_item_id)
+            # A class with no hierarchy contributes nothing: a None in here
+            # would blow up the sort in the base's _format_value.
+            if hierarchy:
+                typology_classes.add(hierarchy[0])
 
         return list(typology_classes), typology_values
 
     @classmethod
     def _get_site_name(cls, resource):
-        borden_number_datatype = cls._datatypes[aliases.BORDEN_NUMBER]
-        display_value = ""
-
-        borden_number_tile = models.TileModel.objects.filter(
-            nodegroup_id=cls._nodes[aliases.BORDEN_NUMBER].nodegroup_id,
+        node = cls._nodes[aliases.BORDEN_NUMBER]
+        tile = models.TileModel.objects.filter(
+            nodegroup_id=node.nodegroup_id,
             resourceinstance_id=resource.resourceinstanceid,
         ).first()
+        if not tile:
+            return cls._empty_name_value
 
-        if borden_number_tile:
-            display_value += "%s" % borden_number_datatype.get_display_value(
-                borden_number_tile, cls._nodes[aliases.BORDEN_NUMBER]
-            )
-
-        return display_value if display_value else cls._empty_name_value
+        display_value = cls._datatypes[aliases.BORDEN_NUMBER].get_display_value(
+            tile, node
+        )
+        return display_value or cls._empty_name_value

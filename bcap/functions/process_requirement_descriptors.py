@@ -46,7 +46,7 @@ details = {
 
 
 class ProcessRequirementDescriptors(AbstractPrimaryDescriptors):
-    _graph_slug = "process_requirement"
+    _graph_slug = GraphSlugs.PROCESS_REQUIREMENT
 
     _empty_name_value = "(Unknown)"
 
@@ -95,7 +95,7 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptors):
             permit = (
                 models.ResourceXResource.objects.filter(
                     to_resource=resource,
-                    from_resource__graph__slug="permit_application",
+                    from_resource__graph__slug=GraphSlugs.PERMIT_APPLICATION,
                 )
                 .select_related("from_resource")
                 .first()
