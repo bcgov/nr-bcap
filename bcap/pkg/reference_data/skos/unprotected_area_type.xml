@@ -3,51 +3,51 @@
   xmlns:skos="http://www.w3.org/2004/02/skos/core#"
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:arches="http://localhost:82/"
+  xmlns:arches="https://localhost/"
 >
-  <skos:Concept rdf:about="http://localhost:82/496a6ae0-11f4-4ed8-bf32-f8008bbfa5c8">
+  <skos:Concept rdf:about="https://localhost/496a6ae0-11f4-4ed8-bf32-f8008bbfa5c8">
     <skos:prefLabel xml:lang="en">Other (describe)</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/496a6ae0-11f4-4ed8-bf32-f8008bbfa5c8</dcterms:identifier>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/496a6ae0-11f4-4ed8-bf32-f8008bbfa5c8</dcterms:identifier>
     <skos:inScheme>
-      <skos:ConceptScheme rdf:about="http://localhost:82/e5691a39-41d1-417d-ae33-b0ca630f02ae">
+      <skos:ConceptScheme rdf:about="https://localhost/e5691a39-41d1-417d-ae33-b0ca630f02ae">
         <dcterms:title>Unprotected Area Type</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/25a76b45-394f-4be7-8a28-560d30eaf48b">
+  <skos:Concept rdf:about="https://localhost/25a76b45-394f-4be7-8a28-560d30eaf48b">
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/25a76b45-394f-4be7-8a28-560d30eaf48b</dcterms:identifier>
-    <skos:inScheme rdf:resource="http://localhost:82/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/25a76b45-394f-4be7-8a28-560d30eaf48b</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
     <skos:prefLabel xml:lang="en">Artifact collected from secondary context</skos:prefLabel>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/3cce447e-6604-4769-ae9f-a04e09e58f4b">
-    <skos:inScheme rdf:resource="http://localhost:82/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
+  <skos:Concept rdf:about="https://localhost/3cce447e-6604-4769-ae9f-a04e09e58f4b">
+    <skos:inScheme rdf:resource="https://localhost/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
     <skos:prefLabel xml:lang="en">Non-archaeological</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/3cce447e-6604-4769-ae9f-a04e09e58f4b</dcterms:identifier>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/3cce447e-6604-4769-ae9f-a04e09e58f4b</dcterms:identifier>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/dbb8b5a0-a604-4f95-af4e-64dc8d1e2724">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/dbb8b5a0-a604-4f95-af4e-64dc8d1e2724</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/dbb8b5a0-a604-4f95-af4e-64dc8d1e2724">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/dbb8b5a0-a604-4f95-af4e-64dc8d1e2724</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
     <skos:prefLabel xml:lang="en">Burial removed</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
+    <skos:inScheme rdf:resource="https://localhost/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/db94094d-7b9f-4200-8feb-c5ac216c24a9">
+  <skos:Concept rdf:about="https://localhost/db94094d-7b9f-4200-8feb-c5ac216c24a9">
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/db94094d-7b9f-4200-8feb-c5ac216c24a9</dcterms:identifier>
-    <skos:inScheme rdf:resource="http://localhost:82/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/db94094d-7b9f-4200-8feb-c5ac216c24a9</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
     <skos:prefLabel xml:lang="en">Federal land</skos:prefLabel>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/93986602-c277-41aa-8ed1-4d61859c4f18">
+  <skos:Concept rdf:about="https://localhost/93986602-c277-41aa-8ed1-4d61859c4f18">
     <skos:prefLabel xml:lang="en">CMT harvested</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/93986602-c277-41aa-8ed1-4d61859c4f18</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/93986602-c277-41aa-8ed1-4d61859c4f18</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/31d6a6bb-adfc-41fe-a27e-244bf694c800">
-    <skos:inScheme rdf:resource="http://localhost:82/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/31d6a6bb-adfc-41fe-a27e-244bf694c800</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/31d6a6bb-adfc-41fe-a27e-244bf694c800">
+    <skos:inScheme rdf:resource="https://localhost/e5691a39-41d1-417d-ae33-b0ca630f02ae"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/31d6a6bb-adfc-41fe-a27e-244bf694c800</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
     <skos:prefLabel xml:lang="en">Archaeological deposit or feature removed</skos:prefLabel>
   </skos:Concept>

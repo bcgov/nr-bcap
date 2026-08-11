@@ -1015,8 +1015,7 @@
                     "alias": "publication_identifier_type",
                     "config": {
                         "controlledList": "82d2b088-5de3-4b4b-8102-602950365a25",
-                        "multiValue": false,
-                        "rdmCollection": null
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
