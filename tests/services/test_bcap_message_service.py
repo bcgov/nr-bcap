@@ -518,14 +518,34 @@ class BcapMessagePrepareTests(TestCase):
             builder, "prepapp", "Amy", "Applicant"
         )
         cls.unlinked = make_contributor(builder, "Unlinked", "Uma")
+        cls.third, cls.third_contrib = make_party(
+            builder, "prepthird", "Tia", "Third", internal=True
+        )
+        cls.permit = builder.make_resource("permit_application")
+        cls.root = make_message(
+            builder,
+            context=cls.permit,
+            author=cls.applicant_contrib,
+            recipient=cls.staff_contrib,
+            subject="Root",
+        )
 
-    def _payload(self, *, is_internal=None, recipient=None):
+    def _payload(self, *, is_internal=None, recipient=None, thread=None):
         content = {}
         if is_internal is not None:
             content[A.IS_INTERNAL] = {"node_value": is_internal}
         if recipient is not None:
             content[A.RECIPIENT] = {"node_value": [{"resourceId": str(recipient.pk)}]}
-        return {"aliased_data": {A.MESSAGE_CONTENT: {"aliased_data": content}}}
+        data = {"aliased_data": {A.MESSAGE_CONTENT: {"aliased_data": content}}}
+        if thread is not None:
+            data["aliased_data"][A.RELATED_SOURCE_MESSAGE] = {
+                "aliased_data": {
+                    A.RELATED_SOURCE_MESSAGE: {
+                        "node_value": [{"resourceId": str(thread.pk)}]
+                    }
+                }
+            }
+        return data
 
     def _content(self, data):
         return data["aliased_data"][A.MESSAGE_CONTENT]["aliased_data"]
@@ -537,6 +557,27 @@ class BcapMessagePrepareTests(TestCase):
         data = self._payload()
         self.service.prepare_message(data, self.applicant)
         self.assertEqual(self._author_id(data), str(self.applicant_contrib.pk))
+
+    def _recipient_id(self, data):
+        return self._content(data)[A.RECIPIENT]["node_value"][0]["resourceId"]
+
+    def test_reply_by_a_third_party_is_addressed_to_the_thread_starter(self):
+        # The client's recipient pick is replaced by the root's author, so a
+        # staffer joining someone else's thread writes back to that thread.
+        data = self._payload(recipient=self.unlinked, thread=self.root)
+        self.service.prepare_message(data, self.third)
+        self.assertEqual(self._author_id(data), str(self.third_contrib.pk))
+        self.assertEqual(self._recipient_id(data), str(self.applicant_contrib.pk))
+
+    def test_reply_by_the_thread_starter_goes_to_the_other_party(self):
+        data = self._payload(recipient=self.unlinked, thread=self.root)
+        self.service.prepare_message(data, self.applicant)
+        self.assertEqual(self._recipient_id(data), str(self.staff_contrib.pk))
+
+    def test_new_thread_keeps_the_chosen_recipient(self):
+        data = self._payload(recipient=self.staff_contrib)
+        self.service.prepare_message(data, self.applicant)
+        self.assertEqual(self._recipient_id(data), str(self.staff_contrib.pk))
 
     def test_internal_flag_honored_only_for_internal_posters(self):
         # An external poster's internal flag is forced off; an internal poster's

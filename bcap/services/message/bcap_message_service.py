@@ -15,6 +15,7 @@ from django.db.models import (
     When,
 )
 
+from arches.app.models.models import TileModel
 from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
@@ -28,7 +29,7 @@ from bcap.services.process_requirement.process_requirement_service import (
 from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.util.auth.groups import is_internal_user
 from bcap.util.dates import parse_iso_or_set_value
-from bcap.util.tiles import group_data
+from bcap.util.tiles import group_data, resource_instance_id
 
 logger = logging.getLogger(__name__)
 
@@ -204,9 +205,10 @@ class BcapMessageService(BaseGraphService):
 
     def prepare_message(self, data, user):
         """Fill in the author and enforce internal-message rules on a create payload."""
-        self.set_author(data, user.username)
+        author_id = self.set_author(data, user.username)
         if not is_internal_user(user):
             self._set_node(data, self.A.IS_INTERNAL, False)
+        self.set_reply_recipient(data, author_id)
         self.validate_internal_recipient(data)
 
     @classmethod
@@ -216,6 +218,46 @@ class BcapMessageService(BaseGraphService):
         if not contributor_id:
             raise NoAuthorContributor(username)
         cls._set_node(data, cls.A.MESSAGE_AUTHOR, [{RESOURCE_ID: contributor_id}])
+        return contributor_id
+
+    @classmethod
+    def set_reply_recipient(cls, data, author_id):
+        """Address a reply from its thread rather than the payload, so a third party
+        joining a thread writes to the root's other party instead of whichever
+        contributor the client happened to have selected."""
+        thread_id = cls._reply_thread_id(data)
+        if not thread_id:
+            return
+        author_node, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, cls.A.MESSAGE_AUTHOR)
+        recipient_node, _ = node_info(MESSAGE_GRAPH_SLUG, cls.A.RECIPIENT)
+        root = (
+            TileModel.objects.filter(
+                nodegroup_id=nodegroup_id, resourceinstance_id=thread_id
+            )
+            .values_list("data", flat=True)
+            .first()
+        )
+        if not root:
+            return
+        root_author = resource_instance_id(root.get(author_node))
+        recipient = (
+            resource_instance_id(root.get(recipient_node))
+            if root_author == str(author_id)
+            else root_author
+        )
+        if recipient:
+            cls._set_node(data, cls.A.RECIPIENT, [{RESOURCE_ID: recipient}])
+
+    @classmethod
+    def _reply_thread_id(cls, data):
+        """The thread root a create payload replies to, or None for a new thread."""
+        node_value = cls._group_node_value(
+            data, cls.A.RELATED_SOURCE_MESSAGE, cls.A.RELATED_SOURCE_MESSAGE
+        )
+        if isinstance(node_value, list):
+            node_value = node_value[0] if node_value else {}
+        thread_id = (node_value or {}).get(RESOURCE_ID)
+        return str(thread_id) if thread_id else None
 
     @classmethod
     def _set_node(cls, data, alias, node_value):
