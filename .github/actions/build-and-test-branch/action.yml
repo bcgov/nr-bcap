@@ -96,6 +96,11 @@ runs:
         python manage.py makemigrations --check
       shell: bash
 
+    - name: Check for stale API codegen
+      run: |
+        python manage.py regenerate_api --check
+      shell: bash
+
     - name: Ensure previous Python coverage data is erased
       run: |
         coverage erase
