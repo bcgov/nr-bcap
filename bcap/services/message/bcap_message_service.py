@@ -191,9 +191,10 @@ class BcapMessageService(BaseGraphService):
         return alias in cls._group_aliased_data(data, cls.A.MESSAGE_CONTENT)
 
     @classmethod
-    def _payload_relation_id(cls, data, alias):
-        """Resource id under the payload's message_content resource node, or None."""
-        node_value = cls._payload_node_value(data, alias)
+    def _payload_relation_id(cls, data, alias, group=None):
+        """Resource id under a payload resource node, or None. Reads the
+        message_content group unless another is named."""
+        node_value = cls._group_node_value(data, group or cls.A.MESSAGE_CONTENT, alias)
         if isinstance(node_value, list):
             node_value = node_value[0] if node_value else {}
         return (node_value or {}).get(RESOURCE_ID)
@@ -225,7 +226,9 @@ class BcapMessageService(BaseGraphService):
         """Address a reply from its thread rather than the payload, so a third party
         joining a thread writes to the root's other party instead of whichever
         contributor the client happened to have selected."""
-        thread_id = cls._reply_thread_id(data)
+        thread_id = cls._payload_relation_id(
+            data, cls.A.RELATED_SOURCE_MESSAGE, cls.A.RELATED_SOURCE_MESSAGE
+        )
         if not thread_id:
             return
         author_node, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, cls.A.MESSAGE_AUTHOR)
@@ -247,17 +250,6 @@ class BcapMessageService(BaseGraphService):
         )
         if recipient:
             cls._set_node(data, cls.A.RECIPIENT, [{RESOURCE_ID: recipient}])
-
-    @classmethod
-    def _reply_thread_id(cls, data):
-        """The thread root a create payload replies to, or None for a new thread."""
-        node_value = cls._group_node_value(
-            data, cls.A.RELATED_SOURCE_MESSAGE, cls.A.RELATED_SOURCE_MESSAGE
-        )
-        if isinstance(node_value, list):
-            node_value = node_value[0] if node_value else {}
-        thread_id = (node_value or {}).get(RESOURCE_ID)
-        return str(thread_id) if thread_id else None
 
     @classmethod
     def _set_node(cls, data, alias, node_value):
