@@ -432,9 +432,16 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._patch(pk, payload).status_code, 400)
         self.assertEqual(self._requirement_count(), before)
 
-    def test_create_forbidden_without_resource_editor_role(self):
+    def test_create_allowed_for_any_signed_in_user(self):
+        """Applicants file their own applications, so creating needs a login and
+        nothing more; the owning organization stamped on create is what scopes
+        who reads it back."""
         self.idir_login_simulate(self.user)
-        self.assertEqual(self._post(create_payload()).status_code, 403)
+        self.assertEqual(self._post(create_payload()).status_code, 201)
+
+    def test_create_redirects_to_login_when_signed_out(self):
+        self.client.logout()
+        self.assertEqual(self._post(create_payload()).status_code, 302)
 
     def _nesting_variants(self, group):
         """A body missing the tree at each level: no aliased_data, no group,

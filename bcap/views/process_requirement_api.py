@@ -109,7 +109,9 @@ class ProcessRequirementSeedView(APIView):
     The permit type is a path segment; a type with no host resource is a 400."""
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [ResourceEditor]
+    # Applicants file their own modules, so this only asks for a login; which
+    # permits they may file against is settled by the permit lookup.
+    permission_classes = [IsAuthenticated]
     # Key each host's aliased_data component name off its graph, so the three
     # host types get distinct typed schemas instead of one shared, generic one.
     schema = ArchesTileAutoSchema()

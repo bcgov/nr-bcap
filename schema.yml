@@ -954,10 +954,10 @@ paths:
     post:
       operationId: api_permit_application_create
       description: |-
-        POST a new Permit Application, seeding its application id.
-
-        Create-only (POST); the requirements are attached later, on submission (see
-        the detail view).
+        POST a new Permit Application, seeding its application id. A body that
+        already carries the submission date attaches the requirement working copies
+        here; one saved as a draft gets them on the update that submits it (see the
+        detail view).
       tags:
       - 'External: permit_application'
       requestBody:
