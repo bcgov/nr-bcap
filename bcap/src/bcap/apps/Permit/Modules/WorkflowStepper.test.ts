@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount, flushPromises } from '@vue/test-utils';
 import WorkflowStepper from './WorkflowStepper.vue';
 import { useDraftStore } from '@/bcap/stores/draft.ts';

@@ -14,7 +14,7 @@ import {
     getAssignableGroups,
     getUnlinkedContributors,
     issueRegistrationLink,
-} from '@/bcap/components/pages/api.ts';
+} from '@/bcap/apps/Admin/api.ts';
 
 import type {
     ContributorSummary,

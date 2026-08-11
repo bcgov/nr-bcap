@@ -9,6 +9,9 @@ export const sanitizeHtml = (html: string | undefined): string => {
     return DOMPurify.sanitize(html);
 };
 
+export const formatDate = (iso: string | null | undefined): string =>
+    iso ? new Date(iso).toLocaleDateString() : '';
+
 export const formatTimestamp = (iso: string | null | undefined): string =>
     new Date(iso ?? 0).toLocaleString(undefined, {
         year: 'numeric',

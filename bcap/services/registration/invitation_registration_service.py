@@ -14,7 +14,7 @@ from django.utils import timezone
 from bcgov_arches_common.util.auth.oauth_session_control import _clean_username
 
 from bcap.models import RegistrationLink
-from bcap.services.contributor_service import (
+from bcap.services.contributor.contributor_service import (
     ContributorService,
     NewContributor,
 )

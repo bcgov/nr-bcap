@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 const { fetchPermitDetails } = vi.hoisted(() => ({

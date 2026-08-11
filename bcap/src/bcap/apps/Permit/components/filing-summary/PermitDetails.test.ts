@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
 import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
@@ -19,15 +18,7 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     setThreadArchived: vi.fn(),
 }));
 
-// The MessageDialog's topic picker; the real widget's package cannot be
-// transformed under vitest.
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: { name: 'GenericWidget', template: '<div />' },
-    }),
-);
-
+// A child of the drafts panel; the real one pulls in the component lab.
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
     default: { template: '<div class="mock-review-summary"></div>' },
 }));

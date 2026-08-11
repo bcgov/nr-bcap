@@ -20,11 +20,12 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationGroupAliases as pa_groups,
 )
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as prq
-from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.bcap_aliases import GraphSlugs, RESOURCE_ID
 from bcap.util.graph import node_id
 from bcap.util.indexing import bulk_index
 from bcap.util.tiles import referenced_resource_ids, references_by_source
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.util.save import acting_request
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.process_requirement.template_specs import (
     host_graph,
@@ -67,8 +68,9 @@ class ProcessRequirementService:
         pa.PROCESS_REQUIREMENT_ORDER,
     ]
 
-    def __init__(self, user=None):
-        self._user = user
+    def __init__(self, request=None):
+        self._request = request
+        self._save_as = {"request": acting_request(request)}
         self._builder = None
 
     @property
@@ -77,7 +79,7 @@ class ProcessRequirementService:
         setup queries (lifecycle state and the admin user)."""
         if self._builder is None:
             self._builder = ProcessRequirementBuilder(
-                skip_refresh=True, owner=self._user, tag_as_seed=False
+                skip_refresh=True, tag_as_seed=False, request=self._request
             )
         return self._builder
 
@@ -178,7 +180,7 @@ class ProcessRequirementService:
         child.aliased_data.ministry_assignee = (
             str(contributor_id) if contributor_id else None
         )
-        permit.save(force_admin=True, partial=True)
+        permit.save(**self._save_as, partial=True)
         return True
 
     def add_blank_requirement(self, permit_id, module_tileid, name="New requirement"):
@@ -201,7 +203,7 @@ class ProcessRequirementService:
                 pa.PROCESS_REQUIREMENT_ORDER: order,
             },
         )
-        permit.save(force_admin=True, partial=True, index=False)
+        permit.save(**self._save_as, partial=True, index=False)
         # make_process_requirement returns a tile tree; descriptors and indexing
         # live on the Resource proxy.
         resource = Resource.objects.get(pk=requirement.pk)
@@ -256,7 +258,7 @@ class ProcessRequirementService:
         return TileModel.objects.filter(
             parenttile_id=module_tileid,
             resourceinstance_id=permit_id,
-            data__contains={reference_node: [{"resourceId": str(requirement_id)}]},
+            data__contains={reference_node: [{RESOURCE_ID: str(requirement_id)}]},
         ).first()
 
     @staticmethod
@@ -412,7 +414,7 @@ class ProcessRequirementService:
                     pa.PROCESS_REQUIREMENT_ORDER: order,
                 },
             )
-        permit.save(force_admin=True, partial=True, index=False)
+        permit.save(**self._save_as, partial=True, index=False)
 
     def _load_application_admin(self, permit_id, nodes=None):
         """The permit hydrated with only its application_admin module tree, its

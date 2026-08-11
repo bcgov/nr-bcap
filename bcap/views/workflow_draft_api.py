@@ -10,6 +10,9 @@ metadata in `data`. GOTCHA: Arches won't auto-promote a TempFile's bytes into a
 resource `File`, so submit must re-send the files via multipart or copy the bytes
 across itself (and bcap's FILENAME_GENERATOR needs the tile to build the path)."""
 
+from dataclasses import dataclass, field
+from uuid import UUID
+
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.authentication import SessionAuthentication
@@ -23,11 +26,9 @@ from arches.app.models.models import ResourceInstance
 from arches.app.utils.permission_backend import user_can_edit_resource
 
 from bcap.serializers.graph_serializers import aliased_data_union_schema
-from bcap.services.workflow_draft_service import (
-    DraftRecord,
-    WorkflowDraftService,
-)
+from bcap.services.workflow_draft_service import DraftRecord, WorkflowDraftService
 from bcap.util.graph import get_current_graph
+from bcap.views.organization_helpers import organization_to_stamp
 
 
 @extend_schema_field(aliased_data_union_schema())
@@ -38,6 +39,10 @@ class DraftDataField(serializers.JSONField):
 
 
 class WorkflowDraftSerializer(DataclassSerializer):
+    """A saved draft: the stored form blob plus the metadata needed to resume it
+    -- which graph it belongs to, the step the user left off on, when it was last
+    saved, and whether that graph has been republished since."""
+
     data = DraftDataField()
     graph_has_different_publication = serializers.SerializerMethodField()
 
@@ -52,24 +57,52 @@ class WorkflowDraftSerializer(DataclassSerializer):
         return bool(graph) and str(graph.publication_id) != obj.graph_publication_id
 
 
-class DraftsQuerySerializer(serializers.Serializer):
+@dataclass
+class DraftsQuery:
     """Query params for the all-graphs draft list."""
 
+    parent: UUID | None = None
+
+
+class DraftsQuerySerializer(DataclassSerializer):
     parent = serializers.UUIDField(
         required=False,
         help_text="Only drafts started from this resource.",
     )
 
+    class Meta:
+        dataclass = DraftsQuery
 
-class DraftPayloadSerializer(serializers.Serializer):
+
+@dataclass
+class DraftPayload:
+    data: dict = field(default_factory=dict)
+    # None when the body omits it, which leaves the stored step alone.
+    current_step: str | None = None
+    frontend_version: str = ""
+    parent_resource_id: str = ""
+    organization_id: str = ""
+
+
+class DraftPayloadSerializer(DataclassSerializer):
     """Request body for create/update: the whole draft blob, plus the step the
-    user is on and an optional frontend version and parent resource stamped on
-    create."""
+    user is on and an optional frontend version, parent resource and owning
+    organization stamped on create."""
 
     data = DraftDataField()
+    # Blank is meaningful here: it clears the stored step, where omitting it keeps.
     current_step = serializers.CharField(required=False, allow_blank=True)
-    frontend_version = serializers.CharField(required=False, allow_blank=True)
-    parent_resource_id = serializers.CharField(required=False, allow_blank=True)
+    organization_id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text=(
+            "Organization to file the draft under, so colleagues can pick it up. "
+            "Must be one the user belongs to."
+        ),
+    )
+
+    class Meta:
+        dataclass = DraftPayload
 
 
 class WorkflowDraftBaseView(APIView):
@@ -99,12 +132,19 @@ class WorkflowDraftBaseView(APIView):
             return
         raise PermissionDenied("You do not have access to the linked resource.")
 
-    def serialize(self, record):
-        return WorkflowDraftSerializer(record).data
+    def payload(self, request):
+        """The request body as a DraftPayload, 400 on anything malformed. Partial
+        so an omitted field falls back to its default rather than being required."""
+        body = DraftPayloadSerializer(data=request.data or {}, partial=True)
+        body.is_valid(raise_exception=True)
+        return body.save()
 
-    def respond(self, record, status=200):
-        """A draft record as its serialized response."""
-        return Response(self.serialize(record), status=status)
+    def serialize(self, draft):
+        return WorkflowDraftSerializer(WorkflowDraftService.record(draft)).data
+
+    def respond(self, draft, status=200):
+        """A draft as its serialized response."""
+        return Response(self.serialize(draft), status=status)
 
 
 @extend_schema(tags=["External: workflow_draft"])
@@ -123,9 +163,9 @@ class WorkflowDraftAllListView(WorkflowDraftBaseView):
         params = DraftsQuerySerializer(data=request.query_params)
         params.is_valid(raise_exception=True)
         drafts = self.store.queryset(
-            request.user, parent_resource_id=params.validated_data.get("parent")
+            request.user, parent_resource_id=params.validated_data.parent
         )
-        return Response([self.serialize(self.store.to_record(d)) for d in drafts])
+        return Response([self.serialize(draft) for draft in drafts])
 
 
 @extend_schema(tags=["External: workflow_draft"])
@@ -135,31 +175,31 @@ class WorkflowDraftListCreateView(WorkflowDraftBaseView):
     @extend_schema(responses=WorkflowDraftSerializer(many=True))
     def get(self, request, graph_slug):
         drafts = self.store.queryset(request.user, graph_slug)
-        return Response([self.serialize(self.store.to_record(d)) for d in drafts])
+        return Response([self.serialize(draft) for draft in drafts])
 
     @extend_schema(request=DraftPayloadSerializer, responses=WorkflowDraftSerializer)
     def post(self, request, graph_slug):
-        body = request.data or {}
-        parent_resource_id = body.get("parent_resource_id") or ""
-        self.verify_parent_resource_access(parent_resource_id)
+        body = self.payload(request)
+        self.verify_parent_resource_access(body.parent_resource_id)
         graph = get_current_graph(graph_slug)
-        record = self.store.create(
-            request.user,
+        draft = self.store.create(
+            request,
             graph_slug,
-            body.get("data") or {},
-            publication_id=getattr(graph, "publication_id", ""),
-            frontend_version=body.get("frontend_version", ""),
-            parent_resource_id=parent_resource_id,
+            body.data,
+            publication_id=graph.publication_id if graph else "",
+            frontend_version=body.frontend_version,
+            parent_resource_id=body.parent_resource_id,
+            organization_id=organization_to_stamp(request.user, body.organization_id),
         )
-        return self.respond(record, status=201)
+        return self.respond(draft, status=201)
 
 
 @extend_schema(tags=["External: workflow_draft"])
 class WorkflowDraftDetailView(WorkflowDraftBaseView):
-    """GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-    shallow-merges by section key -- untouched sections are kept, but a section
-    present in the body is replaced wholesale (no deep merge), so the client must
-    send the complete section, not just changed fields within it."""
+    """GET/PATCH/DELETE a single draft. PATCH shallow-merges by section key --
+    untouched sections are kept, but a section present in the body is replaced
+    wholesale (no deep merge), so the client sends the complete section, not just
+    the fields that changed within it, and clears one by sending it empty."""
 
     def _get_or_404(self, request, pk):
         resource = self.store.get(request.user, pk)
@@ -169,29 +209,15 @@ class WorkflowDraftDetailView(WorkflowDraftBaseView):
 
     @extend_schema(responses=WorkflowDraftSerializer)
     def get(self, request, graph_slug, pk):
-        record = self.store.to_record(self._get_or_404(request, pk))
-        return self.respond(record)
-
-    def _save(self, resource, data, body):
-        """Store the blob plus whatever step the body carries, serialized."""
-        record = self.store.set_data(resource, data, body.get("current_step"))
-        return self.respond(record)
-
-    @extend_schema(request=DraftPayloadSerializer, responses=WorkflowDraftSerializer)
-    def put(self, request, graph_slug, pk):
-        resource = self._get_or_404(request, pk)
-        body = request.data or {}
-        return self._save(resource, body.get("data") or {}, body)
+        return self.respond(self._get_or_404(request, pk))
 
     @extend_schema(request=DraftPayloadSerializer, responses=WorkflowDraftSerializer)
     def patch(self, request, graph_slug, pk):
         resource = self._get_or_404(request, pk)
-        body = request.data or {}
-        merged = {
-            **self.store.to_record(resource).data,
-            **body.get("data", {}),
-        }
-        return self._save(resource, merged, body)
+        body = self.payload(request)
+        merged = {**self.store.blob(resource), **body.data}
+        draft = self.store.set_data(request, pk, merged, body.current_step)
+        return self.respond(draft)
 
     @extend_schema(responses={204: None})
     def delete(self, request, graph_slug, pk):

@@ -22,7 +22,7 @@ from bcap.services.message.bcap_message_service import (
 )
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.controlled_list import reference_value
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.test_bcap_message_service import make_message
 from tests.views.helpers import AuthTestHelper
@@ -164,13 +164,15 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 201)
 
     def test_create_against_a_draft_resource_context(self):
-        draft = WorkflowDraftService().create(self.user, "investigation", {})
+        draft = WorkflowDraftService().create(
+            request_as(self.user), "investigation", {}
+        )
         payload = {
             "aliased_data": {
                 "message_content": {
                     "aliased_data": {
                         "resource_context": {
-                            "node_value": [{"resourceId": str(draft.id)}]
+                            "node_value": [{"resourceId": str(draft.pk)}]
                         },
                         "message_content": {
                             "node_value": {"en": {"value": "hi", "direction": "ltr"}}

@@ -39,7 +39,7 @@ class CloneProcessRequirementTemplates(BaseFunction):
         node = get_node(
             GraphSlugs.PERMIT_APPLICATION, PermitApplicationAliases.PROCESS_REQUIREMENT
         )
-        service = ProcessRequirementService()
+        service = ProcessRequirementService(request)
         tile._cloned_requirement_ids = []
         for relationship in tile.data.get(str(node.pk)) or []:
             if self._is_template(relationship.get("resourceId")):

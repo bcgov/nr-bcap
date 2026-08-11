@@ -11,6 +11,7 @@ from arches.app.models.models import TileModel
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.graph import node_info
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.aliases.permit_application import PermitApplicationAliases as pa
@@ -69,17 +70,13 @@ class ModuleProgressTests(AuthTestHelper, TestCase):
         ).get(pk=pk)
 
     def _module_tiles(self, pk):
-        _, module_ng = self.service._node_info(
-            GraphSlugs.PERMIT_APPLICATION, pa.IS_MODULE_COMPLETED
-        )
+        _, module_ng = node_info(GraphSlugs.PERMIT_APPLICATION, pa.IS_MODULE_COMPLETED)
         return list(
             TileModel.objects.filter(resourceinstance_id=pk, nodegroup_id=module_ng)
         )
 
     def _mark_completed(self, tile):
-        node_id, _ = self.service._node_info(
-            GraphSlugs.PERMIT_APPLICATION, pa.IS_MODULE_COMPLETED
-        )
+        node_id, _ = node_info(GraphSlugs.PERMIT_APPLICATION, pa.IS_MODULE_COMPLETED)
         tile.data[node_id] = True
         tile.save()
 

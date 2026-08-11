@@ -36,10 +36,8 @@
     ],
     "permit_application": [
         "GET",
-        "PUT",
         "PATCH",
-        "POST",
-        "DELETE"
+        "POST"
     ],
     "process_requirement": [
         "GET",

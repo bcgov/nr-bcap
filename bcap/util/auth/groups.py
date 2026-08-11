@@ -10,6 +10,8 @@
 # consider moving to django-guardian for object-level permissions
 # (https://django-guardian.readthedocs.io/) and replacing the group-name
 # checks with permission checks (e.g. user.has_perm("view_permit", permit)).
+# Other sub objects that check for owning organization at the
+# dashboard / draft level only, may need some tweaking for this
 
 from django.contrib.auth import get_user_model
 

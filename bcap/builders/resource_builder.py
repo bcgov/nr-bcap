@@ -18,6 +18,7 @@ from arches.app.models.resource import Resource
 from arches.app.models.tile import Tile
 
 from bcap.util.i18n import localized
+from bcap.util.save import acting_request
 
 from arches_querysets.models import (
     AliasedData,
@@ -40,13 +41,15 @@ class ResourceBuilder:
     # data passes tag_as_seed=False to be left alone.
     _TAG_AS_SEED = True
 
-    def __init__(self, skip_refresh=True, owner=None, tag_as_seed=None):
+    def __init__(self, skip_refresh=True, owner=None, tag_as_seed=None, request=None):
         if tag_as_seed is not None:
             self._TAG_AS_SEED = tag_as_seed
         self.state = ResourceInstanceLifecycleState.objects.first()
-        self.save_kwargs = {"force_admin": True, "partial": False, "index": False}
+        self.request = acting_request(request)
         # The tile-first save never sets principaluser, so claim() does it later.
-        self.owner = owner or get_user_model().objects.get(username="admin")
+        self.owner = owner or self.request.user
+        self._save_as = {"request": self.request}
+        self.save_kwargs = {**self._save_as, "partial": False, "index": False}
         self._graphs = {}
         # save() re-runs get_tiles() to rehydrate aliased_data (~70% of cost);
         # builders only need the saved rows.

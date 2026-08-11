@@ -57,7 +57,7 @@ class ExternalDashboardFilterSerializer(DataclassSerializer):
 
     status = ChoiceField(
         choices=ExternalDashboardStatus.choices,
-        default=ExternalDashboardStatus.CREATED_BY_ME,
+        default=ExternalDashboardStatus.FILINGS_CREATED_BY_ME,
     )
 
     class Meta:

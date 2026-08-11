@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF
-  xmlns:arches="http://localhost:82/"
+  xmlns:arches="https://localhost/"
   xmlns:skos="http://www.w3.org/2004/02/skos/core#"
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
-  <skos:Concept rdf:about="http://localhost:82/859490ca-4f3f-484e-96a5-4632442ccecc">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/859490ca-4f3f-484e-96a5-4632442ccecc</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/859490ca-4f3f-484e-96a5-4632442ccecc">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/859490ca-4f3f-484e-96a5-4632442ccecc</dcterms:identifier>
     <skos:prefLabel xml:lang="en">High</skos:prefLabel>
     <skos:inScheme>
-      <skos:ConceptScheme rdf:about="http://localhost:82/bb7c9c73-5f7c-4fb6-911a-18b49f23c717">
+      <skos:ConceptScheme rdf:about="https://localhost/bb7c9c73-5f7c-4fb6-911a-18b49f23c717">
         <dcterms:title>Application Priority Level</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/e9bcd538-71f3-4dba-84ce-e70f77e750a1">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/e9bcd538-71f3-4dba-84ce-e70f77e750a1</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/e9bcd538-71f3-4dba-84ce-e70f77e750a1">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/e9bcd538-71f3-4dba-84ce-e70f77e750a1</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
     <skos:prefLabel xml:lang="en">Hold</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
+    <skos:inScheme rdf:resource="https://localhost/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/de388a46-0b6c-4bf1-83a6-b645817797e3">
-    <skos:inScheme rdf:resource="http://localhost:82/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
+  <skos:Concept rdf:about="https://localhost/de388a46-0b6c-4bf1-83a6-b645817797e3">
+    <skos:inScheme rdf:resource="https://localhost/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
     <skos:prefLabel xml:lang="en">Regular</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/de388a46-0b6c-4bf1-83a6-b645817797e3</dcterms:identifier>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/de388a46-0b6c-4bf1-83a6-b645817797e3</dcterms:identifier>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/eadd12b1-6c7d-4f9b-86d3-7ebee2c11929">
-    <skos:inScheme rdf:resource="http://localhost:82/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/eadd12b1-6c7d-4f9b-86d3-7ebee2c11929</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/eadd12b1-6c7d-4f9b-86d3-7ebee2c11929">
+    <skos:inScheme rdf:resource="https://localhost/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/eadd12b1-6c7d-4f9b-86d3-7ebee2c11929</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Critical</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/ce7e12f7-0def-4e3a-bb36-8652790a1e31">
-    <skos:inScheme rdf:resource="http://localhost:82/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
+  <skos:Concept rdf:about="https://localhost/ce7e12f7-0def-4e3a-bb36-8652790a1e31">
+    <skos:inScheme rdf:resource="https://localhost/bb7c9c73-5f7c-4fb6-911a-18b49f23c717"/>
     <skos:prefLabel xml:lang="en">Low</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/ce7e12f7-0def-4e3a-bb36-8652790a1e31</dcterms:identifier>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/ce7e12f7-0def-4e3a-bb36-8652790a1e31</dcterms:identifier>
   </skos:Concept>
 </rdf:RDF>

@@ -728,6 +728,26 @@
                 {
                     "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
                     "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Owning Organization",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "d814b48e-18f2-44ef-b8fa-3dba3244f24e",
+                    "label": {
+                        "en": "Owning Organization"
+                    },
+                    "node_id": "17da504c-184c-43f4-9e5d-486ccd31cce2",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
                         "defaultValue": {
                             "en": {
                                 "direction": "ltr",
@@ -1934,6 +1954,16 @@
                 {
                     "description": null,
                     "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "edgeid": "de0aa35b-6eee-472a-84f9-66d3afae1f13",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "17da504c-184c-43f4-9e5d-486ccd31cce2",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
                     "edgeid": "d86d04c5-2975-412d-baa3-a6737b4756cd",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                     "name": null,
@@ -2792,6 +2822,38 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "owning_organization",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "Organization whose members can see this application",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Owning Organization",
+                    "nodegroup_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "nodeid": "17da504c-184c-43f4-9e5d-486ccd31cce2",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

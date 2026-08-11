@@ -1,14 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
 import { defineComponent } from 'vue';
 import { shallowMount } from '@vue/test-utils';
 
 // Heavy arches deps the sections pull in -- stub for a render smoke test.
 vi.mock('@/bcgov_arches_common/components/SimpleMap/SimpleMap.vue', () => ({
     default: defineComponent({ name: 'SimpleMap', template: '<div />' }),
-}));
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-    VIEW: 'view',
-    EDIT: 'edit',
 }));
 vi.mock('@/bcgov_arches_common/composables/useTileEditLog.ts', async () => {
     const { ref } = await import('vue');
