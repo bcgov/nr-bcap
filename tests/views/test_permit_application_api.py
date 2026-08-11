@@ -43,7 +43,7 @@ from bcap.services.process_requirement.template_specs import load
 from bcap.util.i18n import localized_string
 from bcap.views.organization_helpers import block_organization
 
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import build_permit, seed_requirement_templates
 from tests.services.contributor_fixtures import (
@@ -134,7 +134,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         pk = cls._create_permit(cls._logged_in_client())
         host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
         service = ProcessRequirementService(
-            user=get_user_model().objects.get(username="admin")
+            request_as(get_user_model().objects.get(username="admin"))
         )
         return pk, host, service.attach_requirements(pk, "investigation", host)
 
@@ -320,7 +320,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         before = self._non_template_requirement_count()
 
         ProcessRequirementService(
-            user=get_user_model().objects.get(username="admin")
+            request_as(get_user_model().objects.get(username="admin"))
         ).remove_module(pk, module.tileid)
 
         admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
@@ -432,9 +432,16 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._patch(pk, payload).status_code, 400)
         self.assertEqual(self._requirement_count(), before)
 
-    def test_create_forbidden_without_resource_editor_role(self):
+    def test_create_allowed_for_any_signed_in_user(self):
+        """Applicants file their own applications, so creating needs a login and
+        nothing more; the owning organization stamped on create is what scopes
+        who reads it back."""
         self.idir_login_simulate(self.user)
-        self.assertEqual(self._post(create_payload()).status_code, 403)
+        self.assertEqual(self._post(create_payload()).status_code, 201)
+
+    def test_create_redirects_to_login_when_signed_out(self):
+        self.client.logout()
+        self.assertEqual(self._post(create_payload()).status_code, 302)
 
     def _nesting_variants(self, group):
         """A body missing the tree at each level: no aliased_data, no group,
@@ -595,7 +602,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertIn("Investigation", names)
 
         service = ProcessRequirementService(
-            user=get_user_model().objects.get(username="admin")
+            request_as(get_user_model().objects.get(username="admin"))
         )
         hosts = service.permit_module_tiles(pk, "investigation")
         self.assertIn(str(self.investigation_host.pk), [str(h.pk) for h in hosts])

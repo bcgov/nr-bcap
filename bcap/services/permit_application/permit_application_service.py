@@ -21,8 +21,10 @@ from bcap.util.indexing import bulk_index
 class PermitApplicationService:
     """Assigns the id and attaches requirements on first submission."""
 
-    def __init__(self, requirement_service=None):
-        self._requirements = requirement_service or ProcessRequirementService()
+    def __init__(self, request=None, requirement_service=None):
+        # The request rides along so requirement saves name the acting user in
+        # the edit log; the read-only callers build one without it.
+        self._requirements = requirement_service or ProcessRequirementService(request)
 
     def submission_context_ids_for_permits(self, permits, requirements_by_permit=None):
         """Map each permit to the resource ids its unread counts span (the permit

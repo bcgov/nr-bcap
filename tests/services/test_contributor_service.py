@@ -266,6 +266,7 @@ class ContributorsForResourceTests(TestCase):
         child.aliased_data.ministry_assignee = cls.assignee
         permit.save(**builder.save_kwargs)
         cls.permit = permit
+        cls.req = req
         cls.plain = builder.make_resource("permit_application")
 
     def _ids(self, resource):
@@ -294,6 +295,11 @@ class ContributorsForResourceTests(TestCase):
         self.assertIsNotNone(branch_id)
         rows = self.service.contributors_for_resource(str(self.plain.pk))
         self.assertEqual([r.id for r in rows], [branch_id])
+
+    def test_requirement_resource_picks_up_the_permits_assignees(self):
+        self.assertEqual(
+            self._ids(self.req), {str(self.officer.pk), str(self.assignee.pk)}
+        )
 
     def test_assigned_resource_does_not_get_the_branch(self):
         self.assertNotIn(self.service.archaeology_branch_id(), self._ids(self.permit))

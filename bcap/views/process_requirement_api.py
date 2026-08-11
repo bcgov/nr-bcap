@@ -109,7 +109,9 @@ class ProcessRequirementSeedView(APIView):
     The permit type is a path segment; a type with no host resource is a 400."""
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [ResourceEditor]
+    # Applicants file their own modules, so this only asks for a login; which
+    # permits they may file against is settled by the permit lookup.
+    permission_classes = [IsAuthenticated]
     # Key each host's aliased_data component name off its graph, so the three
     # host types get distinct typed schemas instead of one shared, generic one.
     schema = ArchesTileAutoSchema()
@@ -133,9 +135,7 @@ class ProcessRequirementSeedView(APIView):
     def get(self, request, pk, permit_type):
         """The module's host resources attached to the permit application."""
         serializer_class = self._host_serializer_class(permit_type, pk)
-        hosts = ProcessRequirementService(user=request.user).permit_module_tiles(
-            pk, permit_type
-        )
+        hosts = ProcessRequirementService(request).permit_module_tiles(pk, permit_type)
         return Response(
             [serializer_class(host, request=request).data for host in hosts]
         )
@@ -151,9 +151,7 @@ class ProcessRequirementSeedView(APIView):
         host = host_serializer.save()
         host_resource = Resource.objects.get(pk=host.pk)
         host_resource.save_descriptors()
-        ProcessRequirementService(user=request.user).attach_requirements(
-            pk, permit_type, host
-        )
+        ProcessRequirementService(request).attach_requirements(pk, permit_type, host)
         bulk_index([host_resource])
         # Re-read the saved host as representation so the response carries
         # display_value (what the review screen renders).
@@ -181,7 +179,7 @@ class PermitModuleView(APIView):
             GraphSlugs.PERMIT_APPLICATION,
             "No permit application matches the given id.",
         )
-        ProcessRequirementService(user=request.user).remove_module(pk, module_tileid)
+        ProcessRequirementService(request).remove_module(pk, module_tileid)
         return Response(status=204)
 
     @extend_schema(request=ModuleCompletionSerializer, responses={204: None})
@@ -193,7 +191,7 @@ class PermitModuleView(APIView):
         )
         body = ModuleCompletionSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        found = ProcessRequirementService(user=request.user).set_module_completed(
+        found = ProcessRequirementService(request).set_module_completed(
             pk, module_tileid, body.validated_data.completed
         )
         if not found:
@@ -217,7 +215,7 @@ class ModuleRequirementsView(APIView):
     def patch(self, request, pk, module_tileid):
         body = ReorderRequirementsSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        ProcessRequirementService(user=request.user).reorder_requirements(
+        ProcessRequirementService(request).reorder_requirements(
             pk, module_tileid, body.validated_data.order
         )
         return Response(status=204)
@@ -227,7 +225,7 @@ class ModuleRequirementsView(APIView):
         body = AddRequirementSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         name = body.validated_data.name or "New requirement"
-        ProcessRequirementService(user=request.user).add_blank_requirement(
+        ProcessRequirementService(request).add_blank_requirement(
             pk, module_tileid, name
         )
         return Response(status=201)
@@ -243,7 +241,7 @@ class ModuleRequirementView(APIView):
     permission_classes = STAFF_MODULE_PERMISSIONS
 
     def delete(self, request, pk, module_tileid, requirement_id):
-        ProcessRequirementService(user=request.user).remove_requirement(
+        ProcessRequirementService(request).remove_requirement(
             pk, module_tileid, requirement_id
         )
         return Response(status=204)
@@ -252,7 +250,7 @@ class ModuleRequirementView(APIView):
     def patch(self, request, pk, module_tileid, requirement_id):
         body = RequirementAssigneeSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        found = ProcessRequirementService(user=request.user).set_ministry_assignee(
+        found = ProcessRequirementService(request).set_ministry_assignee(
             pk, module_tileid, requirement_id, body.validated_data.contributor_id
         )
         if not found:
@@ -281,7 +279,7 @@ class RequirementStatusView(APIView):
         )
         body = RequirementStatusSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        ProcessRequirementService(user=request.user).set_requirement_status(
+        ProcessRequirementService(request).set_requirement_status(
             requirement_id, body.validated_data.satisfied
         )
         return Response(status=204)
@@ -309,7 +307,7 @@ class RequirementChecklistView(APIView):
         )
         body = ChecklistPatchSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        ProcessRequirementService(user=request.user).save_checklist(
+        ProcessRequirementService(request).save_checklist(
             requirement_id,
             body.validated_data.name,
             body.validated_data.steps,

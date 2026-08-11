@@ -8,8 +8,8 @@ first, so they shadow them.
 """
 
 from drf_spectacular.utils import extend_schema
+from rest_framework.permissions import IsAuthenticated
 
-from arches_querysets.rest_framework.permissions import ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from bcap.services.contributor.organization_service import OrganizationService
@@ -50,7 +50,7 @@ class PermitApplicationView(GeneratedPermitApplicationView):
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
             PA.OWNING_ORGANIZATION,
         )
-        return PermitApplicationService().submit(
+        return PermitApplicationService(request).submit(
             self.get_object(),
             request.data,
             save=lambda: super(PermitApplicationView, self).update(
@@ -61,13 +61,14 @@ class PermitApplicationView(GeneratedPermitApplicationView):
 
 @extend_schema(tags=["External: permit_application"])
 class PermitApplicationCreateView(GeneratedPermitApplicationListView):
-    """POST a new Permit Application, seeding its application id.
+    """POST a new Permit Application, seeding its application id. A body that
+    already carries the submission date attaches the requirement working copies
+    here; one saved as a draft gets them on the update that submits it (see the
+    detail view)."""
 
-    Create-only (POST); the requirements are attached later, on submission (see
-    the detail view).
-    """
-
-    permission_classes = [ResourceEditor]
+    # Applicants file their own applications, so this only asks for a login; the
+    # owning organization stamped on create is what scopes who reads it back.
+    permission_classes = [IsAuthenticated]
     http_method_names = ["post", "options"]
 
     def create(self, request, *args, **kwargs):
@@ -76,7 +77,7 @@ class PermitApplicationCreateView(GeneratedPermitApplicationListView):
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
             PA.OWNING_ORGANIZATION,
         )
-        return PermitApplicationService().create(
+        return PermitApplicationService(request).create(
             request.data,
             save=lambda: super(PermitApplicationCreateView, self).create(
                 request, *args, **kwargs

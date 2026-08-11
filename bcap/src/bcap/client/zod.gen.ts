@@ -9425,13 +9425,4 @@ export const zApiWorkflowDraftPartialUpdatePath = z.object({
 
 export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
 
-export const zApiWorkflowDraftUpdateBody = zDraftPayloadWritable;
-
-export const zApiWorkflowDraftUpdatePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiWorkflowDraftUpdateResponse = zDraftRecord;
-
 export const zUserProfileRetrieveResponse = zUserProfileResponse;

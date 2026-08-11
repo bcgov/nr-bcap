@@ -176,7 +176,7 @@ class BcapMessageDetailView(
         service = BcapMessageService()
         # A PATCH can carry the read date, the archive flag, either, or both; each
         # setter no-ops when its own field is absent from the body.
-        service.set_read_state(self.kwargs["pk"], request.data)
+        service.set_read_state(request, self.kwargs["pk"], request.data)
         service.set_archived_state(
             self.kwargs["pk"], request.data, request.user.username
         )
