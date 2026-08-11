@@ -169,11 +169,13 @@ def build_minimal_permit(builder, name, satisfied=False, submitted=True):
 def build_permit_with_investigation(builder, name):
     """A dashboard-visible permit whose outstanding requirement's
     submission_data points at an Investigation host -- the linkage the
-    unread-message roll-up follows. Returns the permit and the host resource."""
+    unread-message roll-up follows. Returns the permit, the host resource, and
+    the requirement."""
     host = builder.make_resource(GraphSlugs.INVESTIGATION)
     requirement = make_requirement(builder, name)
     builder.link(str(requirement.pk), submission=host)
-    return build_permit(builder, name, [RequirementRow(requirement)]), host
+    permit = build_permit(builder, name, [RequirementRow(requirement)])
+    return permit, host, requirement
 
 
 def build_groupless_requirement_permit(builder, name):
@@ -612,20 +614,31 @@ class DashboardUnreadRollupTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = InternalDashboardService()
         builder = FixtureBuilder()
-        cls.permit, cls.host = build_permit_with_investigation(builder, "Roll")
+        cls.permit, cls.host, requirement = build_permit_with_investigation(
+            builder, "Roll"
+        )
         cls.permit_id = str(cls.permit.pk)
         cls.host_id = str(cls.host.pk)
+        cls.requirement = requirement
+        cls.requirement_id = str(requirement.pk)
 
-    def test_context_ids_include_the_permit_and_its_submission_host(self):
+    def test_context_ids_include_the_permit_its_requirement_and_the_host(self):
         contexts = PermitApplicationService().submission_context_ids_for_permits(
             [self.permit]
         )
-        self.assertEqual(contexts, {self.permit_id: {self.permit_id, self.host_id}})
+        self.assertEqual(
+            contexts,
+            {self.permit_id: {self.permit_id, self.requirement_id, self.host_id}},
+        )
 
-    def test_a_permit_with_no_submission_maps_to_only_itself(self):
-        bare = build_minimal_permit(FixtureBuilder(), "Bare")
+    def test_a_permit_with_no_submission_maps_to_itself_and_its_requirement(self):
+        builder = FixtureBuilder()
+        requirement = make_requirement(builder, "Bare")
+        bare = build_permit(builder, "Bare", [RequirementRow(requirement)])
         contexts = PermitApplicationService().submission_context_ids_for_permits([bare])
-        self.assertEqual(contexts, {str(bare.pk): {str(bare.pk)}})
+        self.assertEqual(
+            contexts, {str(bare.pk): {str(bare.pk), str(requirement.pk)}}
+        )
 
     def test_card_count_rolls_up_messages_on_the_permit_and_the_host(self):
         builder = FixtureBuilder()
@@ -634,6 +647,7 @@ class DashboardUnreadRollupTests(TestCase):
         # read that must not count.
         make_message(builder, context=self.permit, recipient=reader, subject="p")
         make_message(builder, context=self.host, recipient=reader, subject="h")
+        make_message(builder, context=self.requirement, recipient=reader, subject="req")
         make_message(
             builder,
             context=self.host,
@@ -645,4 +659,4 @@ class DashboardUnreadRollupTests(TestCase):
         page = self.service.get_cards(DashboardFilter(), "roller")
 
         card = next(c for c in page.results if c.id == self.permit_id)
-        self.assertEqual(card.unread_messages, 2)
+        self.assertEqual(card.unread_messages, 3)

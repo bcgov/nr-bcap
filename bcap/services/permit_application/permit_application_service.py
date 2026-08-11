@@ -27,9 +27,9 @@ class PermitApplicationService:
         self._requirements = requirement_service or ProcessRequirementService(request)
 
     def submission_context_ids_for_permits(self, permits, requirements_by_permit=None):
-        """Map each permit to the resource ids its unread counts span (the permit
-        and its requirements' submission hosts); pass known requirement ids to
-        skip a query."""
+        """Map each permit to the resource ids its unread counts span (the permit,
+        its requirements, and their submission hosts); pass known requirement ids
+        to skip a query."""
         permit_ids = [str(permit.pk) for permit in permits]
         contexts = {pk: {pk} for pk in permit_ids}
 
@@ -43,7 +43,10 @@ class PermitApplicationService:
         )
         for permit_id, requirement_ids in requirements_by_permit.items():
             for requirement_id in requirement_ids:
-                hosts = hosts_by_requirement.get(requirement_id, ())
+                # The requirement row's message dialog files against the
+                # requirement itself, so it is a context in its own right.
+                contexts[permit_id].add(str(requirement_id))
+                hosts = hosts_by_requirement.get(str(requirement_id), ())
                 contexts[permit_id].update(hosts)
         return contexts
 

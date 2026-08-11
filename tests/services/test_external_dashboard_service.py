@@ -14,12 +14,17 @@ from bcap.services.dashboard.dashboard_types import (
 )
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
-from tests.permit_fixtures import build_permit
+from tests.permit_fixtures import (
+    RequirementRow,
+    build_permit,
+    make_requirement,
+)
 from tests.services.contributor_fixtures import (
     make_contributor,
     make_party,
     make_user,
 )
+from tests.services.test_bcap_message_service import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -498,3 +503,48 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         self.assertEqual(card.permit_application_id, parent_id)
         self.assertEqual(card.project_name, "")
         self.assertEqual(card.application_number, "")
+
+
+class ExternalDashboardUnreadTests(TestCase):
+    """The applicant's card counts unread messages filed anywhere on their
+    application: the permit, its process requirements, and their submission
+    hosts."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        cls.service = ExternalDashboardService()
+        builder = FixtureBuilder()
+
+        cls.user, cls.contributor = make_party(builder, "reader", "Rae", "Reader")
+        cls.host = builder.make_resource(GraphSlugs.INVESTIGATION)
+        cls.requirement = make_requirement(builder, "Unread")
+        builder.link(str(cls.requirement.pk), submission=cls.host)
+        cls.permit = build_permit(
+            builder, "Unread App", [RequirementRow(cls.requirement)]
+        )
+        ResourceInstance.objects.filter(pk=cls.permit.pk).update(
+            principaluser=cls.user,
+            resource_instance_lifecycle_state_id=LIFECYCLE_STATE_IDS["Active"],
+        )
+
+        make_message(
+            builder, context=cls.permit, recipient=cls.contributor, subject="p"
+        )
+        make_message(
+            builder, context=cls.requirement, recipient=cls.contributor, subject="req"
+        )
+        make_message(builder, context=cls.host, recipient=cls.contributor, subject="h")
+        make_message(
+            builder,
+            context=cls.host,
+            recipient=cls.contributor,
+            read_date="2026-02-01",
+            subject="read",
+        )
+
+    def test_card_count_spans_the_permit_its_requirement_and_the_host(self):
+        page = self.service.get_cards(DashboardFilter(), self.user)
+
+        card = next(c for c in page.results if c.id == str(self.permit.pk))
+        self.assertEqual(card.unread_messages, 3)
