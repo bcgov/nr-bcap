@@ -636,9 +636,7 @@ class DashboardUnreadRollupTests(TestCase):
         requirement = make_requirement(builder, "Bare")
         bare = build_permit(builder, "Bare", [RequirementRow(requirement)])
         contexts = PermitApplicationService().submission_context_ids_for_permits([bare])
-        self.assertEqual(
-            contexts, {str(bare.pk): {str(bare.pk), str(requirement.pk)}}
-        )
+        self.assertEqual(contexts, {str(bare.pk): {str(bare.pk), str(requirement.pk)}})
 
     def test_card_count_rolls_up_messages_on_the_permit_and_the_host(self):
         builder = FixtureBuilder()
