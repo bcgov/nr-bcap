@@ -59,12 +59,14 @@ class TestReadGraphMeta(SimpleTestCase):
 
     def test_reads_first_graph_entry_only(self):
         gid = str(uuid.uuid4())
-        data = json.dumps({
-            "graph": [
-                {"graphid": gid, "slug": "first"},
-                {"graphid": str(uuid.uuid4()), "slug": "second"},
-            ]
-        })
+        data = json.dumps(
+            {
+                "graph": [
+                    {"graphid": gid, "slug": "first"},
+                    {"graphid": str(uuid.uuid4()), "slug": "second"},
+                ]
+            }
+        )
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "model.json"
             path.write_text(data)
@@ -183,7 +185,9 @@ class TestHandleRouting(SimpleTestCase):
         mc.clear.assert_called_once()
 
     def test_cache_is_always_cleared(self):
-        *_, mc = self._run(skip_graphs=True, skip_lists=True, skip_requirements=True, skip_reindex=True)
+        *_, mc = self._run(
+            skip_graphs=True, skip_lists=True, skip_requirements=True, skip_reindex=True
+        )
         mc.clear.assert_called_once()
 
     def test_skip_graphs_omits_reload_graphs(self):
@@ -221,8 +225,14 @@ class TestHandleRouting(SimpleTestCase):
 class TestPrepareGraphsForImport(SimpleTestCase):
     """_prepare_graphs_for_import correctly prepares each existing graph."""
 
-    def _prepare(self, paths, valid_pubs=None, dangling_count=0, has_draft=False,
-                 graph_does_not_exist=False):
+    def _prepare(
+        self,
+        paths,
+        valid_pubs=None,
+        dangling_count=0,
+        has_draft=False,
+        graph_does_not_exist=False,
+    ):
         """
         Run _prepare_graphs_for_import with standard mocks.
 
@@ -249,12 +259,12 @@ class TestPrepareGraphsForImport(SimpleTestCase):
         ):
             MockGraph.objects.get = mock_graph_get
             MockGraph.DoesNotExist = _GraphDoesNotExist
-            mock_models.GraphXPublishedGraph.objects.values_list.return_value = valid_pubs
-            (
-                mock_models.Node.objects
-                .filter.return_value
-                .exclude.return_value
-            ) = mock_dangling_qs
+            mock_models.GraphXPublishedGraph.objects.values_list.return_value = (
+                valid_pubs
+            )
+            mock_models.Node.objects.filter.return_value.exclude.return_value = (
+                mock_dangling_qs
+            )
             cmd._prepare_graphs_for_import(paths)
 
         return cmd, mock_graph, mock_models, mock_dangling_qs
@@ -331,11 +341,9 @@ class TestPrepareGraphsForImport(SimpleTestCase):
                 MockGraph.objects.get.return_value = mock_graph
                 MockGraph.DoesNotExist = _GraphDoesNotExist
                 mock_models.GraphXPublishedGraph.objects.values_list.return_value = []
-                (
-                    mock_models.Node.objects
-                    .filter.return_value
-                    .exclude.return_value
-                ) = mock_dangling_qs
+                mock_models.Node.objects.filter.return_value.exclude.return_value = (
+                    mock_dangling_qs
+                )
                 cmd._prepare_graphs_for_import([path_a, path_b])
         self.assertEqual(mock_graph.promote_draft_graph_to_active_graph.call_count, 2)
 
@@ -441,8 +449,14 @@ class TestDeletePermitData(SimpleTestCase):
             ):
                 mock_graphs = MagicMock()
                 mock_models.GraphModel.objects.filter.return_value = mock_graphs
-                mock_models.TileModel.objects.filter.return_value.delete.return_value = (tile_count, {})
-                mock_models.ResourceInstance.objects.filter.return_value.delete.return_value = (instance_count, {})
+                mock_models.TileModel.objects.filter.return_value.delete.return_value = (
+                    tile_count,
+                    {},
+                )
+                mock_models.ResourceInstance.objects.filter.return_value.delete.return_value = (
+                    instance_count,
+                    {},
+                )
                 cmd.delete_permit_data()
                 return cmd, mock_models
 
@@ -466,8 +480,14 @@ class TestDeletePermitData(SimpleTestCase):
                 patch(f"{_MODULE}.arches_models") as mock_models,
             ):
                 mock_models.GraphModel.objects.filter.return_value = MagicMock()
-                mock_models.TileModel.objects.filter.return_value.delete.return_value = (42, {})
-                mock_models.ResourceInstance.objects.filter.return_value.delete.return_value = (3, {})
+                mock_models.TileModel.objects.filter.return_value.delete.return_value = (
+                    42,
+                    {},
+                )
+                mock_models.ResourceInstance.objects.filter.return_value.delete.return_value = (
+                    3,
+                    {},
+                )
                 cmd.delete_permit_data()
         self.assertIn("42", out.getvalue())
         self.assertIn("3", out.getvalue())
