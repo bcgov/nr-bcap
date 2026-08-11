@@ -19,6 +19,6 @@
     <ns1:localhostsortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</ns1:localhostsortorder>
     <skos:prefLabel xml:lang="en">Research</skos:prefLabel>
     <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/091054f0-1e2e-4446-a6ed-b8dd2f983b80</dcterms:identifier>
-    <skos:inScheme rdf:resource="https://localhost18dec7b7-d0f6-472f-826a-3b8edf019291"/>
+    <skos:inScheme rdf:resource="https://localhost/18dec7b7-d0f6-472f-826a-3b8edf019291"/>
   </skos:Concept>
 </rdf:RDF>
