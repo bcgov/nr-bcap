@@ -282,6 +282,18 @@ describe('filter switching', () => {
 });
 
 describe('search filtering', () => {
+    it('feeds the term back to the toolbar, so the input keeps what was typed', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard({ id: 'a' })]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:search', 'copper');
+
+        expect(
+            wrapper.findComponent({ name: 'SortingBar' }).props('search'),
+        ).toBe('copper');
+    });
+
     it('keeps only cards whose title matches the search term', async () => {
         getInternalDashboardData.mockResolvedValue([
             makeCard({ id: 'a', project_name: 'Copper Mine' }),

@@ -152,10 +152,6 @@ const loadData = async () => {
     }
 };
 
-function handleSearch(searchTerm: string) {
-    state.currentSearch = searchTerm;
-}
-
 const displayedProjects = computed(() => {
     let filtered = state.rawProjects;
 
@@ -257,13 +253,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 v-model:current-sort="state.currentSort"
                 v-model:sort-order="state.sortOrder"
                 v-model:messages-only="state.messagesOnly"
+                v-model:search="state.currentSearch"
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
                 messages-only-label="Unread messages only"
                 :shown="state.isLoading ? 0 : displayedProjects.length"
                 :total="state.isLoading ? 0 : state.rawProjects.length"
-                @update:search="handleSearch"
                 @refresh="loadData"
             />
 
