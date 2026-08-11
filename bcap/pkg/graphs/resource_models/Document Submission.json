@@ -124,7 +124,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Arch Branch Internal Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -167,7 +169,9 @@
                     "card_id": "8d61f624-be2d-4a81-9f5b-d03aa3dec18d",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Submission Number",
                         "maxLength": null,
                         "placeholder": {
@@ -192,7 +196,9 @@
                     "card_id": "49931610-b2d8-4f7c-be57-1f409b445ad7",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Lead Archaeologist Consultant",
                         "placeholder": {
                             "en": ""
@@ -217,7 +223,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Photograph Description",
                         "maxLength": null,
                         "placeholder": {
@@ -266,7 +274,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Photograph View",
                         "maxLength": null,
                         "placeholder": {
@@ -294,7 +304,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Consultant Report Number",
                         "maxLength": "40",
                         "placeholder": {
@@ -322,7 +334,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Arch Branch Response",
                         "maxLength": null,
                         "placeholder": {
@@ -344,7 +358,9 @@
                 {
                     "card_id": "8d61f624-be2d-4a81-9f5b-d03aa3dec18d",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Submission Type",
                         "placeholder": {
                             "en": "Select submission type"
@@ -388,7 +404,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Recommendations",
                         "maxLength": null,
                         "placeholder": {
@@ -411,7 +429,9 @@
                     "card_id": "56e1c901-6eb5-4ec0-b6f6-bb7819055cd8",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Determined Level of Risk",
                         "options": [],
                         "placeholder": {
@@ -453,7 +473,9 @@
                                 "value": "Enter title of the PSR"
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Document Title",
                         "maxLength": "80",
                         "placeholder": {
@@ -476,7 +498,9 @@
                     "card_id": "49931610-b2d8-4f7c-be57-1f409b445ad7",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Archaeology Company",
                         "placeholder": {
                             "en": ""
@@ -520,7 +544,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Photographer",
                         "maxLength": null,
                         "placeholder": {
@@ -761,26 +787,26 @@
             ],
             "functions_x_graphs": [
                 {
-                    "id": "97dd3387-7137-4f72-856d-0053ed1cb715",
-                    "function_id": "60000000-0000-0000-0000-000000000001",
-                    "graph_id": "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",
                     "config": {
                         "descriptor_types": {
-                            "name": {
-                                "nodegroup_id": "22e9f8fd-9394-48a0-8911-b48afb0afb34",
-                                "string_template": "<Document Title>"
+                            "description": {
+                                "nodegroup_id": "",
+                                "string_template": ""
                             },
                             "map_popup": {
                                 "nodegroup_id": "",
                                 "string_template": ""
                             },
-                            "description": {
-                                "nodegroup_id": "",
-                                "string_template": ""
+                            "name": {
+                                "nodegroup_id": "22e9f8fd-9394-48a0-8911-b48afb0afb34",
+                                "string_template": "<Document Title>"
                             }
                         },
                         "triggering_nodegroups": []
-                    }
+                    },
+                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "graph_id": "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",
+                    "id": "97dd3387-7137-4f72-856d-0053ed1cb715"
                 }
             ],
             "graphid": "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",
@@ -1056,7 +1082,9 @@
                 },
                 {
                     "alias": "arch_branch_determined_level_of_risk",
-                    "config": {},
+                    "config": {
+                        "rdmCollection": null
+                    },
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,
@@ -1252,7 +1280,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "http://localhost:81/bc-fossil-management/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=1&sort-results=asc&advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22c4eca2de-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22706881ba-bda3-4fbc-9d66-c26bf2d92c18%22%7D%2C%22e2f1c29a-c500-11ed-9089-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%223489e41e-0168-4a8f-80f1-75fde26e2130%22%7D%2C%22c4ec9b2c-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22c4eca13a-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22a5b2cd72-c4f4-11ed-a06d-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22b5ed0072-c4f4-11ed-94de-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22009ba8da-faf6-11ed-ac37-5254004d77d3%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%2299643f1e-9e4e-11ed-b6d5-5254004d77d3%22%3A%7B%22val%22%3A%22null%22%7D%7D%5D"
+                        "searchString": "/bcap/search?advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A[{\"labels\"%3A[{\"id\"%3A\"e499a812-99ef-4bc6-aba9-2de96c54c8e9\"%2C\"language_id\"%3A\"en\"%2C\"list_item_id\"%3A\"8c4e2933-a97a-5f47-89e7-78d1d8aaad81\"%2C\"value\"%3A\"Individual\"%2C\"valuetype_id\"%3A\"prefLabel\"}]%2C\"uri\"%3A\"https%3A%2F%2Flocalhost%2Fbcap%2Fplugins%2Fcontrolled-list-manager%2Fitem%2F8c4e2933-a97a-5f47-89e7-78d1d8aaad81\"}]}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5\"%3A{\"op\"%3A\"~\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -1484,7 +1512,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "/bc-fossil-management/search?paging-filter=1&tiles=true&format=tilecsv&reportlink=false&precision=6&total=0&advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22c4eca2de-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%22a7a00d7b-ac19-4b7a-b911-55b4fb1473ff%22%7D%2C%22e2f1c29a-c500-11ed-9089-5254004d77d3%22%3A%7B%22op%22%3A%22eq%22%2C%22val%22%3A%223489e41e-0168-4a8f-80f1-75fde26e2130%22%7D%2C%22c4ec9b2c-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22c4eca13a-9dea-11ed-9a7b-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22a5b2cd72-c4f4-11ed-a06d-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22b5ed0072-c4f4-11ed-94de-5254004d77d3%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%2C%22009ba8da-faf6-11ed-ac37-5254004d77d3%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%2299643f1e-9e4e-11ed-b6d5-5254004d77d3%22%3A%7B%22val%22%3A%22f%22%7D%7D%5D&sort-results=asc"
+                        "searchString": "/bcap/search?advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A[{\"labels\"%3A[{\"id\"%3A\"29b5c452-81cf-4bb7-b10f-c6bd53a58df1\"%2C\"language_id\"%3A\"en\"%2C\"list_item_id\"%3A\"fd2053d3-c010-519a-97e5-52f3c7b508e2\"%2C\"value\"%3A\"Organization\"%2C\"valuetype_id\"%3A\"prefLabel\"}]%2C\"uri\"%3A\"https%3A%2F%2Flocalhost%2Fbcap%2Fplugins%2Fcontrolled-list-manager%2Fitem%2Ffd2053d3-c010-519a-97e5-52f3c7b508e2\"}]}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5\"%3A{\"op\"%3A\"~\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -1562,7 +1590,10 @@
                         "falseLabel": {
                             "en": "Requires Changes"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Accepted"
                         }
@@ -1670,9 +1701,9 @@
             "publication": {
                 "graph_id": "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",
                 "most_recent_edit_id": null,
-                "notes": null,
-                "publicationid": "715b305a-30df-4e13-8a28-78dfd1ca411a",
-                "published_time": "2026-06-28T21:58:35.223"
+                "notes": "Fix searchString",
+                "publicationid": "08b5c74e-c655-41ae-b196-0bdd13d901df",
+                "published_time": "2026-08-11T11:02:01.702"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1772,7 +1803,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }
