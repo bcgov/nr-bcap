@@ -13,7 +13,6 @@ from pathlib import Path
 from django.apps import apps
 from django.test import SimpleTestCase
 
-
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -26,9 +25,7 @@ REQUIRED_SEARCH_PREFIX = "/bcap/search"
 
 # uri values embedded inside advanced-search filters must point to the local
 # controlled-list-manager instance.
-REQUIRED_URI_PREFIX = (
-    "https://localhost/bcap/plugins/controlled-list-manager/item/"
-)
+REQUIRED_URI_PREFIX = "https://localhost/bcap/plugins/controlled-list-manager/item/"
 
 
 # ---------------------------------------------------------------------------
