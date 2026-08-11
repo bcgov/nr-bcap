@@ -1448,9 +1448,18 @@
                 {
                     "alias": "parent_module",
                     "config": {
-                        "graphs": [],
+                        "graphs": [
+                            {
+                                "graphid": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Process Requirement",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
                         "searchDsl": "",
-                        "searchString": "/bcap/search?advanced-search=[{\"op\"%3A\"and\"%2C\"41f13399-15e5-40ce-b325-2605782d68a4\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A[{\"labels\"%3A[{\"id\"%3A\"e3ca8f5d-fd9d-41e7-a03e-eba2dc00e2c4\"%2C\"language_id\"%3A\"en\"%2C\"list_item_id\"%3A\"5cbc8c6c-5be4-476b-bb55-cb6125b5268c\"%2C\"value\"%3A\"Module\"%2C\"valuetype_id\"%3A\"prefLabel\"}]%2C\"uri\"%3A\"http%3A%2F%2Flocalhost%3A82%2Fplugins%2Fcontrolled-list-manager%2Fitem%2F5cbc8c6c-5be4-476b-bb55-cb6125b5268c\"}]}%2C\"62ffee00-47d5-4b48-84fc-8e76de1cfd94\"%3A{\"val\"%3A\"\"}%2C\"967bd749-09d3-4931-b1cf-6bb6d06a2b84\"%3A{\"op\"%3A\"\"%2C\"val\"%3A\"\"}%2C\"610647c4-77c3-4775-9772-3832f39e2447\"%3A{\"val\"%3A\"\"}%2C\"ebe3bed7-6d1c-4a5e-b1f4-ecc462e37566\"%3A{\"op\"%3A\"~\"%2C\"val\"%3A\"\"}%2C\"1974cf1e-e31a-428a-b64e-7eefbe2f4e5c\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}}]"
+                        "searchString": "/bcap/search?advanced-search=[{\"op\":\"and\",\"41f13399-15e5-40ce-b325-2605782d68a4\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"48b46918-aeeb-4b8f-a919-b75d4853c6f8\",\"language_id\":\"en\",\"list_item_id\":\"5cbc8c6c-5be4-476b-bb55-cb6125b5268c\",\"value\":\"Module\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"https://localhost/bcap/plugins/controlled-list-manager/item/5cbc8c6c-5be4-476b-bb55-cb6125b5268c\"}]},\"62ffee00-47d5-4b48-84fc-8e76de1cfd94\":{\"val\":\"\"},\"967bd749-09d3-4931-b1cf-6bb6d06a2b84\":{\"op\":\"\",\"val\":\"\"},\"610647c4-77c3-4775-9772-3832f39e2447\":{\"val\":\"\"},\"ebe3bed7-6d1c-4a5e-b1f4-ecc462e37566\":{\"op\":\"~\",\"val\":\"\"},\"1974cf1e-e31a-428a-b64e-7eefbe2f4e5c\":{\"op\":\"eq\",\"val\":\"\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": "The module this Process Requirement is part of.",
@@ -1709,9 +1718,9 @@
             "publication": {
                 "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
                 "most_recent_edit_id": null,
-                "notes": "Rework logical process module structure",
-                "publicationid": "979c92c3-6057-4b6e-96f5-874214f3d9df",
-                "published_time": "2026-07-13T14:03:43.880"
+                "notes": null,
+                "publicationid": "f399f1c7-feb6-436c-b9c3-ba6b8c7bef89",
+                "published_time": "2026-08-11T06:21:59.095"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
