@@ -79,12 +79,26 @@ describe('DocumentSubmissionModule extended coverage', () => {
         draftStore.draftId = 'mock-draft-123';
         draftStore.parentPermitId = 'mock-permit-456';
 
+        const photo = (name: string) => ({
+            aliased_data: {
+                submission_photographs: {
+                    node_value: [
+                        {
+                            name,
+                            node_id: 'node-9',
+                            file: new File(['x'], name),
+                        },
+                    ],
+                },
+            },
+        });
+
         draftStore.draftData = {
-            document_submission_process: [
-                { aliased_data: { some_prop: 'test' } },
-            ],
-            report_submission: { aliased_data: { file: 'test.pdf' } },
-            submission_photographs: [{ aliased_data: { view: 'north' } }],
+            document_submission_process: {
+                aliased_data: { submission_number: { node_value: 'S-1' } },
+            },
+            report_submission: { aliased_data: { report_title: 'a report' } },
+            submission_photographs: [photo('one.jpg'), photo('two.jpg')],
         };
 
         const wrapper = shallowMount(DocumentSubmissionModule);
@@ -92,25 +106,30 @@ describe('DocumentSubmissionModule extended coverage', () => {
 
         await stepper.props('submit')();
 
-        expect(submitModule).toHaveBeenCalledWith(
+        const [permitId, draftId, slug, payload, files] =
+            vi.mocked(submitModule).mock.calls[0];
+        expect([permitId, draftId, slug]).toEqual([
             'mock-permit-456',
             'mock-draft-123',
             'document_submission',
-            expect.objectContaining({
-                document_submission_process: [
-                    {
-                        aliased_data: {
-                            some_prop: 'test',
-                            report_submission: {
-                                aliased_data: { file: 'test.pdf' },
-                            },
-                            submission_photographs: {
-                                aliased_data: { view: 'north' },
-                            },
-                        },
-                    },
-                ],
-            }),
+        ]);
+
+        const tiles = payload.document_submission_process[0].aliased_data;
+        expect(tiles).toEqual({
+            submission_type: null,
+            submission_number: { node_value: 'S-1' },
+            report_submission: { aliased_data: { report_title: 'a report' } },
+            // every photograph, not just the first
+            submission_photographs: draftStore.draftData.submission_photographs,
+            submission_assessment: null,
+        });
+
+        // One multipart key per photograph tile, tied to the tileid minted onto it.
+        expect(files).toEqual(
+            tiles.submission_photographs.map((tile: { tileid: string }) => [
+                `file-list_${tile.tileid}-node-9`,
+                expect.any(File),
+            ]),
         );
     });
 

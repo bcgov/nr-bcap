@@ -1,6 +1,9 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
-import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type {
+    FileListAliasedNodeDataWritable,
+    PermitApplicationResourceAliasedData,
+} from '@/bcap/client/types.gen.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
@@ -59,6 +62,23 @@ export const downloadFile = async (
         window.open(url, '_blank');
     }
 };
+
+// A picked File only lives in memory until submit; it can't be stored.
+export const dropFiles = (_key: string, value: unknown) =>
+    value instanceof File ? undefined : value;
+
+// One multipart part per file a file-list node is holding, keyed the way arches
+// reads them back off the request. The tileid scopes the key so each tile claims
+// only its own uploads, and is minted here when the tile has none yet.
+export const fileParts = (
+    tile: { tileid?: string | null },
+    node: FileListAliasedNodeDataWritable | null | undefined,
+): Array<[string, File]> =>
+    (node?.node_value ?? []).flatMap((entry) => {
+        if (!(entry.file instanceof File)) return [];
+        tile.tileid ??= crypto.randomUUID();
+        return [[`file-list_${tile.tileid}-${entry.node_id}`, entry.file]];
+    });
 
 export const formatDateTime = (isoString: string | null): string | null => {
     if (!isoString) return null;

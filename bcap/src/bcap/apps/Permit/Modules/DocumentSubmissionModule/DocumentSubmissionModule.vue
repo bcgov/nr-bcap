@@ -9,6 +9,14 @@ import CustomReview from '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/st
 
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { submitModule } from '@/bcap/apps/Permit/api.ts';
+import { fileParts } from '@/bcap/util.ts';
+import type {
+    DocumentSubmissionDocumentSubmissionProcessAliasedDataWritable as ProcessAliasedData,
+    DocumentSubmissionDocumentSubmissionProcessTileWritable as ProcessTile,
+    DocumentSubmissionReportSubmissionTileWritable as ReportTile,
+    DocumentSubmissionSubmissionAssessmentTileWritable as AssessmentTile,
+    DocumentSubmissionSubmissionPhotographsTileWritable as PhotographTile,
+} from '@/bcap/client/types.gen.ts';
 
 const draft = useDraftStore();
 
@@ -19,59 +27,47 @@ const steps = [
     { label: 'Photographs', component: Step4_Photographs },
 ];
 
+// Each step writes its tile flat at the draft root; the graph nests them all
+// under document_submission_process, so submit reassembles them.
+interface DocumentSubmissionDraft {
+    document_submission_process?: ProcessTile | null;
+    report_submission?: ReportTile | null;
+    submission_photographs?: PhotographTile[] | null;
+    submission_assessment?: AssessmentTile | null;
+}
+
 const customDocumentSubmit = async () => {
     if (!draft.draftId) throw new Error('No active draft found.');
     if (!draft.parentPermitId)
         throw new Error('No permit associated with this filing.');
+    const draftData: DocumentSubmissionDraft = draft.draftData;
+    const process = draftData.document_submission_process?.aliased_data;
+    const report = draftData.report_submission;
+    const photographs = draftData.submission_photographs ?? [];
+    const aliasedData: ProcessAliasedData = {
+        submission_type: process?.submission_type ?? null,
+        submission_number: process?.submission_number ?? null,
+        report_submission: report ?? null,
+        submission_photographs: photographs,
+        submission_assessment: draftData.submission_assessment ?? null,
+    };
 
-    const formattedPayload = JSON.parse(JSON.stringify(draft.draftData));
-    const processAliasedData: Record<string, unknown> = {};
-
-    if (formattedPayload.document_submission_process) {
-        const existingNode = Array.isArray(
-            formattedPayload.document_submission_process,
-        )
-            ? formattedPayload.document_submission_process[0]
-            : formattedPayload.document_submission_process;
-
-        if (
-            existingNode?.aliased_data &&
-            !Array.isArray(existingNode.aliased_data)
-        ) {
-            Object.assign(processAliasedData, existingNode.aliased_data);
-        }
-    }
-    const nestedTiles = [
-        'report_submission',
-        'submission_photographs',
-        'submission_assessment',
-    ];
-
-    nestedTiles.forEach((tileName) => {
-        if (formattedPayload[tileName]) {
-            // Force the data to be a object instead of array
-            const tileData = Array.isArray(formattedPayload[tileName])
-                ? formattedPayload[tileName][0]
-                : formattedPayload[tileName];
-
-            if (tileData) {
-                processAliasedData[tileName] = tileData;
-            }
-            delete formattedPayload[tileName];
-        }
-    });
-
-    formattedPayload.document_submission_process = [
-        {
-            aliased_data: processAliasedData,
-        },
+    const files = [
+        ...(report ? fileParts(report, report.aliased_data?.report_file) : []),
+        ...photographs.flatMap((photograph) =>
+            fileParts(
+                photograph,
+                photograph.aliased_data?.submission_photographs,
+            ),
+        ),
     ];
 
     return submitModule(
         draft.parentPermitId,
         draft.draftId,
         GraphSlug.DocumentSubmission,
-        formattedPayload,
+        { document_submission_process: [{ aliased_data: aliasedData }] },
+        files,
     );
 };
 </script>

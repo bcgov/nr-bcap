@@ -1,6 +1,6 @@
 import arches from 'arches';
 import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
-import { localized, formatTimestamp } from '@/bcap/util.ts';
+import { localized, formatTimestamp, dropFiles } from '@/bcap/util.ts';
 import type {
     DashboardStatus,
     MessageThread,
@@ -103,7 +103,7 @@ export const saveDraftFieldToBackend = async (
     currentStep?: string,
 ): Promise<void> => {
     const payload: { data: ArchesDraftData; current_step?: string } = {
-        data: fullDraftData,
+        data: JSON.parse(JSON.stringify(fullDraftData, dropFiles)),
     };
     if (currentStep) payload.current_step = currentStep;
     try {
@@ -237,17 +237,31 @@ export const submitApplication = async (
 // payload, clones the module's process requirements onto the permit, links the
 // workflow requirement to the host, and returns the created host resource. Pass
 // a draftId to submit from a draft, which is deleted once the module lands.
+// Files the user picked ride along as multipart, with the payload as the "json"
+// part; without them the payload goes as plain JSON.
 export const submitModule = async (
     permitId: string,
     draftId: string | undefined,
     moduleSlug: GraphSlug,
     payload: ArchesDraftData,
+    files: Array<[string, File]> = [],
 ): Promise<PermitApplication> => {
     try {
         const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
+        const json = { aliased_data: payload };
+        let body: FormData | typeof json = json;
+        if (files.length) {
+            body = new FormData();
+            // MultiPartJSONParser reads the body from the part named "json";
+            // the Files in it go as their own parts, rebound by filename.
+            body.append('json', JSON.stringify(json, dropFiles));
+            for (const [key, file] of files) {
+                body.append(key, file);
+            }
+        }
         const result = await apiFetchJson<PermitApplication>(url, {
             method: HttpMethod.Post,
-            body: { aliased_data: payload },
+            body,
         });
         if (draftId) {
             await deleteDraft(moduleSlug, draftId);
