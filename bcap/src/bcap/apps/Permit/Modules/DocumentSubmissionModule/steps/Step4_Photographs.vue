@@ -11,7 +11,7 @@ import { zDocumentSubmissionSubmissionPhotographsAliasedData } from '@/bcap/clie
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
-import { saveDraftFieldToBackend } from '@/bcap/api.ts';
+import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
 
 const emit = defineEmits(['update:step-is-valid']);
 const draftStore = useDraftStore();
