@@ -17,7 +17,10 @@ import type { StepperProps, StepperState } from 'primevue/stepper';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
-import type { PermitApplication } from '@/bcap/client/types.gen.ts';
+import type {
+    DraftPayloadWritable,
+    PermitApplication,
+} from '@/bcap/client/types.gen.ts';
 import { submitModule, fetchDraft } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
@@ -64,7 +67,9 @@ const defaultSubmit = async (): Promise<PermitApplication | null> => {
         draft.parentPermitId,
         draft.draftId,
         props.graphSlug,
-        draft.draftData,
+        // The store holds the draft loosely; the submit spec is one graph's
+        // aliased data, which is what the steps have been writing into it.
+        draft.draftData as DraftPayloadWritable['data'],
     );
 };
 
