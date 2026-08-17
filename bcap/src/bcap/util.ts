@@ -72,12 +72,15 @@ export const dropFiles = (_key: string, value: unknown) =>
 export const fileParts = (
     tile: { tileid?: string | null },
     node: FileListAliasedNodeDataWritable | null | undefined,
-): Array<[string, File]> =>
-    (node?.node_value ?? []).flatMap((entry) => {
-        if (!(entry.file instanceof File)) return [];
+): Array<[string, File]> => {
+    const parts: Array<[string, File]> = [];
+    for (const entry of node?.node_value ?? []) {
+        if (!(entry.file instanceof File)) continue;
         tile.tileid ??= crypto.randomUUID();
-        return [[`file-list_${tile.tileid}-${entry.node_id}`, entry.file]];
-    });
+        parts.push([`file-list_${tile.tileid}-${entry.node_id}`, entry.file]);
+    }
+    return parts;
+};
 
 export const formatDateTime = (isoString: string | null): string | null => {
     if (!isoString) return null;
