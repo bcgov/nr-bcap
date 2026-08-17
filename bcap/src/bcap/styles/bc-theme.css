@@ -31,7 +31,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   PrimeVue overrides: applied app-wide so components don't each repeat them.
+   PrimeVue/Arches overrides: applied app-wide so components don't each repeat them.
    --------------------------------------------------------------------------- */
 
 * :focus,
@@ -39,6 +39,22 @@
     outline: none !important;
     box-shadow: none !important;
 }
+/* Arches' accessibility indicator (base-manager.css) rings a focused control in
+   black over an inset yellow shadow, which reads as an alert against this
+   palette. It is per-element, so it outranks the reset above; the same ring the
+   app draws elsewhere replaces it, rather than leaving keyboard focus invisible. */
+.bcgov-main-content a[href]:focus-visible,
+.bcgov-main-content button:focus-visible,
+.bcgov-main-content input:focus-visible,
+.bcgov-main-content select:focus-visible,
+.bcgov-main-content textarea:focus-visible,
+.bcgov-main-content *[tabindex]:focus-visible,
+.bcgov-main-content *[contenteditable]:focus-visible {
+    outline: 0px !important;
+    outline-offset: -2px !important;
+    box-shadow: none !important;
+}
+
 /* PrimeVue's own ring is off in the preset (see primevue-bcgov-preset.ts). What
    remains here is the browser's default focus ring on the widgets and popups it
    lands on. Controls that need a focus indicator draw their own. */

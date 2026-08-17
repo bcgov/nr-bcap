@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import BaseModule from './BaseModule.vue';
 import WorkflowStepper from '@/bcap/apps/Permit/Modules/WorkflowStepper.vue';
@@ -14,18 +13,6 @@ vi.mock('@primevue/forms', () => ({
     FormField: { template: '<div />' },
 }));
 
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: { name: 'GenericWidget', template: '<div />' },
-    }),
-);
-
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-    EDIT: 'edit',
-    VIEW: 'view',
-}));
-
 vi.mock('vue-router', () => ({
     useRoute: vi.fn(() => ({
         query: {}, // Simulate an empty query (no draftId)
@@ -34,16 +21,6 @@ vi.mock('vue-router', () => ({
 
 vi.mock('@/bcap/util.ts', () => ({
     getCsrfToken: vi.fn(() => 'mock-csrf-token'),
-}));
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            api_workflow_draft: (graphSlug: string) =>
-                `/bcap/api/workflow_draft/${graphSlug}`,
-            plugin: (path: string) => `/${path}`,
-        },
-    },
 }));
 
 vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({

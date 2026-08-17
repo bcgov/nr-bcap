@@ -14,7 +14,7 @@ import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
-import { getBasicInfoFields } from '@/bcap/util.ts';
+import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 import {
     fetchPermitDetails,
@@ -193,17 +193,6 @@ const startNewModule = () => {
         });
     }
 };
-
-// The module types a staff member can add from the submitted-modules panel,
-// each routing to that module's existing workflow (Project Summary excluded).
-const addableModules = computed(() =>
-    permitModuleCatalogue
-        .filter((mod) => mod.id !== GraphSlug.PermitApplication)
-        .map((mod) => ({
-            id: mod.id,
-            label: mod.menuLabel,
-        })),
-);
 
 const {
     state: deleteState,
@@ -393,11 +382,10 @@ watch(activeModuleId, (id) => {
                                                 ></i>
                                                 Last updated
                                                 {{
-                                                    new Date(
+                                                    formatDate(
                                                         draft.updated ||
-                                                            draft.created ||
-                                                            '',
-                                                    ).toLocaleDateString()
+                                                            draft.created,
+                                                    )
                                                 }}
                                             </span>
                                             <span
@@ -473,7 +461,6 @@ watch(activeModuleId, (id) => {
                             :permit-id="permitId"
                             :admin-tile-id="state.adminTileMeta.tileid"
                             :is-staff="isStaff"
-                            :addable-modules="addableModules"
                             :summary-fields="basicInfoFields"
                             :application-id="state.permitData.applicationNumber"
                             @changed="loadPermitDetails"

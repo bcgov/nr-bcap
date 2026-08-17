@@ -8,12 +8,12 @@ from django.db.models.fields.json import KeyTextTransform, KeyTransform
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 
-from arches.app.models.models import Node, TileModel
+from arches.app.models.models import ResourceXResource, TileModel
 from arches.app.models.resource import Resource
 
-from arches_controlled_lists.models import ListItemValue
-
+from bcap.util.graph import node_id, nodegroup_id
 from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.util.controlled_list import reference_value
 from bcap.util.aliases.contributor import (
     ContributorAliases,
     ContributorGroupAliases,
@@ -80,17 +80,15 @@ class ContributorService(BaseGraphService):
     # cache them so the read methods don't each re-resolve the same aliases.
     @cached_property
     def _username_node(self):
-        return self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME)
+        return node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME)
 
     @cached_property
     def _contributor_ng(self):
-        return self._nodegroup_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME
-        )
+        return nodegroup_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.BCAP_USERNAME)
 
     @cached_property
     def _inactive_node(self):
-        return self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.INACTIVE)
+        return node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.INACTIVE)
 
     def _active(self, queryset):
         """Drop tiles flagged inactive."""
@@ -162,9 +160,7 @@ class ContributorService(BaseGraphService):
     def archaeology_branch_id(self):
         """Resource id of the Archaeology Branch organization Contributor, or
         None when it hasn't been seeded."""
-        name_node = self.node_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME
-        )
+        name_node = node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME)
         pk = (
             self._active(
                 TileModel.objects.filter(
@@ -184,8 +180,14 @@ class ContributorService(BaseGraphService):
         have a login (ministry assignees included), name-sorted. Falls back to
         the Archaeology Branch when nobody is assigned, so there is always
         someone to address."""
+        # A requirement resource references nobody; its assignees are on the
+        # permit application pointing at it.
+        permits = ResourceXResource.objects.filter(
+            to_resource_id=resource_id,
+            from_resource__graph__slug=GraphSlugs.PERMIT_APPLICATION,
+        ).values_list("from_resource_id", flat=True)
         ids = self.login_linked_contributor_ids(
-            all_referenced_resource_ids(resource_id)
+            all_referenced_resource_ids(resource_id, *permits)
         )
         if not ids:
             branch = self.archaeology_branch_id()
@@ -208,73 +210,6 @@ class ContributorService(BaseGraphService):
     def contributor_is_internal(self, contributor_id):
         """True when the Contributor is linked to an internal (staff) user."""
         return is_internal_username(self.contributor_username(contributor_id))
-
-    def company_contributor_ids(self, username):
-        """The viewer plus the active members of every org the viewer actively
-        belongs to today, excluding any flagged inactive."""
-        if not username:
-            return set()
-        my_contributor_id = self.username_contributor_id(username)
-        if not my_contributor_id:
-            return set()
-
-        org_node = self.node_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.ASSOCIATED_ORGANIZATION
-        )
-        start_node = self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.START_DATE)
-        end_node = self.node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.END_DATE)
-        membership_ng = self._node_info(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.ASSOCIATED_ORGANIZATION
-        )[1]
-        today = timezone.now().date().isoformat()
-
-        # Memberships active today (an unset start/end bound left open), each
-        # tagged with the org it points at.
-        active = (
-            TileModel.objects.filter(nodegroup_id=membership_ng)
-            .annotate(
-                _start=Coalesce(
-                    KeyTextTransform(start_node, "data"),
-                    Value("0000-01-01"),
-                    output_field=TextField(),
-                ),
-                _end=Coalesce(
-                    KeyTextTransform(end_node, "data"),
-                    Value("9999-12-31"),
-                    output_field=TextField(),
-                ),
-                org=Cast(
-                    KeyTextTransform(
-                        "resourceId", KeyTransform("0", KeyTransform(org_node, "data"))
-                    ),
-                    UUIDField(),
-                ),
-            )
-            .filter(_start__lte=today, _end__gte=today)
-        )
-
-        my_orgs = active.filter(resourceinstance_id=my_contributor_id).values("org")
-        colleagues = active.filter(org__in=my_orgs).values("resourceinstance_id")
-
-        # The viewer and the active members of those orgs, minus anyone inactive.
-        company = self._active(
-            TileModel.objects.filter(nodegroup_id=self._contributor_ng).filter(
-                Q(resourceinstance_id=my_contributor_id)
-                | Q(resourceinstance_id__in=colleagues)
-            )
-        ).values_list("resourceinstance_id", flat=True)
-        return {str(pk) for pk in company}
-
-    def company_usernames(self, username):
-        """bcap_usernames of the members of the user's associated companies
-        (includes the user). Empty if the user has no linked contributor."""
-        ids = self.company_contributor_ids(username)
-        if not ids:
-            return set()
-        rows = TileModel.objects.filter(
-            nodegroup_id=self._contributor_ng, resourceinstance_id__in=ids
-        ).values_list(f"data__{self._username_node}", flat=True)
-        return {name for name in rows if name}
 
     def _contributor_tile(self, contributor_id, lock=False):
         """The single Contributor group tile of a resource, or None. Pass
@@ -353,9 +288,7 @@ class ContributorService(BaseGraphService):
     def invitable_contributors(self, search=""):
         """Active, unlinked Contributors whose name matches the search, as
         name-sorted pick-list options for the invite picker."""
-        name_node = self.node_id(
-            GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME
-        )
+        name_node = node_id(GraphSlugs.CONTRIBUTOR, ContributorAliases.CONTRIBUTOR_NAME)
 
         tiles = (
             self._active(TileModel.objects.filter(nodegroup_id=self._contributor_ng))
@@ -370,15 +303,8 @@ class ContributorService(BaseGraphService):
     def _individual_type_id(self):
         """The contributor_type list-item id for individuals, the only type the
         invite flow creates."""
-        node = Node.objects.get(
-            graph__slug=GraphSlugs.CONTRIBUTOR,
-            alias=ContributorAliases.CONTRIBUTOR_TYPE,
-            source_identifier=None,
-        )
-        return str(
-            ListItemValue.objects.get(
-                list_item__list_id=node.config.get("controlledList"),
-                valuetype_id="prefLabel",
-                value="Individual",
-            ).list_item_id
-        )
+        return reference_value(
+            GraphSlugs.CONTRIBUTOR,
+            ContributorAliases.CONTRIBUTOR_TYPE,
+            label="Individual",
+        )[0]

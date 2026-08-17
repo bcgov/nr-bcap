@@ -11,7 +11,7 @@ import SortingBar from './SortingBar.vue';
 import {
     getInternalDashboardData,
     type DashboardStatus,
-} from '@/bcap/components/pages/api.ts';
+} from '@/bcap/apps/Permit/api.ts';
 import type { InternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 
@@ -20,6 +20,7 @@ const router = useRouter();
 
 interface ProjectData {
     id: string;
+    requirementId: string;
     unreadMessages: number;
     capPriority: boolean;
     capLabel: string;
@@ -46,6 +47,7 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
     return {
         id: rawItem.id,
+        requirementId: rawItem.requirement_id || '',
         unreadMessages: rawItem.unread_messages || 0,
 
         capPriority: isPriority,
@@ -150,10 +152,6 @@ const loadData = async () => {
     }
 };
 
-function handleSearch(searchTerm: string) {
-    state.currentSearch = searchTerm;
-}
-
 const displayedProjects = computed(() => {
     let filtered = state.rawProjects;
 
@@ -236,10 +234,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
         return;
     }
     // Staff open the permit view; isStaff enables the module edit controls.
+    // ?requirement is the one the card is showing, so the summary opens on it.
     router.push({
         name: routeNames.permitDetails,
         params: { id: item.id },
-        query: { staff: 'true' },
+        query: item.requirementId
+            ? { requirement: item.requirementId, staff: 'true' }
+            : { staff: 'true' },
     });
 };
 </script>
@@ -252,13 +253,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 v-model:current-sort="state.currentSort"
                 v-model:sort-order="state.sortOrder"
                 v-model:messages-only="state.messagesOnly"
+                v-model:search="state.currentSearch"
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
                 messages-only-label="Unread messages only"
                 :shown="state.isLoading ? 0 : displayedProjects.length"
                 :total="state.isLoading ? 0 : state.rawProjects.length"
-                @update:search="handleSearch"
                 @refresh="loadData"
             />
 

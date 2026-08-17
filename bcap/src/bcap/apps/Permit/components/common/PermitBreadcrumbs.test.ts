@@ -1,9 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-
-vi.mock('arches', () => ({
-    default: { urls: { plugin: (slug: string) => `/plugins/${slug}` } },
-}));
 
 import PermitBreadcrumbs from './PermitBreadcrumbs.vue';
 import { permitCrumbs } from './permitCrumbs.ts';

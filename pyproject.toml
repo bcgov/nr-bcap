@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bcap"
-version = "2.0.0a19"
+version = "2.0.0a21"
 readme = "README.md"
 requires-python = ">=3.12"
 authors = []
@@ -27,7 +27,7 @@ dependencies = [
     "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@dev/1.1.x",
     "arches-querysets @ git+https://github.com/bcgov/arches-querysets@performance_fix_geojson",
     "arches-workflow-stepper @ git+https://github.com/bferguso/arches-workflow-stepper@main",
-    "arches-zod-validation @ git+https://github.com/bcgov/arches-zod-validation@expose_resource_alias_function",
+    "arches-zod-validation @ git+https://github.com/bcgov/arches-zod-validation@generate_http_method_names",
     "authlib",
     "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@release/2.1.x",
     "boto3==1.26",

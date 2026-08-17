@@ -1,5 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 
 // Route is read for ProjectCard navigation; name becomes the card route. A card
@@ -10,46 +8,18 @@ vi.mock('vue-router', () => ({
     useRouter: () => ({ push }),
 }));
 
-vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
-    routeNames: { permitDetails: 'permitDetails' },
-}));
-
 // The dashboard data source is mocked so we control exactly what renders
 const getInternalDashboardData = vi.fn();
-vi.mock('@/bcap/components/pages/api.ts', () => ({
+vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
     getInternalDashboardData: (...args: unknown[]) =>
         getInternalDashboardData(...args),
 }));
 
 // arches.urls.plugin() builds the checklist URL navigateToReport opens
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-        },
-    },
-}));
 
 import InternalDashboard from './InternalDashboard.vue';
-
-// Stand-in for ProjectCard so we can inspect the props it receives
-const ProjectCardStub = defineComponent({
-    name: 'ProjectCard',
-    props: {
-        bodyTitle: { type: String, default: '' },
-        bodySubtitle1: { type: String, default: '' },
-        bodySubtitle2: { type: String, default: '' },
-        capLabel: { type: String, default: '' },
-        capDate: { type: String, default: '' },
-        capPriority: { type: Boolean, default: false },
-        body1: { type: String, default: '' },
-        body2: { type: String, default: '' },
-        body3: { type: String, default: '' },
-        footerName: { type: String, default: '' },
-        footerDate: { type: String, default: '' },
-    },
-    template: '<div class="project-card-stub">{{ bodyTitle }}</div>',
-});
+import { ProjectCardStub } from './testStubs.ts';
 
 function mountDashboard() {
     return mount(InternalDashboard, {
@@ -312,6 +282,18 @@ describe('filter switching', () => {
 });
 
 describe('search filtering', () => {
+    it('feeds the term back to the toolbar, so the input keeps what was typed', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard({ id: 'a' })]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:search', 'copper');
+
+        expect(
+            wrapper.findComponent({ name: 'SortingBar' }).props('search'),
+        ).toBe('copper');
+    });
+
     it('keeps only cards whose title matches the search term', async () => {
         getInternalDashboardData.mockResolvedValue([
             makeCard({ id: 'a', project_name: 'Copper Mine' }),
@@ -516,8 +498,23 @@ describe('onCardClick', () => {
         vi.restoreAllMocks();
     });
 
-    it('routes to the permit details view on a standard click', async () => {
+    it('routes to the permit details view on a standard click, drilling in on the card requirement', async () => {
         getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-1' })]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+        await wrapper.findComponent(ProjectCardStub).trigger('click');
+
+        expect(push).toHaveBeenCalledWith({
+            name: 'permitDetails',
+            params: { id: 'res-1' },
+            query: { requirement: 'req-1', staff: 'true' },
+        });
+    });
+
+    it('omits the requirement query when the card has no requirement', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'res-1', requirement_id: '' }),
+        ]);
         const wrapper = mountDashboard();
         await flushPromises();
         await wrapper.findComponent(ProjectCardStub).trigger('click');

@@ -8,7 +8,7 @@ from bcap.services.dashboard.dashboard_types import (
 )
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.test_internal_dashboard_service import build_permit_graph
 from tests.services.test_external_dashboard_service import (
@@ -153,7 +153,7 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
             builder, "My App", cls.user, "Active", hca_permit=hca
         )
         cls.draft = WorkflowDraftService().create(
-            cls.user,
+            request_as(cls.user),
             "permit_application",
             {
                 "aliased_data": {
@@ -196,11 +196,13 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         )
 
     def test_drafts_scope_returns_the_users_drafts(self):
-        resp = self.client.get(self.url, {"status": ExternalDashboardStatus.DRAFTS})
+        resp = self.client.get(
+            self.url, {"status": ExternalDashboardStatus.DRAFTS_CREATED_BY_ME}
+        )
 
         self.assertEqual(resp.status_code, 200)
         body = resp.json()
-        self.assertEqual([c["id"] for c in body["results"]], [str(self.draft.id)])
+        self.assertEqual([c["id"] for c in body["results"]], [str(self.draft.pk)])
         self.assertTrue(body["results"][0]["is_draft"])
 
     def test_invalid_status_returns_400(self):

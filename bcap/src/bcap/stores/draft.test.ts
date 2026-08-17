@@ -1,10 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
-import { createDraft } from '@/bcap/apps/Permit/api.ts';
-import { saveDraftFieldToBackend } from '@/bcap/api.ts';
+import {
+    createDraft,
+    saveDraftFieldToBackend,
+} from '@/bcap/apps/Permit/api.ts';
 
-vi.mock('@/bcap/apps/Permit/api.ts', () => ({ createDraft: vi.fn() }));
-vi.mock('@/bcap/api.ts', () => ({ saveDraftFieldToBackend: vi.fn() }));
+vi.mock('@/bcap/apps/Permit/api.ts', () => ({
+    createDraft: vi.fn(),
+    saveDraftFieldToBackend: vi.fn(),
+}));
 
 const value = { node_value: 'x', display_value: 'x' } as never;
 

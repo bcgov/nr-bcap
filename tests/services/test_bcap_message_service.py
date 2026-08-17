@@ -4,28 +4,22 @@ Contributor is party to, as author or recipient."""
 
 from unittest.mock import patch
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.test import TestCase
 
-from bcap.builders.contributor_builder import ContributorSpec
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     InternalMessageToExternal,
     NoAuthorContributor,
 )
 from bcap.util.aliases.bcap_message import BcapMessageAliases as A
-from bcap.util.controlled_list import reference_value
-from tests.builders import FixtureBuilder
+from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
-
-
-def make_user(username, internal=False):
-    user = get_user_model().objects.create_user(username=username, password="pass")
-    if internal:
-        user.groups.add(Group.objects.get(name="Resource Editor"))
-    return user
+from tests.services.contributor_fixtures import (
+    make_contributor,
+    make_party,
+    make_user,
+)
 
 
 def _datetime(day):
@@ -83,23 +77,17 @@ class BcapMessageVisibilityTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
         # A ministry staffer and two external applicants, each backed by a
         # Contributor the messages address (party membership is looked up by the
         # Contributor's bcap_username).
-        cls.staff = make_user("staff", internal=True)
-        cls.applicant = make_user("applicant")
+        cls.staff, staff_contrib = make_party(
+            builder, "staff", "Sam", "Staff", internal=True
+        )
+        cls.applicant, applicant_contrib = make_party(
+            builder, "applicant", "Amy", "Applicant"
+        )
         cls.outsider = make_user("outsider")
-
-        staff_contrib = builder.make_contributor(
-            ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="staff")
-        )
-        applicant_contrib = builder.make_contributor(
-            ContributorSpec(
-                contributor_type, "Amy", "Applicant", bcap_username="applicant"
-            )
-        )
         cls.staff_contrib = staff_contrib
         cls.applicant_contrib = applicant_contrib
 
@@ -242,17 +230,11 @@ class BcapMessageUnreadCountTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
-        cls.applicant = make_user("reader")
-        applicant_contrib = builder.make_contributor(
-            ContributorSpec(
-                contributor_type, "Amy", "Applicant", bcap_username="reader"
-            )
+        cls.applicant, applicant_contrib = make_party(
+            builder, "reader", "Amy", "Applicant"
         )
-        staff_contrib = builder.make_contributor(
-            ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="staff2")
-        )
+        _, staff_contrib = make_party(builder, "staff2", "Sam", "Staff")
         cls.permit = builder.make_resource("permit_application")
         cls.other_permit = builder.make_resource("permit_application")
 
@@ -303,17 +285,12 @@ class BcapMessageThreadUnreadCountTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
-        cls.staff = make_user("threadstaff", internal=True)
-        cls.applicant = make_user("threadapp")
-        staff_contrib = builder.make_contributor(
-            ContributorSpec(
-                contributor_type, "Sam", "Staff", bcap_username="threadstaff"
-            )
+        cls.staff, staff_contrib = make_party(
+            builder, "threadstaff", "Sam", "Staff", internal=True
         )
-        applicant_contrib = builder.make_contributor(
-            ContributorSpec(contributor_type, "Amy", "App", bcap_username="threadapp")
+        cls.applicant, applicant_contrib = make_party(
+            builder, "threadapp", "Amy", "App"
         )
         cls.permit = builder.make_resource("permit_application")
         cls.permit_id = str(cls.permit.pk)
@@ -375,18 +352,13 @@ class BcapMessageArchiveTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
         # A staffer and an applicant, both party to the thread (author of one
         # message, recipient of another) so each can see it and archive it.
-        cls.staff = make_user("archstaff", internal=True)
-        cls.applicant = make_user("archapp")
-        staff_contrib = builder.make_contributor(
-            ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="archstaff")
+        cls.staff, staff_contrib = make_party(
+            builder, "archstaff", "Sam", "Staff", internal=True
         )
-        applicant_contrib = builder.make_contributor(
-            ContributorSpec(contributor_type, "Amy", "App", bcap_username="archapp")
-        )
+        cls.applicant, applicant_contrib = make_party(builder, "archapp", "Amy", "App")
         cls.permit = builder.make_resource("permit_application")
         cls.permit_id = str(cls.permit.pk)
 
@@ -487,7 +459,9 @@ class BcapMessageArchiveTests(TestCase):
     def test_read_setter_noops_without_its_node(self):
         # A body carrying no read date (e.g. an archive-only PATCH) leaves the
         # read state untouched, so read and archive share one endpoint safely.
-        self.assertIsNone(self.service.set_read_state(self.root.pk, {}))
+        self.assertIsNone(
+            self.service.set_read_state(request_as(self.staff), self.root.pk, {})
+        )
 
 
 class BcapMessagePartyAndPayloadTests(TestCase):
@@ -536,29 +510,42 @@ class BcapMessagePrepareTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
-        cls.staff = make_user("prepstaff", internal=True)
-        cls.applicant = make_user("prepapp")
-        cls.staff_contrib = builder.make_contributor(
-            ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="prepstaff")
+        cls.staff, cls.staff_contrib = make_party(
+            builder, "prepstaff", "Sam", "Staff", internal=True
         )
-        cls.applicant_contrib = builder.make_contributor(
-            ContributorSpec(
-                contributor_type, "Amy", "Applicant", bcap_username="prepapp"
-            )
+        cls.applicant, cls.applicant_contrib = make_party(
+            builder, "prepapp", "Amy", "Applicant"
         )
-        cls.unlinked = builder.make_contributor(
-            ContributorSpec(contributor_type, "Uma", "Unlinked")
+        cls.unlinked = make_contributor(builder, "Unlinked", "Uma")
+        cls.third, cls.third_contrib = make_party(
+            builder, "prepthird", "Tia", "Third", internal=True
+        )
+        cls.permit = builder.make_resource("permit_application")
+        cls.root = make_message(
+            builder,
+            context=cls.permit,
+            author=cls.applicant_contrib,
+            recipient=cls.staff_contrib,
+            subject="Root",
         )
 
-    def _payload(self, *, is_internal=None, recipient=None):
+    def _payload(self, *, is_internal=None, recipient=None, thread=None):
         content = {}
         if is_internal is not None:
             content[A.IS_INTERNAL] = {"node_value": is_internal}
         if recipient is not None:
             content[A.RECIPIENT] = {"node_value": [{"resourceId": str(recipient.pk)}]}
-        return {"aliased_data": {A.MESSAGE_CONTENT: {"aliased_data": content}}}
+        data = {"aliased_data": {A.MESSAGE_CONTENT: {"aliased_data": content}}}
+        if thread is not None:
+            data["aliased_data"][A.RELATED_SOURCE_MESSAGE] = {
+                "aliased_data": {
+                    A.RELATED_SOURCE_MESSAGE: {
+                        "node_value": [{"resourceId": str(thread.pk)}]
+                    }
+                }
+            }
+        return data
 
     def _content(self, data):
         return data["aliased_data"][A.MESSAGE_CONTENT]["aliased_data"]
@@ -570,6 +557,27 @@ class BcapMessagePrepareTests(TestCase):
         data = self._payload()
         self.service.prepare_message(data, self.applicant)
         self.assertEqual(self._author_id(data), str(self.applicant_contrib.pk))
+
+    def _recipient_id(self, data):
+        return self._content(data)[A.RECIPIENT]["node_value"][0]["resourceId"]
+
+    def test_reply_by_a_third_party_is_addressed_to_the_thread_starter(self):
+        # The client's recipient pick is replaced by the root's author, so a
+        # staffer joining someone else's thread writes back to that thread.
+        data = self._payload(recipient=self.unlinked, thread=self.root)
+        self.service.prepare_message(data, self.third)
+        self.assertEqual(self._author_id(data), str(self.third_contrib.pk))
+        self.assertEqual(self._recipient_id(data), str(self.applicant_contrib.pk))
+
+    def test_reply_by_the_thread_starter_goes_to_the_other_party(self):
+        data = self._payload(recipient=self.unlinked, thread=self.root)
+        self.service.prepare_message(data, self.applicant)
+        self.assertEqual(self._recipient_id(data), str(self.staff_contrib.pk))
+
+    def test_new_thread_keeps_the_chosen_recipient(self):
+        data = self._payload(recipient=self.staff_contrib)
+        self.service.prepare_message(data, self.applicant)
+        self.assertEqual(self._recipient_id(data), str(self.staff_contrib.pk))
 
     def test_internal_flag_honored_only_for_internal_posters(self):
         # An external poster's internal flag is forced off; an internal poster's
@@ -615,11 +623,9 @@ class BcapMessageThreadDateTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
-        cls.staff = make_user("datestaff", internal=True)
-        recipient = builder.make_contributor(
-            ContributorSpec(contributor_type, "Amy", "App", bcap_username="datestaff")
+        cls.staff, recipient = make_party(
+            builder, "datestaff", "Amy", "App", internal=True
         )
         cls.permit = builder.make_resource("permit_application")
         cls.permit_id = str(cls.permit.pk)
@@ -669,12 +675,8 @@ class BcapMessageModuleUnreadTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
 
-        cls.reader = make_user("modreader")
-        recipient = builder.make_contributor(
-            ContributorSpec(contributor_type, "Amy", "App", bcap_username="modreader")
-        )
+        cls.reader, recipient = make_party(builder, "modreader", "Amy", "App")
         # Two resources a module's messages could file against: one with two
         # unread messages to the reader, one with none.
         cls.hosted = builder.make_resource("permit_application")

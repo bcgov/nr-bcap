@@ -3,7 +3,7 @@ documents them and the frontend's generated types follow."""
 
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
-from bcap.services.contributor_service import ContributorSummary
+from bcap.services.contributor.contributor_service import ContributorSummary
 
 
 class ContributorSummarySerializer(DataclassSerializer):

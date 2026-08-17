@@ -539,6 +539,11 @@ SELF_MANAGE_ROLE_GROUPS = [
 ]
 EXTERNAL_APPLICANT_GROUP = "Submitter"
 
+# Default-allow, minus the provisional-edit path: a signed-in user's tile saves
+# are authoritative without putting them in Resource Reviewer.
+# We will make this default-deny in the future.
+PERMISSION_FRAMEWORK = "bcap_permission_framework.BcapPermissionFramework"
+
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
 

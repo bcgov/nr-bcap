@@ -1,6 +1,8 @@
 """A builder combining the domain mixins, for tests that build several resource
 types through one builder (as the pre-split ResourceBuilder did)."""
 
+from django.test import RequestFactory
+
 from bcap.builders.contributor_builder import ContributorBuilder
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
@@ -8,6 +10,13 @@ from bcap.util.dashboard.dashboard_seed import DashboardDemoBuilder
 
 class FixtureBuilder(ProcessRequirementBuilder, ContributorBuilder):
     pass
+
+
+def request_as(user):
+    """A request from this user, for services a view would hand its own."""
+    request = RequestFactory().post("/")
+    request.user = user
+    return request
 
 
 class SmallDashboardBuilder(DashboardDemoBuilder):

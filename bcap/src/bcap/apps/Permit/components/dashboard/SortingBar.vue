@@ -9,6 +9,10 @@ const props = defineProps({
         type: String,
         default: 'my_projects',
     },
+    search: {
+        type: String,
+        default: '',
+    },
     tabs: {
         type: Array as PropType<Array<{ label: string; value: string }>>,
         default: () => [
@@ -42,6 +46,15 @@ const props = defineProps({
         type: String,
         default: '',
     },
+    // Second opt-in checkbox, same deal as messagesOnly.
+    includeCompany: {
+        type: Boolean,
+        default: false,
+    },
+    includeCompanyLabel: {
+        type: String,
+        default: '',
+    },
     // Card counts for the results summary; omitted (or zero total) hides it.
     shown: {
         type: Number,
@@ -59,10 +72,9 @@ const emit = defineEmits([
     'update:currentSort',
     'update:sortOrder',
     'update:messagesOnly',
+    'update:includeCompany',
     'refresh',
 ]);
-
-const searchQuery = ref('');
 
 const formattedTime = computed(() => {
     if (!props.lastUpdated) return '';
@@ -82,8 +94,8 @@ const selectTab = (tabId: string) => {
     emit('update:activeTab', tabId);
 };
 
-const handleSearchInput = () => {
-    emit('update:search', searchQuery.value);
+const setSearch = (value: string) => {
+    emit('update:search', value);
 };
 
 const sortMenu = ref();
@@ -133,20 +145,23 @@ const sortMenuModel = computed(() => {
 // since there is no "no tab" state to clear it to.
 const activeFilters = computed(() => {
     const filters = [];
-    if (searchQuery.value)
+    if (props.search)
         filters.push({
             key: 'search',
-            label: `Search: ${searchQuery.value}`,
-            clear: () => {
-                searchQuery.value = '';
-                handleSearchInput();
-            },
+            label: `Search: ${props.search}`,
+            clear: () => setSearch(''),
         });
     if (props.messagesOnly && props.messagesOnlyLabel)
         filters.push({
             key: 'messages',
             label: props.messagesOnlyLabel,
             clear: () => emit('update:messagesOnly', false),
+        });
+    if (props.includeCompany && props.includeCompanyLabel)
+        filters.push({
+            key: 'company',
+            label: props.includeCompanyLabel,
+            clear: () => emit('update:includeCompany', false),
         });
     if (props.currentSort !== 'default')
         filters.push({
@@ -202,24 +217,38 @@ const activeSortLabel = computed(() => {
             {{ props.messagesOnlyLabel }}
         </label>
 
+        <label
+            v-if="props.includeCompanyLabel"
+            class="messages-filter"
+        >
+            <input
+                type="checkbox"
+                :checked="props.includeCompany"
+                @change="
+                    emit(
+                        'update:includeCompany',
+                        ($event.target as HTMLInputElement).checked,
+                    )
+                "
+            />
+            {{ props.includeCompanyLabel }}
+        </label>
+
         <div class="search-bar-wrapper">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <input
-                v-model="searchQuery"
+                :value="props.search"
                 type="text"
                 class="search-input"
                 placeholder="Search projects"
-                @input="handleSearchInput"
+                @input="setSearch(($event.target as HTMLInputElement).value)"
             />
             <Button
-                v-if="searchQuery"
+                v-if="props.search"
                 unstyled
                 class="icon-btn"
                 aria-label="Clear search"
-                @click="
-                    searchQuery = '';
-                    handleSearchInput();
-                "
+                @click="setSearch('')"
             >
                 <i class="fa-solid fa-xmark"></i>
             </Button>
@@ -317,14 +346,17 @@ const activeSortLabel = computed(() => {
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    /* Pushes the search section to the far end so it can't ride over the label. */
-    margin-right: auto;
+    margin-right: 1.25rem;
     gap: 0.75rem;
     line-height: 1;
     font-size: 1.425rem;
     color: #333333;
     white-space: nowrap;
     cursor: pointer;
+}
+
+.messages-filter:has(+ :not(.messages-filter)) {
+    margin-right: auto;
 }
 
 .messages-filter input {

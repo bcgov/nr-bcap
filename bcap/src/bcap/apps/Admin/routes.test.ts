@@ -1,13 +1,3 @@
-import { describe, it, expect, vi } from 'vitest';
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-        },
-    },
-}));
-
 import { routes, routeNames } from './routes';
 
 describe('Admin routes', () => {

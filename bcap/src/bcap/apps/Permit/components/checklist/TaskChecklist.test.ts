@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { ref, nextTick } from 'vue';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
@@ -12,31 +11,18 @@ vi.mock('vue-router', () => ({
     useRoute: () => ({ query: mockRouteQuery.value }),
 }));
 
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-            api_process_requirements: (id: string) =>
-                `/bcap/api/process_requirements/${id}`,
-        },
-    },
-}));
-
-vi.mock('@/bcap/components/pages/api.ts', () => ({
-    getProcessRequirementData: vi.fn(),
-}));
-
-// Only the header fetch is stubbed; the save path still goes through the real
-// apiFetch so the PATCH assertions stay honest.
+// Only the header and requirement fetches are stubbed; the save path still goes
+// through the real apiFetch so the PATCH assertions stay honest.
 const { fetchPermitDetails } = vi.hoisted(() => ({
     fetchPermitDetails: vi.fn(),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
     ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
+    getProcessRequirementData: vi.fn(),
     fetchPermitDetails,
 }));
 
-import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
+import { getProcessRequirementData } from '@/bcap/apps/Permit/api.ts';
 import TaskChecklist from './TaskChecklist.vue';
 
 const mockedGet = vi.mocked(getProcessRequirementData);
@@ -621,7 +607,7 @@ describe('TaskChecklist', () => {
             await wrapper.find('.save-btn').trigger('click');
             await flushPromises();
             expect(fetchMock.mock.calls[0][0]).toContain(
-                '/bcap/api/process_requirements/my-resource',
+                '/bcap/api/process_requirement/my-resource',
             );
             expect(fetchMock.mock.calls[0][1].method).toBe('PATCH');
         });

@@ -1,6 +1,9 @@
 # The arches_querysets serializer key wrapping each tile's node values.
 ALIASED_DATA = "aliased_data"
 
+# The key a resource-instance node value holds its target's id under.
+RESOURCE_ID = "resourceId"
+
 
 # Classes to standardize the resource model node aliases
 class AbstractAliases:

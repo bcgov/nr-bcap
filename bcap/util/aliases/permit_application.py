@@ -37,6 +37,7 @@ class PermitApplicationAliases(AbstractAliases):
     MZA_REQUIREMENT = "mza_requirement"
     MZA_REQUIREMENT_MINISTRY_ASIGNEE = "mza_requirement_ministry_asignee"
     MZA_SCOPE_OF_WORK = "mza_scope_of_work"
+    OWNING_ORGANIZATION = "owning_organization"
     PERMIT_DURATION_YEARS_REQUESTED = "permit_duration_years_requested"
     PERMIT_MESSAGES = "permit_messages"
     PROCESS_REQUIREMENT = "process_requirement"

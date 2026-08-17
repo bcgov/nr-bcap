@@ -1,4 +1,3 @@
-import { describe, it, expect, vi } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount } from '@vue/test-utils';
 
@@ -71,19 +70,24 @@ describe('tabs', () => {
 });
 
 describe('search', () => {
+    // The box is controlled: typing only emits, and what shows comes back from
+    // the parent, so a dashboard that resets the search clears the box too.
     it('emits the query, chips it, and clears it from the chip', async () => {
         const wrapper = mountBar();
         await wrapper.find('.search-input').setValue('quarry');
 
         expect(wrapper.emitted('update:search')).toEqual([['quarry']]);
+
+        await wrapper.setProps({ search: 'quarry' });
         expect(chipLabels(wrapper)).toEqual(['Search: quarry']);
 
         await wrapper.find('.filter-chip').trigger('click');
+        expect(wrapper.emitted('update:search')).toEqual([['quarry'], ['']]);
 
+        await wrapper.setProps({ search: '' });
         expect(
             wrapper.find<HTMLInputElement>('.search-input').element.value,
         ).toBe('');
-        expect(wrapper.emitted('update:search')).toEqual([['quarry'], ['']]);
         expect(chipLabels(wrapper)).toEqual([]);
     });
 });

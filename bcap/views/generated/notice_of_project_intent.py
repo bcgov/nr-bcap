@@ -41,9 +41,11 @@ class NoticeOfProjectIntentListView(
 
     Owner-scoped: only the resources the user created. Declared verbs:
     GET (from generated/generate.json); the ListAPIView base
-    class serves the collection subset (GET/POST).
+    class serves the collection subset (GET/POST), narrowed to the declared
+    verbs by http_method_names.
     """
 
+    http_method_names = ["get", "head", "options"]
     permission_classes = [IsAuthenticated]
     pagination_class = ArchesLimitOffsetPagination
 
@@ -59,7 +61,9 @@ class NoticeOfProjectIntentView(
 
     Owner-scoped: requesting one created by another user returns 404. Declared
     verbs: GET (from generated/generate.json); the
-    RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+    RetrieveAPIView base class serves the detail subset
+    (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
     """
 
+    http_method_names = ["get", "head", "options"]
     permission_classes = [IsAuthenticated]

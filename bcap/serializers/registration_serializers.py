@@ -1,6 +1,9 @@
 """Request/response shapes for the admin signup-link API. Thin Serializers so
 drf-spectacular documents them and the frontend's generated types follow."""
 
+from dataclasses import dataclass, field
+from uuid import UUID
+
 from django.conf import settings
 
 from rest_framework.serializers import (
@@ -12,10 +15,25 @@ from rest_framework.serializers import (
     UUIDField,
     ValidationError,
 )
-from bcap.services.contributor_service import ContributorService
+from rest_framework_dataclasses.serializers import DataclassSerializer
+
+from bcap.services.contributor.contributor_service import (
+    ContributorService,
+    NewContributor,
+)
 
 
-class NewContributorSerializer(Serializer):
+@dataclass
+class RegistrationLinkRequest:
+    """The issue-link POST body: exactly one of an existing Contributor or the
+    details of one to create, plus the groups to grant on redemption."""
+
+    contributor_id: UUID | None = None
+    new_contributor: NewContributor | None = None
+    groups: list[str] = field(default_factory=list)
+
+
+class NewContributorSerializer(DataclassSerializer):
     """Details for a Contributor created as part of the invite (for someone who
     has no Contributor record yet)."""
 
@@ -28,8 +46,13 @@ class NewContributorSerializer(Serializer):
         required=False, allow_blank=True, help_text="Contact phone number."
     )
 
+    class Meta:
+        dataclass = NewContributor
+        # contributor_type is settled at creation, not by the inviter.
+        fields = ["name", "first_name", "email", "phone"]
 
-class RegistrationLinkRequestSerializer(Serializer):
+
+class RegistrationLinkRequestSerializer(DataclassSerializer):
     contributor_id = UUIDField(
         required=False,
         help_text="Existing Contributor to link the invited user to.",
@@ -44,22 +67,25 @@ class RegistrationLinkRequestSerializer(Serializer):
         help_text="Django group names to grant the invited user.",
     )
 
-    def validate(self, data):
-        contributor_id = data.get("contributor_id")
-        if bool(contributor_id) == bool(data.get("new_contributor")):
+    class Meta:
+        dataclass = RegistrationLinkRequest
+
+    def validate(self, body):
+        if bool(body.contributor_id) == bool(body.new_contributor):
             raise ValidationError(
                 "Provide exactly one of contributor_id or new_contributor."
             )
-        if contributor_id and not ContributorService().is_invitable(contributor_id):
+        if body.contributor_id and not ContributorService().is_invitable(
+            body.contributor_id
+        ):
             raise ValidationError(
                 "That Contributor doesn't exist or is already linked to an account."
             )
-        names = data.get("groups") or []
-        if not_allowed := set(names) - set(settings.SELF_MANAGE_ROLE_GROUPS):
+        if not_allowed := set(body.groups) - set(settings.SELF_MANAGE_ROLE_GROUPS):
             raise ValidationError(
                 f"Group(s) not allowed: {', '.join(sorted(not_allowed))}."
             )
-        return data
+        return body
 
 
 class RegistrationLinkResponseSerializer(Serializer):

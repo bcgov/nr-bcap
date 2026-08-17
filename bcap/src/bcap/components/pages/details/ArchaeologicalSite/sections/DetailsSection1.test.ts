@@ -1,4 +1,3 @@
-import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 
 vi.mock(
@@ -20,10 +19,6 @@ vi.mock(
         };
     },
 );
-
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-    VIEW: 'view',
-}));
 
 import DetailsSection1 from './DetailsSection1.vue';
 

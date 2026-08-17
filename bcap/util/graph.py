@@ -35,7 +35,7 @@ def _graph_nodes(graph_slug):
                 graph__slug=graph_slug, source_identifier=None
             ).values("alias", "nodeid", "nodegroup_id")
         }
-        cache.set(cache_key, nodes, timeout=None)
+        cache.set(cache_key, nodes, timeout=300)
     return nodes
 
 

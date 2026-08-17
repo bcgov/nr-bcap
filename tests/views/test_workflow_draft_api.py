@@ -1,5 +1,5 @@
 """Tests for the generic per-user draft endpoints: a resource editor can POST a
-draft, PATCH-merge sections into it, PUT-replace the whole blob, and DELETE it;
+draft, PATCH-merge sections into it, and DELETE it;
 drafts are owner-scoped for external applicants (ministry staff see all), and the
 graph publication is stamped on create so a stale draft can be detected. Drafts are stored as
 resources of the 'drafts' graph (see WorkflowDraftService), not a bespoke table."""
@@ -16,10 +16,17 @@ from django.urls import reverse
 
 from arches.app.models.models import ResourceInstance
 
+from arches_querysets.models import ResourceTileTree
+
+from bcap.builders.contributor_builder import ContributorSpec
+from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.controlled_list import reference_value
 from bcap.util.graph import get_current_graph
 
+from tests.builders import FixtureBuilder, request_as
+from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.views.helpers import AuthTestHelper
 
 SLUG = GraphSlugs.PERMIT_APPLICATION
@@ -45,7 +52,43 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
         cls.applicant.groups.add(submitters)
         cls.other_applicant.groups.add(submitters)
+        # The list tests assert on whole lists, so they need users whose drafts
+        # are only ever the ones they make themselves.
+        cls.lister = User.objects.create_user(username="lister1", password="pass")
+        cls.other_lister = User.objects.create_user(username="lister2", password="pass")
+        cls.lister.groups.add(submitters)
+        cls.other_lister.groups.add(submitters)
+        cls.staff_lister = User.objects.create_user(username="lister3", password="pass")
+        cls.staff_lister.groups.add(editors)
+        # A real Contributor: the stamp is a resource-instance value, and a
+        # reference to a resource that doesn't exist blows up on read.
+        ControlledListFixtures.seed()
+        cls.org = FixtureBuilder().make_contributor(
+            ContributorSpec(
+                reference_value("contributor", "contributor_type"), None, "Acme Corp"
+            )
+        )
         # cls.user (from AuthTestHelper) intentionally holds neither role.
+        # Drafts to act on, made once: a create runs a full resource save, and
+        # every test rolls back, so each test gets them untouched.
+        cls.draft = cls._seed_draft(
+            cls.editor,
+            {"step1": {"x": 1}},
+            publication_id=get_current_graph(SLUG).publication_id,
+        )
+        cls.stale_draft = cls._seed_draft(cls.editor, publication_id=uuid.uuid4())
+        cls.applicant_draft = cls._seed_draft(cls.applicant, {"step1": {"x": 1}})
+        cls.other_applicant_draft = cls._seed_draft(
+            cls.other_applicant, {"step1": {"x": 1}}
+        )
+
+    @classmethod
+    def _seed_draft(cls, user, data=None, publication_id=""):
+        return WorkflowDraftService.record(
+            WorkflowDraftService().create(
+                request_as(user), SLUG, data or {}, publication_id=publication_id
+            )
+        )
 
     def setUp(self):
         super().setUp()
@@ -65,9 +108,17 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
 
-    def _create_draft(self, user=None, data=None, publication_id=""):
-        return self.svc.create(
-            user or self.editor, SLUG, data or {}, publication_id=publication_id
+    def _create_draft(
+        self, user=None, data=None, publication_id="", organization_id=""
+    ):
+        return WorkflowDraftService.record(
+            self.svc.create(
+                request_as(user or self.editor),
+                SLUG,
+                data or {},
+                publication_id=publication_id,
+                organization_id=organization_id,
+            )
         )
 
     def _save(self, pk, body):
@@ -79,12 +130,20 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
 
     def _read(self, pk):
-        """The stored draft as a fresh record (bypasses the request layer)."""
-        return self.svc.to_record(self.svc.get(self.admin, pk))
+        """The stored draft as a fresh record. Bypasses the request layer and
+        the visibility scoping, so it can assert on anyone's draft."""
+        return WorkflowDraftService.record(
+            ResourceTileTree.get_tiles(
+                GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
+            ).get(pk=pk)
+        )
 
     def _make_resource(self, owner):
-        """A bare resource of the draft's graph, owned by ``owner``."""
-        resource = ResourceInstance.objects.create(graph_id=get_current_graph(SLUG).pk)
+        """A bare resource of the draft's graph, owned by the given user. Saved
+        with descriptors, as every real save path leaves them."""
+        resource = ResourceInstance.objects.create(
+            graph_id=get_current_graph(SLUG).pk, descriptors={}
+        )
         ResourceInstance.objects.filter(pk=resource.pk).update(principaluser=owner)
         return resource
 
@@ -107,8 +166,8 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             ResourceInstance.objects.get(pk=body["id"]).principaluser, self.editor
         )
 
-    def test_patch_merges_sections_then_put_replaces_blob(self):
-        draft = self._create_draft(data={"step1": {"x": 1}})
+    def test_patch_merges_sections_and_an_empty_one_clears_it(self):
+        draft = self.draft
         # PATCH merges, leaving siblings intact.
         resp = self.client.patch(
             self._detail_url(draft.id),
@@ -119,17 +178,18 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(
             self._read(draft.id).data, {"step1": {"x": 1}, "step2": {"y": 2}}
         )
-        # PUT replaces the whole blob.
-        resp = self.client.put(
+        # A section sent empty replaces what was there, which is how a caller
+        # clears one without a whole-blob replace.
+        resp = self.client.patch(
             self._detail_url(draft.id),
-            data=json.dumps({"data": {"step3": {"z": 3}}}),
+            data=json.dumps({"data": {"step1": {}}}),
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(self._read(draft.id).data, {"step3": {"z": 3}})
+        self.assertEqual(self._read(draft.id).data, {"step1": {}, "step2": {"y": 2}})
 
     def test_patch_records_current_step_and_keeps_it_when_omitted(self):
-        draft = self._create_draft(data={"step1": {"x": 1}})
+        draft = self.draft
         resp = self.client.patch(
             self._detail_url(draft.id),
             data=json.dumps({"data": {}, "current_step": "Contacts"}),
@@ -145,23 +205,10 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(self._read(draft.id).current_step, "Contacts")
 
-    def test_put_records_the_current_step_too(self):
-        draft = self._create_draft(data={"step1": {"x": 1}})
-
-        resp = self.client.put(
-            self._detail_url(draft.id),
-            data=json.dumps({"data": {"step2": {"y": 2}}, "current_step": "Review"}),
-            content_type="application/json",
-        )
-
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["current_step"], "Review")
-        self.assertEqual(self._read(draft.id).current_step, "Review")
-
     def test_a_blank_step_clears_it_but_an_omitted_one_does_not(self):
         # Only None (an absent key) means "leave it alone"; "" is a real value
         # the client can send to unset the marker.
-        draft = self._create_draft()
+        draft = self.draft
         self._save(draft.id, {"current_step": "Contacts"})
 
         self._save(draft.id, {})
@@ -179,15 +226,15 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.json()["current_step"], "")
         self.assertEqual(self._read(resp.json()["id"]).current_step, "")
 
-    def test_a_non_string_step_is_stored_unvalidated(self):
-        # Pins current behaviour: put/patch read the body directly and never run
-        # DraftPayloadSerializer, so whatever is sent lands in the tile.
-        draft = self._create_draft()
+    def test_a_non_string_step_is_coerced(self):
+        # The store only accepts a string, so the payload serializer settles it
+        # before the save rather than letting the store raise mid-request.
+        draft = self.draft
 
         resp = self._save(draft.id, {"current_step": 7})
 
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(self._read(draft.id).current_step, 7)
+        self.assertEqual(self._read(draft.id).current_step, "7")
 
     def test_create_stamps_descriptors(self):
         # A draft is referenced by other resources (a message's resource_context
@@ -200,47 +247,115 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
     def test_updated_is_stamped_on_create_and_bumped_on_save(self):
         t1 = datetime(2026, 7, 21, 10, 0, tzinfo=dt_timezone.utc)
         t2 = datetime(2026, 7, 21, 11, 30, tzinfo=dt_timezone.utc)
-        with patch(
-            "bcap.services.workflow_draft_service.timezone.now", return_value=t1
-        ):
+        with patch("bcap.services.workflow_draft_service.datetime") as clock:
+            clock.now.return_value = t1
             resp = self._post({"data": {"step1": {"x": 1}}})
         self.assertEqual(resp.status_code, 201)
         draft_id = resp.json()["id"]
         self.assertIsNotNone(resp.json()["updated"])
-        self.assertEqual(self._read(draft_id).updated, t1)
+        self.assertEqual(datetime.fromisoformat(self._read(draft_id).updated), t1)
 
         # A later save advances the timestamp.
-        with patch(
-            "bcap.services.workflow_draft_service.timezone.now", return_value=t2
-        ):
+        with patch("bcap.services.workflow_draft_service.datetime") as clock:
+            clock.now.return_value = t2
             resp = self.client.patch(
                 self._detail_url(draft_id),
                 data=json.dumps({"data": {"step2": {"y": 2}}}),
                 content_type="application/json",
             )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(self._read(draft_id).updated, t2)
+        self.assertEqual(datetime.fromisoformat(self._read(draft_id).updated), t2)
 
-    def test_applicant_list_is_owner_scoped_but_staff_see_all(self):
-        self.idir_login_simulate(self.applicant)
+    def test_the_list_is_owner_scoped_for_staff_and_applicants_alike(self):
+        self.idir_login_simulate(self.lister)
         resp = self._post({"data": {"step1": {"x": 1}}})
         self.assertEqual(resp.status_code, 201)
         mine = resp.json()["id"]
-        self._create_draft(user=self.other_applicant)
-        # The applicant sees only their own draft; staff see both.
+        self._create_draft(user=self.other_lister)
+
         resp = self.client.get(self.list_url)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual({row["id"] for row in resp.json()}, {mine})
-        self.idir_login_simulate(self.editor)
-        self.assertEqual(len(self.client.get(self.list_url).json()), 2)
+        # An unfinished form is its author's business, so staff get no widening.
+        self.idir_login_simulate(self.staff_lister)
+        self.assertEqual(self.client.get(self.list_url).json(), [])
+
+    def test_drafts_stamped_for_my_organization_are_visible(self):
+        """The stamp, not today's membership, is what a colleague matches on. Who
+        belongs to which org is OrganizationService's business, so stub it."""
+        outsider = get_user_model().objects.create_user(
+            username="applicant3", password="pass"
+        )
+        outsider.groups.add(Group.objects.get(name="Submitter"))
+        org_id = str(self.org.pk)
+        members = {self.lister.username, self.other_lister.username}
+        with patch.object(
+            OrganizationService,
+            "organization_ids",
+            side_effect=lambda username: {org_id} if username in members else set(),
+        ):
+            mine = self._create_draft(user=self.lister, organization_id=org_id)
+            colleague = self._create_draft(
+                user=self.other_lister, organization_id=org_id
+            )
+            # Unstamped, and the outsider is in no org: theirs stays their own.
+            self._create_draft(user=outsider)
+            self.idir_login_simulate(self.lister)
+            resp = self.client.get(self.list_url)
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual({row["id"] for row in resp.json()}, {mine.id, colleague.id})
+
+    def test_an_unstamped_draft_stays_with_whoever_created_it(self):
+        with patch.object(OrganizationService, "organization_ids", return_value=set()):
+            mine = self._create_draft(user=self.lister)
+            self._create_draft(user=self.other_lister)
+            self.idir_login_simulate(self.lister)
+            resp = self.client.get(self.list_url)
+
+        self.assertEqual({row["id"] for row in resp.json()}, {mine.id})
+
+    def test_a_draft_left_at_a_former_organization_is_no_longer_visible(self):
+        """Creating it is not enough: the stamp hands the draft to the company,
+        so leaving takes the author's own access with them."""
+        org_id = str(self.org.pk)
+        with patch.object(
+            OrganizationService, "organization_ids", return_value={org_id}
+        ):
+            self._create_draft(user=self.lister, organization_id=org_id)
+        with patch.object(OrganizationService, "organization_ids", return_value=set()):
+            mine = self._create_draft(user=self.lister)
+            self.idir_login_simulate(self.lister)
+            resp = self.client.get(self.list_url)
+
+        self.assertEqual({row["id"] for row in resp.json()}, {mine.id})
+
+    def test_a_member_of_several_organizations_has_to_pick_one(self):
+        both = {str(self.org.pk), str(uuid.uuid4())}
+        with patch.object(OrganizationService, "organization_ids", return_value=both):
+            resp = self._post({"data": {}})
+            self.assertEqual(resp.status_code, 400)
+            self.assertIn("organization_id", resp.json())
+            # Picking one it is, then.
+            resp = self._post({"data": {}, "organization_id": str(self.org.pk)})
+            self.assertEqual(resp.status_code, 201)
+
+    def test_a_draft_cannot_be_stamped_for_someone_elses_organization(self):
+        with patch.object(OrganizationService, "organization_ids", return_value=set()):
+            resp = self._post({"data": {}, "organization_id": str(self.org.pk)})
+        self.assertEqual(resp.status_code, 403)
 
     def test_all_graphs_list_spans_graphs_and_stays_owner_scoped(self):
-        self.idir_login_simulate(self.applicant)
-        mine = self._create_draft(user=self.applicant)
-        investigation = self.svc.create(
-            self.applicant, GraphSlugs.INVESTIGATION, {"step1": {"x": 1}}
+        self.idir_login_simulate(self.lister)
+        mine = self._create_draft(user=self.lister)
+        investigation = WorkflowDraftService.record(
+            self.svc.create(
+                request_as(self.lister),
+                GraphSlugs.INVESTIGATION,
+                {"step1": {"x": 1}},
+            )
         )
-        self._create_draft(user=self.other_applicant)
+        self._create_draft(user=self.other_lister)
         resp = self.client.get(reverse("workflow_draft_list_all"))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(
@@ -248,11 +363,14 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
 
     def test_all_graphs_list_narrows_to_one_parent(self):
-        permit = ResourceInstance.objects.create(
-            graph_id=get_current_graph(SLUG).pk, principaluser=self.editor
-        )
-        on_permit = self.svc.create(
-            self.editor, GraphSlugs.INVESTIGATION, {}, parent_resource_id=str(permit.pk)
+        permit = self._make_resource(self.editor)
+        on_permit = WorkflowDraftService.record(
+            self.svc.create(
+                request_as(self.editor),
+                GraphSlugs.INVESTIGATION,
+                {},
+                parent_resource_id=str(permit.pk),
+            )
         )
         self._create_draft(user=self.other_editor)
 
@@ -265,23 +383,19 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
 
     def test_non_owner_cannot_access_draft(self):
         self.idir_login_simulate(self.applicant)
-        others = self._create_draft(user=self.other_applicant, data={"step1": {"x": 1}})
+        others = self.other_applicant_draft
         url = self._detail_url(others.id)
         body = json.dumps({"data": {"step2": {"y": 2}}})
         for resp in (
             self.client.get(url),
             self.client.patch(url, data=body, content_type="application/json"),
-            self.client.put(url, data=body, content_type="application/json"),
             self.client.delete(url),
         ):
             self.assertEqual(resp.status_code, 404)
         self.assertEqual(self._read(others.id).data, {"step1": {"x": 1}})  # untouched
 
     def test_graph_has_different_publication_flag(self):
-        current = self._create_draft(
-            publication_id=get_current_graph(SLUG).publication_id
-        )
-        stale = self._create_draft(publication_id=uuid.uuid4())
+        current, stale = self.draft, self.stale_draft
         self.assertFalse(
             self.client.get(self._detail_url(current.id)).json()[
                 "graph_has_different_publication"
@@ -294,7 +408,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         )
 
     def test_delete_removes_draft(self):
-        draft = self._create_draft()
+        draft = self.draft
         resp = self.client.delete(self._detail_url(draft.id))
         self.assertEqual(resp.status_code, 204)
         self.assertIsNone(self.svc.get(self.editor, draft.id))
@@ -326,41 +440,32 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         resp = self._post({"data": {}, "parent_resource_id": str(parent.pk)})
         self.assertEqual(resp.status_code, 201)
 
-    def test_put_keeps_the_parent_resource(self):
+    def test_saving_keeps_the_parent_resource(self):
         parent = self._make_resource(self.editor)
-        draft_id = self._post(
-            {"data": {}, "parent_resource_id": str(parent.pk)}
-        ).json()["id"]
-        resp = self.client.put(
+        draft_id = (
+            self._post({"data": {}, "parent_resource_id": str(parent.pk)}).json()
+        )["id"]
+        resp = self.client.patch(
             self._detail_url(draft_id),
             data=json.dumps({"data": {"step1": {"x": 1}}}),
             content_type="application/json",
         )
         self.assertEqual(resp.json()["parent_resource_id"], str(parent.pk))
 
-    def test_internal_staff_reach_every_verb_on_an_applicants_draft(self):
-        # Visibility is keyed on internal-group membership, not superuser, and
-        # the widening applies to every verb. Pins current behaviour: a plain
-        # Resource Editor can read, overwrite and destroy an applicant's draft.
-        draft = self._create_draft(user=self.applicant, data={"step1": {"x": 1}})
-        self.assertFalse(self.editor.is_superuser)
+    def test_internal_staff_reach_no_verb_on_an_applicants_draft(self):
+        # No internal-group widening on drafts: a Resource Editor is as walled
+        # off from an applicant's unsubmitted form as another applicant is.
+        draft = self.applicant_draft
+        url = self._detail_url(draft.id)
+        body = json.dumps({"data": {"step2": {"y": 2}}})
 
-        resp = self.client.get(self._detail_url(draft.id))
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["data"], {"step1": {"x": 1}})
-
-        resp = self.client.put(
-            self._detail_url(draft.id),
-            data=json.dumps({"data": {"step2": {"y": 2}}}),
-            content_type="application/json",
-        )
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(self._read(draft.id).data, {"step2": {"y": 2}})
-
-        self.assertEqual(
-            self.client.delete(self._detail_url(draft.id)).status_code, 204
-        )
-        self.assertIsNone(self.svc.get(self.admin, draft.id))
+        for resp in (
+            self.client.get(url),
+            self.client.patch(url, data=body, content_type="application/json"),
+            self.client.delete(url),
+        ):
+            self.assertEqual(resp.status_code, 404)
+        self.assertEqual(self._read(draft.id).data, {"step1": {"x": 1}})
 
     def test_drafts_need_no_role_but_do_need_a_login(self):
         # Any signed-in user may keep drafts; owner scoping is what separates
