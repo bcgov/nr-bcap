@@ -5979,8 +5979,9 @@ components:
           - $ref: '#/components/schemas/Document_Submission_Report_Submission_Tile'
           nullable: true
         submission_photographs:
-          allOf:
-          - $ref: '#/components/schemas/Document_Submission_Submission_Photographs_Tile'
+          type: array
+          items:
+            $ref: '#/components/schemas/Document_Submission_Submission_Photographs_Tile'
           nullable: true
         submission_assessment:
           allOf:
