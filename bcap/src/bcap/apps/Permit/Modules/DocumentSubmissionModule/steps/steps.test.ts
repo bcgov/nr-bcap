@@ -4,7 +4,6 @@ import { shallowMount } from '@vue/test-utils';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { submitModule } from '@/bcap/apps/Permit/api.ts';
 
-// 5. Import the Document Submission steps and module
 import DocumentSubmissionModule from '../DocumentSubmissionModule.vue';
 import Step1 from './Step1_About.vue';
 import Step2 from './Step2_Details.vue';
@@ -12,15 +11,11 @@ import Step3 from './Step3_Submission.vue';
 import Step4 from './Step4_Photographs.vue';
 import Step99 from './Step99_Review.vue';
 
-vi.mock('@/bcap/api.ts', () => ({
+vi.mock('@/bcap/apps/Permit/api.ts', () => ({
+    submitModule: vi.fn(),
     saveDraftFieldToBackend: vi.fn(),
 }));
 
-vi.mock('@/bcap/apps/Permit/api.ts', () => ({
-    submitModule: vi.fn(),
-}));
-
-// 1. Mock the heavy GenericWidget to avoid runtime deps during shallowMount
 vi.mock(
     '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
     () => ({
@@ -31,23 +26,20 @@ vi.mock(
     }),
 );
 
-// 2. Mock widget constants
 vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
     EDIT: 'edit',
     VIEW: 'view',
 }));
 
-// 3. Mock useDraftStep composable utilized by Steps 2, 3, and 4
 vi.mock('@/bcap/composables/useDraftStep.ts', () => ({
     useDraftStep: () => ({
-        draftData: ref({}), // Ensure draftData is a ref so draftData.value doesn't crash
+        draftData: ref({}),
         resolver: vi.fn(),
         isValid: vi.fn(() => true),
         updateValue: vi.fn(),
     }),
 }));
 
-// 4. Mock useDraftStore utilized by Step 4 for manual photo saves
 const sharedMockStore = {
     draftId: 'test-draft-id',
     parentPermitId: 'test-permit-id',
@@ -70,13 +62,10 @@ const steps = {
 describe('DocumentSubmissionModule steps', () => {
     for (const [name, component] of Object.entries(steps)) {
         it(`${name} renders and exposes isValid()`, () => {
-            // Because we mocked the composable and store, shallowMount will succeed
             const wrapper = shallowMount(component);
 
-            // Assert the component rendered successfully
             expect(wrapper.html()).toBeTruthy();
 
-            // Every step exposes isValid() for the stepper navigation
             expect(
                 typeof (wrapper.vm as { isValid: () => boolean }).isValid(),
             ).toBe('boolean');
@@ -85,13 +74,11 @@ describe('DocumentSubmissionModule steps', () => {
 });
 
 describe('DocumentSubmissionModule extended coverage', () => {
-    // Tests lines 2-86 in DocumentSubmissionModule.vue
     it('customDocumentSubmit formats nested tile payloads', async () => {
         const draftStore = useDraftStore();
         draftStore.draftId = 'mock-draft-123';
         draftStore.parentPermitId = 'mock-permit-456';
 
-        // Give it nested data to test the tile formatting logic
         draftStore.draftData = {
             document_submission_process: [
                 { aliased_data: { some_prop: 'test' } },
@@ -103,10 +90,8 @@ describe('DocumentSubmissionModule extended coverage', () => {
         const wrapper = shallowMount(DocumentSubmissionModule);
         const stepper = wrapper.findComponent({ name: 'WorkflowStepper' });
 
-        // Trigger the custom submit function passed to the stepper
         await stepper.props('submit')();
 
-        // Assert the data was flattened correctly
         expect(submitModule).toHaveBeenCalledWith(
             'mock-permit-456',
             'mock-draft-123',
@@ -132,7 +117,6 @@ describe('DocumentSubmissionModule extended coverage', () => {
     it('Step2_Details template events', async () => {
         const wrapper = shallowMount(Step2);
         const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
-        // Trigger the inline updateValue() lambdas in the template
         for (const w of widgets) {
             await w.vm.$emit('update:value', 'test');
         }
@@ -141,26 +125,20 @@ describe('DocumentSubmissionModule extended coverage', () => {
     it('Step3_Submission template events', async () => {
         const wrapper = shallowMount(Step3);
         const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
-        // Trigger the inline updateValue() lambdas in the template
         for (const w of widgets) {
             await w.vm.$emit('update:value', 'test');
         }
     });
 
-    // Tests line 19 branch in Step 3
     it('Step3_Submission handles undefined draftData', () => {
-        // The global mock established at the top of the file returns an empty ref({}),
-        // which inherently tests the optional chaining fallback on line 19 safely.
         const wrapper = shallowMount(Step3);
         expect(wrapper.exists()).toBe(true);
     });
 
-    // Tests lines 77-196 in Step 4
     it('Step4_Photographs complete interaction flow', async () => {
         const wrapper = shallowMount(Step4);
         const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
 
-        // 1. Test File Intercept (using props instead of attributes)
         const fileWidget = widgets.find(
             (w) => w.props('nodeAlias') === 'submission_photographs',
         );
@@ -171,34 +149,31 @@ describe('DocumentSubmissionModule extended coverage', () => {
             });
         }
 
-        // 2. Test Date Regex Formatting logic branches
         const dateWidget = widgets.find(
             (w) => w.props('nodeAlias') === 'photograph_date',
         );
         if (dateWidget) {
-            await dateWidget.vm.$emit('update:value', { node_value: '2020' }); // tests YYYY
+            await dateWidget.vm.$emit('update:value', { node_value: '2020' });
             await dateWidget.vm.$emit('update:value', {
                 node_value: '2020-01-01',
-            }); // tests YYYY-MM-DD
+            });
             await dateWidget.vm.$emit('update:value', {
                 node_value: 'invalid',
-            }); // fallback
+            });
         }
 
-        // 3. Test Save, Add, and Delete Photo array mutations
         const buttons = wrapper.findAllComponents({ name: 'Button' });
 
-        // Click Save Image
-        const saveBtn = buttons.find((b) =>
+        const saveImageBtn = buttons.find((b) =>
             (b.attributes('tooltip') || '').includes('Save'),
         );
-        if (saveBtn) await saveBtn.vm.$emit('click');
+        if (saveImageBtn) await saveImageBtn.vm.$emit('click');
 
-        // Click Add Image
-        const addBtn = buttons.find((b) => b.attributes('label') === '+ Add');
-        if (addBtn) await addBtn.vm.$emit('click');
+        const addImageBtn = buttons.find(
+            (b) => b.attributes('label') === '+ Add',
+        );
+        if (addImageBtn) await addImageBtn.vm.$emit('click');
 
-        // Click Delete Image
         const galleryItems = wrapper.findAll('.image-placeholder');
         if (galleryItems.length > 0) {
             await galleryItems[0].trigger('click');
@@ -206,21 +181,17 @@ describe('DocumentSubmissionModule extended coverage', () => {
             if (deleteIcon.exists()) await deleteIcon.trigger('click');
         }
 
-        // Expose save method check
         expect(
             await (wrapper.vm as { save: () => Promise<boolean> }).save(),
         ).toBe(true);
     });
 
-    // Tests lines 34-35, 46, 55-56, 62 in Step 99
     it('Step99_Review parses edge case data shapes', () => {
-        // 1. Define the stub FIRST inside the test block
         const Step99Stub = {
             template: '<div><slot :data="resourceData" :fields="[]" /></div>',
             props: ['resourceData'],
         };
 
-        // 2. Missing data and non-array fields
         shallowMount(Step99, {
             props: { resourceData: null },
             global: {
@@ -231,7 +202,6 @@ describe('DocumentSubmissionModule extended coverage', () => {
             },
         });
 
-        // 3. Photographs existing outside of 'process' node as a single object
         const wrapperWithDirectPhotos = shallowMount(Step99, {
             props: {
                 resourceData: {
@@ -251,17 +221,13 @@ describe('DocumentSubmissionModule extended coverage', () => {
             },
         });
 
-        // 4. Proves getPhotos fallback worked and parsed the direct photograph object
         expect(wrapperWithDirectPhotos.html()).toContain(
             'Submission Photographs',
         );
     });
 });
 
-// Targets line 19 in Step 3
 it('Step3_Submission forces data ref initialization', async () => {
-    // By unmounting and passing a totally empty initial state, we trigger
-    // the optional chaining fallback on the 'initialFileState' ref
     const wrapper = shallowMount(Step3, {
         global: {
             provide: {
@@ -273,7 +239,6 @@ it('Step3_Submission forces data ref initialization', async () => {
     expect(wrapper.exists()).toBe(true);
 });
 
-// Targets lines 34-35, 46, 53, 61 in Step 99
 it('Step99_Review edge cases and fallbacks', async () => {
     const Step99Stub = {
         template: '<div><slot :data="resourceData" :fields="fields" /></div>',
@@ -281,7 +246,6 @@ it('Step99_Review edge cases and fallbacks', async () => {
     };
     const FieldSetStub = { template: '<div><slot/></div>' };
 
-    // Test missing data/fields entirely (Lines 34-35, 46)
     shallowMount(Step99, {
         props: { resourceData: null },
         global: {
@@ -289,7 +253,6 @@ it('Step99_Review edge cases and fallbacks', async () => {
         },
     });
 
-    // Test finding photographs in the root object (Lines 53, 61)
     const directWrapper = shallowMount(Step99, {
         props: {
             resourceData: {
@@ -315,14 +278,12 @@ it('Step99_Review edge cases and fallbacks', async () => {
     expect(directWrapper.html()).toContain('Submission Photographs');
 });
 
-// Targets lines 77-196 in Step 4
 it('Step4_Photographs full component interaction', async () => {
     const wrapper = shallowMount(Step4);
-    await wrapper.vm.$nextTick(); // Wait for initial render
+    await wrapper.vm.$nextTick();
 
     const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
 
-    // Ensure photo array interactions trigger
     const fileWidget = widgets.find(
         (w) =>
             w.attributes('node-alias') === 'submission_photographs' ||
@@ -333,7 +294,7 @@ it('Step4_Photographs full component interaction', async () => {
         fileWidget.vm.$emit('update:value', {
             node_value: [{ file: mockFile }],
         });
-        await wrapper.vm.$nextTick(); // Wait for file state to update
+        await wrapper.vm.$nextTick();
     }
 
     const dateWidget = widgets.find(
@@ -347,22 +308,21 @@ it('Step4_Photographs full component interaction', async () => {
         dateWidget.vm.$emit('update:value', { node_value: 'invalid' });
     }
 
-    // Must await DOM updates before clicking buttons
     await wrapper.vm.$nextTick();
 
-    const saveBtn = wrapper
+    const saveImageBtn = wrapper
         .findAllComponents({ name: 'Button' })
         .find((b) => (b.attributes('tooltip') || '').includes('Save'));
-    if (saveBtn) {
-        saveBtn.vm.$emit('click');
+    if (saveImageBtn) {
+        saveImageBtn.vm.$emit('click');
         await wrapper.vm.$nextTick();
     }
 
-    const addBtn = wrapper
+    const addImageBtn = wrapper
         .findAllComponents({ name: 'Button' })
         .find((b) => b.attributes('label') === '+ Add');
-    if (addBtn) {
-        addBtn.vm.$emit('click');
+    if (addImageBtn) {
+        addImageBtn.vm.$emit('click');
         await wrapper.vm.$nextTick();
     }
 
