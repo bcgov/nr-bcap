@@ -63,7 +63,6 @@ export const downloadFile = async (
     }
 };
 
-// A picked File only lives in memory until submit; it can't be stored.
 export const dropFiles = (_key: string, value: unknown) =>
     value instanceof File ? undefined : value;
 
