@@ -23,6 +23,7 @@ import type {
     ExternalDashboardPage,
     InternalDashboardCard,
     PatchedRequirementAssignee,
+    DraftPayloadWritable,
     DraftRecord,
     PatchedBcapMessagePatchWritable,
     PatchedPermitApplicationWritable,
@@ -243,7 +244,7 @@ export const submitModule = async (
     permitId: string,
     draftId: string | undefined,
     moduleSlug: GraphSlug,
-    payload: ArchesDraftData,
+    payload: DraftPayloadWritable['data'],
     files: Array<[string, File]> = [],
 ): Promise<PermitApplication> => {
     try {
