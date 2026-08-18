@@ -1,44 +1,45 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, computed } from 'vue';
+import { ref, useTemplateRef, computed, watch } from 'vue';
 import type { Ref } from 'vue';
 import { Form, type FormInstance } from '@primevue/forms';
 import FieldSet from 'primevue/fieldset';
-import Button from 'primevue/button';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
 import LabelledInput from '@/bcgov_arches_common/components/labelledinput/LabelledInput.vue';
-import { EDIT, VIEW } from '@/arches_component_lab/widgets/constants.ts';
-import { zDocumentSubmissionSubmissionPhotographsAliasedData } from '@/bcap/client/zod.gen.ts';
-import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
+import MultiFileUploader from './MultiFileUploader.vue';
+
+import type {
+    DocumentSubmissionSubmissionPhotographsTile,
+    DocumentSubmissionSubmissionPhotographsAliasedData,
+    FileListAliasedNodeData,
+    StringAliasedNodeData,
+} from '@/bcap/client/types.gen.ts';
 
 const emit = defineEmits(['update:step-is-valid']);
 const draftStore = useDraftStore();
+const draftData = computed(() => draftStore.draftData);
 
-const { draftData, resolver, isValid } = useDraftStep(
-    zDocumentSubmissionSubmissionPhotographsAliasedData,
-    'submission_photographs',
-    emit,
-);
+const getBlankPhotograph = (): DocumentSubmissionSubmissionPhotographsTile => ({
+    aliased_data: {
+        submission_photographs: null,
+        photograph_description: null,
+        photograph_date: null,
+        photograph_view: null,
+        photographer: null,
+    },
+});
 
-const getBlankPhotograph = () => {
-    return {
-        aliased_data: {
-            submission_photographs: null,
-            photograph_description: '',
-            photograph_date: null,
-            photograph_view: null,
-            photographer: '',
-        },
-    };
-};
-
-const currentPhoto = ref(getBlankPhotograph());
+const currentPhoto =
+    ref<DocumentSubmissionSubmissionPhotographsTile>(getBlankPhotograph());
 const photoKey = ref<number>(0);
 const addingNewImage = ref<boolean>(true);
+const photoForm: Ref<FormInstance | null> = useTemplateRef(
+    'photoForm',
+) as Ref<FormInstance | null>;
 
-// Ensure the draftData property is treated as an array
 const photoList = computed(() => {
     if (!draftData.value?.submission_photographs) return [];
     return Array.isArray(draftData.value.submission_photographs)
@@ -46,34 +47,65 @@ const photoList = computed(() => {
         : [draftData.value.submission_photographs];
 });
 
-const photosCount = computed(() => photoList.value.length);
-
-const hasUnsavedImage = computed(() => {
-    const nodes = currentPhoto.value?.aliased_data?.submission_photographs;
-    return nodes !== null && nodes !== undefined;
-});
-
-const photoForm: Ref<FormInstance | null> = useTemplateRef(
-    'photoForm',
-) as Ref<FormInstance | null>;
-
 const addImageDisabled = computed(() => {
-    if (photosCount.value >= 10) return true;
-    if (!hasUnsavedImage.value) return true;
+    const fileNode = currentPhoto.value.aliased_data?.submission_photographs as
+        FileListAliasedNodeData | null | undefined;
+    const isUnsaved =
+        !!fileNode &&
+        Array.isArray(fileNode.node_value) &&
+        fileNode.node_value.length > 0;
 
-    const data = currentPhoto.value?.aliased_data;
-    const hasView = !!data?.photograph_view;
-    const hasDesc = !!data?.photograph_description;
+    if (photoList.value.length >= 10) return true;
+    if (!isUnsaved) return true;
+
+    const viewNode = currentPhoto.value.aliased_data?.photograph_view as
+        StringAliasedNodeData | undefined;
+    const vVal = viewNode?.node_value;
+    const hasView = !!(
+        viewNode?.display_value ||
+        vVal?.en?.value ||
+        (typeof vVal === 'string' && (vVal as string).trim() !== '')
+    );
+
+    const descNode = currentPhoto.value.aliased_data?.photograph_description as
+        StringAliasedNodeData | undefined;
+    const dVal = descNode?.node_value;
+    const hasDesc = !!(
+        descNode?.display_value ||
+        dVal?.en?.value ||
+        (typeof dVal === 'string' && (dVal as string).trim() !== '')
+    );
 
     return !(hasView && hasDesc);
 });
 
-const nextImageKey = computed(() => photoList.value.length);
+const updateCurrentValue = (
+    newValue: AliasedNodeData,
+    fieldName: keyof DocumentSubmissionSubmissionPhotographsAliasedData,
+) => {
+    if (
+        fieldName === 'photograph_date' &&
+        newValue &&
+        typeof newValue.node_value === 'string'
+    ) {
+        const val = newValue.node_value;
+        if (/^\d{4}$/.test(val)) newValue.node_value = `${val}-01-01T00:00:00Z`;
+        else if (/^\d{4}-\d{2}-\d{2}$/.test(val))
+            newValue.node_value = `${val}T00:00:00Z`;
+    }
+
+    if (!currentPhoto.value.aliased_data) {
+        currentPhoto.value.aliased_data = {};
+    }
+
+    // @ts-expect-error - Dynamic assignment mapping generic Arches nodes
+    currentPhoto.value.aliased_data[fieldName] = newValue;
+};
 
 const addNewImage = () => {
     currentPhoto.value = getBlankPhotograph();
     addingNewImage.value = true;
-    photoKey.value = nextImageKey.value;
+    photoKey.value = photoList.value.length;
 };
 
 const clearPendingImage = () => {
@@ -81,82 +113,70 @@ const clearPendingImage = () => {
     photoKey.value++;
 };
 
-// Generic manual update for the current drafted item
-const updateCurrentValue = (
-    newValue: AliasedNodeData,
-    fieldName: keyof typeof currentPhoto.value.aliased_data,
-) => {
-    if (
-        fieldName === 'photograph_date' &&
-        newValue &&
-        typeof newValue.node_value === 'string'
-    ) {
-        // correcting date format
-        const val = newValue.node_value;
-        if (/^\d{4}$/.test(val)) {
-            newValue.node_value = `${val}-01-01T00:00:00Z`;
-        } else if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-            newValue.node_value = `${val}T00:00:00Z`;
-        }
-    }
+const customIsValid = () => {
+    const fileNode = currentPhoto.value.aliased_data?.submission_photographs as
+        FileListAliasedNodeData | null | undefined;
+    const isUnsaved =
+        !!fileNode &&
+        Array.isArray(fileNode.node_value) &&
+        fileNode.node_value.length > 0;
 
-    currentPhoto.value.aliased_data[fieldName] = newValue as never;
-};
+    if (photoList.value.length === 0 && !isUnsaved) return false;
 
-const pendingFile = ref<File | null>(null);
-
-const handleFileUpdate = (newValue: AliasedNodeData) => {
-    console.log('INTERCEPTED FILE WIDGET UPDATE:', newValue);
-    const nodeArray = newValue?.node_value as
-        Array<Record<string, unknown>> | undefined;
-    const fileObj = nodeArray?.[0]?.file;
-
-    if (fileObj instanceof File) {
-        pendingFile.value = fileObj;
-        console.log('Successfully extracted raw File:', pendingFile.value.name);
-    } else {
-        pendingFile.value = null;
-    }
-    updateCurrentValue(newValue, 'submission_photographs');
-};
-
-type PhotographDraft = ReturnType<typeof getBlankPhotograph>;
-
-const saveImage = async () => {
-    const currentData = draftData.value.submission_photographs as unknown as
-        PhotographDraft | PhotographDraft[] | null | undefined;
-
-    const existingPhotos: PhotographDraft[] = Array.isArray(currentData)
-        ? currentData
-        : currentData
-          ? [currentData]
-          : [];
-
-    const newPhotosArray = [...existingPhotos, currentPhoto.value];
-
-    draftData.value.submission_photographs =
-        newPhotosArray as unknown as typeof draftData.value.submission_photographs;
-
-    if (draftStore.draftId) {
-        if (pendingFile.value) {
-            const formData = new FormData();
-            formData.append('file', pendingFile.value);
-
-            console.log(
-                'Ready to execute manual file PATCH with:',
-                formData.get('file'),
-            );
-        }
-
-        const safeDraftData = JSON.parse(
-            JSON.stringify(draftStore.draftData, (key, value) => {
-                if (key === 'file' && value instanceof File) {
-                    return undefined;
-                }
-                return value;
-            }),
+    for (const photo of photoList.value) {
+        const viewNode = photo.aliased_data?.photograph_view as
+            StringAliasedNodeData | undefined;
+        const vVal = viewNode?.node_value;
+        const hasView = !!(
+            viewNode?.display_value ||
+            vVal?.en?.value ||
+            (typeof vVal === 'string' && (vVal as string).trim() !== '')
         );
 
+        const descNode = photo.aliased_data?.photograph_description as
+            StringAliasedNodeData | undefined;
+        const dVal = descNode?.node_value;
+        const hasDesc = !!(
+            descNode?.display_value ||
+            dVal?.en?.value ||
+            (typeof dVal === 'string' && (dVal as string).trim() !== '')
+        );
+
+        if (!hasView || !hasDesc) return false;
+    }
+
+    if (addingNewImage.value && isUnsaved && addImageDisabled.value)
+        return false;
+
+    return true;
+};
+
+watch(
+    () => [photoList.value, currentPhoto.value, addingNewImage.value],
+    () => emit('update:step-is-valid', customIsValid()),
+    { deep: true, immediate: true },
+);
+
+const saveImage = async () => {
+    const currentData = draftData.value.submission_photographs;
+    const existingPhotos: DocumentSubmissionSubmissionPhotographsTile[] =
+        Array.isArray(currentData)
+            ? currentData
+            : currentData
+              ? [currentData as DocumentSubmissionSubmissionPhotographsTile]
+              : [];
+
+    draftData.value.submission_photographs = [
+        ...existingPhotos,
+        currentPhoto.value,
+    ] as typeof draftData.value.submission_photographs;
+
+    if (draftStore.draftId) {
+        const safeDraftData = JSON.parse(
+            JSON.stringify(draftStore.draftData, (key, value) =>
+                key === 'file' && value instanceof File ? undefined : value,
+            ),
+        );
         await saveDraftFieldToBackend(
             draftStore.draftId,
             draftStore.graphSlug,
@@ -164,24 +184,17 @@ const saveImage = async () => {
         );
     }
 
-    // Reset UI
-    pendingFile.value = null;
     currentPhoto.value = getBlankPhotograph();
-    photoKey.value = nextImageKey.value;
+    photoKey.value = photoList.value.length;
     photoForm.value?.reset();
-
-    emit('update:step-is-valid', isValid());
+    emit('update:step-is-valid', customIsValid());
 };
 
 const deletePhoto = async (index: number) => {
-    const currentData = draftData.value.submission_photographs as unknown as
-        PhotographDraft | PhotographDraft[] | null | undefined;
-
+    const currentData = draftData.value.submission_photographs;
     if (Array.isArray(currentData)) {
         currentData.splice(index, 1);
-
-        draftData.value.submission_photographs =
-            currentData as unknown as typeof draftData.value.submission_photographs;
+        draftData.value.submission_photographs = currentData;
 
         if (draftStore.draftId) {
             await saveDraftFieldToBackend(
@@ -190,8 +203,7 @@ const deletePhoto = async (index: number) => {
                 draftStore.draftData,
             );
         }
-
-        emit('update:step-is-valid', isValid());
+        emit('update:step-is-valid', customIsValid());
     }
 };
 
@@ -201,128 +213,38 @@ const setCurrentPhoto = (index: number) => {
     addingNewImage.value = false;
 };
 
-const save = async () => {
-    return true;
-};
-
-defineExpose({ isValid, save });
+defineExpose({ isValid: customIsValid, save: async () => true });
 </script>
 
 <template>
     <Form
         ref="photoForm"
-        v-slot="$form"
         name="photoForm"
         :validateOnBlur="true"
-        :resolver="resolver"
     >
         <FieldSet legend="Submission Photographs">
-            <div class="flex flex-row flex-nowrap">
-                <div class="uploader-container">
-                    <div
-                        v-if="
-                            photosCount >= 10 &&
-                            !hasUnsavedImage &&
-                            addingNewImage
-                        "
-                        class="max-limit-message"
-                    >
-                        <i class="fa fa-ban limit-icon"></i>
-                        <div>Maximum of 10 images reached.</div>
-                        <div class="limit-subtext">
-                            Please delete an image to add more.
-                        </div>
-                    </div>
-
-                    <!-- INTERCEPTED FILE WIDGET -->
-                    <GenericWidget
-                        v-else-if="!hasUnsavedImage && addingNewImage"
-                        :key="photoKey"
-                        graph-slug="document_submission"
-                        node-alias="submission_photographs"
-                        :should-show-label="false"
-                        :mode="EDIT"
-                        :aliased-node-data="
-                            currentPhoto?.aliased_data?.submission_photographs
-                        "
-                        @update:value="handleFileUpdate"
-                    ></GenericWidget>
-
-                    <div
-                        v-else
-                        class="pending-image-preview"
-                    >
-                        <GenericWidget
-                            :key="`view-${photoKey}`"
-                            graph-slug="document_submission"
-                            node-alias="submission_photographs"
-                            :should-show-label="false"
-                            :mode="VIEW"
-                            :aliased-node-data="
-                                currentPhoto?.aliased_data
-                                    ?.submission_photographs
-                            "
-                        ></GenericWidget>
-
-                        <Button
-                            v-if="addingNewImage"
-                            label="Remove / Change Image"
-                            icon="fa fa-times"
-                            @click="clearPendingImage"
-                        />
-                    </div>
-                </div>
-
-                <div class="placeholders">
-                    <div>
-                        <Button
-                            v-if="!addingNewImage && photosCount < 10"
-                            label="+ Add"
-                            class="inline-block"
-                            :aria-disabled="addImageDisabled"
-                            :disabled="addImageDisabled"
-                            @click="addNewImage"
-                        ></Button>
-                        <Button
-                            v-if="addingNewImage && photosCount < 10"
-                            class="inline-block"
-                            :aria-disabled="addImageDisabled"
-                            :disabled="addImageDisabled"
-                            tooltip="Save the new image before adding another"
-                            @click="saveImage"
-                        >
-                            <i class="fa fa-save mr-2"></i>
-                            Save Image
-                        </Button>
-                    </div>
-
-                    <!-- Thumbnails / Gallery -->
-                    <div class="flex flex-row image-placeholders">
-                        <div
-                            v-for="(photo, index) in photoList"
-                            :key="index"
-                            :data-selected="index === photoKey"
-                            class="image-placeholder"
-                            @click="setCurrentPhoto(index)"
-                        >
-                            <div
-                                class="fa fa-remove image-icons image-delete-icon"
-                                tooltip="Remove Image"
-                                @click.stop="deletePhoto(index)"
-                            ></div>
-                            <GenericWidget
-                                graph-slug="document_submission"
-                                :mode="VIEW"
-                                :should-show-label="false"
-                                node-alias="submission_photographs"
-                                :aliased-node-data="
-                                    photo.aliased_data.submission_photographs
-                                "
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <MultiFileUploader
+                :max-items="10"
+                :adding-new="addingNewImage"
+                :disable-add-or-save="addImageDisabled"
+                graph-slug="document_submission"
+                node-alias="submission_photographs"
+                :current-node-data="
+                    currentPhoto?.aliased_data?.submission_photographs
+                "
+                :items="photoList"
+                :selected-index="photoKey"
+                item-type-label="Image"
+                icon-class="fa-image"
+                @file-updated="
+                    updateCurrentValue($event, 'submission_photographs')
+                "
+                @clear-pending="clearPendingImage"
+                @add-new="addNewImage"
+                @save-item="saveImage"
+                @delete-item="deletePhoto"
+                @select-item="setCurrentPhoto"
+            />
 
             <!-- Metadata Form -->
             <div class="flex flex-row mt-4">
@@ -360,7 +282,6 @@ defineExpose({ isValid, save });
                 label="Photograph Description"
                 hint="Summarize the image content. Include additional information that does not fit fields above"
                 input-name="photographDescription"
-                :error-message="$form.photographDescription?.error?.message"
                 :required="true"
             >
                 <div class="p-inputtext-fluid">
@@ -415,7 +336,6 @@ defineExpose({ isValid, save });
                         label="Photographer"
                         hint="Enter the name of the photographer"
                         input-name="photographer"
-                        :error-message="$form.photographer?.error?.message"
                     >
                         <div class="p-inputtext-fluid">
                             <GenericWidget
@@ -451,15 +371,9 @@ defineExpose({ isValid, save });
     display: flex;
     gap: 1.5rem;
 }
-.flex-column {
-    flex-direction: column;
-}
 .flex-row {
     flex-direction: row;
     align-items: start;
-}
-.flex-nowrap {
-    flex-wrap: nowrap;
 }
 .flex-grow {
     flex-grow: 1;
@@ -469,82 +383,5 @@ defineExpose({ isValid, save });
 }
 .mt-4 {
     margin-top: 1rem;
-}
-
-.uploader-container {
-    width: 300px;
-    min-height: 200px;
-}
-
-.max-limit-message {
-    width: 100%;
-    height: 100%;
-    min-height: 200px;
-    background: #f8f9fa;
-    border: 2px dashed #dee2e6;
-    border-radius: 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #495057;
-    font-weight: 600;
-}
-
-.limit-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: #aaa;
-}
-
-.limit-subtext {
-    font-size: 0.8em;
-    color: #666;
-}
-
-.pending-image-preview {
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.image-placeholders {
-    flex-flow: wrap;
-    gap: 0.25rem;
-}
-
-.image-placeholder {
-    max-width: 125px;
-    min-width: 125px;
-    max-height: 125px;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-}
-
-.image-icons {
-    position: absolute;
-    right: 0.5rem;
-    cursor: pointer;
-    width: 1rem;
-    height: 1rem;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px;
-    border-radius: 3px;
-}
-
-.image-delete-icon {
-    top: 0.5rem;
-    color: red;
-}
-</style>
-<style>
-.image-placeholder[data-selected='false'] {
-    opacity: 0.7;
 }
 </style>

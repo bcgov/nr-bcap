@@ -1,125 +1,350 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Form } from '@primevue/forms';
-import { zDocumentSubmissionReportSubmissionAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
-import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import LabelledInput from '@/bcgov_arches_common/components/labelledinput/LabelledInput.vue';
+import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
+import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
+import MultiFileUploader from './MultiFileUploader.vue';
+
+import type {
+    DocumentSubmissionReportSubmissionAliasedData,
+    FileListAliasedNodeData,
+} from '@/bcap/client/types.gen.ts';
 
 const emit = defineEmits(['update:step-is-valid']);
+const draftStore = useDraftStore();
+const draftData = computed(() => draftStore.draftData);
 
-const { draftData, resolver, isValid, updateValue } = useDraftStep(
-    zDocumentSubmissionReportSubmissionAliasedData,
-    'report_submission',
-    emit,
+if (!draftData.value.report_submission) {
+    draftData.value.report_submission = { aliased_data: {} };
+}
+
+const getBlankFileNode = () => ({ aliased_data: { report_file: null } });
+const currentFile = ref(getBlankFileNode());
+const docKey = ref<number>(0);
+const addingNewDoc = ref<boolean>(true);
+
+const docList = computed(() => {
+    const aliasedData = draftData.value.report_submission?.aliased_data as
+        DocumentSubmissionReportSubmissionAliasedData | undefined;
+    const files = aliasedData?.report_file?.node_value;
+    if (!Array.isArray(files)) return [];
+    return files.map((f) => ({
+        aliased_data: { report_file: { node_value: [f] } },
+    }));
+});
+
+const hasUnsavedFile = computed(() => {
+    const fileNode = currentFile.value?.aliased_data?.report_file as
+        FileListAliasedNodeData | null | undefined;
+    return (
+        !!fileNode &&
+        Array.isArray(fileNode.node_value) &&
+        fileNode.node_value.length > 0
+    );
+});
+
+const addDocDisabled = computed(() => {
+    if (docList.value.length >= 10) return true;
+    return !hasUnsavedFile.value;
+});
+
+const customIsValid = () => {
+    if (docList.value.length === 0) return false;
+
+    const reportData = draftData.value.report_submission?.aliased_data as
+        DocumentSubmissionReportSubmissionAliasedData | undefined;
+    if (!reportData) return false;
+
+    const titleNode = reportData.report_title;
+    const tVal = titleNode?.node_value;
+    const hasTitle = !!(
+        titleNode?.display_value ||
+        tVal?.en?.value ||
+        (typeof tVal === 'string' && (tVal as string).trim() !== '')
+    );
+
+    const consultantNode = reportData.archaeological_consultant;
+    const hasConsultant = !!(
+        consultantNode?.display_value ||
+        (Array.isArray(consultantNode?.node_value) &&
+            consultantNode.node_value.length > 0)
+    );
+
+    return hasTitle && hasConsultant;
+};
+
+watch(
+    () => [
+        docList.value,
+        currentFile.value,
+        addingNewDoc.value,
+        draftData.value.report_submission,
+    ],
+    () => emit('update:step-is-valid', customIsValid()),
+    { deep: true, immediate: true },
 );
 
-const initialFileState = ref(
-    draftData.value?.report_submission?.aliased_data?.report_file,
-);
+const updateMetadata = async (
+    newValue: AliasedNodeData,
+    fieldName: keyof DocumentSubmissionReportSubmissionAliasedData,
+) => {
+    if (!draftData.value.report_submission) {
+        draftData.value.report_submission = { aliased_data: {} };
+    }
 
-defineExpose({ isValid });
+    const aliasedData = draftData.value.report_submission
+        .aliased_data as DocumentSubmissionReportSubmissionAliasedData;
+    // @ts-expect-error - Dynamic assignment on typed object
+    aliasedData[fieldName] = newValue;
+
+    emit('update:step-is-valid', customIsValid());
+
+    if (draftStore.draftId) {
+        const safeDraftData = JSON.parse(
+            JSON.stringify(draftStore.draftData, (key, value) =>
+                key === 'file' && value instanceof File ? undefined : value,
+            ),
+        );
+        await saveDraftFieldToBackend(
+            draftStore.draftId,
+            draftStore.graphSlug,
+            safeDraftData,
+        );
+    }
+};
+
+const handleFileUpdated = (newValue: unknown) => {
+    currentFile.value.aliased_data.report_file = newValue as never;
+    emit('update:step-is-valid', customIsValid());
+};
+
+const saveDoc = async () => {
+    const fileNode = currentFile.value.aliased_data.report_file as
+        FileListAliasedNodeData | null | undefined;
+    const newFileVals = fileNode?.node_value;
+    if (!Array.isArray(newFileVals) || newFileVals.length === 0) return;
+
+    if (!draftData.value.report_submission) {
+        draftData.value.report_submission = { aliased_data: {} };
+    }
+
+    const reportData = draftData.value.report_submission
+        .aliased_data as DocumentSubmissionReportSubmissionAliasedData;
+
+    if (!reportData.report_file) reportData.report_file = { node_value: [] };
+    if (!Array.isArray(reportData.report_file.node_value)) {
+        reportData.report_file.node_value = [];
+    }
+
+    reportData.report_file.node_value.push(...newFileVals);
+
+    if (draftStore.draftId) {
+        const safeDraftData = JSON.parse(
+            JSON.stringify(draftStore.draftData, (key, value) =>
+                key === 'file' && value instanceof File ? undefined : value,
+            ),
+        );
+        await saveDraftFieldToBackend(
+            draftStore.draftId,
+            draftStore.graphSlug,
+            safeDraftData,
+        );
+    }
+
+    currentFile.value = getBlankFileNode();
+    docKey.value = docList.value.length;
+    emit('update:step-is-valid', customIsValid());
+};
+
+const deleteDoc = async (index: number) => {
+    const aliasedData = draftData.value.report_submission?.aliased_data as
+        DocumentSubmissionReportSubmissionAliasedData | undefined;
+    const fileArray = aliasedData?.report_file?.node_value;
+
+    if (Array.isArray(fileArray)) {
+        fileArray.splice(index, 1);
+        if (draftStore.draftId) {
+            const safeDraftData = JSON.parse(
+                JSON.stringify(draftStore.draftData, (key, value) =>
+                    key === 'file' && value instanceof File ? undefined : value,
+                ),
+            );
+            await saveDraftFieldToBackend(
+                draftStore.draftId,
+                draftStore.graphSlug,
+                safeDraftData,
+            );
+        }
+        emit('update:step-is-valid', customIsValid());
+    }
+};
+
+const addNewDoc = () => {
+    currentFile.value = getBlankFileNode();
+    addingNewDoc.value = true;
+    docKey.value = docList.value.length;
+};
+
+const clearPendingDoc = () => {
+    currentFile.value = getBlankFileNode();
+    docKey.value++;
+};
+
+const setCurrentDoc = (index: number) => {
+    currentFile.value = docList.value[index];
+    docKey.value = index;
+    addingNewDoc.value = false;
+};
+
+defineExpose({ isValid: customIsValid, save: async () => true });
 </script>
 
 <template>
     <Form
-        :resolver="resolver"
-        :validate-on-blur="true"
-        :validate-on-value-update="true"
-        :validate-on-mount="false"
+        name="docForm"
+        :validateOnBlur="true"
     >
-        <FieldSet legend="Document Submission">
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="initialFileState"
+        <FieldSet legend="Document Submissions">
+            <MultiFileUploader
+                :max-items="1"
+                :adding-new="addingNewDoc"
+                :disable-add-or-save="addDocDisabled"
                 graph-slug="document_submission"
                 node-alias="report_file"
-                @update:value="
-                    updateValue($event, 'report_file', 'report_submission')
-                "
+                :current-node-data="currentFile?.aliased_data?.report_file"
+                :items="docList"
+                :selected-index="docKey"
+                item-type-label="Document"
+                icon-class="fa-file"
+                @file-updated="handleFileUpdated"
+                @clear-pending="clearPendingDoc"
+                @add-new="addNewDoc"
+                @save-item="saveDoc"
+                @delete-item="deleteDoc"
+                @select-item="setCurrentDoc"
             />
 
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.report_submission?.aliased_data?.report_title
-                "
-                graph-slug="document_submission"
-                node-alias="report_title"
-                @update:value="
-                    updateValue($event, 'report_title', 'report_submission')
-                "
-            />
+            <!-- Metadata Fields that apply to all uploaded files -->
+            <div class="flex flex-column mt-4 gap-4">
+                <LabelledInput
+                    label="Report Title"
+                    input-name="reportTitle"
+                    :required="true"
+                >
+                    <GenericWidget
+                        :mode="EDIT"
+                        :should-show-label="false"
+                        :aliasedNodeData="
+                            draftData?.report_submission?.aliased_data
+                                ?.report_title
+                        "
+                        graph-slug="document_submission"
+                        node-alias="report_title"
+                        @update:value="updateMetadata($event, 'report_title')"
+                    />
+                </LabelledInput>
 
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.report_submission?.aliased_data
-                        ?.archaeological_consultant
-                "
-                graph-slug="document_submission"
-                node-alias="archaeological_consultant"
-                @update:value="
-                    updateValue(
-                        $event,
-                        'archaeological_consultant',
-                        'report_submission',
-                    )
-                "
-            />
+                <LabelledInput
+                    label="Archaeological Consultant"
+                    input-name="archConsultant"
+                    :required="true"
+                >
+                    <GenericWidget
+                        :mode="EDIT"
+                        :should-show-label="false"
+                        :aliasedNodeData="
+                            draftData?.report_submission?.aliased_data
+                                ?.archaeological_consultant
+                        "
+                        graph-slug="document_submission"
+                        node-alias="archaeological_consultant"
+                        @update:value="
+                            updateMetadata($event, 'archaeological_consultant')
+                        "
+                    />
+                </LabelledInput>
 
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.report_submission?.aliased_data
-                        ?.consultant_report_number
-                "
-                graph-slug="document_submission"
-                node-alias="consultant_report_number"
-                @update:value="
-                    updateValue(
-                        $event,
-                        'consultant_report_number',
-                        'report_submission',
-                    )
-                "
-            />
+                <LabelledInput
+                    label="Consultant Report Number"
+                    input-name="reportNumber"
+                >
+                    <GenericWidget
+                        :mode="EDIT"
+                        :should-show-label="false"
+                        :aliasedNodeData="
+                            draftData?.report_submission?.aliased_data
+                                ?.consultant_report_number
+                        "
+                        graph-slug="document_submission"
+                        node-alias="consultant_report_number"
+                        @update:value="
+                            updateMetadata($event, 'consultant_report_number')
+                        "
+                    />
+                </LabelledInput>
 
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.report_submission?.aliased_data
-                        ?.archaological_company
-                "
-                graph-slug="document_submission"
-                node-alias="archaological_company"
-                @update:value="
-                    updateValue(
-                        $event,
-                        'archaological_company',
-                        'report_submission',
-                    )
-                "
-            />
+                <LabelledInput
+                    label="Archaeological Company"
+                    input-name="archCompany"
+                >
+                    <GenericWidget
+                        :mode="EDIT"
+                        :should-show-label="false"
+                        :aliasedNodeData="
+                            draftData?.report_submission?.aliased_data
+                                ?.archaological_company
+                        "
+                        graph-slug="document_submission"
+                        node-alias="archaological_company"
+                        @update:value="
+                            updateMetadata($event, 'archaological_company')
+                        "
+                    />
+                </LabelledInput>
 
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.report_submission?.aliased_data
-                        ?.report_recommendations
-                "
-                graph-slug="document_submission"
-                node-alias="report_recommendations"
-                @update:value="
-                    updateValue(
-                        $event,
-                        'report_recommendations',
-                        'report_submission',
-                    )
-                "
-            />
+                <LabelledInput
+                    label="Report Recommendations"
+                    input-name="reportRecs"
+                >
+                    <GenericWidget
+                        :mode="EDIT"
+                        :should-show-label="false"
+                        :aliasedNodeData="
+                            draftData?.report_submission?.aliased_data
+                                ?.report_recommendations
+                        "
+                        graph-slug="document_submission"
+                        node-alias="report_recommendations"
+                        @update:value="
+                            updateMetadata($event, 'report_recommendations')
+                        "
+                    />
+                </LabelledInput>
+            </div>
         </FieldSet>
     </Form>
-    <br />
 </template>
+
+<style scoped>
+:deep(label) {
+    font-weight: bold;
+}
+
+.flex {
+    display: flex;
+}
+.flex-column {
+    flex-direction: column;
+}
+.gap-4 {
+    gap: 1rem;
+}
+.mt-4 {
+    margin-top: 1rem;
+}
+</style>

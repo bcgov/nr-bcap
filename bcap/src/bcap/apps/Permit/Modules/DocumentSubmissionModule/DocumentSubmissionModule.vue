@@ -27,8 +27,6 @@ const steps = [
     { label: 'Photographs', component: Step4_Photographs },
 ];
 
-// Each step writes its tile flat at the draft root; the graph nests them all
-// under document_submission_process, so submit reassembles them.
 interface DocumentSubmissionDraft {
     document_submission_process?: ProcessTile | null;
     report_submission?: ReportTile | null;
@@ -40,14 +38,17 @@ const customDocumentSubmit = async () => {
     if (!draft.draftId) throw new Error('No active draft found.');
     if (!draft.parentPermitId)
         throw new Error('No permit associated with this filing.');
+
     const draftData: DocumentSubmissionDraft = draft.draftData;
     const process = draftData.document_submission_process?.aliased_data;
-    const report = draftData.report_submission;
+
+    const report = draftData.report_submission ?? null;
     const photographs = draftData.submission_photographs ?? [];
+
     const aliasedData: ProcessAliasedData = {
         submission_type: process?.submission_type ?? null,
         submission_number: process?.submission_number ?? null,
-        report_submission: report ?? null,
+        report_submission: report,
         submission_photographs: photographs,
         submission_assessment: draftData.submission_assessment ?? null,
     };
