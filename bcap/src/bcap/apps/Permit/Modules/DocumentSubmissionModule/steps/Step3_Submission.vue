@@ -8,8 +8,9 @@ import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
-import MultiFileUploader from './MultiFileUploader.vue';
+import MultiFileUploader from '@/bcgov_arches_common/components/fileUpload/MultiFileUploader.vue';
 
+// Import the official auto-generated types
 import type {
     DocumentSubmissionReportSubmissionAliasedData,
     FileListAliasedNodeData,
@@ -23,12 +24,20 @@ if (!draftData.value.report_submission) {
     draftData.value.report_submission = { aliased_data: {} };
 }
 
-const getBlankFileNode = () => ({ aliased_data: { report_file: null } });
-const currentFile = ref(getBlankFileNode());
+interface SingleFileWrapper {
+    aliased_data: {
+        report_file: FileListAliasedNodeData | null;
+    };
+}
+
+const getBlankFileNode = (): SingleFileWrapper => ({
+    aliased_data: { report_file: null },
+});
+const currentFile = ref<SingleFileWrapper>(getBlankFileNode());
 const docKey = ref<number>(0);
 const addingNewDoc = ref<boolean>(true);
 
-const docList = computed(() => {
+const docList = computed<SingleFileWrapper[]>(() => {
     const aliasedData = draftData.value.report_submission?.aliased_data as
         DocumentSubmissionReportSubmissionAliasedData | undefined;
     const files = aliasedData?.report_file?.node_value;
@@ -39,8 +48,7 @@ const docList = computed(() => {
 });
 
 const hasUnsavedFile = computed(() => {
-    const fileNode = currentFile.value?.aliased_data?.report_file as
-        FileListAliasedNodeData | null | undefined;
+    const fileNode = currentFile.value?.aliased_data?.report_file;
     return (
         !!fileNode &&
         Array.isArray(fileNode.node_value) &&
@@ -119,13 +127,13 @@ const updateMetadata = async (
 };
 
 const handleFileUpdated = (newValue: unknown) => {
-    currentFile.value.aliased_data.report_file = newValue as never;
+    currentFile.value.aliased_data.report_file =
+        newValue as FileListAliasedNodeData;
     emit('update:step-is-valid', customIsValid());
 };
 
 const saveDoc = async () => {
-    const fileNode = currentFile.value.aliased_data.report_file as
-        FileListAliasedNodeData | null | undefined;
+    const fileNode = currentFile.value.aliased_data.report_file;
     const newFileVals = fileNode?.node_value;
     if (!Array.isArray(newFileVals) || newFileVals.length === 0) return;
 
