@@ -81,7 +81,7 @@ const state = reactive({
     submitting: false,
     savingDraft: false,
     confirmingExit: false,
-    devMode: true,
+    devMode: false,
     isDataLoaded: false,
     finalizedResourceData: null as PermitApplication | null,
 });
