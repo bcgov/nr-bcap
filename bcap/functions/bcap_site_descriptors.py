@@ -43,7 +43,7 @@ details = {
 
 
 class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
-    _datatype_factory = DataTypeFactory()
+    _datatype_factory = None
     # For Name part of descriptor
     graph_slug = "archaeological_site"
 
@@ -68,6 +68,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptorsFunction):
 
     # Initializes the static nodes and datatypes data
     def initialize(self):
+        BCAPSiteDescriptors._datatype_factory = DataTypeFactory()
         for alias in (
             BCAPSiteDescriptors._name_nodes
             + BCAPSiteDescriptors._sig_event_nodes
