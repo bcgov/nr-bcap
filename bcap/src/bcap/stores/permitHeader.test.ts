@@ -13,6 +13,7 @@ const aliased = (
         applicationNumber?: string;
         submissionType?: string;
         sector?: string;
+        organization?: string;
         submittedDate?: string;
     } = {},
 ) =>
@@ -22,6 +23,7 @@ const aliased = (
                 project_name: { display_value: opts.projectName },
                 application_id: { display_value: opts.applicationNumber },
                 filing_type: { display_value: opts.submissionType },
+                owning_organization: { display_value: opts.organization },
             },
         },
         proposed_project: {
@@ -62,6 +64,8 @@ describe('setFromAliased', () => {
                 applicationNumber: 'APP-1',
                 submissionType: 'Site Visit',
                 sector: 'Forestry',
+                // As the Contributor descriptor arrives: "last, first".
+                organization: 'Acme Corp, ',
                 submittedDate: '2026-01-01',
             }),
         );
@@ -71,6 +75,7 @@ describe('setFromAliased', () => {
             applicationNumber: 'APP-1',
             submissionType: 'Site Visit',
             sector: 'Forestry',
+            organization: 'Acme Corp',
             submittedDate: '2026-01-01',
         });
         expect(store.state.permitId).toBe('permit-1');
@@ -85,6 +90,7 @@ describe('setFromAliased', () => {
             submissionType: '',
             // Left empty rather than stating a sector that was never given.
             sector: '',
+            organization: '',
             submittedDate: null,
         });
     });

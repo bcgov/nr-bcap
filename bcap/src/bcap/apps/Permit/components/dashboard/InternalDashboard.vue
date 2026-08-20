@@ -34,6 +34,7 @@ interface ProjectData {
     body3?: string;
     body4?: string;
     body5?: string;
+    body6?: string;
     footerDate: string;
     footerName?: string;
     class?: string;
@@ -70,6 +71,9 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
             : undefined,
         body4: `Officer: ${rawItem.project_officer || ''}`,
         body5: buildModuleSummary(rawItem.module_progress),
+        body6: rawItem.organization
+            ? `Organization: ${rawItem.organization}`
+            : undefined,
 
         footerDate: rawItem.requirement_due_date || 'Not Started',
         footerName: rawItem.ministry_assignee_name || 'Unassigned',
@@ -86,6 +90,7 @@ const sortOptions = [
     { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
     { label: 'Permit Holder', value: 'body3' },
+    { label: 'Organization', value: 'body6' },
     { label: 'Permit Number', value: 'body2' },
     { label: 'Priority', value: 'capPriority' },
     { label: 'Process', value: 'capLabel' },
@@ -177,6 +182,7 @@ const displayedProjects = computed(() => {
                 item.body3?.toLowerCase().includes(query) ||
                 item.body4?.toLowerCase().includes(query) ||
                 item.body5?.toLowerCase().includes(query) ||
+                item.body6?.toLowerCase().includes(query) ||
                 item.footerName?.toLowerCase().includes(query)
             );
         });
@@ -288,6 +294,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                     :body3="formatBodyLine(item.body3)"
                     :body4="item.body4"
                     :body5="formatBodyLine(item.body5)"
+                    :body6="formatBodyLine(item.body6)"
                     :route="{ name: item.route }"
                     :search-query="state.currentSearch"
                     @click.capture.prevent="onCardClick($event, item)"

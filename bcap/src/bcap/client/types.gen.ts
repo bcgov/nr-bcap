@@ -2190,6 +2190,10 @@ export type ExternalDashboardCard = {
      */
     industrial_sector?: string;
     /**
+     * Name of the organization the application is filed under (its stamped owning_organization); empty when it was filed under none.
+     */
+    organization?: string;
+    /**
      * Resourceinstanceid of the related HCA Permit; its drill-in GUID.
      */
     permit_id?: string | null;
@@ -2805,6 +2809,10 @@ export type InternalDashboardCard = {
      * Permit application's industrial sector (reference label).
      */
     industrial_sector?: string;
+    /**
+     * Name of the organization the application is filed under (its stamped owning_organization); empty when it was filed under none.
+     */
+    organization?: string;
     /**
      * Resourceinstanceid of the related HCA Permit; its drill-in GUID.
      */

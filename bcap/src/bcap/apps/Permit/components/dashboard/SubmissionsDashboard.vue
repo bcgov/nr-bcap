@@ -312,6 +312,12 @@ const openResourceReport = (resourceId: string) => {
                                 :body3="
                                     buildModuleSummary(project.module_progress)
                                 "
+                                :body4="
+                                    labelled(
+                                        'Organization',
+                                        project.organization,
+                                    )
+                                "
                                 :footer-date="formatDate(project.created_date)"
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
@@ -372,6 +378,12 @@ const openResourceReport = (resourceId: string) => {
                                     :body3="
                                         buildModuleSummary(
                                             draft.module_progress,
+                                        )
+                                    "
+                                    :body4="
+                                        labelled(
+                                            'Organization',
+                                            draft.organization,
                                         )
                                     "
                                     :urgency="draft.urgency || 0"
