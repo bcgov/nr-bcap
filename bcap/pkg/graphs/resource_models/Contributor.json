@@ -472,25 +472,18 @@
             "functions_x_graphs": [
                 {
                     "config": {
+                        "class_name": "ContributorDescriptors",
                         "descriptor_types": {
-                            "description": {
-                                "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
-                                "string_template": "<Contributor Type>, <Contributor Role>"
-                            },
-                            "map_popup": {
-                                "nodegroup_id": "",
-                                "string_template": ""
-                            },
-                            "name": {
-                                "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
-                                "string_template": "<Contributor Name>, <First Name>"
-                            }
+                            "description": {},
+                            "map_popup": {},
+                            "name": {}
                         },
+                        "module": "bcap.functions.contributor_descriptors",
                         "triggering_nodegroups": []
                     },
-                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "function_id": "60000000-0000-0000-0000-000000001007",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                    "id": "a62973b8-f0d8-4e1c-a47b-323dd4ad4bb2"
+                    "id": "42693a4a-d76b-4714-b914-c2912bac8cbe"
                 }
             ],
             "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
@@ -1140,7 +1133,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }
