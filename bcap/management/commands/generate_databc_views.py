@@ -43,8 +43,8 @@ from arches.app.models.models import GraphModel, Node, NodeGroup
 # Maps the DataBC short slug used by this command to the Arches graph slug
 # stored in GraphModel.slug.  Update this if graph slugs change in the DB.
 GRAPH_SLUGS = {
-    "sv": "site-visit",
-    "as": "archaeological-site",
+    "sv": "site_visit",
+    "as": "archaeological_site",
     "rep": "repository",
     "pub": "publication",
     "per": "hca_permit",
@@ -244,6 +244,26 @@ class Command(BaseCommand):
             ng_list.append(
                 (alias, ng_id, parent_alias, ng.cardinality, ng_fields.get(ng_id, []))
             )
+
+        # Validate FLAT_GRAINS against the regenerated NG aliases.
+        # When a nodegroup is renamed in the graph, --from-db picks up the new
+        # alias but _load_existing_spec preserves the old FLAT_GRAINS verbatim.
+        # A stale entry causes a KeyError in generate.py; catch it here instead.
+        new_aliases = {entry[0] for entry in ng_list}
+        invalid_grains = [g for g in flat_grains if g not in new_aliases]
+        if invalid_grains:
+            for g in invalid_grains:
+                self.stderr.write(
+                    self.style.ERROR(
+                        f"  ERROR: FLAT_GRAINS entry '{g}' no longer exists in the NG "
+                        f"list and has been removed from the spec.\n"
+                        f"         A nodegroup may have been renamed. Known aliases:\n"
+                        f"         {', '.join(sorted(new_aliases))}\n"
+                        f"         Re-add the correct alias to FLAT_GRAINS in "
+                        f"{os.path.join(spec_dir, slug + '_spec.py')} before running generate.py."
+                    )
+                )
+            flat_grains = [g for g in flat_grains if g in new_aliases]
 
         content = self._render_spec(
             graph_id, graph.slug.replace("-", "_"), spec_slug, flat_grains, ng_list

@@ -25,9 +25,9 @@ CREATE MATERIALIZED VIEW site_visit.mv_related_documents AS
 WITH related_site_documents AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'related_site_documents', arches_util.file_list(t.tiledata -> '55f5927c-8279-4864-ba1d-2f288ca46fcf'),
+            'related_document_description', arches_util.i18n_text(t.tiledata -> '844ae10f-b38b-4706-8fac-8804d04ab05e'),
             'related_document_type', arches_util.reference_flat(t.tiledata -> 'acbdadfa-2ccf-4a68-9497-56d36dbd1021'),
-            'related_document_description', arches_util.i18n_text(t.tiledata -> '844ae10f-b38b-4706-8fac-8804d04ab05e')
+            'related_site_documents', arches_util.file_list(t.tiledata -> '55f5927c-8279-4864-ba1d-2f288ca46fcf')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '55f5927c-8279-4864-ba1d-2f288ca46fcf'::uuid
@@ -45,15 +45,15 @@ publication_reference AS (
 site_images AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'site_images', arches_util.file_list(t.tiledata -> 'a6536975-292e-47d1-8ebe-7e83092438bd'),
             'primary_image', NULLIF(t.tiledata ->> '696b4699-bc65-4d0e-8d48-f2a211fe5e3a', '')::boolean,
             'image_type', arches_util.reference_flat(t.tiledata -> '98c6f7ee-5c7f-4287-aeed-0168e5c40773'),
+            'site_images', arches_util.file_list(t.tiledata -> 'a6536975-292e-47d1-8ebe-7e83092438bd'),
+            'photographer', arches_util.i18n_text(t.tiledata -> 'd20d1438-701d-47e9-8f93-7a460f3bba75'),
             'image_view', arches_util.reference_flat(t.tiledata -> 'c0dbd7b1-9c2b-4c27-96f3-17cb5aad7d25'),
             'image_description', arches_util.i18n_text(t.tiledata -> '10d83dfd-49d8-4bf3-9977-4acbc809b7b8'),
-            'image_features', arches_util.i18n_text(t.tiledata -> '9bd92cab-7995-4940-9547-073e2eb505ac'),
-            'photographer', arches_util.i18n_text(t.tiledata -> 'd20d1438-701d-47e9-8f93-7a460f3bba75'),
             'copyright', arches_util.i18n_text(t.tiledata -> '7b7f1f4c-df01-4881-b9f3-495fc9a968bc'),
-            'image_date', to_date(NULLIF(t.tiledata ->> '2454579e-6884-4d1d-82f3-724f62ce4d4f', ''), 'YYYY')
+            'image_date', to_date(NULLIF(t.tiledata ->> '2454579e-6884-4d1d-82f3-724f62ce4d4f', ''), 'YYYY-MM-DD'),
+            'image_features', arches_util.i18n_text(t.tiledata -> '9bd92cab-7995-4940-9547-073e2eb505ac')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = 'a6536975-292e-47d1-8ebe-7e83092438bd'::uuid

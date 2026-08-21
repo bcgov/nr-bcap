@@ -25,8 +25,8 @@ CREATE MATERIALIZED VIEW archaeological_site.mv_external_url AS
 WITH external_url AS (
     SELECT t.resourceinstanceid AS resourceinstanceid,
            jsonb_agg(jsonb_build_object(
-            'external_url', arches_util.url_obj(t.tiledata -> '3ee73f28-ca40-11ed-af48-5254004d77d3'),
-            'external_url_type', arches_util.reference_flat(t.tiledata -> '1f5a7b92-ca41-11ed-933f-5254004d77d3')
+            'external_url_type', arches_util.reference_flat(t.tiledata -> '1f5a7b92-ca41-11ed-933f-5254004d77d3'),
+            'external_url', arches_util.url_obj(t.tiledata -> '3ee73f28-ca40-11ed-af48-5254004d77d3')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '3ee73f28-ca40-11ed-af48-5254004d77d3'::uuid

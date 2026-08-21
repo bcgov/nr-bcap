@@ -11,13 +11,13 @@ BEGIN
         'archaeological_site.mv_geom_site_boundary',
         'archaeological_site.mv_geom_unprotected_areas',
         'archaeological_site.mv_site_boundary',
-        'archaeological_site.mv_identification_and_registration',
-        'archaeological_site.mv_site_location',
-        'archaeological_site.mv_archaeological_data',
         'archaeological_site.mv_site_record_admin',
         'archaeological_site.mv_external_url',
         'archaeological_site.mv_ancestral_remains',
+        'archaeological_site.mv_archaeological_data',
+        'archaeological_site.mv_identification_and_registration',
         'archaeological_site.mv_remarks_and_restricted_information',
+        'archaeological_site.mv_heritage_site_location',
         'archaeological_site.mv_related_documents',
         'archaeological_site.mv_resource_v1'
     ]

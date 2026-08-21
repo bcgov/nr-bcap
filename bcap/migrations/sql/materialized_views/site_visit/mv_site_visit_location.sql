@@ -25,9 +25,9 @@ CREATE MATERIALIZED VIEW site_visit.mv_site_visit_location AS
 WITH biogeography AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
+            'biogeography_description', arches_util.i18n_text(t.tiledata -> '95e5f9b6-71cd-4769-b365-9155442954ec'),
             'biogeography_type', arches_util.reference_flat(t.tiledata -> '5270c773-125c-4223-868e-badeb5cf5f78'),
-            'biogeography_name', arches_util.i18n_text(t.tiledata -> '5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c'),
-            'biogeography_description', arches_util.i18n_text(t.tiledata -> '95e5f9b6-71cd-4769-b365-9155442954ec')
+            'biogeography_name', arches_util.i18n_text(t.tiledata -> '5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '6abfca2d-8f5d-458a-b128-ab8ba49c1921'::uuid
@@ -42,11 +42,11 @@ geom_site_visit_location AS (
 site_visit_location AS (
     SELECT t.resourceinstanceid AS resourceinstanceid,
            jsonb_agg(jsonb_build_object(
-            'boundary_type', arches_util.reference_flat(t.tiledata -> '9aea2913-e4ee-43dd-904c-abee908f61b6'),
+            'site_visit_location', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END,
             'latest_edit_type', arches_util.reference_flat(t.tiledata -> 'cf40f158-13f0-11f0-9404-0242ac170007'),
+            'boundary_type', arches_util.reference_flat(t.tiledata -> '9aea2913-e4ee-43dd-904c-abee908f61b6'),
             'location_and_access', arches_util.i18n_text(t.tiledata -> 'cca03a72-13fe-11f0-99e9-0242ac170007'),
             'accuracy_remarks', arches_util.i18n_text(t.tiledata -> 'cf40f40a-13f0-11f0-9404-0242ac170007'),
-            'site_visit_location', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END,
             'biogeography', COALESCE(biogeography.arr, '[]'::jsonb)
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t

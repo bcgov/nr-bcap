@@ -26,11 +26,11 @@ WITH ancestral_remains AS (
     SELECT t.resourceinstanceid AS resourceinstanceid,
            jsonb_agg(jsonb_build_object(
             'ancestral_remains_type', arches_util.reference_flat(t.tiledata -> '6f96fb9a-5049-11f0-91cd-0242ac170006'),
+            'multiple_burials', NULLIF(t.tiledata ->> '6f96fc94-5049-11f0-91cd-0242ac170006', '')::boolean,
             'ancestral_remains_status', arches_util.reference_flat(t.tiledata -> '6f96fd5c-5049-11f0-91cd-0242ac170006'),
             'ancestral_remains_remarks', arches_util.i18n_text(t.tiledata -> '6f96fe2e-5049-11f0-91cd-0242ac170006'),
-            'ancestral_remains_repository', arches_util.resource_id(t.tiledata -> 'a87dd01e-5ce2-11f0-a419-0242ac170007'),
             'minimum_number_of_individuals', NULLIF(t.tiledata ->> '6f96fef6-5049-11f0-91cd-0242ac170006', '')::numeric,
-            'multiple_burials', NULLIF(t.tiledata ->> '6f96fc94-5049-11f0-91cd-0242ac170006', '')::boolean
+            'ancestral_remains_repository', arches_util.resource_id(t.tiledata -> 'a87dd01e-5ce2-11f0-a419-0242ac170007')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '6f96f910-5049-11f0-91cd-0242ac170006'::uuid

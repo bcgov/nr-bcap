@@ -8,7 +8,7 @@ DECLARE
 BEGIN
     FOREACH mv IN ARRAY ARRAY[
         'archaeological_site.mv_resource_flat_v1',
-        'archaeological_site.mv_site_location_flat_v1',
+        'archaeological_site.mv_heritage_site_location_flat_v1',
         'archaeological_site.mv_bc_property_address_flat_v1'
     ]
     LOOP

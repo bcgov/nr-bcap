@@ -25,9 +25,9 @@ CREATE MATERIALIZED VIEW site_visit.mv_site_visit_details AS
 WITH team_member AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
+            'was_on_site', NULLIF(t.tiledata ->> '0484d428-1410-11f0-8419-0242ac170007', '')::boolean,
             'team_member', arches_util.resource_id(t.tiledata -> '0484d572-1410-11f0-8419-0242ac170007'),
-            'member_roles', arches_util.reference_flat(t.tiledata -> '0484d69e-1410-11f0-8419-0242ac170007'),
-            'was_on_site', NULLIF(t.tiledata ->> '0484d428-1410-11f0-8419-0242ac170007', '')::boolean
+            'member_roles', arches_util.reference_flat(t.tiledata -> '0484d69e-1410-11f0-8419-0242ac170007')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '0484d572-1410-11f0-8419-0242ac170007'::uuid
@@ -46,15 +46,15 @@ site_visit_team AS (
 site_visit_details AS (
     SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
            jsonb_build_object(
+            'site_form_authors', arches_util.resource_ids(t.tiledata -> '4fb2db52-1410-11f0-8419-0242ac170007'),
             'site_visit_type', arches_util.reference_flat(t.tiledata -> 'e39372c4-df58-11ef-8fa3-0242ac170009'),
             'is_site_visit_permitted', NULLIF(t.tiledata ->> 'fb01d6a1-cac8-4b16-8f2c-5472213aeec6', '')::boolean,
             'first_date_of_site_visit', to_date(NULLIF(t.tiledata ->> '745b0462-140f-11f0-8419-0242ac170007', ''), 'YYYY-MM-DD'),
             'last_date_of_site_visit', to_date(NULLIF(t.tiledata ->> '1de04042-df59-11ef-8fa3-0242ac170009', ''), 'YYYY-MM-DD'),
             'project_description', arches_util.i18n_text(t.tiledata -> 'fbfbb0a6-df58-11ef-8fa3-0242ac170009'),
-            'affiliation', arches_util.resource_id(t.tiledata -> '69273f50-4c9c-11f0-9f73-0242ac170007'),
-            'archaeological_site', arches_util.resource_id(t.tiledata -> 'cd722a58-df58-11ef-8fa3-0242ac170009'),
             'associated_permit', arches_util.resource_ids(t.tiledata -> 'b03790fe-df58-11ef-8fa3-0242ac170009'),
-            'site_form_authors', arches_util.resource_ids(t.tiledata -> '4fb2db52-1410-11f0-8419-0242ac170007'),
+            'archaeological_site', arches_util.resource_id(t.tiledata -> 'cd722a58-df58-11ef-8fa3-0242ac170009'),
+            'affiliation', arches_util.resource_id(t.tiledata -> '69273f50-4c9c-11f0-9f73-0242ac170007'),
             'site_visit_team', site_visit_team.obj
         ) AS obj
     FROM public.tiles t

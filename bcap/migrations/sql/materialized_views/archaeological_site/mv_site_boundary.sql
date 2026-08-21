@@ -31,9 +31,9 @@ WITH geom_unprotected_areas AS (
 unprotected_areas AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
+            'unprotected_areas', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END,
             'unprotected_area_type', arches_util.reference_flat(t.tiledata -> 'e1f8bec7-9d0c-4f04-9dc8-718d05444105'),
-            'other_unprotected_area_type', arches_util.i18n_text(t.tiledata -> '56c7c419-e31c-4e7d-a99a-8aea3f370e52'),
-            'unprotected_areas', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END
+            'other_unprotected_area_type', arches_util.i18n_text(t.tiledata -> '56c7c419-e31c-4e7d-a99a-8aea3f370e52')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     LEFT JOIN geom_unprotected_areas g ON g.tileid = t.tileid
@@ -49,10 +49,10 @@ geom_site_boundary AS (
 site_boundary AS (
     SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
            jsonb_build_object(
-            'accuracy_remarks', arches_util.i18n_text(t.tiledata -> 'b182276e-13ef-11f0-8695-0242ac170007'),
             'site_boundary_description', arches_util.i18n_text(t.tiledata -> '63e48668-58f0-49fa-8767-abf412f54921'),
-            'latest_edit_type', arches_util.reference_flat(t.tiledata -> '6292f704-13f0-11f0-9284-0242ac170007'),
             'site_boundary', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END,
+            'accuracy_remarks', arches_util.i18n_text(t.tiledata -> 'b182276e-13ef-11f0-8695-0242ac170007'),
+            'latest_edit_type', arches_util.reference_flat(t.tiledata -> '6292f704-13f0-11f0-9284-0242ac170007'),
             'unprotected_areas', COALESCE(unprotected_areas.arr, '[]'::jsonb)
         ) AS obj
     FROM public.tiles t

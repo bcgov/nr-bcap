@@ -35,9 +35,9 @@ WITH recommendation AS (
 general_remark AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'remark', arches_util.i18n_text(t.tiledata -> '9625068a-61ab-11f0-be7c-3a7a4e6803c5'),
+            'remark_source', arches_util.reference_flat(t.tiledata -> '962504dc-61ab-11f0-be7c-3a7a4e6803c5'),
             'remark_date', to_date(NULLIF(t.tiledata ->> '962505cc-61ab-11f0-be7c-3a7a4e6803c5', ''), 'YYYY-MM-DD'),
-            'remark_source', arches_util.reference_flat(t.tiledata -> '962504dc-61ab-11f0-be7c-3a7a4e6803c5')
+            'remark', arches_util.i18n_text(t.tiledata -> '9625068a-61ab-11f0-be7c-3a7a4e6803c5')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '9625020c-61ab-11f0-be7c-3a7a4e6803c5'::uuid

@@ -18,24 +18,11 @@ SET work_mem             = '128MB';
 CREATE SCHEMA IF NOT EXISTS site_visit;
 
 -- ---------------------------------------------------------------------
--- identification  (cardinality 1)  children: new_site_names, temporary_number
+-- identification  (cardinality 1)  children: temporary_number, new_site_names
 -- ---------------------------------------------------------------------
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_identification CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_identification AS
-WITH new_site_names AS (
-    SELECT t.parenttileid AS parenttileid,
-           jsonb_agg(jsonb_build_object(
-            'name', arches_util.i18n_text(t.tiledata -> '6d90619c-140d-11f0-b9bb-0242ac170007'),
-            'name_type', arches_util.reference_flat(t.tiledata -> '6d9065d4-140d-11f0-b9bb-0242ac170007'),
-            'name_remarks', arches_util.i18n_text(t.tiledata -> '6d9066ce-140d-11f0-b9bb-0242ac170007'),
-            'assigned_or_reported_by', arches_util.resource_id(t.tiledata -> '6d9063d6-140d-11f0-b9bb-0242ac170007'),
-            'assigned_or_reported_date', to_date(NULLIF(t.tiledata ->> '6d9067be-140d-11f0-b9bb-0242ac170007', ''), 'YYYY-MM-DD')
-        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
-    FROM public.tiles t
-    WHERE t.nodegroupid = '6d905dbe-140d-11f0-b9bb-0242ac170007'::uuid
-    GROUP BY t.parenttileid
-),
-temporary_number AS (
+WITH temporary_number AS (
     SELECT DISTINCT ON (t.parenttileid) t.parenttileid AS parenttileid,
            jsonb_build_object(
             'temporary_number', arches_util.i18n_text(t.tiledata -> 'ab674670-140d-11f0-b9bb-0242ac170007'),
@@ -46,15 +33,28 @@ temporary_number AS (
     WHERE t.nodegroupid = 'ab674670-140d-11f0-b9bb-0242ac170007'::uuid
     ORDER BY t.parenttileid, COALESCE(t.sortorder, 2147483647), t.tileid
 ),
+new_site_names AS (
+    SELECT t.parenttileid AS parenttileid,
+           jsonb_agg(jsonb_build_object(
+            'name', arches_util.i18n_text(t.tiledata -> '6d90619c-140d-11f0-b9bb-0242ac170007'),
+            'assigned_or_reported_by', arches_util.resource_id(t.tiledata -> '6d9063d6-140d-11f0-b9bb-0242ac170007'),
+            'name_type', arches_util.reference_flat(t.tiledata -> '6d9065d4-140d-11f0-b9bb-0242ac170007'),
+            'name_remarks', arches_util.i18n_text(t.tiledata -> '6d9066ce-140d-11f0-b9bb-0242ac170007'),
+            'assigned_or_reported_date', to_date(NULLIF(t.tiledata ->> '6d9067be-140d-11f0-b9bb-0242ac170007', ''), 'YYYY-MM-DD')
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    WHERE t.nodegroupid = '6d905dbe-140d-11f0-b9bb-0242ac170007'::uuid
+    GROUP BY t.parenttileid
+),
 identification AS (
     SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
            jsonb_build_object(
-            'new_site_names', COALESCE(new_site_names.arr, '[]'::jsonb),
-            'temporary_number', temporary_number.obj
+            'temporary_number', temporary_number.obj,
+            'new_site_names', COALESCE(new_site_names.arr, '[]'::jsonb)
         ) AS obj
     FROM public.tiles t
-    LEFT JOIN new_site_names new_site_names ON new_site_names.parenttileid = t.tileid
     LEFT JOIN temporary_number temporary_number ON temporary_number.parenttileid = t.tileid
+    LEFT JOIN new_site_names new_site_names ON new_site_names.parenttileid = t.tileid
     WHERE t.nodegroupid = '37bdda22-140d-11f0-b9bb-0242ac170007'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )

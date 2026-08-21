@@ -24,13 +24,13 @@ CREATE MATERIALIZED VIEW site_visit.mv_resource_v1 AS
 -- carries the only graphid filter in the stack. Drop the columns, keep the join.
 SELECT
     r.resourceinstanceid,
-    COALESCE(b0.site_visit_location, '[]'::jsonb) AS site_visit_location,
-    b1.identification,
-    b2.site_visit_details,
-    b3.archaeological_data,
+    COALESCE(b0.ancestral_remains, '[]'::jsonb) AS ancestral_remains,
+    b1.site_visit_details,
+    COALESCE(b2.site_visit_location, '[]'::jsonb) AS site_visit_location,
+    b3.related_documents,
     b4.remarks_and_recommendations,
-    COALESCE(b5.ancestral_remains, '[]'::jsonb) AS ancestral_remains,
-    b6.related_documents,
+    b5.identification,
+    b6.archaeological_data,
     g_site_visit_location.site_visit_location_geom,
     g_site_visit_location.site_visit_location_geom_type,
     g_site_visit_location.site_visit_location_source_valid,
@@ -39,22 +39,22 @@ SELECT
     g_site_visit_location.site_visit_location_polygons,
     jsonb_build_object(
         'resourceinstanceid', r.resourceinstanceid,
-        'site_visit_location', COALESCE(b0.site_visit_location, '[]'::jsonb),
-        'identification', b1.identification,
-        'site_visit_details', b2.site_visit_details,
-        'archaeological_data', b3.archaeological_data,
+        'ancestral_remains', COALESCE(b0.ancestral_remains, '[]'::jsonb),
+        'site_visit_details', b1.site_visit_details,
+        'site_visit_location', COALESCE(b2.site_visit_location, '[]'::jsonb),
+        'related_documents', b3.related_documents,
         'remarks_and_recommendations', b4.remarks_and_recommendations,
-        'ancestral_remains', COALESCE(b5.ancestral_remains, '[]'::jsonb),
-        'related_documents', b6.related_documents
+        'identification', b5.identification,
+        'archaeological_data', b6.archaeological_data
     ) AS resource
 FROM public.resource_instances r
-LEFT JOIN site_visit.mv_site_visit_location b0 ON b0.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_identification b1 ON b1.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_site_visit_details b2 ON b2.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_archaeological_data b3 ON b3.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_ancestral_remains b0 ON b0.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_site_visit_details b1 ON b1.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_site_visit_location b2 ON b2.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_related_documents b3 ON b3.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN site_visit.mv_remarks_and_recommendations b4 ON b4.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_ancestral_remains b5 ON b5.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_related_documents b6 ON b6.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_identification b5 ON b5.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_archaeological_data b6 ON b6.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN site_visit.mv_geom_site_visit_location g_site_visit_location ON g_site_visit_location.resourceinstanceid = r.resourceinstanceid
 WHERE r.graphid = '2da1c15f-1ab6-4122-9dbc-d10da693ac79'::uuid;
 

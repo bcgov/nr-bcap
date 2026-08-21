@@ -1,7 +1,7 @@
 -- GENERATED - edit as_spec.py and re-run generate.py. Do not hand-edit.
 
 CREATE OR REPLACE VIEW archaeological_site.resource_flat AS SELECT * FROM archaeological_site.mv_resource_flat_v1;
-CREATE OR REPLACE VIEW archaeological_site.site_location_flat AS SELECT * FROM archaeological_site.mv_site_location_flat_v1;
+CREATE OR REPLACE VIEW archaeological_site.heritage_site_location_flat AS SELECT * FROM archaeological_site.mv_heritage_site_location_flat_v1;
 CREATE OR REPLACE VIEW archaeological_site.bc_property_address_flat AS SELECT * FROM archaeological_site.mv_bc_property_address_flat_v1;
 
 COMMENT ON VIEW archaeological_site.resource_flat IS

@@ -25,13 +25,13 @@ CREATE MATERIALIZED VIEW archaeological_site.mv_resource_v1 AS
 SELECT
     r.resourceinstanceid,
     b0.site_boundary,
-    b1.identification_and_registration,
-    COALESCE(b2.site_location, '[]'::jsonb) AS site_location,
-    b3.archaeological_data,
-    COALESCE(b4.site_record_admin, '[]'::jsonb) AS site_record_admin,
-    COALESCE(b5.external_url, '[]'::jsonb) AS external_url,
-    b6.ancestral_remains,
-    b7.remarks_and_restricted_information,
+    COALESCE(b1.site_record_admin, '[]'::jsonb) AS site_record_admin,
+    COALESCE(b2.external_url, '[]'::jsonb) AS external_url,
+    b3.ancestral_remains,
+    b4.archaeological_data,
+    b5.identification_and_registration,
+    b6.remarks_and_restricted_information,
+    COALESCE(b7.heritage_site_location, '[]'::jsonb) AS heritage_site_location,
     b8.related_documents,
     g_site_boundary.site_boundary_geom,
     g_site_boundary.site_boundary_geom_type,
@@ -48,24 +48,24 @@ SELECT
     jsonb_build_object(
         'resourceinstanceid', r.resourceinstanceid,
         'site_boundary', b0.site_boundary,
-        'identification_and_registration', b1.identification_and_registration,
-        'site_location', COALESCE(b2.site_location, '[]'::jsonb),
-        'archaeological_data', b3.archaeological_data,
-        'site_record_admin', COALESCE(b4.site_record_admin, '[]'::jsonb),
-        'external_url', COALESCE(b5.external_url, '[]'::jsonb),
-        'ancestral_remains', b6.ancestral_remains,
-        'remarks_and_restricted_information', b7.remarks_and_restricted_information,
+        'site_record_admin', COALESCE(b1.site_record_admin, '[]'::jsonb),
+        'external_url', COALESCE(b2.external_url, '[]'::jsonb),
+        'ancestral_remains', b3.ancestral_remains,
+        'archaeological_data', b4.archaeological_data,
+        'identification_and_registration', b5.identification_and_registration,
+        'remarks_and_restricted_information', b6.remarks_and_restricted_information,
+        'heritage_site_location', COALESCE(b7.heritage_site_location, '[]'::jsonb),
         'related_documents', b8.related_documents
     ) AS resource
 FROM public.resource_instances r
 LEFT JOIN archaeological_site.mv_site_boundary b0 ON b0.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_identification_and_registration b1 ON b1.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_site_location b2 ON b2.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_archaeological_data b3 ON b3.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_site_record_admin b4 ON b4.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_external_url b5 ON b5.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_ancestral_remains b6 ON b6.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_remarks_and_restricted_information b7 ON b7.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_site_record_admin b1 ON b1.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_external_url b2 ON b2.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_ancestral_remains b3 ON b3.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_archaeological_data b4 ON b4.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_identification_and_registration b5 ON b5.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_remarks_and_restricted_information b6 ON b6.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_heritage_site_location b7 ON b7.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN archaeological_site.mv_related_documents b8 ON b8.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN archaeological_site.mv_geom_site_boundary g_site_boundary ON g_site_boundary.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN archaeological_site.mv_geom_unprotected_areas g_unprotected_areas ON g_unprotected_areas.resourceinstanceid = r.resourceinstanceid
