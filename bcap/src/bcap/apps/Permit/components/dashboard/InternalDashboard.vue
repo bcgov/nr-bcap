@@ -47,13 +47,6 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
     const safeUrgency = rawItem.urgency ?? 0;
     const isPriority = rawItem.priority_level === 'High' || false;
 
-    const submissionType = rawItem.submission_type || '';
-    const permitNumber = rawItem.permit_number || '';
-    const permitHolder = rawItem.permit_holder || '';
-    const projectOfficer = rawItem.project_officer || '';
-    const moduleSummary = buildModuleSummary(rawItem.module_progress);
-    const organization = rawItem.organization || '';
-
     return {
         id: rawItem.id,
         requirementId: rawItem.requirement_id || '',
@@ -68,20 +61,20 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
         bodySubtitle1: rawItem.application_number || 'No App #',
         bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-        submissionType,
-        permitNumber,
-        permitHolder,
-        projectOfficer,
-        moduleSummary,
-        organization,
+        submissionType: rawItem.submission_type || '',
+        permitNumber: rawItem.permit_number || '',
+        permitHolder: rawItem.permit_holder || '',
+        projectOfficer: rawItem.project_officer || '',
+        moduleSummary: buildModuleSummary(rawItem.module_progress),
+        organization: rawItem.organization || '',
 
         body: [
-            submissionType && `Type: ${submissionType}`,
-            permitNumber && `Permit: ${permitNumber}`,
-            permitHolder && `Holder: ${permitHolder}`,
-            `Officer: ${projectOfficer}`,
-            moduleSummary,
-            organization && `Organization: ${organization}`,
+            rawItem.submission_type && `Type: ${rawItem.submission_type}`,
+            rawItem.permit_number && `Permit: ${rawItem.permit_number}`,
+            rawItem.permit_holder && `Holder: ${rawItem.permit_holder}`,
+            `Officer: ${rawItem.project_officer || ''}`,
+            buildModuleSummary(rawItem.module_progress),
+            rawItem.organization && `Organization: ${rawItem.organization}`,
         ].filter(Boolean) as string[],
 
         footerDate: rawItem.requirement_due_date || 'Not Started',
