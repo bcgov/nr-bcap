@@ -19,13 +19,13 @@ vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
 // arches.urls.plugin() builds the checklist URL navigateToReport opens
 
 import InternalDashboard from './InternalDashboard.vue';
-import { ProjectCardStub } from './testStubs.ts';
+import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 
 function mountDashboard() {
     return mount(InternalDashboard, {
         global: {
             stubs: {
-                ProjectCard: ProjectCardStub,
+                RouterLink: true,
                 SortingBar: true,
             },
         },
@@ -101,7 +101,7 @@ describe('data loading', () => {
         await flushPromises();
 
         expect(wrapper.find('.loading-state').exists()).toBe(false);
-        const cards = wrapper.findAllComponents(ProjectCardStub);
+        const cards = wrapper.findAllComponents(ProjectCard);
         expect(cards).toHaveLength(2);
         expect(cards.map((c) => c.props('bodyTitle'))).toEqual([
             'Alpha',
@@ -114,7 +114,7 @@ describe('data loading', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        expect(wrapper.findAllComponents(ProjectCardStub)).toHaveLength(0);
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
         expect(wrapper.find('.empty-state').text()).toContain(
             'No projects match your search criteria.',
         );
@@ -127,7 +127,7 @@ describe('data loading', () => {
         await flushPromises();
 
         expect(wrapper.find('.loading-state').exists()).toBe(false);
-        expect(wrapper.findAllComponents(ProjectCardStub)).toHaveLength(0);
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
     });
 });
 
@@ -137,7 +137,7 @@ describe('field mapping (data shows up right)', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        const card = wrapper.findComponent(ProjectCardStub);
+        const card = wrapper.findComponent(ProjectCard);
         expect(card.props('bodyTitle')).toBe('My Project');
         expect(card.props('bodySubtitle1')).toBe('APP-123');
         expect(card.props('bodySubtitle2')).toBe('Mining');
@@ -154,9 +154,9 @@ describe('field mapping (data shows up right)', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        expect(
-            wrapper.findComponent(ProjectCardStub).props('capPriority'),
-        ).toBe(false);
+        expect(wrapper.findComponent(ProjectCard).props('capPriority')).toBe(
+            false,
+        );
     });
 
     it('formats the labelled body lines as plain text', async () => {
@@ -166,10 +166,13 @@ describe('field mapping (data shows up right)', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        const card = wrapper.findComponent(ProjectCardStub);
-        expect(card.props('body1')).toBe('Type: Site Visit');
-        expect(card.props('body2')).toBe('Permit: PN-9');
-        expect(card.props('body3')).toBe('Holder: Acme Co');
+        const card = wrapper.findComponent(ProjectCard);
+        expect(card.props('body')).toEqual([
+            'Type: Site Visit',
+            'Permit: PN-9',
+            'Holder: Acme Co',
+            'Officer: Jane Officer',
+        ]);
     });
 
     it('falls back to placeholder text for missing fields', async () => {
@@ -183,7 +186,7 @@ describe('field mapping (data shows up right)', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        const card = wrapper.findComponent(ProjectCardStub);
+        const card = wrapper.findComponent(ProjectCard);
         expect(card.props('bodyTitle')).toBe('Unknown Project');
         expect(card.props('bodySubtitle1')).toBe('No App #');
         expect(card.props('capDate')).toBe('Pending');
@@ -201,7 +204,7 @@ describe('default "my_projects" filter', () => {
 
         // The ASSIGNED_TO_ME backend filter decides who shows; the component
         // does not re-filter by assignee on the client.
-        const cards = wrapper.findAllComponents(ProjectCardStub);
+        const cards = wrapper.findAllComponents(ProjectCard);
         expect(cards).toHaveLength(2);
     });
 
@@ -236,7 +239,7 @@ describe('filter switching', () => {
             1,
             100,
         );
-        const cards = wrapper.findAllComponents(ProjectCardStub);
+        const cards = wrapper.findAllComponents(ProjectCard);
         expect(cards).toHaveLength(1);
         expect(cards[0].props('footerName')).toBe('Unassigned');
     });
@@ -262,7 +265,7 @@ describe('filter switching', () => {
 
         await emitFromToolbar(wrapper, 'update:activeTab', 'ALL');
 
-        expect(wrapper.findAllComponents(ProjectCardStub)).toHaveLength(2);
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(2);
     });
 
     it('reloads when the toolbar requests a refresh', async () => {
@@ -304,7 +307,7 @@ describe('search filtering', () => {
 
         await emitFromToolbar(wrapper, 'update:search', 'copper');
 
-        const cards = wrapper.findAllComponents(ProjectCardStub);
+        const cards = wrapper.findAllComponents(ProjectCard);
         expect(cards).toHaveLength(1);
         expect(cards[0].props('bodyTitle')).toBe('Copper Mine');
     });
@@ -319,7 +322,7 @@ describe('search filtering', () => {
 
         await emitFromToolbar(wrapper, 'update:search', 'acme');
 
-        expect(wrapper.findAllComponents(ProjectCardStub)).toHaveLength(1);
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(1);
     });
 
     it('treats "priority" as a keyword surfacing only starred cards', async () => {
@@ -332,7 +335,7 @@ describe('search filtering', () => {
 
         await emitFromToolbar(wrapper, 'update:search', 'priority');
 
-        const cards = wrapper.findAllComponents(ProjectCardStub);
+        const cards = wrapper.findAllComponents(ProjectCard);
         expect(cards).toHaveLength(1);
         expect(cards[0].props('capPriority')).toBe(true);
     });
@@ -344,7 +347,7 @@ describe('search filtering', () => {
 
         await emitFromToolbar(wrapper, 'update:search', 'no-such-thing');
 
-        expect(wrapper.findAllComponents(ProjectCardStub)).toHaveLength(0);
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
         expect(wrapper.find('.empty-state').exists()).toBe(true);
     });
 });
@@ -352,7 +355,7 @@ describe('search filtering', () => {
 describe('sorting', () => {
     function titlesOf(wrapper: ReturnType<typeof mountDashboard>) {
         return wrapper
-            .findAllComponents(ProjectCardStub)
+            .findAllComponents(ProjectCard)
             .map((c) => c.props('bodyTitle'));
     }
 
@@ -502,7 +505,7 @@ describe('onCardClick', () => {
         getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-1' })]);
         const wrapper = mountDashboard();
         await flushPromises();
-        await wrapper.findComponent(ProjectCardStub).trigger('click');
+        await wrapper.findComponent(ProjectCard).trigger('click');
 
         expect(push).toHaveBeenCalledWith({
             name: 'permitDetails',
@@ -517,7 +520,7 @@ describe('onCardClick', () => {
         ]);
         const wrapper = mountDashboard();
         await flushPromises();
-        await wrapper.findComponent(ProjectCardStub).trigger('click');
+        await wrapper.findComponent(ProjectCard).trigger('click');
 
         expect(push).toHaveBeenCalledWith({
             name: 'permitDetails',
@@ -532,7 +535,7 @@ describe('onCardClick', () => {
         const wrapper = mountDashboard();
         await flushPromises();
 
-        await wrapper.findComponent(ProjectCardStub).trigger('click', {
+        await wrapper.findComponent(ProjectCard).trigger('click', {
             ctrlKey: true,
         });
 

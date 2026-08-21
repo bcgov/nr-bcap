@@ -301,23 +301,17 @@ const openResourceReport = (resourceId: string) => {
                                     project.application_number || 'No App #'
                                 "
                                 :body-subtitle2="project.industrial_sector"
-                                :body1="
+                                :body="[
                                     project.submission_type
                                         ? `Type: ${project.submission_type}`
-                                        : ''
-                                "
-                                :body2="
-                                    labelled('Permit', project.permit_number)
-                                "
-                                :body3="
-                                    buildModuleSummary(project.module_progress)
-                                "
-                                :body4="
+                                        : '',
+                                    labelled('Permit', project.permit_number),
+                                    buildModuleSummary(project.module_progress),
                                     labelled(
                                         'Organization',
                                         project.organization,
-                                    )
-                                "
+                                    ),
+                                ]"
                                 :footer-date="formatDate(project.created_date)"
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
@@ -360,32 +354,26 @@ const openResourceReport = (resourceId: string) => {
                                         draft.application_number || 'No App #'
                                     "
                                     :body-subtitle2="draft.industrial_sector"
-                                    :body1="
+                                    :body="[
                                         labelled(
                                             'Type',
                                             draftDescription(draft),
-                                        )
-                                    "
-                                    :body2="
+                                        ),
                                         labelled(
                                             'Updated',
                                             formatDate(
                                                 draft.updated_date ||
                                                     draft.created_date,
                                             ),
-                                        )
-                                    "
-                                    :body3="
+                                        ),
                                         buildModuleSummary(
                                             draft.module_progress,
-                                        )
-                                    "
-                                    :body4="
+                                        ),
                                         labelled(
                                             'Organization',
                                             draft.organization,
-                                        )
-                                    "
+                                        ),
+                                    ]"
                                     :urgency="draft.urgency || 0"
                                     :unread-messages="
                                         draft.unread_messages || 0
