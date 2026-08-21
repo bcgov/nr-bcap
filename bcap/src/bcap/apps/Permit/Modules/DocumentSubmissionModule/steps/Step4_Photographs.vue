@@ -55,7 +55,6 @@ const addImageDisabled = computed(() => {
         Array.isArray(fileNode.node_value) &&
         fileNode.node_value.length > 0;
 
-    if (photoList.value.length >= 10) return true;
     if (!isUnsaved) return true;
 
     const viewNode = currentPhoto.value.aliased_data?.photograph_view as
@@ -224,7 +223,6 @@ defineExpose({ isValid: customIsValid, save: async () => true });
     >
         <FieldSet legend="Submission Photographs">
             <MultiFileUploader
-                :max-items="10"
                 :adding-new="addingNewImage"
                 :disable-add-or-save="addImageDisabled"
                 graph-slug="document_submission"

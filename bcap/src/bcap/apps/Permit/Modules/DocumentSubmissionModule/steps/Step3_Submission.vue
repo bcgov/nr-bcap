@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, inject } from 'vue';
+import type { Ref } from 'vue';
 import { Form } from '@primevue/forms';
 import FieldSet from 'primevue/fieldset';
 import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
 import LabelledInput from '@/bcgov_arches_common/components/labelledinput/LabelledInput.vue';
 import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
 import MultiFileUploader from '@/bcgov_arches_common/components/fileUpload/MultiFileUploader.vue';
 
-// Import the official auto-generated types
+import type {
+    AliasedNodeData,
+    CardXNodeXWidgetData,
+} from '@/arches_component_lab/types.ts';
 import type {
     DocumentSubmissionReportSubmissionAliasedData,
     FileListAliasedNodeData,
@@ -19,6 +22,19 @@ import type {
 const emit = defineEmits(['update:step-is-valid']);
 const draftStore = useDraftStore();
 const draftData = computed(() => draftStore.draftData);
+
+const cardComponents = inject<Ref<CardXNodeXWidgetData[]>>('cardComponents');
+
+const blueprints = computed(() => {
+    const comps = cardComponents?.value || [];
+    return comps.reduce(
+        (acc, curr) => {
+            acc[curr.node.alias] = curr;
+            return acc;
+        },
+        {} as Record<string, CardXNodeXWidgetData>,
+    );
+});
 
 if (!draftData.value.report_submission) {
     draftData.value.report_submission = { aliased_data: {} };
@@ -57,7 +73,6 @@ const hasUnsavedFile = computed(() => {
 });
 
 const addDocDisabled = computed(() => {
-    if (docList.value.length >= 10) return true;
     return !hasUnsavedFile.value;
 });
 
@@ -219,7 +234,6 @@ defineExpose({ isValid: customIsValid, save: async () => true });
     >
         <FieldSet legend="Document Submissions">
             <MultiFileUploader
-                :max-items="1"
                 :adding-new="addingNewDoc"
                 :disable-add-or-save="addDocDisabled"
                 graph-slug="document_submission"
@@ -245,6 +259,7 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                     :required="true"
                 >
                     <GenericWidget
+                        :card-x-node-x-widget-data="blueprints['report_title']"
                         :mode="EDIT"
                         :should-show-label="false"
                         :aliasedNodeData="
@@ -263,6 +278,9 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                     :required="true"
                 >
                     <GenericWidget
+                        :card-x-node-x-widget-data="
+                            blueprints['archaeological_consultant']
+                        "
                         :mode="EDIT"
                         :should-show-label="false"
                         :aliasedNodeData="
@@ -282,6 +300,9 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                     input-name="reportNumber"
                 >
                     <GenericWidget
+                        :card-x-node-x-widget-data="
+                            blueprints['consultant_report_number']
+                        "
                         :mode="EDIT"
                         :should-show-label="false"
                         :aliasedNodeData="
@@ -301,6 +322,9 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                     input-name="archCompany"
                 >
                     <GenericWidget
+                        :card-x-node-x-widget-data="
+                            blueprints['archaological_company']
+                        "
                         :mode="EDIT"
                         :should-show-label="false"
                         :aliasedNodeData="
@@ -320,6 +344,9 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                     input-name="reportRecs"
                 >
                     <GenericWidget
+                        :card-x-node-x-widget-data="
+                            blueprints['report_recommendations']
+                        "
                         :mode="EDIT"
                         :should-show-label="false"
                         :aliasedNodeData="
