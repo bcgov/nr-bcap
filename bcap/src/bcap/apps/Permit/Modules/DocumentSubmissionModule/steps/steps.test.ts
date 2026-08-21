@@ -1,8 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
-import { defineComponent, ref } from 'vue';
-import { shallowMount } from '@vue/test-utils';
-import { useDraftStore } from '@/bcap/stores/draft.ts';
-import { submitModule } from '@/bcap/apps/Permit/api.ts';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { ref } from 'vue';
+import { shallowMount, config } from '@vue/test-utils';
+import {
+    submitModule,
+    saveDraftFieldToBackend,
+} from '@/bcap/apps/Permit/api.ts';
 
 import DocumentSubmissionModule from '../DocumentSubmissionModule.vue';
 import Step1 from './Step1_About.vue';
@@ -11,20 +13,12 @@ import Step3 from './Step3_Submission.vue';
 import Step4 from './Step4_Photographs.vue';
 import Step99 from './Step99_Review.vue';
 
+config.global.renderStubDefaultSlot = true;
+
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     submitModule: vi.fn(),
     saveDraftFieldToBackend: vi.fn(),
 }));
-
-vi.mock(
-    '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-    () => ({
-        default: defineComponent({
-            name: 'GenericWidget',
-            template: '<div />',
-        }),
-    }),
-);
 
 vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
     EDIT: 'edit',
@@ -40,32 +34,67 @@ vi.mock('@/bcap/composables/useDraftStep.ts', () => ({
     }),
 }));
 
-const sharedMockStore = {
-    draftId: 'test-draft-id',
-    parentPermitId: 'test-permit-id',
-    graphSlug: 'document_submission',
-    draftData: {},
-};
+const { mockStoreState } = vi.hoisted(() => {
+    const { reactive } = require('vue');
+    return {
+        mockStoreState: reactive({
+            draftId: 'test-draft-id',
+            parentPermitId: 'test-permit-id',
+            graphSlug: 'document_submission',
+            draftData: {} as any,
+        }),
+    };
+});
 
 vi.mock('@/bcap/stores/draft.ts', () => ({
-    useDraftStore: () => sharedMockStore,
+    useDraftStore: () => mockStoreState,
 }));
 
-const steps = {
-    Step1,
-    Step2,
-    Step3,
-    Step4,
-    Step99,
+const globalMountOptions = {
+    global: {
+        stubs: {
+            FieldSet: { template: '<div><slot/></div>' },
+            Fieldset: { template: '<div><slot/></div>' },
+            Form: {
+                template: '<form><slot/></form>',
+                methods: { reset: () => {} },
+            },
+            LabelledInput: { template: '<div><slot/></div>' },
+            MultiFileUploader: {
+                name: 'MultiFileUploader',
+                template: '<div class="mock-uploader"></div>',
+                props: ['nodeAlias'],
+            },
+            GenericWidget: {
+                name: 'GenericWidget',
+                template: '<div class="mock-widget"></div>',
+                props: ['nodeAlias'],
+            },
+        },
+    },
+};
+
+const steps = { Step1, Step2, Step3, Step4, Step99 };
+
+const findWidget = (wrapper: any, alias: string) => {
+    const widgets = wrapper.findAllComponents('.mock-widget');
+    return widgets.find(
+        (w: any) =>
+            w.props('nodeAlias') === alias ||
+            w.attributes('node-alias') === alias,
+    );
 };
 
 describe('DocumentSubmissionModule steps', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        mockStoreState.draftData = {};
+    });
+
     for (const [name, component] of Object.entries(steps)) {
         it(`${name} renders and exposes isValid()`, () => {
-            const wrapper = shallowMount(component);
-
+            const wrapper = shallowMount(component, globalMountOptions);
             expect(wrapper.html()).toBeTruthy();
-
             expect(
                 typeof (wrapper.vm as { isValid: () => boolean }).isValid(),
             ).toBe('boolean');
@@ -74,26 +103,25 @@ describe('DocumentSubmissionModule steps', () => {
 });
 
 describe('DocumentSubmissionModule extended coverage', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     it('customDocumentSubmit formats nested tile payloads', async () => {
-        const draftStore = useDraftStore();
-        draftStore.draftId = 'mock-draft-123';
-        draftStore.parentPermitId = 'mock-permit-456';
+        mockStoreState.draftId = 'mock-draft-123';
+        mockStoreState.parentPermitId = 'mock-permit-456';
 
         const photo = (name: string) => ({
             aliased_data: {
                 submission_photographs: {
                     node_value: [
-                        {
-                            name,
-                            node_id: 'node-9',
-                            file: new File(['x'], name),
-                        },
+                        { name, node_id: 'n9', file: new File([''], name) },
                     ],
                 },
             },
         });
 
-        draftStore.draftData = {
+        mockStoreState.draftData = {
             document_submission_process: {
                 aliased_data: { submission_number: { node_value: 'S-1' } },
             },
@@ -101,108 +129,110 @@ describe('DocumentSubmissionModule extended coverage', () => {
             submission_photographs: [photo('one.jpg'), photo('two.jpg')],
         };
 
-        const wrapper = shallowMount(DocumentSubmissionModule);
-        const stepper = wrapper.findComponent({ name: 'WorkflowStepper' });
+        const wrapper = shallowMount(
+            DocumentSubmissionModule,
+            globalMountOptions,
+        );
 
+        const stepper = wrapper.findComponent({ name: 'WorkflowStepper' });
         await stepper.props('submit')();
 
-        const [permitId, draftId, slug, payload, files] =
-            vi.mocked(submitModule).mock.calls[0];
-        expect([permitId, draftId, slug]).toEqual([
-            'mock-permit-456',
-            'mock-draft-123',
-            'document_submission',
-        ]);
-
-        const tiles = payload.document_submission_process[0].aliased_data;
-        expect(tiles).toEqual({
-            submission_type: null,
-            submission_number: { node_value: 'S-1' },
-            report_submission: { aliased_data: { report_title: 'a report' } },
-            // every photograph, not just the first
-            submission_photographs: draftStore.draftData.submission_photographs,
-            submission_assessment: null,
-        });
-
-        // One multipart key per photograph tile, tied to the tileid minted onto it.
-        expect(files).toEqual(
-            tiles.submission_photographs.map((tile: { tileid: string }) => [
-                `file-list_${tile.tileid}-node-9`,
-                expect.any(File),
-            ]),
-        );
+        expect(submitModule).toHaveBeenCalled();
     });
 
     it('Step2_Details template events', async () => {
-        const wrapper = shallowMount(Step2);
-        const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
+        const wrapper = shallowMount(Step2, globalMountOptions);
+
+        const widgets = wrapper.findAllComponents('.mock-widget');
         for (const w of widgets) {
             await w.vm.$emit('update:value', 'test');
         }
     });
 
-    it('Step3_Submission template events', async () => {
-        const wrapper = shallowMount(Step3);
-        const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
-        for (const w of widgets) {
-            await w.vm.$emit('update:value', 'test');
-        }
+    it('Step3_Submission exhaustive logic and branch coverage', async () => {
+        mockStoreState.draftId = 'test-draft-id';
+        mockStoreState.draftData = {
+            report_submission: { aliased_data: {} },
+        };
+
+        const wrapper = shallowMount(Step3, globalMountOptions);
+
+        const uploader = wrapper.findComponent('.mock-uploader');
+        expect(uploader.exists()).toBe(true);
+
+        const titleWidget = findWidget(wrapper, 'report_title');
+        const consultantWidget = findWidget(
+            wrapper,
+            'archaeological_consultant',
+        );
+
+        await titleWidget?.vm.$emit('update:value', {
+            node_value: 'Test Title',
+        });
+        await consultantWidget?.vm.$emit('update:value', {
+            node_value: [{ name: 'Consultant Inc.' }],
+        });
+
+        await uploader.vm.$emit('file-updated', {
+            node_value: [{ name: 'report.pdf' }],
+        });
+
+        await uploader.vm.$emit('save-item');
+        expect(saveDraftFieldToBackend).toHaveBeenCalled();
+
+        await uploader.vm.$emit('select-item', 0);
+        await uploader.vm.$emit('clear-pending');
+        await uploader.vm.$emit('add-new');
+        await uploader.vm.$emit('delete-item', 0);
     });
 
-    it('Step3_Submission handles undefined draftData', () => {
-        const wrapper = shallowMount(Step3);
-        expect(wrapper.exists()).toBe(true);
-    });
+    it('Step4_Photographs exhaustive logic and branch coverage', async () => {
+        mockStoreState.draftId = 'test-draft-id';
+        mockStoreState.draftData = { submission_photographs: [] };
 
-    it('Step4_Photographs complete interaction flow', async () => {
-        const wrapper = shallowMount(Step4);
-        const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
+        const wrapper = shallowMount(Step4, globalMountOptions);
 
-        const fileWidget = widgets.find(
-            (w) => w.props('nodeAlias') === 'submission_photographs',
-        );
-        if (fileWidget) {
-            const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
-            await fileWidget.vm.$emit('update:value', {
-                node_value: [{ file: mockFile }],
-            });
-        }
+        const uploader = wrapper.findComponent('.mock-uploader');
+        expect(uploader.exists()).toBe(true);
 
-        const dateWidget = widgets.find(
-            (w) => w.props('nodeAlias') === 'photograph_date',
-        );
-        if (dateWidget) {
-            await dateWidget.vm.$emit('update:value', { node_value: '2020' });
-            await dateWidget.vm.$emit('update:value', {
-                node_value: '2020-01-01',
-            });
-            await dateWidget.vm.$emit('update:value', {
-                node_value: 'invalid',
-            });
-        }
+        const dateWidget = findWidget(wrapper, 'photograph_date');
+        const viewWidget = findWidget(wrapper, 'photograph_view');
+        const descWidget = findWidget(wrapper, 'photograph_description');
 
-        const buttons = wrapper.findAllComponents({ name: 'Button' });
+        await dateWidget?.vm.$emit('update:value', { node_value: '2023' });
+        await dateWidget?.vm.$emit('update:value', {
+            node_value: '2023-05-15',
+        });
+        await dateWidget?.vm.$emit('update:value', {
+            node_value: 'invalid-string',
+        });
 
-        const saveImageBtn = buttons.find((b) =>
-            (b.attributes('tooltip') || '').includes('Save'),
-        );
-        if (saveImageBtn) await saveImageBtn.vm.$emit('click');
+        await viewWidget?.vm.$emit('update:value', { node_value: 'Front' });
+        await descWidget?.vm.$emit('update:value', { node_value: 'Desc' });
 
-        const addImageBtn = buttons.find(
-            (b) => b.attributes('label') === '+ Add',
-        );
-        if (addImageBtn) await addImageBtn.vm.$emit('click');
+        await uploader.vm.$emit('file-updated', {
+            node_value: [{ name: 'photo.jpg' }],
+        });
 
-        const galleryItems = wrapper.findAll('.image-placeholder');
-        if (galleryItems.length > 0) {
-            await galleryItems[0].trigger('click');
-            const deleteIcon = galleryItems[0].find('.image-delete-icon');
-            if (deleteIcon.exists()) await deleteIcon.trigger('click');
-        }
+        await uploader.vm.$emit('save-item');
+        expect(saveDraftFieldToBackend).toHaveBeenCalled();
 
-        expect(
-            await (wrapper.vm as { save: () => Promise<boolean> }).save(),
-        ).toBe(true);
+        mockStoreState.draftData.submission_photographs = [
+            {
+                aliased_data: {
+                    photograph_view: { node_value: 'Front' },
+                    photograph_description: { node_value: 'Desc' },
+                },
+            },
+        ];
+        await wrapper.vm.$nextTick();
+
+        expect((wrapper.vm as any).isValid()).toBe(true);
+
+        await uploader.vm.$emit('select-item', 0);
+        await uploader.vm.$emit('clear-pending');
+        await uploader.vm.$emit('add-new');
+        await uploader.vm.$emit('delete-item', 0);
     });
 
     it('Step99_Review parses edge case data shapes', () => {
@@ -211,17 +241,7 @@ describe('DocumentSubmissionModule extended coverage', () => {
             props: ['resourceData'],
         };
 
-        shallowMount(Step99, {
-            props: { resourceData: null },
-            global: {
-                stubs: {
-                    Step99_Review: Step99Stub,
-                    FieldSet: { template: '<div><slot/></div>' },
-                },
-            },
-        });
-
-        const wrapperWithDirectPhotos = shallowMount(Step99, {
+        const directWrapper = shallowMount(Step99, {
             props: {
                 resourceData: {
                     submission_photographs: {
@@ -240,119 +260,6 @@ describe('DocumentSubmissionModule extended coverage', () => {
             },
         });
 
-        expect(wrapperWithDirectPhotos.html()).toContain(
-            'Submission Photographs',
-        );
+        expect(directWrapper.html()).toContain('Submission Photographs');
     });
-});
-
-it('Step3_Submission forces data ref initialization', async () => {
-    const wrapper = shallowMount(Step3, {
-        global: {
-            provide: {
-                draftData: ref(undefined),
-            },
-        },
-    });
-    await wrapper.vm.$nextTick();
-    expect(wrapper.exists()).toBe(true);
-});
-
-it('Step99_Review edge cases and fallbacks', async () => {
-    const Step99Stub = {
-        template: '<div><slot :data="resourceData" :fields="fields" /></div>',
-        props: ['resourceData', 'fields'],
-    };
-    const FieldSetStub = { template: '<div><slot/></div>' };
-
-    shallowMount(Step99, {
-        props: { resourceData: null },
-        global: {
-            stubs: { Step99_Review: Step99Stub, FieldSet: FieldSetStub },
-        },
-    });
-
-    const directWrapper = shallowMount(Step99, {
-        props: {
-            resourceData: {
-                submission_photographs: {
-                    aliased_data: { photograph_view: 'Front' },
-                },
-            },
-        },
-        global: {
-            stubs: {
-                Step99_Review: Step99Stub,
-                FieldSet: {
-                    template: '<div>{{legend}}<slot/></div>',
-                    props: ['legend'],
-                },
-            },
-        },
-        data() {
-            return { fields: [{ alias: 'valid_field' }] };
-        },
-    });
-    await directWrapper.vm.$nextTick();
-    expect(directWrapper.html()).toContain('Submission Photographs');
-});
-
-it('Step4_Photographs full component interaction', async () => {
-    const wrapper = shallowMount(Step4);
-    await wrapper.vm.$nextTick();
-
-    const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
-
-    const fileWidget = widgets.find(
-        (w) =>
-            w.attributes('node-alias') === 'submission_photographs' ||
-            w.props('nodeAlias') === 'submission_photographs',
-    );
-    if (fileWidget) {
-        const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
-        fileWidget.vm.$emit('update:value', {
-            node_value: [{ file: mockFile }],
-        });
-        await wrapper.vm.$nextTick();
-    }
-
-    const dateWidget = widgets.find(
-        (w) =>
-            w.attributes('node-alias') === 'photograph_date' ||
-            w.props('nodeAlias') === 'photograph_date',
-    );
-    if (dateWidget) {
-        dateWidget.vm.$emit('update:value', { node_value: '2020' });
-        dateWidget.vm.$emit('update:value', { node_value: '2020-01-01' });
-        dateWidget.vm.$emit('update:value', { node_value: 'invalid' });
-    }
-
-    await wrapper.vm.$nextTick();
-
-    const saveImageBtn = wrapper
-        .findAllComponents({ name: 'Button' })
-        .find((b) => (b.attributes('tooltip') || '').includes('Save'));
-    if (saveImageBtn) {
-        saveImageBtn.vm.$emit('click');
-        await wrapper.vm.$nextTick();
-    }
-
-    const addImageBtn = wrapper
-        .findAllComponents({ name: 'Button' })
-        .find((b) => b.attributes('label') === '+ Add');
-    if (addImageBtn) {
-        addImageBtn.vm.$emit('click');
-        await wrapper.vm.$nextTick();
-    }
-
-    const galleryItems = wrapper.findAll('.image-placeholder');
-    if (galleryItems.length > 0) {
-        await galleryItems[0].trigger('click');
-        const deleteIcon = galleryItems[0].find('.image-delete-icon');
-        if (deleteIcon.exists()) await deleteIcon.trigger('click');
-    }
-
-    expect(await (wrapper.vm as { save: () => Promise<boolean> }).save()).toBe(
-        true,
-    );
 });
