@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
-import { shallowMount, config } from '@vue/test-utils';
+import { shallowMount, config, VueWrapper } from '@vue/test-utils';
 import {
     submitModule,
     saveDraftFieldToBackend,
@@ -12,6 +12,18 @@ import Step2 from './Step2_Details.vue';
 import Step3 from './Step3_Submission.vue';
 import Step4 from './Step4_Photographs.vue';
 import Step99 from './Step99_Review.vue';
+
+import type {
+    DocumentSubmissionDocumentSubmissionProcessAliasedData,
+    DocumentSubmissionSubmissionPhotographsTile,
+    DocumentSubmissionReportSubmissionTile,
+} from '@/bcap/client/types.gen.ts';
+
+type DeepPartial<T> = T extends object
+    ? {
+          [P in keyof T]?: DeepPartial<T[P]>;
+      }
+    : T;
 
 config.global.renderStubDefaultSlot = true;
 
@@ -41,7 +53,8 @@ const { mockStoreState } = vi.hoisted(() => {
             draftId: 'test-draft-id',
             parentPermitId: 'test-permit-id',
             graphSlug: 'document_submission',
-            draftData: {} as any,
+            draftData:
+                {} as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>,
         }),
     };
 });
@@ -76,10 +89,13 @@ const globalMountOptions = {
 
 const steps = { Step1, Step2, Step3, Step4, Step99 };
 
-const findWidget = (wrapper: any, alias: string) => {
+const findWidget = (
+    wrapper: VueWrapper,
+    alias: string,
+): VueWrapper | undefined => {
     const widgets = wrapper.findAllComponents('.mock-widget');
     return widgets.find(
-        (w: any) =>
+        (w: VueWrapper) =>
             w.props('nodeAlias') === alias ||
             w.attributes('node-alias') === alias,
     );
@@ -96,7 +112,9 @@ describe('DocumentSubmissionModule steps', () => {
             const wrapper = shallowMount(component, globalMountOptions);
             expect(wrapper.html()).toBeTruthy();
             expect(
-                typeof (wrapper.vm as { isValid: () => boolean }).isValid(),
+                typeof (
+                    wrapper.vm as unknown as { isValid: () => boolean }
+                ).isValid(),
             ).toBe('boolean');
         });
     }
@@ -111,23 +129,33 @@ describe('DocumentSubmissionModule extended coverage', () => {
         mockStoreState.draftId = 'mock-draft-123';
         mockStoreState.parentPermitId = 'mock-permit-456';
 
-        const photo = (name: string) => ({
+        const photo = (
+            name: string,
+        ): DeepPartial<DocumentSubmissionSubmissionPhotographsTile> => ({
             aliased_data: {
                 submission_photographs: {
                     node_value: [
-                        { name, node_id: 'n9', file: new File([''], name) },
+                        {
+                            name,
+                            node_id: 'n9',
+                            file: new File([''], name) as unknown as {
+                                objectURL?: string | null;
+                            },
+                        },
                     ],
                 },
             },
         });
 
         mockStoreState.draftData = {
-            document_submission_process: {
-                aliased_data: { submission_number: { node_value: 'S-1' } },
+            submission_number: { node_value: 'S-1' },
+            report_submission: {
+                aliased_data: {
+                    report_title: { node_value: { en: { value: 'a report' } } },
+                },
             },
-            report_submission: { aliased_data: { report_title: 'a report' } },
             submission_photographs: [photo('one.jpg'), photo('two.jpg')],
-        };
+        } as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>;
 
         const wrapper = shallowMount(
             DocumentSubmissionModule,
@@ -153,7 +181,7 @@ describe('DocumentSubmissionModule extended coverage', () => {
         mockStoreState.draftId = 'test-draft-id';
         mockStoreState.draftData = {
             report_submission: { aliased_data: {} },
-        };
+        } as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>;
 
         const wrapper = shallowMount(Step3, globalMountOptions);
 
@@ -188,7 +216,9 @@ describe('DocumentSubmissionModule extended coverage', () => {
 
     it('Step4_Photographs exhaustive logic and branch coverage', async () => {
         mockStoreState.draftId = 'test-draft-id';
-        mockStoreState.draftData = { submission_photographs: [] };
+        mockStoreState.draftData = {
+            submission_photographs: [],
+        } as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>;
 
         const wrapper = shallowMount(Step4, globalMountOptions);
 
@@ -217,17 +247,27 @@ describe('DocumentSubmissionModule extended coverage', () => {
         await uploader.vm.$emit('save-item');
         expect(saveDraftFieldToBackend).toHaveBeenCalled();
 
-        mockStoreState.draftData.submission_photographs = [
-            {
-                aliased_data: {
-                    photograph_view: { node_value: 'Front' },
-                    photograph_description: { node_value: 'Desc' },
+        mockStoreState.draftData = {
+            ...mockStoreState.draftData,
+            submission_photographs: [
+                {
+                    aliased_data: {
+                        photograph_view: {
+                            node_value: { en: { value: 'Front' } },
+                        },
+                        photograph_description: {
+                            node_value: { en: { value: 'Desc' } },
+                        },
+                    },
                 },
-            },
-        ];
+            ],
+        } as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>;
+
         await wrapper.vm.$nextTick();
 
-        expect((wrapper.vm as any).isValid()).toBe(true);
+        expect(
+            (wrapper.vm as unknown as { isValid: () => boolean }).isValid(),
+        ).toBe(true);
 
         await uploader.vm.$emit('select-item', 0);
         await uploader.vm.$emit('clear-pending');
@@ -247,7 +287,7 @@ describe('DocumentSubmissionModule extended coverage', () => {
                     submission_photographs: {
                         aliased_data: { photograph_view: 'Front' },
                     },
-                },
+                } as unknown,
             },
             global: {
                 stubs: {
