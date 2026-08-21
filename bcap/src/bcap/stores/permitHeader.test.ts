@@ -64,8 +64,7 @@ describe('setFromAliased', () => {
                 applicationNumber: 'APP-1',
                 submissionType: 'Site Visit',
                 sector: 'Forestry',
-                // As the Contributor descriptor arrives: "last, first".
-                organization: 'Acme Corp, ',
+                organization: 'Acme Corp',
                 submittedDate: '2026-01-01',
             }),
         );

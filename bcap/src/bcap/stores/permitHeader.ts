@@ -20,11 +20,7 @@ const headerFrom = (
         // Left empty when unset so the header can mute it rather than stating a
         // sector that was never given.
         sector: devDetails?.industrial_sector?.display_value || '',
-        // A Contributor's descriptor is "last, first", so an organization (no
-        // first name) arrives with a trailing comma.
-        organization: (
-            appIdent?.owning_organization?.display_value || ''
-        ).replace(/,\s*$/, ''),
+        organization: appIdent?.owning_organization?.display_value || '',
         submittedDate:
             appAdmin?.aliased_data?.application_submission_date
                 ?.display_value || null,

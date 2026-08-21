@@ -84,9 +84,7 @@ class BaseDashboardService(BaseGraphService):
             submission_type=display(self.PA.FILING_TYPE),
             industrial_sector=display(self.PA.INDUSTRIAL_SECTOR),
             priority_level=display(self.PA.APPLICATION_PRIORITY_LEVEL),
-            # A Contributor's descriptor is "last, first", so an organization
-            # (no first name) comes back with a trailing comma.
-            organization=display(self.PA.OWNING_ORGANIZATION).rstrip(", "),
+            organization=display(self.PA.OWNING_ORGANIZATION),
             related_permit_id=self._resource_id(
                 self._node_value(aliased, self.PA.RELATED_PERMIT)
             ),
