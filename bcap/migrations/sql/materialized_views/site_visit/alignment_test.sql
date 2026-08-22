@@ -1,9 +1,6 @@
--- Alignment regression test. Run after every build. EXPECT ZERO ROWS.
--- Not a schema object - run manually to verify correctness.
---
--- Every sibling column from one cardinality-n nodegroup must have exactly
--- <nodegroup>_count slots. A mismatch means a null element got SKIPPED.
--- =====================================================================
+-- Alignment regression test. EXPECT ZERO ROWS.
+-- Run manually after a full generate + refresh.
+
 WITH v AS (
   SELECT resourceinstanceid, ancestral_remains_count AS n, 'resource_flat_v1.ancestral_remains' AS grp,
          ARRAY[arches_util.nslots(ancestral_remains_type),

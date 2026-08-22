@@ -1,9 +1,6 @@
--- Alignment regression test. Run after every build. EXPECT ZERO ROWS.
--- Not a schema object - run manually to verify correctness.
---
--- Every sibling column from one cardinality-n nodegroup must have exactly
--- <nodegroup>_count slots. A mismatch means a null element got SKIPPED.
--- =====================================================================
+-- Alignment regression test. EXPECT ZERO ROWS.
+-- Run manually after a full generate + refresh.
+
 WITH v AS (
   SELECT resourceinstanceid, site_record_admin_count AS n, 'resource_flat_v1.site_record_admin' AS grp,
          ARRAY[arches_util.nslots(bcap_submission_status),
@@ -150,18 +147,18 @@ WITH v AS (
          ARRAY['publication_reference', 'publication_reference_ids']::text[] AS colnames
   FROM archaeological_site.mv_resource_flat_v1 WHERE publication_reference_count > 0
   UNION ALL
-  SELECT resourceinstanceid, biogeography_count AS n, 'heritage_site_location_flat_v1.biogeography' AS grp,
+  SELECT resourceinstanceid, biogeography_count AS n, 'site_location_flat_v1.biogeography' AS grp,
          ARRAY[arches_util.nslots(biogeography_type),
                arches_util.nslots(biogeography_type_ids),
                arches_util.nslots(biogeography_description),
                arches_util.nslots(biogeography_name)] AS slots,
          ARRAY['biogeography_type', 'biogeography_type_ids', 'biogeography_description', 'biogeography_name']::text[] AS colnames
-  FROM archaeological_site.mv_heritage_site_location_flat_v1 WHERE biogeography_count > 0
+  FROM archaeological_site.mv_site_location_flat_v1 WHERE biogeography_count > 0
   UNION ALL
-  SELECT resourceinstanceid, elevation_comments_count AS n, 'heritage_site_location_flat_v1.elevation_comments' AS grp,
+  SELECT resourceinstanceid, elevation_comments_count AS n, 'site_location_flat_v1.elevation_comments' AS grp,
          ARRAY[arches_util.nslots(elevation_comments)] AS slots,
          ARRAY['elevation_comments']::text[] AS colnames
-  FROM archaeological_site.mv_heritage_site_location_flat_v1 WHERE elevation_comments_count > 0
+  FROM archaeological_site.mv_site_location_flat_v1 WHERE elevation_comments_count > 0
   UNION ALL
   SELECT resourceinstanceid, bc_property_legal_description_count AS n, 'bc_property_address_flat_v1.bc_property_legal_description' AS grp,
          ARRAY[arches_util.nslots(pid),
