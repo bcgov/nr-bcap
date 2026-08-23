@@ -47,7 +47,7 @@ details = {
 
 
 class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
-    _datatype_factory = DataTypeFactory()
+    _datatype_factory = None
     # For Name part of descriptor
     graph_slug = "process_requirement"
 
@@ -69,6 +69,7 @@ class ProcessRequirementDescriptors(AbstractPrimaryDescriptorsFunction):
 
     # Initializes the static nodes and datatypes data
     def initialize(self):
+        ProcessRequirementDescriptors._datatype_factory = DataTypeFactory()
         for alias in (
             ProcessRequirementDescriptors._name_nodes
             + ProcessRequirementDescriptors._popup_nodes

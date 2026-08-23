@@ -81,7 +81,6 @@ const state = reactive({
     submitting: false,
     savingDraft: false,
     confirmingExit: false,
-    devMode: true,
     isDataLoaded: false,
     finalizedResourceData: null as PermitApplication | null,
 });
@@ -132,7 +131,6 @@ const currentStepIsValid = computed(
 );
 
 const stepIsValid = (step: number): boolean => {
-    if (state.devMode) return true;
     const el = stepEls.value[step - 1];
     let valid = true;
     if (typeof el?.isValid === 'function') valid = el.isValid();

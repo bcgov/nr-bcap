@@ -68,11 +68,7 @@ class ExternalDashboardService(BaseDashboardService):
                 GraphSlugs.PERMIT_APPLICATION,
                 nodes=self.nodes(
                     GraphSlugs.PERMIT_APPLICATION,
-                    self.CARD_NODES
-                    + [
-                        self.PA.APPLICATION_SUBMISSION_DATE,
-                        self.PA.OWNING_ORGANIZATION,
-                    ],
+                    self.CARD_NODES + [self.PA.APPLICATION_SUBMISSION_DATE],
                 ),
                 as_representation=True,
             )
@@ -114,6 +110,7 @@ class ExternalDashboardService(BaseDashboardService):
             application_number=core.application_number,
             submission_type=core.submission_type,
             industrial_sector=core.industrial_sector,
+            organization=core.organization,
             permit_id=core.related_permit_id,
             permit_number=hca.number,
             urgency=0,
@@ -160,7 +157,12 @@ class ExternalDashboardService(BaseDashboardService):
         permits = self._tiles(
             GraphSlugs.PERMIT_APPLICATION,
             ids,
-            [self.PA.PROJECT_NAME, self.PA.APPLICATION_ID, self.PA.FILING_TYPE],
+            [
+                self.PA.PROJECT_NAME,
+                self.PA.APPLICATION_ID,
+                self.PA.FILING_TYPE,
+                self.PA.OWNING_ORGANIZATION,
+            ],
         )
         return {
             str(permit.pk): self._application_core(permit.aliased_data)
@@ -195,5 +197,6 @@ class ExternalDashboardService(BaseDashboardService):
                 self.PA.APPLICATION_ID, parent.application_number
             ),
             submission_type=identification(self.PA.FILING_TYPE, parent.submission_type),
+            organization=parent.organization,
             unread_messages=unread_messages,
         )

@@ -137,6 +137,7 @@ def build_permit_graph():
         ],
         # Pinned by label so the card's submission_type is assertable.
         filing_type="Site Visit",
+        organization=acme,
         related_permit=hca_permit,
         admin_values={pa.PROJECT_OFFICER: alan},
     )
@@ -238,6 +239,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         self.assertEqual(card.permit_number, "HCA-001")
         self.assertEqual(card.permit_id, self.hca_permit_id)
         self.assertEqual(card.permit_holder, "Acme Corp")
+        self.assertEqual(card.organization, "Acme Corp")
         self.assertEqual(card.permit_holder_ids, [self.acme_id])
         # The project_officer on the permit's application_admin group.
         self.assertEqual(card.project_officer, "Turing, Alan")
@@ -446,6 +448,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         # A missing group yields no leaf, so its fields fall back to "".
         self.assertEqual(core.industrial_sector, "")
         self.assertEqual(core.priority_level, "")
+        self.assertEqual(core.organization, "")
         self.assertEqual(core.application_number, "")
         self.assertIsNone(core.related_permit_id)
 
@@ -465,9 +468,10 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
                 core.submission_type,
                 core.industrial_sector,
                 core.priority_level,
+                core.organization,
                 core.related_permit_id,
             ),
-            ("", "", "", "", "", None),
+            ("", "", "", "", "", "", None),
         )
 
 
