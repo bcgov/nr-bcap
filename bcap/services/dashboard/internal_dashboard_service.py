@@ -375,6 +375,7 @@ class InternalDashboardService(BaseDashboardService):
             application_number=core.application_number,
             submission_type=core.submission_type,
             industrial_sector=core.industrial_sector,
+            organization=core.organization,
             permit_id=core.related_permit_id,
             permit_number=hca.number,
             permit_holder=holder_names,

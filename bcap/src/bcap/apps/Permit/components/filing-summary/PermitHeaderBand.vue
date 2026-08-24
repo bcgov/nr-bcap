@@ -6,6 +6,7 @@ export interface PermitHeader {
     applicationNumber: string;
     submissionType: string;
     sector: string;
+    organization: string;
     submittedDate: string | null;
     // Index signature so the object is a valid router history state value.
     [key: string]: string | null;
@@ -14,9 +15,7 @@ export interface PermitHeader {
 const { header } = defineProps<{ header: PermitHeader }>();
 
 const meta = computed(() =>
-    [header.applicationNumber, header.submissionType, header.sector]
-        .filter(Boolean)
-        .join(' · '),
+    [header.organization, header.submissionType, header.sector].filter(Boolean),
 );
 </script>
 
@@ -26,14 +25,25 @@ const meta = computed(() =>
             <i class="fa-solid fa-bolt permit-icon"></i>
         </div>
         <div class="permit-info">
-            <h2 class="project-name">{{ header.projectName }}</h2>
+            <div class="permit-title-line">
+                <h2 class="project-name">{{ header.projectName }}</h2>
+                <span class="application-number">
+                    {{ header.applicationNumber }}
+                </span>
+            </div>
             <p class="permit-meta">
-                {{ meta }}
+                <span
+                    v-for="part in meta"
+                    :key="part"
+                    class="meta-part"
+                >
+                    {{ part }}
+                </span>
                 <span
                     v-if="!header.sector"
-                    class="meta-unset"
+                    class="meta-flag"
                 >
-                    · Sector not specified
+                    Sector not specified
                 </span>
             </p>
         </div>
@@ -74,9 +84,16 @@ const meta = computed(() =>
 .permit-info {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.35rem;
     flex-grow: 1;
     min-width: 0;
+}
+
+.permit-title-line {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
 .project-name {
@@ -88,16 +105,35 @@ const meta = computed(() =>
     word-break: break-word;
 }
 
+.application-number {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #b6c4d6;
+}
+
 .permit-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin: 0;
-    font-size: 1.2rem;
-    font-weight: 400;
+    font-size: 1.15rem;
     color: #cbd5e1;
 }
 
-.meta-unset {
-    color: #93a4bb;
-    font-style: italic;
+.meta-part + .meta-part::before {
+    content: '·';
+    padding-right: 0.5rem;
+    color: #6f819b;
+}
+
+.meta-flag {
+    padding: 0.05rem 0.7rem;
+    border: 1px solid var(--bc-gold);
+    border-radius: 999px;
+    font-size: 1.15rem;
+    color: var(--bc-gold);
 }
 
 .header-actions {

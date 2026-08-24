@@ -29,11 +29,13 @@ interface ProjectData {
     bodyTitle: string;
     bodySubtitle1: string;
     bodySubtitle2: string;
-    body1?: string;
-    body2?: string;
-    body3?: string;
-    body4?: string;
-    body5?: string;
+    submissionType: string;
+    permitNumber: string;
+    permitHolder: string;
+    projectOfficer: string;
+    moduleSummary: string;
+    organization: string;
+    body: string[];
     footerDate: string;
     footerName?: string;
     class?: string;
@@ -59,17 +61,21 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
         bodySubtitle1: rawItem.application_number || 'No App #',
         bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-        body1: rawItem.submission_type
-            ? `Type: ${rawItem.submission_type}`
-            : undefined,
-        body2: rawItem.permit_number
-            ? `Permit: ${rawItem.permit_number}`
-            : undefined,
-        body3: rawItem.permit_holder
-            ? `Holder: ${rawItem.permit_holder}`
-            : undefined,
-        body4: `Officer: ${rawItem.project_officer || ''}`,
-        body5: buildModuleSummary(rawItem.module_progress),
+        submissionType: rawItem.submission_type || '',
+        permitNumber: rawItem.permit_number || '',
+        permitHolder: rawItem.permit_holder || '',
+        projectOfficer: rawItem.project_officer || '',
+        moduleSummary: buildModuleSummary(rawItem.module_progress),
+        organization: rawItem.organization || '',
+
+        body: [
+            rawItem.submission_type && `Type: ${rawItem.submission_type}`,
+            rawItem.permit_number && `Permit: ${rawItem.permit_number}`,
+            rawItem.permit_holder && `Holder: ${rawItem.permit_holder}`,
+            `Officer: ${rawItem.project_officer || ''}`,
+            buildModuleSummary(rawItem.module_progress),
+            rawItem.organization && `Organization: ${rawItem.organization}`,
+        ].filter(Boolean) as string[],
 
         footerDate: rawItem.requirement_due_date || 'Not Started',
         footerName: rawItem.ministry_assignee_name || 'Unassigned',
@@ -85,13 +91,14 @@ const sortOptions = [
     { label: 'Assigned To', value: 'footerName' },
     { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
-    { label: 'Permit Holder', value: 'body3' },
-    { label: 'Permit Number', value: 'body2' },
+    { label: 'Permit Holder', value: 'permitHolder' },
+    { label: 'Organization', value: 'organization' },
+    { label: 'Permit Number', value: 'permitNumber' },
     { label: 'Priority', value: 'capPriority' },
     { label: 'Process', value: 'capLabel' },
-    { label: 'Project Officer', value: 'body4' },
+    { label: 'Project Officer', value: 'projectOfficer' },
     { label: 'Sector', value: 'bodySubtitle2' },
-    { label: 'Submission Type', value: 'body1' },
+    { label: 'Submission Type', value: 'submissionType' },
 ];
 
 const internalTabs = [
@@ -172,11 +179,7 @@ const displayedProjects = computed(() => {
                 item.bodyTitle?.toLowerCase().includes(query) ||
                 item.bodySubtitle1?.toLowerCase().includes(query) ||
                 item.bodySubtitle2?.toLowerCase().includes(query) ||
-                item.body1?.toLowerCase().includes(query) ||
-                item.body2?.toLowerCase().includes(query) ||
-                item.body3?.toLowerCase().includes(query) ||
-                item.body4?.toLowerCase().includes(query) ||
-                item.body5?.toLowerCase().includes(query) ||
+                item.body.some((line) => line.toLowerCase().includes(query)) ||
                 item.footerName?.toLowerCase().includes(query)
             );
         });
@@ -283,11 +286,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                     :key="item.id"
                     v-bind="item"
                     :unread-messages="item.unreadMessages"
-                    :body1="formatBodyLine(item.body1)"
-                    :body2="formatBodyLine(item.body2)"
-                    :body3="formatBodyLine(item.body3)"
-                    :body4="item.body4"
-                    :body5="formatBodyLine(item.body5)"
+                    :body="item.body.map(formatBodyLine)"
                     :route="{ name: item.route }"
                     :search-query="state.currentSearch"
                     @click.capture.prevent="onCardClick($event, item)"

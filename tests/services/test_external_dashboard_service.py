@@ -161,9 +161,16 @@ class ExternalDashboardServiceTests(TestCase):
         self.assertEqual(card.created_by_name, "me")
         self.assertEqual(card.permit_id, self.hca_id)
         self.assertEqual(card.permit_number, "HCA-001")
+        self.assertEqual(card.organization, "Acme Corp")
         # Personal/internal fields are not on the external card at all.
         self.assertFalse(hasattr(card, "ministry_assignee_name"))
         self.assertFalse(hasattr(card, "project_officer"))
+
+    def test_a_filing_stamped_with_no_organization_has_an_empty_one(self):
+        page = self.service.get_cards(DashboardFilter(), self.outsider)
+
+        card = next(c for c in page.results if c.id == str(self.outsiders.pk))
+        self.assertEqual(card.organization, "")
 
     def test_status_maps_from_lifecycle_state(self):
         page = self.service.get_cards(DashboardFilter(), self.me)
@@ -238,8 +245,13 @@ class ExternalDashboardDraftsTests(TestCase):
         cls.service = ExternalDashboardService()
         cls.user = make_user("drafter")
         cls.other = make_user("other")
+        builder = FixtureBuilder()
         cls.permit = build_external_permit(
-            FixtureBuilder(), "Parent Project", cls.user, "Active"
+            builder,
+            "Parent Project",
+            cls.user,
+            "Active",
+            organization=make_contributor(builder, "Parent Corp"),
         )
         cls.draft = WorkflowDraftService().create(
             request_as(cls.user),
@@ -298,6 +310,16 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertEqual(card.project_name, "Parent Project")
         self.assertRegex(card.application_number, r"^APP-\d+$")
         self.assertEqual(card.submission_type, "Site Visit")
+        self.assertEqual(card.organization, "Parent Corp")
+
+    def test_a_parentless_draft_names_no_organization(self):
+        page = self.service.get_cards(
+            DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
+            self.user,
+        )
+
+        card = next(c for c in page.results if c.id == str(self.draft.pk))
+        self.assertEqual(card.organization, "")
 
     def test_internal_staff_get_no_widening_on_someone_elses_draft(self):
         # An unsubmitted form is its author's business, so branch staff are

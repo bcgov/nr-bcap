@@ -104,6 +104,11 @@ class InternalDashboardCard:
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
     )
+    organization: str = described(
+        "Name of the organization the application is filed under (its stamped "
+        "owning_organization); empty when it was filed under none.",
+        "",
+    )
     permit_id: str | None = described(
         "Resourceinstanceid of the related HCA Permit; its drill-in GUID.", None
     )
@@ -210,6 +215,11 @@ class ExternalDashboardCard:
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
     )
+    organization: str = described(
+        "Name of the organization the application is filed under (its stamped "
+        "owning_organization); empty when it was filed under none.",
+        "",
+    )
     permit_id: str | None = described(
         "Resourceinstanceid of the related HCA Permit; its drill-in GUID.", None
     )
@@ -269,6 +279,7 @@ class ApplicationCore:
     submission_type: str = ""
     industrial_sector: str = ""
     priority_level: str = ""
+    organization: str = ""
     related_permit_id: str | None = None
 
 
