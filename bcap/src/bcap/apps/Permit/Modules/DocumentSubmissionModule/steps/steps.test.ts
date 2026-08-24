@@ -45,17 +45,14 @@ vi.mock('@/bcap/composables/useDraftStep.ts', () => ({
     }),
 }));
 
-// 1. Hoist a simple generic container (no require needed!)
 const { storeContainer } = vi.hoisted(() => ({
-    storeContainer: { state: null as any },
+    storeContainer: { state: null as unknown },
 }));
 
-// 2. The mock returns whatever is inside the container
 vi.mock('@/bcap/stores/draft.ts', () => ({
     useDraftStore: () => storeContainer.state,
 }));
 
-// 3. Create the reactive store state using standard ES imports
 const mockStoreState = reactive({
     draftId: 'test-draft-id',
     parentPermitId: 'test-permit-id',
@@ -64,7 +61,6 @@ const mockStoreState = reactive({
         {} as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>,
 });
 
-// 4. Inject the reactive state into the hoisted container
 storeContainer.state = mockStoreState;
 
 const globalMountOptions = {
