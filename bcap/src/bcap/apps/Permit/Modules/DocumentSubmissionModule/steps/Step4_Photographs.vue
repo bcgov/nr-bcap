@@ -60,20 +60,12 @@ const addImageDisabled = computed(() => {
     const viewNode = currentPhoto.value.aliased_data?.photograph_view as
         StringAliasedNodeData | undefined;
     const vVal = viewNode?.node_value;
-    const hasView = !!(
-        viewNode?.display_value ||
-        vVal?.en?.value ||
-        (typeof vVal === 'string' && (vVal as string).trim() !== '')
-    );
+    const hasView = !!(viewNode?.display_value || vVal?.en?.value?.trim());
 
     const descNode = currentPhoto.value.aliased_data?.photograph_description as
         StringAliasedNodeData | undefined;
     const dVal = descNode?.node_value;
-    const hasDesc = !!(
-        descNode?.display_value ||
-        dVal?.en?.value ||
-        (typeof dVal === 'string' && (dVal as string).trim() !== '')
-    );
+    const hasDesc = !!(descNode?.display_value || dVal?.en?.value?.trim());
 
     return !(hasView && hasDesc);
 });
@@ -82,12 +74,8 @@ const updateCurrentValue = (
     newValue: AliasedNodeData,
     fieldName: keyof DocumentSubmissionSubmissionPhotographsAliasedData,
 ) => {
-    if (
-        fieldName === 'photograph_date' &&
-        newValue &&
-        typeof newValue.node_value === 'string'
-    ) {
-        const val = newValue.node_value;
+    if (fieldName === 'photograph_date' && newValue?.node_value) {
+        const val = newValue.node_value as string;
         if (/^\d{4}$/.test(val)) newValue.node_value = `${val}-01-01T00:00:00Z`;
         else if (/^\d{4}-\d{2}-\d{2}$/.test(val))
             newValue.node_value = `${val}T00:00:00Z`;
@@ -126,20 +114,12 @@ const customIsValid = () => {
         const viewNode = photo.aliased_data?.photograph_view as
             StringAliasedNodeData | undefined;
         const vVal = viewNode?.node_value;
-        const hasView = !!(
-            viewNode?.display_value ||
-            vVal?.en?.value ||
-            (typeof vVal === 'string' && (vVal as string).trim() !== '')
-        );
+        const hasView = !!(viewNode?.display_value || vVal?.en?.value?.trim());
 
         const descNode = photo.aliased_data?.photograph_description as
             StringAliasedNodeData | undefined;
         const dVal = descNode?.node_value;
-        const hasDesc = !!(
-            descNode?.display_value ||
-            dVal?.en?.value ||
-            (typeof dVal === 'string' && (dVal as string).trim() !== '')
-        );
+        const hasDesc = !!(descNode?.display_value || dVal?.en?.value?.trim());
 
         if (!hasView || !hasDesc) return false;
     }

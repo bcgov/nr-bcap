@@ -85,11 +85,8 @@ const customIsValid = () => {
 
     const titleNode = reportData.report_title;
     const tVal = titleNode?.node_value;
-    const hasTitle = !!(
-        titleNode?.display_value ||
-        tVal?.en?.value ||
-        (typeof tVal === 'string' && (tVal as string).trim() !== '')
-    );
+
+    const hasTitle = !!(titleNode?.display_value || tVal?.en?.value?.trim());
 
     const consultantNode = reportData.archaeological_consultant;
     const hasConsultant = !!(
