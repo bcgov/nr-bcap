@@ -19,6 +19,7 @@ from arches.app.models.models import EditLog, TileModel
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.graph import node_id, node_info
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.services.dashboard.dashboard_types import (
     InternalDashboardData,
@@ -30,7 +31,7 @@ from bcap.services.dashboard.dashboard_types import (
 )
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases
-from bcap.util.bcap_aliases import GraphSlugs
+from bcap.util.bcap_aliases import GraphSlugs, RESOURCE_ID
 from bcap.util.queryset import filter_or_empty
 
 
@@ -87,18 +88,8 @@ class InternalDashboardService(BaseDashboardService):
                 GraphSlugs.PERMIT_APPLICATION,
                 nodes=self.nodes(
                     GraphSlugs.PERMIT_APPLICATION,
-                    [
-                        self.PA.PROJECT_NAME,
-                        self.PA.APPLICATION_ID,
-                        self.PA.FILING_TYPE,
-                        self.PA.INDUSTRIAL_SECTOR,
-                        self.PA.APPLICATION_PRIORITY_LEVEL,
-                        self.PA.RELATED_PERMIT,
-                        self.PA.MODULE_ID,
-                        self.PA.MODULE_NAME,
-                        self.PA.MODULE_ORDER,
-                        self.PA.MODULE_COMPLETED_DATE,
-                        self.PA.IS_MODULE_COMPLETED,
+                    self.CARD_NODES
+                    + [
                         self.PA.PROCESS_REQUIREMENT,
                         self.PA.PROCESS_REQUIREMENT_ORDER,
                         self.PA.MINISTRY_ASSIGNEE,
@@ -122,7 +113,7 @@ class InternalDashboardService(BaseDashboardService):
         """Per-permit subquery of its application_admin tile once the submission
         date is filled in. The text read (->>) excludes a key present with JSON
         null, which a data__id__isnull check would keep."""
-        date_id, admin_ng = self._node_info(
+        date_id, admin_ng = node_info(
             GraphSlugs.PERMIT_APPLICATION, self.PA.APPLICATION_SUBMISSION_DATE
         )
         return (
@@ -165,15 +156,15 @@ class InternalDashboardService(BaseDashboardService):
         ordered by module then requirement order (the first unsatisfied wins).
         The non-null guard stays in lockstep with _choose_requirements."""
         app, req = GraphSlugs.PERMIT_APPLICATION, GraphSlugs.PROCESS_REQUIREMENT
-        order_id, child_ng = self._node_info(app, self.PA.PROCESS_REQUIREMENT_ORDER)
-        assignee_id = self.node_id(app, self.PA.MINISTRY_ASSIGNEE)
-        requirement_id = self.node_id(app, self.PA.PROCESS_REQUIREMENT)
-        module_order_id = self.node_id(app, self.PA.MODULE_ORDER)
-        status_id, status_ng = self._node_info(req, self.PR.REQUIREMENT_STATUS)
+        order_id, child_ng = node_info(app, self.PA.PROCESS_REQUIREMENT_ORDER)
+        assignee_id = node_id(app, self.PA.MINISTRY_ASSIGNEE)
+        requirement_id = node_id(app, self.PA.PROCESS_REQUIREMENT)
+        module_order_id = node_id(app, self.PA.MODULE_ORDER)
+        status_id, status_ng = node_info(req, self.PR.REQUIREMENT_STATUS)
 
         def get_json_resource_id(node_id):
             return KeyTextTransform(
-                "resourceId", KeyTransform("0", KeyTransform(node_id, "data"))
+                RESOURCE_ID, KeyTransform("0", KeyTransform(node_id, "data"))
             )
 
         module_order = Subquery(
@@ -275,7 +266,7 @@ class InternalDashboardService(BaseDashboardService):
             self.PR.REQUIREMENT_PROCESS_DUE_DATE,
             self.PR.ASSESSMENT_NOTES,
         ):
-            node_ids[alias], nodegroup = self._node_info(
+            node_ids[alias], nodegroup = node_info(
                 GraphSlugs.PROCESS_REQUIREMENT, alias
             )
             nodegroups.add(nodegroup)
@@ -321,13 +312,15 @@ class InternalDashboardService(BaseDashboardService):
         if not tile_ids:
             return {}
 
-        node_id = self.node_id(GraphSlugs.PERMIT_APPLICATION, self.PA.MINISTRY_ASSIGNEE)
+        assignee_node = node_id(
+            GraphSlugs.PERMIT_APPLICATION, self.PA.MINISTRY_ASSIGNEE
+        )
 
         # NULL-coalesced so an initial assignment (key absent in oldvalue)
         # registers as a change rather than NULL == NULL.
         def assignee(column):
             return Coalesce(
-                KeyTextTransform(node_id, column),
+                KeyTextTransform(assignee_node, column),
                 Value(""),
                 output_field=TextField(),
             )
@@ -382,6 +375,7 @@ class InternalDashboardService(BaseDashboardService):
             application_number=core.application_number,
             submission_type=core.submission_type,
             industrial_sector=core.industrial_sector,
+            organization=core.organization,
             permit_id=core.related_permit_id,
             permit_number=hca.number,
             permit_holder=holder_names,

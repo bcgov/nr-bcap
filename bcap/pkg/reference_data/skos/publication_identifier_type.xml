@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF
-  xmlns:arches="http://localhost:82/"
+  xmlns:arches="https://localhost/"
   xmlns:skos="http://www.w3.org/2004/02/skos/core#"
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
-  <skos:Concept rdf:about="http://localhost:82/95440cb8-bb52-41c9-ae78-a807ac627579">
+  <skos:Concept rdf:about="https://localhost/95440cb8-bb52-41c9-ae78-a807ac627579">
     <skos:inScheme>
-      <skos:ConceptScheme rdf:about="http://localhost:82/82d2b088-5de3-4b4b-8102-602950365a25">
+      <skos:ConceptScheme rdf:about="https://localhost/82d2b088-5de3-4b4b-8102-602950365a25">
         <dcterms:title>Publication Identifier Type</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/95440cb8-bb52-41c9-ae78-a807ac627579</dcterms:identifier>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/95440cb8-bb52-41c9-ae78-a807ac627579</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
     <skos:prefLabel xml:lang="en">Digital Object Identifier</skos:prefLabel>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/6893e28f-c65c-4158-9d47-37036a06ee55">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/6893e28f-c65c-4158-9d47-37036a06ee55</dcterms:identifier>
-    <skos:inScheme rdf:resource="http://localhost:82/82d2b088-5de3-4b4b-8102-602950365a25"/>
+  <skos:Concept rdf:about="https://localhost/6893e28f-c65c-4158-9d47-37036a06ee55">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/6893e28f-c65c-4158-9d47-37036a06ee55</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/82d2b088-5de3-4b4b-8102-602950365a25"/>
     <skos:prefLabel xml:lang="en">URL</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/2ea6b6c4-ef9f-4f68-8516-da6840d40f02">
-    <skos:inScheme rdf:resource="http://localhost:82/82d2b088-5de3-4b4b-8102-602950365a25"/>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/2ea6b6c4-ef9f-4f68-8516-da6840d40f02</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/2ea6b6c4-ef9f-4f68-8516-da6840d40f02">
+    <skos:inScheme rdf:resource="https://localhost/82d2b088-5de3-4b4b-8102-602950365a25"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/2ea6b6c4-ef9f-4f68-8516-da6840d40f02</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
     <skos:prefLabel xml:lang="en">Report Number</skos:prefLabel>
   </skos:Concept>

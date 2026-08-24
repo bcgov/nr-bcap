@@ -2,6 +2,7 @@ import arches from 'arches';
 import { apiFetch, apiFetchJson, HttpMethod } from '@/bcap/api.ts';
 import { localized, formatTimestamp } from '@/bcap/util.ts';
 import type {
+    DashboardStatus,
     MessageThread,
     ArchesDraftData,
     DraftNode,
@@ -9,6 +10,7 @@ import type {
     NewBcapMessage,
     WorkflowDraft,
 } from '@/bcap/types.ts';
+export type { DashboardStatus };
 import type {
     ApiContributorsAssignableListResponse,
     ApiDashboardExternalRetrieveData,
@@ -19,6 +21,7 @@ import type {
     ContributorSummary,
     ExternalDashboardCard,
     ExternalDashboardPage,
+    InternalDashboardCard,
     PatchedRequirementAssignee,
     DraftRecord,
     PatchedBcapMessagePatchWritable,
@@ -30,6 +33,11 @@ import type {
     ProcessRequirement,
     ModuleUnread,
 } from '@/bcap/client/types.gen.ts';
+import {
+    zApiDashboardExternalRetrieveQuery,
+    zInternalDashboardPage,
+    zProcessRequirement,
+} from '@/bcap/client/zod.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 
 export const fetchDraft = async (
@@ -88,16 +96,45 @@ export const deleteDraft = async (
     });
 };
 
+export const saveDraftFieldToBackend = async (
+    draftId: string,
+    graphSlug: string,
+    fullDraftData: ArchesDraftData,
+    currentStep?: string,
+): Promise<void> => {
+    const payload: { data: ArchesDraftData; current_step?: string } = {
+        data: fullDraftData,
+    };
+    if (currentStep) payload.current_step = currentStep;
+    try {
+        await apiFetch(
+            `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`,
+            { method: HttpMethod.Patch, body: payload },
+        );
+    } catch (error) {
+        console.error('Failed to auto-save draft data:', error);
+    }
+};
+
 type ExternalDashboardStatus = NonNullable<
     ApiDashboardExternalRetrieveData['query']
 >['status'];
 
+export const dashboardScope =
+    zApiDashboardExternalRetrieveQuery.shape.status.unwrap().enum;
+
 export const fetchMyProjects = async () =>
-    fetchExternalDashboardCards('CREATED_BY_ME');
+    fetchExternalDashboardCards(dashboardScope.FILINGS_CREATED_BY_ME);
 export const fetchCompanyProjects = async () =>
-    fetchExternalDashboardCards('CREATED_BY_ASSOCIATED_COMPANIES');
+    fetchExternalDashboardCards(
+        dashboardScope.FILINGS_BY_ASSOCIATED_ORGANIZATIONS,
+    );
 export const fetchDraftCards = async () =>
-    fetchExternalDashboardCards('DRAFTS');
+    fetchExternalDashboardCards(dashboardScope.DRAFTS_CREATED_BY_ME);
+export const fetchCompanyDraftCards = async () =>
+    fetchExternalDashboardCards(
+        dashboardScope.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS,
+    );
 
 const fetchExternalDashboardCards = async (
     status: ExternalDashboardStatus,
@@ -111,6 +148,49 @@ const fetchExternalDashboardCards = async (
         console.error(`Failed to load ${status} dashboard cards:`, error);
         return [];
     }
+};
+
+export const getInternalDashboardData = async (
+    status?: DashboardStatus,
+    page: number = 1,
+    limit: number = 100,
+): Promise<InternalDashboardCard[]> => {
+    try {
+        // no status means all results -- omit the param entirely
+        const statusParam = status ? `&status=${status}` : '';
+        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${statusParam}`;
+        const result = zInternalDashboardPage.safeParse(
+            await apiFetchJson(apiUrl),
+        );
+        if (!result.success) {
+            console.warn(
+                'InternalDashboardPage failed validation:',
+                result.error,
+            );
+            return [];
+        }
+        return result.data.results ?? [];
+    } catch (error) {
+        console.error('Error fetching projects from backend:', error);
+        return [];
+    }
+};
+
+export const getProcessRequirementData = async (
+    resource_id: string,
+): Promise<ProcessRequirement> => {
+    const json = await apiFetchJson<ProcessRequirement>(
+        arches.urls.api_process_requirements(resource_id),
+        {
+            formatError: async (response) =>
+                (await response.text()) || response.statusText,
+        },
+    );
+    const result = zProcessRequirement.safeParse(json);
+    if (!result.success) {
+        console.warn('ProcessRequirement failed validation:', result.error);
+    }
+    return json;
 };
 
 export const submitApplication = async (
@@ -156,8 +236,7 @@ export const submitApplication = async (
 // Submit a permit module: the route creates the module's host resource from the
 // payload, clones the module's process requirements onto the permit, links the
 // workflow requirement to the host, and returns the created host resource. Pass
-// a draftId to submit from a draft (deleted after); omit it for a staff
-// quick-add that sends a placeholder payload directly.
+// a draftId to submit from a draft, which is deleted once the module lands.
 export const submitModule = async (
     permitId: string,
     draftId: string | undefined,

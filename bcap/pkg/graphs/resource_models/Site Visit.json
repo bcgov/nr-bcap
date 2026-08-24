@@ -741,7 +741,7 @@
                                     }
                                 ],
                                 "list_id": "dea73106-ad02-561d-8075-4f68ba5318b9",
-                                "uri": "/bcap/plugins/controlled-list-manager/item/5b9cb2a4-d941-5260-bfdf-5e6895e5b212"
+                                "uri": "https://localhost/bcap/plugins/controlled-list-manager/item/5b9cb2a4-d941-5260-bfdf-5e6895e5b212"
                             }
                         ],
                         "i18n_properties": ["placeholder"],
@@ -1753,7 +1753,7 @@
                                     }
                                 ],
                                 "list_id": "da20ba4d-3f96-4801-b5cd-f5e1800cad12",
-                                "uri": "http://localhost:82/plugins/controlled-list-manager/item/da9933b2-6b6c-435e-890e-21c78907625b"
+                                "uri": "https://localhost/bcap/plugins/controlled-list-manager/item/da9933b2-6b6c-435e-890e-21c78907625b"
                             }
                         ],
                         "i18n_properties": ["placeholder"],
@@ -3794,7 +3794,7 @@
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"b8875eef-428e-4032-907f-07a3d32bba74\",\"language_id\":\"en\",\"list_item_id\":\"8c4e2933-a97a-5f47-89e7-78d1d8aaad81\",\"value\":\"Individual\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/8c4e2933-a97a-5f47-89e7-78d1d8aaad81\"}]},\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"like\",\"val\":\"Site Visit\"}}]"
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"b8875eef-428e-4032-907f-07a3d32bba74\",\"language_id\":\"en\",\"list_item_id\":\"8c4e2933-a97a-5f47-89e7-78d1d8aaad81\",\"value\":\"Individual\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"https://localhost/bcap/plugins/controlled-list-manager/item/8c4e2933-a97a-5f47-89e7-78d1d8aaad81\"}]},\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"like\",\"val\":\"Site Visit\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -4114,7 +4114,7 @@
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"b8875eef-428e-4032-907f-07a3d32bba74\",\"language_id\":\"en\",\"list_item_id\":\"8c4e2933-a97a-5f47-89e7-78d1d8aaad81\",\"value\":\"Individual\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/8c4e2933-a97a-5f47-89e7-78d1d8aaad81\"}]},\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"e04dd772-ece5-49a4-97f0-36a670a26100\",\"language_id\":\"en\",\"list_item_id\":\"b2e77050-5be2-5de5-9647-5b151870960e\",\"value\":\"Site+Form+Author\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/b2e77050-5be2-5de5-9647-5b151870960e\"}]}}]"
+                        "searchString": "/bcap/search?advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A[{\"labels\"%3A[{\"id\"%3A\"1275b9b0-5f2b-428f-97e5-e9d943eea0bb\"%2C\"language_id\"%3A\"en\"%2C\"list_item_id\"%3A\"b2e77050-5be2-5de5-9647-5b151870960e\"%2C\"value\"%3A\"Site Form Author\"%2C\"valuetype_id\"%3A\"prefLabel\"}]%2C\"uri\"%3A\"https%3A%2F%2Flocalhost%2Fbcap%2Fplugins%2Fcontrolled-list-manager%2Fitem%2Fb2e77050-5be2-5de5-9647-5b151870960e\"}]}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5\"%3A{\"op\"%3A\"~\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"\"}}]"
                     },
                     "datatype": "resource-instance-list",
                     "description": null,
@@ -4333,7 +4333,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"9416afb2-2efb-4fbc-8979-06205a4aee19\",\"language_id\":\"en\",\"list_item_id\":\"fd2053d3-c010-519a-97e5-52f3c7b508e2\",\"value\":\"Organization\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/fd2053d3-c010-519a-97e5-52f3c7b508e2\"}]}}]"
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"9416afb2-2efb-4fbc-8979-06205a4aee19\",\"language_id\":\"en\",\"list_item_id\":\"fd2053d3-c010-519a-97e5-52f3c7b508e2\",\"value\":\"Organization\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"https://localhost/bcap/plugins/controlled-list-manager/item/fd2053d3-c010-519a-97e5-52f3c7b508e2\"}]}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,

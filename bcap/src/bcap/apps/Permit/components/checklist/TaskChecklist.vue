@@ -2,8 +2,10 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Button from 'primevue/button';
-import { getProcessRequirementData } from '@/bcap/components/pages/api.ts';
-import { patchProcessRequirement } from '@/bcap/apps/Permit/api.ts';
+import {
+    getProcessRequirementData,
+    patchProcessRequirement,
+} from '@/bcap/apps/Permit/api.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';

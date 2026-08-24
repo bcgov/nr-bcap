@@ -20,7 +20,6 @@ from bcap.serializers.registration_serializers import (
     RegistrationLinkRequestSerializer,
     RegistrationLinkResponseSerializer,
 )
-from bcap.services.contributor_service import NewContributor
 from bcap.services.registration.invitation_registration_service import (
     PENDING_REGISTRATION_SESSION_KEY,
     InvitationRegistrationService,
@@ -40,14 +39,12 @@ class RegistrationLinkView(APIView):
     def post(self, request):
         serializer = RegistrationLinkRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        new_contributor = serializer.validated_data.get("new_contributor")
-        if new_contributor:
-            new_contributor = NewContributor(**new_contributor)
+        body = serializer.validated_data
         link = InvitationRegistrationService().issue_link(
             request.user,
-            contributor_id=serializer.validated_data.get("contributor_id"),
-            new_contributor=new_contributor,
-            groups=serializer.validated_data.get("groups"),
+            contributor_id=body.contributor_id,
+            new_contributor=body.new_contributor,
+            groups=body.groups,
         )
         origin = urlsplit(settings.PUBLIC_SERVER_ADDRESS)
         path = f"{reverse('registration_claim')}?token={link.id}"

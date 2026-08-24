@@ -12,7 +12,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -45,7 +46,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -309,7 +311,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -342,7 +345,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -418,16 +422,18 @@ paths:
         name: status
         schema:
           enum:
-          - DRAFTS
-          - CREATED_BY_ME
-          - CREATED_BY_ASSOCIATED_COMPANIES
+          - DRAFTS_CREATED_BY_ME
+          - DRAFTS_BY_ASSOCIATED_ORGANIZATIONS
+          - FILINGS_CREATED_BY_ME
+          - FILINGS_BY_ASSOCIATED_ORGANIZATIONS
           type: string
-          default: CREATED_BY_ME
+          default: FILINGS_CREATED_BY_ME
           minLength: 1
         description: |-
-          * `DRAFTS` - Drafts
-          * `CREATED_BY_ME` - My Projects
-          * `CREATED_BY_ASSOCIATED_COMPANIES` - Created by associated companies
+          * `DRAFTS_CREATED_BY_ME` - My drafts
+          * `DRAFTS_BY_ASSOCIATED_ORGANIZATIONS` - Drafts of associated organizations
+          * `FILINGS_CREATED_BY_ME` - My filings
+          * `FILINGS_BY_ASSOCIATED_ORGANIZATIONS` - Filings of associated organizations
       tags:
       - 'External: dashboard'
       security:
@@ -485,7 +491,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -518,7 +525,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -545,7 +553,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -578,7 +587,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -605,7 +615,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -638,7 +649,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -665,7 +677,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -698,7 +711,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -725,7 +739,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -758,7 +773,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -785,7 +801,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -818,7 +835,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -845,7 +863,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -878,7 +897,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -904,8 +924,9 @@ paths:
         Collection endpoint for the requesting user's Permit Application resources.
 
         Owner-scoped: only the resources the user created. Declared verbs:
-        GET, PUT, PATCH, POST, DELETE (from generated/generate.json); the ListCreateAPIView base
-        class serves the collection subset (GET/POST).
+        GET, PATCH, POST (from generated/generate.json); the ListCreateAPIView base
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -933,10 +954,10 @@ paths:
     post:
       operationId: api_permit_application_create
       description: |-
-        POST a new Permit Application, seeding its application id.
-
-        Create-only (POST); the requirements are attached later, on submission (see
-        the detail view).
+        POST a new Permit Application, seeding its application id. A body that
+        already carries the submission date attaches the requirement working copies
+        here; one saved as a draft gets them on the update that submits it (see the
+        detail view).
       tags:
       - 'External: permit_application'
       requestBody:
@@ -963,11 +984,10 @@ paths:
     get:
       operationId: api_permit_application_retrieve
       description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles.
 
         The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
+        the application id and attaches the requirement working copies.
       parameters:
       - in: path
         name: id
@@ -977,43 +997,6 @@ paths:
         required: true
       tags:
       - 'External: permit_application'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PermitApplication'
-          description: ''
-    put:
-      operationId: api_permit_application_update
-      description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
-
-        The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: permit_application'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PermitApplication'
       security:
       - cookieAuth: []
       responses:
@@ -1026,11 +1009,10 @@ paths:
     patch:
       operationId: api_permit_application_partial_update
       description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles.
 
         The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
+        the application id and attaches the requirement working copies.
       parameters:
       - in: path
         name: id
@@ -1060,28 +1042,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PermitApplication'
           description: ''
-    delete:
-      operationId: api_permit_application_destroy
-      description: |-
-        GET/PUT/PATCH/DELETE a Permit Application and its nested tiles.
-
-        The update that first sets the submission date is the submission: it assigns
-        the application id and attaches the requirement working copies. PATCH applies
-        a partial diff; PUT replaces.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: permit_application'
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
   /bcap/api/permit_application/{id}/module/{module_tileid}:
     patch:
       operationId: api_permit_application_module_partial_update
@@ -1595,7 +1555,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -1628,7 +1589,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -1681,7 +1643,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -1714,7 +1677,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -1741,7 +1705,8 @@ paths:
 
         Owner-scoped: only the resources the user created. Declared verbs:
         GET (from generated/generate.json); the ListAPIView base
-        class serves the collection subset (GET/POST).
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
       parameters:
       - name: limit
         required: false
@@ -1774,7 +1739,8 @@ paths:
 
         Owner-scoped: requesting one created by another user returns 404. Declared
         verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset (GET/PUT/PATCH/DELETE).
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
       parameters:
       - in: path
         name: id
@@ -1880,10 +1846,10 @@ paths:
     get:
       operationId: api_workflow_draft_retrieve
       description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
+        GET/PATCH/DELETE a single draft. PATCH shallow-merges by section key --
+        untouched sections are kept, but a section present in the body is replaced
+        wholesale (no deep merge), so the client sends the complete section, not just
+        the fields that changed within it, and clears one by sending it empty.
       parameters:
       - in: path
         name: graph_slug
@@ -1898,48 +1864,6 @@ paths:
         required: true
       tags:
       - 'External: workflow_draft'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DraftRecord'
-          description: ''
-    put:
-      operationId: api_workflow_draft_update
-      description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
-      parameters:
-      - in: path
-        name: graph_slug
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: workflow_draft'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DraftPayload'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/DraftPayload'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/DraftPayload'
-        required: true
       security:
       - cookieAuth: []
       responses:
@@ -1952,10 +1876,10 @@ paths:
     patch:
       operationId: api_workflow_draft_partial_update
       description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
+        GET/PATCH/DELETE a single draft. PATCH shallow-merges by section key --
+        untouched sections are kept, but a section present in the body is replaced
+        wholesale (no deep merge), so the client sends the complete section, not just
+        the fields that changed within it, and clears one by sending it empty.
       parameters:
       - in: path
         name: graph_slug
@@ -1993,10 +1917,10 @@ paths:
     delete:
       operationId: api_workflow_draft_destroy
       description: |-
-        GET/PUT/PATCH/DELETE a single draft. PUT replaces the whole blob; PATCH
-        shallow-merges by section key -- untouched sections are kept, but a section
-        present in the body is replaced wholesale (no deep merge), so the client must
-        send the complete section, not just changed fields within it.
+        GET/PATCH/DELETE a single draft. PATCH shallow-merges by section key --
+        untouched sections are kept, but a section present in the body is replaced
+        wholesale (no deep merge), so the client sends the complete section, not just
+        the fields that changed within it, and clears one by sending it empty.
       parameters:
       - in: path
         name: graph_slug
@@ -5648,13 +5572,14 @@ components:
     ChecklistStep:
       type: object
       properties:
-        tileid:
-          type: string
-          format: uuid
         name:
           type: string
         description:
           type: string
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
       required:
       - description
       - name
@@ -6363,8 +6288,8 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus the step the
-        user is on and an optional frontend version and parent resource stamped on
-        create.
+        user is on and an optional frontend version, parent resource and owning
+        organization stamped on create.
       properties:
         data:
           oneOf:
@@ -6378,6 +6303,10 @@ components:
           - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
         current_step:
           type: string
+        organization_id:
+          type: string
+          description: Organization to file the draft under, so colleagues can pick
+            it up. Must be one the user belongs to.
         frontend_version:
           type: string
         parent_resource_id:
@@ -6386,6 +6315,10 @@ components:
       - data
     DraftRecord:
       type: object
+      description: |-
+        A saved draft: the stored form blob plus the metadata needed to resume it
+        -- which graph it belongs to, the step the user left off on, when it was last
+        saved, and whether that graph has been republished since.
       properties:
         data:
           oneOf:
@@ -6420,8 +6353,6 @@ components:
           nullable: true
         updated:
           type: string
-          format: date-time
-          nullable: true
       required:
       - data
       - frontend_version
@@ -6478,6 +6409,10 @@ components:
         industrial_sector:
           type: string
           description: Permit application's industrial sector (reference label).
+        organization:
+          type: string
+          description: Name of the organization the application is filed under (its
+            stamped owning_organization); empty when it was filed under none.
         permit_id:
           type: string
           nullable: true
@@ -7685,6 +7620,10 @@ components:
         industrial_sector:
           type: string
           description: Permit application's industrial sector (reference label).
+        organization:
+          type: string
+          description: Name of the organization the application is filed under (its
+            stamped owning_organization); empty when it was filed under none.
         permit_id:
           type: string
           nullable: true
@@ -10511,7 +10450,7 @@ components:
       type: object
       description: |-
         The checklist PATCH body: a requirement's name and its full ordered step
-        list. Declared as a serializer so the shape reaches the generated client.
+        list.
       properties:
         name:
           type: string
@@ -10523,8 +10462,8 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus the step the
-        user is on and an optional frontend version and parent resource stamped on
-        create.
+        user is on and an optional frontend version, parent resource and owning
+        organization stamped on create.
       properties:
         data:
           oneOf:
@@ -10538,6 +10477,10 @@ components:
           - $ref: '#/components/schemas/Site_Visit_Resource_Aliased_Data'
         current_step:
           type: string
+        organization_id:
+          type: string
+          description: Organization to file the draft under, so colleagues can pick
+            it up. Must be one the user belongs to.
         frontend_version:
           type: string
         parent_resource_id:
@@ -10921,6 +10864,10 @@ components:
         supplemental_information:
           allOf:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+        owning_organization:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
       required:
       - filing_type

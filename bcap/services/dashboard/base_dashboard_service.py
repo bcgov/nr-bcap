@@ -1,7 +1,7 @@
 from itertools import chain
 
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.dashboard.dashboard_types import (
     ApplicationCore,
     HcaPermit,
@@ -21,6 +21,21 @@ class BaseDashboardService(BaseGraphService):
     service, paging, and the related-HCA-permit lookup."""
 
     PA = PermitApplicationAliases
+
+    CARD_NODES = [
+        PA.PROJECT_NAME,
+        PA.APPLICATION_ID,
+        PA.FILING_TYPE,
+        PA.INDUSTRIAL_SECTOR,
+        PA.APPLICATION_PRIORITY_LEVEL,
+        PA.OWNING_ORGANIZATION,
+        PA.RELATED_PERMIT,
+        PA.MODULE_ID,
+        PA.MODULE_NAME,
+        PA.MODULE_ORDER,
+        PA.MODULE_COMPLETED_DATE,
+        PA.IS_MODULE_COMPLETED,
+    ]
 
     def __init__(self):
         self.contributors = ContributorService()
@@ -69,6 +84,7 @@ class BaseDashboardService(BaseGraphService):
             submission_type=display(self.PA.FILING_TYPE),
             industrial_sector=display(self.PA.INDUSTRIAL_SECTOR),
             priority_level=display(self.PA.APPLICATION_PRIORITY_LEVEL),
+            organization=display(self.PA.OWNING_ORGANIZATION),
             related_permit_id=self._resource_id(
                 self._node_value(aliased, self.PA.RELATED_PERMIT)
             ),

@@ -9,12 +9,14 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { useGettext } from 'vue3-gettext';
 import SortingBar from './SortingBar.vue';
 import {
+    fetchCompanyDraftCards,
     fetchCompanyProjects,
     fetchDraftCards,
     fetchMyProjects,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
+import { formatDate } from '@/bcap/util.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { permitModules } from './permitModules.ts';
 import type { ExternalDashboardCard } from '@/bcap/client/types.gen.ts';
@@ -26,13 +28,13 @@ const { $gettext } = useGettext();
 const router = useRouter();
 const cards = reactive({
     savedDrafts: [] as ExternalDashboardCard[],
+    companyDrafts: [] as ExternalDashboardCard[],
     submittedProjects: [] as ExternalDashboardCard[],
     companyProjects: [] as ExternalDashboardCard[],
 });
 
 enum DashboardTab {
-    MyProjects = 'my_projects',
-    CompanyProjects = 'company_projects',
+    Filings = 'filings',
     Drafts = 'drafts',
 }
 
@@ -46,6 +48,7 @@ const ui = reactive({
     searchQuery: '',
     currentSort: 'default',
     messagesOnly: false,
+    includeCompany: false,
     sortOrder: 'desc' as 'asc' | 'desc',
     lastUpdated: new Date(),
 });
@@ -61,8 +64,7 @@ const sortOptions = [
 ];
 
 const dashboardTabs = [
-    { label: 'My Projects', value: DashboardTab.MyProjects },
-    { label: 'Company Projects', value: DashboardTab.CompanyProjects },
+    { label: 'Filings', value: DashboardTab.Filings },
     { label: 'Drafts', value: DashboardTab.Drafts },
 ];
 
@@ -71,13 +73,16 @@ const isLoading = ref(true);
 const loadDashboardData = async () => {
     isLoading.value = true;
     try {
-        const [draftsData, projectsData, companyData] = await Promise.all([
-            fetchDraftCards(),
-            fetchMyProjects(),
-            fetchCompanyProjects(),
-        ]);
+        const [draftsData, companyDraftsData, projectsData, companyData] =
+            await Promise.all([
+                fetchDraftCards(),
+                fetchCompanyDraftCards(),
+                fetchMyProjects(),
+                fetchCompanyProjects(),
+            ]);
 
         cards.savedDrafts = draftsData;
+        cards.companyDrafts = companyDraftsData;
         cards.submittedProjects = projectsData;
         cards.companyProjects = companyData;
         ui.lastUpdated = new Date();
@@ -149,10 +154,14 @@ const {
     cards.savedDrafts = cards.savedDrafts.filter((d) => d.id !== draft.id);
 });
 
+const tabDrafts = computed(() =>
+    ui.includeCompany ? cards.companyDrafts : cards.savedDrafts,
+);
+
 const filteredDrafts = computed(() => {
     const drafts = ui.messagesOnly
-        ? cards.savedDrafts.filter((draft) => (draft.unread_messages || 0) > 0)
-        : cards.savedDrafts;
+        ? tabDrafts.value.filter((draft) => (draft.unread_messages || 0) > 0)
+        : tabDrafts.value;
     if (!ui.searchQuery) return drafts;
     const lowerQuery = ui.searchQuery.toLowerCase();
 
@@ -161,12 +170,8 @@ const filteredDrafts = computed(() => {
     );
 });
 
-// The two project tabs share every card, filter and sort; only the source
-// differs.
 const tabProjects = computed(() =>
-    ui.activeTab === DashboardTab.CompanyProjects
-        ? cards.companyProjects
-        : cards.submittedProjects,
+    ui.includeCompany ? cards.companyProjects : cards.submittedProjects,
 );
 
 const filteredProjects = computed(() => {
@@ -199,19 +204,14 @@ const shownCards = computed(() =>
 );
 
 const totalCards = computed(() =>
-    ui.activeTab === DashboardTab.Drafts
-        ? cards.savedDrafts
-        : tabProjects.value,
+    ui.activeTab === DashboardTab.Drafts ? tabDrafts.value : tabProjects.value,
 );
 
 const emptyProjectsNote = computed(() =>
-    ui.activeTab === DashboardTab.CompanyProjects
+    ui.includeCompany
         ? 'No company projects found.'
         : 'No submitted projects found.',
 );
-
-const cardDate = (iso?: string) =>
-    iso ? new Date(iso).toLocaleDateString() : '';
 
 const labelled = (label: string, value?: string) =>
     value ? `${label}: ${value}` : '';
@@ -255,6 +255,8 @@ const openResourceReport = (resourceId: string) => {
                 v-model:current-sort="ui.currentSort"
                 v-model:sort-order="ui.sortOrder"
                 v-model:messages-only="ui.messagesOnly"
+                v-model:include-company="ui.includeCompany"
+                include-company-label="Include company"
                 :tabs="dashboardTabs"
                 :last-updated="ui.lastUpdated"
                 :sort-options="sortOptions"
@@ -289,7 +291,7 @@ const openResourceReport = (resourceId: string) => {
                                     project.priority_level === 'High'
                                 "
                                 :cap-label="project.status || 'Submitted'"
-                                :cap-date="cardDate(project.created_date)"
+                                :cap-date="formatDate(project.created_date)"
                                 icon="fa-solid fa-folder-open"
                                 :body-title="
                                     project.project_name ||
@@ -299,18 +301,18 @@ const openResourceReport = (resourceId: string) => {
                                     project.application_number || 'No App #'
                                 "
                                 :body-subtitle2="project.industrial_sector"
-                                :body1="
+                                :body="[
                                     project.submission_type
                                         ? `Type: ${project.submission_type}`
-                                        : ''
-                                "
-                                :body2="
-                                    labelled('Permit', project.permit_number)
-                                "
-                                :body3="
-                                    buildModuleSummary(project.module_progress)
-                                "
-                                :footer-date="cardDate(project.created_date)"
+                                        : '',
+                                    labelled('Permit', project.permit_number),
+                                    buildModuleSummary(project.module_progress),
+                                    labelled(
+                                        'Organization',
+                                        project.organization,
+                                    ),
+                                ]"
+                                :footer-date="formatDate(project.created_date)"
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
                                 :unread-messages="project.unread_messages || 0"
@@ -341,7 +343,7 @@ const openResourceReport = (resourceId: string) => {
                                     "
                                     :cap-label="draft.status || 'Draft'"
                                     :cap-date="
-                                        cardDate(
+                                        formatDate(
                                             draft.updated_date ||
                                                 draft.created_date,
                                         )
@@ -352,31 +354,33 @@ const openResourceReport = (resourceId: string) => {
                                         draft.application_number || 'No App #'
                                     "
                                     :body-subtitle2="draft.industrial_sector"
-                                    :body1="
+                                    :body="[
                                         labelled(
                                             'Type',
                                             draftDescription(draft),
-                                        )
-                                    "
-                                    :body2="
+                                        ),
                                         labelled(
                                             'Updated',
-                                            cardDate(
+                                            formatDate(
                                                 draft.updated_date ||
                                                     draft.created_date,
                                             ),
-                                        )
-                                    "
-                                    :body3="
+                                        ),
                                         buildModuleSummary(
                                             draft.module_progress,
-                                        )
-                                    "
+                                        ),
+                                        labelled(
+                                            'Organization',
+                                            draft.organization,
+                                        ),
+                                    ]"
                                     :urgency="draft.urgency || 0"
                                     :unread-messages="
                                         draft.unread_messages || 0
                                     "
-                                    :footer-date="cardDate(draft.created_date)"
+                                    :footer-date="
+                                        formatDate(draft.created_date)
+                                    "
                                     :footer-name="draft.created_by_name"
                                     :search-query="ui.searchQuery"
                                     :route="draftRoute(draft)"

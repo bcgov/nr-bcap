@@ -107,8 +107,8 @@ class ProcessRequirementBuilder(ResourceBuilder):
 
     def update_checklist(self, requirement_id, name, steps):
         """Set a requirement's name and reconcile its ordered checklist steps
-        (dicts of an optional tile id, name, and description): steps matched by
-        tile id are updated, new ones appended, the rest deleted.
+        (each an optional tile id, name, and description): steps matched by tile
+        id are updated, new ones appended, the rest deleted.
 
         A partial save, so only the name and step tiles are touched and the rest
         of the requirement is left alone rather than reset by a full-tree
@@ -130,20 +130,20 @@ class ProcessRequirementBuilder(ResourceBuilder):
         }
         reconciled = []
         for order, step in enumerate(steps, start=1):
-            tile = existing.get(str(step.get("tileid")))
+            tile = existing.get(str(step.tileid))
             if tile is None:
                 tile = self.append_blank_tile_for_group(
                     data, groups.SUB_REQUIREMENT_N1, {}
                 )
             sub = tile.aliased_data
-            sub.checklist_item_name = self.localized(step.get("name", ""))
-            sub.checklist_item_description = self.localized(step.get("description", ""))
+            sub.checklist_item_name = self.localized(step.name)
+            sub.checklist_item_description = self.localized(step.description)
             sub.checklist_item_sort_order = order
             reconciled.append(tile)
         kept = {str(tile.tileid) for tile in reconciled}
         removed = [tile for tileid, tile in existing.items() if tileid not in kept]
         data.aliased_data.sub_requirement_n1 = reconciled
-        requirement.save(force_admin=True, partial=True, index=False)
+        requirement.save(**self._save_as, partial=True, index=False)
         for tile in removed:
             Tile.objects.get(pk=tile.tileid).delete()
         return requirement
@@ -162,7 +162,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
             )
         else:
             assessment.aliased_data.requirement_status = satisfied
-        requirement.save(force_admin=True, partial=True, index=False)
+        requirement.save(**self._save_as, partial=True, index=False)
         return requirement
 
     def clone_requirement(self, template_id, parent=None, submission=None):

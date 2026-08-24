@@ -1,8 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
 import { mount, shallowMount } from '@vue/test-utils';
-import { useDraftStore } from '@/bcap/stores/draft.ts';
 
-import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 
 import Step1 from './Step1_About.vue';
 import Step2 from './Step2_Overview.vue';

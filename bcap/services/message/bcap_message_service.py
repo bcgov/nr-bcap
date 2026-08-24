@@ -15,17 +15,21 @@ from django.db.models import (
     When,
 )
 
+from arches.app.models.models import TileModel
 from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.graph import node_info
+from bcap.util.bcap_aliases import RESOURCE_ID
 from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
 from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.util.auth.groups import is_internal_user
 from bcap.util.dates import parse_iso_or_set_value
+from bcap.util.tiles import group_data, resource_instance_id
 
 logger = logging.getLogger(__name__)
 
@@ -90,8 +94,9 @@ class BcapMessageService(BaseGraphService):
         )
         return str(context_id) if context_id else None
 
-    def set_read_state(self, message_id, data):
-        """Set (a datetime) or clear (None) a message's read date from a PATCH body."""
+    def set_read_state(self, request, message_id, data):
+        """Set (a datetime) or clear (None) a message's read date from a PATCH
+        body. Takes the request so the edit log records who saved."""
         if not self._payload_has(data, self.A.MESSAGE_READ_DATE):
             return None
         read_date = self._payload_node_value(data, self.A.MESSAGE_READ_DATE)
@@ -100,8 +105,7 @@ class BcapMessageService(BaseGraphService):
         ).get()
         content = message.aliased_data.message_content.aliased_data
         content.message_read_date = parse_iso_or_set_value(read_date)
-        # Save as a reviewer (admin): provisional edit applies if not?
-        message.save(request=None, force_admin=True, partial=True)
+        message.save(request=request, partial=True)
         return message
 
     def set_archived_state(self, message_id, data, username):
@@ -126,20 +130,18 @@ class BcapMessageService(BaseGraphService):
             self._delete_tiles(existing)
             return
         if not existing.exists():
-            node_id, nodegroup_id = self._node_info(
-                MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY
-            )
+            node_id, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
             Tile(
                 resourceinstance_id=thread_id,
                 nodegroup_id=nodegroup_id,
-                data={node_id: [{"resourceId": str(contributor_id)}]},
+                data={node_id: [{RESOURCE_ID: str(contributor_id)}]},
             ).save()
 
     def unarchive_thread_for_all(self, message_id):
         """Clear every viewer's archive of a message's thread so a new reply
         resurfaces it for all. A new root has no such tiles, so it no-ops."""
         thread_id = self._thread_id(message_id)
-        _, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
+        _, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
         self._delete_tiles(
             Tile.objects.filter(
                 nodegroup_id=nodegroup_id,
@@ -156,10 +158,10 @@ class BcapMessageService(BaseGraphService):
 
     def _archived_by_tiles(self, contributor_id, thread_id=None):
         """archived_by tiles naming this contributor, optionally scoped to one root."""
-        node_id, nodegroup_id = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
+        node_id, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, self.A.ARCHIVED_BY)
         tiles = Tile.objects.filter(
             nodegroup_id=nodegroup_id,
-            **{f"data__{node_id}__contains": [{"resourceId": str(contributor_id)}]},
+            **{f"data__{node_id}__contains": [{RESOURCE_ID: str(contributor_id)}]},
         )
         if thread_id is not None:
             tiles = tiles.filter(resourceinstance_id=str(thread_id))
@@ -189,12 +191,13 @@ class BcapMessageService(BaseGraphService):
         return alias in cls._group_aliased_data(data, cls.A.MESSAGE_CONTENT)
 
     @classmethod
-    def _payload_relation_id(cls, data, alias):
-        """Resource id under the payload's message_content resource node, or None."""
-        node_value = cls._payload_node_value(data, alias)
+    def _payload_relation_id(cls, data, alias, group=None):
+        """Resource id under a payload resource node, or None. Reads the
+        message_content group unless another is named."""
+        node_value = cls._group_node_value(data, group or cls.A.MESSAGE_CONTENT, alias)
         if isinstance(node_value, list):
             node_value = node_value[0] if node_value else {}
-        return (node_value or {}).get("resourceId")
+        return (node_value or {}).get(RESOURCE_ID)
 
     @classmethod
     def _is_internal_payload(cls, data):
@@ -203,9 +206,10 @@ class BcapMessageService(BaseGraphService):
 
     def prepare_message(self, data, user):
         """Fill in the author and enforce internal-message rules on a create payload."""
-        self.set_author(data, user.username)
+        author_id = self.set_author(data, user.username)
         if not is_internal_user(user):
             self._set_node(data, self.A.IS_INTERNAL, False)
+        self.set_reply_recipient(data, author_id)
         self.validate_internal_recipient(data)
 
     @classmethod
@@ -214,15 +218,43 @@ class BcapMessageService(BaseGraphService):
         contributor_id = ContributorService().username_contributor_id(username)
         if not contributor_id:
             raise NoAuthorContributor(username)
-        cls._set_node(data, cls.A.MESSAGE_AUTHOR, [{"resourceId": contributor_id}])
+        cls._set_node(data, cls.A.MESSAGE_AUTHOR, [{RESOURCE_ID: contributor_id}])
+        return contributor_id
+
+    @classmethod
+    def set_reply_recipient(cls, data, author_id):
+        """Address a reply from its thread rather than the payload, so a third party
+        joining a thread writes to the root's other party instead of whichever
+        contributor the client happened to have selected."""
+        thread_id = cls._payload_relation_id(
+            data, cls.A.RELATED_SOURCE_MESSAGE, cls.A.RELATED_SOURCE_MESSAGE
+        )
+        if not thread_id:
+            return
+        author_node, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, cls.A.MESSAGE_AUTHOR)
+        recipient_node, _ = node_info(MESSAGE_GRAPH_SLUG, cls.A.RECIPIENT)
+        root = (
+            TileModel.objects.filter(
+                nodegroup_id=nodegroup_id, resourceinstance_id=thread_id
+            )
+            .values_list("data", flat=True)
+            .first()
+        )
+        if not root:
+            return
+        root_author = resource_instance_id(root.get(author_node))
+        recipient = (
+            resource_instance_id(root.get(recipient_node))
+            if root_author == str(author_id)
+            else root_author
+        )
+        if recipient:
+            cls._set_node(data, cls.A.RECIPIENT, [{RESOURCE_ID: recipient}])
 
     @classmethod
     def _set_node(cls, data, alias, node_value):
         """Set a node's value in the payload's message_content group, creating the path."""
-        content = data.setdefault("aliased_data", {}).setdefault(
-            cls.A.MESSAGE_CONTENT, {}
-        )
-        content.setdefault("aliased_data", {})[alias] = {"node_value": node_value}
+        group_data(data, cls.A.MESSAGE_CONTENT)[alias] = {"node_value": node_value}
 
     def validate_internal_recipient(self, data):
         """Refuse an internal-only message whose recipient is not staff."""
@@ -370,7 +402,7 @@ class BcapMessageService(BaseGraphService):
         """The multipart field key the create endpoint expects for attachment
         files: file-list_<attachments node id>, resolved from the graph so no
         node id is hard-coded on the client."""
-        node_id, _ = self._node_info(MESSAGE_GRAPH_SLUG, self.A.ATTACHMENTS)
+        node_id, _ = node_info(MESSAGE_GRAPH_SLUG, self.A.ATTACHMENTS)
         return f"file-list_{node_id}"
 
     def unread_count_across(self, context_ids, username):

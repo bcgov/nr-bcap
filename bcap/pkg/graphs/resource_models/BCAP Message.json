@@ -636,7 +636,7 @@
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": "/search/resources?advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5%22%3A%7B%22op%22%3A%22not_null%22%2C%22val%22%3A%22%22%7D%7D%5D"
+                        "searchString": "/bcap/search?advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5%22%3A%7B%22op%22%3A%22not_null%22%2C%22val%22%3A%22%22%7D%7D%5D"
                     },
                     "datatype": "resource-instance",
                     "description": null,
@@ -742,7 +742,7 @@
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": "/search/resources?advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5%22%3A%7B%22op%22%3A%22not_null%22%2C%22val%22%3A%22%22%7D%7D%5D"
+                        "searchString": "/bcap/search?advanced-search=%5B%7B%22op%22%3A%22and%22%2C%22a80514f2-7d9d-4aa4-b9f3-629bde6c1fd5%22%3A%7B%22op%22%3A%22not_null%22%2C%22val%22%3A%22%22%7D%7D%5D"
                     },
                     "datatype": "resource-instance",
                     "description": null,

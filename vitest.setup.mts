@@ -2,26 +2,59 @@ import { beforeAll, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { config, RouterLinkStub } from '@vue/test-utils';
 
-// Components render <router-link>, but tests mock vue-router without registering
-// the component, so Vue warns it can't resolve. Stub it globally: the built-in
-// stub renders an <a> and records `to`, silencing the warning everywhere.
+// silencing the warning everywhere.
 config.global.stubs.RouterLink = RouterLinkStub;
+
+// The url names tests assert on, at the paths Django really serves them from,
+// so an expected url in a test reads like the one in the browser. Anything not
+// listed falls through to the Proxy below.
+const urls: Record<string, unknown> = {
+    api_process_requirements: (id: string) =>
+        `/bcap/api/process_requirement/${id}`,
+    api_resource: (graphSlug: string, id: string) =>
+        `/bcap/api/resource/${graphSlug}/${id}`,
+    api_resource_blank: (graphSlug: string) =>
+        `/bcap/api/resource/${graphSlug}/blank`,
+    api_site_related_resources: (graphSlug: string, id: string) =>
+        `/bcap/api/arch_site_related_resources/${graphSlug}/${id}`,
+    api_workflow_draft: (graphSlug: string) =>
+        `/bcap/api/workflow_draft/${graphSlug}`,
+    api_workflow_draft_all: '/bcap/api/workflow_draft',
+    assignable_contributors: '/bcap/api/contributors/assignable',
+    assignable_groups: '/bcap/api/assignable_groups',
+    bcap_message_detail: (messageId: string) =>
+        `/bcap/api/bcap_message/${messageId}`,
+    bcap_message_resource_threads: (resourceId: string) =>
+        `/bcap/api/bcap_message/resource/${resourceId}/threads`,
+    bcap_message_thread_messages: (threadId: string) =>
+        `/bcap/api/bcap_message/thread/${threadId}`,
+    dashboard: '/bcap/api/dashboard',
+    dashboard_external: '/bcap/api/dashboard/external',
+    module_requirement: (
+        permitId: string,
+        moduleTileId: string,
+        requirementId: string,
+    ) =>
+        `/bcap/api/permit_application/${permitId}/module/${moduleTileId}/requirement/${requirementId}`,
+    permit_application_create: '/bcap/api/permit_application',
+    plugin: (slug: string) => `/plugins/${slug}`,
+    registration_link: '/bcap/api/registration_link',
+    seed_process_requirements: (permitId: string, permitType: string) =>
+        `/bcap/api/permit_application/${permitId}/process_requirement/${permitType}`,
+    unlinked_contributors: '/bcap/api/unlinked_contributors',
+};
 
 beforeAll(() => {
     // routes.ts (and others) call arches.urls.<name>(...) at import time, so the
-    // stub needs a urls object. The Proxy returns a path-building function for any
-    // url name, so tests that only transitively import these modules don't crash.
+    // stub needs a urls object. Unnamed urls fall back to a path built from the
+    // arguments, so a module only transitively imported doesn't crash.
     vi.mock('arches', () => ({
         default: {
-            urls: new Proxy(
-                {},
-                {
-                    get:
-                        () =>
-                        (...args: string[]) =>
-                            '/' + args.join('/'),
-                },
-            ),
+            urls: new Proxy(urls, {
+                get: (target, name: string) =>
+                    target[name] ??
+                    ((...args: string[]) => '/' + args.join('/')),
+            }),
         },
     }));
 

@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { FilingType } from '@/bcap/apps/Permit/filingType.ts';
 import { modulesForFilingType, graphForModule } from './permitModules.ts';

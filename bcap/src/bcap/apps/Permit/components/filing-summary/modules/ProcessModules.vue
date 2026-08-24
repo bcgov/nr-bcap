@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
@@ -7,7 +7,6 @@ import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
-import Menu from 'primevue/menu';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { graphForModule } from '@/bcap/apps/Permit/components/dashboard/permitModules.ts';
@@ -23,7 +22,6 @@ import ModulePanelHeader from '@/bcap/apps/Permit/components/filing-summary/modu
 import RequirementRow from '@/bcap/apps/Permit/components/filing-summary/modules/RequirementRow.vue';
 import {
     STATUS_ICON,
-    type AddableModule,
     type ModuleRow,
     type RequirementItem,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
@@ -33,7 +31,6 @@ const props = defineProps<{
     permitId: string;
     adminTileId: string;
     isStaff?: boolean;
-    addableModules?: AddableModule[];
     applicationId?: string;
     summaryFields?: ReviewField[];
 }>();
@@ -43,12 +40,17 @@ const emit = defineEmits<{
     (event: 'changed'): void;
 }>();
 
+const router = useRouter();
+const route = useRoute();
+
+// The requirement a dashboard card drilled in on, if any.
+const focusRequirementId = String(route?.query?.requirement ?? '');
+
 const {
     state,
     ui,
     hasModules,
     isLoadingRequirements,
-    onAddModule,
     onAddRequirement,
     onToggleCompleted,
     onToggleRequirement,
@@ -63,6 +65,7 @@ const {
     adminTileId: props.adminTileId,
     tiles: () => props.modules,
     onChanged: () => emit('changed'),
+    focusRequirementId,
 });
 
 const dnd = useDragReorder();
@@ -74,11 +77,23 @@ onMounted(() => {
     if (props.isStaff) loadAssignees();
 });
 
-const router = useRouter();
-const route = useRoute();
-
 // Optional chaining: the component is mounted without a router in tests.
 const staffQuery = computed(() => route?.query?.staff ?? '');
+
+// The drilled-in row only exists once its panel is open and its requirements
+// have hydrated. Post-flush so the row is in the DOM, and the watcher stops
+// itself once it has scrolled.
+const stopFocusScroll = watch(
+    () => state.rows,
+    () => {
+        if (!focusRequirementId) return;
+        const row = document.getElementById(`req-${focusRequirementId}`);
+        if (!row) return;
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        stopFocusScroll();
+    },
+    { deep: true, flush: 'post' },
+);
 
 // The button only shows once requirements have loaded, so the host ids are
 // already populated here.
@@ -107,19 +122,12 @@ const onViewSubmission = (
     router.push({ name: routeNames.moduleReview, query: route?.query ?? {} });
 };
 
-const addModuleMenu = ref();
-
-const addModuleItems = computed(() =>
-    (props.addableModules ?? []).map((mod) => ({
-        label: mod.label,
-        icon: 'fa-solid fa-plus',
-        command: () => onAddModule(mod),
-    })),
-);
-
 // All requirements are shown, internal ones included.
 const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     row.requirements;
+
+const archesResourceId = (row: ModuleRow, index: number): string =>
+    row.hostResourceId || (index === 0 ? props.permitId : '');
 </script>
 
 <template>
@@ -145,32 +153,6 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
                 Complete
             </span>
         </div>
-        <div
-            v-if="isStaff && addableModules && addableModules.length"
-            class="add-module-bar"
-        >
-            <Button
-                type="button"
-                class="add-module-chip"
-                :disabled="ui.adding !== null"
-                @click="addModuleMenu?.toggle($event)"
-            >
-                <i
-                    class="fa-solid"
-                    :class="ui.adding ? 'fa-circle-notch fa-spin' : 'fa-plus'"
-                ></i>
-                Add module
-                <i class="fa-solid fa-chevron-down add-module-caret"></i>
-            </Button>
-            <Menu
-                ref="addModuleMenu"
-                :model="addModuleItems"
-                popup
-                append-to="body"
-                class="req-more-menu"
-            />
-        </div>
-
         <Accordion
             v-model:value="ui.openPanels"
             multiple
@@ -193,6 +175,7 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
                     <ModulePanelHeader
                         :row="row"
                         :is-staff="isStaff"
+                        :resource-id="archesResourceId(row, index)"
                         :toggling="ui.togglingModule"
                         @toggle="onToggleCompleted(row)"
                         @remove="moduleRemove.open(row)"
@@ -235,11 +218,17 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
                                     v-for="(
                                         requirement, reqIndex
                                     ) in visibleRequirements(row)"
+                                    :id="`req-${requirement.resourceId}`"
                                     :key="
                                         requirement.resourceId ||
                                         requirement.name
                                     "
                                     class="requirement-item"
+                                    :class="{
+                                        'is-focused':
+                                            requirement.resourceId ===
+                                            focusRequirementId,
+                                    }"
                                     @dragover.prevent
                                     @drop="
                                         dnd.drop(
@@ -420,9 +409,11 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
 }
 
-/* Neutral while collapsed; the pale blue band means "expanded". */
+/* White while collapsed; the pale blue band means "expanded". Grey here muddies
+   against the page, so the card is lifted with a hairline instead of a fill. */
 .submitted-modules :deep(.p-accordionheader) {
-    background-color: #f6f7f9;
+    background-color: #fff;
+    border: 1px solid #e6eaef;
     color: var(--bc-navy);
     padding: 1.9rem 1.5rem 1.9rem 2.5rem;
     /* Match the panel's corners so the open-state outline follows them. */
@@ -461,7 +452,7 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
 }
 
 .submitted-modules :deep(.p-accordionheader:hover) {
-    background-color: #e2ecf8;
+    background-color: #f4f8fd;
 }
 
 /* Match the draft accordion's content inset so both lists align. The top inset
@@ -522,46 +513,6 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     color: #2563eb;
 }
 
-.add-module-bar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: 2.5rem;
-}
-
-/* Outlined by default, filled on hover. */
-.add-module-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.6rem 1.2rem;
-    font-weight: 700;
-    color: #3a3f4b;
-    background: #ffffff;
-    border: 1px solid #3a3f4b;
-    border-radius: 4px;
-    cursor: pointer;
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
-}
-
-.add-module-chip:hover:not(:disabled) {
-    background: #3a3f4b;
-    color: #ffffff;
-}
-
-.add-module-caret {
-    font-size: 0.85em;
-    margin-left: 0.2rem;
-}
-
-.add-module-chip:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
 .modules-accordion {
     display: flex;
     flex-direction: column;
@@ -608,6 +559,11 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     border-bottom: 1px solid #e5e7eb;
 }
 
+/* The column strip's own edge separates it, so the summary's rule would double up. */
+.module-summary:has(+ .requirement-head) {
+    border-bottom: 0;
+}
+
 /* The summary is plain data, so labels and values both read as text even when
    a value happens to be a link. */
 .module-summary :deep(.div-grid-cols dt) {
@@ -633,11 +589,15 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
 
 /* Column labels over the rows. Uses the same trailing grid as a requirement row
    (RequirementRow reads these vars), so the labels sit over their columns. */
+/* Bleeds through the content padding so the strip meets the panel edges; when a
+   module leads with its summary the head keeps the gap above it. */
 .requirement-head {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.6rem 0.5rem;
+    /* Overshoots the inset; the panel clips it, so no sliver at the edges. */
+    margin-inline: -3rem;
+    padding: 0.6rem 3rem;
     border-bottom: 1px solid #e5e7eb;
     background: #f8fafc;
     font-size: 11px;
@@ -645,6 +605,12 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #94a3b8;
+}
+
+/* Where nothing precedes it, close the content's top inset too so the strip
+   butts against the module header. */
+.requirement-head:first-child {
+    margin-top: -1.5rem;
 }
 
 .head-task {
@@ -677,24 +643,42 @@ const visibleRequirements = (row: ModuleRow): RequirementItem[] =>
 .requirement-list {
     list-style: none;
     margin: 0;
-    padding: 0.25rem 0 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    /* No gap: the rows are full-bleed bands, so their border is the divider. */
+    gap: 0;
 }
 
+/* Every row bleeds through the content inset, so hover and the focused band are
+   the same width; the extra 0.5rem of padding keeps the columns where they were. */
 .requirement-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 0.5rem;
+    margin-inline: -3rem;
+    padding: 0.9rem 3.5rem;
     border-bottom: 1px solid #e5e7eb;
-    border-radius: 4px;
     transition: background-color 0.12s ease;
 }
 
 .requirement-item:hover {
     background-color: #f6f9fd;
+}
+
+/* The drilled-in row reads as a flat band, marked by the navy edge rather than
+   elevation. */
+/* Gold, not blue: blue already means "selected" on the panels and the option
+   lists, so the current row would read as one of those. Muted off --bc-gold so
+   it marks the row without alarming. */
+.requirement-item.is-focused {
+    background-color: #fffbf0;
+    border-left: 6px solid #d99e0b;
+    padding-left: calc(3.5rem - 6px);
+}
+
+.requirement-item.is-focused:hover {
+    background-color: #fef6e4;
 }
 
 .req-drag-handle {

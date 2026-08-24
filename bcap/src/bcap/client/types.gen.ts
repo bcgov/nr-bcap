@@ -1748,9 +1748,9 @@ export type BordenNumberDatatypeAliasedNodeDataMax13 = {
 };
 
 export type ChecklistStep = {
-    tileid?: string;
     name: string;
     description: string;
+    tileid?: string | null;
 };
 
 export type ConceptAliasedNodeData = {
@@ -2085,8 +2085,8 @@ export type DocumentSubmissionSubmissionPhotographsTile = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type DraftPayload = {
     data:
@@ -2099,10 +2099,19 @@ export type DraftPayload = {
         | PermitApplicationResourceAliasedData
         | SiteVisitResourceAliasedData;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
 
+/**
+ * A saved draft: the stored form blob plus the metadata needed to resume it
+ * -- which graph it belongs to, the step the user left off on, when it was last
+ * saved, and whether that graph has been republished since.
+ */
 export type DraftRecord = {
     data:
         | AlterationResourceAliasedData
@@ -2124,7 +2133,7 @@ export type DraftRecord = {
     parent_resource_id?: string;
     current_step?: string;
     created?: string | null;
-    updated?: string | null;
+    updated?: string;
 };
 
 export type ExternalDashboardCard = {
@@ -2180,6 +2189,10 @@ export type ExternalDashboardCard = {
      * Permit application's industrial sector (reference label).
      */
     industrial_sector?: string;
+    /**
+     * Name of the organization the application is filed under (its stamped owning_organization); empty when it was filed under none.
+     */
+    organization?: string;
     /**
      * Resourceinstanceid of the related HCA Permit; its drill-in GUID.
      */
@@ -2796,6 +2809,10 @@ export type InternalDashboardCard = {
      * Permit application's industrial sector (reference label).
      */
     industrial_sector?: string;
+    /**
+     * Name of the organization the application is filed under (its stamped owning_organization); empty when it was filed under none.
+     */
+    organization?: string;
     /**
      * Resourceinstanceid of the related HCA Permit; its drill-in GUID.
      */
@@ -4138,7 +4155,7 @@ export type PatchedBcapMessagePatch = {
 
 /**
  * The checklist PATCH body: a requirement's name and its full ordered step
- * list. Declared as a serializer so the shape reaches the generated client.
+ * list.
  */
 export type PatchedChecklistPatch = {
     name?: string;
@@ -4147,8 +4164,8 @@ export type PatchedChecklistPatch = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type PatchedDraftPayload = {
     data?:
@@ -4161,6 +4178,10 @@ export type PatchedDraftPayload = {
         | PermitApplicationResourceAliasedData
         | SiteVisitResourceAliasedData;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -4339,6 +4360,7 @@ export type PermitApplicationApplicationIdentificationAliasedData = {
     map_or_hip?: ReferenceAliasedNodeData | null;
     is_replacement?: BooleanAliasedNodeData | null;
     supplemental_information?: FileListAliasedNodeData | null;
+    owning_organization?: ResourceInstanceAliasedNodeData | null;
 };
 
 export type PermitApplicationApplicationIdentificationTile = {
@@ -8659,8 +8681,8 @@ export type DocumentSubmissionSubmissionPhotographsTileWritable = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type DraftPayloadWritable = {
     data:
@@ -8673,10 +8695,19 @@ export type DraftPayloadWritable = {
         | PermitApplicationResourceAliasedDataWritable
         | SiteVisitResourceAliasedDataWritable;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
 
+/**
+ * A saved draft: the stored form blob plus the metadata needed to resume it
+ * -- which graph it belongs to, the step the user left off on, when it was last
+ * saved, and whether that graph has been republished since.
+ */
 export type DraftRecordWritable = {
     data:
         | AlterationResourceAliasedDataWritable
@@ -8694,7 +8725,7 @@ export type DraftRecordWritable = {
     parent_resource_id?: string;
     current_step?: string;
     created?: string | null;
-    updated?: string | null;
+    updated?: string;
 };
 
 export type FileListAliasedNodeDataWritable = {
@@ -10307,8 +10338,8 @@ export type PatchedBcapMessagePatchWritable = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export type PatchedDraftPayloadWritable = {
     data?:
@@ -10321,6 +10352,10 @@ export type PatchedDraftPayloadWritable = {
         | PermitApplicationResourceAliasedDataWritable
         | SiteVisitResourceAliasedDataWritable;
     current_step?: string;
+    /**
+     * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
+     */
+    organization_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -10428,6 +10463,7 @@ export type PermitApplicationApplicationIdentificationAliasedDataWritable = {
     map_or_hip?: ReferenceAliasedNodeDataWritable | null;
     is_replacement?: BooleanAliasedNodeDataWritable | null;
     supplemental_information?: FileListAliasedNodeDataWritable | null;
+    owning_organization?: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
 export type PermitApplicationApplicationIdentificationTileWritable = {
@@ -12856,11 +12892,16 @@ export type ApiDashboardExternalRetrieveData = {
         limit?: number;
         page?: number;
         /**
-         * * `DRAFTS` - Drafts
-         * * `CREATED_BY_ME` - My Projects
-         * * `CREATED_BY_ASSOCIATED_COMPANIES` - Created by associated companies
+         * * `DRAFTS_CREATED_BY_ME` - My drafts
+         * * `DRAFTS_BY_ASSOCIATED_ORGANIZATIONS` - Drafts of associated organizations
+         * * `FILINGS_CREATED_BY_ME` - My filings
+         * * `FILINGS_BY_ASSOCIATED_ORGANIZATIONS` - Filings of associated organizations
          */
-        status?: 'DRAFTS' | 'CREATED_BY_ME' | 'CREATED_BY_ASSOCIATED_COMPANIES';
+        status?:
+            | 'DRAFTS_CREATED_BY_ME'
+            | 'DRAFTS_BY_ASSOCIATED_ORGANIZATIONS'
+            | 'FILINGS_CREATED_BY_ME'
+            | 'FILINGS_BY_ASSOCIATED_ORGANIZATIONS';
     };
     url: '/bcap/api/dashboard/external';
 };
@@ -13204,25 +13245,6 @@ export type ApiPermitApplicationCreateResponses = {
 export type ApiPermitApplicationCreateResponse =
     ApiPermitApplicationCreateResponses[keyof ApiPermitApplicationCreateResponses];
 
-export type ApiPermitApplicationDestroyData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/bcap/api/permit_application/{id}/';
-};
-
-export type ApiPermitApplicationDestroyResponses = {
-    /**
-     * No response body
-     */
-    204: void;
-};
-
-export type ApiPermitApplicationDestroyResponse =
-    ApiPermitApplicationDestroyResponses[keyof ApiPermitApplicationDestroyResponses];
-
 export type ApiPermitApplicationRetrieveData = {
     body?: never;
     path: {
@@ -13254,22 +13276,6 @@ export type ApiPermitApplicationPartialUpdateResponses = {
 
 export type ApiPermitApplicationPartialUpdateResponse =
     ApiPermitApplicationPartialUpdateResponses[keyof ApiPermitApplicationPartialUpdateResponses];
-
-export type ApiPermitApplicationUpdateData = {
-    body?: PermitApplicationWritable;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/bcap/api/permit_application/{id}/';
-};
-
-export type ApiPermitApplicationUpdateResponses = {
-    200: PermitApplication;
-};
-
-export type ApiPermitApplicationUpdateResponse =
-    ApiPermitApplicationUpdateResponses[keyof ApiPermitApplicationUpdateResponses];
 
 export type ApiPermitApplicationModuleDestroyData = {
     body?: never;
@@ -13787,23 +13793,6 @@ export type ApiWorkflowDraftPartialUpdateResponses = {
 
 export type ApiWorkflowDraftPartialUpdateResponse =
     ApiWorkflowDraftPartialUpdateResponses[keyof ApiWorkflowDraftPartialUpdateResponses];
-
-export type ApiWorkflowDraftUpdateData = {
-    body: DraftPayloadWritable;
-    path: {
-        graph_slug: string;
-        id: string;
-    };
-    query?: never;
-    url: '/bcap/api/workflow_draft/{graph_slug}/{id}';
-};
-
-export type ApiWorkflowDraftUpdateResponses = {
-    200: DraftRecord;
-};
-
-export type ApiWorkflowDraftUpdateResponse =
-    ApiWorkflowDraftUpdateResponses[keyof ApiWorkflowDraftUpdateResponses];
 
 export type UserProfileRetrieveData = {
     body?: never;

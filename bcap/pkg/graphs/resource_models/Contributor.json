@@ -472,23 +472,16 @@
             "functions_x_graphs": [
                 {
                     "config": {
+                        "class_name": "ContributorDescriptors",
                         "descriptor_types": {
-                            "description": {
-                                "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
-                                "string_template": "<Contributor Type>, <Contributor Role>"
-                            },
-                            "map_popup": {
-                                "nodegroup_id": "",
-                                "string_template": ""
-                            },
-                            "name": {
-                                "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
-                                "string_template": "<Contributor Name>, <First Name>"
-                            }
+                            "description": {},
+                            "map_popup": {},
+                            "name": {}
                         },
+                        "module": "bcap.functions.contributor_descriptors",
                         "triggering_nodegroups": []
                     },
-                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "function_id": "60000000-0000-0000-0000-000000001007",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "id": "a62973b8-f0d8-4e1c-a47b-323dd4ad4bb2"
                 }
@@ -621,7 +614,7 @@
                                 "should": []
                             }
                         },
-                        "searchString": "/bcap/search?advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A[{\"labels\"%3A[{\"id\"%3A\"891278e4-5d67-571a-a0c4-414896d36d1c\"%2C\"language_id\"%3A\"en\"%2C\"list_item_id\"%3A\"fd2053d3-c010-519a-97e5-52f3c7b508e2\"%2C\"value\"%3A\"Organization\"%2C\"valuetype_id\"%3A\"prefLabel\"}]%2C\"uri\"%3A\"%2Fbcap%2Fplugins%2Fcontrolled-list-manager%2Fitem%2Ffd2053d3-c010-519a-97e5-52f3c7b508e2\"}]}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"f\"}}]"
+                        "searchString": "/bcap/search?advanced-search=[{\"op\"%3A\"and\"%2C\"c4eca2de-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A[{\"labels\"%3A[{\"id\"%3A\"891278e4-5d67-571a-a0c4-414896d36d1c\"%2C\"language_id\"%3A\"en\"%2C\"list_item_id\"%3A\"fd2053d3-c010-519a-97e5-52f3c7b508e2\"%2C\"value\"%3A\"Organization\"%2C\"valuetype_id\"%3A\"prefLabel\"}]%2C\"uri\"%3A\"https://localhost/bcap/plugins/controlled-list-manager/item/fd2053d3-c010-519a-97e5-52f3c7b508e2\"}]}%2C\"e2f1c29a-c500-11ed-9089-5254004d77d3\"%3A{\"op\"%3A\"eq\"%2C\"val\"%3A\"\"}%2C\"c4ec9b2c-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"c4eca13a-9dea-11ed-9a7b-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"a5b2cd72-c4f4-11ed-a06d-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"b5ed0072-c4f4-11ed-94de-5254004d77d3\"%3A{\"op\"%3A\"~\"%2C\"lang\"%3A\"en\"%2C\"val\"%3A\"\"}%2C\"99643f1e-9e4e-11ed-b6d5-5254004d77d3\"%3A{\"val\"%3A\"f\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": null,

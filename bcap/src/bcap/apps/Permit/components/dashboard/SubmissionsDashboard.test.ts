@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 
@@ -7,55 +6,23 @@ vi.mock('vue-router', () => ({
     useRouter: () => ({ push }),
 }));
 
-vi.mock('@/bcap/apps/Permit/routes.ts', () => ({
-    routeNames: {
-        baseModule: 'baseModule',
-        investigationModule: 'investigationModule',
-        permitDetails: 'permitDetails',
-    },
-}));
-
 const fetchDraftCards = vi.fn();
+const fetchCompanyDraftCards = vi.fn();
 const fetchMyProjects = vi.fn();
 const fetchCompanyProjects = vi.fn();
 const deleteDraft = vi.fn();
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchDraftCards: (...args: unknown[]) => fetchDraftCards(...args),
+    fetchCompanyDraftCards: (...args: unknown[]) =>
+        fetchCompanyDraftCards(...args),
     fetchMyProjects: (...args: unknown[]) => fetchMyProjects(...args),
     fetchCompanyProjects: (...args: unknown[]) => fetchCompanyProjects(...args),
     deleteDraft: (...args: unknown[]) => deleteDraft(...args),
 }));
 
-vi.mock('vue3-gettext', () => ({
-    useGettext: () => ({ $gettext: (text: string) => text }),
-}));
-
-vi.mock('arches', () => ({
-    default: { urls: { plugin: (slug: string) => `/plugins/${slug}` } },
-}));
-
 import SubmissionsDashboard from './SubmissionsDashboard.vue';
 
-// Stand-in for ProjectCard so the props the dashboard computes are inspectable.
-const ProjectCardStub = defineComponent({
-    name: 'ProjectCard',
-    props: {
-        bodyTitle: { type: String, default: '' },
-        bodySubtitle1: { type: String, default: '' },
-        bodySubtitle2: { type: String, default: '' },
-        capLabel: { type: String, default: '' },
-        capDate: { type: String, default: '' },
-        capPriority: { type: Boolean, default: false },
-        body1: { type: String, default: '' },
-        body2: { type: String, default: '' },
-        body3: { type: String, default: '' },
-        footerName: { type: String, default: '' },
-        footerDate: { type: String, default: '' },
-        unreadMessages: { type: Number, default: 0 },
-        route: { type: Object, default: () => ({}) },
-    },
-    template: '<div class="project-card-stub">{{ bodyTitle }}</div>',
-});
+import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 
 const CardStub = defineComponent({
     name: 'CenterCard',
@@ -123,7 +90,7 @@ function makeDraft(overrides: Record<string, unknown> = {}) {
 }
 
 const STUBS = {
-    ProjectCard: ProjectCardStub,
+    RouterLink: true,
     Card: CardStub,
     Panel: PassThrough,
     Fluid: PassThrough,
@@ -149,9 +116,20 @@ async function switchTab(
     await flushPromises();
 }
 
+// The checkbox that widens the active tab to the company's own cards.
+async function includeCompany(
+    wrapper: Awaited<ReturnType<typeof mountDashboard>>,
+) {
+    wrapper
+        .findComponent({ name: 'SortingBar' })
+        .vm.$emit('update:includeCompany', true);
+    await flushPromises();
+}
+
 beforeEach(() => {
     localStorage.clear();
     fetchDraftCards.mockReset().mockResolvedValue([]);
+    fetchCompanyDraftCards.mockReset().mockResolvedValue([]);
     fetchMyProjects.mockReset().mockResolvedValue([]);
     fetchCompanyProjects.mockReset().mockResolvedValue([]);
     deleteDraft.mockReset().mockResolvedValue(undefined);
@@ -189,9 +167,9 @@ describe('project cards', () => {
     it('maps a submitted project onto the card props', async () => {
         fetchMyProjects.mockResolvedValue([makeProject()]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
-        const card = wrapper.findComponent(ProjectCardStub);
+        const card = wrapper.findComponent(ProjectCard);
         expect(card.props('bodyTitle')).toBe('My Project');
         expect(card.props('bodySubtitle1')).toBe('APP-123');
         expect(card.props('bodySubtitle2')).toBe('Mining');
@@ -203,12 +181,13 @@ describe('project cards', () => {
     it('labels the submission type, permit and module progress', async () => {
         fetchMyProjects.mockResolvedValue([makeProject()]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
-        const card = wrapper.findComponent(ProjectCardStub);
-        expect(card.props('body1')).toBe('Type: Site Visit');
-        expect(card.props('body2')).toBe('Permit: PN-9');
-        expect(card.props('body3')).toContain('1/3 modules complete');
+        const card = wrapper.findComponent(ProjectCard);
+        const body = card.props('body') as string[];
+        expect(body[0]).toBe('Type: Site Visit');
+        expect(body[1]).toBe('Permit: PN-9');
+        expect(body[2]).toContain('1/3 modules complete');
     });
 
     it('omits the type and permit lines when the values are missing', async () => {
@@ -216,19 +195,20 @@ describe('project cards', () => {
             makeProject({ submission_type: '', permit_number: '' }),
         ]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
-        const card = wrapper.findComponent(ProjectCardStub);
-        expect(card.props('body1')).toBe('');
-        expect(card.props('body2')).toBe('');
+        const card = wrapper.findComponent(ProjectCard);
+        const body = card.props('body') as string[];
+        expect(body[0]).toBe('');
+        expect(body[1]).toBe('');
     });
 
     it('routes to the permit details view on click', async () => {
         fetchMyProjects.mockResolvedValue([makeProject()]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
-        await wrapper.findComponent(ProjectCardStub).trigger('click');
+        await wrapper.findComponent(ProjectCard).trigger('click');
 
         expect(push).toHaveBeenCalledWith({
             name: 'permitDetails',
@@ -242,7 +222,7 @@ describe('project cards', () => {
             makeProject({ id: 'b', project_name: 'Quarry Dig' }),
         ]);
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         wrapper
             .findComponent({ name: 'SortingBar' })
@@ -250,7 +230,7 @@ describe('project cards', () => {
         await flushPromises();
 
         const titles = wrapper
-            .findAllComponents(ProjectCardStub)
+            .findAllComponents(ProjectCard)
             .map((card) => card.props('bodyTitle'));
         expect(titles).toEqual(['Quarry Dig']);
     });
@@ -276,13 +256,13 @@ describe('project cards', () => {
                 }),
             ]);
             const wrapper = await mountDashboard();
-            await switchTab(wrapper, 'my_projects');
+            await switchTab(wrapper, 'filings');
             wrapper
                 .findComponent({ name: 'SortingBar' })
                 .vm.$emit('update:search', query);
             await flushPromises();
             return wrapper
-                .findAllComponents(ProjectCardStub)
+                .findAllComponents(ProjectCard)
                 .map((card) => card.props('bodyTitle'));
         };
 
@@ -292,35 +272,36 @@ describe('project cards', () => {
         expect(await matches('forestry')).toEqual(['Bridge Survey']);
     });
 
-    it('shows the associated companies scope on the company tab', async () => {
+    it('swaps in the company scope when the company checkbox is on', async () => {
         fetchMyProjects.mockResolvedValue([
             makeProject({ id: 'mine', project_name: 'Mine' }),
-            makeProject({ id: 'mine-2', project_name: 'Mine Two' }),
         ]);
+        // The company scope already carries the user's own cards back.
         fetchCompanyProjects.mockResolvedValue([
+            makeProject({ id: 'mine', project_name: 'Mine' }),
             makeProject({ id: 'theirs', project_name: 'Colleague App' }),
         ]);
         const wrapper = await mountDashboard();
+        await switchTab(wrapper, 'filings');
 
-        await switchTab(wrapper, 'company_projects');
+        await includeCompany(wrapper);
 
         const titles = wrapper
-            .findAllComponents(ProjectCardStub)
+            .findAllComponents(ProjectCard)
             .map((card) => card.props('bodyTitle'));
-        expect(titles).toEqual(['Colleague App']);
-        // The counts follow the tab, not whichever list loaded first.
+        expect(titles).toEqual(['Mine', 'Colleague App']);
         const bar = wrapper.findComponent({ name: 'SortingBar' });
-        expect(bar.props('shown')).toBe(1);
-        expect(bar.props('total')).toBe(1);
+        expect(bar.props('shown')).toBe(2);
+        expect(bar.props('total')).toBe(2);
     });
 
-    it('names the empty state after the tab', async () => {
+    it('names the empty state after the scope', async () => {
         const wrapper = await mountDashboard();
 
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
         expect(wrapper.text()).toContain('No submitted projects found.');
 
-        await switchTab(wrapper, 'company_projects');
+        await includeCompany(wrapper);
         expect(wrapper.text()).toContain('No company projects found.');
     });
 });
@@ -333,13 +314,13 @@ describe('drafts', () => {
         ]);
         const wrapper = await mountDashboard();
 
-        const cards = wrapper.findAllComponents(ProjectCardStub);
+        const cards = wrapper.findAllComponents(ProjectCard);
         expect(cards.map((card) => card.props('bodyTitle'))).toEqual([
             'Draft One',
             'Draft Two',
         ]);
         // The filing type comes off the card, not a static draft label.
-        expect(cards[0].props('body1')).toBe(
+        expect((cards[0].props('body') as string[])[0]).toBe(
             'Type: Permit Application - Standard',
         );
     });
@@ -348,9 +329,9 @@ describe('drafts', () => {
         fetchDraftCards.mockResolvedValue([makeDraft({ unread_messages: 3 })]);
         const wrapper = await mountDashboard();
 
-        expect(
-            wrapper.findComponent(ProjectCardStub).props('unreadMessages'),
-        ).toBe(3);
+        expect(wrapper.findComponent(ProjectCard).props('unreadMessages')).toBe(
+            3,
+        );
     });
 
     it('names and resumes a module draft through its own workflow', async () => {
@@ -364,9 +345,11 @@ describe('drafts', () => {
         ]);
         const wrapper = await mountDashboard();
 
-        const card = wrapper.findComponent(ProjectCardStub);
+        const card = wrapper.findComponent(ProjectCard);
         expect(card.props('bodyTitle')).toBe('Investigation');
-        expect(card.props('body1')).toBe('Type: Investigation Draft');
+        expect((card.props('body') as string[])[0]).toBe(
+            'Type: Investigation Draft',
+        );
         // The permit it hangs off, so the card says what it belongs to.
         expect(card.props('bodySubtitle1')).toBe('APP-1');
         expect(card.props('route')).toEqual({
@@ -388,9 +371,11 @@ describe('drafts', () => {
         ]);
         const wrapper = await mountDashboard();
 
-        const card = wrapper.findComponent(ProjectCardStub);
+        const card = wrapper.findComponent(ProjectCard);
         expect(card.props('bodyTitle')).toBe('Investigation');
-        expect(card.props('body1')).toBe('Type: Investigation Draft');
+        expect((card.props('body') as string[])[0]).toBe(
+            'Type: Investigation Draft',
+        );
         // The permit exists, so the card opens its filing summary with the
         // draft's own section expanded.
         expect(card.props('route')).toEqual({
@@ -415,20 +400,20 @@ describe('drafts', () => {
 describe('tab persistence', () => {
     it('starts on drafts and remembers the chosen tab', async () => {
         const wrapper = await mountDashboard();
-        await switchTab(wrapper, 'my_projects');
+        await switchTab(wrapper, 'filings');
 
         expect(localStorage.getItem('bcap.externalDashboard.tab')).toBe(
-            'my_projects',
+            'filings',
         );
     });
 
     it('restores a stored tab on mount', async () => {
-        localStorage.setItem('bcap.externalDashboard.tab', 'my_projects');
+        localStorage.setItem('bcap.externalDashboard.tab', 'filings');
         fetchMyProjects.mockResolvedValue([makeProject()]);
 
         const wrapper = await mountDashboard();
 
-        expect(wrapper.findComponent(ProjectCardStub).exists()).toBe(true);
+        expect(wrapper.findComponent(ProjectCard).exists()).toBe(true);
     });
 
     it('ignores an unrecognised stored tab', async () => {

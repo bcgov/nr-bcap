@@ -14,19 +14,22 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationGroupAliases as group_aliases,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA
+from bcap.util.tiles import group_data
 from bcap.util.indexing import bulk_index
 
 
 class PermitApplicationService:
     """Assigns the id and attaches requirements on first submission."""
 
-    def __init__(self, requirement_service=None):
-        self._requirements = requirement_service or ProcessRequirementService()
+    def __init__(self, request=None, requirement_service=None):
+        # The request rides along so requirement saves name the acting user in
+        # the edit log; the read-only callers build one without it.
+        self._requirements = requirement_service or ProcessRequirementService(request)
 
     def submission_context_ids_for_permits(self, permits, requirements_by_permit=None):
-        """Map each permit to the resource ids its unread counts span (the permit
-        and its requirements' submission hosts); pass known requirement ids to
-        skip a query."""
+        """Map each permit to the resource ids its unread counts span (the permit,
+        its requirements, and their submission hosts); pass known requirement ids
+        to skip a query."""
         permit_ids = [str(permit.pk) for permit in permits]
         contexts = {pk: {pk} for pk in permit_ids}
 
@@ -40,7 +43,10 @@ class PermitApplicationService:
         )
         for permit_id, requirement_ids in requirements_by_permit.items():
             for requirement_id in requirement_ids:
-                hosts = hosts_by_requirement.get(requirement_id, ())
+                # The requirement row's message dialog files against the
+                # requirement itself, so it is a context in its own right.
+                contexts[permit_id].add(str(requirement_id))
+                hosts = hosts_by_requirement.get(str(requirement_id), ())
                 contexts[permit_id].update(hosts)
         return contexts
 
@@ -116,11 +122,7 @@ class PermitApplicationService:
         to the application in flow order, and return the cloned module so a
         rejected save can delete everything it created. The module id and
         requirement ids are filled in by the assign-module-ids save hook."""
-        admin = (
-            data.setdefault(ALIASED_DATA, {})
-            .setdefault(group_aliases.APPLICATION_ADMIN, {ALIASED_DATA: {}})
-            .setdefault(ALIASED_DATA, {})
-        )
+        admin = group_data(data, group_aliases.APPLICATION_ADMIN)
         cloned = self._requirements.create_working_copies()
         modules = admin.setdefault(group_aliases.PROCESS_MODULE, [])
         modules.append(

@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import PermitHeaderBand, { type PermitHeader } from './PermitHeaderBand.vue';
 
@@ -7,51 +6,61 @@ const makeHeader = (overrides: Partial<PermitHeader> = {}): PermitHeader => ({
     applicationNumber: 'APP-42',
     submissionType: 'Permit Application - Standard',
     sector: 'Mining',
+    organization: 'Acme Corp',
     submittedDate: '2026-07-23',
     ...overrides,
 });
 
+const meta = (wrapper: ReturnType<typeof mount>) =>
+    wrapper.findAll('.meta-part').map((part) => part.text());
+
 describe('PermitHeaderBand', () => {
-    it('renders the project name', () => {
+    it('titles the band with the project name and its file number', () => {
         const wrapper = mount(PermitHeaderBand, {
             props: { header: makeHeader() },
         });
         expect(wrapper.find('.project-name').text()).toBe('Riverside Dig');
+        expect(wrapper.find('.application-number').text()).toBe('APP-42');
     });
 
-    it('joins the meta line with a middot', () => {
+    it('lists the organization, submission type, and sector', () => {
         const wrapper = mount(PermitHeaderBand, {
             props: { header: makeHeader() },
         });
-        expect(wrapper.find('.permit-meta').text()).toContain(
-            'APP-42 · Permit Application - Standard · Mining',
-        );
+        expect(meta(wrapper)).toEqual([
+            'Acme Corp',
+            'Permit Application - Standard',
+            'Mining',
+        ]);
+        expect(wrapper.find('.meta-flag').exists()).toBe(false);
     });
 
-    it('drops empty parts from the meta line without stray middots', () => {
+    it('drops an empty part rather than leaving a stray separator', () => {
         const wrapper = mount(PermitHeaderBand, {
-            props: { header: makeHeader({ submissionType: '' }) },
+            props: { header: makeHeader({ organization: '' }) },
         });
-        const text = wrapper.find('.permit-meta').text();
-        // The empty submission type is dropped: one join middot, not two.
-        expect(text).toContain('APP-42 · Mining');
-        expect(text).not.toContain('· ·');
-        expect(wrapper.find('.meta-unset').exists()).toBe(false);
+        expect(meta(wrapper)).toEqual([
+            'Permit Application - Standard',
+            'Mining',
+        ]);
     });
 
-    it('shows the unset-sector note when no sector is given', () => {
+    it('flags a missing sector', () => {
         const wrapper = mount(PermitHeaderBand, {
             props: { header: makeHeader({ sector: '' }) },
         });
-        expect(wrapper.find('.meta-unset').exists()).toBe(true);
+        expect(meta(wrapper)).toEqual([
+            'Acme Corp',
+            'Permit Application - Standard',
+        ]);
+        expect(wrapper.find('.meta-flag').text()).toBe('Sector not specified');
     });
 
-    it('renders the actions slot when not yet submitted', () => {
+    it('renders the actions slot', () => {
         const wrapper = mount(PermitHeaderBand, {
             props: { header: makeHeader({ submittedDate: null }) },
             slots: { actions: '<button class="slotted">Submit</button>' },
         });
-        expect(wrapper.find('.submitted-text').exists()).toBe(false);
         expect(wrapper.find('.slotted').exists()).toBe(true);
     });
 });

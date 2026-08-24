@@ -43,9 +43,9 @@ export const zBordenNumberDatatypeAliasedNodeDataMax13 = z.object({
 });
 
 export const zChecklistStep = z.object({
-    tileid: z.uuid().optional(),
     name: z.string(),
-    description: z.string()
+    description: z.string(),
+    tileid: z.uuid().nullish()
 });
 
 /**
@@ -194,6 +194,7 @@ export const zExternalDashboardCard = z.object({
     application_number: z.string().optional(),
     submission_type: z.string().optional(),
     industrial_sector: z.string().optional(),
+    organization: z.string().optional(),
     permit_id: z.string().nullish(),
     permit_number: z.string().optional(),
     urgency: z.int().optional(),
@@ -226,6 +227,7 @@ export const zInternalDashboardCard = z.object({
     application_number: z.string().optional(),
     submission_type: z.string().optional(),
     industrial_sector: z.string().optional(),
+    organization: z.string().optional(),
     permit_id: z.string().nullish(),
     permit_number: z.string().optional(),
     permit_holder: z.string().optional(),
@@ -371,7 +373,7 @@ export const zPaginatedInformationRequestList = z.object({
 
 /**
  * The checklist PATCH body: a requirement's name and its full ordered step
- * list. Declared as a serializer so the shape reaches the generated client.
+ * list.
  */
 export const zPatchedChecklistPatch = z.object({
     name: z.string().optional(),
@@ -2451,7 +2453,8 @@ export const zPermitApplicationApplicationIdentificationAliasedData = z.object({
     project_name: zStringAliasedNodeData.nullable(),
     map_or_hip: zReferenceAliasedNodeData.nullish(),
     is_replacement: zBooleanAliasedNodeData.nullish(),
-    supplemental_information: zFileListAliasedNodeData.nullish()
+    supplemental_information: zFileListAliasedNodeData.nullish(),
+    owning_organization: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zPermitApplicationApplicationIdentificationTile = z.object({
@@ -4391,8 +4394,8 @@ export const zSiteVisitResourceAliasedData = z.object({
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export const zDraftPayload = z.object({
     data: z.union([
@@ -4406,10 +4409,16 @@ export const zDraftPayload = z.object({
         zSiteVisitResourceAliasedData
     ]),
     current_step: z.string().optional(),
+    organization_id: z.string().optional(),
     frontend_version: z.string().optional(),
     parent_resource_id: z.string().optional()
 });
 
+/**
+ * A saved draft: the stored form blob plus the metadata needed to resume it
+ * -- which graph it belongs to, the step the user left off on, when it was last
+ * saved, and whether that graph has been republished since.
+ */
 export const zDraftRecord = z.object({
     data: z.union([
         zAlterationResourceAliasedData,
@@ -4429,13 +4438,13 @@ export const zDraftRecord = z.object({
     parent_resource_id: z.string().optional(),
     current_step: z.string().optional(),
     created: z.iso.datetime({ offset: true, local: true }).nullish(),
-    updated: z.iso.datetime({ offset: true, local: true }).nullish()
+    updated: z.string().optional()
 });
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export const zPatchedDraftPayload = z.object({
     data: z.union([
@@ -4449,6 +4458,7 @@ export const zPatchedDraftPayload = z.object({
         zSiteVisitResourceAliasedData
     ]).optional(),
     current_step: z.string().optional(),
+    organization_id: z.string().optional(),
     frontend_version: z.string().optional(),
     parent_resource_id: z.string().optional()
 });
@@ -6844,7 +6854,8 @@ export const zPermitApplicationApplicationIdentificationAliasedDataWritable = z.
     project_name: zStringAliasedNodeDataWritable.nullable(),
     map_or_hip: zReferenceAliasedNodeDataWritable.nullish(),
     is_replacement: zBooleanAliasedNodeDataWritable.nullish(),
-    supplemental_information: zFileListAliasedNodeDataWritable.nullish()
+    supplemental_information: zFileListAliasedNodeDataWritable.nullish(),
+    owning_organization: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
 export const zPermitApplicationApplicationIdentificationTileWritable = z.object({
@@ -8652,8 +8663,8 @@ export const zSiteVisitResourceAliasedDataWritable = z.object({
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export const zDraftPayloadWritable = z.object({
     data: z.union([
@@ -8667,10 +8678,16 @@ export const zDraftPayloadWritable = z.object({
         zSiteVisitResourceAliasedDataWritable
     ]),
     current_step: z.string().optional(),
+    organization_id: z.string().optional(),
     frontend_version: z.string().optional(),
     parent_resource_id: z.string().optional()
 });
 
+/**
+ * A saved draft: the stored form blob plus the metadata needed to resume it
+ * -- which graph it belongs to, the step the user left off on, when it was last
+ * saved, and whether that graph has been republished since.
+ */
 export const zDraftRecordWritable = z.object({
     data: z.union([
         zAlterationResourceAliasedDataWritable,
@@ -8689,13 +8706,13 @@ export const zDraftRecordWritable = z.object({
     parent_resource_id: z.string().optional(),
     current_step: z.string().optional(),
     created: z.iso.datetime({ offset: true, local: true }).nullish(),
-    updated: z.iso.datetime({ offset: true, local: true }).nullish()
+    updated: z.string().optional()
 });
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version and parent resource stamped on
- * create.
+ * user is on and an optional frontend version, parent resource and owning
+ * organization stamped on create.
  */
 export const zPatchedDraftPayloadWritable = z.object({
     data: z.union([
@@ -8709,6 +8726,7 @@ export const zPatchedDraftPayloadWritable = z.object({
         zSiteVisitResourceAliasedDataWritable
     ]).optional(),
     current_step: z.string().optional(),
+    organization_id: z.string().optional(),
     frontend_version: z.string().optional(),
     parent_resource_id: z.string().optional()
 });
@@ -9046,9 +9064,10 @@ export const zApiDashboardExternalRetrieveQuery = z.object({
     limit: z.int().gte(1).lte(100).optional(),
     page: z.int().gte(1).optional(),
     status: z.enum([
-        'DRAFTS',
-        'CREATED_BY_ME',
-        'CREATED_BY_ASSOCIATED_COMPANIES'
+        'DRAFTS_CREATED_BY_ME',
+        'DRAFTS_BY_ASSOCIATED_ORGANIZATIONS',
+        'FILINGS_CREATED_BY_ME',
+        'FILINGS_BY_ASSOCIATED_ORGANIZATIONS'
     ]).optional()
 });
 
@@ -9164,15 +9183,6 @@ export const zApiPermitApplicationCreateBody = zPermitApplicationWritable;
 
 export const zApiPermitApplicationCreateResponse = zPermitApplication;
 
-export const zApiPermitApplicationDestroyPath = z.object({
-    id: z.uuid()
-});
-
-/**
- * No response body
- */
-export const zApiPermitApplicationDestroyResponse = z.void();
-
 export const zApiPermitApplicationRetrievePath = z.object({
     id: z.uuid()
 });
@@ -9186,14 +9196,6 @@ export const zApiPermitApplicationPartialUpdatePath = z.object({
 });
 
 export const zApiPermitApplicationPartialUpdateResponse = zPermitApplication;
-
-export const zApiPermitApplicationUpdateBody = zPermitApplicationWritable;
-
-export const zApiPermitApplicationUpdatePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiPermitApplicationUpdateResponse = zPermitApplication;
 
 export const zApiPermitApplicationModuleDestroyPath = z.object({
     id: z.uuid(),
@@ -9424,14 +9426,5 @@ export const zApiWorkflowDraftPartialUpdatePath = z.object({
 });
 
 export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
-
-export const zApiWorkflowDraftUpdateBody = zDraftPayloadWritable;
-
-export const zApiWorkflowDraftUpdatePath = z.object({
-    graph_slug: z.string(),
-    id: z.uuid()
-});
-
-export const zApiWorkflowDraftUpdateResponse = zDraftRecord;
 
 export const zUserProfileRetrieveResponse = zUserProfileResponse;

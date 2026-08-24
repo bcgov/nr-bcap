@@ -11,7 +11,7 @@ import SortingBar from './SortingBar.vue';
 import {
     getInternalDashboardData,
     type DashboardStatus,
-} from '@/bcap/components/pages/api.ts';
+} from '@/bcap/apps/Permit/api.ts';
 import type { InternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
 
@@ -20,6 +20,7 @@ const router = useRouter();
 
 interface ProjectData {
     id: string;
+    requirementId: string;
     unreadMessages: number;
     capPriority: boolean;
     capLabel: string;
@@ -28,11 +29,13 @@ interface ProjectData {
     bodyTitle: string;
     bodySubtitle1: string;
     bodySubtitle2: string;
-    body1?: string;
-    body2?: string;
-    body3?: string;
-    body4?: string;
-    body5?: string;
+    submissionType: string;
+    permitNumber: string;
+    permitHolder: string;
+    projectOfficer: string;
+    moduleSummary: string;
+    organization: string;
+    body: string[];
     footerDate: string;
     footerName?: string;
     class?: string;
@@ -46,6 +49,7 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
     return {
         id: rawItem.id,
+        requirementId: rawItem.requirement_id || '',
         unreadMessages: rawItem.unread_messages || 0,
 
         capPriority: isPriority,
@@ -57,17 +61,21 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
         bodySubtitle1: rawItem.application_number || 'No App #',
         bodySubtitle2: rawItem.industrial_sector || 'Sector',
 
-        body1: rawItem.submission_type
-            ? `Type: ${rawItem.submission_type}`
-            : undefined,
-        body2: rawItem.permit_number
-            ? `Permit: ${rawItem.permit_number}`
-            : undefined,
-        body3: rawItem.permit_holder
-            ? `Holder: ${rawItem.permit_holder}`
-            : undefined,
-        body4: `Officer: ${rawItem.project_officer || ''}`,
-        body5: buildModuleSummary(rawItem.module_progress),
+        submissionType: rawItem.submission_type || '',
+        permitNumber: rawItem.permit_number || '',
+        permitHolder: rawItem.permit_holder || '',
+        projectOfficer: rawItem.project_officer || '',
+        moduleSummary: buildModuleSummary(rawItem.module_progress),
+        organization: rawItem.organization || '',
+
+        body: [
+            rawItem.submission_type && `Type: ${rawItem.submission_type}`,
+            rawItem.permit_number && `Permit: ${rawItem.permit_number}`,
+            rawItem.permit_holder && `Holder: ${rawItem.permit_holder}`,
+            `Officer: ${rawItem.project_officer || ''}`,
+            buildModuleSummary(rawItem.module_progress),
+            rawItem.organization && `Organization: ${rawItem.organization}`,
+        ].filter(Boolean) as string[],
 
         footerDate: rawItem.requirement_due_date || 'Not Started',
         footerName: rawItem.ministry_assignee_name || 'Unassigned',
@@ -83,13 +91,14 @@ const sortOptions = [
     { label: 'Assigned To', value: 'footerName' },
     { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
-    { label: 'Permit Holder', value: 'body3' },
-    { label: 'Permit Number', value: 'body2' },
+    { label: 'Permit Holder', value: 'permitHolder' },
+    { label: 'Organization', value: 'organization' },
+    { label: 'Permit Number', value: 'permitNumber' },
     { label: 'Priority', value: 'capPriority' },
     { label: 'Process', value: 'capLabel' },
-    { label: 'Project Officer', value: 'body4' },
+    { label: 'Project Officer', value: 'projectOfficer' },
     { label: 'Sector', value: 'bodySubtitle2' },
-    { label: 'Submission Type', value: 'body1' },
+    { label: 'Submission Type', value: 'submissionType' },
 ];
 
 const internalTabs = [
@@ -150,10 +159,6 @@ const loadData = async () => {
     }
 };
 
-function handleSearch(searchTerm: string) {
-    state.currentSearch = searchTerm;
-}
-
 const displayedProjects = computed(() => {
     let filtered = state.rawProjects;
 
@@ -174,11 +179,7 @@ const displayedProjects = computed(() => {
                 item.bodyTitle?.toLowerCase().includes(query) ||
                 item.bodySubtitle1?.toLowerCase().includes(query) ||
                 item.bodySubtitle2?.toLowerCase().includes(query) ||
-                item.body1?.toLowerCase().includes(query) ||
-                item.body2?.toLowerCase().includes(query) ||
-                item.body3?.toLowerCase().includes(query) ||
-                item.body4?.toLowerCase().includes(query) ||
-                item.body5?.toLowerCase().includes(query) ||
+                item.body.some((line) => line.toLowerCase().includes(query)) ||
                 item.footerName?.toLowerCase().includes(query)
             );
         });
@@ -236,10 +237,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
         return;
     }
     // Staff open the permit view; isStaff enables the module edit controls.
+    // ?requirement is the one the card is showing, so the summary opens on it.
     router.push({
         name: routeNames.permitDetails,
         params: { id: item.id },
-        query: { staff: 'true' },
+        query: item.requirementId
+            ? { requirement: item.requirementId, staff: 'true' }
+            : { staff: 'true' },
     });
 };
 </script>
@@ -252,13 +256,13 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 v-model:current-sort="state.currentSort"
                 v-model:sort-order="state.sortOrder"
                 v-model:messages-only="state.messagesOnly"
+                v-model:search="state.currentSearch"
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
                 messages-only-label="Unread messages only"
                 :shown="state.isLoading ? 0 : displayedProjects.length"
                 :total="state.isLoading ? 0 : state.rawProjects.length"
-                @update:search="handleSearch"
                 @refresh="loadData"
             />
 
@@ -282,11 +286,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                     :key="item.id"
                     v-bind="item"
                     :unread-messages="item.unreadMessages"
-                    :body1="formatBodyLine(item.body1)"
-                    :body2="formatBodyLine(item.body2)"
-                    :body3="formatBodyLine(item.body3)"
-                    :body4="item.body4"
-                    :body5="formatBodyLine(item.body5)"
+                    :body="item.body.map(formatBodyLine)"
                     :route="{ name: item.route }"
                     :search-query="state.currentSearch"
                     @click.capture.prevent="onCardClick($event, item)"

@@ -2,29 +2,29 @@
 <rdf:RDF
   xmlns:dcterms="http://purl.org/dc/terms/"
   xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-  xmlns:arches="http://localhost:82/"
+  xmlns:arches="https://localhost/"
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
-  <skos:Concept rdf:about="http://localhost:82/c58875c7-694b-4a9b-ad91-73e0b99322c9">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/c58875c7-694b-4a9b-ad91-73e0b99322c9</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/c58875c7-694b-4a9b-ad91-73e0b99322c9">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/c58875c7-694b-4a9b-ad91-73e0b99322c9</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Proposed Archaeological Site Boundary</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
     <skos:inScheme>
-      <skos:ConceptScheme rdf:about="http://localhost:82/da20ba4d-3f96-4801-b5cd-f5e1800cad12">
+      <skos:ConceptScheme rdf:about="https://localhost/da20ba4d-3f96-4801-b5cd-f5e1800cad12">
         <dcterms:title>Site Visit Boundary Type</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/1ff72e70-8a0d-40b6-b8a0-d054b7cb927a">
+  <skos:Concept rdf:about="https://localhost/1ff72e70-8a0d-40b6-b8a0-d054b7cb927a">
     <skos:prefLabel xml:lang="en">Unprotected Area</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/da20ba4d-3f96-4801-b5cd-f5e1800cad12"/>
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/1ff72e70-8a0d-40b6-b8a0-d054b7cb927a</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/da20ba4d-3f96-4801-b5cd-f5e1800cad12"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/1ff72e70-8a0d-40b6-b8a0-d054b7cb927a</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="http://localhost:82/da9933b2-6b6c-435e-890e-21c78907625b">
-    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/da9933b2-6b6c-435e-890e-21c78907625b</dcterms:identifier>
+  <skos:Concept rdf:about="https://localhost/da9933b2-6b6c-435e-890e-21c78907625b">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/da9933b2-6b6c-435e-890e-21c78907625b</dcterms:identifier>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
     <skos:prefLabel xml:lang="en">Study Area</skos:prefLabel>
-    <skos:inScheme rdf:resource="http://localhost:82/da20ba4d-3f96-4801-b5cd-f5e1800cad12"/>
+    <skos:inScheme rdf:resource="https://localhost/da20ba4d-3f96-4801-b5cd-f5e1800cad12"/>
   </skos:Concept>
 </rdf:RDF>

@@ -28,7 +28,7 @@ from bcap.serializers.bcap_message_serializers import (
     ThreadsQuerySerializer,
 )
 from bcap.serializers.contributor_serializers import ContributorSummarySerializer
-from bcap.services.contributor_service import ContributorService
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     InternalMessageToExternal,
@@ -55,7 +55,7 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
         return BcapMessageService().root_queryset(
             self.kwargs["resource_id"],
             self.request.user,
-            archived=params.validated_data["archived"],
+            archived=params.validated_data.archived,
         )
 
 
@@ -176,7 +176,7 @@ class BcapMessageDetailView(
         service = BcapMessageService()
         # A PATCH can carry the read date, the archive flag, either, or both; each
         # setter no-ops when its own field is absent from the body.
-        service.set_read_state(self.kwargs["pk"], request.data)
+        service.set_read_state(request, self.kwargs["pk"], request.data)
         service.set_archived_state(
             self.kwargs["pk"], request.data, request.user.username
         )

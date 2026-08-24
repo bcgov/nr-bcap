@@ -1,13 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-        },
-    },
-}));
 
 const { fetchRequirementDetails } = vi.hoisted(() => ({
     fetchRequirementDetails: vi.fn(),
@@ -76,49 +67,7 @@ const moduleTile = (
         },
     }) as unknown as PermitApplicationProcessModuleTile;
 
-const detail = (opts: {
-    name?: string;
-    type?: string;
-    satisfied?: boolean;
-    internal?: boolean;
-    host?: string;
-}) => ({
-    aliased_data: {
-        requirement_identification: {
-            aliased_data: {
-                requirement_name: { display_value: opts.name ?? '' },
-                is_template_requirement: {
-                    aliased_data: {
-                        process_requirement_type: {
-                            display_value: opts.type ?? 'Standard',
-                        },
-                        is_internal_requirement: {
-                            node_value: opts.internal ?? false,
-                        },
-                    },
-                },
-            },
-        },
-        sub_requirement_assessment_n1: {
-            aliased_data: {
-                requirement_status: { node_value: opts.satisfied ?? false },
-            },
-        },
-        requirement_data: {
-            aliased_data: {
-                submission_data: {
-                    aliased_data: {
-                        submission_data: {
-                            node_value: opts.host
-                                ? [{ resourceId: opts.host }]
-                                : undefined,
-                        },
-                    },
-                },
-            },
-        },
-    },
-});
+import { requirementDetail as detail } from './testFixtures.ts';
 
 describe('type predicates', () => {
     it('matches the submission-bearing types regardless of case', () => {

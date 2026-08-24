@@ -5,6 +5,7 @@ attaches the process-requirement working copies."""
 import json
 from types import SimpleNamespace
 from unittest import mock
+from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
@@ -32,12 +33,24 @@ from arches_controlled_lists.models import ListItem
 from arches.app.models.models import ResourceInstance, TileModel
 
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
+from bcap.util.controlled_list import reference_value
 from bcap.util.graph import get_node, node_id
+from bcap.util.tiles import resource_instance_id, resource_instance_value
+from bcap.builders.contributor_builder import ContributorSpec
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.process_requirement.template_specs import load
 from bcap.util.i18n import localized_string
+from bcap.views.organization_helpers import block_organization
 
-from tests.permit_fixtures import seed_requirement_templates
+from tests.builders import FixtureBuilder, request_as
+from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.permit_fixtures import build_permit, seed_requirement_templates
+from tests.services.contributor_fixtures import (
+    make_contributor,
+    make_party,
+    make_user,
+)
 from tests.views.helpers import AuthTestHelper, login_as
 
 # The permit module's child requirements, seeded by migration from the spec.
@@ -121,7 +134,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         pk = cls._create_permit(cls._logged_in_client())
         host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
         service = ProcessRequirementService(
-            user=get_user_model().objects.get(username="admin")
+            request_as(get_user_model().objects.get(username="admin"))
         )
         return pk, host, service.attach_requirements(pk, "investigation", host)
 
@@ -252,16 +265,19 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             PERMIT_REQUIREMENTS,
         )
 
-    def test_submission_via_put_attaches_requirements(self):
-        pk = self._create()
-        # Round-trip the resource (so tile ids are preserved), set the date,
-        # and PUT it back.
-        body = self._get(pk)
-        body[ALIASED_DATA][group_aliases.APPLICATION_ADMIN] = {
-            ALIASED_DATA: {aliases.APPLICATION_SUBMISSION_DATE: "2026-06-18"}
-        }
-        self.assertEqual(self._put(pk, body).status_code, 200)
-        self.assertEqual(len(self._requirements(pk)), PERMIT_REQUIREMENTS)
+    def test_put_and_delete_are_not_allowed(self):
+        # A whole-resource replace would reset every node the body omits, the
+        # owning organization included. Submission goes through PATCH, and
+        # nothing deletes a permit through the API.
+        pk = self.draft_pk
+
+        self.assertEqual(self._put(pk, self._get(pk)).status_code, 405)
+        self.assertEqual(
+            self.client.delete(
+                reverse("api_permit_application", args=[pk])
+            ).status_code,
+            405,
+        )
 
     def test_submission_stamps_module_and_requirement_ids(self):
         # The assign-module-ids hook mints the module id on save and stamps each
@@ -304,7 +320,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         before = self._non_template_requirement_count()
 
         ProcessRequirementService(
-            user=get_user_model().objects.get(username="admin")
+            request_as(get_user_model().objects.get(username="admin"))
         ).remove_module(pk, module.tileid)
 
         admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
@@ -405,7 +421,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._requirement_count(), before)
 
     def test_failed_submission_rolls_back_requirements(self):
-        pk = self._create()
+        pk = self.draft_pk
         before = self._requirement_count()
         # Sets the submission date (so requirements clone) but nulls the
         # required project_name, so the save is rejected.
@@ -416,9 +432,16 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._patch(pk, payload).status_code, 400)
         self.assertEqual(self._requirement_count(), before)
 
-    def test_create_forbidden_without_resource_editor_role(self):
+    def test_create_allowed_for_any_signed_in_user(self):
+        """Applicants file their own applications, so creating needs a login and
+        nothing more; the owning organization stamped on create is what scopes
+        who reads it back."""
         self.idir_login_simulate(self.user)
-        self.assertEqual(self._post(create_payload()).status_code, 403)
+        self.assertEqual(self._post(create_payload()).status_code, 201)
+
+    def test_create_redirects_to_login_when_signed_out(self):
+        self.client.logout()
+        self.assertEqual(self._post(create_payload()).status_code, 302)
 
     def _nesting_variants(self, group):
         """A body missing the tree at each level: no aliased_data, no group,
@@ -579,7 +602,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertIn("Investigation", names)
 
         service = ProcessRequirementService(
-            user=get_user_model().objects.get(username="admin")
+            request_as(get_user_model().objects.get(username="admin"))
         )
         hosts = service.permit_module_tiles(pk, "investigation")
         self.assertIn(str(self.investigation_host.pk), [str(h.pk) for h in hosts])
@@ -593,11 +616,11 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_permit_module_hosts_only_what_is_attached(self):
         """The permit module hosts the permit itself once submitted, and only
-        then: a permit with no module has no hosts, and a module with
+        then: a permit carrying no permit module has no hosts, and a module with
         requirements but no host resources has none for another type."""
         service = ProcessRequirementService()
 
-        self.assertEqual(service.permit_module_tiles(self._create(), "permit"), [])
+        self.assertEqual(service.permit_module_tiles(self.draft_pk, "permit"), [])
 
         # The own-submission requirement points back at the permit, linked after
         # the save because the id exists only then.
@@ -669,7 +692,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
     def test_a_failed_link_rolls_the_clones_back_after_the_save(self):
         # The link runs after the permit is saved, so a failure there still
         # deletes every clone; the permit itself is already committed.
-        pk = self._create()
+        pk = self.draft_pk
         before = self._requirement_count()
 
         with mock.patch.object(
@@ -684,3 +707,190 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
         self.assertEqual(self._requirement_count(), before)
         self.assertTrue(ResourceTileTree.objects.filter(pk=pk).exists())
+
+
+@override_settings(ROOT_URLCONF="tests.test_urls")
+class PermitApplicationOrganizationTests(AuthTestHelper, TestCase):
+    """The owning-organization stamp: create records the creator's company, and
+    only branch staff may set or move it on an update."""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        ControlledListFixtures.seed()
+        cls.org = FixtureBuilder().make_contributor(
+            ContributorSpec(
+                reference_value("contributor", "contributor_type"), None, "Acme Corp"
+            )
+        )
+        cls.org_id = str(cls.org.pk)
+
+    def setUp(self):
+        super().setUp()
+        self.idir_login_simulate(get_user_model().objects.get(username="admin"))
+
+    def _owning_organization(self, pk):
+        node = node_id(GraphSlugs.PERMIT_APPLICATION, aliases.OWNING_ORGANIZATION)
+        tile = TileModel.objects.filter(
+            resourceinstance_id=pk, data__has_key=node
+        ).first()
+        return resource_instance_id(tile.data[node]) if tile else ""
+
+    def _post_as_member_of(self, orgs, payload=None):
+        with mock.patch.object(
+            OrganizationService, "organization_ids", return_value=orgs
+        ):
+            return self.client.post(
+                reverse("permit_application_create"),
+                data=json.dumps(payload or create_payload()),
+                content_type="application/json",
+            )
+
+    def test_create_stamps_the_creators_only_organization(self):
+        resp = self._post_as_member_of({self.org_id})
+
+        self.assertEqual(resp.status_code, 201)
+        pk = resp.json()["resourceinstanceid"]
+        self.assertEqual(self._owning_organization(pk), self.org_id)
+
+    def test_a_member_of_no_organization_creates_an_unstamped_application(self):
+        resp = self._post_as_member_of(set())
+
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(
+            self._owning_organization(resp.json()["resourceinstanceid"]), ""
+        )
+
+    def test_a_member_of_several_organizations_has_to_pick_one(self):
+        both = {self.org_id, str(uuid4())}
+
+        resp = self._post_as_member_of(both)
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("organization_id", resp.json())
+
+        payload = {**create_payload(), "organization_id": self.org_id}
+        self.assertEqual(self._post_as_member_of(both, payload).status_code, 201)
+
+    def test_an_application_cannot_be_filed_under_someone_elses_organization(self):
+        payload = {**create_payload(), "organization_id": self.org_id}
+
+        self.assertEqual(self._post_as_member_of(set(), payload).status_code, 403)
+
+    def test_an_external_update_cannot_move_the_application(self):
+        # block_organization strips the node before the save ever sees it, so
+        # the stamp an applicant sends on submission is simply dropped.
+        body = {
+            ALIASED_DATA: {
+                group_aliases.APPLICATION_IDENTIFICATION: {
+                    ALIASED_DATA: {
+                        aliases.PROJECT_NAME: "Renamed",
+                        aliases.OWNING_ORGANIZATION: resource_instance_value(
+                            self.org_id
+                        ),
+                    }
+                }
+            }
+        }
+        request = SimpleNamespace(user=self.user, data=body)
+
+        block_organization(
+            request,
+            group_aliases.APPLICATION_IDENTIFICATION,
+            aliases.OWNING_ORGANIZATION,
+        )
+
+        identification = body[ALIASED_DATA][group_aliases.APPLICATION_IDENTIFICATION]
+        self.assertNotIn(aliases.OWNING_ORGANIZATION, identification[ALIASED_DATA])
+        self.assertEqual(identification[ALIASED_DATA][aliases.PROJECT_NAME], "Renamed")
+
+    def test_branch_staff_keep_the_organization_they_send(self):
+        admin = get_user_model().objects.get(username="admin")
+        body = {
+            ALIASED_DATA: {
+                group_aliases.APPLICATION_IDENTIFICATION: {
+                    ALIASED_DATA: {
+                        aliases.OWNING_ORGANIZATION: resource_instance_value(
+                            self.org_id
+                        )
+                    }
+                }
+            }
+        }
+
+        block_organization(
+            SimpleNamespace(user=admin, data=body),
+            group_aliases.APPLICATION_IDENTIFICATION,
+            aliases.OWNING_ORGANIZATION,
+        )
+
+        identification = body[ALIASED_DATA][group_aliases.APPLICATION_IDENTIFICATION]
+        self.assertIn(aliases.OWNING_ORGANIZATION, identification[ALIASED_DATA])
+
+    def test_a_body_that_never_mentions_the_group_is_left_alone(self):
+        body = {ALIASED_DATA: {}}
+
+        block_organization(
+            SimpleNamespace(user=self.user, data=body),
+            group_aliases.APPLICATION_IDENTIFICATION,
+            aliases.OWNING_ORGANIZATION,
+        )
+
+        self.assertEqual(body, {ALIASED_DATA: {}})
+
+
+class PermitApplicationCompanyVisibilityTests(TestCase):
+    """The detail route's scoping. The dashboard lists a colleague's filing under
+    the company scope, so opening it has to resolve rather than 404 -- the two
+    read the same organization stamp."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = FixtureBuilder()
+
+        acme = make_contributor(builder, "Acme Corp")
+        rival = make_contributor(builder, "Rival Corp")
+        cls.me, _ = make_party(
+            builder, "colleague-me", "Grace", "Hopper", associated_organization=acme
+        )
+        cls.colleague, _ = make_party(
+            builder, "colleague-them", "Alan", "Turing", associated_organization=acme
+        )
+        cls.outsider, _ = make_party(
+            builder, "rival", "Ada", "Lovelace", associated_organization=rival
+        )
+
+        # Created by the colleague, filed under the organization we share.
+        cls.company_permit = build_permit(
+            builder, "Colleague Filing", organization=acme
+        )
+        ResourceInstance.objects.filter(pk=cls.company_permit.pk).update(
+            principaluser=cls.colleague
+        )
+
+        # Created by the colleague, filed under an organization we do not share.
+        cls.rival_permit = build_permit(builder, "Rival Filing", organization=rival)
+        ResourceInstance.objects.filter(pk=cls.rival_permit.pk).update(
+            principaluser=cls.outsider
+        )
+
+    def _get(self, user, permit):
+        login_as(self.client, user)
+        return self.client.get(reverse("api_permit_application", args=[permit.pk]))
+
+    def test_creator_can_open_their_own_filing(self):
+        self.assertEqual(
+            self._get(self.colleague, self.company_permit).status_code, 200
+        )
+
+    def test_colleague_can_open_a_filing_filed_under_a_shared_organization(self):
+        # The regression: creator-only scoping 404s the card the company
+        # dashboard tab just listed.
+        self.assertEqual(self._get(self.me, self.company_permit).status_code, 200)
+
+    def test_another_organizations_filing_stays_hidden(self):
+        self.assertEqual(self._get(self.me, self.rival_permit).status_code, 404)
+
+    def test_a_user_with_no_organization_sees_only_their_own(self):
+        loner = make_user("loner")
+        self.assertEqual(self._get(loner, self.company_permit).status_code, 404)

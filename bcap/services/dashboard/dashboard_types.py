@@ -25,11 +25,15 @@ class ExternalDashboardStatus(TextChoices):
     may move to an applicant field on the application later.
     """
 
-    DRAFTS = "DRAFTS", "Drafts"
-    CREATED_BY_ME = "CREATED_BY_ME", "My Projects"
-    CREATED_BY_ASSOCIATED_COMPANIES = (
-        "CREATED_BY_ASSOCIATED_COMPANIES",
-        "Created by associated companies",
+    DRAFTS_CREATED_BY_ME = "DRAFTS_CREATED_BY_ME", "My drafts"
+    DRAFTS_BY_ASSOCIATED_ORGANIZATIONS = (
+        "DRAFTS_BY_ASSOCIATED_ORGANIZATIONS",
+        "Drafts of associated organizations",
+    )
+    FILINGS_CREATED_BY_ME = "FILINGS_CREATED_BY_ME", "My filings"
+    FILINGS_BY_ASSOCIATED_ORGANIZATIONS = (
+        "FILINGS_BY_ASSOCIATED_ORGANIZATIONS",
+        "Filings of associated organizations",
     )
 
 
@@ -99,6 +103,11 @@ class InternalDashboardCard:
     )
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
+    )
+    organization: str = described(
+        "Name of the organization the application is filed under (its stamped "
+        "owning_organization); empty when it was filed under none.",
+        "",
     )
     permit_id: str | None = described(
         "Resourceinstanceid of the related HCA Permit; its drill-in GUID.", None
@@ -206,6 +215,11 @@ class ExternalDashboardCard:
     industrial_sector: str = described(
         "Permit application's industrial sector (reference label).", ""
     )
+    organization: str = described(
+        "Name of the organization the application is filed under (its stamped "
+        "owning_organization); empty when it was filed under none.",
+        "",
+    )
     permit_id: str | None = described(
         "Resourceinstanceid of the related HCA Permit; its drill-in GUID.", None
     )
@@ -265,6 +279,7 @@ class ApplicationCore:
     submission_type: str = ""
     industrial_sector: str = ""
     priority_level: str = ""
+    organization: str = ""
     related_permit_id: str | None = None
 
 

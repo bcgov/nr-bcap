@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import arches from 'arches';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import { useMessageStore } from '@/bcap/stores/message.ts';
@@ -8,9 +9,11 @@ import {
     type ModuleRow,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
 
-defineProps<{
+const props = defineProps<{
     row: ModuleRow;
     isStaff?: boolean;
+    // The resource this module opens in Arches; blank hides the link.
+    resourceId?: string;
     // The module whose completion toggle is mid-save, if any.
     toggling?: string | null;
 }>();
@@ -26,14 +29,25 @@ const messageStore = useMessageStore();
 
 const moreMenu = ref();
 
-const moreItems = [
+const moreItems = computed(() => [
+    {
+        label: 'View in Arches',
+        icon: 'fa-solid fa-up-right-from-square',
+        visible: Boolean(props.resourceId),
+        command: () =>
+            window.open(
+                `${arches.urls.resource_editor}${props.resourceId}`,
+                '_blank',
+                'noopener',
+            ),
+    },
     {
         label: 'Delete module',
         icon: 'fa-solid fa-trash',
         class: 'req-more-danger',
         command: () => emit('remove'),
     },
-];
+]);
 </script>
 
 <template>

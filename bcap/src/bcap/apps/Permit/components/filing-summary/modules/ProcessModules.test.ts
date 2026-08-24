@@ -1,15 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-        },
-    },
-}));
 
 // The app mounts <Toast /> at its root; the composable only needs somewhere to
 // hand a failure to.
@@ -18,11 +9,19 @@ vi.mock('primevue/usetoast', () => ({
     useToast: () => ({ add: toastAdd }),
 }));
 
+const routerMock = vi.hoisted(() => ({
+    query: {} as Record<string, string>,
+    push: vi.fn(),
+}));
+vi.mock('vue-router', () => ({
+    useRoute: () => ({ query: routerMock.query }),
+    useRouter: () => ({ push: routerMock.push }),
+}));
+
 const api = vi.hoisted(() => ({
     patchModuleOrder: vi.fn(),
     fetchRequirementDetails: vi.fn(),
     removeModuleAndRequirements: vi.fn(),
-    submitModule: vi.fn(),
     reorderModuleRequirements: vi.fn(),
     addBlankRequirement: vi.fn(),
     removeRequirement: vi.fn(),
@@ -98,34 +97,7 @@ const moduleTile = (opts: {
         },
     }) as unknown as PermitApplicationProcessModuleTile;
 
-// A loaded requirement resource, in the shape the detail-fetch reads.
-const requirementDetail = (opts: {
-    type?: string;
-    satisfied?: boolean;
-    internal?: boolean;
-}) => ({
-    aliased_data: {
-        requirement_identification: {
-            aliased_data: {
-                is_template_requirement: {
-                    aliased_data: {
-                        process_requirement_type: {
-                            display_value: opts.type ?? 'Standard',
-                        },
-                        is_internal_requirement: {
-                            node_value: opts.internal ?? false,
-                        },
-                    },
-                },
-            },
-        },
-        sub_requirement_assessment_n1: {
-            aliased_data: {
-                requirement_status: { node_value: opts.satisfied ?? false },
-            },
-        },
-    },
-});
+import { requirementDetail } from './testFixtures.ts';
 
 function mountModules(props: Record<string, unknown>) {
     return mount(ProcessModules, {
@@ -139,9 +111,10 @@ function mountModules(props: Record<string, unknown>) {
 }
 
 beforeEach(() => {
+    routerMock.query = {};
+    routerMock.push.mockReset();
     Object.values(api).forEach((fn) => fn.mockReset());
     api.fetchRequirementDetails.mockResolvedValue({});
-    api.submitModule.mockResolvedValue(undefined);
     api.removeModuleAndRequirements.mockResolvedValue(undefined);
     api.addBlankRequirement.mockResolvedValue(undefined);
     api.removeRequirement.mockResolvedValue(undefined);
@@ -339,55 +312,6 @@ describe('ProcessModules staff controls', () => {
         expect(wrapper.find('.drag-handle').exists()).toBe(false);
         expect(wrapper.find('.module-remove').exists()).toBe(false);
         expect(wrapper.find('.add-req-btn').exists()).toBe(false);
-    });
-
-    it('offers the addable modules on one menu behind the add chip', () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-            addableModules: [
-                { id: 'investigation', label: 'Investigation' },
-                { id: 'permit', label: 'Permit' },
-            ],
-        });
-        const chip = wrapper.find('.add-module-chip');
-        // Enabled unless a submit is in flight; the parent decides which
-        // modules are offered, and they hang off the chip's menu.
-        expect((chip.element as HTMLButtonElement).disabled).toBe(false);
-        const items = wrapper.findComponent({ name: 'Menu' }).props('model');
-        expect(items.map((item: { label: string }) => item.label)).toEqual([
-            'Investigation',
-            'Permit',
-        ]);
-    });
-
-    it('hides the add bar when the parent offers no modules', () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-            addableModules: [],
-        });
-        expect(wrapper.find('.add-module-bar').exists()).toBe(false);
-    });
-
-    it('add-module submits a blank host then emits changed', async () => {
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            onAddModule: (m: { id: string }) => Promise<void>;
-        };
-
-        await vm.onAddModule({ id: 'investigation' });
-
-        expect(api.submitModule).toHaveBeenCalledWith(
-            'permit-1',
-            undefined,
-            'investigation',
-            {},
-        );
-        expect(wrapper.emitted('changed')).toHaveLength(1);
     });
 
     it('confirming module removal deletes it and emits changed', async () => {
@@ -689,22 +613,6 @@ describe('ProcessModules in-flight guards', () => {
     // A write that never settles, so the second call hits the guard.
     const pending = () => new Promise<void>(() => {});
 
-    it('ignores a second add-module while the first is in flight', async () => {
-        api.submitModule.mockReturnValue(pending());
-        const wrapper = mountModules({
-            modules: [staffModule()],
-            isStaff: true,
-        });
-        const vm = wrapper.vm as unknown as {
-            onAddModule: (m: { id: string }) => Promise<void>;
-        };
-
-        vm.onAddModule({ id: 'investigation' });
-        vm.onAddModule({ id: 'investigation' });
-
-        expect(api.submitModule).toHaveBeenCalledTimes(1);
-    });
-
     it('ignores a second requirement toggle while the first is in flight', async () => {
         api.setRequirementSatisfied.mockReturnValue(pending());
         const wrapper = mountModules({
@@ -745,6 +653,28 @@ describe('ProcessModules default open panel', () => {
             (empty.vm as unknown as { ui: { openPanels: string[] } }).ui
                 .openPanels,
         ).toEqual([]);
+    });
+
+    it('opens the module holding the drilled-in requirement instead of the top one', async () => {
+        routerMock.query = { requirement: 'r-9' };
+        const wrapper = mountModules({
+            modules: [
+                named('a', 1),
+                moduleTile({
+                    tileid: 'b',
+                    name: 'Module 2',
+                    order: 2,
+                    requirements: [
+                        { name: 'Req', resourceId: 'r-9', order: 1 },
+                    ],
+                }),
+            ],
+        });
+        await flushPromises();
+        const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
+
+        expect(vm.ui.openPanels).toEqual(['b']);
+        expect(wrapper.find('#req-r-9').classes()).toContain('is-focused');
     });
 
     it("leaves the user's choice alone once the tiles reload", async () => {

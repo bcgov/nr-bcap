@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
@@ -7,15 +6,6 @@ import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 const mockQuery = ref<Record<string, string | undefined>>({});
 vi.mock('vue-router', () => ({
     useRoute: () => ({ query: mockQuery.value }),
-}));
-
-vi.mock('arches', () => ({
-    default: {
-        urls: {
-            plugin: (slug: string) => `/plugins/${slug}`,
-            api_resource: (slug: string, id: string) => `/api/${slug}/${id}`,
-        },
-    },
 }));
 
 vi.mock('@/bcap/api.ts', () => ({ apiFetchJson: vi.fn() }));
@@ -199,7 +189,7 @@ describe('edit mode (route id present)', () => {
 
         expect(wrapper.find('h2').text()).toBe('Edit Process Requirement');
         expect(mockFetchJson).toHaveBeenCalledWith(
-            '/api/process_requirement/req-1',
+            '/bcap/api/resource/process_requirement/req-1',
         );
         const names = stepNameInputs(wrapper).map((i) => i.element.value);
         expect(names).toEqual(['Step A', 'Step B']);

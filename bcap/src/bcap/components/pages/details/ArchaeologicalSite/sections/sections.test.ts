@@ -1,4 +1,3 @@
-import { describe, it, expect, vi } from 'vitest';
 import { defineComponent } from 'vue';
 import { shallowMount } from '@vue/test-utils';
 

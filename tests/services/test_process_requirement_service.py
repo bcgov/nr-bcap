@@ -11,6 +11,7 @@ from arches.app.models.models import TileModel
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.serializers.process_requirement_serializers import ChecklistStep
 from bcap.services.dashboard.dashboard_types import DashboardFilter
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
@@ -33,7 +34,7 @@ from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import seed_requirement_templates
 from tests.services.test_internal_dashboard_service import (
     build_permit_graph,
-    build_unassigned_permit,
+    build_minimal_permit,
 )
 
 
@@ -215,8 +216,8 @@ class ProcessRequirementServiceTests(TestCase):
             requirement.pk,
             "Checklist",
             [
-                {"name": "First", "description": "one"},
-                {"name": "Second", "description": "two"},
+                ChecklistStep(name="First", description="one"),
+                ChecklistStep(name="Second", description="two"),
             ],
         )
 
@@ -230,8 +231,8 @@ class ProcessRequirementServiceTests(TestCase):
             requirement.pk,
             "Checklist v2",
             [
-                {"tileid": str(kept_tileid), "name": "First edited", "description": ""},
-                {"name": "Third", "description": "three"},
+                ChecklistStep(tileid=kept_tileid, name="First edited", description=""),
+                ChecklistStep(name="Third", description="three"),
             ],
         )
 
@@ -266,7 +267,7 @@ class MinistryAssigneeTests(TestCase):
 
         # A second permit, unassigned so its first assignment registers as an
         # edit-log change, and foreign to the permit above.
-        other = build_unassigned_permit(FixtureBuilder(), "Other Permit")
+        other = build_minimal_permit(FixtureBuilder(), "Other Permit")
         other_module = _load_module(other.pk)
         cls.other_permit_id = str(other.pk)
         cls.other_module_tileid = str(other_module.tileid)

@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
 import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
@@ -110,8 +109,10 @@ describe('PermitDetails.vue', () => {
         expect(fetchPermitDetails).toHaveBeenCalledWith('mock-permit-123');
 
         expect(wrapper.find('.project-name').text()).toBe('Test Project Name');
-        // Application id, submission type and sector share one subtitle line.
-        expect(wrapper.find('.permit-meta').text()).toBe('APP-001 · Forestry');
+        expect(wrapper.find('.application-number').text()).toBe('APP-001');
+        expect(
+            wrapper.findAll('.meta-part').map((part) => part.text()),
+        ).toEqual(['Forestry']);
     });
 
     it('has no submit action in the header band', async () => {
