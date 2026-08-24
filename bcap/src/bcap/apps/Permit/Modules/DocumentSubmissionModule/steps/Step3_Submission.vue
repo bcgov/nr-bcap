@@ -8,7 +8,7 @@ import LabelledInput from '@/bcgov_arches_common/components/labelledinput/Labell
 import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
-import MultiFileUploader from '@/bcgov_arches_common/components/fileUpload/MultiFileUploader.vue';
+import MultiFileUploader from '@/bcgov_arches_common/components/MultiFileUploader/MultiFileUploader.vue';
 
 import type {
     AliasedNodeData,
