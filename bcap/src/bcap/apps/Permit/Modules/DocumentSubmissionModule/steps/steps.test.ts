@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { shallowMount, config, VueWrapper } from '@vue/test-utils';
 import {
     submitModule,
@@ -16,7 +16,6 @@ import Step99 from './Step99_Review.vue';
 import type {
     DocumentSubmissionDocumentSubmissionProcessAliasedData,
     DocumentSubmissionSubmissionPhotographsTile,
-    DocumentSubmissionReportSubmissionTile,
 } from '@/bcap/client/types.gen.ts';
 
 type DeepPartial<T> = T extends object
@@ -46,22 +45,27 @@ vi.mock('@/bcap/composables/useDraftStep.ts', () => ({
     }),
 }));
 
-const { mockStoreState } = vi.hoisted(() => {
-    const { reactive } = require('vue');
-    return {
-        mockStoreState: reactive({
-            draftId: 'test-draft-id',
-            parentPermitId: 'test-permit-id',
-            graphSlug: 'document_submission',
-            draftData:
-                {} as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>,
-        }),
-    };
+// 1. Hoist a simple generic container (no require needed!)
+const { storeContainer } = vi.hoisted(() => ({
+    storeContainer: { state: null as any },
+}));
+
+// 2. The mock returns whatever is inside the container
+vi.mock('@/bcap/stores/draft.ts', () => ({
+    useDraftStore: () => storeContainer.state,
+}));
+
+// 3. Create the reactive store state using standard ES imports
+const mockStoreState = reactive({
+    draftId: 'test-draft-id',
+    parentPermitId: 'test-permit-id',
+    graphSlug: 'document_submission',
+    draftData:
+        {} as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>,
 });
 
-vi.mock('@/bcap/stores/draft.ts', () => ({
-    useDraftStore: () => mockStoreState,
-}));
+// 4. Inject the reactive state into the hoisted container
+storeContainer.state = mockStoreState;
 
 const globalMountOptions = {
     global: {
