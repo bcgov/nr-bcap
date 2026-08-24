@@ -472,23 +472,16 @@
             "functions_x_graphs": [
                 {
                     "config": {
+                        "class_name": "ContributorDescriptors",
                         "descriptor_types": {
-                            "description": {
-                                "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
-                                "string_template": "<Contributor Type>, <Contributor Role>"
-                            },
-                            "map_popup": {
-                                "nodegroup_id": "",
-                                "string_template": ""
-                            },
-                            "name": {
-                                "nodegroup_id": "c4ec91a4-9dea-11ed-9a7b-5254004d77d3",
-                                "string_template": "<Contributor Name>, <First Name>"
-                            }
+                            "description": {},
+                            "map_popup": {},
+                            "name": {}
                         },
+                        "module": "bcap.functions.contributor_descriptors",
                         "triggering_nodegroups": []
                     },
-                    "function_id": "60000000-0000-0000-0000-000000000001",
+                    "function_id": "60000000-0000-0000-0000-000000001007",
                     "graph_id": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
                     "id": "a62973b8-f0d8-4e1c-a47b-323dd4ad4bb2"
                 }

@@ -6410,6 +6410,10 @@ components:
         industrial_sector:
           type: string
           description: Permit application's industrial sector (reference label).
+        organization:
+          type: string
+          description: Name of the organization the application is filed under (its
+            stamped owning_organization); empty when it was filed under none.
         permit_id:
           type: string
           nullable: true
@@ -7617,6 +7621,10 @@ components:
         industrial_sector:
           type: string
           description: Permit application's industrial sector (reference label).
+        organization:
+          type: string
+          description: Name of the organization the application is filed under (its
+            stamped owning_organization); empty when it was filed under none.
         permit_id:
           type: string
           nullable: true

@@ -12,13 +12,9 @@ from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 
-# DataTypeFactory() is evaluated at class-body level when the module is first
-# imported. In CI the DB tables don't exist at collection time, so we mock it
-# for the duration of the import to prevent a premature DB query.
-with patch("arches.app.datatypes.datatypes.DataTypeFactory"):
-    from bcap.functions.process_requirement_descriptors import (
-        ProcessRequirementDescriptors,
-    )
+from bcap.functions.process_requirement_descriptors import (
+    ProcessRequirementDescriptors,
+)
 
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as A
 
