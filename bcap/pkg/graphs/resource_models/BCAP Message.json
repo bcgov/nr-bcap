@@ -581,7 +581,7 @@
                         "activateMax": false,
                         "imagesOnly": false,
                         "maxFileSize": null,
-                        "maxFiles": null
+                        "maxFiles": 20
                     },
                     "datatype": "file-list",
                     "description": "Files attached to the message.",
