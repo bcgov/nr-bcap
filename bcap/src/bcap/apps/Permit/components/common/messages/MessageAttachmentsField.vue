@@ -22,7 +22,8 @@ const onFilesSelected = (value: Array<{ file?: File }>) => {
     const picked = (value ?? [])
         .map((entry) => entry.file)
         .filter(
-            (file): file is File => Boolean(file) && !staged.has(fileKey(file!)),
+            (file): file is File =>
+                Boolean(file) && !staged.has(fileKey(file!)),
         );
 
     if (picked.length) {
