@@ -29,7 +29,6 @@ from arches.app.models.models import GraphModel, Node, NodeGroup
 from bcap.databc_config import GRAPHS
 from bcap.migrations.databc.generator import SpecGenerator
 
-
 _DATE_FORMAT_DEFAULT = "YYYY-MM-DD"
 _DATE_DT = frozenset({"date"})
 _SEMANTIC_DT = "semantic"
@@ -132,7 +131,9 @@ class Command(BaseCommand):
         # If only a subset was requested, we still need the full list so the
         # generated file stays consistent. Re-run all slugs that aren't already done.
         if set(graphs) != set(GRAPHS.keys()):
-            self.stdout.write("\nRegenerating remaining graphs for sql_items consistency ...")
+            self.stdout.write(
+                "\nRegenerating remaining graphs for sql_items consistency ..."
+            )
             for slug in GRAPHS:
                 if slug not in all_results:
                     cfg = GRAPHS[slug]
@@ -215,9 +216,7 @@ class Command(BaseCommand):
             ng_id = str(node.nodegroup_id)
             if ng_id == root_ng_id:
                 continue
-            datefmt = (
-                self._date_format(node) if node.datatype in _DATE_DT else None
-            )
+            datefmt = self._date_format(node) if node.datatype in _DATE_DT else None
             ng_fields[ng_id].append(
                 (node.alias, str(node.nodeid), node.datatype, datefmt)
             )
@@ -228,9 +227,7 @@ class Command(BaseCommand):
             if ng_id == root_ng_id:
                 continue
             ng = ng_by_id[ng_id]
-            parent_id = (
-                str(ng.parentnodegroup_id) if ng.parentnodegroup_id else None
-            )
+            parent_id = str(ng.parentnodegroup_id) if ng.parentnodegroup_id else None
             if parent_id is None or parent_id == root_ng_id:
                 tops.append(ng_id)
             else:
@@ -270,9 +267,7 @@ class Command(BaseCommand):
         for ng_id in ordered:
             ng = ng_by_id[ng_id]
             alias = ng_alias.get(ng_id, ng_id)
-            parent_id = (
-                str(ng.parentnodegroup_id) if ng.parentnodegroup_id else None
-            )
+            parent_id = str(ng.parentnodegroup_id) if ng.parentnodegroup_id else None
             parent_alias = (
                 None
                 if parent_id is None or parent_id == root_ng_id
@@ -406,9 +401,7 @@ class Command(BaseCommand):
                 ]
 
             # Stack MV
-            dep_expr = (
-                f"_{U}_BRANCHES + _{U}_GEOMS" if geoms else f"_{U}_BRANCHES"
-            )
+            dep_expr = f"_{U}_BRANCHES + _{U}_GEOMS" if geoms else f"_{U}_BRANCHES"
             L += [
                 "    SQLItem(",
                 f'        "{slug}_mv_resource",',

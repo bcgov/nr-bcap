@@ -19,7 +19,6 @@ import unittest
 
 from bcap.databc_config import GRAPHS
 
-
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -32,6 +31,7 @@ _VW_DIR = os.path.join(_BCAP_DIR, "migrations", "sql", "views", "databc")
 # ---------------------------------------------------------------------------
 # Helper: build flat-table-name → mv SQL file mapping from databc_config
 # ---------------------------------------------------------------------------
+
 
 def _build_flat_table_map():
     """
@@ -65,6 +65,7 @@ def _build_flat_table_map():
 # ---------------------------------------------------------------------------
 # Helper: parse defined columns from a generated MV SQL file
 # ---------------------------------------------------------------------------
+
 
 def _defined_columns(mv_sql_path):
     """
@@ -100,14 +101,53 @@ def _defined_columns(mv_sql_path):
 # Helper: parse columns referenced from a source table in a vw_*.sql file
 # ---------------------------------------------------------------------------
 
-_KEYWORDS = frozenset({
-    "select", "from", "where", "and", "or", "as", "left", "null", "case",
-    "when", "then", "else", "end", "join", "on", "true", "false", "not",
-    "is", "distinct", "create", "or", "replace", "view", "comment",
-    "schema", "if", "exists", "do", "declare", "begin", "for", "loop",
-    "end", "raise", "execute", "format", "into", "language", "plpgsql",
-    "commit", "return", "databc",
-})
+_KEYWORDS = frozenset(
+    {
+        "select",
+        "from",
+        "where",
+        "and",
+        "or",
+        "as",
+        "left",
+        "null",
+        "case",
+        "when",
+        "then",
+        "else",
+        "end",
+        "join",
+        "on",
+        "true",
+        "false",
+        "not",
+        "is",
+        "distinct",
+        "create",
+        "or",
+        "replace",
+        "view",
+        "comment",
+        "schema",
+        "if",
+        "exists",
+        "do",
+        "declare",
+        "begin",
+        "for",
+        "loop",
+        "end",
+        "raise",
+        "execute",
+        "format",
+        "into",
+        "language",
+        "plpgsql",
+        "commit",
+        "return",
+        "databc",
+    }
+)
 
 
 def _referenced_columns(vw_sql_path, source_table):
@@ -181,6 +221,7 @@ def _parse_select_cols(select_body):
 # Discover vw_*.sql files and extract their source table references
 # ---------------------------------------------------------------------------
 
+
 def _discover_vw_sources():
     """
     Scan all vw_*.sql files and return:
@@ -217,6 +258,7 @@ def _discover_vw_sources():
 # ---------------------------------------------------------------------------
 # Test class
 # ---------------------------------------------------------------------------
+
 
 class DataBCContractTest(unittest.TestCase):
     """
@@ -285,8 +327,7 @@ class DataBCContractTest(unittest.TestCase):
         if failures:
             self.fail(
                 "DataBC contract violations detected "
-                f"({len(failures)} issue(s)):\n\n"
-                + "\n".join(failures)
+                f"({len(failures)} issue(s)):\n\n" + "\n".join(failures)
             )
 
     def test_mv_files_exist_for_all_configured_graphs(self):
@@ -297,9 +338,7 @@ class DataBCContractTest(unittest.TestCase):
             schema_dir = os.path.join(_MV_BASE, schema)
             flat_mv = os.path.join(schema_dir, "mv_resource_flat.sql")
             if not os.path.exists(flat_mv):
-                missing.append(
-                    f"  {slug} ({schema}): {flat_mv}"
-                )
+                missing.append(f"  {slug} ({schema}): {flat_mv}")
         if missing:
             self.fail(
                 "Missing mv_resource_flat.sql for configured graph(s):\n"
