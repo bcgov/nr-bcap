@@ -33,7 +33,11 @@ describe('Step99_Review.vue (shared)', () => {
         const vm = wrapper.vm as unknown as ReviewVm;
 
         expect(vm.reviewFields).toEqual([
-            { label: 'Investigation Identification', value: 'sdfgfsgsg' },
+            {
+                label: 'Investigation Identification',
+                value: 'sdfgfsgsg',
+                nodeAlias: 'investigation_identification',
+            },
         ]);
     });
 
@@ -53,7 +57,11 @@ describe('Step99_Review.vue (shared)', () => {
         const vm = shallowMount(Step99_Review).vm as unknown as ReviewVm;
 
         expect(vm.reviewFields).toEqual([
-            { label: 'Director Name', value: 'Ada' },
+            {
+                label: 'Director Name',
+                value: 'Ada',
+                nodeAlias: 'director_name',
+            },
         ]);
     });
 
@@ -75,7 +83,7 @@ describe('Step99_Review.vue (shared)', () => {
         const vm = wrapper.vm as unknown as ReviewVm;
 
         expect(vm.reviewFields).toEqual([
-            { label: 'B', value: 'from-resource' },
+            { label: 'B', value: 'from-resource', nodeAlias: 'b' },
         ]);
         expect(wrapper.find('.review-intro').text()).toContain(
             'successfully submitted',

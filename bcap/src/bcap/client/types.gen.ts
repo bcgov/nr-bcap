@@ -1933,7 +1933,7 @@ export type DocumentSubmissionDocumentSubmissionProcessAliasedData = {
      */
     submission_number: NonLocalizedStringAliasedNodeData | null;
     report_submission?: DocumentSubmissionReportSubmissionTile | null;
-    submission_photographs?: DocumentSubmissionSubmissionPhotographsTile | null;
+    submission_photographs?: Array<DocumentSubmissionSubmissionPhotographsTile> | null;
     submission_assessment?: DocumentSubmissionSubmissionAssessmentTile | null;
 };
 
@@ -8529,7 +8529,7 @@ export type DocumentSubmissionDocumentSubmissionProcessAliasedDataWritable = {
      */
     submission_number: NonLocalizedStringAliasedNodeDataWritable | null;
     report_submission?: DocumentSubmissionReportSubmissionTileWritable | null;
-    submission_photographs?: DocumentSubmissionSubmissionPhotographsTileWritable | null;
+    submission_photographs?: Array<DocumentSubmissionSubmissionPhotographsTileWritable> | null;
     submission_assessment?: DocumentSubmissionSubmissionAssessmentTileWritable | null;
 };
 

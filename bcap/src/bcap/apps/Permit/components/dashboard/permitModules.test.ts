@@ -13,6 +13,7 @@ describe('modulesForFilingType', () => {
             GraphSlug.Investigation,
             GraphSlug.Inspection,
             GraphSlug.Alteration,
+            GraphSlug.DocumentSubmission,
         ];
         expect(idsFor(FilingType.PermitApplicationStandard)).toEqual(full);
         expect(idsFor(FilingType.PermitApplicationEmergency)).toEqual(full);
