@@ -1,68 +1,79 @@
 """
 Management command: generate_databc_views
 
-One-stop command for regenerating the DataBC materialized view SQL.
+Generates DataBC materialized view SQL from the live database graph model.
+Always reads node/nodegroup structure from the database — no spec files used as input.
 
-Spec files live in:  migrations/databc/{sv,as}_spec.py
-Common SQL lives in: migrations/databc/00_common.sql
-Output goes to:      migrations/sql/materialized_views/
+Workflow:
+    1. Run manage.py generate_databc_views [sv|as|per|pub|rep]
+    2. Review generated SQL in migrations/sql/materialized_views/
+    3. Run manage.py test tests.test_databc_contract
+    4. Run manage.py makemigrations to generate AlterSQL migrations
+    5. Commit SQL + databc_sql_items.py + migrations together
 
-Usage:
-    # Regenerate SQL from existing specs (most common after a manual spec edit):
-    python manage.py generate_databc_views
-    python manage.py generate_databc_views [ sv | as | per | pub | rep ]
-
-    # Regenerate specs from the live database, THEN regenerate SQL:
-    python manage.py generate_databc_views --from-db
-    python manage.py generate_databc_views --from-db [ sv | as | per | pub | rep ]
-
-Workflow when the Arches graph model changes:
-    1. Run with --from-db to pull the current node/nodegroup structure from the DB.
-    2. Review the updated spec file in migrations/databc/.
-       - Confirm cardinality against node_groups.cardinality.
-       - Adjust FLAT_GRAINS if any cardinality-n nodegroups were added under other n groups.
-       - Check date formats.
-    3. Re-run WITHOUT --from-db to regenerate the SQL (or it runs automatically after step 1).
-    4. Review the generated SQL in migrations/sql/materialized_views/.
-    5. Create a new migration (django_migrate_sql detects the diff via makemigrations).
-    6. Commit specs, SQL, and migration together.
-
-This command handles the full DataBC workflow end-to-end.
+Graph slugs are defined in bcap/databc_config.py. Edit that file to:
+    - Add/remove graphs
+    - Change flat_grains (which cardinality-n nodegroups get their own grain table)
+    - Set view_names overrides to keep wrapper view names stable across renames
 """
 
 import os
 import shutil
-import subprocess
-import sys
+import types
 from collections import defaultdict, deque
 
 from django.core.management.base import BaseCommand, CommandError
 
 from arches.app.models.models import GraphModel, Node, NodeGroup
 
-# Maps the DataBC short slug used by this command to the Arches graph slug
-# stored in GraphModel.slug.  Update this if graph slugs change in the DB.
-GRAPH_SLUGS = {
-    "sv": "site-visit",
-    "as": "archaeological-site",
-    "rep": "repository",
-    "pub": "publication",
-    "per": "hca_permit",
-}
+from bcap.databc_config import GRAPHS
+from bcap.migrations.databc.generator import SpecGenerator
 
-DATE_FORMAT_DEFAULT = "YYYY-MM-DD"
-DATE_DT = frozenset({"date"})
-SEMANTIC_DT = "semantic"
+_DATE_FORMAT_DEFAULT = "YYYY-MM-DD"
+_DATE_DT = frozenset({"date"})
+_SEMANTIC_DT = "semantic"
+
+# Maps arches_slug → DataBC API view config (static files, never generated).
+# Update here if new vw_*.sql files are added.
+_API_VIEWS = {
+    "site_visit": {
+        "item_name": "databc_site_visit",
+        "vw_file": "vw_site_visit",
+        "drops": ["databc.vw_site_visit", "databc.vw_site_visit_location"],
+    },
+    "archaeological_site": {
+        "item_name": "databc_archaeological_site",
+        "vw_file": "vw_archaeological_site",
+        "drops": [
+            "databc.vw_archaeological_site",
+            "databc.vw_archaeological_site_site_location",
+            "databc.vw_archaeological_site_bc_property_address",
+        ],
+    },
+    "hca_permit": {
+        "item_name": "databc_hca_permit",
+        "vw_file": "vw_hca_permit",
+        "drops": ["databc.vw_hca_permit"],
+    },
+    "publication": {
+        "item_name": "databc_publication",
+        "vw_file": "vw_publication",
+        "drops": ["databc.vw_publication"],
+    },
+    "repository": {
+        "item_name": "databc_repository",
+        "vw_file": "vw_repository",
+        "drops": ["databc.vw_repository"],
+    },
+}
 
 
 class Command(BaseCommand):
     help = (
-        "Generate DataBC materialized view SQL from spec files in "
-        "migrations/databc/ and write output to migrations/sql/materialized_views/. "
-        "Use --from-db to regenerate specs from the live database first."
+        "Generate DataBC materialized view SQL from the live database. "
+        "Always reads node/nodegroup structure from the DB. "
+        "Output goes to migrations/sql/materialized_views/ and bcap/databc_sql_items.py."
     )
-
-    KNOWN_GRAPHS = tuple(GRAPH_SLUGS.keys())  # ("sv", "as")
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -70,27 +81,19 @@ class Command(BaseCommand):
             nargs="*",
             metavar="GRAPH",
             help=(
-                "Graph slugs to process: sv (site_visit), as (archaeological_site). "
-                "Defaults to all known graphs."
-            ),
-        )
-        parser.add_argument(
-            "--from-db",
-            action="store_true",
-            help=(
-                "Regenerate spec files from the live database before generating SQL. "
-                "Requires a working database connection."
+                f"Graph short slugs to process ({', '.join(GRAPHS)}). "
+                "Defaults to all."
             ),
         )
 
     def handle(self, *args, **options):
-        graphs = options["graphs"] or list(self.KNOWN_GRAPHS)
+        graphs = options["graphs"] or list(GRAPHS.keys())
 
-        unknown = [g for g in graphs if g not in self.KNOWN_GRAPHS]
+        unknown = [g for g in graphs if g not in GRAPHS]
         if unknown:
             raise CommandError(
                 f"Unknown graph slug(s): {', '.join(unknown)}. "
-                f"Known: {', '.join(self.KNOWN_GRAPHS)}"
+                f"Known: {', '.join(GRAPHS)}"
             )
 
         cmd_dir = os.path.dirname(os.path.abspath(__file__))
@@ -100,60 +103,83 @@ class Command(BaseCommand):
         out_dir = os.path.join(mig_dir, "sql", "materialized_views")
         os.makedirs(out_dir, exist_ok=True)
 
-        # 1. Optionally regenerate specs from the live database
-        if options["from_db"]:
-            for slug in graphs:
-                self._regenerate_spec(slug, spec_dir)
-
-        # 2. Copy the static common SQL
+        # Copy shared arches_util SQL
         src = os.path.join(spec_dir, "00_common.sql")
         dst = os.path.join(out_dir, "00_arches_util.sql")
         shutil.copy2(src, dst)
         self.stdout.write(
-            f"  copied 00_common.sql -> sql/materialized_views/00_arches_util.sql"
+            "  copied 00_common.sql -> sql/materialized_views/00_arches_util.sql"
         )
 
-        # 3. Generate stack + flat SQL for each requested graph
-        generate_script = os.path.join(spec_dir, "generate.py")
+        # Generate SQL for each requested graph
+        all_results = {}
         for slug in graphs:
             self.stdout.write(f"\nGenerating SQL for '{slug}' ...")
-            result = subprocess.run(
-                [sys.executable, generate_script, f"{slug}_spec", out_dir],
-                cwd=spec_dir,
-                capture_output=True,
-                text=True,
+            cfg = GRAPHS[slug]
+            spec = self._build_spec(slug, cfg)
+            gen = SpecGenerator(spec, out_dir)
+            result = gen.generate()
+            all_results[slug] = result
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"  [OK] {slug} ({len(spec.NG)} nodegroups, "
+                    f"{len(result['tops'])} branch MVs)"
+                )
             )
-            if result.returncode != 0:
-                raise CommandError(f"generate.py failed for '{slug}':\n{result.stderr}")
-            if result.stdout.strip():
-                self.stdout.write(result.stdout.rstrip())
-            self.stdout.write(self.style.SUCCESS(f"  [OK] {slug}"))
+
+        # Always regenerate databc_sql_items.py for the full GRAPHS set.
+        # If only a subset was requested, we still need the full list so the
+        # generated file stays consistent. Re-run all slugs that aren't already done.
+        if set(graphs) != set(GRAPHS.keys()):
+            self.stdout.write(
+                "\nRegenerating remaining graphs for sql_items consistency ..."
+            )
+            for slug in GRAPHS:
+                if slug not in all_results:
+                    cfg = GRAPHS[slug]
+                    try:
+                        spec = self._build_spec(slug, cfg)
+                        gen = SpecGenerator(spec, out_dir)
+                        result = gen.generate()
+                        all_results[slug] = result
+                        self.stdout.write(f"  [OK] {slug}")
+                    except CommandError as exc:
+                        self.stderr.write(
+                            self.style.WARNING(
+                                f"  WARNING: could not regenerate '{slug}': {exc}. "
+                                "Skipping from sql_items."
+                            )
+                        )
+
+        items_path = os.path.join(app_dir, "databc_sql_items.py")
+        self._write_sql_items(items_path, all_results)
+        self.stdout.write(self.style.SUCCESS(f"\nUpdated: {items_path}"))
 
         self.stdout.write(self.style.SUCCESS(f"\nOutput written to:\n  {out_dir}"))
         self.stdout.write(
             "\nNext steps:\n"
-            "  1. Review the generated SQL files in migrations/sql/materialized_views/.\n"
-            "  2. Run manage.py makemigrations to generate AlterSQL migrations for any changes.\n"
-            "  3. Commit specs, SQL, and migration together."
+            "  1. Review generated SQL in migrations/sql/materialized_views/.\n"
+            "  2. Run:  python manage.py test tests.test_databc_contract\n"
+            "  3. Run:  python manage.py makemigrations\n"
+            "  4. Commit SQL + databc_sql_items.py + migrations together."
         )
 
     # ------------------------------------------------------------------
-    # Spec generation from live database (--from-db)
+    # Build spec object from DB + databc_config
     # ------------------------------------------------------------------
 
-    def _regenerate_spec(self, slug, spec_dir):
-        """Query the live DB for the graph and write an updated spec.py."""
-        arches_slug = GRAPH_SLUGS[slug]
-        self.stdout.write(
-            f"\nRegenerating spec for '{slug}' (graph slug: {arches_slug}) ..."
-        )
+    def _build_spec(self, slug, cfg):
+        arches_slug = cfg["arches_slug"]
+        flat_grains = cfg["flat_grains"]
+        view_names = cfg.get("view_names", {})
+        schema = arches_slug.replace("-", "_")
 
         try:
             graph = GraphModel.objects.get(slug=arches_slug)
         except GraphModel.DoesNotExist:
             raise CommandError(
-                f"No graph found with slug '{arches_slug}'. "
-                "Check GRAPH_SLUGS in this command or the DB."
+                f"No graph found with slug '{arches_slug}' (for '{slug}'). "
+                "Check databc_config.py or the DB."
             )
 
         graph_id = str(graph.graphid)
@@ -178,19 +204,19 @@ class Command(BaseCommand):
         )
         ng_by_id = {str(ng.nodegroupid): ng for ng in all_ngs}
 
-        ng_alias = {}
-        for ng_id, ng in ng_by_id.items():
-            grouping = node_by_id.get(ng_id)
-            ng_alias[ng_id] = grouping.alias if grouping else ng_id
+        ng_alias = {
+            ng_id: (node_by_id[ng_id].alias if ng_id in node_by_id else ng_id)
+            for ng_id in ng_by_id
+        }
 
         ng_fields = defaultdict(list)
         for node in nodes:
-            if node.datatype == SEMANTIC_DT:
+            if node.datatype == _SEMANTIC_DT:
                 continue
             ng_id = str(node.nodegroup_id)
             if ng_id == root_ng_id:
                 continue
-            datefmt = self._date_format(node) if node.datatype in DATE_DT else None
+            datefmt = self._date_format(node) if node.datatype in _DATE_DT else None
             ng_fields[ng_id].append(
                 (node.alias, str(node.nodeid), node.datatype, datefmt)
             )
@@ -222,14 +248,20 @@ class Command(BaseCommand):
         for ng_id in skipped:
             self.stderr.write(
                 self.style.WARNING(
-                    f"  Warning: nodegroup '{ng_alias.get(ng_id, ng_id)}' unreachable, skipped."
+                    f"  Warning: nodegroup '{ng_alias.get(ng_id, ng_id)}' "
+                    "is unreachable (no valid parent chain); skipped."
                 )
             )
 
-        # Load existing spec to preserve SLUG and FLAT_GRAINS (not queryable from DB)
-        existing = self._load_existing_spec(slug, spec_dir)
-        spec_slug = existing.get("SLUG", slug)
-        flat_grains = existing.get("FLAT_GRAINS", [])
+        new_aliases = {ng_alias[ng_id] for ng_id in ordered}
+        invalid_grains = [g for g in flat_grains if g not in new_aliases]
+        if invalid_grains:
+            raise CommandError(
+                f"flat_grains in databc_config.py for '{slug}' references unknown "
+                f"nodegroup aliases: {invalid_grains}.\n"
+                f"Known aliases: {sorted(new_aliases)}\n"
+                "Update databc_config.py to match the current DB aliases."
+            )
 
         ng_list = []
         for ng_id in ordered:
@@ -242,47 +274,23 @@ class Command(BaseCommand):
                 else ng_alias.get(parent_id)
             )
             ng_list.append(
-                (alias, ng_id, parent_alias, ng.cardinality, ng_fields.get(ng_id, []))
-            )
-
-        content = self._render_spec(
-            graph_id, graph.slug.replace("-", "_"), spec_slug, flat_grains, ng_list
-        )
-        out_path = os.path.join(spec_dir, f"{slug}_spec.py")
-        with open(out_path, "w") as fh:
-            fh.write(content)
-        self._format_with_black(out_path)
-        self.stdout.write(
-            self.style.SUCCESS(f"  wrote {out_path} ({len(ng_list)} nodegroups)")
-        )
-
-        geom_nodes = [
-            (f_alias, f_nid, ng_id)
-            for alias, ng_id, _, _, fields in ng_list
-            for f_alias, f_nid, dt, _ in fields
-            if dt == "geojson-feature-collection"
-        ]
-        if geom_nodes:
-            self.stdout.write(
-                self.style.WARNING(
-                    "  geojson-feature-collection nodes detected — verify geom_mv() calls in generate.py:"
+                (
+                    alias,
+                    ng_id,
+                    parent_alias,
+                    ng.cardinality,
+                    ng_fields.get(ng_id, []),
                 )
             )
-            for g_alias, g_nid, g_ng_id in geom_nodes:
-                self.stdout.write(f"    geom_mv('{g_alias}', '{g_nid}', '{g_ng_id}')")
 
-    def _format_with_black(self, path):
-        result = subprocess.run(
-            [sys.executable, "-m", "black", "--quiet", path],
-            capture_output=True,
-            text=True,
+        return types.SimpleNamespace(
+            GRAPH_ID=graph_id,
+            SCHEMA=schema,
+            SLUG=slug,
+            FLAT_GRAINS=flat_grains,
+            FLAT_GRAIN_VIEW_NAMES=view_names,
+            NG=ng_list,
         )
-        if result.returncode != 0:
-            self.stderr.write(
-                self.style.WARNING(
-                    f"  black could not format {path}:\n{result.stderr.strip()}"
-                )
-            )
 
     def _date_format(self, node):
         cfg = node.config
@@ -290,52 +298,219 @@ class Command(BaseCommand):
             fmt = cfg.get("dateFormat") or cfg.get("dateformat")
             if fmt:
                 return fmt
-        return DATE_FORMAT_DEFAULT
+        return _DATE_FORMAT_DEFAULT
 
-    def _load_existing_spec(self, slug, spec_dir):
-        """Return a dict with SLUG and FLAT_GRAINS from the existing spec, if it exists."""
-        import importlib.util
+    # ------------------------------------------------------------------
+    # Write databc_sql_items.py
+    # ------------------------------------------------------------------
 
-        path = os.path.join(spec_dir, f"{slug}_spec.py")
-        if not os.path.exists(path):
-            return {}
-        spec = importlib.util.spec_from_file_location(f"_spec_{slug}", path)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        return {
-            "SLUG": getattr(mod, "SLUG", slug),
-            "FLAT_GRAINS": getattr(mod, "FLAT_GRAINS", []),
-        }
+    def _write_sql_items(self, items_path, all_results):
+        ordered_slugs = [s for s in GRAPHS if s in all_results]
+        L = []
 
-    def _render_spec(self, graph_id, schema, slug, flat_grains, ng_list):
-        lines = [
-            '"""',
-            f"{schema} graph spec.",
+        L += [
+            "# GENERATED by manage.py generate_databc_views — do not edit.",
+            "# Re-run the command after graph model or databc_config.py changes.",
             "",
-            "AUTO-GENERATED by `manage.py generate_databc_views --from-db`.",
-            "Review cardinality, FLAT_GRAINS, and date formats before regenerating SQL.",
-            '"""',
+            "from django_migrate_sql.config import SQLItem",
+            "from bcap.migrations.util.migration_util import format_sql",
             "",
-            f"GRAPH_ID = '{graph_id}'",
-            f"SCHEMA   = '{schema}'",
-            f"SLUG     = '{slug}'",
-            "",
-            f"FLAT_GRAINS = {flat_grains!r}",
-            "",
-            "# name, ngid, parent, cardinality, [(field, nodeid, dt, datefmt)]",
-            "NG = [",
         ]
-        for alias, ngid, parent_alias, card, fields in ng_list:
-            parent_repr = f"'{parent_alias}'" if parent_alias is not None else "None"
-            if not fields:
-                lines.append(f"    ('{alias}', '{ngid}', {parent_repr}, '{card}', []),")
-            else:
-                lines.append(f"    ('{alias}', '{ngid}', {parent_repr}, '{card}', [")
-                for f_alias, f_nodeid, f_dt, f_datefmt in fields:
-                    datefmt_repr = f"'{f_datefmt}'" if f_datefmt else "None"
-                    lines.append(
-                        f"        ('{f_alias}', '{f_nodeid}', '{f_dt}', {datefmt_repr}),"
-                    )
-                lines.append("    ]),")
-        lines.append("]")
-        return "\n".join(lines) + "\n"
+
+        # Dependency list variables
+        for slug in ordered_slugs:
+            r = all_results[slug]
+            schema = r["schema"]
+            tops = r["tops"]
+            geoms = r["geoms"]
+            grains = r["grains"]
+            U = slug.upper()
+
+            L.append(f"# {schema} dependency lists")
+            L.append(f"_{U}_BRANCHES = [")
+            for n in tops:
+                L.append(f'    ("bcap", "{slug}_mv_{n}"),')
+            L.append("]")
+
+            L.append(f"_{U}_GEOMS = [")
+            for _, fname, _ in geoms:
+                L.append(f'    ("bcap", "{slug}_mv_geom_{fname}"),')
+            L.append("]")
+
+            L.append(f"_{U}_GRAIN_FLATS = [")
+            for g in grains:
+                L.append(f'    ("bcap", "{slug}_mv_{g}_flat"),')
+            L.append("]")
+            L.append("")
+
+        # sql_items list
+        L.append("sql_items = [")
+
+        # Shared arches_util
+        L += [
+            "    # -------------------------------------------------------------------",
+            "    # Shared arches_util schema (indexes + helper functions)",
+            "    # -------------------------------------------------------------------",
+            "    SQLItem(",
+            '        "databc_arches_util",',
+            '        format_sql("sql/materialized_views/00_arches_util.sql"),',
+            "        reverse_sql=(",
+            '            "DROP SCHEMA IF EXISTS arches_util CASCADE;\\n"',
+            '            "DROP INDEX IF EXISTS public.tiles_nodegroupid_idx;\\n"',
+            '            "DROP INDEX IF EXISTS public.geojson_geometries_nodeid_idx;\\n"',
+            '            "DROP INDEX IF EXISTS public.resource_instances_graphid_idx;"',
+            "        ),",
+            "    ),",
+        ]
+
+        for slug in ordered_slugs:
+            r = all_results[slug]
+            schema = r["schema"]
+            tops = r["tops"]
+            geoms = r["geoms"]
+            grains = r["grains"]
+            gvn = r["grain_view_names"]
+            U = slug.upper()
+
+            L += [
+                f"    # -------------------------------------------------------------------",
+                f"    # {schema}",
+                f"    # -------------------------------------------------------------------",
+            ]
+
+            # Branch MVs
+            for n in tops:
+                L += [
+                    "    SQLItem(",
+                    f'        "{slug}_mv_{n}",',
+                    f'        format_sql("sql/materialized_views/{schema}/mv_{n}.sql"),',
+                    f'        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS {schema}.mv_{n} CASCADE;",',
+                    '        dependencies=[("bcap", "databc_arches_util")],',
+                    "    ),",
+                ]
+
+            # Geom MVs
+            for _, fname, _ in geoms:
+                L += [
+                    "    SQLItem(",
+                    f'        "{slug}_mv_geom_{fname}",',
+                    f'        format_sql("sql/materialized_views/{schema}/mv_geom_{fname}.sql"),',
+                    f'        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS {schema}.mv_geom_{fname} CASCADE;",',
+                    '        dependencies=[("bcap", "databc_arches_util")],',
+                    "    ),",
+                ]
+
+            # Stack MV
+            dep_expr = f"_{U}_BRANCHES + _{U}_GEOMS" if geoms else f"_{U}_BRANCHES"
+            L += [
+                "    SQLItem(",
+                f'        "{slug}_mv_resource",',
+                f'        format_sql("sql/materialized_views/{schema}/mv_resource.sql"),',
+                f'        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS {schema}.mv_resource CASCADE;",',
+                f"        dependencies={dep_expr},",
+                "    ),",
+            ]
+
+            # Stable wrapper view
+            L += [
+                "    SQLItem(",
+                f'        "{slug}_resource_view",',
+                f'        format_sql("sql/materialized_views/{schema}/resource_view.sql"),',
+                f'        reverse_sql="DROP VIEW IF EXISTS {schema}.resource;",',
+                "        replace=True,",
+                f'        dependencies=[("bcap", "{slug}_mv_resource")],',
+                "    ),",
+            ]
+
+            # Refresh procedure (stack)
+            L += [
+                "    SQLItem(",
+                f'        "{slug}_refresh_resource",',
+                f'        format_sql("sql/materialized_views/{schema}/refresh_resource.sql"),',
+                f'        reverse_sql="DROP PROCEDURE IF EXISTS {schema}.refresh_resource(boolean);",',
+                "        replace=True,",
+                f'        dependencies=[("bcap", "{slug}_mv_resource")],',
+                "    ),",
+            ]
+
+            # Resource flat MV
+            L += [
+                "    SQLItem(",
+                f'        "{slug}_mv_resource_flat",',
+                f'        format_sql("sql/materialized_views/{schema}/mv_resource_flat.sql"),',
+                f'        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS {schema}.mv_resource_flat CASCADE;",',
+                f'        dependencies=[("bcap", "{slug}_mv_resource")],',
+                "    ),",
+            ]
+
+            # Grain flat MVs (named after nodegroup alias)
+            for g in grains:
+                L += [
+                    "    SQLItem(",
+                    f'        "{slug}_mv_{g}_flat",',
+                    f'        format_sql("sql/materialized_views/{schema}/mv_{g}_flat.sql"),',
+                    f'        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS {schema}.mv_{g}_flat CASCADE;",',
+                    f'        dependencies=[("bcap", "{slug}_mv_resource_flat")],',
+                    "    ),",
+                ]
+
+            # Flat wrapper views (reverse drops use stable view_names)
+            flat_wrappers = ["resource_flat"] + [
+                f"{gvn.get(g, g)}_flat" for g in grains
+            ]
+            dep_flat = (
+                f'[("bcap", "{slug}_mv_resource_flat")] + _{U}_GRAIN_FLATS'
+                if grains
+                else f'[("bcap", "{slug}_mv_resource_flat")]'
+            )
+            L.append("    SQLItem(")
+            L.append(f'        "{slug}_flat_views",')
+            L.append(
+                f'        format_sql("sql/materialized_views/{schema}/flat_views.sql"),'
+            )
+            L.append("        reverse_sql=(")
+            for v in flat_wrappers:
+                L.append(f'            "DROP VIEW IF EXISTS {schema}.{v};\\n"')
+            L.append("        ),")
+            L.append("        replace=True,")
+            L.append(f"        dependencies={dep_flat},")
+            L.append("    ),")
+
+            # Refresh procedure (flat)
+            L += [
+                "    SQLItem(",
+                f'        "{slug}_refresh_flat",',
+                f'        format_sql("sql/materialized_views/{schema}/refresh_flat.sql"),',
+                f'        reverse_sql="DROP PROCEDURE IF EXISTS {schema}.refresh_flat(boolean);",',
+                "        replace=True,",
+                f"        dependencies={dep_flat},",
+                "    ),",
+            ]
+
+        # Static API export views (vw_*.sql — never generated)
+        L += [
+            "    # -------------------------------------------------------------------",
+            "    # DataBC API export views (static vw_*.sql — do not regenerate)",
+            "    # -------------------------------------------------------------------",
+        ]
+        for slug in ordered_slugs:
+            arches_slug = GRAPHS[slug]["arches_slug"]
+            api = _API_VIEWS.get(arches_slug)
+            if not api:
+                continue
+            L.append("    SQLItem(")
+            L.append(f'        "{api["item_name"]}",')
+            L.append(f'        format_sql("sql/views/databc/{api["vw_file"]}.sql"),')
+            L.append("        reverse_sql=(")
+            for d in api["drops"]:
+                L.append(f'            "DROP VIEW IF EXISTS {d};\\n"')
+            L.append("        ),")
+            L.append("        replace=True,")
+            L.append(f'        dependencies=[("bcap", "{slug}_flat_views")],')
+            L.append("    ),")
+
+        L.append("]")
+        L.append("")
+
+        with open(items_path, "w") as fh:
+            fh.write("\n".join(L))

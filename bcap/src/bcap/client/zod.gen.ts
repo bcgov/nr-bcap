@@ -2870,7 +2870,7 @@ export const zPublicationCopyrightTypeTile = z.object({
 });
 
 export const zPublicationPublicationIdentifierAliasedData = z.object({
-    publication_identifier_type: zConceptAliasedNodeData.nullish(),
+    publication_identifier_type: zReferenceAliasedNodeData.nullish(),
     publication_identifier: zStringAliasedNodeData.nullish()
 });
 
@@ -4223,7 +4223,7 @@ export const zDocumentSubmissionDocumentSubmissionProcessAliasedData = z.object(
     submission_type: zReferenceAliasedNodeDataRequired.nullable(),
     submission_number: zNonLocalizedStringAliasedNodeData.nullable(),
     report_submission: zDocumentSubmissionReportSubmissionTile.nullish(),
-    submission_photographs: zDocumentSubmissionSubmissionPhotographsTile.nullish(),
+    submission_photographs: z.array(zDocumentSubmissionSubmissionPhotographsTile).nullish(),
     submission_assessment: zDocumentSubmissionSubmissionAssessmentTile.nullish()
 });
 
@@ -7243,7 +7243,7 @@ export const zPublicationCopyrightTypeTileWritable = z.object({
 });
 
 export const zPublicationPublicationIdentifierAliasedDataWritable = z.object({
-    publication_identifier_type: zConceptAliasedNodeDataWritable.nullish(),
+    publication_identifier_type: zReferenceAliasedNodeDataWritable.nullish(),
     publication_identifier: zStringAliasedNodeDataWritable.nullish()
 });
 
@@ -8520,7 +8520,7 @@ export const zDocumentSubmissionDocumentSubmissionProcessAliasedDataWritable = z
     submission_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     submission_number: zNonLocalizedStringAliasedNodeDataWritable.nullable(),
     report_submission: zDocumentSubmissionReportSubmissionTileWritable.nullish(),
-    submission_photographs: zDocumentSubmissionSubmissionPhotographsTileWritable.nullish(),
+    submission_photographs: z.array(zDocumentSubmissionSubmissionPhotographsTileWritable).nullish(),
     submission_assessment: zDocumentSubmissionSubmissionAssessmentTileWritable.nullish()
 });
 

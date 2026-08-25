@@ -23,7 +23,8 @@
 --                                                      bc_property_address_index
 --
 -- NOTE: responsible_government and authority_legal_instrument are in the data
--- model but absent from the current flat view — add to as_spec.py to expose them.
+-- model but absent from the current flat view — add to databc_config.py flat_grains
+-- or ensure the nodes are included in the generated MV to expose them.
 
 CREATE SCHEMA IF NOT EXISTS databc;
 
@@ -33,6 +34,14 @@ CREATE SCHEMA IF NOT EXISTS databc;
 CREATE OR REPLACE VIEW databc.vw_archaeological_site AS
 SELECT
     resourceinstanceid::text                        AS resourceinstanceid,
+
+    -- Site Boundary geometry (union of all boundary tiles)
+    site_boundary_geom,                                                     -- geometry
+    site_boundary_polygons,                                                 -- geometry (polygons only)
+
+    -- Unprotected Areas geometry (union of all unprotected area tiles)
+    unprotected_areas_geom,                                                 -- geometry
+    unprotected_areas_polygons,                                             -- geometry (polygons only)
 
     -- Identification and Registration
     LEFT(borden_number, 4000)                       AS borden_number,

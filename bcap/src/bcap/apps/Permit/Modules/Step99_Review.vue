@@ -35,7 +35,11 @@ const walk = (
         if (node.aliased_data) {
             walk(node.aliased_data, fields);
         } else {
-            fields.push({ label: humanize(alias), value: node.display_value });
+            fields.push({
+                label: humanize(alias),
+                value: node.display_value,
+                nodeAlias: alias,
+            });
         }
     }
 };

@@ -12,6 +12,8 @@ omit =
     */hosts.py
     */celery.py
     */__init__.py
+    bcap/databc_sql_items.py
+    bcap/sql_config.py
 
 data_file = coverage/python/.coverage
 

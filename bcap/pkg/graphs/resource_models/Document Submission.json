@@ -803,7 +803,7 @@
                     "parentnodegroup_id": "81300382-4aee-4082-b328-987d97689e94"
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "grouping_node_id": "43ffcb90-09c7-4ef3-9e4e-2407fee6dc32",
                     "legacygroupid": null,
                     "nodegroupid": "43ffcb90-09c7-4ef3-9e4e-2407fee6dc32",
@@ -1056,9 +1056,7 @@
                 },
                 {
                     "alias": "arch_branch_determined_level_of_risk",
-                    "config": {
-                        "rdmCollection": null
-                    },
+                    "config": {},
                     "datatype": "concept",
                     "description": null,
                     "exportable": false,

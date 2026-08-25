@@ -1,6 +1,9 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
-import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type {
+    FileListAliasedNodeDataWritable,
+    PermitApplicationResourceAliasedData,
+} from '@/bcap/client/types.gen.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 
@@ -58,6 +61,25 @@ export const downloadFile = async (
         console.error('Failed to download file:', error);
         window.open(url, '_blank');
     }
+};
+
+export const dropFiles = (_key: string, value: unknown) =>
+    value instanceof File ? undefined : value;
+
+// One multipart part per file a file-list node is holding, keyed the way arches
+// reads them back off the request. The tileid scopes the key so each tile claims
+// only its own uploads, and is minted here when the tile has none yet.
+export const fileParts = (
+    tile: { tileid?: string | null },
+    node: FileListAliasedNodeDataWritable | null | undefined,
+): Array<[string, File]> => {
+    const parts: Array<[string, File]> = [];
+    for (const entry of node?.node_value ?? []) {
+        if (!(entry.file instanceof File)) continue;
+        tile.tileid ??= crypto.randomUUID();
+        parts.push([`file-list_${tile.tileid}-${entry.node_id}`, entry.file]);
+    }
+    return parts;
 };
 
 export const formatDateTime = (isoString: string | null): string | null => {

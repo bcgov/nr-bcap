@@ -1326,9 +1326,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ModuleHost'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/ModuleHost'
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/ModuleHost'
@@ -5979,8 +5976,9 @@ components:
           - $ref: '#/components/schemas/Document_Submission_Report_Submission_Tile'
           nullable: true
         submission_photographs:
-          allOf:
-          - $ref: '#/components/schemas/Document_Submission_Submission_Photographs_Tile'
+          type: array
+          items:
+            $ref: '#/components/schemas/Document_Submission_Submission_Photographs_Tile'
           nullable: true
         submission_assessment:
           allOf:
@@ -12740,7 +12738,7 @@ components:
       properties:
         publication_identifier_type:
           allOf:
-          - $ref: '#/components/schemas/ConceptAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
         publication_identifier:
