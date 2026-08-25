@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import { formatFileSize } from '@/bcap/util.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
@@ -12,21 +14,29 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update:files', files: File[]): void }>();
 
-// One node_value entry per staged file. The raw File rides in .file, which the
-// widget's own FileReference type doesn't declare, hence the cast.
-const onFilesSelected = (node: AliasedNodeData) => {
-    emit(
-        'update:files',
-        ((node.node_value ?? []) as Array<{ file?: File }>)
-            .map((entry) => entry.file)
-            .filter((file): file is File => Boolean(file)),
-    );
+const pick = ref(0);
+const fileKey = (file: File) => `${file.name}:${file.size}`;
+
+// The file widget emits an entry per staged file; the raw File rides in .file.
+const onFilesSelected = (value: Array<{ file?: File }>) => {
+    const staged = new Set(props.files.map(fileKey));
+    const picked = (value ?? [])
+        .map((entry) => entry.file)
+        .filter(
+            (file): file is File =>
+                Boolean(file) && !staged.has(fileKey(file!)),
+        );
+
+    if (picked.length) {
+        emit('update:files', [...props.files, ...picked]);
+    }
 };
 
 const removeFile = (index: number) => {
     const remaining = [...props.files];
     remaining.splice(index, 1);
     emit('update:files', remaining);
+    pick.value += 1;
 };
 </script>
 
@@ -38,7 +48,7 @@ const removeFile = (index: number) => {
         </label>
         <div class="attachments-widget">
             <GenericWidget
-                :key="resetKey"
+                :key="`${resetKey}-${pick}`"
                 :graph-slug="GraphSlug.BcapMessage"
                 node-alias="attachments"
                 mode="edit"
