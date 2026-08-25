@@ -18,9 +18,12 @@ const pick = ref(0);
 const fileKey = (file: File) => `${file.name}:${file.size}`;
 
 // The file widget emits an entry per staged file; the raw File rides in .file.
-const onFilesSelected = (value: Array<{ file?: File }>) => {
+const onFilesSelected = (aliasedNodeData: AliasedNodeData) => {
+    const entries = (aliasedNodeData?.node_value ?? []) as Array<{
+        file?: File;
+    }>;
     const staged = new Set(props.files.map(fileKey));
-    const picked = (value ?? [])
+    const picked = entries
         .map((entry) => entry.file)
         .filter(
             (file): file is File =>
