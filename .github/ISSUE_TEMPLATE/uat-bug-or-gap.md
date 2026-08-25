@@ -1,7 +1,8 @@
 ---
-name: UAT Feedback
-about: 'Provide feedback from SMEs about how things should change '
-title: 'UAT FEEDBACK: xxxxxxxxxx'
+name: UAT Bug or Gap
+about: 'BUG: Can''t complete without a technical interruption.  GAP: An as-built compulsory
+  feature won''t meet operational or user needs. '
+title: 'BUG or GAP - UAT: xxxxxxxxxx'
 labels: PERM
 assignees: ''
 
@@ -9,7 +10,7 @@ assignees: ''
 
 ## Feedback Details
 
-**Feedback provided by xxxSMExxx while testing ticket #xxxx**
+**Feedback found by xxxSMExxx while testing Ticket #xxxx under Sprint xxxx test case xxxx using the xxxx browser**
 
 
 **Feedback Description:**
@@ -21,6 +22,8 @@ assignees: ''
 
 **Screenshots (if applicable)**
 
+
+**Console log content (right click>inspect>console):**
 
 ## Steps to Reproduce / Get us to where you were
 
