@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zDocumentSubmissionSubmissionAssessmentAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -31,7 +31,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="document_submission"
                 node-alias="submission_type"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'submission_type',
@@ -47,7 +47,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="document_submission"
                 node-alias="submission_number"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'submission_number',

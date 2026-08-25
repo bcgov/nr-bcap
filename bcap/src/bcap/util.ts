@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type {
+    FileListAliasedNodeData,
     FileListAliasedNodeDataWritable,
     PermitApplicationResourceAliasedData,
 } from '@/bcap/client/types.gen.ts';
@@ -206,3 +207,12 @@ export const readString = (node: unknown): string => {
     } | null;
     return value?.node_value?.en?.value ?? value?.display_value ?? '';
 };
+
+// MultiFileUploader forwards the widget's bare node_value, so a file update
+// arrives as the file array rather than the node it belongs to.
+export const asFileNode = (
+    value: AliasedNodeData | NonNullable<FileListAliasedNodeData['node_value']>,
+): AliasedNodeData =>
+    Array.isArray(value)
+        ? { display_value: '', node_value: value, details: [] }
+        : value;

@@ -31,7 +31,7 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     saveDraftFieldToBackend: vi.fn(),
 }));
 
-vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
+vi.mock('@/arches_vue_components/widgets/constants.ts', () => ({
     EDIT: 'edit',
     VIEW: 'view',
 }));
@@ -59,6 +59,7 @@ const mockStoreState = reactive({
     graphSlug: 'document_submission',
     draftData:
         {} as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>,
+    updateValue: vi.fn(),
 });
 
 storeContainer.state = mockStoreState;
@@ -76,7 +77,7 @@ const globalMountOptions = {
             MultiFileUploader: {
                 name: 'MultiFileUploader',
                 template: '<div class="mock-uploader"></div>',
-                props: ['nodeAlias'],
+                props: ['nodeAlias', 'disableAddOrSave'],
             },
             GenericWidget: {
                 name: 'GenericWidget',
@@ -173,7 +174,7 @@ describe('DocumentSubmissionModule extended coverage', () => {
 
         const widgets = wrapper.findAllComponents('.mock-widget');
         for (const w of widgets) {
-            await w.vm.$emit('update:value', 'test');
+            await w.vm.$emit('update:aliasedNodeData', 'test');
         }
     });
 
@@ -194,16 +195,24 @@ describe('DocumentSubmissionModule extended coverage', () => {
             'archaeological_consultant',
         );
 
-        await titleWidget?.vm.$emit('update:value', {
+        await titleWidget?.vm.$emit('update:aliasedNodeData', {
             node_value: 'Test Title',
         });
-        await consultantWidget?.vm.$emit('update:value', {
+        await consultantWidget?.vm.$emit('update:aliasedNodeData', {
             node_value: [{ name: 'Consultant Inc.' }],
         });
 
-        await uploader.vm.$emit('file-updated', {
-            node_value: [{ name: 'report.pdf' }],
-        });
+        // Typed-in metadata goes through the store, which debounces the save.
+        expect(mockStoreState.updateValue).toHaveBeenCalledWith(
+            { node_value: 'Test Title' },
+            'report_title',
+            'report_submission',
+        );
+        expect(saveDraftFieldToBackend).not.toHaveBeenCalled();
+
+        // The uploader forwards the widget's bare node_value, not the node.
+        await uploader.vm.$emit('file-updated', [{ name: 'report.pdf' }]);
+        expect(uploader.props('disableAddOrSave')).toBe(false);
 
         await uploader.vm.$emit('save-item');
         expect(saveDraftFieldToBackend).toHaveBeenCalled();
@@ -229,16 +238,22 @@ describe('DocumentSubmissionModule extended coverage', () => {
         const viewWidget = findWidget(wrapper, 'photograph_view');
         const descWidget = findWidget(wrapper, 'photograph_description');
 
-        await dateWidget?.vm.$emit('update:value', { node_value: '2023' });
-        await dateWidget?.vm.$emit('update:value', {
+        await dateWidget?.vm.$emit('update:aliasedNodeData', {
+            node_value: '2023',
+        });
+        await dateWidget?.vm.$emit('update:aliasedNodeData', {
             node_value: '2023-05-15',
         });
-        await dateWidget?.vm.$emit('update:value', {
+        await dateWidget?.vm.$emit('update:aliasedNodeData', {
             node_value: 'invalid-string',
         });
 
-        await viewWidget?.vm.$emit('update:value', { node_value: 'Front' });
-        await descWidget?.vm.$emit('update:value', { node_value: 'Desc' });
+        await viewWidget?.vm.$emit('update:aliasedNodeData', {
+            node_value: 'Front',
+        });
+        await descWidget?.vm.$emit('update:aliasedNodeData', {
+            node_value: 'Desc',
+        });
 
         await uploader.vm.$emit('file-updated', {
             node_value: [{ name: 'photo.jpg' }],
