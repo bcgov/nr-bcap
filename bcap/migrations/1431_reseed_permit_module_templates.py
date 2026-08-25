@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
     # The builder opens its own durable atomic block per save; can't nest.
     atomic = False
 
-    dependencies = [("bcap", "1430_create_databc_api_views")]
+    dependencies = [("bcap", "1428_use_aliases_in_get_map_attribute_data")]
 
     operations = [migrations.RunPython(seed, migrations.RunPython.noop)]
