@@ -2870,7 +2870,7 @@ export const zPublicationCopyrightTypeTile = z.object({
 });
 
 export const zPublicationPublicationIdentifierAliasedData = z.object({
-    publication_identifier_type: zConceptAliasedNodeData.nullish(),
+    publication_identifier_type: zReferenceAliasedNodeData.nullish(),
     publication_identifier: zStringAliasedNodeData.nullish()
 });
 
@@ -7243,7 +7243,7 @@ export const zPublicationCopyrightTypeTileWritable = z.object({
 });
 
 export const zPublicationPublicationIdentifierAliasedDataWritable = z.object({
-    publication_identifier_type: zConceptAliasedNodeDataWritable.nullish(),
+    publication_identifier_type: zReferenceAliasedNodeDataWritable.nullish(),
     publication_identifier: zStringAliasedNodeDataWritable.nullish()
 });
 

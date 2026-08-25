@@ -1326,9 +1326,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ModuleHost'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/ModuleHost'
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/ModuleHost'
@@ -12741,7 +12738,7 @@ components:
       properties:
         publication_identifier_type:
           allOf:
-          - $ref: '#/components/schemas/ConceptAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
         publication_identifier:

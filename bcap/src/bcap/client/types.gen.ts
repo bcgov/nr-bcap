@@ -5217,7 +5217,7 @@ export type PublicationPublicationIdentifierAliasedData = {
     /**
      * Select an option
      */
-    publication_identifier_type?: ConceptAliasedNodeData | null;
+    publication_identifier_type?: ReferenceAliasedNodeData | null;
     /**
      * Enter Report Number, URL or Digital Object Identifier
      */
@@ -11273,7 +11273,7 @@ export type PublicationPublicationIdentifierAliasedDataWritable = {
     /**
      * Select an option
      */
-    publication_identifier_type?: ConceptAliasedNodeDataWritable | null;
+    publication_identifier_type?: ReferenceAliasedNodeDataWritable | null;
     /**
      * Enter Report Number, URL or Digital Object Identifier
      */
