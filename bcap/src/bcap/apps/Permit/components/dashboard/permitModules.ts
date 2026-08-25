@@ -17,6 +17,7 @@ const PERMIT_APPLICATION_MODULES: string[] = [
     GraphSlug.Investigation,
     GraphSlug.Inspection,
     GraphSlug.Alteration,
+    GraphSlug.DocumentSubmission,
 ];
 
 const MODULES_BY_FILING_TYPE: Record<FilingType, string[]> = {
@@ -63,7 +64,6 @@ export const permitModules: PermitModule[] = [
         description:
             'Notice submitted to signal the intent to carry out a project under the permit.',
         listItems: [],
-        // No route yet -- coming soon.
         routeName: '',
         disabled: true,
     },
@@ -117,7 +117,6 @@ export const permitModules: PermitModule[] = [
         description:
             'Records of site visits conducted under the permit, including observations and follow-up actions.',
         listItems: [],
-        // No route yet -- coming soon.
         routeName: '',
         disabled: true,
     },
@@ -127,9 +126,8 @@ export const permitModules: PermitModule[] = [
         title: 'Document Submission module',
         description: 'Supporting documents submitted against the permit.',
         listItems: [],
-        // No route yet -- coming soon.
-        routeName: '',
-        disabled: true,
+        routeName: 'documentSubmission',
+        disabled: false,
     },
     {
         id: GraphSlug.InformationRequest,
@@ -138,7 +136,6 @@ export const permitModules: PermitModule[] = [
         description:
             'A request for further information, tracking the response sent back.',
         listItems: [],
-        // No route yet -- coming soon.
         routeName: '',
         disabled: true,
     },

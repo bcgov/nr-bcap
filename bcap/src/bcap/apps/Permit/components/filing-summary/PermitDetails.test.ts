@@ -196,7 +196,7 @@ describe('PermitDetails.vue', () => {
         // With no filing type the menu falls back to the permit-application
         // set, which ends at Alteration.
         const menuItems = wrapper.findAll('.menu-item');
-        await menuItems[menuItems.length - 1].trigger('click');
+        await menuItems[menuItems.length - 2].trigger('click');
 
         expect(wrapper.find('.content-title').text()).toBe('Alteration module');
         const addBtn = wrapper.find('.add-module-btn');

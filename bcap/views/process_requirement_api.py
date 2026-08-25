@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,6 +20,7 @@ from rest_framework.views import APIView
 from arches.app.models.resource import Resource
 
 from arches_querysets.models import ResourceTileTree
+from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.permissions import ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
@@ -112,6 +114,8 @@ class ProcessRequirementSeedView(APIView):
     # Applicants file their own modules, so this only asks for a login; which
     # permits they may file against is settled by the permit lookup.
     permission_classes = [IsAuthenticated]
+    # A module carrying file uploads (a document submission and its photographs)
+    parser_classes = [JSONParser, MultiPartJSONParser]
     # Key each host's aliased_data component name off its graph, so the three
     # host types get distinct typed schemas instead of one shared, generic one.
     schema = ArchesTileAutoSchema()

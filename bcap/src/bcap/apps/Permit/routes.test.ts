@@ -4,13 +4,14 @@ describe('Permit routes', () => {
     it('defines a route for each Permit screen', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(routes).toHaveLength(13);
+        expect(routes).toHaveLength(14);
         expect(Object.keys(byName).sort()).toEqual([
             'Checklist',
             'EditChecklist',
             'alterationsModule',
             'baseModule',
             'collectionModule',
+            'documentSubmission',
             'inspectionModule',
             'internal-root',
             'investigationModule',
