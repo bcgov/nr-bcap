@@ -20,6 +20,10 @@ vi.mock(
     },
 );
 
+vi.mock('@/arches_vue_components/widgets/constants.ts', () => ({
+    VIEW: 'view',
+}));
+
 import DetailsSection1 from './DetailsSection1.vue';
 
 describe('DetailsSection1', () => {

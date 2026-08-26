@@ -2,8 +2,14 @@ import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura'; // base preset (light). Other options: Lara, Nora, etc.
 import type { Preset } from '@primeuix/themes/types';
 import type { App } from 'vue';
+import { createPinia } from 'pinia';
 
 import PrimeVue from 'primevue/config';
+
+// arches-vue-components widgets read their config through a pinia store, so
+// every KO-mounted app needs one. Shared instance, so the widget-config cache
+// is not refetched per mount.
+const pinia = createPinia();
 
 // Make your custom preset (optional; you can also pass Aura directly)
 const BcapPreset = definePreset(Aura, {
@@ -26,6 +32,7 @@ const BcapPreset = definePreset(Aura, {
 
 // Register once with your KO↔Vue bridge so EVERY app gets PrimeVue + the preset.
 window.BCAP?.vueKO?.use?.((app: App) => {
+    app.use(pinia);
     app.use(PrimeVue, {
         theme: {
             preset: BcapPreset, // or Aura / Nora / Lara directly

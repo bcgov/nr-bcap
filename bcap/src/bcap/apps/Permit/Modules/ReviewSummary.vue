@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { VIEW } from '@/arches_component_lab/widgets/constants.ts';
-import type { CardXNodeXWidgetData } from '@/arches_component_lab/types.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
+import type {
+    AliasedNodeData,
+    CardXNodeXWidgetData,
+} from '@/arches_vue_components/types.ts';
 
 export interface ReviewField {
     label: string;
@@ -79,7 +82,7 @@ const hasValue = (val: unknown): boolean => {
                 <GenericWidget
                     :mode="VIEW"
                     :should-show-label="false"
-                    :aliased-node-data="field.value"
+                    :aliased-node-data="field.value as AliasedNodeData"
                     :card-x-node-x-widget-data-overrides="mapOverrides"
                     :graph-slug="field.graphSlug || 'permit_application'"
                     :node-alias="field.nodeAlias || 'project_boundary'"

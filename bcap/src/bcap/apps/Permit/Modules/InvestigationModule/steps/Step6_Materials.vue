@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zInvestigationMaterialCollectionAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -30,7 +30,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="collection_approach_details"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'collection_approach_details',
@@ -46,7 +46,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="collection_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'collection_approach',
@@ -62,7 +62,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="details_of_collected_materials"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'details_of_collected_materials',
@@ -78,7 +78,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="collection_approach_additional_comments"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'collection_approach_additional_comments',
@@ -94,7 +94,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="details_of_collected_samples"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'details_of_collected_samples',
@@ -110,7 +110,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="additional_collection_and_sampling_details"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'additional_collection_and_sampling_details',

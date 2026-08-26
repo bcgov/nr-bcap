@@ -1,116 +1,113 @@
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
-import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
-import type { NonLocalizedTextValue } from '@/arches_component_lab/datatypes/non-localized-text/types.ts';
-import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
-import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
-import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
-import type {
-    NumberValue,
-    NullableReferenceSelectValue,
-} from '@/bcap/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
+import type { StringAliasedNodeData } from '@/arches_vue_components/datatypes/string/types.ts';
+import type { NonLocalizedTextAliasedNodeData } from '@/arches_vue_components/datatypes/non-localized-text/types.ts';
+import type { DateAliasedNodeData } from '@/arches_vue_components/datatypes/date/types.ts';
+import type { ResourceInstanceListAliasedNodeData } from '@/arches_vue_components/datatypes/resource-instance-list/types.ts';
+import type { ReferenceSelectAliasedNodeData } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
+import type { NumberAliasedNodeData } from '@/arches_vue_components/datatypes/number/types.ts';
 
 export interface BiogeographyTile extends AliasedTileData {
     aliased_data: {
-        biogeography_description: StringValue;
-        biogeography_entered_by: NonLocalizedTextValue;
-        biogeography_entered_date: DateValue;
-        biogeography_name: StringValue;
-        biogeography_type: NonLocalizedTextValue;
+        biogeography_description: StringAliasedNodeData;
+        biogeography_entered_by: NonLocalizedTextAliasedNodeData;
+        biogeography_entered_date: DateAliasedNodeData;
+        biogeography_name: StringAliasedNodeData;
+        biogeography_type: NonLocalizedTextAliasedNodeData;
     };
 }
 
 export interface UnreviewedAdifRecordTile extends AliasedTileData {
     aliased_data: {
-        site_entered_by: NonLocalizedTextValue;
-        site_entry_date: DateValue;
-        unreviewed_adif_record: NonLocalizedTextValue;
+        site_entered_by: NonLocalizedTextAliasedNodeData;
+        site_entry_date: DateAliasedNodeData;
+        unreviewed_adif_record: NonLocalizedTextAliasedNodeData;
     };
 }
 
 export interface ArchaeologicalSiteTile extends AliasedTileData {
     aliased_data: {
-        archaeological_site: ResourceInstanceListValue;
+        archaeological_site: ResourceInstanceListAliasedNodeData;
     };
 }
 
 export interface HriaJurisdictionAndTenureTile extends AliasedTileData {
     aliased_data: {
-        jurisdiction_entered_by: StringValue;
-        jurisdiction_entered_date: DateValue;
-        site_jurisdiction: StringValue;
-        tenure_identifier: StringValue;
-        tenure_remarks: StringValue;
-        tenure_type: StringValue;
+        jurisdiction_entered_by: StringAliasedNodeData;
+        jurisdiction_entered_date: DateAliasedNodeData;
+        site_jurisdiction: StringAliasedNodeData;
+        tenure_identifier: StringAliasedNodeData;
+        tenure_remarks: StringAliasedNodeData;
+        tenure_type: StringAliasedNodeData;
     };
 }
 
 export interface ChronologyTile extends AliasedTileData {
     aliased_data: {
-        chronology_modified_by: NonLocalizedTextValue;
-        chronology_modified_on: DateValue;
-        chronology_remarks: StringValue;
-        determination_method: ReferenceSelectValue;
-        end_year: DateValue;
-        end_year_calendar: ReferenceSelectValue;
-        end_year_qualifier: NullableReferenceSelectValue;
-        information_source: StringValue;
-        rcd_adjusted: NonLocalizedTextValue;
-        rcd_adjusted_var: NonLocalizedTextValue;
-        rcd_lab_code: NonLocalizedTextValue;
-        rcd_lab_number: NonLocalizedTextValue;
-        rcd_unadjusted: NonLocalizedTextValue;
-        rcd_unadjusted_var: NonLocalizedTextValue;
-        start_year: DateValue;
-        start_year_calendar: ReferenceSelectValue;
-        start_year_qualifier: NullableReferenceSelectValue;
+        chronology_modified_by: NonLocalizedTextAliasedNodeData;
+        chronology_modified_on: DateAliasedNodeData;
+        chronology_remarks: StringAliasedNodeData;
+        determination_method: ReferenceSelectAliasedNodeData;
+        end_year: DateAliasedNodeData;
+        end_year_calendar: ReferenceSelectAliasedNodeData;
+        end_year_qualifier: ReferenceSelectAliasedNodeData;
+        information_source: StringAliasedNodeData;
+        rcd_adjusted: NonLocalizedTextAliasedNodeData;
+        rcd_adjusted_var: NonLocalizedTextAliasedNodeData;
+        rcd_lab_code: NonLocalizedTextAliasedNodeData;
+        rcd_lab_number: NonLocalizedTextAliasedNodeData;
+        rcd_unadjusted: NonLocalizedTextAliasedNodeData;
+        rcd_unadjusted_var: NonLocalizedTextAliasedNodeData;
+        start_year: DateAliasedNodeData;
+        start_year_calendar: ReferenceSelectAliasedNodeData;
+        start_year_qualifier: ReferenceSelectAliasedNodeData;
     };
 }
 
 export interface SiteDimensionsTile extends AliasedTileData {
     aliased_data: {
-        boundary_type: StringValue;
-        dimension_entered_by: NonLocalizedTextValue;
-        dimension_entered_date: DateValue;
-        length: NumberValue;
-        length_direction: NonLocalizedTextValue;
-        site_area: NumberValue;
-        width: NumberValue;
-        width_direction: NonLocalizedTextValue;
+        boundary_type: StringAliasedNodeData;
+        dimension_entered_by: NonLocalizedTextAliasedNodeData;
+        dimension_entered_date: DateAliasedNodeData;
+        length: NumberAliasedNodeData;
+        length_direction: NonLocalizedTextAliasedNodeData;
+        site_area: NumberAliasedNodeData;
+        width: NumberAliasedNodeData;
+        width_direction: NonLocalizedTextAliasedNodeData;
     };
 }
 
 export interface DiscontinuedAddressAttributesTile extends AliasedTileData {
     aliased_data: {
-        city: StringValue;
+        city: StringAliasedNodeData;
         discontinued_address_attributes?: DiscontinuedAddressAttributesTile[];
-        legal_description: StringValue;
-        legal_number: StringValue;
-        legal_type: StringValue;
-        modified_by: NonLocalizedTextValue;
-        modified_on: DateValue;
-        pid: StringValue;
-        pin: StringValue;
-        postal_code: StringValue;
-        street_name: StringValue;
-        street_number: StringValue;
+        legal_description: StringAliasedNodeData;
+        legal_number: StringAliasedNodeData;
+        legal_type: StringAliasedNodeData;
+        modified_by: NonLocalizedTextAliasedNodeData;
+        modified_on: DateAliasedNodeData;
+        pid: StringAliasedNodeData;
+        pin: StringAliasedNodeData;
+        postal_code: StringAliasedNodeData;
+        street_name: StringAliasedNodeData;
+        street_number: StringAliasedNodeData;
     };
 }
 
 export interface OtherMapsTile extends AliasedTileData {
     aliased_data: {
-        other_maps_map_name: StringValue;
-        other_maps_map_scale: StringValue;
-        other_maps_modified_by: StringValue;
-        other_maps_modified_on: DateValue;
+        other_maps_map_name: StringAliasedNodeData;
+        other_maps_map_scale: StringAliasedNodeData;
+        other_maps_modified_by: StringAliasedNodeData;
+        other_maps_modified_on: DateAliasedNodeData;
     };
 }
 
 export interface SiteBoundaryAnnotationsTile extends AliasedTileData {
     aliased_data: {
-        accuracy_remarks: StringValue;
-        site_boundary_entered_by: NonLocalizedTextValue;
-        site_boundary_entered_on: DateValue;
-        source_notes: StringValue;
+        accuracy_remarks: StringAliasedNodeData;
+        site_boundary_entered_by: NonLocalizedTextAliasedNodeData;
+        site_boundary_entered_on: DateAliasedNodeData;
+        source_notes: StringAliasedNodeData;
     };
 }
 

@@ -14,7 +14,7 @@ import 'primeicons/primeicons.css';
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';

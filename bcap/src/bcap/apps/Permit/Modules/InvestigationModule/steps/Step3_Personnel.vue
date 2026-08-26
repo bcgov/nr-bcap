@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zInvestigationSection2PersonnelAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -30,7 +30,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="permit_deliverables"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'permit_deliverables',
@@ -46,7 +46,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="is_hca_compliant"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'is_hca_compliant',
@@ -62,7 +62,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="field_directors"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'field_directors',
@@ -78,7 +78,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="overseeing_archaeologist"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'overseeing_archaeologist',

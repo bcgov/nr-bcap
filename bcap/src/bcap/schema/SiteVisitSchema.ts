@@ -2,21 +2,18 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
-import type { StringValue } from '@/arches_component_lab/datatypes/string/types.ts';
-import type { DateValue } from '@/arches_component_lab/datatypes/date/types.ts';
-import type { ResourceInstanceValue } from '@/arches_component_lab/datatypes/resource-instance/types.ts';
-import type { ResourceInstanceListValue } from '@/arches_component_lab/datatypes/resource-instance-list/types.ts';
-import type { FileListValue } from '@/arches_component_lab/datatypes/file-list/types.ts';
+} from '@/arches_vue_components/types.ts';
+import type { StringAliasedNodeData } from '@/arches_vue_components/datatypes/string/types.ts';
+import type { DateAliasedNodeData } from '@/arches_vue_components/datatypes/date/types.ts';
+import type { ResourceInstanceAliasedNodeData } from '@/arches_vue_components/datatypes/resource-instance/types.ts';
+import type { ResourceInstanceListAliasedNodeData } from '@/arches_vue_components/datatypes/resource-instance-list/types.ts';
+import type { FileListAliasedNodeData } from '@/arches_vue_components/datatypes/file-list/types.ts';
 
-import type {
-    NumberValue,
-    BooleanValue,
-    GeoJSONFeatureCollectionValue,
-    NullableReferenceSelectValue,
-} from '@/bcap/types.ts';
+import type { NumberAliasedNodeData } from '@/arches_vue_components/datatypes/number/types.ts';
+import type { BooleanAliasedNodeData } from '@/arches_vue_components/datatypes/boolean/types.ts';
+import type { GeoJSONFeatureCollectionAliasedNodeData } from '@/arches_vue_components/datatypes/geojson-feature-collection/types.ts';
 
-import type { ReferenceSelectValue } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
+import type { ReferenceSelectAliasedNodeData } from '@/arches_controlled_lists/datatypes/reference-select/types.js';
 
 // ---------- Site Visit Location: Biogeography ----------
 export interface SiteVisitLocationBiogeographyTile extends AliasedTileData {
@@ -30,10 +27,10 @@ export interface SiteVisitLocationBiogeographyTile extends AliasedTileData {
 // ---------- Site Visit Location ----------
 export interface SiteVisitLocationTile extends AliasedTileData {
     aliased_data: {
-        accuracy_remarks: StringValue; // string (i18n)
-        latest_edit_type: ReferenceSelectValue; // reference
-        site_visit_location: GeoJSONFeatureCollectionValue; // geojson-feature-collection
-        location_and_access: StringValue; // string (i18n)
+        accuracy_remarks: StringAliasedNodeData; // string (i18n)
+        latest_edit_type: ReferenceSelectAliasedNodeData; // reference
+        site_visit_location: GeoJSONFeatureCollectionAliasedNodeData; // geojson-feature-collection
+        location_and_access: StringAliasedNodeData; // string (i18n)
         biogeography?: SiteVisitLocationBiogeographyTile[];
     };
 }
@@ -41,31 +38,31 @@ export interface SiteVisitLocationTile extends AliasedTileData {
 // --- ancestral_remains[] (semantic group of tiles) ---
 export interface AncestralRemainsTile extends AliasedTileData {
     aliased_data: {
-        ancestral_remains_type: ReferenceSelectValue; // reference
-        multiple_burials: BooleanValue; // boolean
-        ancestral_remains_status: ReferenceSelectValue; // reference
-        ancestral_remains_remarks: StringValue; // string (i18n)
-        minimum_number_of_individuals: NumberValue; // number
-        ancestral_remains_repository: ResourceInstanceValue;
+        ancestral_remains_type: ReferenceSelectAliasedNodeData; // reference
+        multiple_burials: BooleanAliasedNodeData; // boolean
+        ancestral_remains_status: ReferenceSelectAliasedNodeData; // reference
+        ancestral_remains_remarks: StringAliasedNodeData; // string (i18n)
+        minimum_number_of_individuals: NumberAliasedNodeData; // number
+        ancestral_remains_repository: ResourceInstanceAliasedNodeData;
     };
 }
 
 // --- identification (with children new_site_names[] & temporary_number) ---
 export interface NewSiteNameTile extends AliasedTileData {
     aliased_data: {
-        name: StringValue; // string (i18n)
-        assigned_or_reported_by: ResourceInstanceValue;
-        name_type: ReferenceSelectValue; // reference
-        name_remarks: StringValue; // string (i18n)
-        assigned_or_reported_date: DateValue; // date
+        name: StringAliasedNodeData; // string (i18n)
+        assigned_or_reported_by: ResourceInstanceAliasedNodeData;
+        name_type: ReferenceSelectAliasedNodeData; // reference
+        name_remarks: StringAliasedNodeData; // string (i18n)
+        assigned_or_reported_date: DateAliasedNodeData; // date
     };
 }
 
 export interface TemporaryNumberTile extends AliasedTileData {
     aliased_data: {
-        temporary_number_assigned_by: ResourceInstanceValue;
-        temporary_number: StringValue; // string (i18n)
-        temporary_number_assigned_date: DateValue; // date
+        temporary_number_assigned_by: ResourceInstanceAliasedNodeData;
+        temporary_number: StringAliasedNodeData; // string (i18n)
+        temporary_number_assigned_date: DateAliasedNodeData; // date
     };
 }
 
@@ -78,9 +75,9 @@ export interface IdentificationTile {
 
 export interface TeamMemberTile extends AliasedTileData {
     aliased_data: {
-        team_member: ResourceInstanceValue;
-        member_roles: ReferenceSelectValue; // reference-list
-        was_on_site: BooleanValue; // boolean
+        team_member: ResourceInstanceAliasedNodeData;
+        member_roles: ReferenceSelectAliasedNodeData; // reference-list
+        was_on_site: BooleanAliasedNodeData; // boolean
     };
 }
 
@@ -92,15 +89,15 @@ export interface SiteVisitTeamTile extends AliasedTileData {
 
 export interface SiteVisitDetailsTile extends AliasedTileData {
     aliased_data: {
-        site_form_authors: ResourceInstanceListValue; // resource-instance-list
-        site_visit_type: ReferenceSelectValue; // reference
-        first_date_of_site_visit: DateValue; // date (nullable in some payloads)
-        last_date_of_site_visit: DateValue; // date
-        project_description: StringValue; // string (i18n)
-        archaeological_site: ResourceInstanceValue;
-        associated_permit: ResourceInstanceValue;
-        affiliation: ResourceInstanceValue;
-        is_site_visit_permitted?: BooleanValue;
+        site_form_authors: ResourceInstanceListAliasedNodeData; // resource-instance-list
+        site_visit_type: ReferenceSelectAliasedNodeData; // reference
+        first_date_of_site_visit: DateAliasedNodeData; // date (nullable in some payloads)
+        last_date_of_site_visit: DateAliasedNodeData; // date
+        project_description: StringAliasedNodeData; // string (i18n)
+        archaeological_site: ResourceInstanceAliasedNodeData;
+        associated_permit: ResourceInstanceAliasedNodeData;
+        affiliation: ResourceInstanceAliasedNodeData;
+        is_site_visit_permitted?: BooleanAliasedNodeData;
         site_visit_team: SiteVisitTeamTile; // semantic subgroup (child tile)
     };
 }
@@ -108,54 +105,54 @@ export interface SiteVisitDetailsTile extends AliasedTileData {
 // --- archaeological_data (multiple semantic groups) ---
 export interface StratigraphyTile extends AliasedTileData {
     aliased_data: {
-        stratigraphy: StringValue; // string (i18n)
+        stratigraphy: StringAliasedNodeData; // string (i18n)
     };
 }
 
 export interface ArchaeologicalCultureTile extends AliasedTileData {
     aliased_data: {
-        culture_remarks: StringValue; // string (i18n)
-        archaeological_culture: ReferenceSelectValue; // reference
+        culture_remarks: StringAliasedNodeData; // string (i18n)
+        archaeological_culture: ReferenceSelectAliasedNodeData; // reference
     };
 }
 
 export interface SiteDisturbanceTile extends AliasedTileData {
     aliased_data: {
-        disturbance_period: ReferenceSelectValue; // reference
-        disturbance_cause: ReferenceSelectValue; // reference
-        disturbance_remarks: StringValue; // string (i18n)
+        disturbance_period: ReferenceSelectAliasedNodeData; // reference
+        disturbance_cause: ReferenceSelectAliasedNodeData; // reference
+        disturbance_remarks: StringAliasedNodeData; // string (i18n)
     };
 }
 
 export interface CulturalMaterialTile extends AliasedTileData {
     aliased_data: {
-        cultural_material_type: ReferenceSelectValue; // reference
-        cultural_material_status: ReferenceSelectValue; // reference
-        cultural_material_details: StringValue; // string (i18n)
-        number_of_artifacts: NumberValue; // number
-        repository: ResourceInstanceValue;
+        cultural_material_type: ReferenceSelectAliasedNodeData; // reference
+        cultural_material_status: ReferenceSelectAliasedNodeData; // reference
+        cultural_material_details: StringAliasedNodeData; // string (i18n)
+        number_of_artifacts: NumberAliasedNodeData; // number
+        repository: ResourceInstanceAliasedNodeData;
     };
 }
 
 export interface ArchaeologicalFeatureTile extends AliasedTileData {
     aliased_data: {
-        feature_count: NumberValue; // number
-        archaeological_feature: NullableReferenceSelectValue; // reference (nullable)
-        feature_remarks: StringValue; // string (i18n)
+        feature_count: NumberAliasedNodeData; // number
+        archaeological_feature: ReferenceSelectAliasedNodeData; // reference (nullable)
+        feature_remarks: StringAliasedNodeData; // string (i18n)
     };
 }
 
 export interface ChronologyTile extends AliasedTileData {
     aliased_data: {
-        end_year_calendar: ReferenceSelectValue; // reference
-        start_year_calendar: ReferenceSelectValue; // reference
-        end_year_qualifier: ReferenceSelectValue; // reference
-        determination_method: ReferenceSelectValue; // reference
-        start_year: DateValue; // date
-        information_source: StringValue; // string (i18n)
-        end_year: DateValue; // date
-        chronology_remarks: StringValue; // string (i18n)
-        start_year_qualifier: ReferenceSelectValue; // reference
+        end_year_calendar: ReferenceSelectAliasedNodeData; // reference
+        start_year_calendar: ReferenceSelectAliasedNodeData; // reference
+        end_year_qualifier: ReferenceSelectAliasedNodeData; // reference
+        determination_method: ReferenceSelectAliasedNodeData; // reference
+        start_year: DateAliasedNodeData; // date
+        information_source: StringAliasedNodeData; // string (i18n)
+        end_year: DateAliasedNodeData; // date
+        chronology_remarks: StringAliasedNodeData; // string (i18n)
+        start_year_qualifier: ReferenceSelectAliasedNodeData; // reference
     };
 }
 
@@ -173,21 +170,21 @@ export interface ArchaeologicalDataTile extends AliasedTileData {
 // --- remarks_and_recommendations ---
 export interface RecommendationTile extends AliasedTileData {
     aliased_data: {
-        recorders_recommendation: StringValue; // string (i18n)
+        recorders_recommendation: StringAliasedNodeData; // string (i18n)
     };
 }
 
 export interface ArchaeologyBranchRecommendationTile extends AliasedTileData {
     aliased_data: {
-        archaeology_branch_recommendation: StringValue; // string (i18n)
+        archaeology_branch_recommendation: StringAliasedNodeData; // string (i18n)
     };
 }
 
 export interface GeneralRemarkTile extends AliasedTileData {
     aliased_data: {
-        remark_source: ReferenceSelectValue; // reference
-        remark_date: DateValue; // date
-        remark: StringValue; // string (i18n)
+        remark_source: ReferenceSelectAliasedNodeData; // reference
+        remark_date: DateAliasedNodeData; // date
+        remark: StringAliasedNodeData; // string (i18n)
     };
 }
 
@@ -202,28 +199,28 @@ export interface RemarksAndRecommendationsTile extends AliasedTileData {
 // --- references_and_documents ---
 export interface ReferencesTile extends AliasedTileData {
     aliased_data: {
-        reference_type: ReferenceSelectValue;
-        reference_title: StringValue;
-        reference_year: StringValue;
-        reference_authors: StringValue;
-        reference_remarks: StringValue;
+        reference_type: ReferenceSelectAliasedNodeData;
+        reference_title: StringAliasedNodeData;
+        reference_year: StringAliasedNodeData;
+        reference_authors: StringAliasedNodeData;
+        reference_remarks: StringAliasedNodeData;
     };
 }
 
 export interface RelatedDocumentsTile extends AliasedTileData {
     aliased_data: {
-        related_document_type: ReferenceSelectValue;
-        related_document_description: StringValue;
-        related_site_documents: ResourceInstanceValue;
+        related_document_type: ReferenceSelectAliasedNodeData;
+        related_document_description: StringAliasedNodeData;
+        related_site_documents: ResourceInstanceAliasedNodeData;
     };
 }
 
 export interface PhotosTile extends AliasedTileData {
     aliased_data: {
-        photo_title: StringValue;
-        photo_description: StringValue;
-        photographer: ResourceInstanceValue;
-        photo_date: DateValue;
+        photo_title: StringAliasedNodeData;
+        photo_description: StringAliasedNodeData;
+        photographer: ResourceInstanceAliasedNodeData;
+        photo_date: DateAliasedNodeData;
     };
 }
 
@@ -264,7 +261,7 @@ export interface SiteVisitSiteImagesTile extends AliasedTileData {
         image_view?: AliasedNodeData;
         photographer?: AliasedNodeData;
         primary_image?: AliasedNodeData;
-        site_images?: FileListValue;
+        site_images?: FileListAliasedNodeData;
     };
 }
 

@@ -8,7 +8,7 @@ import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type {
     RemarksAndRestrictedInformationTile,
     ContraventionDocumentTile,

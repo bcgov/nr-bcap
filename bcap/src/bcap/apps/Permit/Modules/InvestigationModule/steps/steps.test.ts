@@ -1,4 +1,6 @@
-import { shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
+
+import { useDraftStore } from '@/bcap/stores/draft.ts';
 
 import Step1 from './Step1_About.vue';
 import Step2 from './Step2_Overview.vue';
@@ -34,4 +36,32 @@ describe('InvestigationModule steps', () => {
             ).toBe('boolean');
         });
     }
+
+    // Binding the wrong GenericWidget event still compiles and renders; the
+    // edit just never reaches the draft store.
+    it('routes a widget edit into the draft store via update:aliasedNodeData', () => {
+        // shallowMount would stub <Form> and never render its slot, so the
+        // widgets inside it would not exist to emit from.
+        const passthrough = { template: '<div><slot /></div>' };
+        const wrapper = mount(Step2, {
+            global: { stubs: { Form: passthrough, FieldSet: passthrough } },
+        });
+        const store = useDraftStore();
+        const updateValue = vi.spyOn(store, 'updateValue');
+
+        const edit = {
+            display_value: 'Field survey',
+            node_value: 'Field survey',
+            details: [],
+        } as AliasedNodeData;
+        wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:aliasedNodeData', edit);
+
+        expect(updateValue).toHaveBeenCalledWith(
+            edit,
+            'investigation_identification',
+            'investigation_identification',
+        );
+    });
 });

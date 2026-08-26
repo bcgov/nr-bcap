@@ -60,27 +60,28 @@ beforeAll(() => {
 
     vi.mock('vue3-gettext', () => ({
         useGettext: () => ({
-            $gettext: (text: string) => text,
-        }),
+            $gettext: (text: string) => (text)
+        })
     }));
 
-    // The component lab ships these as .ts constants a mounted widget reads at
-    // import time. Stubbed so tests don't pull the package's build in for them.
-    vi.mock('@/arches_component_lab/widgets/constants.ts', () => ({
-        EDIT: 'edit',
-        VIEW: 'view',
-        CONFIGURE: 'configure',
-    }));
-
-    // The component lab's tsconfig has a broken extends that crashes the esbuild
-    // transform, so the real widget can never be loaded here. A test that needs
-    // it to behave (emit, render a label) mocks it again with the behaviour.
+    // The real GenericWidget needs an active pinia and a live
+    // card_x_node_x_widget fetch. Drive the stub with `.vm.$emit(...)`:
+    // `update:value` is the bare node_value, `update:aliasedNodeData` the node.
     vi.mock(
-        '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue',
-        () => ({ default: { name: 'GenericWidget', template: '<div />' } }),
+        '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue',
+        () => ({
+            default: {
+                name: 'GenericWidget',
+                emits: ['update:value', 'update:aliasedNodeData'],
+                template: '<div class="mock-widget" />',
+            },
+        }),
     );
 });
 
+// Fresh Pinia per test so stores start empty and never leak state across tests.
+// Components that call useStore() without an installed plugin fall back to this
+// active instance, so mounts work without per-test setup.
 beforeEach(() => {
     setActivePinia(createPinia());
 });

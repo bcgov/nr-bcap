@@ -9,7 +9,6 @@ vi.mock('primevue/usetoast', () => ({
     useToast: () => ({ add: toastAdd }),
 }));
 
-// Mutated per test so a drill-in query can be simulated.
 const routerMock = vi.hoisted(() => ({
     query: {} as Record<string, string>,
     push: vi.fn(),

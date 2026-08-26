@@ -3,11 +3,12 @@ import { ref, useTemplateRef, computed, watch } from 'vue';
 import type { Ref } from 'vue';
 import { Form, type FormInstance } from '@primevue/forms';
 import FieldSet from 'primevue/fieldset';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import LabelledInput from '@/bcgov_arches_common/components/labelledinput/LabelledInput.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
+import { asFileNode } from '@/bcap/util.ts';
 import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
 import MultiFileUploader from '@/bcgov_arches_common/components/MultiFileUploader/MultiFileUploader.vue';
 
@@ -151,15 +152,10 @@ const saveImage = async () => {
     ] as typeof draftData.value.submission_photographs;
 
     if (draftStore.draftId) {
-        const safeDraftData = JSON.parse(
-            JSON.stringify(draftStore.draftData, (key, value) =>
-                key === 'file' && value instanceof File ? undefined : value,
-            ),
-        );
         await saveDraftFieldToBackend(
             draftStore.draftId,
             draftStore.graphSlug,
-            safeDraftData,
+            draftStore.draftData,
         );
     }
 
@@ -199,7 +195,7 @@ defineExpose({ isValid: customIsValid, save: async () => true });
     <Form
         ref="photoForm"
         name="photoForm"
-        :validateOnBlur="true"
+        :validate-on-blur="true"
     >
         <FieldSet legend="Submission Photographs">
             <MultiFileUploader
@@ -208,14 +204,18 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                 graph-slug="document_submission"
                 node-alias="submission_photographs"
                 :current-node-data="
-                    currentPhoto?.aliased_data?.submission_photographs
+                    currentPhoto?.aliased_data
+                        ?.submission_photographs as AliasedNodeData
                 "
                 :items="photoList"
                 :selected-index="photoKey"
                 item-type-label="Image"
                 icon-class="fa-image"
                 @file-updated="
-                    updateCurrentValue($event, 'submission_photographs')
+                    updateCurrentValue(
+                        asFileNode($event),
+                        'submission_photographs',
+                    )
                 "
                 @clear-pending="clearPendingImage"
                 @add-new="addNewImage"
@@ -240,11 +240,12 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                                 node-alias="photograph_view"
                                 :mode="EDIT"
                                 :aliased-node-data="
-                                    currentPhoto?.aliased_data?.photograph_view
+                                    currentPhoto?.aliased_data
+                                        ?.photograph_view as AliasedNodeData
                                 "
                                 :should-show-label="false"
                                 placeholder="Select an Image View"
-                                @update:value="
+                                @update:aliased-node-data="
                                     updateCurrentValue(
                                         $event,
                                         'photograph_view',
@@ -267,13 +268,14 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                         :key="photoKey"
                         :mode="EDIT"
                         :should-show-label="false"
-                        :aliasedNodeData="
-                            currentPhoto?.aliased_data?.photograph_description
+                        :aliased-node-data="
+                            currentPhoto?.aliased_data
+                                ?.photograph_description as AliasedNodeData
                         "
                         graph-slug="document_submission"
                         node-alias="photograph_description"
                         placeholder="E.g. Front view of the excavation site..."
-                        @update:value="
+                        @update:aliased-node-data="
                             updateCurrentValue($event, 'photograph_description')
                         "
                     />
@@ -292,13 +294,14 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                                 :key="photoKey"
                                 :mode="EDIT"
                                 :should-show-label="false"
-                                :aliasedNodeData="
-                                    currentPhoto?.aliased_data?.photograph_date
+                                :aliased-node-data="
+                                    currentPhoto?.aliased_data
+                                        ?.photograph_date as AliasedNodeData
                                 "
                                 graph-slug="document_submission"
                                 node-alias="photograph_date"
                                 group-direction="column"
-                                @update:value="
+                                @update:aliased-node-data="
                                     updateCurrentValue(
                                         $event,
                                         'photograph_date',
@@ -320,13 +323,14 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                                 :key="photoKey"
                                 :mode="EDIT"
                                 :should-show-label="false"
-                                :aliasedNodeData="
-                                    currentPhoto?.aliased_data?.photographer
+                                :aliased-node-data="
+                                    currentPhoto?.aliased_data
+                                        ?.photographer as AliasedNodeData
                                 "
                                 graph-slug="document_submission"
                                 node-alias="photographer"
                                 placeholder="First Name Last Name"
-                                @update:value="
+                                @update:aliased-node-data="
                                     updateCurrentValue($event, 'photographer')
                                 "
                             />

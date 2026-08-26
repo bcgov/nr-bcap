@@ -16,7 +16,7 @@ import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 
 const props = withDefaults(
     defineProps<{

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zInvestigationSection6AncestralRemainsAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -30,7 +30,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="alternate_ancestral_remains_approach"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'alternate_ancestral_remains_approach',
@@ -46,7 +46,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="ancestral_remains_approach_compliant"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'ancestral_remains_approach_compliant',
@@ -62,7 +62,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="ancestral_remains_approach_methods"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'ancestral_remains_approach_methods',
@@ -78,7 +78,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="investigation"
                 node-alias="ancestral_remains_approach_additional_comments"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'ancestral_remains_approach_additional_comments',

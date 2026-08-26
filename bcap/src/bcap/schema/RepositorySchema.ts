@@ -1,7 +1,7 @@
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 
 export interface RepositoryIdentifierTile extends AliasedTileData {
     aliased_data: {

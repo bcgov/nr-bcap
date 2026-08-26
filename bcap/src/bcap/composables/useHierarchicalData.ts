@@ -2,7 +2,7 @@ import { ref, watch, type Ref } from 'vue';
 import type {
     AliasedTileData,
     AliasedNodeData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 
 interface HierarchicalFieldConfig {
     sourceField: string;

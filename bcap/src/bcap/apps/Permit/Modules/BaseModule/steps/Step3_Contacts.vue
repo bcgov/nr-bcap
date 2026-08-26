@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -56,7 +56,7 @@ defineExpose({ isValid });
             "
             graph-slug="permit_application"
             node-alias="application_proponent"
-            @update:value="
+            @update:aliased-node-data="
                 updateValue(
                     $event,
                     'application_proponent',
@@ -73,7 +73,7 @@ defineExpose({ isValid });
             "
             graph-slug="permit_application"
             node-alias="has_retained_archaeologist"
-            @update:value="
+            @update:aliased-node-data="
                 updateValue(
                     $event,
                     'has_retained_archaeologist',
@@ -92,7 +92,7 @@ defineExpose({ isValid });
             "
             graph-slug="permit_application"
             node-alias="rationale_for_no_archaeologist"
-            @update:value="
+            @update:aliased-node-data="
                 updateValue(
                     $event,
                     'rationale_for_no_archaeologist',
@@ -110,7 +110,7 @@ defineExpose({ isValid });
             "
             graph-slug="permit_application"
             node-alias="application_archaeologist"
-            @update:value="
+            @update:aliased-node-data="
                 updateValue(
                     $event,
                     'application_archaeologist',

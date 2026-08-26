@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import { formatFileSize } from '@/bcap/util.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 const props = defineProps<{
     files: File[];
@@ -17,9 +18,12 @@ const pick = ref(0);
 const fileKey = (file: File) => `${file.name}:${file.size}`;
 
 // The file widget emits an entry per staged file; the raw File rides in .file.
-const onFilesSelected = (value: Array<{ file?: File }>) => {
+const onFilesSelected = (aliasedNodeData: AliasedNodeData) => {
+    const entries = (aliasedNodeData?.node_value ?? []) as Array<{
+        file?: File;
+    }>;
     const staged = new Set(props.files.map(fileKey));
-    const picked = (value ?? [])
+    const picked = entries
         .map((entry) => entry.file)
         .filter(
             (file): file is File =>
@@ -51,8 +55,7 @@ const removeFile = (index: number) => {
                 :graph-slug="GraphSlug.BcapMessage"
                 node-alias="attachments"
                 mode="edit"
-                should-emit-simplified-value
-                @update:value="onFilesSelected"
+                @update:aliased-node-data="onFilesSelected"
             />
         </div>
 

@@ -1,5 +1,6 @@
 import createVueApplication from 'arches/arches/app/media/js/utils/create-vue-application';
 import { createRouter, createWebHistory } from 'vue-router';
+import { createPinia } from 'pinia';
 import BCAPAdminApp from '@/bcap/apps/Admin/App.vue';
 import { routes } from '@/bcap/apps/Admin/routes.ts';
 import { BCGovPreset } from '@/bcap/primevue-bcgov-preset.ts';
@@ -29,6 +30,7 @@ ko.components.register('contributor-invitations', {
                 },
             },
         }).then((vueApp) => {
+            vueApp.use(createPinia());
             vueApp.use(router);
             vueApp.mount('#contributor-invitations-mounting-point');
         });

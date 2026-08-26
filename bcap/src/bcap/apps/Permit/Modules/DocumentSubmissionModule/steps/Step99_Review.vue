@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import GenericReviewSummary from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import FieldSet from 'primevue/fieldset';
-import { VIEW } from '@/arches_component_lab/widgets/constants.ts';
+import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 defineProps<{
     isSubmittedView?: boolean;
@@ -18,22 +19,22 @@ type NodeData = Record<string, unknown>;
 
 interface PhotographNode {
     aliased_data?: {
-        submission_photographs?: unknown;
-        photograph_description?: unknown;
-        photograph_view?: unknown;
-        photographer?: unknown;
-        photograph_date?: unknown;
+        submission_photographs?: AliasedNodeData;
+        photograph_description?: AliasedNodeData;
+        photograph_view?: AliasedNodeData;
+        photographer?: AliasedNodeData;
+        photograph_date?: AliasedNodeData;
     };
 }
 
 interface ReportNode {
     aliased_data?: {
-        report_file?: unknown;
-        report_title?: unknown;
-        archaeological_consultant?: unknown;
-        consultant_report_number?: unknown;
-        archaological_company?: unknown;
-        report_recommendations?: unknown;
+        report_file?: AliasedNodeData;
+        report_title?: AliasedNodeData;
+        archaeological_consultant?: AliasedNodeData;
+        consultant_report_number?: AliasedNodeData;
+        archaological_company?: AliasedNodeData;
+        report_recommendations?: AliasedNodeData;
     };
 }
 

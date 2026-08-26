@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
 import { zPermitApplicationApplicationIdentificationAliasedData } from '@/bcap/client/zod.gen.ts';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
@@ -34,7 +34,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="permit_application"
                 node-alias="filing_type"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'filing_type',
@@ -50,7 +50,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="permit_application"
                 node-alias="project_name"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'project_name',
@@ -67,7 +67,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="permit_application"
                 node-alias="project_description"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue(
                         $event,
                         'project_description',
@@ -82,7 +82,7 @@ defineExpose({ isValid });
                 "
                 graph-slug="permit_application"
                 node-alias="scope_of_work"
-                @update:value="
+                @update:aliased-node-data="
                     updateValue($event, 'scope_of_work', 'proposed_project')
                 "
             />

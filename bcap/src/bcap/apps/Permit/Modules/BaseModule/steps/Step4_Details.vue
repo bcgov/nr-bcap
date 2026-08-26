@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
-import type { CardXNodeXWidgetData } from '@/arches_component_lab/types.ts';
+import type { CardXNodeXWidgetData } from '@/arches_vue_components/types.ts';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
 
 const { draftData, isValid, updateValue } = useDraftStep();
@@ -29,7 +29,7 @@ defineExpose({ isValid });
             "
             graph-slug="permit_application"
             node-alias="industrial_sector"
-            @update:value="
+            @update:aliased-node-data="
                 updateValue($event, 'industrial_sector', [
                     'proposed_project',
                     'development_project_details',
@@ -44,7 +44,7 @@ defineExpose({ isValid });
             :card-x-node-x-widget-data-overrides="mapOverrides"
             graph-slug="permit_application"
             node-alias="project_boundary"
-            @update:value="
+            @update:aliased-node-data="
                 updateValue($event, 'project_boundary', 'proposed_project')
             "
         />

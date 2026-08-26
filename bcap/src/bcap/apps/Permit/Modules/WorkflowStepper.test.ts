@@ -17,7 +17,7 @@ vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
 }));
 
 // Stub the shared review and nav so the test doesn't transform the real
-// arches_component_lab widget tree.
+// arches_vue_components widget tree.
 const stub = vi.hoisted(() => () => ({ default: { template: '<div />' } }));
 vi.mock('@/bcap/apps/Permit/Modules/Step99_Review.vue', stub);
 vi.mock(

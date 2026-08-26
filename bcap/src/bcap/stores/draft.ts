@@ -6,7 +6,7 @@ import {
     saveDraftFieldToBackend,
 } from '@/bcap/apps/Permit/api.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 const debouncedSave = debounce(
     async (

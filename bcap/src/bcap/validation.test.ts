@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import { isFilled, buildTileValidation } from './validation';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 const node = (overrides: Partial<AliasedNodeData> = {}): AliasedNodeData => ({
     display_value: '',

@@ -5,6 +5,10 @@ import { shallowMount } from '@vue/test-utils';
 vi.mock('@/bcgov_arches_common/components/SimpleMap/SimpleMap.vue', () => ({
     default: defineComponent({ name: 'SimpleMap', template: '<div />' }),
 }));
+vi.mock('@/arches_vue_components/widgets/constants.ts', () => ({
+    VIEW: 'view',
+    EDIT: 'edit',
+}));
 vi.mock('@/bcgov_arches_common/composables/useTileEditLog.ts', async () => {
     const { ref } = await import('vue');
     return {

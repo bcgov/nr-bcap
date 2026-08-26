@@ -3,17 +3,18 @@ import { ref, computed, watch, inject } from 'vue';
 import type { Ref } from 'vue';
 import { Form } from '@primevue/forms';
 import FieldSet from 'primevue/fieldset';
-import GenericWidget from '@/arches_component_lab/generics/GenericWidget/GenericWidget.vue';
+import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import LabelledInput from '@/bcgov_arches_common/components/labelledinput/LabelledInput.vue';
-import { EDIT } from '@/arches_component_lab/widgets/constants.ts';
+import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
+import { asFileNode } from '@/bcap/util.ts';
 import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
 import MultiFileUploader from '@/bcgov_arches_common/components/MultiFileUploader/MultiFileUploader.vue';
 
 import type {
     AliasedNodeData,
     CardXNodeXWidgetData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 import type {
     DocumentSubmissionReportSubmissionAliasedData,
     FileListAliasedNodeData,
@@ -40,15 +41,12 @@ if (!draftData.value.report_submission) {
     draftData.value.report_submission = { aliased_data: {} };
 }
 
+// Shaped to MultiFileUploader's item prop, which is generic over node alias.
 interface SingleFileWrapper {
-    aliased_data: {
-        report_file: FileListAliasedNodeData | null;
-    };
+    aliased_data: Record<string, AliasedNodeData>;
 }
 
-const getBlankFileNode = (): SingleFileWrapper => ({
-    aliased_data: { report_file: null },
-});
+const getBlankFileNode = (): SingleFileWrapper => ({ aliased_data: {} });
 const currentFile = ref<SingleFileWrapper>(getBlankFileNode());
 const docKey = ref<number>(0);
 const addingNewDoc = ref<boolean>(true);
@@ -59,7 +57,9 @@ const docList = computed<SingleFileWrapper[]>(() => {
     const files = aliasedData?.report_file?.node_value;
     if (!Array.isArray(files)) return [];
     return files.map((f) => ({
-        aliased_data: { report_file: { node_value: [f] } },
+        aliased_data: {
+            report_file: { display_value: '', node_value: [f], details: [] },
+        },
     }));
 });
 
@@ -109,38 +109,19 @@ watch(
     { deep: true, immediate: true },
 );
 
-const updateMetadata = async (
+const updateMetadata = (
     newValue: AliasedNodeData,
     fieldName: keyof DocumentSubmissionReportSubmissionAliasedData,
 ) => {
-    if (!draftData.value.report_submission) {
-        draftData.value.report_submission = { aliased_data: {} };
-    }
-
-    const aliasedData = draftData.value.report_submission
-        .aliased_data as DocumentSubmissionReportSubmissionAliasedData;
-    // @ts-expect-error - Dynamic assignment on typed object
-    aliasedData[fieldName] = newValue;
-
+    draftStore.updateValue(newValue, fieldName, 'report_submission');
     emit('update:step-is-valid', customIsValid());
-
-    if (draftStore.draftId) {
-        const safeDraftData = JSON.parse(
-            JSON.stringify(draftStore.draftData, (key, value) =>
-                key === 'file' && value instanceof File ? undefined : value,
-            ),
-        );
-        await saveDraftFieldToBackend(
-            draftStore.draftId,
-            draftStore.graphSlug,
-            safeDraftData,
-        );
-    }
 };
 
-const handleFileUpdated = (newValue: unknown) => {
-    currentFile.value.aliased_data.report_file =
-        newValue as FileListAliasedNodeData;
+const handleFileUpdated = (
+    newValue:
+        AliasedNodeData | NonNullable<FileListAliasedNodeData['node_value']>,
+) => {
+    currentFile.value.aliased_data.report_file = asFileNode(newValue);
     emit('update:step-is-valid', customIsValid());
 };
 
@@ -164,15 +145,10 @@ const saveDoc = async () => {
     reportData.report_file.node_value.push(...newFileVals);
 
     if (draftStore.draftId) {
-        const safeDraftData = JSON.parse(
-            JSON.stringify(draftStore.draftData, (key, value) =>
-                key === 'file' && value instanceof File ? undefined : value,
-            ),
-        );
         await saveDraftFieldToBackend(
             draftStore.draftId,
             draftStore.graphSlug,
-            safeDraftData,
+            draftStore.draftData,
         );
     }
 
@@ -189,15 +165,10 @@ const deleteDoc = async (index: number) => {
     if (Array.isArray(fileArray)) {
         fileArray.splice(index, 1);
         if (draftStore.draftId) {
-            const safeDraftData = JSON.parse(
-                JSON.stringify(draftStore.draftData, (key, value) =>
-                    key === 'file' && value instanceof File ? undefined : value,
-                ),
-            );
             await saveDraftFieldToBackend(
                 draftStore.draftId,
                 draftStore.graphSlug,
-                safeDraftData,
+                draftStore.draftData,
             );
         }
         emit('update:step-is-valid', customIsValid());
@@ -227,7 +198,7 @@ defineExpose({ isValid: customIsValid, save: async () => true });
 <template>
     <Form
         name="docForm"
-        :validateOnBlur="true"
+        :validate-on-blur="true"
     >
         <FieldSet legend="Document Submissions">
             <MultiFileUploader
@@ -235,7 +206,9 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                 :disable-add-or-save="addDocDisabled"
                 graph-slug="document_submission"
                 node-alias="report_file"
-                :current-node-data="currentFile?.aliased_data?.report_file"
+                :current-node-data="
+                    currentFile?.aliased_data?.report_file ?? null
+                "
                 :items="docList"
                 :selected-index="docKey"
                 item-type-label="Document"
@@ -259,13 +232,15 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                         :card-x-node-x-widget-data="blueprints['report_title']"
                         :mode="EDIT"
                         :should-show-label="false"
-                        :aliasedNodeData="
+                        :aliased-node-data="
                             draftData?.report_submission?.aliased_data
                                 ?.report_title
                         "
                         graph-slug="document_submission"
                         node-alias="report_title"
-                        @update:value="updateMetadata($event, 'report_title')"
+                        @update:aliased-node-data="
+                            updateMetadata($event, 'report_title')
+                        "
                     />
                 </LabelledInput>
 
@@ -280,13 +255,13 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                         "
                         :mode="EDIT"
                         :should-show-label="false"
-                        :aliasedNodeData="
+                        :aliased-node-data="
                             draftData?.report_submission?.aliased_data
                                 ?.archaeological_consultant
                         "
                         graph-slug="document_submission"
                         node-alias="archaeological_consultant"
-                        @update:value="
+                        @update:aliased-node-data="
                             updateMetadata($event, 'archaeological_consultant')
                         "
                     />
@@ -302,13 +277,13 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                         "
                         :mode="EDIT"
                         :should-show-label="false"
-                        :aliasedNodeData="
+                        :aliased-node-data="
                             draftData?.report_submission?.aliased_data
                                 ?.consultant_report_number
                         "
                         graph-slug="document_submission"
                         node-alias="consultant_report_number"
-                        @update:value="
+                        @update:aliased-node-data="
                             updateMetadata($event, 'consultant_report_number')
                         "
                     />
@@ -324,13 +299,13 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                         "
                         :mode="EDIT"
                         :should-show-label="false"
-                        :aliasedNodeData="
+                        :aliased-node-data="
                             draftData?.report_submission?.aliased_data
                                 ?.archaological_company
                         "
                         graph-slug="document_submission"
                         node-alias="archaological_company"
-                        @update:value="
+                        @update:aliased-node-data="
                             updateMetadata($event, 'archaological_company')
                         "
                     />
@@ -346,13 +321,13 @@ defineExpose({ isValid: customIsValid, save: async () => true });
                         "
                         :mode="EDIT"
                         :should-show-label="false"
-                        :aliasedNodeData="
+                        :aliased-node-data="
                             draftData?.report_submission?.aliased_data
                                 ?.report_recommendations
                         "
                         graph-slug="document_submission"
                         node-alias="report_recommendations"
-                        @update:value="
+                        @update:aliased-node-data="
                             updateMetadata($event, 'report_recommendations')
                         "
                     />

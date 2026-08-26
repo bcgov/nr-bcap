@@ -18,7 +18,6 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     setThreadArchived: vi.fn(),
 }));
 
-// A child of the drafts panel; the real one pulls in the component lab.
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
     default: { template: '<div class="mock-review-summary"></div>' },
 }));

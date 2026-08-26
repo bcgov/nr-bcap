@@ -1,7 +1,7 @@
 import { zodResolver } from '@primevue/forms/resolvers/zod';
 import { getFlattenResolver } from '@/bcgov_arches_common/validation-utils.ts';
 import * as z from 'zod';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
 // node_value shapes per datatype, keyed by the field that identifies each.
 type ObjectNodeValue = {

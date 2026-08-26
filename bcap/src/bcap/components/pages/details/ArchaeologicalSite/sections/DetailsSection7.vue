@@ -7,7 +7,7 @@ import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
-import type { AliasedTileData } from '@/arches_component_lab/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import 'primeicons/primeicons.css';
 import type {
     AncestralRemainsTile,

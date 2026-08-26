@@ -23,11 +23,11 @@ classifiers = [
 ]
 dependencies = [
     "arches @ git+https://github.com/bcgov/arches@stable/8.1.2_bcgov_12776",
-    "arches-component-lab @ git+https://github.com/bcgov/arches-component-lab@v0.0.1a13-bcgov",
-    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@dev/1.1.x",
+    "arches-vue-components==2.0.3",
+    "arches-controlled-lists @ git+https://github.com/archesproject/arches-controlled-lists@1.2.0",
     "arches-querysets @ git+https://github.com/bcgov/arches-querysets@performance_fix_geojson",
     "arches-workflow-stepper @ git+https://github.com/bferguso/arches-workflow-stepper@main",
-    "arches-zod-validation @ git+https://github.com/bcgov/arches-zod-validation@generate_http_method_names",
+    "arches-zod-validation @ git+https://github.com/bcgov/arches-zod-validation@main",
     "authlib",
     "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@release/2.1.x",
     "boto3==1.26",

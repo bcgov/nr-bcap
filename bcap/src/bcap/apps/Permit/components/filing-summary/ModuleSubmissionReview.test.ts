@@ -9,7 +9,7 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchPermitDetails,
 }));
 
-// The real review pulls in the arches_component_lab widget tree, which vitest
+// The real review pulls in the arches_vue_components widget tree, which vitest
 // cannot transform.
 vi.mock('@/bcap/apps/Permit/Modules/Step99_Review.vue', () => ({
     default: {

@@ -40,6 +40,11 @@ export default [
         },
         "rules": {
             "semi": ["error", "always"],
+            "vue/no-restricted-v-on": ["error", {
+                argument: "update:value",
+                element: "GenericWidget",
+                message: "Bind @update:aliased-node-data and read node_value or display_value off the node.",
+            }],
         },
     },
     {

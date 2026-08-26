@@ -153,7 +153,7 @@ bcap_patterns = [
     ),
     path("", include("bcgov_arches_common.urls")),
     path("", include("arches_controlled_lists.urls")),
-    path("", include("arches_component_lab.urls")),
+    path("", include("arches_vue_components.urls")),
     path("", include("arches_querysets.urls")),
     path("", include("arches.urls")),
 ]

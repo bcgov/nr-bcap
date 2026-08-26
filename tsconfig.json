@@ -27,8 +27,8 @@
             "@/bcgov_arches_common/*": [
                 "node_modules/bcgov_arches_common/bcgov_arches_common/src/bcgov_arches_common/*"
             ],
-            "@/arches_component_lab/*": [
-                "node_modules/arches-component-lab/arches_component_lab/src/arches_component_lab/*"
+            "@/arches_vue_components/*": [
+                "node_modules/arches-vue-components/arches_vue_components/src/arches_vue_components/*"
             ],
             "@/arches_controlled_lists/*": [
                 "node_modules/arches-controlled-lists/arches_controlled_lists/src/arches_controlled_lists/*"
