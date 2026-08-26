@@ -55,7 +55,7 @@
         "arches": "bcgov/arches#stable/8.1.2_bcgov_12776",
         "arches-controlled-lists": "github:archesproject/arches-controlled-lists#1.2.0",
         "arches-vue-components": "archesproject/arches-vue-components#2.0.3",
-        "bcgov_arches_common": "github:bcgov/bcgov-arches-common#update_to_arches_vue_components",
+        "bcgov_arches_common": "github:bcgov/bcgov-arches-common#release/2.1.x",
         "datatables.net": "^1.13.11",
         "dompurify": "^3.4.11",
         "eslint-config-prettier": "^10.1.5",
