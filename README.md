@@ -13,7 +13,7 @@ BC Archaeology Branch Arches configuration, schemas and extensions for the BC Ar
 ```
 git clone https://github.com/bcgov/arches-dependency-containers
 git clone https://github.com/bcgov/arches
-git clone https://github.com/archesproject/arches-component-lab
+git clone https://github.com/archesproject/arches-vue-components
 git clone https://github.com/archesproject/arches-controlled-lists
 git clone https://github.com/archesproject/arches-querysets
 git clone https://github.com/bcgov/bcgov-arches-common
@@ -30,7 +30,7 @@ git clone https://github.com/bcgov/nr-bcap
     ├── 📁 arches/
     ├── 📁 bcgov-arches-common/
     ├── 📁 arches-querysets/
-    ├── 📁 arches-component-lab/
+    ├── 📁 arches-vue-components/
     ├── 📁 arches-controlled-lists/
     ├── 📁 arches-workflow-stepper/
     ├── 📁 arches-zod-validation/
