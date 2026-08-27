@@ -1,19 +1,27 @@
 ---
-name: UAT Bug or Gap
-about: 'BUG: Can''t complete without a technical interruption.  GAP: An as-built compulsory
-  feature won''t meet operational or user needs. '
-title: 'BUG or GAP - UAT: xxxxxxxxxx'
-labels: PERM
+name: UAT Bug
+about: 'BUG: Can''t complete without a technical interruption.  '
+title: 'BUG - UAT: xxxxxxxxxx'
+labels: Bug, PERM
 assignees: ''
+type: Bug
 
 ---
 
-## Feedback Details
+*Creation Instructions (delete after doing)*
+*1. Fill out the template and create the ticket*
+*2. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section*
+*3. Set label as BUG - UAT* and either INV, PERM, or Shared Concern
+*4. Populate sprint details and priority section*
+*5. Set type as 'Bug'*
+*6. Set status as BACKLOG* 
+
+## Bug Details
 
 **Feedback found by xxxSMExxx while testing Ticket #xxxx under Sprint xxxx test case xxxx using the xxxx browser**
 
 
-**Feedback Description:**
+**Bug Description:**
 
 
 **Rationale / Business Context for Change:**
@@ -24,6 +32,8 @@ assignees: ''
 
 
 **Console log content (right click>inspect>console):**
+
+
 
 ## Steps to Reproduce / Get us to where you were
 
