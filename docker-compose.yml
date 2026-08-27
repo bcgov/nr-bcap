@@ -25,6 +25,9 @@ services:
     env_file:
       - ./.env
       - ./docker/docker.dev.env
+    environment:
+      CLAMAV_ENABLED: "True"
+      CLAMAV_HOST: bcap-clamav
     ports:
       - 5690:5678
       # - 82:80            # moved to bcap-proxy
@@ -32,6 +35,14 @@ services:
       - 5175:5175        # Vite dev server (optional direct access)
     stdin_open: true
     tty: true
+
+  bcap-clamav:
+    container_name: bcap-clamav
+    hostname: bcap-clamav
+    image: clamav/clamav:stable
+    volumes:
+      - clamav-db-bcap:/var/lib/clamav
+    restart: unless-stopped
 
   bcap-proxy:
     container_name: bcap-proxy
@@ -95,5 +106,6 @@ networks:
     name: arches7-5-2-dev
 
 volumes:
+  clamav-db-bcap:
   arches-log-bcap:
   arches-static-bcap:

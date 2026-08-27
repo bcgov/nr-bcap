@@ -5,3 +5,18 @@
 from arches_querysets.datatypes.geojson import (
     GeojsonFeatureCollectionDataType,
 )  # noqa: F401
+
+# Same shadowing trick for file uploads: the core FileListDataType is
+# registered as (datatypes.py, FileListDataType), so this subclass wins and
+# every uploaded file gets virus scanned on top of the core type checks.
+from arches.app.datatypes.datatypes import FileListDataType as CoreFileListDataType
+
+from bcap.util.clamav import scan_file
+
+
+class FileListDataType(CoreFileListDataType):
+    def validate_file_types(self, request=None, nodeid=None):
+        errors = super().validate_file_types(request, nodeid)
+        for file in self._get_files_from_request(request, nodeid):
+            errors = errors + scan_file(file.file)
+        return errors

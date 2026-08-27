@@ -31,6 +31,7 @@ dependencies = [
     "authlib",
     "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@release/2.1.x",
     "boto3==1.26",
+    "clamd",
     "django-captcha",
     "django-migrate-sql-deux==1.1.1",
     "django-pgtrigger==4.15.2",
