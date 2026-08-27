@@ -62,8 +62,8 @@ SEARCH_COMPONENT_LOCATIONS.append("bcap.search_components")
 LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
 
 # ClamAV virus scanning of uploads
-CLAMAV_ENABLED = ast.literal_eval(
-    get_env_variable("CLAMAV_ENABLED", is_optional=True) or "False"
+CLAMAV_ENABLED = (
+    str(get_env_variable("CLAMAV_ENABLED", is_optional=True)).lower() == "true"
 )
 CLAMAV_HOST = get_env_variable("CLAMAV_HOST", is_optional=True)
 CLAMAV_PORT = get_env_variable("CLAMAV_PORT", is_optional=True) or 3310
