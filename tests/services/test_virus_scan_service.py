@@ -10,7 +10,7 @@ from django.core.exceptions import SuspiciousFileOperation
 from django.test import SimpleTestCase, override_settings
 from storages.backends.s3boto3 import S3Boto3Storage
 
-from bcap.util.clamav import ScanningStorage, scan_file
+from bcap.services.virus_scan_service import ScanningStorage, VirusScanService
 
 
 def fake_scanner(result=None, error=None):
@@ -25,24 +25,25 @@ def fake_scanner(result=None, error=None):
 class ClamAVScanTests(SimpleTestCase):
     def test_clean_file_passes(self):
         with fake_scanner(result=("OK", None)):
-            self.assertEqual(scan_file(io.BytesIO(b"harmless")), [])
+            self.assertEqual(VirusScanService.scan(io.BytesIO(b"harmless")), [])
 
     def test_infected_file_is_rejected(self):
         with fake_scanner(result=("FOUND", "Eicar-Test-Signature")):
-            errors = scan_file(io.BytesIO(b"virus"))
+            errors = VirusScanService.scan(io.BytesIO(b"virus"))
         self.assertEqual(len(errors), 1)
         self.assertIn("Eicar-Test-Signature", errors[0])
 
     def test_unreachable_scanner_fails_closed(self):
         with fake_scanner(error=clamd.ConnectionError("no clamd")):
             self.assertEqual(
-                scan_file(io.BytesIO(b"anything")), ["Unable to virus scan file"]
+                VirusScanService.scan(io.BytesIO(b"anything")),
+                ["Unable to virus scan file"],
             )
 
     def test_file_is_rewound_for_the_next_reader(self):
         file = io.BytesIO(b"harmless")
         with fake_scanner(result=("OK", None)):
-            scan_file(file)
+            VirusScanService.scan(file)
         self.assertEqual(file.read(), b"harmless")
 
     def test_scanning_is_off_when_disabled(self):
@@ -50,7 +51,7 @@ class ClamAVScanTests(SimpleTestCase):
             override_settings(CLAMAV_ENABLED=False),
             fake_scanner(result=("FOUND", "nope")) as scanner,
         ):
-            self.assertEqual(scan_file(io.BytesIO(b"virus")), [])
+            self.assertEqual(VirusScanService.scan(io.BytesIO(b"virus")), [])
             scanner.assert_not_called()
 
 

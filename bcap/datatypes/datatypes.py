@@ -11,12 +11,12 @@ from arches_querysets.datatypes.geojson import (
 # every uploaded file gets virus scanned on top of the core type checks.
 from arches.app.datatypes.datatypes import FileListDataType as CoreFileListDataType
 
-from bcap.util.clamav import scan_file
+from bcap.services.virus_scan_service import VirusScanService
 
 
 class FileListDataType(CoreFileListDataType):
     def validate_file_types(self, request=None, nodeid=None):
         errors = super().validate_file_types(request, nodeid)
         for file in self._get_files_from_request(request, nodeid):
-            errors = errors + scan_file(file.file)
+            errors = errors + VirusScanService.scan(file.file)
         return errors

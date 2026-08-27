@@ -732,7 +732,7 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 STORAGES = {
     "default": {
-        "BACKEND": "bcap.util.clamav.ScanningStorage",
+        "BACKEND": "bcap.services.virus_scan_service.ScanningStorage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
