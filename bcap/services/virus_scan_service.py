@@ -1,15 +1,11 @@
-"""ClamAV virus scanning of uploaded files.
+"""ClamAV virus scanning of uploaded files. Set CLAMAV_ENABLED=True and
+CLAMAV_HOST (CLAMAV_PORT defaults to 3310).
 
-Set CLAMAV_ENABLED=True and CLAMAV_HOST (CLAMAV_PORT defaults to 3310).
-
-ScanningStorage is the backstop covering every upload boundary - arches writes
-uploads through the default storage from the file datatype, /temp_file,
-/images, the manifest manager and the ETL importers alike. The file datatype
-also calls VirusScanService.scan() directly so the common case reports a
-readable validation error instead of a 400.
+ScanningStorage is the backstop: every upload arches writes goes through the
+default storage. The file datatype also scans directly, so the common case
+reports a readable validation error instead of a 400.
 """
 
-import io
 import logging
 
 import clamd
@@ -35,12 +31,12 @@ class VirusScanService:
                 port=int(settings.CLAMAV_PORT),
                 timeout=120,
             )
-            contents = file.read()
-            file.seek(0)
-            status, reason = scanner.instream(io.BytesIO(contents))["stream"]
+            status, reason = scanner.instream(file)["stream"]
         except (clamd.ClamdError, OSError) as e:
             logger.error("ClamAV scan failed: %s", e)
             return ["Unable to virus scan file"]
+        finally:
+            file.seek(0)
 
         if status == "FOUND":
             logger.error("ClamAV found %s", reason)

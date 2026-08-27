@@ -42,7 +42,12 @@ class ClamAVScanTests(SimpleTestCase):
 
     def test_file_is_rewound_for_the_next_reader(self):
         file = io.BytesIO(b"harmless")
-        with fake_scanner(result=("OK", None)):
+        with fake_scanner(result=("OK", None)) as scanner:
+            # clamd streams the file, so it is drained by the time we rewind it.
+            scanner.return_value.instream.side_effect = lambda f: (
+                f.read(),
+                {"stream": ("OK", None)},
+            )[1]
             VirusScanService.scan(file)
         self.assertEqual(file.read(), b"harmless")
 
