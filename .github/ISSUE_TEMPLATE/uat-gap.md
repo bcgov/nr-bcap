@@ -15,6 +15,7 @@ type: Feature
 *4. Under 'Projects', add it to the BCAP Project and set the status to BACKLOG* 
 *5. Expand the project section to populate sprint details and priority section*
 *6. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section* 
+*7. Delete the ticket creation instructions section from the ticket body.*
 
 ## Gap Details
 
