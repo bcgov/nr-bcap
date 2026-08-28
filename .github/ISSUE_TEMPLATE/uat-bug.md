@@ -55,5 +55,5 @@ A checkbox list of measurable, quantifiable items that must be met before the st
 - [ ] xxxxxxxxxx
 
 
-## Test Cases
-*Optional space for pre-written QA/UAT test cases to live (written by the BAs or PO)*
+## Test Case Drafts 
+*Optional space for PO or BAs to pre-draft QA/UAT test cases, and copy into testing spreadsheets later*
