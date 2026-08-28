@@ -2,19 +2,19 @@
 name: UAT Bug
 about: 'BUG: Can''t complete without a technical interruption.  '
 title: 'BUG - UAT: xxxxxxxxxx'
-labels: Bug, PERM
+labels: Bug, TRIAGE
 assignees: ''
 type: Bug
 
 ---
 
-*Creation Instructions (delete after doing)*
+## *Ticket Creation Instructions (delete after doing)*
 *1. Fill out the template and create the ticket*
 *2. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section*
-*3. Set label as BUG - UAT* and either INV, PERM, or Shared Concern
+*3. Add labels: either INV, PERM, or Shared Concern (Bug and TRIAGE are pre-labelled)*
 *4. Populate sprint details and priority section*
 *5. Set type as 'Bug'*
-*6. Set status as BACKLOG* 
+*6. Under 'Projects', add it to the BCAP Project and set the status to BACKLOG* 
 
 ## Bug Details
 

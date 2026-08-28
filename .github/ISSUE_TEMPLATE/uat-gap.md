@@ -1,20 +1,20 @@
 ---
 name: UAT Gap
 about: 'GAP: An as-built compulsory feature won''t meet operational or user needs. '
-title: 'GAP - UAT: xxxxxxxxxxxxxxxxxxx'
-labels: GAP - UAT
+title: 'GAP-UAT: xxxxxxxxxxxxxxxxxxx'
+labels: GAP - UAT, TRIAGE
 assignees: ''
 type: Feature
 
 ---
 
-*Creation Instructions (delete after doing)*
+## *Ticket Creation Instructions (delete after doing)*
 *1. Fill out the template and create the ticket*
 *2. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section*
-*3. Set label as GAP - UAT and either INV, PERM, or Shared Concern*
+*3. Add labels: either INV, PERM, or Shared Concern  (Triage and Gap are pre-labelled)*
 *4. Populate sprint details and priority section*
 *5. Set type as 'Feature'*
-*6. Set status as BACKLOG* 
+*6.  Under 'Projects', add it to the BCAP Project and set the status to BACKLOG* 
 
 ## Gap Details
 
