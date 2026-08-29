@@ -265,6 +265,7 @@ describe('MessageDialog.vue', () => {
         await wrapper
             .findComponent({ name: 'GenericWidget' })
             .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
+        await wrapper.find('.subject-input').setValue('Setback dimensions');
         await wrapper.find('textarea').setValue('This is my question.');
 
         await wrapper.findAll('.mock-button')[1].trigger('click');
@@ -276,7 +277,7 @@ describe('MessageDialog.vue', () => {
             applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
-            topic: 'General Question',
+            topic: 'General Question - Setback dimensions',
             files: [],
         });
 
@@ -340,6 +341,7 @@ describe('MessageDialog.vue', () => {
         await wrapper
             .findComponent({ name: 'GenericWidget' })
             .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
+        await wrapper.find('.subject-input').setValue('Trench depth');
         await wrapper.find('textarea').setValue('A question.');
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
@@ -350,7 +352,7 @@ describe('MessageDialog.vue', () => {
             applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
-            topic: 'General Question',
+            topic: 'General Question - Trench depth',
             files: [],
         });
     });
@@ -394,6 +396,7 @@ describe('MessageDialog.vue', () => {
             node_value: [{ name: 'plan.pdf', file }],
             details: [],
         });
+        await wrapper.find('.subject-input').setValue('Site plan');
         await wrapper.find('textarea').setValue('See attached.');
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
@@ -401,7 +404,7 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith(
             expect.objectContaining({
                 messageText: 'See attached.',
-                topic: 'General Question',
+                topic: 'General Question - Site plan',
                 files: [file],
             }),
         );
