@@ -5,6 +5,18 @@ import { config, RouterLinkStub } from '@vue/test-utils';
 // silencing the warning everywhere.
 config.global.stubs.RouterLink = RouterLinkStub;
 
+// jsdom has no ResizeObserver, and components that watch their own box build one
+// on mount. Observing does nothing here; a test that needs a resize drives the
+// callback itself.
+vi.stubGlobal(
+    'ResizeObserver',
+    class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+    },
+);
+
 // The url names tests assert on, at the paths Django really serves them from,
 // so an expected url in a test reads like the one in the browser. Anything not
 // listed falls through to the Proxy below.
