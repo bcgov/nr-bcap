@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
+import { useMapBoxAutoCenter } from '@/bcgov_arches_common/composables/useMapBoxAutoCenter.ts';
 import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
 import type {
     AliasedNodeData,
@@ -17,6 +18,8 @@ export interface ReviewField {
 defineProps<{
     fields: ReviewField[];
 }>();
+
+useMapBoxAutoCenter();
 
 const mapOverrides = {
     widget: {
@@ -78,7 +81,10 @@ const hasValue = (val: unknown): boolean => {
         >
             <dt class="mb-2 font-bold">{{ field.label }}</dt>
 
-            <dd class="centered-map">
+            <dd
+                ref="mapBoxes"
+                class="centered-map"
+            >
                 <GenericWidget
                     :mode="VIEW"
                     :should-show-label="false"
@@ -134,10 +140,30 @@ const hasValue = (val: unknown): boolean => {
 }
 
 /* The widget's map div only carries a min-height, so it ignored the box being
-   dragged. Filling the box makes maplibre's own resize tracking kick in and
-   keep the geometry centred. */
+   dragged; the observer above feeds it the box's pixels instead. */
 .centered-map :deep(.map-wrap),
 .centered-map :deep(.map) {
     height: 100%;
+}
+
+/* The map fills the box, so the readout rides over its bottom edge and the
+   maplibre controls step up to clear it. */
+.centered-map :deep(.map-wrap) {
+    position: relative;
+}
+
+.centered-map :deep(.map-wrap > .panel) {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.centered-map :deep(.maplibregl-ctrl-bottom-left),
+.centered-map :deep(.maplibregl-ctrl-bottom-right) {
+    bottom: 3.8rem;
 }
 </style>
