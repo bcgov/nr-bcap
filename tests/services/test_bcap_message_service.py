@@ -13,6 +13,7 @@ from bcap.services.message.bcap_message_service import (
     NoAuthorContributor,
 )
 from bcap.util.aliases.bcap_message import BcapMessageAliases as A
+from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.contributor_fixtures import (
@@ -52,6 +53,7 @@ def make_message(
         {
             A.MESSAGE_SUBJECT: builder.localized(subject),
             A.MESSAGE_CONTENT: builder.localized(subject),
+            A.MESSAGE_TYPE: reference_value("bcap_message", A.MESSAGE_TYPE),
             A.MESSAGE_AUTHOR: author,
             A.RECIPIENT: recipient,
             A.RESOURCE_CONTEXT: context,

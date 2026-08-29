@@ -12,6 +12,7 @@ import MessageHistory from '@/bcap/apps/Permit/components/common/messages/Messag
 import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messages/MessageAttachmentsField.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
+import type { ReferenceAliasedNodeDataWritable } from '@/bcap/client/types.gen.ts';
 
 // The dialog shows the threads on one resource, scoped by its id: the permit for
 // the permit view, or a module's own resource for that module's view. context is a
@@ -41,6 +42,7 @@ const state = reactive({
     isLoadingRecipients: false,
     isLoadingMessages: false,
     selectedTopic: '',
+    selectedTopicValue: [] as ReferenceAliasedNodeDataWritable['node_value'],
     selectedThreadId: 'new',
     files: [] as File[],
 });
@@ -52,6 +54,8 @@ const threadContainer = ref<HTMLElement | null>(null);
 // reference objects, not strings.
 const onTopicSelected = (node: AliasedNodeData) => {
     state.selectedTopic = node.display_value ?? '';
+    state.selectedTopicValue = (node.node_value ??
+        []) as ReferenceAliasedNodeDataWritable['node_value'];
 };
 
 const visibleThreads = computed(() =>
@@ -115,6 +119,7 @@ const closeDialog = () => {
     state.messageText = '';
     state.subjectText = '';
     state.selectedTopic = '';
+    state.selectedTopicValue = [];
     state.files = [];
     messageStore.openMessages = [];
 };
@@ -157,10 +162,7 @@ const submitMessage = async () => {
             ? activeThread.value?.id
             : undefined;
 
-        const detail = state.subjectText.trim();
-        const subject = detail
-            ? `${state.selectedTopic} - ${detail}`
-            : state.selectedTopic;
+        const subject = state.subjectText.trim();
 
         await messageStore.send({
             messageText: state.messageText,
@@ -169,6 +171,9 @@ const submitMessage = async () => {
             resourceId: props.resourceId,
             threadId: targetThreadId,
             topic: isReplyMode.value ? undefined : subject || undefined,
+            messageType: isReplyMode.value
+                ? undefined
+                : state.selectedTopicValue,
             files: state.files,
         });
 

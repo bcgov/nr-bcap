@@ -507,6 +507,7 @@ export const createBcapMessage = async ({
     resourceId,
     threadId,
     topic,
+    messageType,
     files,
 }: NewBcapMessage) => {
     const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
@@ -528,6 +529,12 @@ export const createBcapMessage = async ({
             },
         },
     };
+
+    if (messageType?.length) {
+        aliasedData.message_content!.aliased_data!.message_type = {
+            node_value: messageType,
+        };
+    }
 
     if (recipientId) {
         aliasedData.message_content!.aliased_data!.recipient = {
@@ -592,13 +599,17 @@ export const getThreadsForResource = async (
     return results.map((root) => {
         const content = root.aliased_data?.message_content?.aliased_data;
         const subject = content?.message_subject;
+        // Older threads carry the type inside the subject text and have no
+        // message_type of their own, so an absent type just drops the prefix.
+        const subjectText =
+            subject?.display_value || subject?.node_value?.en?.value || '';
+        const typeLabel = content?.message_type?.display_value || '';
         const unreadCount =
             (root as { unread_count?: number }).unread_count ?? 0;
         return {
             id: root.resourceinstanceid ?? '',
             topic:
-                subject?.display_value ||
-                subject?.node_value?.en?.value ||
+                [typeLabel, subjectText].filter(Boolean).join(' - ') ||
                 'General Question',
             startedBy: content?.message_author?.display_value || 'Unknown',
             // The threads endpoint annotates the whole thread's latest date;

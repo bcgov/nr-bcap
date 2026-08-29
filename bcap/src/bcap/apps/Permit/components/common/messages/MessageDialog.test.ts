@@ -277,7 +277,10 @@ describe('MessageDialog.vue', () => {
             applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
-            topic: 'General Question - Setback dimensions',
+            topic: 'Setback dimensions',
+            messageType: [
+                { list_id: 'list-1', uri: 'https://example.org/1', labels: [] },
+            ],
             files: [],
         });
 
@@ -325,9 +328,9 @@ describe('MessageDialog.vue', () => {
         expect(markMessageAsRead).toHaveBeenCalledTimes(1);
     });
 
-    // The subject is the picked topic alone; the title names the resource, so
-    // the subject does not repeat the context. context never filters the view.
-    it('sends the picked topic as the subject', async () => {
+    // The typed subject and the picked type travel as separate nodes; the
+    // thread list composes them for display. context never filters the view.
+    it('sends the subject and the picked type separately', async () => {
         vi.mocked(createBcapMessage).mockResolvedValue({ id: 'msg-123' });
 
         const wrapper = mountComponent({ context: 'Investigation' });
@@ -352,7 +355,10 @@ describe('MessageDialog.vue', () => {
             applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
-            topic: 'General Question - Trench depth',
+            topic: 'Trench depth',
+            messageType: [
+                { list_id: 'list-1', uri: 'https://example.org/1', labels: [] },
+            ],
             files: [],
         });
     });
@@ -404,7 +410,7 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith(
             expect.objectContaining({
                 messageText: 'See attached.',
-                topic: 'General Question - Site plan',
+                topic: 'Site plan',
                 files: [file],
             }),
         );
