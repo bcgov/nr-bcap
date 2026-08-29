@@ -71,10 +71,15 @@ const isReplyMode = computed(() => {
     return state.selectedThreadId !== 'new' && activeThread.value !== null;
 });
 
-// A message needs text; a new thread also needs a message type. Replies inherit
-// their thread's type, so they only need text.
+// A message needs text; a new thread also needs a recipient, message type and
+// subject. Replies inherit their thread's, so they only need text.
 const canSend = computed(
-    () => !!state.messageText && (isReplyMode.value || !!state.selectedTopic),
+    () =>
+        !!state.messageText &&
+        (isReplyMode.value ||
+            (!!state.selectedTopic &&
+                !!state.selectedRecipient &&
+                !!state.subjectText.trim())),
 );
 
 const showTab = async (archived: boolean) => {
@@ -154,8 +159,8 @@ const submitMessage = async () => {
             ? activeThread.value?.id
             : undefined;
 
-        // "General Question - setback dimensions": the message type, with the
-        // optional free-text subject appended when one was entered.
+        // "General Question - setback dimensions": the message type with the
+        // free-text subject appended.
         const detail = state.subjectText.trim();
         const subject = detail
             ? `${state.selectedTopic} - ${detail}`
@@ -266,7 +271,15 @@ onMounted(() => {
                 >
                     <div class="field-row">
                         <div class="field-col">
-                            <label class="field-label">Recipient</label>
+                            <label class="field-label">
+                                Recipient
+                                <span
+                                    class="field-required"
+                                    aria-hidden="true"
+                                >
+                                    *
+                                </span>
+                            </label>
                             <Dropdown
                                 v-model="state.selectedRecipient"
                                 :options="state.recipients"
@@ -351,7 +364,12 @@ onMounted(() => {
                     <div class="field-block">
                         <label class="field-label">
                             Subject
-                            <span class="field-optional">(optional)</span>
+                            <span
+                                class="field-required"
+                                aria-hidden="true"
+                            >
+                                *
+                            </span>
                         </label>
                         <input
                             v-model="state.subjectText"
@@ -362,7 +380,15 @@ onMounted(() => {
                     </div>
 
                     <div class="field-block textarea-wrapper">
-                        <label class="field-label">Message</label>
+                        <label class="field-label">
+                            Message
+                            <span
+                                class="field-required"
+                                aria-hidden="true"
+                            >
+                                *
+                            </span>
+                        </label>
                         <Textarea
                             ref="messageInput"
                             v-model="state.messageText"
@@ -603,11 +629,6 @@ onMounted(() => {
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-}
-
-.field-optional {
-    font-weight: 400;
-    color: #6c757d;
 }
 
 .field-required {
