@@ -156,7 +156,7 @@ const hasValue = (val: unknown): boolean => {
     position: absolute;
     inset: auto 0 0 0;
     z-index: 2;
-    padding: 0.25rem 0.5rem;
+    padding: 0.3rem 0.5rem 0.5rem;
     background-color: rgba(255, 255, 255, 0.85);
     font-size: 12px;
     line-height: 1.4;
