@@ -225,8 +225,8 @@ class BcapMessageService(BaseGraphService):
     def set_reply_fields(cls, data, author_id):
         """Address a reply from its thread rather than the payload, so a third party
         joining a thread writes to the root's other party instead of whichever
-        contributor the client happened to have selected, and carry the thread's
-        subject and type down since a reply has neither field of its own."""
+        contributor the client happened to have selected, and stamp the thread's
+        subject and type onto it so a reply cannot drift from its thread."""
         thread_id = cls._payload_relation_id(
             data, cls.A.RELATED_SOURCE_MESSAGE, cls.A.RELATED_SOURCE_MESSAGE
         )
@@ -255,12 +255,14 @@ class BcapMessageService(BaseGraphService):
         if recipient:
             cls._set_node(data, cls.A.RECIPIENT, [{RESOURCE_ID: recipient}])
 
+        # Both belong to the thread, so a reply takes the root's over whatever
+        # the client sent.
         for alias, node in (
             (cls.A.MESSAGE_TYPE, type_node),
             (cls.A.MESSAGE_SUBJECT, subject_node),
         ):
             inherited = root.get(node)
-            if inherited and not cls._payload_node_value(data, alias):
+            if inherited:
                 cls._set_node(data, alias, inherited)
 
     @classmethod
