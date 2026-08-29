@@ -503,44 +503,37 @@ export const saveChecklist = async (
 export const createBcapMessage = async ({
     messageText,
     recipientId,
-    applicationId,
     resourceId,
     threadId,
     topic,
     messageType,
     files,
 }: NewBcapMessage) => {
+    // A reply carries no subject, type or recipient: the service copies the
+    // thread's onto it. The nodes are required by the generated writable type,
+    // so they travel as null rather than being left out.
     const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
                 message_content: {
                     node_value: localized(messageText),
                 },
-                message_subject: {
-                    node_value: localized(
-                        topic ||
-                            `Comment regarding Application ${applicationId}`,
-                    ),
-                },
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
                     node_value: [{ resourceId }],
                 },
+                message_subject: topic
+                    ? { node_value: localized(topic) }
+                    : null,
+                message_type: messageType?.length
+                    ? { node_value: messageType }
+                    : null,
+                recipient: recipientId
+                    ? { node_value: [{ resourceId: recipientId }] }
+                    : null,
             },
         },
     };
-
-    if (messageType?.length) {
-        aliasedData.message_content!.aliased_data!.message_type = {
-            node_value: messageType,
-        };
-    }
-
-    if (recipientId) {
-        aliasedData.message_content!.aliased_data!.recipient = {
-            node_value: [{ resourceId: recipientId }],
-        };
-    }
 
     if (threadId) {
         aliasedData.related_source_message = {
@@ -696,6 +689,9 @@ export const markMessageAsRead = async (messageId: string): Promise<void> => {
                 aliased_data: {
                     message_content: null,
                     resource_context: null,
+                    message_subject: null,
+                    message_type: null,
+                    recipient: null,
                     message_read_date: {
                         node_value: new Date().toISOString(),
                     },

@@ -61,7 +61,6 @@ export const isDraftOf = <S extends WorkflowDraft['graph_slug']>(slug: S) => {
 export interface NewBcapMessage {
     messageText: string;
     recipientId: string;
-    applicationId: string;
     resourceId: string;
     threadId?: string;
     topic?: string;

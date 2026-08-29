@@ -167,7 +167,6 @@ const submitMessage = async () => {
         await messageStore.send({
             messageText: state.messageText,
             recipientId: state.selectedRecipient as string,
-            applicationId: props.applicationId,
             resourceId: props.resourceId,
             threadId: targetThreadId,
             topic: isReplyMode.value ? undefined : subject || undefined,

@@ -274,7 +274,6 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith({
             messageText: 'This is my question.',
             recipientId: 'user-1',
-            applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
             topic: 'Setback dimensions',
@@ -352,7 +351,6 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith({
             messageText: 'A question.',
             recipientId: 'user-1',
-            applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
             topic: 'Trench depth',
@@ -459,7 +457,6 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith({
             messageText: 'This is my reply.',
             recipientId: 'user-1',
-            applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: 'thread-777',
             topic: undefined,
