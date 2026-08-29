@@ -532,12 +532,29 @@ class BcapMessagePrepareTests(TestCase):
             subject="Root",
         )
 
-    def _payload(self, *, is_internal=None, recipient=None, thread=None):
+    # A type the client might send that is not the thread's.
+    OTHER_TYPE = [{"uri": "https://bcap.test/clm/other", "labels": []}]
+
+    def _payload(
+        self,
+        *,
+        is_internal=None,
+        recipient=None,
+        thread=None,
+        subject=None,
+        message_type=None,
+    ):
         content = {}
         if is_internal is not None:
             content[A.IS_INTERNAL] = {"node_value": is_internal}
         if recipient is not None:
             content[A.RECIPIENT] = {"node_value": [{"resourceId": str(recipient.pk)}]}
+        if subject is not None:
+            content[A.MESSAGE_SUBJECT] = {
+                "node_value": {"en": {"value": subject, "direction": "ltr"}}
+            }
+        if message_type is not None:
+            content[A.MESSAGE_TYPE] = {"node_value": message_type}
         data = {"aliased_data": {A.MESSAGE_CONTENT: {"aliased_data": content}}}
         if thread is not None:
             data["aliased_data"][A.RELATED_SOURCE_MESSAGE] = {
@@ -563,6 +580,12 @@ class BcapMessagePrepareTests(TestCase):
     def _recipient_id(self, data):
         return self._content(data)[A.RECIPIENT]["node_value"][0]["resourceId"]
 
+    def _subject(self, data):
+        return self._content(data)[A.MESSAGE_SUBJECT]["node_value"]["en"]["value"]
+
+    def _message_type(self, data):
+        return self._content(data)[A.MESSAGE_TYPE]["node_value"]
+
     def test_reply_by_a_third_party_is_addressed_to_the_thread_starter(self):
         # The client's recipient pick is replaced by the root's author, so a
         # staffer joining someone else's thread writes back to that thread.
@@ -571,15 +594,39 @@ class BcapMessagePrepareTests(TestCase):
         self.assertEqual(self._author_id(data), str(self.third_contrib.pk))
         self.assertEqual(self._recipient_id(data), str(self.applicant_contrib.pk))
 
+    def test_reply_takes_the_threads_subject_and_type(self):
+        # Subject and type belong to the thread, so whatever the client sent is
+        # replaced rather than merely filled in.
+        data = self._payload(
+            thread=self.root, subject="Something else", message_type=self.OTHER_TYPE
+        )
+        self.service.prepare_message(data, self.applicant)
+        self.assertEqual(self._subject(data), "Root")
+        self.assertNotEqual(self._message_type(data), self.OTHER_TYPE)
+        self.assertTrue(self._message_type(data))
+
+    def test_reply_without_a_subject_or_type_still_gets_the_threads(self):
+        data = self._payload(thread=self.root)
+        self.service.prepare_message(data, self.applicant)
+        self.assertEqual(self._subject(data), "Root")
+        self.assertTrue(self._message_type(data))
+
     def test_reply_by_the_thread_starter_goes_to_the_other_party(self):
         data = self._payload(recipient=self.unlinked, thread=self.root)
         self.service.prepare_message(data, self.applicant)
         self.assertEqual(self._recipient_id(data), str(self.staff_contrib.pk))
 
-    def test_new_thread_keeps_the_chosen_recipient(self):
-        data = self._payload(recipient=self.staff_contrib)
+    def test_new_thread_keeps_what_the_client_sent(self):
+        # Nothing to inherit from, so the recipient, subject and type stand.
+        data = self._payload(
+            recipient=self.staff_contrib,
+            subject="Brand new",
+            message_type=self.OTHER_TYPE,
+        )
         self.service.prepare_message(data, self.applicant)
         self.assertEqual(self._recipient_id(data), str(self.staff_contrib.pk))
+        self.assertEqual(self._subject(data), "Brand new")
+        self.assertEqual(self._message_type(data), self.OTHER_TYPE)
 
     def test_internal_flag_honored_only_for_internal_posters(self):
         # An external poster's internal flag is forced off; an internal poster's
