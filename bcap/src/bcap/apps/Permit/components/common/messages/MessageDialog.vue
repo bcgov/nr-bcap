@@ -426,7 +426,15 @@ onMounted(() => {
                     />
 
                     <div class="field-container textarea-wrapper">
-                        <label class="field-label">Write a Reply:</label>
+                        <label class="field-label">
+                            Write a Reply:
+                            <span
+                                class="field-required"
+                                aria-hidden="true"
+                            >
+                                *
+                            </span>
+                        </label>
                         <Textarea
                             ref="messageInput"
                             v-model="state.messageText"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
-import { useMapBoxAutoCenter } from '@/bcgov_arches_common/composables/useMapBoxAutoCenter.ts';
+import { useMapFrameAutoCentre } from '@/bcgov_arches_common/composables/useMapFrameAutoCentre.ts';
 import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
 import type {
     AliasedNodeData,
@@ -19,7 +19,7 @@ defineProps<{
     fields: ReviewField[];
 }>();
 
-useMapBoxAutoCenter();
+useMapFrameAutoCentre();
 
 const mapOverrides = {
     widget: {
