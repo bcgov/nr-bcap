@@ -36,6 +36,13 @@ class ClamAVScanTests(SimpleTestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("Eicar-Test-Signature", errors[0])
 
+    def test_oversized_file_says_so(self):
+        with fake_scanner(error=clamd.BufferTooLongError()):
+            self.assertEqual(
+                VirusScanService.scan(io.BytesIO(b"big")),
+                ["File is too large to virus scan"],
+            )
+
     def test_unreachable_scanner_fails_closed(self):
         with fake_scanner(error=clamd.ConnectionError("no clamd")):
             self.assertEqual(
