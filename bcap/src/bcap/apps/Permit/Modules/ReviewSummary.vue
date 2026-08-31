@@ -19,7 +19,7 @@ defineProps<{
     fields: ReviewField[];
 }>();
 
-useMapFrameAutoCentre();
+useMapFrameAutoCentre('mapBoxes');
 
 const mapOverrides = {
     widget: {
