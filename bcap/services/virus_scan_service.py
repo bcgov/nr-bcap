@@ -21,10 +21,10 @@ class VirusScanService:
 
     @staticmethod
     def scan(file):
-        """Return a list of errors ([] if clean or scanning is disabled)."""
+        """Return why the file was refused, or None if it is clean."""
         if not settings.CLAMAV_ENABLED:
             logger.warning("CLAMAV_ENABLED is off; accepting file unscanned")
-            return []
+            return None
 
         file.seek(0)
         try:
@@ -36,28 +36,25 @@ class VirusScanService:
             status, reason = scanner.instream(file)["stream"]
         except clamd.BufferTooLongError:
             logger.error("ClamAV rejected an oversized stream")
-            return ["File is too large to virus scan"]
+            return "File is too large to virus scan"
         except (clamd.ClamdError, OSError) as e:
             logger.error("ClamAV scan failed: %s", e)
-            return ["Unable to virus scan file"]
+            return "Unable to virus scan file"
         finally:
             file.seek(0)
 
         if status == "FOUND":
-            logger.error("ClamAV found %s", reason)
-            return [f"File failed virus scan: {reason}"]
-        return []
+            return f"File failed virus scan: {reason}"
+        return None
 
 
 class ScanningStorage(S3Boto3Storage):
     """Default storage that refuses to write a file ClamAV objects to."""
 
     def _save(self, name, content):
-        if errors := VirusScanService.scan(content):
+        if error := VirusScanService.scan(content):
             # TileValidationError Anything else leaves an empty resource behind, indexed.
-            logger.error("Refused to store %s: %s", name, errors[0])
             uploaded_name = getattr(content, "name", None) or name
-            raise TileValidationError(
-                f"{errors[0]} ({os.path.basename(uploaded_name)})"
-            )
+            logger.error("Refused to store %s as %s: %s", uploaded_name, name, error)
+            raise TileValidationError(f"{error} ({os.path.basename(uploaded_name)})")
         return super()._save(name, content)

@@ -26,26 +26,25 @@ def fake_scanner(result=None, error=None):
 class ClamAVScanTests(SimpleTestCase):
     def test_clean_file_passes(self):
         with fake_scanner(result=("OK", None)):
-            self.assertEqual(VirusScanService.scan(io.BytesIO(b"harmless")), [])
+            self.assertIsNone(VirusScanService.scan(io.BytesIO(b"harmless")))
 
     def test_infected_file_is_rejected(self):
         with fake_scanner(result=("FOUND", "Eicar-Test-Signature")):
-            errors = VirusScanService.scan(io.BytesIO(b"virus"))
-        self.assertEqual(len(errors), 1)
-        self.assertIn("Eicar-Test-Signature", errors[0])
+            error = VirusScanService.scan(io.BytesIO(b"virus"))
+        self.assertIn("Eicar-Test-Signature", error)
 
     def test_oversized_file_says_so(self):
         with fake_scanner(error=clamd.BufferTooLongError()):
             self.assertEqual(
                 VirusScanService.scan(io.BytesIO(b"big")),
-                ["File is too large to virus scan"],
+                "File is too large to virus scan",
             )
 
     def test_unreachable_scanner_fails_closed(self):
         with fake_scanner(error=clamd.ConnectionError("no clamd")):
             self.assertEqual(
                 VirusScanService.scan(io.BytesIO(b"anything")),
-                ["Unable to virus scan file"],
+                "Unable to virus scan file",
             )
 
     def test_an_already_read_file_is_still_scanned(self):
@@ -53,8 +52,8 @@ class ClamAVScanTests(SimpleTestCase):
         file = io.BytesIO(b"virus")
         file.read()
         with fake_scanner(result=("FOUND", "Eicar-Test-Signature")) as scanner:
-            errors = VirusScanService.scan(file)
-        self.assertEqual(len(errors), 1)
+            error = VirusScanService.scan(file)
+        self.assertIsNotNone(error)
         self.assertEqual(scanner.return_value.instream.call_args[0][0].tell(), 0)
 
     def test_file_is_rewound_for_the_next_reader(self):
@@ -73,7 +72,7 @@ class ClamAVScanTests(SimpleTestCase):
             override_settings(CLAMAV_ENABLED=False),
             fake_scanner(result=("FOUND", "nope")) as scanner,
         ):
-            self.assertEqual(VirusScanService.scan(io.BytesIO(b"virus")), [])
+            self.assertIsNone(VirusScanService.scan(io.BytesIO(b"virus")))
             scanner.assert_not_called()
 
 
