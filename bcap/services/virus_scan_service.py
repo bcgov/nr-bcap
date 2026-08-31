@@ -57,8 +57,8 @@ class ScanningStorage(S3Boto3Storage):
 
     def _save(self, name: str, content) -> str:
         if error := VirusScanService.scan(content):
-            # TileValidationError Anything else leaves an empty resource behind, indexed.
             uploaded_name = content.name
             logger.error("Refused to store %s as %s: %s", uploaded_name, name, error)
+            # TileValidationError Anything else leaves an empty resource behind, indexed.
             raise TileValidationError(f"{error} ({os.path.basename(uploaded_name)})")
         return super()._save(name, content)
