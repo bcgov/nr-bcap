@@ -1,9 +1,8 @@
 """ClamAV virus scanning of uploaded files. Set CLAMAV_ENABLED=True and
 CLAMAV_HOST (CLAMAV_PORT defaults to 3310).
 
-ScanningStorage is the backstop: every upload arches writes goes through the
-default storage. The file datatype also scans directly, so the common case
-reports a readable validation error instead of a 400.
+ScanningStorage is where it happens: every file arches writes goes through the
+default storage, whichever save path put it there.
 """
 
 import logging
