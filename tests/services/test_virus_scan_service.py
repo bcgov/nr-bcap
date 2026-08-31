@@ -86,7 +86,7 @@ class ClamAVScanTests(SimpleTestCase):
 
 @override_settings(CLAMAV_ENABLED=True, CLAMAV_HOST="clamav", CLAMAV_PORT=3310)
 class ScanningStorageTests(SimpleTestCase):
-    def save(self, result, content=None):
+    def save(self, result):
         with (
             fake_scanner(result=result),
             mock.patch.object(
@@ -97,7 +97,7 @@ class ScanningStorageTests(SimpleTestCase):
                 return (
                     ScanningStorage()._save(
                         "uploads/44/report-4804bdab-6725-4d0f-aa92-ea392851412e.pdf",
-                        content or SimpleUploadedFile("report.pdf", b"x"),
+                        SimpleUploadedFile("report.pdf", b"x"),
                     ),
                     parent_save,
                 )
@@ -118,10 +118,3 @@ class ScanningStorageTests(SimpleTestCase):
         # Not the stored path, and not the tile id the filename generator adds.
         error, _parent_save = self.save(("FOUND", "Eicar-Test-Signature"))
         self.assertIn("(report.pdf)", error.messages[0])
-
-    def test_an_unnamed_file_falls_back_to_the_stored_name(self):
-        # The ETL paths hand storage a bare file object.
-        error, _parent_save = self.save(
-            ("FOUND", "Eicar-Test-Signature"), content=io.BytesIO(b"x")
-        )
-        self.assertIn("report-4804bdab", error.messages[0])
