@@ -35,7 +35,6 @@ class VirusScanService:
             )
             status, reason = scanner.instream(file)["stream"]
         except clamd.BufferTooLongError:
-            # clamd refuses streams over StreamMaxLength (25M by default).
             logger.error("ClamAV rejected an oversized stream")
             return ["File is too large to virus scan"]
         except (clamd.ClamdError, OSError) as e:
