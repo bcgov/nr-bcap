@@ -23,6 +23,7 @@ class VirusScanService:
     def scan(file):
         """Return a list of errors ([] if clean or scanning is disabled)."""
         if not settings.CLAMAV_ENABLED:
+            logger.warning("CLAMAV_ENABLED is off; accepting file unscanned")
             return []
 
         try:
