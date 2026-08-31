@@ -7,6 +7,8 @@ from bcap.services.virus_scan_service import VirusScanService
 
 
 class FileListDataType(BaseFileListDataType):
+    # Storage scans again on write, but that path raises and surfaces as a 400.
+    # Scanning here puts the failure in the field's validation errors instead.
     def validate_file_types(self, request=None, nodeid=None):
         errors = super().validate_file_types(request, nodeid)
         for file in self._get_files_from_request(request, nodeid):
