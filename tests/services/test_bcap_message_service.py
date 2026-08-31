@@ -54,7 +54,7 @@ def make_message(
             A.MESSAGE_SUBJECT: builder.localized(subject),
             A.MESSAGE_CONTENT: builder.localized(subject),
             A.MESSAGE_TYPE: reference_value("bcap_message", A.MESSAGE_TYPE),
-            A.MESSAGE_AUTHOR: author,
+            A.MESSAGE_AUTHOR: author or make_contributor(builder, "Author", "Anon"),
             A.RECIPIENT: recipient,
             A.RESOURCE_CONTEXT: context,
             A.IS_INTERNAL: is_internal,
