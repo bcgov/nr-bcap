@@ -25,6 +25,7 @@ class VirusScanService:
             logger.warning("CLAMAV_ENABLED is off; accepting file unscanned")
             return []
 
+        file.seek(0)
         try:
             scanner = clamd.ClamdNetworkSocket(
                 host=settings.CLAMAV_HOST,

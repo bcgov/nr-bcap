@@ -47,6 +47,15 @@ class ClamAVScanTests(SimpleTestCase):
                 ["Unable to virus scan file"],
             )
 
+    def test_an_already_read_file_is_still_scanned(self):
+        # Thumbnailing and type checks read the file first, leaving it at EOF.
+        file = io.BytesIO(b"virus")
+        file.read()
+        with fake_scanner(result=("FOUND", "Eicar-Test-Signature")) as scanner:
+            errors = VirusScanService.scan(file)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(scanner.return_value.instream.call_args[0][0].tell(), 0)
+
     def test_file_is_rewound_for_the_next_reader(self):
         file = io.BytesIO(b"harmless")
         with fake_scanner(result=("OK", None)) as scanner:
