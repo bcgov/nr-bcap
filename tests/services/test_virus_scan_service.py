@@ -2,11 +2,11 @@
 unreachable scanner are rejected, no CLAMAV_HOST means no scanning, and the
 storage backend refuses to write anything that fails a scan."""
 
-import io
 from unittest import mock
 
 import clamd
 from arches.app.models.tile import TileValidationError
+from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import SimpleTestCase, override_settings
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -26,38 +26,40 @@ def fake_scanner(result=None, error=None):
 class ClamAVScanTests(SimpleTestCase):
     def test_clean_file_passes(self):
         with fake_scanner(result=("OK", None)):
-            self.assertIsNone(VirusScanService.scan(io.BytesIO(b"harmless")))
+            self.assertIsNone(
+                VirusScanService.scan(ContentFile(b"harmless", name="clean.txt"))
+            )
 
     def test_infected_file_is_rejected(self):
         with fake_scanner(result=("FOUND", "Eicar-Test-Signature")):
-            error = VirusScanService.scan(io.BytesIO(b"virus"))
+            error = VirusScanService.scan(ContentFile(b"virus", name="bad.txt"))
         self.assertIn("Eicar-Test-Signature", error)
 
     def test_a_scan_error_is_not_treated_as_clean(self):
         # clamd reports a per-file failure as ERROR, not as a missing detection.
         with fake_scanner(result=("ERROR", "Can't allocate memory")):
             self.assertEqual(
-                VirusScanService.scan(io.BytesIO(b"anything")),
+                VirusScanService.scan(ContentFile(b"anything", name="any.txt")),
                 "Unable to virus scan file",
             )
 
     def test_oversized_file_says_so(self):
         with fake_scanner(error=clamd.BufferTooLongError()):
             self.assertEqual(
-                VirusScanService.scan(io.BytesIO(b"big")),
+                VirusScanService.scan(ContentFile(b"big", name="big.txt")),
                 "File is too large to virus scan",
             )
 
     def test_unreachable_scanner_fails_closed(self):
         with fake_scanner(error=clamd.ConnectionError("no clamd")):
             self.assertEqual(
-                VirusScanService.scan(io.BytesIO(b"anything")),
+                VirusScanService.scan(ContentFile(b"anything", name="any.txt")),
                 "Unable to virus scan file",
             )
 
     def test_an_already_read_file_is_still_scanned(self):
         # Thumbnailing and type checks read the file first, leaving it at EOF.
-        file = io.BytesIO(b"virus")
+        file = ContentFile(b"virus", name="bad.txt")
         file.read()
         with fake_scanner(result=("FOUND", "Eicar-Test-Signature")) as scanner:
             error = VirusScanService.scan(file)
@@ -65,7 +67,7 @@ class ClamAVScanTests(SimpleTestCase):
         self.assertEqual(scanner.return_value.instream.call_args[0][0].tell(), 0)
 
     def test_file_is_rewound_for_the_next_reader(self):
-        file = io.BytesIO(b"harmless")
+        file = ContentFile(b"harmless", name="clean.txt")
         with fake_scanner(result=("OK", None)) as scanner:
             # clamd streams the file, so it is drained by the time we rewind it.
             scanner.return_value.instream.side_effect = lambda f: (
@@ -80,7 +82,9 @@ class ClamAVScanTests(SimpleTestCase):
             override_settings(CLAMAV_ENABLED=False),
             fake_scanner(result=("FOUND", "nope")) as scanner,
         ):
-            self.assertIsNone(VirusScanService.scan(io.BytesIO(b"virus")))
+            self.assertIsNone(
+                VirusScanService.scan(ContentFile(b"virus", name="bad.txt"))
+            )
             scanner.assert_not_called()
 
 
