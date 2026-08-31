@@ -12,15 +12,20 @@ type: Feature
 **Improvement Description**:
 
 
+**Screenshots (if applicable)**:
+
+
 **Requested by**: 
 
 
 **Context & Rationale**:
 
-1. How often does it occur:
+1. Context of situation where the improvement came up:
 
-2. Who does it impact:
+2. How often does it occur:
 
-3. How does it improve things:
+3. Who does it impact:
 
-4. What problem does it solve:
+4. How does it improve things:
+
+5. What problem does it solve:
