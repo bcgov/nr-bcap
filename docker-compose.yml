@@ -25,9 +25,6 @@ services:
     env_file:
       - ./.env
       - ./docker/docker.dev.env
-    environment:
-      CLAMAV_ENABLED: "True"
-      CLAMAV_HOST: bcap-clamav
     ports:
       - 5690:5678
       # - 82:80            # moved to bcap-proxy
