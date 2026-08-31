@@ -40,6 +40,7 @@ services:
     pull_policy: always
     volumes:
       - clamav-db-bcap:/var/lib/clamav
+      - ./docker/clamav/clamd.conf:/etc/clamav/clamd.conf
     restart: unless-stopped
 
   bcap-proxy:
