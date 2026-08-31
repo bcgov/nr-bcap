@@ -6,10 +6,11 @@ default storage, whichever save path put it there.
 """
 
 import logging
+import os
 
 import clamd
+from arches.app.models.tile import TileValidationError
 from django.conf import settings
-from django.core.exceptions import SuspiciousFileOperation
 from storages.backends.s3boto3 import S3Boto3Storage
 
 logger = logging.getLogger(__name__)
@@ -54,5 +55,10 @@ class ScanningStorage(S3Boto3Storage):
 
     def _save(self, name, content):
         if errors := VirusScanService.scan(content):
-            raise SuspiciousFileOperation(f"{errors[0]}: {name}")
+            # TileValidationError Anything else leaves an empty resource behind, indexed.
+            logger.error("Refused to store %s: %s", name, errors[0])
+            uploaded_name = getattr(content, "name", None) or name
+            raise TileValidationError(
+                f"{errors[0]} ({os.path.basename(uploaded_name)})"
+            )
         return super()._save(name, content)

@@ -6,7 +6,8 @@ import io
 from unittest import mock
 
 import clamd
-from django.core.exceptions import SuspiciousFileOperation
+from arches.app.models.tile import TileValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import SimpleTestCase, override_settings
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -78,7 +79,7 @@ class ClamAVScanTests(SimpleTestCase):
 
 @override_settings(CLAMAV_ENABLED=True, CLAMAV_HOST="clamav", CLAMAV_PORT=3310)
 class ScanningStorageTests(SimpleTestCase):
-    def save(self, result):
+    def save(self, result, content=None):
         with (
             fake_scanner(result=result),
             mock.patch.object(
@@ -86,8 +87,14 @@ class ScanningStorageTests(SimpleTestCase):
             ) as parent_save,
         ):
             try:
-                return ScanningStorage()._save("f.txt", io.BytesIO(b"x")), parent_save
-            except SuspiciousFileOperation as e:
+                return (
+                    ScanningStorage()._save(
+                        "uploads/44/report-4804bdab-6725-4d0f-aa92-ea392851412e.pdf",
+                        content or SimpleUploadedFile("report.pdf", b"x"),
+                    ),
+                    parent_save,
+                )
+            except TileValidationError as e:
                 return e, parent_save
 
     def test_clean_file_is_written(self):
@@ -97,5 +104,17 @@ class ScanningStorageTests(SimpleTestCase):
 
     def test_infected_file_is_never_written(self):
         error, parent_save = self.save(("FOUND", "Eicar-Test-Signature"))
-        self.assertIsInstance(error, SuspiciousFileOperation)
+        self.assertIsInstance(error, TileValidationError)
         parent_save.assert_not_called()
+
+    def test_the_error_names_the_file_as_the_caller_sent_it(self):
+        # Not the stored path, and not the tile id the filename generator adds.
+        error, _parent_save = self.save(("FOUND", "Eicar-Test-Signature"))
+        self.assertIn("(report.pdf)", error.messages[0])
+
+    def test_an_unnamed_file_falls_back_to_the_stored_name(self):
+        # The ETL paths hand storage a bare file object.
+        error, _parent_save = self.save(
+            ("FOUND", "Eicar-Test-Signature"), content=io.BytesIO(b"x")
+        )
+        self.assertIn("report-4804bdab", error.messages[0])
