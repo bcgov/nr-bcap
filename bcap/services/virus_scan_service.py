@@ -45,6 +45,9 @@ class VirusScanService:
 
         if status == "FOUND":
             return f"File failed virus scan: {reason}"
+        if status != "OK":
+            logger.error("ClamAV returned %s: %s", status, reason)
+            return "Unable to virus scan file"
         return None
 
 

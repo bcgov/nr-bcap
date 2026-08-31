@@ -33,6 +33,14 @@ class ClamAVScanTests(SimpleTestCase):
             error = VirusScanService.scan(io.BytesIO(b"virus"))
         self.assertIn("Eicar-Test-Signature", error)
 
+    def test_a_scan_error_is_not_treated_as_clean(self):
+        # clamd reports a per-file failure as ERROR, not as a missing detection.
+        with fake_scanner(result=("ERROR", "Can't allocate memory")):
+            self.assertEqual(
+                VirusScanService.scan(io.BytesIO(b"anything")),
+                "Unable to virus scan file",
+            )
+
     def test_oversized_file_says_so(self):
         with fake_scanner(error=clamd.BufferTooLongError()):
             self.assertEqual(
