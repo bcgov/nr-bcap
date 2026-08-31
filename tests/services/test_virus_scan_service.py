@@ -10,6 +10,9 @@ from django.core.exceptions import SuspiciousFileOperation
 from django.test import SimpleTestCase, override_settings
 from storages.backends.s3boto3 import S3Boto3Storage
 
+from arches_querysets.datatypes.file import FileListDataType as BaseFileListDataType
+
+from bcap.datatypes.datatypes import FileListDataType
 from bcap.services.virus_scan_service import ScanningStorage, VirusScanService
 
 
@@ -83,3 +86,37 @@ class ScanningStorageTests(SimpleTestCase):
         error, parent_save = self.save(("FOUND", "Eicar-Test-Signature"))
         self.assertIsInstance(error, SuspiciousFileOperation)
         parent_save.assert_not_called()
+
+
+@override_settings(CLAMAV_ENABLED=True, CLAMAV_HOST="clamav", CLAMAV_PORT=3310)
+class FileListDataTypeScanTests(SimpleTestCase):
+    """The datatype reports a scan failure as its own field error, and skips the
+    scan when the file was already rejected."""
+
+    def validate(self, scan_result, base_errors):
+        datatype = FileListDataType()
+        upload = mock.Mock(file=io.BytesIO(b"x"))
+        with (
+            fake_scanner(result=scan_result) as scanner,
+            mock.patch.object(
+                BaseFileListDataType, "validate", return_value=base_errors
+            ),
+            mock.patch.object(
+                FileListDataType, "_get_files_from_request", return_value=[upload]
+            ),
+        ):
+            errors = datatype.validate(
+                [], node=mock.Mock(pk="node"), request=mock.Mock()
+            )
+        return errors, scanner
+
+    def test_infected_file_gets_its_own_message(self):
+        errors, _scanner = self.validate(("FOUND", "Eicar-Test-Signature"), [])
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Eicar-Test-Signature", errors[0]["message"])
+
+    def test_already_rejected_file_is_not_scanned(self):
+        rejected = [{"type": "ERROR", "message": "File type not permitted"}]
+        errors, scanner = self.validate(("FOUND", "nope"), rejected)
+        self.assertEqual(errors, rejected)
+        scanner.assert_not_called()
