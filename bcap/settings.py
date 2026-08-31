@@ -257,7 +257,6 @@ INSTALLED_APPS += (
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "EXCEPTION_HANDLER": "bcap.views.exception_handlers.bcap_exception_handler",
 }
 
 SPECTACULAR_SETTINGS = {
