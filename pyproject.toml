@@ -29,7 +29,7 @@ dependencies = [
     "arches-workflow-stepper @ git+https://github.com/bferguso/arches-workflow-stepper@main",
     "arches-zod-validation @ git+https://github.com/bcgov/arches-zod-validation@main",
     "authlib",
-    "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@ts/feat/simple_map_resize",
+    "bcgov-arches-common @ git+https://github.com/bcgov/bcgov-arches-common@release/2.1.x",
     "boto3==1.26",
     "django-captcha",
     "django-migrate-sql-deux==1.1.1",
