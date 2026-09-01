@@ -16,7 +16,7 @@ from bcap.views.registration_link_api import RegistrationClaimView
 from bcap.urls_api_documented import api_documented_patterns
 from bcap.views.auth import auth_callback
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
-from bcap.views.search import BCAPSearchView, export_results
+from bcap.views.search import export_results
 from bcap.views.translate_api import (
     TranslatableResourceTypesView,
     TranslateToResourceTypeView,
@@ -117,8 +117,6 @@ bcap_patterns = [
         TranslatableResourceTypesView.as_view(),
         name="translatable_resource_types",
     ),
-    # Overrides resource types to only show what the user has permission to see
-    path("search", BCAPSearchView.as_view(), name="search_home"),
     path("search/export_results", export_results, name="export_results"),
     # Signup-link target: bounces the visitor through BCSC, BCEID or IDIR
     # login, where the token (stashed in the session) is redeemed.
