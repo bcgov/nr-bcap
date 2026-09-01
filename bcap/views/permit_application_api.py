@@ -8,10 +8,10 @@ first, so they shadow them.
 """
 
 from drf_spectacular.utils import extend_schema
-from rest_framework.permissions import IsAuthenticated
 
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
+from bcap.permissions.route_permissions import SubmitterOrInternal
 from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
@@ -68,7 +68,7 @@ class PermitApplicationCreateView(GeneratedPermitApplicationListView):
 
     # Applicants file their own applications, so this only asks for a login; the
     # owning organization stamped on create is what scopes who reads it back.
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SubmitterOrInternal]
     http_method_names = ["post", "options"]
 
     def create(self, request, *args, **kwargs):
