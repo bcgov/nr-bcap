@@ -265,6 +265,7 @@ describe('MessageDialog.vue', () => {
         await wrapper
             .findComponent({ name: 'GenericWidget' })
             .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
+        await wrapper.find('.subject-input').setValue('Setback dimensions');
         await wrapper.find('textarea').setValue('This is my question.');
 
         await wrapper.findAll('.mock-button')[1].trigger('click');
@@ -273,10 +274,12 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith({
             messageText: 'This is my question.',
             recipientId: 'user-1',
-            applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
-            topic: 'General Question',
+            topic: 'Setback dimensions',
+            messageType: [
+                { list_id: 'list-1', uri: 'https://example.org/1', labels: [] },
+            ],
             files: [],
         });
 
@@ -324,9 +327,9 @@ describe('MessageDialog.vue', () => {
         expect(markMessageAsRead).toHaveBeenCalledTimes(1);
     });
 
-    // The subject is the picked topic alone; the title names the resource, so
-    // the subject does not repeat the context. context never filters the view.
-    it('sends the picked topic as the subject', async () => {
+    // The typed subject and the picked type travel as separate nodes; the
+    // thread list composes them for display. context never filters the view.
+    it('sends the subject and the picked type separately', async () => {
         vi.mocked(createBcapMessage).mockResolvedValue({ id: 'msg-123' });
 
         const wrapper = mountComponent({ context: 'Investigation' });
@@ -340,6 +343,7 @@ describe('MessageDialog.vue', () => {
         await wrapper
             .findComponent({ name: 'GenericWidget' })
             .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
+        await wrapper.find('.subject-input').setValue('Trench depth');
         await wrapper.find('textarea').setValue('A question.');
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
@@ -347,10 +351,12 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith({
             messageText: 'A question.',
             recipientId: 'user-1',
-            applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: undefined,
-            topic: 'General Question',
+            topic: 'Trench depth',
+            messageType: [
+                { list_id: 'list-1', uri: 'https://example.org/1', labels: [] },
+            ],
             files: [],
         });
     });
@@ -394,6 +400,7 @@ describe('MessageDialog.vue', () => {
             node_value: [{ name: 'plan.pdf', file }],
             details: [],
         });
+        await wrapper.find('.subject-input').setValue('Site plan');
         await wrapper.find('textarea').setValue('See attached.');
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
@@ -401,7 +408,7 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith(
             expect.objectContaining({
                 messageText: 'See attached.',
-                topic: 'General Question',
+                topic: 'Site plan',
                 files: [file],
             }),
         );
@@ -450,7 +457,6 @@ describe('MessageDialog.vue', () => {
         expect(createBcapMessage).toHaveBeenCalledWith({
             messageText: 'This is my reply.',
             recipientId: 'user-1',
-            applicationId: 'APP-1234',
             resourceId: 'permit-999',
             threadId: 'thread-777',
             topic: undefined,
