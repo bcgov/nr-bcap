@@ -25,3 +25,4 @@ def any_groups_required(*group_names):
 
 Submitter = any_groups_required(Groups.SUBMITTER)
 Internal = any_groups_required(*INTERNAL_GROUPS)
+SubmitterOrInternal = any_groups_required(Groups.SUBMITTER, *INTERNAL_GROUPS)
