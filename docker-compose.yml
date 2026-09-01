@@ -36,7 +36,7 @@ services:
   bcap-clamav:
     container_name: bcap-clamav
     hostname: bcap-clamav
-    image: clamav/clamav:stable
+    image: clamav/clamav-debian:stable
     pull_policy: always
     volumes:
       - clamav-db-bcap:/var/lib/clamav
