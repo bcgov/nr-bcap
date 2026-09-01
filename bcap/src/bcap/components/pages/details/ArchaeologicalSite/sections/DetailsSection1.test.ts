@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 
 vi.mock(
-    '@/bcgov_arches_common/components/SimpleMap/SimpleMap.vue',
+    '@/bcgov_arches_common/widgets/SimpleMapWidget/SimpleMapWidget.vue',
     async () => {
         const { defineComponent } = await import('vue');
         return {
