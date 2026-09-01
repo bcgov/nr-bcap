@@ -41,7 +41,7 @@ def remove_functions(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bcap", "1433_create_databc_views"),
+        ("bcap", "1434_boolean_checkbox_widget_mapping"),
     ]
 
     operations = [
