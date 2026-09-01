@@ -1,62 +1,60 @@
-"""Check the graph permission policy against the checked-in graph JSON files.
+"""Check PERMISSION_DEFAULTS against the checked-in graph JSON files.
 
-A slug typo in the policy, or a newly added graph nobody assigned groups to,
-both fail silently at runtime: the graph is skipped and default-deny hides it.
-These tests need no database.
+A stale graph id in the setting, or a newly added graph nobody granted access
+to, both fail silently at runtime: the graph is skipped and default deny hides
+it. These tests need no database.
 """
 
 import json
 from pathlib import Path
 
 from django.apps import apps
+from django.conf import settings
 from django.test import SimpleTestCase
 
-from bcap.permissions.graph_policy import (
-    index_group_names,
-    nodegroup_perms,
-    policy_slugs,
-)
+RESOURCE_INSTANCE_PERMS = {
+    "view_resourceinstance",
+    "change_resourceinstance",
+    "add_resourceinstance",
+    "delete_resourceinstance",
+    "no_access_to_resourceinstance",
+}
 
 
-def package_graph_slugs():
+def package_graphs():
+    """Graph id to slug, for every resource model in the package."""
     graphs = Path(apps.get_app_config("bcap").path) / "pkg/graphs/resource_models"
     return {
-        json.loads(path.read_text())["graph"][0]["slug"]
+        json.loads(path.read_text())["graph"][0]["graphid"]: json.loads(
+            path.read_text()
+        )["graph"][0]["slug"]
         for path in graphs.glob("*.json")
     }
 
 
-class PermissionPolicyTests(SimpleTestCase):
-    def test_policy_slugs_all_exist_as_graphs(self):
-        unknown = set(policy_slugs()) - package_graph_slugs()
-        self.assertEqual(unknown, set(), "Policy slugs matching no graph")
+class PermissionDefaultsTests(SimpleTestCase):
+    def test_every_graph_granted_exists(self):
+        unknown = set(settings.PERMISSION_DEFAULTS) - set(package_graphs())
+        self.assertEqual(unknown, set(), "Graph ids matching no graph")
 
-    def test_every_graph_has_a_policy(self):
-        uncovered = package_graph_slugs() - set(policy_slugs())
+    def test_every_graph_is_granted(self):
+        graphs = package_graphs()
+        uncovered = {
+            graphs[graph_id]
+            for graph_id in set(graphs) - set(settings.PERMISSION_DEFAULTS)
+        }
         self.assertEqual(
-            uncovered, set(), "Graphs with no permission policy (denied to everyone)"
+            uncovered, set(), "Graphs with no defaults (denied to everyone)"
         )
 
-    def test_unknown_slugs_are_dropped(self):
-        self.assertEqual(policy_slugs(["not-a-graph"]), [])
+    def test_every_permission_granted_is_a_real_one(self):
+        """A codename arches does not know is granted to nobody, silently."""
+        for graph_id, grants in settings.PERMISSION_DEFAULTS.items():
+            for grant in grants:
+                unknown = set(grant["permissions"]) - RESOURCE_INSTANCE_PERMS
+                self.assertEqual(unknown, set(), graph_id)
 
-    def test_every_policy_verb_maps_to_a_nodegroup_perm(self):
-        for slug in policy_slugs():
-            # A verb with no guardian perm raises here.
-            for name, perms in nodegroup_perms(slug).items():
-                self.assertTrue(perms, f"{slug} grants {name} nothing")
-
-    def test_an_unlisted_graph_grants_nothing(self):
-        self.assertEqual(nodegroup_perms("not-a-graph"), {})
-        self.assertEqual(
-            index_group_names("not-a-graph"), {"groups_read": [], "groups_edit": []}
-        )
-
-    def test_the_index_never_promises_more_than_the_nodegroups(self):
-        for slug in policy_slugs():
-            perms = nodegroup_perms(slug)
-            fields = index_group_names(slug)
-            for name in fields["groups_read"]:
-                self.assertIn("read_nodegroup", perms[name], f"{slug}: {name}")
-            for name in fields["groups_edit"]:
-                self.assertIn("write_nodegroup", perms[name], f"{slug}: {name}")
+    def test_every_grant_names_a_group(self):
+        for graph_id, grants in settings.PERMISSION_DEFAULTS.items():
+            for grant in grants:
+                self.assertEqual(grant["type"], "group", graph_id)

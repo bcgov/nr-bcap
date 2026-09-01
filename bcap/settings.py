@@ -530,6 +530,9 @@ REGISTRATION_LINK_TTL_DAYS = 7
 
 PERMISSION_FRAMEWORK = "bcap_arches_permission_framework.BcapArchesPermissionFramework"
 
+
+from bcap.permissions.permission_settings import PERMISSION_DEFAULTS  # noqa: E402
+
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
 
