@@ -25,7 +25,7 @@ from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.test_bcap_message_service import make_message
-from tests.views.helpers import AuthTestHelper
+from tests.views.helpers import AuthTestHelper, api_reference_value
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")
@@ -53,6 +53,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         staff_contrib = builder.make_contributor(
             ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="staff")
         )
+        cls.recipient_id = str(staff_contrib.pk)
 
         cls.permit = builder.make_resource("permit_application")
         cls.permit_id = str(cls.permit.pk)
@@ -123,21 +124,29 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["count"], 0)
 
-    def _post_message(self):
-        payload = {
-            "aliased_data": {
-                "message_content": {
-                    "aliased_data": {
-                        "resource_context": {
-                            "node_value": [{"resourceId": self.permit_id}]
-                        },
-                        "message_content": {
-                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
-                        },
-                    }
-                }
-            }
+    def _message_payload(self, context_id=None, **extra_nodes):
+        """A create body with the nodes the model requires; extra_nodes adds to
+        or overrides the message_content group."""
+        nodes = {
+            "resource_context": {
+                "node_value": [{"resourceId": context_id or self.permit_id}]
+            },
+            "message_content": {
+                "node_value": {"en": {"value": "hi", "direction": "ltr"}}
+            },
+            "message_subject": {
+                "node_value": {"en": {"value": "Subject", "direction": "ltr"}}
+            },
+            "message_type": {
+                "node_value": api_reference_value("bcap_message", "message_type")
+            },
+            "recipient": {"node_value": [{"resourceId": self.recipient_id}]},
+            **extra_nodes,
         }
+        return {"aliased_data": {"message_content": {"aliased_data": nodes}}}
+
+    def _post_message(self):
+        payload = self._message_payload()
         return self.client.post(
             reverse("bcap_message_list_create"),
             data=json.dumps(payload),
@@ -167,20 +176,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         draft = WorkflowDraftService().create(
             request_as(self.user), "investigation", {}
         )
-        payload = {
-            "aliased_data": {
-                "message_content": {
-                    "aliased_data": {
-                        "resource_context": {
-                            "node_value": [{"resourceId": str(draft.pk)}]
-                        },
-                        "message_content": {
-                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
-                        },
-                    }
-                }
-            }
-        }
+        payload = self._message_payload(str(draft.pk))
         self.idir_login_simulate(self.user)
         resp = self.client.post(
             reverse("bcap_message_list_create"),
@@ -209,23 +205,9 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         # custom serializer field keeps the offset DRF would otherwise strip
         # under USE_TZ off, so the value passes validation and indexing (rather
         # than 400ing) and reads back as the same instant, time-of-day intact.
-        payload = {
-            "aliased_data": {
-                "message_content": {
-                    "aliased_data": {
-                        "resource_context": {
-                            "node_value": [{"resourceId": self.permit_id}]
-                        },
-                        "message_content": {
-                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
-                        },
-                        "message_creation_date": {
-                            "node_value": "2026-07-09T17:36:33.000Z"
-                        },
-                    }
-                }
-            }
-        }
+        payload = self._message_payload(
+            message_creation_date={"node_value": "2026-07-09T17:36:33.000Z"}
+        )
         self.idir_login_simulate(self.user)
         with patch(
             "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
@@ -251,23 +233,9 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         # A message can carry a file: the collection endpoint accepts multipart
         # (a "json" part plus files under the "attachments" alias key), re-keys
         # them to the file-list node, and arches links the upload by name.
-        payload = {
-            "aliased_data": {
-                "message_content": {
-                    "aliased_data": {
-                        "resource_context": {
-                            "node_value": [{"resourceId": self.permit_id}]
-                        },
-                        "message_content": {
-                            "node_value": {"en": {"value": "hi", "direction": "ltr"}}
-                        },
-                        "attachments": {
-                            "node_value": [{"name": "note.txt", "url": None}]
-                        },
-                    }
-                }
-            }
-        }
+        payload = self._message_payload(
+            attachments={"node_value": [{"name": "note.txt", "url": None}]}
+        )
         upload = SimpleUploadedFile(
             "note.txt", b"hello world", content_type="text/plain"
         )

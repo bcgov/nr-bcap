@@ -1,35 +1,41 @@
 ---
 name: UAT Gap
 about: 'GAP: An as-built compulsory feature won''t meet operational or user needs. '
-title: 'GAP - UAT: xxxxxxxxxxxxxxxxxxx'
-labels: GAP - UAT
+title: 'GAP-UAT: xxxxxxxxxxxxxxxxxxx'
+labels: GAP - UAT, TRIAGE
 assignees: ''
 type: Feature
 
 ---
 
-*Creation Instructions (delete after doing)*
+## *Ticket Creation Instructions (delete after doing)*
 *1. Fill out the template and create the ticket*
-*2. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section*
-*3. Set label as GAP - UAT and either INV, PERM, or Shared Concern*
-*4. Populate sprint details and priority section*
-*5. Set type as 'Feature'*
-*6. Set status as BACKLOG* 
+*2. Add labels: either INV, PERM, or Shared Concern  (Triage and Gap are pre-labelled)* 
+*3. Confirm type is set to 'Feature'*
+*4. Under 'Projects', add it to the BCAP Project and set the status to BACKLOG* 
+*5. Expand the project section to populate sprint details and priority section*
+*6. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section* 
+*7. Delete the ticket creation instructions section from the ticket body.*
 
 ## Gap Details
 
-**Gap found by xxxSMExxx while testing Ticket #xxxx under Sprint xxxx test case xxxx using the xxxx browser**
+**Found by**: xxxSMExxx 
+**Ticket being tested**: #xxxx 
+**Sprint#:** xxxx 
+**Test case#**: xxxx 
+**Internet Browser used**: xxxx
 
 
 **Gap Description:**
 
 
+**Screenshots (if applicable):**
+
+
 **Rationale / Business Context for Change:**
 
 
-
-**Screenshots (if applicable)**
-
+**Proposed Solution (if applicable):**
 
 
 ## Steps to Reproduce / Get us to where you were
@@ -47,5 +53,5 @@ A checkbox list of measurable, quantifiable items that must be met before the st
 - [ ] xxxxxxxxxx
 
 
-## Test Cases
-Optional space for pre-written potential test cases to live (written by the BAs or PO) to help with QA or UAT.
+## Test Case Drafts 
+*Optional space for PO or BAs to pre-draft QA/UAT test cases, and copy into testing spreadsheets later*

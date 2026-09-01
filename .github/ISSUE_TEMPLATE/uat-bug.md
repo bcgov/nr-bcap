@@ -2,23 +2,30 @@
 name: UAT Bug
 about: 'BUG: Can''t complete without a technical interruption.  '
 title: 'BUG - UAT: xxxxxxxxxx'
-labels: Bug, PERM
+labels: Bug, TRIAGE
 assignees: ''
 type: Bug
 
 ---
 
-*Creation Instructions (delete after doing)*
+## *Ticket Creation Instructions (delete after doing)*
 *1. Fill out the template and create the ticket*
-*2. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section*
-*3. Set label as BUG - UAT* and either INV, PERM, or Shared Concern
-*4. Populate sprint details and priority section*
-*5. Set type as 'Bug'*
-*6. Set status as BACKLOG* 
+*2. Add labels: either INV, PERM, or Shared Concern  (Triage and Bug are pre-labelled)* 
+*3. Confirm type is set to 'Bug'*
+*4. Under 'Projects', add it to the BCAP Project and set the status to BACKLOG* 
+*5. Expand the project section to populate sprint details and priority section*
+*6. Link it to the ticket that was being tested as the parent ticket under 'add relationship' section* 
+*7. Delete the ticket creation instructions section from the ticket body.*
+
+
 
 ## Bug Details
 
-**Feedback found by xxxSMExxx while testing Ticket #xxxx under Sprint xxxx test case xxxx using the xxxx browser**
+**Found by**: xxxSMExxx 
+**Ticket being tested**: #xxxx 
+**Sprint#:** xxxx 
+**Test case#**: xxxx 
+**Internet Browser used**: xxxx
 
 
 **Bug Description:**
@@ -27,12 +34,10 @@ type: Bug
 **Rationale / Business Context for Change:**
 
 
-
 **Screenshots (if applicable)**
 
 
 **Console log content (right click>inspect>console):**
-
 
 
 ## Steps to Reproduce / Get us to where you were
@@ -50,5 +55,5 @@ A checkbox list of measurable, quantifiable items that must be met before the st
 - [ ] xxxxxxxxxx
 
 
-## Test Cases
-Optional space for pre-written potential test cases to live (written by the BAs or PO) to help with QA or UAT.
+## Test Case Drafts 
+*Optional space for PO or BAs to pre-draft QA/UAT test cases, and copy into testing spreadsheets later*

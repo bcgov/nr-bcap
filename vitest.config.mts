@@ -51,6 +51,10 @@ function generateConfig(): Promise<UserConfig> {
                 'js',
                 'arches.js',
             ),
+            // Arches application sources live outside this project, so vite
+            // cannot walk up to our node_modules for the bare imports they
+            // make. Webpack resolves them through resolve.modules already.
+            underscore: path.join(__dirname, 'node_modules', 'underscore'),
         };
 
         for (const [
