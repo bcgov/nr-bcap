@@ -25,7 +25,7 @@ from bcap.services.process_requirement.template_specs import (
     supported_permit_types,
 )
 from bcap.util.aliases.contributor import ContributorAliases as A
-from bcap.util.auth.groups import Groups
+from bcap.permissions.groups import Groups
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import reference_value
 from bcap.util.dashboard.requirement_flow_seed import RequirementFlowBuilder

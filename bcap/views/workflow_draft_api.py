@@ -17,7 +17,6 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_dataclasses.serializers import DataclassSerializer
@@ -25,6 +24,7 @@ from rest_framework_dataclasses.serializers import DataclassSerializer
 from arches.app.models.models import ResourceInstance
 from arches.app.utils.permission_backend import user_can_edit_resource
 
+from bcap.permissions.route_permissions import SubmitterOrInternal
 from bcap.serializers.graph_serializers import aliased_data_union_schema
 from bcap.services.workflow_draft_service import DraftRecord, WorkflowDraftService
 from bcap.util.graph import get_current_graph
@@ -110,7 +110,7 @@ class WorkflowDraftBaseView(APIView):
     # Drafts are personal scratch data, so the route itself only asks for a login
     # -- scoping in WorkflowDraftService then limits an applicant to their own,
     # while branch staff reach the drafts on the permits they review.
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SubmitterOrInternal]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

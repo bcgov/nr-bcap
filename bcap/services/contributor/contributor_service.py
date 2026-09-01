@@ -18,7 +18,7 @@ from bcap.util.aliases.contributor import (
     ContributorAliases,
     ContributorGroupAliases,
 )
-from bcap.util.auth.groups import Groups, is_internal_username
+from bcap.permissions.groups import Groups, is_internal_username
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.resource_builder import ResourceBuilder
 from bcap.util.tiles import all_referenced_resource_ids

@@ -10,16 +10,15 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.parsers import JSONParser
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from arches.app.utils.permission_backend import user_can_edit_resource
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
-from arches_querysets.rest_framework.permissions import ReadOnly, ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
+from bcap.permissions.route_permissions import SubmitterOrInternal
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
     ModuleUnreadSerializer,
@@ -45,7 +44,7 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
     """GET the threads on a parent resource, one per thread as its root
     (thread-starting) message, with the standard limit/offset pagination."""
 
-    permission_classes = [ResourceEditor | ReadOnly]
+    permission_classes = [SubmitterOrInternal]
     pagination_class = ArchesLimitOffsetPagination
     serializer_class = ThreadRootSerializer
 
@@ -64,7 +63,7 @@ class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIVi
     """GET one thread's messages (its root and replies), oldest-first, with the
     standard limit/offset pagination the rest of the API uses."""
 
-    permission_classes = [ResourceEditor | ReadOnly]
+    permission_classes = [SubmitterOrInternal]
     pagination_class = ArchesLimitOffsetPagination
     serializer_class = ThreadMessageSerializer
 
@@ -117,10 +116,10 @@ class BcapMessageCreateView(BcapMessageListView):
 class BcapMessageModuleUnreadView(APIView):
     """GET the viewer's unread count per process_module of a submission, so the
     module list badges unread without loading each module's threads. Counts are
-    the caller's own, so IsAuthenticated leaks nothing."""
+    the caller's own, so no further scoping is needed."""
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SubmitterOrInternal]
 
     def get(self, request, submission_id):
         rows = BcapMessageService().unread_by_module(
@@ -139,7 +138,7 @@ class BcapMessageContributorsView(APIView):
     Gated on edit access to the resource, like posting a message about it."""
 
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SubmitterOrInternal]
 
     def get(self, request, resource_id):
         if not user_can_edit_resource(request.user, resourceid=str(resource_id)):
@@ -158,7 +157,7 @@ class BcapMessageDetailView(
     in the body) and/or the caller's personal archive of the thread (a top-level
     "archived" boolean), whichever the body carries."""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SubmitterOrInternal]
     http_method_names = ["get", "patch", "options"]
 
     def _require_context_edit(self, request):

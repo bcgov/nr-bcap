@@ -27,7 +27,7 @@ from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
 from bcap.util.aliases.bcap_message import BcapMessageAliases
-from bcap.util.auth.groups import is_internal_user
+from bcap.permissions.groups import is_internal_user
 from bcap.util.dates import parse_iso_or_set_value
 from bcap.util.tiles import group_data, resource_instance_id
 

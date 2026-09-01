@@ -1,6 +1,8 @@
 from arches.app.views.resource import ResourceReportView as ResourceReportViewCore
 from arches.app.views.resource import ResourceEditLogView as ResourceEditLogViewCore
 from arches.app.utils.decorators import group_required
+
+from bcap.permissions.groups import Groups
 from django.utils.decorators import method_decorator
 from arches.app.models import models
 from arches.app.models.system_settings import settings
@@ -9,7 +11,7 @@ from django.utils.translation import gettext as _
 from arches.app.models.resource import Resource
 
 
-@method_decorator(group_required("Resource Editor"), name="dispatch")
+@method_decorator(group_required(Groups.RESOURCE_EDITOR), name="dispatch")
 class ResourceReportView(ResourceReportViewCore):
     def get(self, request, resourceid=None):
         return super().get(request, resourceid)
