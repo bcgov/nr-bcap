@@ -1665,12 +1665,12 @@ export type BcapMessageMessageContentAliasedData = {
     /**
      * Enter text
      */
-    message_subject?: StringAliasedNodeData | null;
+    message_subject: StringAliasedNodeData | null;
     /**
      * Select an option
      */
-    message_type?: ReferenceAliasedNodeData | null;
-    recipient?: ResourceInstanceAliasedNodeData | null;
+    message_type: ReferenceAliasedNodeDataRequired | null;
+    recipient: ResourceInstanceAliasedNodeData | null;
     resource_context: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter date
@@ -8331,12 +8331,12 @@ export type BcapMessageMessageContentAliasedDataWritable = {
     /**
      * Enter text
      */
-    message_subject?: StringAliasedNodeDataWritable | null;
+    message_subject: StringAliasedNodeDataWritable | null;
     /**
      * Select an option
      */
-    message_type?: ReferenceAliasedNodeDataWritable | null;
-    recipient?: ResourceInstanceAliasedNodeDataWritable | null;
+    message_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    recipient: ResourceInstanceAliasedNodeDataWritable | null;
     resource_context: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter date
