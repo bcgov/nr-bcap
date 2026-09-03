@@ -16,6 +16,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from bcap.permissions.groups import SELF_MANAGE_ROLE_GROUPS
 from bcap.serializers.registration_serializers import (
     RegistrationLinkRequestSerializer,
     RegistrationLinkResponseSerializer,
@@ -62,7 +63,7 @@ class AssignableGroupsView(APIView):
         responses={200: {"type": "array", "items": {"type": "string"}}},
     )
     def get(self, request):
-        return Response(settings.SELF_MANAGE_ROLE_GROUPS)
+        return Response(SELF_MANAGE_ROLE_GROUPS)
 
 
 @extend_schema(tags=["Admin: registration"])

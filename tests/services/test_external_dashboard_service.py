@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from arches.app.models.models import ResourceInstance
 
+from bcap.permissions.groups import Groups
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.services.dashboard.external_dashboard_service import (
@@ -325,7 +326,7 @@ class ExternalDashboardDraftsTests(TestCase):
         # An unsubmitted form is its author's business, so branch staff are
         # scoped like anyone else: their own drafts and their companies'.
         staff = make_user("branch-staff")
-        staff.groups.add(Group.objects.get(name="Resource Editor"))
+        staff.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
 
         for status in (
             ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS,

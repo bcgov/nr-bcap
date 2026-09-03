@@ -4,7 +4,6 @@ drf-spectacular documents them and the frontend's generated types follow."""
 from dataclasses import dataclass, field
 from uuid import UUID
 
-from django.conf import settings
 
 from rest_framework.serializers import (
     Serializer,
@@ -17,6 +16,7 @@ from rest_framework.serializers import (
 )
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
+from bcap.permissions.groups import SELF_MANAGE_ROLE_GROUPS
 from bcap.services.contributor.contributor_service import (
     ContributorService,
     NewContributor,
@@ -81,7 +81,7 @@ class RegistrationLinkRequestSerializer(DataclassSerializer):
             raise ValidationError(
                 "That Contributor doesn't exist or is already linked to an account."
             )
-        if not_allowed := set(body.groups) - set(settings.SELF_MANAGE_ROLE_GROUPS):
+        if not_allowed := set(body.groups) - set(SELF_MANAGE_ROLE_GROUPS):
             raise ValidationError(
                 f"Group(s) not allowed: {', '.join(sorted(not_allowed))}."
             )

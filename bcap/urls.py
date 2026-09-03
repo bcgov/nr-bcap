@@ -11,14 +11,16 @@ from bcap.views.api import (
     RegisterType,
     RelatedSiteVisits,
     ControlledListHierarchy,
-    TranslatableResourceTypesView,
-    TranslateToResourceTypeView,
 )
 from bcap.views.registration_link_api import RegistrationClaimView
 from bcap.urls_api_documented import api_documented_patterns
 from bcap.views.auth import auth_callback
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
+from bcap.views.translate_api import (
+    TranslatableResourceTypesView,
+    TranslateToResourceTypeView,
+)
 from bcgov_arches_common.views.map import BCTileserverProxyView
 from rest_framework.permissions import IsAdminUser
 from drf_spectacular.views import (

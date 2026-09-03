@@ -9,6 +9,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from bcap.models import RegistrationLink
+from bcap.permissions.groups import Groups
 from bcap.services.contributor.contributor_service import (
     ContributorService,
     NewContributor,
@@ -40,7 +41,7 @@ class InvitationRegistrationServiceTest(TestCase):
             username="idir\\jdoe", email="jdoe@example.com"
         )
         # Default group granted on redemption when no groups are specified.
-        Group.objects.get_or_create(name="Guest")
+        Group.objects.get_or_create(name=Groups.GUEST)
 
     def make_contributor(self, name="Hopper", first_name="Grace", **kwargs):
         spec = ContributorSpec(self.contributor_type, first_name, name, **kwargs)
@@ -80,13 +81,13 @@ class InvitationRegistrationServiceTest(TestCase):
             self.contributors.username_contributor_id(self.user.username),
             str(contributor.pk),
         )
-        self.assertTrue(self.user.groups.filter(name="Guest").exists())
+        self.assertTrue(self.user.groups.filter(name=Groups.GUEST).exists())
         link.refresh_from_db()
         self.assertIsNotNone(link.used)
         self.assertEqual(link.used_by_id, self.user.pk)
 
     def test_redeem_grants_the_links_selected_groups(self):
-        Group.objects.get_or_create(name="Permit Reviewer")
+        Group.objects.get_or_create(name=Groups.PERMIT_REVIEWER)
         contributor = self.make_contributor()
         link = self.service.issue_link(
             self.user,
@@ -94,12 +95,12 @@ class InvitationRegistrationServiceTest(TestCase):
             groups=["Permit Reviewer"],
         )
         self.service.redeem_link(link.id, self.user)
-        self.assertTrue(self.user.groups.filter(name="Permit Reviewer").exists())
+        self.assertTrue(self.user.groups.filter(name=Groups.PERMIT_REVIEWER).exists())
         # The settings default is not also applied when groups are chosen.
-        self.assertFalse(self.user.groups.filter(name="Guest").exists())
+        self.assertFalse(self.user.groups.filter(name=Groups.GUEST).exists())
 
     def test_redeem_drops_non_whitelisted_groups_and_falls_back(self):
-        Group.objects.get_or_create(name="Resource Editor")
+        Group.objects.get_or_create(name=Groups.RESOURCE_EDITOR)
         contributor = self.make_contributor()
         link = self.service.issue_link(
             self.user,
@@ -107,9 +108,9 @@ class InvitationRegistrationServiceTest(TestCase):
             groups=["Resource Editor"],  # not in SELF_MANAGE_ROLE_GROUPS
         )
         self.service.redeem_link(link.id, self.user)
-        self.assertFalse(self.user.groups.filter(name="Resource Editor").exists())
+        self.assertFalse(self.user.groups.filter(name=Groups.RESOURCE_EDITOR).exists())
         # Nothing whitelisted remained, so the default is granted.
-        self.assertTrue(self.user.groups.filter(name="Guest").exists())
+        self.assertTrue(self.user.groups.filter(name=Groups.GUEST).exists())
 
     def test_redeem_new_contributor_creates_then_binds(self):
         link = self.service.issue_link(
@@ -157,7 +158,7 @@ class InvitationRegistrationServiceTest(TestCase):
         contributor = self.make_contributor(bcap_username="someone_else")
         link = self.service.issue_link(self.user, contributor_id=str(contributor.pk))
         self.assertIsNone(self.service.redeem_link(link.id, self.user))
-        self.assertFalse(self.user.groups.filter(name="Guest").exists())
+        self.assertFalse(self.user.groups.filter(name=Groups.GUEST).exists())
         link.refresh_from_db()
         self.assertIsNone(link.used)
 
@@ -169,7 +170,7 @@ class InvitationRegistrationServiceTest(TestCase):
         self.assertIsNone(self.service.redeem_link(link.id, self.user))
         # Second Contributor stays unlinked, link unused, no groups granted.
         self.assertTrue(self.contributors.is_invitable(str(other.pk)))
-        self.assertFalse(self.user.groups.filter(name="Guest").exists())
+        self.assertFalse(self.user.groups.filter(name=Groups.GUEST).exists())
         link.refresh_from_db()
         self.assertIsNone(link.used)
 
@@ -222,7 +223,7 @@ class InvitationRegistrationServiceTest(TestCase):
 
     def test_redeem_pending_without_pending_token_is_a_noop(self):
         self.service.redeem_pending(self.idir_request())
-        self.assertFalse(self.user.groups.filter(name="Guest").exists())
+        self.assertFalse(self.user.groups.filter(name=Groups.GUEST).exists())
 
     def redeemable_link(self):
         return RegistrationLink.objects.create(

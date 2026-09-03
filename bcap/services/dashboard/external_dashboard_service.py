@@ -2,7 +2,7 @@ from arches_querysets.models import ResourceTileTree
 
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.services.message.bcap_message_service import BcapMessageService
-from bcap.services.contributor.organization_service import OrganizationService
+from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     ApplicationCore,
@@ -81,7 +81,7 @@ class ExternalDashboardService(BaseDashboardService):
     def _filter_by_status(self, queryset, status, user):
         """Created-by scoping. The seam for a future applicant-field match:
         only this method knows how a user/company maps to applications."""
-        visible = OrganizationService().visible_to(user, self.PA.OWNING_ORGANIZATION)
+        visible = PermitResourceAccess.visible_permits_for_organization_or_user(user)
         match status:
             case ExternalDashboardStatus.FILINGS_BY_ASSOCIATED_ORGANIZATIONS:
                 # Inclusive: the organizations' filings plus the user's own, so

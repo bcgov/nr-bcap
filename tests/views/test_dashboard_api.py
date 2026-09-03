@@ -1,6 +1,8 @@
+from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from bcap.permissions.groups import Groups
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
@@ -44,6 +46,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        cls.user.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
         # Rolled back with the class transaction.
         ControlledListFixtures.seed()
         graph = build_permit_graph()

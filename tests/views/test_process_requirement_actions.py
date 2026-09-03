@@ -14,6 +14,7 @@ from django.urls import reverse
 
 from arches.app.models.models import TileModel
 
+from bcap.permissions.groups import Groups
 from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as pa,
     PermitApplicationGroupAliases as pa_groups,
@@ -111,7 +112,7 @@ class ModuleCompletionRouteTests(AuthTestHelper, TestCase):
         cls.editor = get_user_model().objects.create_user(
             username="mod-editor", password="pass"
         )
-        cls.editor.groups.add(Group.objects.get(name="Resource Editor"))
+        cls.editor.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
 
         builder = FixtureBuilder()
         permit = builder.new_resource("permit_application")

@@ -14,6 +14,7 @@ from django.utils import timezone
 from bcgov_arches_common.util.auth.oauth_session_control import _clean_username
 
 from bcap.models import RegistrationLink
+from bcap.permissions.groups import SELF_MANAGE_ROLE_GROUPS, Groups
 from bcap.services.contributor.contributor_service import (
     ContributorService,
     NewContributor,
@@ -104,10 +105,8 @@ class InvitationRegistrationService:
                     return None
                 # Enforce the whitelist again here, in case a link was issued
                 # with groups that have since dropped off it.
-                allowed = [
-                    g for g in link.groups if g in settings.SELF_MANAGE_ROLE_GROUPS
-                ]
-                group_names = allowed or ["Guest"]
+                allowed = [g for g in link.groups if g in SELF_MANAGE_ROLE_GROUPS]
+                group_names = allowed or [Groups.GUEST]
                 user.groups.add(*Group.objects.filter(name__in=group_names))
                 link.used = timezone.now()
                 link.used_by = user

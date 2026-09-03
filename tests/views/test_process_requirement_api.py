@@ -9,14 +9,20 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from arches.app.models.models import ResourceInstance
+
 from arches_querysets.models import ResourceTileTree
 
+from bcap.permissions.groups import Groups
 from bcap.util.aliases.process_requirement import (
     ProcessRequirementAliases as aliases,
     ProcessRequirementGroupAliases as groups,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from tests.builders import FixtureBuilder
+from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.permit_fixtures import RequirementRow, build_permit
 from tests.views.helpers import AuthTestHelper
 
 
@@ -59,7 +65,20 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         cls.editor = get_user_model().objects.create_user(
             username="pr-editor", password="pass"
         )
-        cls.editor.groups.add(Group.objects.get(name="Resource Editor"))
+        cls.editor.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
+
+        # An applicant reaches a requirement through the permit application it
+        # hangs off, never by owning it: the working copies are made for them.
+        ControlledListFixtures.seed()
+        cls.submitter = get_user_model().objects.create_user(
+            username="pr-submitter", password="pass"
+        )
+        cls.submitter.groups.add(Group.objects.get(name=Groups.SUBMITTER))
+        permit = build_permit(FixtureBuilder(), "Mine", [RequirementRow(requirement)])
+        ResourceInstance.objects.filter(pk=permit.pk).update(
+            principaluser=cls.submitter
+        )
+        cls.unattached_id = str(make_requirement(ProcessRequirementBuilder()).pk)
 
         resource = ResourceTileTree.get_tiles(
             GraphSlugs.PROCESS_REQUIREMENT,
@@ -115,9 +134,35 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.editor)
         self.assertEqual(self.client.get(self.url).status_code, 200)
 
-    def test_non_owner_without_editor_role_cannot_view(self):
+    def test_a_user_with_no_role_cannot_view(self):
         self.idir_login_simulate(self.user)
-        self.assertEqual(self.client.get(self.url).status_code, 404)
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+
+    def test_applicant_can_view_a_requirement_on_their_own_permit(self):
+        self.idir_login_simulate(self.submitter)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_applicant_cannot_view_a_requirement_off_their_permits(self):
+        self.idir_login_simulate(self.submitter)
+        url = reverse("api_process_requirement", kwargs={"pk": self.unattached_id})
+        self.assertEqual(self.client.get(url).status_code, 403)
+
+    def test_applicant_cannot_write_a_requirement_they_can_read(self):
+        # Reading their own permit's requirement is allowed; changing one is
+        # ministry work.
+        self.idir_login_simulate(self.submitter)
+        resp = self._patch(
+            {
+                ALIASED_DATA: {
+                    aliases.REQUIREMENT_IDENTIFICATION: {
+                        "tileid": self.ident_tileid,
+                        ALIASED_DATA: {aliases.REQUIREMENT_NAME: "Nope"},
+                    }
+                }
+            }
+        )
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(self.client.delete(self.url).status_code, 403)
 
     def test_patch_updates_fields(self):
         # Cardinality-1 tiles carry their tileid so the serializer updates the
@@ -170,7 +215,12 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         resp = self.client.patch(url, data="{}", content_type="application/json")
         self.assertEqual(resp.status_code, 404)
 
-    def test_patch_by_non_owner_returns_404(self):
+    def test_staff_can_delete_a_requirement(self):
+        self.idir_login_simulate(self.editor)
+        url = reverse("api_process_requirement", kwargs={"pk": self.unattached_id})
+        self.assertEqual(self.client.delete(url).status_code, 204)
+
+    def test_patch_by_a_user_with_no_role_is_refused(self):
         self.idir_login_simulate(self.user)
         resp = self._patch({ALIASED_DATA: {}})
-        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.status_code, 403)
