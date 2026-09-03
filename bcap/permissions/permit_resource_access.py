@@ -11,6 +11,8 @@ draft list) and the per-instance checks answer "my work, and my company's" from
 one place instead of each assembling the rule themselves.
 """
 
+from django.db.models import Q
+
 from rest_framework.exceptions import PermissionDenied
 
 from arches.app.models.models import ResourceXResource
@@ -40,6 +42,15 @@ class PermitResourceAccess(BaseGraphService):
         return OrganizationService().visible_with_organization_or_user(
             user, cls.PERMIT_ORG
         )
+
+    @classmethod
+    def visible_permits_for_organization_or_user_or_staff(cls, user):
+        """Everything this user may open: staff are not narrowed, an applicant
+        gets their own and their company's. The list-shaped counterpart of the
+        per-instance check, so a detail route and a list route agree."""
+        if is_internal_user(user):
+            return Q()
+        return cls.visible_permits_for_organization_or_user(user)
 
     @classmethod
     def visible_drafts_for_organization_or_user(cls, user):
