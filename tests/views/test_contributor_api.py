@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
@@ -24,7 +25,7 @@ class AssignableContributorsTests(AuthTestHelper, TestCase):
         cls.editor = get_user_model().objects.create_user(
             username="assign-editor", password="pass"
         )
-        cls.editor.groups.add(Group.objects.get(name="Resource Editor"))
+        cls.editor.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
 
         builder = FixtureBuilder()
         contributor_type = reference_value("contributor", "contributor_type")
