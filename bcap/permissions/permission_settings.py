@@ -6,23 +6,21 @@ entries to grant the matching nodegroup perms, so this is the only place a role
 is given access to a graph.
 """
 
+from functools import lru_cache
+
 from django.apps import apps
 from django.utils.functional import lazy
 
-_GROUP_IDS_BY_NAME = {}
+
+@lru_cache(maxsize=None)
+def _group_id(name):
+    """The named group's id. Ids differ between databases, so they cannot be
+    written down here. Only hits are cached, so a resolve that runs before the
+    group's seeding migration retries rather than sticking for the process."""
+    return apps.get_model("auth", "Group").objects.get(name=name).id
 
 
-def _group_ids_by_name():
-    """Every group's id, read once and kept. Ids differ between databases, so
-    they cannot be written down here; an empty read is not kept, so a resolve
-    that beats the seeding doesn't poison the rest."""
-    if not _GROUP_IDS_BY_NAME:
-        Group = apps.get_model("auth", "Group")
-        _GROUP_IDS_BY_NAME.update(Group.objects.values_list("name", "id"))
-    return _GROUP_IDS_BY_NAME
-
-
-GroupId = lazy(lambda name: _group_ids_by_name()[name], int)
+GroupId = lazy(_group_id, int)
 
 # Instance-level permission defaults, one entry per graph. Under default deny a
 # user reaches nothing it does not own without a grant here.
