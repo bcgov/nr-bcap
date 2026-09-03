@@ -45,13 +45,11 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         cls.staff = get_user_model().objects.create_user(
             username="staff", password="pass"
         )
-        cls.staff.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
-        # Resource Exporter holds view but not change on permit_application, so
-        # this is staff whom the edit check genuinely refuses.
+        cls.staff.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
+        # A signed-in account in no group: the route gate refuses it outright.
         cls.viewer = get_user_model().objects.create_user(
             username="viewer", password="pass"
         )
-        cls.viewer.groups.add(Group.objects.get(name=Groups.RESOURCE_EXPORTER))
 
         applicant_contrib = builder.make_contributor(
             ContributorSpec(
@@ -180,9 +178,9 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
 
-    def test_create_denied_when_staff_cannot_edit_resource_context(self):
-        # Staff gate on edit access to the resource the message's resource_context
-        # points at; a view-only role is refused before any write.
+    def test_create_denied_when_caller_cannot_edit_resource_context(self):
+        # A caller with no reach into the resource the message's resource_context
+        # points at is refused before any write.
         self.idir_login_simulate(self.viewer)
         resp = self._post_message()
         self.assertEqual(resp.status_code, 403)
@@ -278,9 +276,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             "bcap_message_resource_contributors",
             kwargs={"resource_id": self.permit_id},
         )
-        for user in (self.staff, self.viewer):
-            self.idir_login_simulate(user)
-            self.assertEqual(self.client.get(url).status_code, 200)
+        self.idir_login_simulate(self.staff)
+        self.assertEqual(self.client.get(url).status_code, 200)
 
     def test_applicant_cannot_read_a_thread_on_another_permit(self):
         other_thread = make_message(
@@ -427,12 +424,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         resp = self._get_detail(self.public_root.pk)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["resourceinstanceid"], str(self.public_root.pk))
-
-    def test_get_allowed_for_staff_who_can_only_read_the_context(self):
-        # A read-only ministry role follows the conversation without being able
-        # to post to it; the PATCH is what their edit grant gates.
-        self.idir_login_simulate(self.viewer)
-        self.assertEqual(self._get_detail(self.public_root.pk).status_code, 200)
 
     def test_patch_denied_when_caller_cannot_edit_resource_context(self):
         self.idir_login_simulate(self.viewer)

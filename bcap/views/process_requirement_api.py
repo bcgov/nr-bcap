@@ -30,7 +30,7 @@ from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.permissions.route_permissions import (
     Internal,
     SubmitterOrInternal,
-    SubmitterReadOnly,
+    SubmitterReadsInternalReadWrites,
 )
 from bcap.serializers.graph_serializers import MODULE_SERIALIZERS, module_host_schema
 from bcap.serializers.process_requirement_serializers import (
@@ -96,7 +96,7 @@ class ProcessRequirementView(
     applicant by someone else, and get_object answers the access question anyway.
     """
 
-    permission_classes = [SubmitterReadOnly | Internal]
+    permission_classes = [SubmitterReadsInternalReadWrites]
 
     def get_object(self, permission_callable=None, **kwargs):
         """Access is one question, so one check answers it: staff anything, an

@@ -107,6 +107,10 @@ class InvitationRegistrationService:
                 # with groups that have since dropped off it.
                 allowed = [g for g in link.groups if g in SELF_MANAGE_ROLE_GROUPS]
                 group_names = allowed or [Groups.GUEST]
+                # The staff roles authorize functions, not data; Archaeology
+                # Branch is what actually grants an internal invitee access.
+                if any(name != Groups.SUBMITTER for name in allowed):
+                    group_names = [*group_names, Groups.ARCHAEOLOGY_BRANCH]
                 user.groups.add(*Group.objects.filter(name__in=group_names))
                 link.used = timezone.now()
                 link.used_by = user

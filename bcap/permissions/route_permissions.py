@@ -12,7 +12,7 @@ from rest_framework import permissions
 from arches.app.utils.decorators import group_required as group_required_decorator
 from arches.app.utils.permission_backend import group_required
 
-from bcap.permissions.groups import Groups, INTERNAL_GROUPS
+from bcap.permissions.groups import Groups
 
 
 def any_groups_required(*group_names):
@@ -35,22 +35,28 @@ def any_groups_required_django_view(*group_names, raise_exception=False):
     )
 
 
-class SubmitterReadOnly(permissions.BasePermission):
-    """An applicant may read but not write. Or it with the gate naming who may
-    write, so the pair reads as "staff anything, applicants reads"."""
+class SubmitterReadsInternalReadWrites(permissions.BasePermission):
+    """Applicants read, staff read and write. Both halves are stated as
+    positive grants: under default deny an applicant's lack of write access
+    needs no permission of its own, and a negative one could contradict a
+    positive one the same user holds."""
 
     def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS and bool(
-            group_required(request.user, Groups.SUBMITTER)
-        )
+        if request.method in permissions.SAFE_METHODS:
+            return bool(
+                group_required(
+                    request.user, Groups.SUBMITTER, Groups.ARCHAEOLOGY_BRANCH
+                )
+            )
+        return bool(group_required(request.user, Groups.ARCHAEOLOGY_BRANCH))
 
 
 Submitter = any_groups_required(Groups.SUBMITTER)
-Internal = any_groups_required(*INTERNAL_GROUPS)
-SubmitterOrInternal = any_groups_required(Groups.SUBMITTER, *INTERNAL_GROUPS)
+Internal = any_groups_required(Groups.ARCHAEOLOGY_BRANCH)
+SubmitterOrInternal = any_groups_required(Groups.SUBMITTER, Groups.ARCHAEOLOGY_BRANCH)
 
 internal_only_django_view = any_groups_required_django_view(
-    *INTERNAL_GROUPS, raise_exception=True
+    Groups.ARCHAEOLOGY_BRANCH, raise_exception=True
 )
 resource_editor_only_django_view = any_groups_required_django_view(
     Groups.RESOURCE_EDITOR

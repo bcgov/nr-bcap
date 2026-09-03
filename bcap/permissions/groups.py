@@ -3,6 +3,10 @@
 Referenced by the permission policy, the route gates, and tests. Keep these in
 sync with the actual group names; a typo silently denies access rather than
 erroring.
+
+Archaeology Branch is the one group that marks a user as ministry staff. The
+others authorize functions within the system (who may decide a permit, who may
+add a multi-permit) and grant no data access on their own.
 """
 
 from django.contrib.auth import get_user_model
@@ -36,30 +40,14 @@ SELF_MANAGE_ROLE_GROUPS = [
 ]
 
 
-# Ministry staff groups. A user without any of these (and not a superuser) is an
-# external applicant.
-INTERNAL_GROUPS = (
-    Groups.ARCHAEOLOGY_BRANCH,
-    Groups.RESOURCE_EDITOR,
-    Groups.RESOURCE_REVIEWER,
-    Groups.RESOURCE_EXPORTER,
-    Groups.PERMIT_REVIEWER,
-    Groups.PERMIT_DECIDER,
-    Groups.PERMIT_SDM,
-    Groups.PERMIT_MANAGER,
-    Groups.INVENTORY_REVIEWER,
-    Groups.INVENTORY_MANAGER,
-)
-
-
 def is_internal_user(user):
-    """True if the user is ministry staff (a superuser or holds an internal
-    group); everyone else is treated as an external applicant."""
+    """True if the user is ministry staff (a superuser or in Archaeology
+    Branch); everyone else is treated as an external applicant."""
     if not user.is_authenticated:
         return False
     if user.is_superuser:
         return True
-    return user.groups.filter(name__in=INTERNAL_GROUPS).exists()
+    return user.groups.filter(name=Groups.ARCHAEOLOGY_BRANCH).exists()
 
 
 def is_internal_username(username):

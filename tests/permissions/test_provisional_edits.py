@@ -1,4 +1,4 @@
-"""Signed-in users must read as resource reviewers.
+"""Staff and applicants must read as resource reviewers.
 
 Arches parks a non-reviewer's tile save in provisionaledits and writes the tile
 empty (Tile.save), and skips their deletes (TileModel.delete). BCAP has no
@@ -7,13 +7,14 @@ than raising.
 """
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, Group
 from django.test import TestCase
 
 from bcap.permissions.bcap_arches_permission_framework import (
     ANONYMOUS_USERNAME,
     BcapArchesPermissionFramework,
 )
+from bcap.permissions.groups import Groups
 
 
 class ResourceReviewerOverrideTests(TestCase):
@@ -23,12 +24,19 @@ class ResourceReviewerOverrideTests(TestCase):
         cls.submitter = get_user_model().objects.create_user(
             username="submitter", password="pass"
         )
+        cls.submitter.groups.add(Group.objects.get(name=Groups.SUBMITTER))
+        cls.stranger = get_user_model().objects.create_user(
+            username="stranger", password="pass"
+        )
         cls.public, _ = get_user_model().objects.get_or_create(
             username=ANONYMOUS_USERNAME
         )
 
-    def test_signed_in_user_without_groups_is_a_reviewer(self):
+    def test_submitter_is_a_reviewer(self):
         self.assertTrue(self.framework.user_is_resource_reviewer(self.submitter))
+
+    def test_signed_in_user_without_groups_is_not_a_reviewer(self):
+        self.assertFalse(self.framework.user_is_resource_reviewer(self.stranger))
 
     def test_public_user_is_not_a_reviewer(self):
         self.assertFalse(self.framework.user_is_resource_reviewer(self.public))

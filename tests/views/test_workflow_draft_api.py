@@ -40,7 +40,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         User = get_user_model()
         cls.admin = User.objects.get(username="admin")
-        editors = Group.objects.get(name=Groups.RESOURCE_EDITOR)
+        editors = Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH)
         cls.editor = User.objects.create_user(username="editor1", password="pass")
         cls.other_editor = User.objects.create_user(username="editor2", password="pass")
         cls.editor.groups.add(editors)

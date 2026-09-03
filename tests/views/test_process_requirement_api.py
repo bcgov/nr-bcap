@@ -65,7 +65,7 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         cls.editor = get_user_model().objects.create_user(
             username="pr-editor", password="pass"
         )
-        cls.editor.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
+        cls.editor.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
 
         # An applicant reaches a requirement through the permit application it
         # hangs off, never by owning it: the working copies are made for them.

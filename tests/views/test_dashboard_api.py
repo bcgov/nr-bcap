@@ -46,7 +46,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.user.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
+        cls.user.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
         # Rolled back with the class transaction.
         ControlledListFixtures.seed()
         graph = build_permit_graph()

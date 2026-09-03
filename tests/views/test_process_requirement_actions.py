@@ -112,7 +112,7 @@ class ModuleCompletionRouteTests(AuthTestHelper, TestCase):
         cls.editor = get_user_model().objects.create_user(
             username="mod-editor", password="pass"
         )
-        cls.editor.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
+        cls.editor.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
 
         builder = FixtureBuilder()
         permit = builder.new_resource("permit_application")

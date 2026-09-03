@@ -25,11 +25,13 @@ def make_contributor(builder, name, first_name=None, **kwargs):
 
 
 def make_user(username, internal=False):
-    """A user, in the Resource Editor group when internal and the Submitter
+    """A user, in the Archaeology Branch group when internal and the Submitter
     group otherwise, matching the group registration puts an applicant in."""
     user = get_user_model().objects.create_user(username=username, password="pass")
     user.groups.add(
-        Group.objects.get(name=Groups.RESOURCE_EDITOR if internal else Groups.SUBMITTER)
+        Group.objects.get(
+            name=Groups.ARCHAEOLOGY_BRANCH if internal else Groups.SUBMITTER
+        )
     )
     return user
 

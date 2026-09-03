@@ -326,7 +326,7 @@ class ExternalDashboardDraftsTests(TestCase):
         # An unsubmitted form is its author's business, so branch staff are
         # scoped like anyone else: their own drafts and their companies'.
         staff = make_user("branch-staff")
-        staff.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
+        staff.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
 
         for status in (
             ExternalDashboardStatus.DRAFTS_BY_ASSOCIATED_ORGANIZATIONS,
