@@ -14,19 +14,12 @@ ROLE_GROUPS = [
     "Submitter",
 ]
 
-# Named by the permission defaults and read by later migrations, but created
-# nowhere else. Kept on reverse: it carries real memberships, and dropping it
-# would take their access with it.
-PERMANENT_GROUPS = [
-    "Archaeology Branch",
-]
-
 CONTRIBUTOR_INVITATIONS_PLUGIN_SLUG = "contributor-invitations"
 
 
 def create_role_groups(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
-    for name in ROLE_GROUPS + PERMANENT_GROUPS:
+    for name in ROLE_GROUPS:
         Group.objects.get_or_create(name=name)
 
 
