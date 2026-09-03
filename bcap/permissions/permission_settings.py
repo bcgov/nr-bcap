@@ -26,6 +26,46 @@ GroupId = lazy(lambda name: _group_ids_by_name()[name], int)
 
 # Instance-level permission defaults, one entry per graph. Under default deny a
 # user reaches nothing it does not own without a grant here.
+#
+# What the entries below add up to, written R(ead) W(rite) A(dd) D(elete).
+# Archaeology Branch holds RWAD on every graph and is left out of the rows.
+#
+#   permit work            Permit Reviewer/Decider/SDM RWAD, Inventory
+#   (permit_application,   Reviewer/Manager RWAD, Resource Editor RWA,
+#   alteration,            Resource Reviewer RW, Resource Exporter R
+#   inspection,
+#   investigation,
+#   information_request,
+#   notice_of_project_intent,
+#   bcap_message,
+#   document_submission,
+#   contributor)
+#
+#   process_requirement    Permit Decider/SDM RWAD, Inventory Manager RWAD,
+#                          Resource Editor RWA, Permit Reviewer RW, Resource
+#                          Reviewer RW, Inventory Reviewer RW,
+#                          Resource Exporter R
+#
+#   inventory              Inventory Manager RWAD, Inventory Reviewer RW
+#   (archaeological_site,
+#   site_visit,
+#   site_submission)
+#
+#   hca_permit             Inventory Manager RWAD, Permit Decider/SDM RWAD,
+#                          Inventory Reviewer RW, Permit Reviewer RW
+#
+#   publication,           Resource Editor RWA, Resource Reviewer R,
+#   repository             Resource Exporter R
+#
+#   legislative_act,       Resource Editor/Reviewer/Exporter R
+#   local_government
+#
+#   workflow_drafts        every internal group RWAD
+#
+#   branch only            no other group: project_sandbox,
+#                          hria_discontinued_data, lg_person
+#
+# Permit Manager appears on workflow_drafts alone, so it reads no permit.
 
 ARCHAEOLOGY_BRANCH_GROUP_ID = GroupId("Archaeology Branch")
 INVENTORY_MANAGER_GROUP_ID = GroupId("Inventory Manager")
@@ -174,6 +214,24 @@ PERMISSION_DEFAULTS = {
                 "change_resourceinstance",
                 "add_resourceinstance",
                 "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": INVENTORY_MANAGER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": INVENTORY_REVIEWER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
             ],
         },
     ],
@@ -1030,6 +1088,64 @@ PERMISSION_DEFAULTS = {
                 "view_resourceinstance",
             ],
         },
+        {
+            "id": PERMIT_REVIEWER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": PERMIT_DECIDER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": PERMIT_SDM_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": INVENTORY_REVIEWER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": INVENTORY_MANAGER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+            ],
+        },
     ],
     "f4b391f1-79d1-4886-ab2d-d72a197a9f21": [  # hca_permit
         {
@@ -1101,21 +1217,37 @@ PERMISSION_DEFAULTS = {
             ],
         },
         {
-            "id": INVENTORY_MANAGER_GROUP_ID,
+            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+            ],
+        },
+        {
+            "id": RESOURCE_EDITOR_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+            ],
+        },
+        {
+            "id": RESOURCE_EXPORTER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+            ],
+        },
+        {
+            "id": PERMIT_REVIEWER_GROUP_ID,
             "type": "group",
             "permissions": [
                 "view_resourceinstance",
                 "change_resourceinstance",
                 "add_resourceinstance",
                 "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
             ],
         },
         {
@@ -1139,11 +1271,23 @@ PERMISSION_DEFAULTS = {
             ],
         },
         {
-            "id": PERMIT_REVIEWER_GROUP_ID,
+            "id": INVENTORY_REVIEWER_GROUP_ID,
             "type": "group",
             "permissions": [
                 "view_resourceinstance",
                 "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
+            ],
+        },
+        {
+            "id": INVENTORY_MANAGER_GROUP_ID,
+            "type": "group",
+            "permissions": [
+                "view_resourceinstance",
+                "change_resourceinstance",
+                "add_resourceinstance",
+                "delete_resourceinstance",
             ],
         },
     ],
