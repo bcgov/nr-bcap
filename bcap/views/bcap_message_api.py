@@ -7,17 +7,17 @@ BcapMessageService."""
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from arches.app.utils.permission_backend import user_can_edit_resource
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
+from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.permissions.route_permissions import SubmitterOrInternal
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
@@ -51,6 +51,9 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
     def get_queryset(self):
         params = ThreadsQuerySerializer(data=self.request.query_params)
         params.is_valid(raise_exception=True)
+        PermitResourceAccess.require_view(
+            self.request.user, str(self.kwargs["resource_id"])
+        )
         return BcapMessageService().root_queryset(
             self.kwargs["resource_id"],
             self.request.user,
@@ -68,9 +71,12 @@ class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIVi
     serializer_class = ThreadMessageSerializer
 
     def get_queryset(self):
-        return BcapMessageService().thread_queryset(
-            self.kwargs["thread_id"], self.request.user
+        service = BcapMessageService()
+        thread_id = self.kwargs["thread_id"]
+        PermitResourceAccess.require_view(
+            self.request.user, service.message_resource_context_id(thread_id)
         )
+        return service.thread_queryset(thread_id, self.request.user)
 
 
 @extend_schema(tags=["External: bcap_message"])
@@ -99,8 +105,7 @@ class BcapMessageCreateView(BcapMessageListView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         resource_id = service.resource_context_id(request.data)
-        if not user_can_edit_resource(request.user, resourceid=resource_id):
-            raise PermissionDenied("No access to the resource context.")
+        PermitResourceAccess.require_change(request.user, resource_id)
         self.perform_create(serializer)
         # A reply resurfaces the thread
         service.unarchive_thread_for_all(serializer.instance.pk)
@@ -115,13 +120,14 @@ class BcapMessageCreateView(BcapMessageListView):
 )
 class BcapMessageModuleUnreadView(APIView):
     """GET the viewer's unread count per process_module of a submission, so the
-    module list badges unread without loading each module's threads. Counts are
-    the caller's own, so no further scoping is needed."""
+    module list badges unread without loading each module's threads. The counts
+    are the caller's own; the gate is on the submission they ask about."""
 
     authentication_classes = [SessionAuthentication]
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, submission_id):
+        PermitResourceAccess.require_view(request.user, str(submission_id))
         rows = BcapMessageService().unread_by_module(
             str(submission_id), request.user.username
         )
@@ -135,14 +141,13 @@ class BcapMessageModuleUnreadView(APIView):
 class BcapMessageContributorsView(APIView):
     """GET the contributors you can address a message to for a resource: the
     login-linked contributors referenced on it plus its ministry assignees.
-    Gated on edit access to the resource, like posting a message about it."""
+    Gated on read access to the resource, like the threads on it."""
 
     authentication_classes = [SessionAuthentication]
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, resource_id):
-        if not user_can_edit_resource(request.user, resourceid=str(resource_id)):
-            raise PermissionDenied("No access to the resource context.")
+        PermitResourceAccess.require_view(request.user, str(resource_id))
         options = ContributorService().contributors_for_resource(str(resource_id))
         return Response(ContributorSummarySerializer(options, many=True).data)
 
@@ -152,26 +157,24 @@ class BcapMessageContributorsView(APIView):
 class BcapMessageDetailView(
     BcapMessageViewMixin, ArchesModelAPIMixin, RetrieveUpdateAPIView
 ):
-    """GET or PATCH a single message, both gated like create (edit access to the
-    resource_context, not owner-scoped). PATCH sets the read date (message_read_date
-    in the body) and/or the caller's personal archive of the thread (a top-level
-    "archived" boolean), whichever the body carries."""
+    """GET or PATCH a single message, gated on the resource_context rather than
+    owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
+    sets the read date (message_read_date in the body) and/or the caller's
+    personal archive of the thread (a top-level "archived" boolean), whichever
+    the body carries."""
 
     permission_classes = [SubmitterOrInternal]
     http_method_names = ["get", "patch", "options"]
 
-    def _require_context_edit(self, request):
-        service = BcapMessageService()
-        resource_id = service.message_resource_context_id(self.kwargs["pk"])
-        if not user_can_edit_resource(request.user, resourceid=resource_id):
-            raise PermissionDenied("No access to the resource context.")
+    def _context_id(self):
+        return BcapMessageService().message_resource_context_id(self.kwargs["pk"])
 
     def retrieve(self, request, *args, **kwargs):
-        self._require_context_edit(request)
+        PermitResourceAccess.require_view(request.user, self._context_id())
         return Response(self.get_serializer(self.get_object()).data)
 
     def update(self, request, *args, **kwargs):
-        self._require_context_edit(request)
+        PermitResourceAccess.require_change(request.user, self._context_id())
         service = BcapMessageService()
         # A PATCH can carry the read date, the archive flag, either, or both; each
         # setter no-ops when its own field is absent from the body.
