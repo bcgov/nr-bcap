@@ -5,6 +5,7 @@ from datetime import date, timedelta
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
+from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
 
@@ -27,7 +28,7 @@ def make_user(username, internal=False):
     """A user, in the Resource Editor group when internal."""
     user = get_user_model().objects.create_user(username=username, password="pass")
     if internal:
-        user.groups.add(Group.objects.get(name="Resource Editor"))
+        user.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
     return user
 
 
