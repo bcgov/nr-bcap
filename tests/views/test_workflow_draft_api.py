@@ -18,6 +18,7 @@ from arches.app.models.models import ResourceInstance
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.workflow_draft_service import WorkflowDraftService
@@ -39,13 +40,13 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         User = get_user_model()
         cls.admin = User.objects.get(username="admin")
-        editors = Group.objects.get(name="Resource Editor")
+        editors = Group.objects.get(name=Groups.RESOURCE_EDITOR)
         cls.editor = User.objects.create_user(username="editor1", password="pass")
         cls.other_editor = User.objects.create_user(username="editor2", password="pass")
         cls.editor.groups.add(editors)
         cls.other_editor.groups.add(editors)
         # External applicants: unlike staff they only ever see their own drafts.
-        submitters = Group.objects.get(name="Submitter")
+        submitters = Group.objects.get(name=Groups.SUBMITTER)
         cls.applicant = User.objects.create_user(username="applicant1", password="pass")
         cls.other_applicant = User.objects.create_user(
             username="applicant2", password="pass"
@@ -286,7 +287,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
         outsider = get_user_model().objects.create_user(
             username="applicant3", password="pass"
         )
-        outsider.groups.add(Group.objects.get(name="Submitter"))
+        outsider.groups.add(Group.objects.get(name=Groups.SUBMITTER))
         org_id = str(self.org.pk)
         members = {self.lister.username, self.other_lister.username}
         with patch.object(
