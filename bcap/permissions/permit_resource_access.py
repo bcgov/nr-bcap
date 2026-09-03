@@ -1,14 +1,9 @@
-"""Object-level access for external applicants.
+"""Object-level access for external applicants: which instances a caller may
+touch, once their route gate has let them in.
 
-The route gates in route_permissions say which role may call an endpoint; this
-says which instances an external caller may touch once inside one. An applicant
-reaches what they created, plus anything hanging off a permit application they
-can see: its process requirements and the submission hosts under them. Internal
-staff are settled by their route gate, so they pass.
-
-The company-visibility filters live here too, so the lists (the dashboard, the
-draft list) and the per-instance checks answer "my work, and my company's" from
-one place instead of each assembling the rule themselves.
+An applicant reaches what they created, plus anything hanging off a permit
+application they can see. The list filters live here too, so a list route and a
+detail route answer "my work, and my company's" from one place.
 """
 
 from django.db.models import Q
