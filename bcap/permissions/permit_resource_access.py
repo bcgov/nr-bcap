@@ -11,7 +11,10 @@ from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied
 
 from arches.app.models.models import ResourceXResource
-from arches.app.utils.permission_backend import user_can_edit_resource
+from arches.app.utils.permission_backend import (
+    user_can_edit_resource,
+    user_can_read_resource,
+)
 
 from arches_querysets.models import ResourceTileTree
 
@@ -56,10 +59,13 @@ class PermitResourceAccess(BaseGraphService):
 
     @classmethod
     def can_view(cls, user, resource_id):
+        """Staff by the graph policy's read grant, an applicant by what their
+        permit reaches. An applicant is never asked the graph policy: they hold
+        no grant that would let them read their own work."""
         if not resource_id:
             return False
         if is_internal_user(user):
-            return True
+            return user_can_read_resource(user, resourceid=resource_id)
         if cls._own_or_company_permit_exists(
             user, cls._candidate_permit_ids(resource_id)
         ):
@@ -68,8 +74,8 @@ class PermitResourceAccess(BaseGraphService):
 
     @classmethod
     def can_change(cls, user, resource_id):
-        """Same reachability, but staff must also hold the graph policy's edit
-        grant: a read-only role sees a permit without being able to act on it."""
+        """As the read, but staff need the edit grant: a read-only role sees a
+        permit without being able to act on it."""
         if is_internal_user(user):
             return bool(resource_id) and user_can_edit_resource(
                 user, resourceid=resource_id
