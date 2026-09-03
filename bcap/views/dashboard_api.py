@@ -51,7 +51,11 @@ class ExternalDashboardView(APIView):
     created-by.
 
     The gate only says who may ask: isolation between applicants is the
-    service's queryset filter alone, so a query added without it leaks."""
+    service's queryset filter alone, so a query added without it leaks.
+
+    TODO: staff are not widened here the way they are on the permit routes --
+    the filter treats them as an applicant, so they see only what they filed
+    themselves. Temporary, pending the decision on what staff should see here."""
 
     authentication_classes = [SessionAuthentication]
     permission_classes = [SubmitterOrInternal]
