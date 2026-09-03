@@ -13,8 +13,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from arches.app.models.models import File
+from arches.app.models.models import File, ResourceInstance
 
+from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.services.message.bcap_message_service import (
     MESSAGE_GRAPH_SLUG,
@@ -24,6 +25,7 @@ from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.permit_fixtures import RequirementRow, build_permit, make_requirement
 from tests.services.test_bcap_message_service import make_message
 from tests.views.helpers import AuthTestHelper, api_reference_value
 
@@ -39,10 +41,17 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
         # cls.user (from AuthTestHelper) is the external applicant; a second
         # user is ministry staff.
+        cls.user.groups.add(Group.objects.get(name=Groups.SUBMITTER))
         cls.staff = get_user_model().objects.create_user(
             username="staff", password="pass"
         )
-        cls.staff.groups.add(Group.objects.get(name="Resource Editor"))
+        cls.staff.groups.add(Group.objects.get(name=Groups.RESOURCE_EDITOR))
+        # Resource Exporter holds view but not change on permit_application, so
+        # this is staff whom the edit check genuinely refuses.
+        cls.viewer = get_user_model().objects.create_user(
+            username="viewer", password="pass"
+        )
+        cls.viewer.groups.add(Group.objects.get(name=Groups.RESOURCE_EXPORTER))
 
         applicant_contrib = builder.make_contributor(
             ContributorSpec(
@@ -54,9 +63,20 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             ContributorSpec(contributor_type, "Sam", "Staff", bcap_username="staff")
         )
         cls.recipient_id = str(staff_contrib.pk)
+        builder.make_contributor(
+            ContributorSpec(contributor_type, "Vic", "Viewer", bcap_username="viewer")
+        )
 
-        cls.permit = builder.make_resource("permit_application")
+        # The applicant's own permit and the requirement attached to it: what an
+        # applicant reaches through, since they hold no grant on either graph.
+        cls.requirement = make_requirement(builder, "Referral")
+        cls.permit = build_permit(builder, "Mine", [RequirementRow(cls.requirement)])
         cls.permit_id = str(cls.permit.pk)
+        cls.other_permit = build_permit(builder, "Someone Else's")
+        ResourceInstance.objects.filter(pk=cls.permit.pk).update(principaluser=cls.user)
+        ResourceInstance.objects.filter(pk=cls.other_permit.pk).update(
+            principaluser=cls.staff
+        )
 
         cls.public_root = make_message(
             builder,
@@ -72,6 +92,13 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             recipient=applicant_contrib,
             subject="Reply",
             root=cls.public_root,
+        )
+        cls.requirement_message = make_message(
+            builder,
+            context=cls.requirement,
+            author=staff_contrib,
+            recipient=applicant_contrib,
+            subject="On the requirement",
         )
         cls.internal_root = make_message(
             builder,
@@ -153,24 +180,144 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
 
-    def test_create_denied_when_caller_cannot_edit_resource_context(self):
-        # The create endpoint gates on edit access to the resource the message's
-        # resource_context points at; when that check fails, the POST is refused
-        # before any write.
-        self.idir_login_simulate(self.user)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=False
-        ):
-            resp = self._post_message()
+    def test_create_denied_when_staff_cannot_edit_resource_context(self):
+        # Staff gate on edit access to the resource the message's resource_context
+        # points at; a view-only role is refused before any write.
+        self.idir_login_simulate(self.viewer)
+        resp = self._post_message()
         self.assertEqual(resp.status_code, 403)
 
-    def test_create_allowed_when_caller_can_edit_resource_context(self):
+    def test_create_allowed_on_the_applicants_own_permit(self):
         self.idir_login_simulate(self.user)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self._post_message()
+        resp = self._post_message()
         self.assertEqual(resp.status_code, 201)
+
+    def test_applicant_creates_against_a_requirement_on_their_own_permit(self):
+        # The applicant holds no grant on process_requirement, so the arches
+        # edit check says no; reaching it through their own permit is what lets
+        # the message through.
+        self.idir_login_simulate(self.user)
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(self._message_payload(str(self.requirement.pk))),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 201, resp.content)
+
+    def test_applicant_cannot_create_against_someone_elses_permit(self):
+        self.idir_login_simulate(self.user)
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(self._message_payload(str(self.other_permit.pk))),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_applicant_cannot_read_threads_on_someone_elses_permit(self):
+        self.idir_login_simulate(self.user)
+        resp = self.client.get(
+            reverse(
+                "bcap_message_resource_threads",
+                kwargs={"resource_id": str(self.other_permit.pk)},
+            )
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_applicant_patches_a_message_filed_on_their_requirement(self):
+        # The detail route runs the same gate: the applicant cannot edit a
+        # process_requirement, but reaches this one through their permit.
+        self.idir_login_simulate(self.user)
+        resp = self._patch_read_date(
+            self.requirement_message.pk, "2026-07-10T14:04:46.334Z"
+        )
+        self.assertEqual(resp.status_code, 200, resp.content)
+
+    def test_applicant_reads_the_contributors_of_their_own_permit(self):
+        self.idir_login_simulate(self.user)
+        resp = self.client.get(
+            reverse(
+                "bcap_message_resource_contributors",
+                kwargs={"resource_id": self.permit_id},
+            )
+        )
+        self.assertEqual(resp.status_code, 200)
+
+    def test_applicant_cannot_read_the_contributors_of_another_permit(self):
+        self.idir_login_simulate(self.user)
+        resp = self.client.get(
+            reverse(
+                "bcap_message_resource_contributors",
+                kwargs={"resource_id": str(self.other_permit.pk)},
+            )
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_applicant_cannot_read_a_message_on_another_permit(self):
+        # The message itself is not the gate: its resource_context is, so a
+        # message filed on a permit the applicant cannot reach stays closed.
+        other_message = make_message(
+            FixtureBuilder(),
+            context=self.other_permit,
+            author=self.applicant_contrib,
+            recipient=self.applicant_contrib,
+            subject="Not yours",
+        )
+        self.idir_login_simulate(self.user)
+        resp = self.client.get(
+            reverse("bcap_message_detail", kwargs={"pk": str(other_message.pk)})
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_staff_create_allowed_by_their_change_grant(self):
+        self.idir_login_simulate(self.staff)
+        resp = self._post_message()
+        self.assertEqual(resp.status_code, 201, resp.content)
+
+    def test_staff_contributors_follow_their_read_access(self):
+        url = reverse(
+            "bcap_message_resource_contributors",
+            kwargs={"resource_id": self.permit_id},
+        )
+        for user in (self.staff, self.viewer):
+            self.idir_login_simulate(user)
+            self.assertEqual(self.client.get(url).status_code, 200)
+
+    def test_applicant_cannot_read_a_thread_on_another_permit(self):
+        other_thread = make_message(
+            FixtureBuilder(),
+            context=self.other_permit,
+            author=self.applicant_contrib,
+            recipient=self.applicant_contrib,
+            subject="Not yours",
+        )
+        self.idir_login_simulate(self.user)
+        resp = self.client.get(
+            reverse(
+                "bcap_message_thread_messages",
+                kwargs={"thread_id": str(other_thread.pk)},
+            )
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_applicant_cannot_read_unread_counts_of_another_submission(self):
+        self.idir_login_simulate(self.user)
+        resp = self.client.get(
+            reverse(
+                "bcap_message_module_unread",
+                kwargs={"submission_id": str(self.other_permit.pk)},
+            )
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_applicant_reads_threads_on_a_requirement_of_their_permit(self):
+        self.idir_login_simulate(self.user)
+        resp = self.client.get(
+            reverse(
+                "bcap_message_resource_threads",
+                kwargs={"resource_id": str(self.requirement.pk)},
+            )
+        )
+        self.assertEqual(resp.status_code, 200)
 
     def test_create_against_a_draft_resource_context(self):
         draft = WorkflowDraftService().create(
@@ -189,10 +336,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         # The poster's Contributor (resolved from their username) is written as
         # the message author, even though the payload never sets it.
         self.idir_login_simulate(self.user)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self._post_message()
+        resp = self._post_message()
         self.assertEqual(resp.status_code, 201)
         author = resp.json()["aliased_data"]["message_content"]["aliased_data"][
             "message_author"
@@ -209,14 +353,11 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             message_creation_date={"node_value": "2026-07-09T17:36:33.000Z"}
         )
         self.idir_login_simulate(self.user)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self.client.post(
-                reverse("bcap_message_list_create"),
-                data=json.dumps(payload),
-                content_type="application/json",
-            )
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
         self.assertEqual(resp.status_code, 201)
         stored = resp.json()["aliased_data"]["message_content"]["aliased_data"][
             "message_creation_date"
@@ -241,16 +382,13 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         )
         before = File.objects.count()
         self.idir_login_simulate(self.user)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self.client.post(
-                reverse("bcap_message_list_create"),
-                data={
-                    "json": json.dumps(payload),
-                    "attachments": upload,
-                },
-            )
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data={
+                "json": json.dumps(payload),
+                "attachments": upload,
+            },
+        )
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(File.objects.count(), before + 1)
 
@@ -277,38 +415,34 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
 
-    def test_get_returns_the_message_when_caller_can_edit_context(self):
-        # GET by id is gated like PATCH: edit access to the resource_context,
-        # not owner-scoped, so staff (not the creator) can read it.
+    def _get_detail(self, message_id):
+        return self.client.get(
+            reverse("bcap_message_detail", kwargs={"pk": str(message_id)})
+        )
+
+    def test_get_returns_the_message_when_caller_can_read_context(self):
+        # GET by id is gated on read access to the resource_context, not
+        # owner-scoped, so staff (not the creator) can read it.
         self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self.client.get(
-                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)})
-            )
+        resp = self._get_detail(self.public_root.pk)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["resourceinstanceid"], str(self.public_root.pk))
 
-    def test_get_denied_when_caller_cannot_edit_resource_context(self):
-        self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=False
-        ):
-            resp = self.client.get(
-                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)})
-            )
+    def test_get_allowed_for_staff_who_can_only_read_the_context(self):
+        # A read-only ministry role follows the conversation without being able
+        # to post to it; the PATCH is what their edit grant gates.
+        self.idir_login_simulate(self.viewer)
+        self.assertEqual(self._get_detail(self.public_root.pk).status_code, 200)
+
+    def test_patch_denied_when_caller_cannot_edit_resource_context(self):
+        self.idir_login_simulate(self.viewer)
+        resp = self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
         self.assertEqual(resp.status_code, 403)
 
     def test_patch_marks_a_message_read(self):
         # Staff (the recipient, not the message's creator) marks it read.
         self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self._patch_read_date(
-                self.public_root.pk, "2026-07-10T14:04:46.334Z"
-            )
+        resp = self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
         self.assertEqual(resp.status_code, 200)
         read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
             "message_read_date"
@@ -317,11 +451,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def test_patch_can_mark_unread_by_clearing_the_date(self):
         self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
-            resp = self._patch_read_date(self.public_root.pk, None)
+        self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
+        resp = self._patch_read_date(self.public_root.pk, None)
         self.assertEqual(resp.status_code, 200)
         read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
             "message_read_date"
@@ -330,13 +461,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def test_patch_denied_when_caller_cannot_edit_resource_context(self):
         # Same gate as create: no edit access to the resource_context, no write.
-        self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=False
-        ):
-            resp = self._patch_read_date(
-                self.public_root.pk, "2026-07-10T14:04:46.334Z"
-            )
+        self.idir_login_simulate(self.viewer)
+        resp = self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
         self.assertEqual(resp.status_code, 403)
 
     def test_patch_ignores_writes_to_non_read_date_fields(self):
@@ -358,14 +484,11 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             }
         }
         self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self.client.patch(
-                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
-                data=json.dumps(payload),
-                content_type="application/json",
-            )
+        resp = self.client.patch(
+            reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
         self.assertEqual(resp.status_code, 200)
         content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
         self.assertIsNotNone(content["message_read_date"]["node_value"])
@@ -378,10 +501,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         # A top-level "archived": true on the PATCH moves the thread to the
         # caller's archived list; the other party's view is untouched.
         self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self._patch_archived(self.public_root.pk, True)
+        resp = self._patch_archived(self.public_root.pk, True)
         self.assertEqual(resp.status_code, 200)
         self.assertNotIn(str(self.public_root.pk), self._thread_roots(self.staff))
         self.assertIn(
@@ -394,11 +514,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def test_patch_unarchives_thread_back_to_active(self):
         self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            self._patch_archived(self.public_root.pk, True)
-            resp = self._patch_archived(self.public_root.pk, False)
+        self._patch_archived(self.public_root.pk, True)
+        resp = self._patch_archived(self.public_root.pk, False)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(str(self.public_root.pk), self._thread_roots(self.staff))
         self.assertEqual(self._thread_roots(self.staff, archived=True), set())
@@ -417,14 +534,11 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             },
         }
         self.idir_login_simulate(self.staff)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self.client.patch(
-                reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
-                data=json.dumps(payload),
-                content_type="application/json",
-            )
+        resp = self.client.patch(
+            reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
         self.assertEqual(resp.status_code, 200)
         read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
             "message_read_date"
@@ -442,10 +556,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             username="stranger", password="pass"
         )
         self.idir_login_simulate(no_contrib)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self._post_message()
+        resp = self._post_message()
         self.assertEqual(resp.status_code, 400)
 
     def test_module_unread_returns_the_serialized_counts(self):

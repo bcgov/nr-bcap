@@ -468,9 +468,9 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
             self.assertEqual(resp.status_code, 404)
         self.assertEqual(self._read(draft.id).data, {"step1": {"x": 1}})
 
-    def test_drafts_need_no_role_but_do_need_a_login(self):
-        # Any signed-in user may keep drafts; owner scoping is what separates
-        # them, not a role.
+    def test_drafts_need_the_submitter_role_and_a_login(self):
+        # The role only says who may keep drafts at all; owner scoping is what
+        # separates one applicant's from another's.
         self.idir_login_simulate(self.user)
         self.assertEqual(self._post({"data": {}}).status_code, 201)
         # Anonymous never reaches the view: auth middleware bounces it to login.

@@ -404,9 +404,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._patch(pk, payload).status_code, 400)
         self.assertEqual(self._requirement_count(), before)
 
-    def test_create_allowed_for_any_signed_in_user(self):
-        """Applicants file their own applications, so creating needs a login and
-        nothing more; the owning organization stamped on create is what scopes
+    def test_create_allowed_for_any_submitter(self):
+        """Applicants file their own applications, so creating asks only for the
+        Submitter group; the owning organization stamped on create is what scopes
         who reads it back."""
         self.idir_login_simulate(self.user)
         self.assertEqual(self._post(create_payload()).status_code, 201)
