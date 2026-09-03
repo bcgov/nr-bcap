@@ -69,7 +69,7 @@ class WorkflowDraftApiTests(AuthTestHelper, TestCase):
                 reference_value("contributor", "contributor_type"), None, "Acme Corp"
             )
         )
-        # cls.user (from AuthTestHelper) intentionally holds neither role.
+        # cls.user (from AuthTestHelper) is a plain applicant: Submitter only.
         # Drafts to act on, made once: a create runs a full resource save, and
         # every test rolls back, so each test gets them untouched.
         cls.draft = cls._seed_draft(
