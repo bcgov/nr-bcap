@@ -7,37 +7,25 @@ is given access to a graph.
 """
 
 from django.apps import apps
+from django.utils.functional import lazy
+
+_GROUP_IDS_BY_NAME = {}
 
 
-class GroupId:
-    """A group's primary key, read on first use.
+def _group_ids_by_name():
+    """Every group's id, read once and kept. Ids differ between databases, so
+    they cannot be written down here; an empty read is not kept, so a resolve
+    that beats the seeding doesn't poison the rest."""
+    if not _GROUP_IDS_BY_NAME:
+        Group = apps.get_model("auth", "Group")
+        _GROUP_IDS_BY_NAME.update(Group.objects.values_list("name", "id"))
+    return _GROUP_IDS_BY_NAME
 
-    Groups are created by name and take whatever id the sequence hands out, so
-    the number differs between databases and cannot be written down here. A name
-    with no group reads as 0, which matches nothing, so its grants are ignored
-    rather than raising."""
 
-    def __init__(self, name):
-        self.name = name
-        self.id = None
-
-    def __int__(self):
-        if self.id is None:
-            Group = apps.get_model("auth", "Group")
-            self.id = (
-                Group.objects.filter(name=self.name)
-                .values_list("id", flat=True)
-                .first()
-                or 0
-            )
-        return self.id
-
-    __index__ = __int__
-
+GroupId = lazy(lambda name: _group_ids_by_name()[name], int)
 
 # Instance-level permission defaults, one entry per graph. Under default deny a
-# user reaches nothing it does not own without a grant here. Group ids differ
-# between databases, so each constant reads its own on first use.
+# user reaches nothing it does not own without a grant here.
 
 ARCHAEOLOGY_BRANCH_GROUP_ID = GroupId("Archaeology Branch")
 INVENTORY_MANAGER_GROUP_ID = GroupId("Inventory Manager")

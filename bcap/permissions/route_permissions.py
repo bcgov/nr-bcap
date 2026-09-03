@@ -35,13 +35,13 @@ def any_groups_required_django_view(*group_names, raise_exception=False):
     )
 
 
-class InternalWrites(permissions.BasePermission):
-    """Reads for whoever the route's other gates let in; writes for ministry
-    staff only. Pair it with the gate naming who may read."""
+class SubmitterReadOnly(permissions.BasePermission):
+    """An applicant may read but not write. Or it with the gate naming who may
+    write, so the pair reads as "staff anything, applicants reads"."""
 
     def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS or bool(
-            group_required(request.user, *INTERNAL_GROUPS)
+        return request.method in permissions.SAFE_METHODS and bool(
+            group_required(request.user, Groups.SUBMITTER)
         )
 
 

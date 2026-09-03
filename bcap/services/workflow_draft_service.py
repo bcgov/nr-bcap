@@ -13,7 +13,7 @@ from arches.app.models.models import ResourceInstance, TileModel
 
 from arches_querysets.models import ResourceTileTree, TileTree
 
-from bcap.services.contributor.organization_service import OrganizationService
+from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.workflow_drafts import (
     WorkflowDraftsAliases,
@@ -57,9 +57,7 @@ class WorkflowDraftService(BaseGraphService):
             GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
         )
         qs = qs.filter(
-            OrganizationService().visible_to(
-                user, WorkflowDraftsAliases.OWNING_ORGANIZATION
-            )
+            PermitResourceAccess.visible_drafts_for_organization_or_user(user)
         )
         if own_only:
             qs = qs.filter(principaluser=user)

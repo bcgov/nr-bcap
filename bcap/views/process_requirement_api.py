@@ -26,7 +26,12 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from arches_zod_validation.views.mixins import UserOwnedResourceMixin
 
 from bcap.permissions.groups import is_internal_user
-from bcap.permissions.route_permissions import Internal, SubmitterOrInternal
+from bcap.permissions.permit_resource_access import PermitResourceAccess
+from bcap.permissions.route_permissions import (
+    Internal,
+    SubmitterOrInternal,
+    SubmitterReadOnly,
+)
 from bcap.serializers.graph_serializers import MODULE_SERIALIZERS, module_host_schema
 from bcap.serializers.process_requirement_serializers import (
     AddRequirementSerializer,
@@ -80,14 +85,26 @@ class ProcessRequirementListView(
 @extend_schema(tags=["External: process_requirement"])
 class ProcessRequirementView(
     ProcessRequirementViewMixin,
-    StaffReadsAnyMixin,
     ArchesModelAPIMixin,
     RetrieveUpdateDestroyAPIView,
 ):
-    """Detail endpoint: superusers and Resource Editors may read any instance;
-    other users requesting one they don't own get a 404."""
+    """Detail endpoint: ministry staff read and write any instance; an applicant
+    may read a requirement on a permit application they can reach, and gets a 403
+    on one they cannot. Writing is staff-only.
 
-    permission_classes = [SubmitterOrInternal]
+    No owner mixin: the creator filter would hide the working copies made for an
+    applicant by someone else, and get_object answers the access question anyway.
+    """
+
+    permission_classes = [SubmitterReadOnly | Internal]
+
+    def get_object(self, permission_callable=None, **kwargs):
+        """Access is one question, so one check answers it: staff anything, an
+        applicant what their permit reaches. Dropping the callable takes the
+        graph policy out of it, which would never grant an applicant that."""
+        requirement = super().get_object(**kwargs)
+        PermitResourceAccess.require_view(self.request.user, requirement.pk)
+        return requirement
 
 
 @extend_schema(tags=["External: process_requirement"])

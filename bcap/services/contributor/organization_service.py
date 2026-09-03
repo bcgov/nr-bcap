@@ -80,23 +80,24 @@ class OrganizationService(ContributorService):
             raise ValueError("Choose which organization to file this under.")
         return next(iter(mine)) if mine else ""
 
-    def visible_to(self, user, alias):
+    def visible_with_organization_or_user(self, user, alias):
         """Rows this user may reach: their companies', plus their own when no
         company was named. A stamped row belongs to the organization that paid
         for it, so leaving takes its creator's access with them."""
         return (
-            Q(principaluser=user) & self.no_owning_organization(alias)
-        ) | self.has_owning_organization_for(user, alias)
+            Q(principaluser=user) & self._no_owning_organization(alias)
+        ) | self._has_owning_organization_for(user, alias)
 
-    def no_owning_organization(self, alias):
+    def _no_owning_organization(self, alias):
         """Rows naming no organization. Spelled out both ways because a negated
         containment test against a missing value is null, not true."""
         return Q(**{f"{alias}__isnull": True}) | ~Q(**{f"{alias}__contains": [{}]})
 
-    def has_owning_organization_for(self, user, alias):
+    def _has_owning_organization_for(self, user, alias):
         """Rows filed under an organization the user is in today, whoever created
-        them. Matches nothing when they belong to none -- unlike visible_to, this
-        answers "my company's work", not "what I am allowed to see"."""
+        them. Matches nothing when they belong to none -- unlike the broader
+        visibility filter, this answers "my company's work", not "what I am
+        allowed to see"."""
         scope = Q(pk__in=[])
         for org in self.organization_ids(user.username):
             scope |= Q(**{f"{alias}__contains": resource_instance_value(org)})
