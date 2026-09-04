@@ -7,10 +7,18 @@ import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
-defineProps<{
+const props = defineProps<{
     isSubmittedView?: boolean;
     resourceData?: ArchesDraftData | null;
 }>();
+
+export interface ReviewField {
+    label: string;
+    value?: unknown;
+    type?: 'text' | 'html' | 'map';
+    nodeAlias?: string;
+    graphSlug?: string;
+}
 
 const isValid = () => true;
 defineExpose({ isValid });
@@ -38,15 +46,75 @@ interface ReportNode {
     };
 }
 
-const getFilteredFields = (fields: unknown) => {
-    if (!Array.isArray(fields)) return [];
+const getProcessDetails = (rawData: unknown): NodeData | null => {
+    if (!rawData) return null;
+    const data = rawData as NodeData;
 
-    return fields.filter((f) => {
-        const alias = f.alias || f.nodeAlias || f.node?.alias || f.node_alias;
-        return (
-            alias !== 'submission_photographs' && alias !== 'report_submission'
-        );
-    });
+    const processNode = Array.isArray(data.document_submission_process)
+        ? data.document_submission_process[0]
+        : data.document_submission_process;
+
+    return ((processNode as NodeData)?.aliased_data as NodeData) || null;
+};
+
+const getFilteredFields = (fields: unknown, data: unknown) => {
+    if (!props.isSubmittedView || !data) {
+        return (Array.isArray(fields) ? fields : []).filter((f) => {
+            const obj = f as Record<string, unknown>;
+            const alias =
+                obj.alias ||
+                obj.nodeAlias ||
+                (obj.node as Record<string, unknown>)?.alias ||
+                obj.node_alias;
+            return !['submission_photographs', 'report_submission'].includes(
+                alias as string,
+            );
+        });
+    }
+
+    const finalFields: ReviewField[] = [];
+
+    const walk = (nodes: unknown) => {
+        if (!nodes) return;
+
+        if (Array.isArray(nodes)) return nodes.forEach(walk);
+
+        for (const [alias, raw] of Object.entries(
+            nodes as Record<string, unknown>,
+        )) {
+            if (
+                !raw ||
+                ['submission_photographs', 'report_file'].includes(alias)
+            )
+                continue;
+
+            const node = raw as Record<string, unknown>;
+
+            if (node.aliased_data || Array.isArray(raw)) {
+                walk(node.aliased_data || raw);
+            } else {
+                const val =
+                    node.display_value ||
+                    (node.en as Record<string, unknown>)?.value ||
+                    (typeof raw === 'string' ? raw : null);
+
+                if (val) {
+                    finalFields.push({
+                        label: alias,
+                        value: val,
+                        nodeAlias: alias,
+                        type:
+                            alias === 'report_recommendations'
+                                ? 'html'
+                                : 'text',
+                    });
+                }
+            }
+        }
+    };
+
+    walk(getProcessDetails(data));
+    return finalFields;
 };
 
 const getPhotos = (rawData: unknown): PhotographNode[] => {
@@ -132,7 +200,7 @@ const getFileNames = (fileData: unknown): string[] => {
         :resource-data="resourceData"
     >
         <template #default="{ data, fields }">
-            <GenericReviewSummary :fields="getFilteredFields(fields)" />
+            <GenericReviewSummary :fields="getFilteredFields(fields, data)" />
 
             <!-- Document Submission Files -->
             <FieldSet

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { reactive, onMounted, computed } from 'vue';
+import { reactive, onMounted, computed, type Component } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import ProgressSpinner from 'primevue/progressspinner';
-import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
@@ -11,12 +10,27 @@ import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import DocumentSubmissionReview from '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/steps/Step99_Review.vue';
+import InvestigationReview from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step99_Review.vue';
+import GenericReview from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 
 const router = useRouter();
 const route = useRoute();
 const headerStore = usePermitHeaderStore();
 const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
+
+const ActiveReviewComponent = computed(() => {
+    if (!nav?.graph) return GenericReview;
+
+    const componentMap: Record<string, Component> = {
+        [GraphSlug.DocumentSubmission]: DocumentSubmissionReview,
+        [GraphSlug.Investigation]: InvestigationReview,
+    };
+
+    return componentMap[nav.graph] || GenericReview;
+});
 
 const crumbs = computed(() =>
     permitCrumbs(nav?.permitId, route.query.staff, title),
@@ -68,7 +82,9 @@ onMounted(async () => {
                 >
                     <ProgressSpinner />
                 </div>
-                <Step99_Review
+
+                <component
+                    :is="ActiveReviewComponent"
                     v-else
                     :is-submitted-view="true"
                     :resource-data="state.data"
