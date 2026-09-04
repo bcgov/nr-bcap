@@ -46,18 +46,32 @@ const isStaff = computed(
     () => String(route.query.staff).toLowerCase() === 'true',
 );
 
+type PermitDraft =
+    DraftOf<GraphSlug.Investigation> | DraftOf<GraphSlug.DocumentSubmission>;
+
 // A draft resumes into its own module's workflow, chosen by its graph slug.
-const draftRouteName = (draft: DraftOf<GraphSlug.Investigation>): string =>
+const draftRouteName = (draft: PermitDraft): string =>
     permitModuleCatalogue.find((mod) => mod.id === draft.graph_slug)
         ?.routeName || routeNames.investigationModule;
 
-const draftTitle = (draft: DraftOf<GraphSlug.Investigation>) => {
-    const ident = draft.data?.investigation_identification?.aliased_data
-        ?.investigation_identification as
-        | { node_value?: { en?: { value?: string } }; en?: { value?: string } }
-        | undefined;
-    const name = ident?.node_value?.en?.value ?? ident?.en?.value;
-    return name ? `Investigation - ${name}` : 'Untitled Investigation';
+const draftTitle = (draft: PermitDraft) => {
+    if (draft.graph_slug === GraphSlug.DocumentSubmission) {
+        return 'Document Submission Draft';
+    }
+
+    if (draft.graph_slug === GraphSlug.Investigation) {
+        const ident = draft.data?.investigation_identification?.aliased_data
+            ?.investigation_identification as
+            | {
+                  node_value?: { en?: { value?: string } };
+                  en?: { value?: string };
+              }
+            | undefined;
+        const name = ident?.node_value?.en?.value ?? ident?.en?.value;
+        return name ? `Investigation - ${name}` : 'Untitled Investigation';
+    }
+
+    return 'Untitled Draft';
 };
 
 interface PermitHeaderData {
@@ -85,7 +99,7 @@ const state = reactive({
     adminTileMeta: { tileid: '', nodegroup: '' },
     fetchedModuleData: {} as Record<string, ModuleResponse>,
     rawPermitData: null as PermitApplicationResourceAliasedData | null,
-    investigationDrafts: [] as DraftOf<GraphSlug.Investigation>[],
+    permitDrafts: [] as PermitDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as DraftOf<GraphSlug.Investigation>[],
 });
@@ -198,20 +212,25 @@ const {
     state: deleteState,
     open: confirmDelete,
     confirm: performDelete,
-} = useConfirmAction<DraftOf<GraphSlug.Investigation>>(async (draft) => {
-    await deleteDraft(GraphSlug.Investigation, draft.id);
+} = useConfirmAction<PermitDraft>(async (draft) => {
+    await deleteDraft(draft.graph_slug, draft.id);
     await loadDraftsForPermitApp();
 });
 
 // This needs to be more generic in the future
 const loadDraftsForPermitApp = async () => {
     const drafts = await fetchDrafts(permitId.value);
-    state.investigationDrafts = drafts.filter(
-        isDraftOf(GraphSlug.Investigation),
+
+    const isInv = isDraftOf(GraphSlug.Investigation);
+    const isDoc = isDraftOf(GraphSlug.DocumentSubmission);
+
+    state.permitDrafts = drafts.filter(
+        (d): d is PermitDraft => isInv(d) || isDoc(d),
     );
+
     // Load each draft's threads up front so its header can badge unread without
     // the dialog being opened. Drafts are few, so a fetch each is fine.
-    for (const draft of state.investigationDrafts) {
+    for (const draft of state.permitDrafts) {
         if (draft.id) messageStore.load(draft.id);
     }
 };
@@ -356,7 +375,7 @@ watch(activeModuleId, (id) => {
                         class="investigation-lists"
                     >
                         <section
-                            v-if="state.investigationDrafts.length > 0"
+                            v-if="state.permitDrafts.length > 0"
                             class="draft-modules"
                         >
                             <h2 class="list-heading">Draft modules</h2>
@@ -366,7 +385,7 @@ watch(activeModuleId, (id) => {
                                 class="draft-accordion"
                             >
                                 <AccordionPanel
-                                    v-for="draft in state.investigationDrafts"
+                                    v-for="draft in state.permitDrafts"
                                     :key="draft.id"
                                     :value="draft.id"
                                     class="draft-panel"
