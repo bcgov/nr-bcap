@@ -450,7 +450,7 @@
                         "defaultValue": {
                             "en": {
                                 "direction": "ltr",
-                                "value": "Enter title of the PSR"
+                                "value": ""
                             }
                         },
                         "i18n_properties": ["placeholder"],
