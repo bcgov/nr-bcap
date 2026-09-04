@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import { Form } from '@primevue/forms';
-import { zDocumentSubmissionSubmissionAssessmentAliasedData } from '@/bcap/client/zod.gen.ts';
+import { zDocumentSubmissionDocumentSubmissionProcessAliasedData } from '@/bcap/client/zod.gen.ts';
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+import { onMounted } from 'vue';
 
 const emit = defineEmits(['update:step-is-valid']);
 const { draftData, resolver, isValid, updateValue } = useDraftStep(
-    zDocumentSubmissionSubmissionAssessmentAliasedData,
-    'document_submission_submission_assessment',
+    zDocumentSubmissionDocumentSubmissionProcessAliasedData,
+    'document_submission_process',
     emit,
 );
+
 defineExpose({ isValid });
+
+onMounted(() => {
+    emit('update:step-is-valid', isValid());
+});
 </script>
 
 <template>
