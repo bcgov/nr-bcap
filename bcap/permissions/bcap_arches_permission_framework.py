@@ -188,9 +188,8 @@ class ArchesDefaultDenyApplicantGate:
     # archaeologist, a proponent, an organization. Read from the node rather
     # than listed here, so editing a graph cannot widen it by surprise.
     #
-    # arches-vue-components should filter the candidates through
-    # get_resource_types_by_perm and get_filtered_instances; the gap only shows
-    # under a default-deny framework. Belongs upstream.
+    # arches-vue-components should check the page of candidates it is about to
+    # return, one user_can_read_resource each. Belongs upstream.
     PICKER_VIEW = "arches_vue_components.views.api.relatable_resources"
     PICKER_GRAPHS = frozenset({GraphSlugs.CONTRIBUTOR})
 
