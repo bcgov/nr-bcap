@@ -48,7 +48,6 @@ class BcapArchesPermissionFramework(ArchesDefaultDenyPermissionFramework):
         if (
             result.get("permitted")
             and not is_internal_user(user)
-            and str(result["resource"].graph_id) in PERMIT_SCOPED_GRAPHS
         ):
             result["permitted"] = PermitResourceAccess.on_visible_permit_or_draft(
                 user, result["resource"].pk

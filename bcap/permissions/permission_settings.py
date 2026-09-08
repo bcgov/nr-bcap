@@ -269,13 +269,3 @@ PERMISSION_DEFAULTS = {
         },
     ],
 }
-
-# Every graph an applicant is granted above, narrowed per resource to the
-# permits and drafts they reach. Derived rather than listed, so a grant cannot
-# be added without its narrowing. Identity, not equality, keeps the lazy group
-# id from being resolved at import.
-PERMIT_SCOPED_GRAPHS = frozenset(
-    graph_id
-    for graph_id, grants in PERMISSION_DEFAULTS.items()
-    if any(grant["id"] is SUBMITTER_GROUP_ID for grant in grants)
-)
