@@ -9,6 +9,9 @@ others authorize functions within the system (who may decide a permit, who may
 add a multi-permit) and grant no data access on their own.
 """
 
+from functools import lru_cache
+
+from django.apps import apps
 from django.contrib.auth import get_user_model
 
 
@@ -38,6 +41,15 @@ SELF_MANAGE_ROLE_GROUPS = [
     Groups.INVENTORY_MANAGER,
     Groups.SUBMITTER,
 ]
+
+
+@lru_cache(maxsize=None)
+def group_id(name):
+    """The named group's id. Ids differ between databases, so they cannot be
+    written down in a setting. Only hits are cached, so a resolve that runs
+    before the group's seeding migration retries rather than sticking for the
+    process."""
+    return apps.get_model("auth", "Group").objects.get(name=name).id
 
 
 def is_internal_user(user):
