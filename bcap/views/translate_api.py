@@ -14,7 +14,7 @@ from arches.app.search.components.base import SearchFilterFactory
 from arches.app.search.mappings import RESOURCES_INDEX
 from arches.app.search.search_engine_factory import SearchEngineInstance
 
-from bcap.permissions.bcap_arches_permission_framework import internal_only_django_view
+from bcap.permissions.route_guards import internal_only_django_view
 
 
 @internal_only_django_view

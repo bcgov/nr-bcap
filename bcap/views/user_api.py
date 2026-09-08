@@ -11,7 +11,7 @@ from drf_spectacular.utils import extend_schema
 
 from arches.app.models import models
 
-from bcap.permissions.bcap_arches_permission_framework import SubmitterOrInternal
+from bcap.permissions.route_guards import SubmitterOrInternal
 from bcap.serializers.dashboard_serializers import UserProfileResponseSerializer
 
 

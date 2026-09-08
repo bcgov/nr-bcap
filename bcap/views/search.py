@@ -5,9 +5,7 @@ import arches.app.utils.task_management as task_management
 import arches.app.utils.zip as zip_utils
 from arches.app.views.search import export_results as arches_export_results
 
-from bcap.permissions.bcap_arches_permission_framework import (
-    resource_exporter_only_function_view,
-)
+from bcap.permissions.route_guards import resource_exporter_only_function_view
 from bcap.search.search_export import BCAPSearchResultsExporter
 import bcap.tasks.tasks as bcap_tasks
 

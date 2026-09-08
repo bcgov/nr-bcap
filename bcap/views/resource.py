@@ -1,7 +1,7 @@
 from arches.app.views.resource import ResourceReportView as ResourceReportViewCore
 from arches.app.views.resource import ResourceEditLogView as ResourceEditLogViewCore
 
-from bcap.permissions.bcap_arches_permission_framework import (
+from bcap.permissions.route_guards import (
     internal_only_django_view,
     resource_editor_only_django_view,
 )

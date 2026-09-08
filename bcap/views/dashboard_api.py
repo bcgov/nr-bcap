@@ -10,10 +10,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from drf_spectacular.utils import extend_schema
 
-from bcap.permissions.bcap_arches_permission_framework import (
-    Internal,
-    SubmitterOrInternal,
-)
+from bcap.permissions.route_guards import Internal, SubmitterOrInternal
 from bcap.serializers.dashboard_serializers import (
     InternalDashboardPageResponseSerializer,
     InternalDashboardFilterSerializer,

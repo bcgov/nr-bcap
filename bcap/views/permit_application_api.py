@@ -11,7 +11,7 @@ from drf_spectacular.utils import extend_schema
 
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
-from bcap.permissions.bcap_arches_permission_framework import SubmitterOrInternal
+from bcap.permissions.route_guards import SubmitterOrInternal
 from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,

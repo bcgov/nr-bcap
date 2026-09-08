@@ -27,7 +27,7 @@ from arches_zod_validation.views.mixins import UserOwnedResourceMixin
 
 from bcap.permissions.groups import is_internal_user
 from bcap.permissions.permit_resource_access import PermitResourceAccess
-from bcap.permissions.bcap_arches_permission_framework import (
+from bcap.permissions.route_guards import (
     Internal,
     SubmitterOrInternal,
     SubmitterReadsInternalReadWrites,

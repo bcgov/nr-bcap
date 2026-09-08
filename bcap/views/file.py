@@ -6,7 +6,7 @@ from arches.app.models.models import File
 from arches.app.utils.permission_backend import user_can_read_resource
 from arches.app.views.file import FileView
 
-from bcap.permissions.bcap_arches_permission_framework import is_internal_user
+from bcap.permissions.groups import is_internal_user
 
 
 class BCAPFileView(FileView):

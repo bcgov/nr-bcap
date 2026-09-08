@@ -251,7 +251,7 @@ INSTALLED_APPS += (
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": [
-        "bcap.permissions.bcap_arches_permission_framework.Internal"
+        "bcap.permissions.route_guards.Internal"
     ],
 }
 
@@ -330,7 +330,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
-    "bcap.permissions.bcap_arches_permission_framework.ArchesDefaultDenyApplicantGate",
+    "bcap.permissions.applicant_gate.ArchesDefaultDenyApplicantGate",
     # "silk.middleware.SilkyMiddleware",
 ]
 

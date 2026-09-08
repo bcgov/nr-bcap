@@ -10,9 +10,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import NoReverseMatch, URLResolver, get_resolver, resolve, reverse
 
-from bcap.permissions.bcap_arches_permission_framework import (
-    ArchesDefaultDenyApplicantGate as gate,
-)
+from bcap.permissions.applicant_gate import ArchesDefaultDenyApplicantGate as gate
 from bcap.permissions.groups import Groups
 from bcap.util.bcap_aliases import GraphSlugs
 from tests.builders import FixtureBuilder
