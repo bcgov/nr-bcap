@@ -25,7 +25,6 @@ from arches.app.utils.decorators import group_required as group_required_decorat
 from arches.app.utils.permission_backend import group_required
 
 from bcap.permissions.groups import Groups, group_id, is_internal_user
-from bcap.permissions.permission_settings import PERMIT_SCOPED_GRAPHS
 from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.graph import graph_slugs_of, relatable_graph_slugs
@@ -40,15 +39,13 @@ class BcapArchesPermissionFramework(ArchesDefaultDenyPermissionFramework):
         self, user, resourceid, permission, *, resource=None
     ):
         """The graph policy grants an applicant a whole graph; narrow that to
-        the instances their own permits reach. Only graphs a permit points at
-        are narrowed, since anything else finds no permit and is denied."""
+        the instances their own permits reach. Narrowing applies wherever the
+        policy said yes, since arches permits a resource's creator ahead of any
+        grant, and reach rather than authorship is what governs an applicant."""
         result = super().check_resource_instance_permissions(
             user, resourceid, permission, resource=resource
         )
-        if (
-            result.get("permitted")
-            and not is_internal_user(user)
-        ):
+        if result.get("permitted") and not is_internal_user(user):
             result["permitted"] = PermitResourceAccess.on_visible_permit_or_draft(
                 user, result["resource"].pk
             )

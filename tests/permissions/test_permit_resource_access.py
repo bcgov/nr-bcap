@@ -100,7 +100,9 @@ class ResourceAccessTests(TestCase):
     def test_applicant_does_not_reach_an_unrelated_contributor(self):
         # The graph grant is applicant-wide, so without narrowing this is every
         # other company's people and organizations.
-        self.assertFalse(PermitResourceAccess.can_view(self.applicant, self.stranger.pk))
+        self.assertFalse(
+            PermitResourceAccess.can_view(self.applicant, self.stranger.pk)
+        )
 
     def test_internal_staff_reach_anything(self):
         self.assertTrue(PermitResourceAccess.can_view(self.staff, self.other_permit.pk))
