@@ -19,6 +19,7 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.permissions.bcap_arches_permission_framework import SubmitterOrInternal
+from bcap.permissions.groups import is_internal_user
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
     ModuleUnreadSerializer,
@@ -166,6 +167,17 @@ class BcapMessageDetailView(
     permission_classes = [SubmitterOrInternal]
     http_method_names = ["get", "patch", "options"]
 
+    def get_queryset(self):
+        """The resource_context gate says which permit's correspondence this is,
+        not which of it the caller is party to, so an external caller is
+        narrowed the same way the thread listing narrows them."""
+        queryset = super().get_queryset()
+        if is_internal_user(self.request.user):
+            return queryset
+        return BcapMessageService().external_visible(
+            queryset, self.request.user.username
+        )
+
     def _context_id(self):
         return BcapMessageService().message_resource_context_id(self.kwargs["pk"])
 
@@ -174,6 +186,7 @@ class BcapMessageDetailView(
         return Response(self.get_serializer(self.get_object()).data)
 
     def update(self, request, *args, **kwargs):
+        self.get_object()
         PermitResourceAccess.require_change(request.user, self._context_id())
         service = BcapMessageService()
         # A PATCH can carry the read date, the archive flag, either, or both; each

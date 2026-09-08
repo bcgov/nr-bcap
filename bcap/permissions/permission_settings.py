@@ -286,5 +286,6 @@ PERMIT_SCOPED_GRAPHS = frozenset(
         "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",  # document_submission
         "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",  # notice_of_project_intent
         "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d",  # information_request
+        "605b0bbc-8661-4cf2-b340-df743a8c5f89",  # contributor
     }
 )

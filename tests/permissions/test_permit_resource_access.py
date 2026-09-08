@@ -22,8 +22,9 @@ class ResourceAccessTests(TestCase):
         ControlledListFixtures.seed()
         builder = FixtureBuilder()
 
-        acme = make_contributor(builder, "Acme Corp")
-        cls.applicant, _ = make_party(
+        acme = cls.acme = make_contributor(builder, "Acme Corp")
+        cls.stranger = make_contributor(builder, "Stranger Co")
+        cls.applicant, cls.applicant_contributor = make_party(
             builder, "applicant", "Amy", "Applicant", associated_organization=acme
         )
         cls.colleague, _ = make_party(
@@ -92,6 +93,23 @@ class ResourceAccessTests(TestCase):
         self.assertFalse(
             PermitResourceAccess.can_view(self.applicant, self.former_permit.pk)
         )
+
+    def test_applicant_reaches_their_own_contributor(self):
+        # It hangs off no permit until one is filed, and the profile page reads
+        # it either way.
+        self.assertTrue(
+            PermitResourceAccess.can_view(
+                self.applicant, self.applicant_contributor.pk
+            )
+        )
+
+    def test_applicant_reaches_a_contributor_on_a_permit_they_can_see(self):
+        self.assertTrue(PermitResourceAccess.can_view(self.applicant, self.acme.pk))
+
+    def test_applicant_does_not_reach_an_unrelated_contributor(self):
+        # The graph grant is applicant-wide, so without narrowing this is every
+        # other company's people and organizations.
+        self.assertFalse(PermitResourceAccess.can_view(self.applicant, self.stranger.pk))
 
     def test_internal_staff_reach_anything(self):
         self.assertTrue(PermitResourceAccess.can_view(self.staff, self.other_permit.pk))

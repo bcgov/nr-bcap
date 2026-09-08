@@ -28,7 +28,7 @@ from bcap.permissions.groups import Groups, group_id, is_internal_user
 from bcap.permissions.permission_settings import PERMIT_SCOPED_GRAPHS
 from bcap.permissions.permit_resource_access import PermitResourceAccess
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.graph import relatable_graph_slugs
+from bcap.util.graph import graph_slugs_of, relatable_graph_slugs
 
 ANONYMOUS_USERNAME = "anonymous"
 
@@ -209,11 +209,14 @@ class ArchesDefaultDenyApplicantGate:
             offered = relatable_graph_slugs(
                 view_kwargs["graph"], view_kwargs["node_alias"]
             )
-            if offered and offered <= self.PICKER_GRAPHS:
+            # An initialValue is echoed back with its descriptor whatever graph
+            # it names, so it clears the same bar the candidates do.
+            named = offered | graph_slugs_of(request.GET.getlist("initialValue"))
+            if offered and named <= self.PICKER_GRAPHS:
                 logger.info(
                     "Applicant allowed %s, a picker of %s",
                     request.path,
-                    sorted(offered),
+                    sorted(named),
                 )
                 return None
         if module.startswith(self.APPLICANT_ALLOWED):

@@ -297,7 +297,7 @@ class BcapMessageService(BaseGraphService):
         roots = self._by_archived(roots, user.username, archived)
         # Coarse role gate for now; a future groups ticket moves this to Guardian.
         if not is_internal_user(user):
-            roots = self._external_visible(roots, user.username)
+            roots = self.external_visible(roots, user.username)
         unread, latest = self._thread_summaries(resource_id, user.username)
         # A subquery annotation can't reach these: the thread link is a JSON node,
         # not a column an OuterRef can compare against, so map them on by pk.
@@ -397,7 +397,7 @@ class BcapMessageService(BaseGraphService):
             .order_by("message_creation_date", "createdtime")
         )
         if not is_internal_user(user):
-            messages = self._external_visible(messages, user.username)
+            messages = self.external_visible(messages, user.username)
         return messages
 
     def unread_by_module(self, submission_id, username) -> list[ModuleUnread]:
@@ -458,7 +458,7 @@ class BcapMessageService(BaseGraphService):
         )
         return {str(row["resource_context__id"]): row["unread"] for row in rows}
 
-    def _external_visible(self, messages, username):
+    def external_visible(self, messages, username):
         """What an external user may see: messages they're party to, never internal-only."""
         return self.recipient_or_author(messages, username).exclude(is_internal=True)
 

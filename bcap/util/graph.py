@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.cache import cache
 
 from arches.app.models import models
@@ -66,4 +68,20 @@ def relatable_graph_slugs(graph_slug, alias):
         models.GraphModel.objects.filter(
             pk__in=[entry["graphid"] for entry in config.get("graphs", [])]
         ).values_list("slug", flat=True)
+    )
+
+
+def graph_slugs_of(resource_ids):
+    """The graph slugs these resource ids belong to. Anything that is not a uuid
+    is dropped rather than raised on, since it matches no resource either."""
+    ids = []
+    for value in resource_ids:
+        try:
+            ids.append(uuid.UUID(str(value)))
+        except ValueError:
+            continue
+    return frozenset(
+        models.ResourceInstance.objects.filter(pk__in=ids).values_list(
+            "graph__slug", flat=True
+        )
     )

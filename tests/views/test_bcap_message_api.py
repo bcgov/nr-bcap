@@ -425,6 +425,17 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["resourceinstanceid"], str(self.public_root.pk))
 
+    def test_applicant_cannot_read_an_internal_message_on_their_own_permit(self):
+        # The thread listing hides it, so by-id is the way round the listing:
+        # the context gate passes, since the permit is theirs.
+        self.idir_login_simulate(self.user)
+        self.assertEqual(self._get_detail(self.internal_root.pk).status_code, 404)
+
+    def test_applicant_cannot_patch_an_internal_message_on_their_own_permit(self):
+        self.idir_login_simulate(self.user)
+        resp = self._patch_read_date(self.internal_root.pk, "2026-07-10T14:04:46.334Z")
+        self.assertEqual(resp.status_code, 404)
+
     def test_patch_denied_when_caller_cannot_edit_resource_context(self):
         self.idir_login_simulate(self.viewer)
         resp = self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")

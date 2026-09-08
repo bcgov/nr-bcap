@@ -14,6 +14,10 @@ from bcap.permissions.bcap_arches_permission_framework import (
     ArchesDefaultDenyApplicantGate as gate,
 )
 from bcap.permissions.groups import Groups
+from bcap.util.bcap_aliases import GraphSlugs
+from tests.builders import FixtureBuilder
+from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.services.contributor_fixtures import make_contributor
 from tests.views.helpers import AuthTestHelper
 
 
@@ -95,18 +99,47 @@ class TestRelatableResourcePicker(AuthTestHelper, TestCase):
     """The picker lists every instance of whatever graphs its node names, so an
     applicant reaches it only where that is contributors."""
 
-    def picker(self, graph, node_alias):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        ControlledListFixtures.seed()
+        builder = FixtureBuilder()
+        cls.contributor = make_contributor(builder, "Acme Corp")
+        cls.off_graph = builder.make_resource(GraphSlugs.INVESTIGATION)
+
+    def picker(self, graph, node_alias, **params):
         return self.client.get(
             reverse(
                 "arches_vue_components:api-relatable-resources",
                 kwargs={"graph": graph, "node_alias": node_alias},
-            )
+            ),
+            params,
         )
 
     def test_applicant_may_pick_a_contributor(self):
         self.idir_login_simulate()
         response = self.picker("permit_application", "application_proponent")
         self.assertNotEqual(response.status_code, 403)
+
+    def test_applicant_may_carry_a_contributor_as_the_current_value(self):
+        self.idir_login_simulate()
+        response = self.picker(
+            "permit_application",
+            "application_proponent",
+            initialValue=str(self.contributor.pk),
+        )
+        self.assertNotEqual(response.status_code, 403)
+
+    def test_applicant_may_not_name_an_off_graph_current_value(self):
+        # The picker answers with the descriptor of whatever initialValue names,
+        # ahead of the candidates it was asked for.
+        self.idir_login_simulate()
+        response = self.picker(
+            "permit_application",
+            "application_proponent",
+            initialValue=str(self.off_graph.pk),
+        )
+        self.assertEqual(response.status_code, 403)
 
     def test_applicant_may_not_pick_a_permit(self):
         self.idir_login_simulate()

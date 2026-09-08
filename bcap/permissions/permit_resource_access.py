@@ -19,6 +19,7 @@ from arches.app.utils.permission_backend import (
 from arches_querysets.models import ResourceTileTree
 
 from bcap.permissions.groups import is_internal_user
+from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.contributor.organization_service import OrganizationService
 from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.util.aliases.permit_application import PermitApplicationAliases
@@ -69,7 +70,18 @@ class PermitResourceAccess(BaseGraphService):
             user, cls._candidate_permit_ids(resource_id)
         ):
             return True
-        return cls._own_or_company_draft_exists(user, resource_id)
+        if cls._own_or_company_draft_exists(user, resource_id):
+            return True
+        return cls._is_own_contributor(user, resource_id)
+
+    @classmethod
+    def _is_own_contributor(cls, user, resource_id):
+        """An account's own Contributor hangs off no permit until one is filed,
+        and the profile page reads it either way. Everyone else's is reached
+        through a permit, like anything else."""
+        return str(resource_id) == ContributorService().username_contributor_id(
+            user.username
+        )
 
     @classmethod
     def can_view(cls, user, resource_id):
