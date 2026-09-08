@@ -250,9 +250,7 @@ INSTALLED_APPS += (
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_PERMISSION_CLASSES": [
-        "bcap.permissions.route_guards.Internal"
-    ],
+    "DEFAULT_PERMISSION_CLASSES": ["bcap.permissions.route_guards.Internal"],
 }
 
 SPECTACULAR_SETTINGS = {
