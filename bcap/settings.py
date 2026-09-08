@@ -250,6 +250,9 @@ INSTALLED_APPS += (
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PERMISSION_CLASSES": [
+        "bcap.permissions.bcap_arches_permission_framework.Internal"
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -327,6 +330,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
+    "bcap.permissions.bcap_arches_permission_framework.ArchesDefaultDenyApplicantGate",
     # "silk.middleware.SilkyMiddleware",
 ]
 
@@ -628,8 +632,8 @@ RENDERERS = [
     },
 ]
 
-# By setting RESTRICT_MEDIA_ACCESS to True, media file requests outside of Arches will checked against nodegroup permissions.
-RESTRICT_MEDIA_ACCESS = True
+# Off: BCAPFileView serves the files route and does the checking. See it for why.
+RESTRICT_MEDIA_ACCESS = False
 
 # By setting RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER to True, if the user is attempting
 # to export search results above the SEARCH_EXPORT_IMMEDIATE_DOWNLOAD_THRESHOLD
