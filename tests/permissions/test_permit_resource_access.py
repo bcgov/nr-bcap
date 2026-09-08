@@ -50,11 +50,14 @@ class ResourceAccessTests(TestCase):
             organization=make_contributor(builder, "Former Corp"),
         )
         cls.other_permit = build_permit(builder, "Someone Else's")
+        # A graph no applicant is granted, on a resource one created anyway.
+        cls.own_site = builder.make_resource(GraphSlugs.ARCHAEOLOGICAL_SITE)
         for permit, owner in (
             (cls.permit, cls.applicant),
             (cls.own_permit, cls.applicant),
             (cls.former_permit, cls.applicant),
             (cls.other_permit, cls.outsider),
+            (cls.own_site, cls.applicant),
         ):
             ResourceInstance.objects.filter(pk=permit.pk).update(principaluser=owner)
 
@@ -102,6 +105,13 @@ class ResourceAccessTests(TestCase):
         # other company's people and organizations.
         self.assertFalse(
             PermitResourceAccess.can_view(self.applicant, self.stranger.pk)
+        )
+
+    def test_applicant_does_not_reach_what_they_created_off_any_permit(self):
+        # Arches permits a resource's creator ahead of any grant, so on a graph
+        # applicants are never granted, the narrowing is all that denies this.
+        self.assertFalse(
+            PermitResourceAccess.can_view(self.applicant, self.own_site.pk)
         )
 
     def test_internal_staff_reach_anything(self):
