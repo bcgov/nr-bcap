@@ -960,7 +960,7 @@
                 {
                     "alias": "submission_type",
                     "config": {
-                        "controlledList": "0868cf04-7b9f-5be1-99ae-24074540603c",
+                        "controlledList": "56fc77f7-edf5-54d6-8a0b-ad17c220c390",
                         "multiValue": true
                     },
                     "datatype": "reference",
