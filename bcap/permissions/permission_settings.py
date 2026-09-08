@@ -1,1362 +1,290 @@
 """Instance-level permission defaults, read by arches as PERMISSION_DEFAULTS.
 
-One entry per graph: under default deny a user reaches nothing it does not own
-without a grant here. The applier in the permission framework reads the same
-entries to grant the matching nodegroup perms, so this is the only place a role
-is given access to a graph.
+Archaeology Branch reaches every graph. Submitter is granted the graphs an
+applicant files: a permit application, everything hanging off one, and the
+drafts on the way there. The grant is graph-wide, so the permission framework
+narrows it per resource to the permits and drafts that applicant reaches.
 """
 
-from functools import lru_cache
-
-from django.apps import apps
 from django.utils.functional import lazy
 
+from bcap.permissions.groups import Groups, group_id
 
-@lru_cache(maxsize=None)
-def _group_id(name):
-    """The named group's id. Ids differ between databases, so they cannot be
-    written down here. Only hits are cached, so a resolve that runs before the
-    group's seeding migration retries rather than sticking for the process."""
-    return apps.get_model("auth", "Group").objects.get(name=name).id
+GroupId = lazy(group_id, int)
 
+ARCHAEOLOGY_BRANCH_GROUP_ID = GroupId(Groups.ARCHAEOLOGY_BRANCH)
+SUBMITTER_GROUP_ID = GroupId(Groups.SUBMITTER)
 
-GroupId = lazy(_group_id, int)
+FULL_ACCESS = [
+    "view_resourceinstance",
+    "change_resourceinstance",
+    "add_resourceinstance",
+    "delete_resourceinstance",
+]
 
-# Instance-level permission defaults, one entry per graph. Under default deny a
-# user reaches nothing it does not own without a grant here.
-#
-# What the entries below add up to, written R(ead) W(rite) A(dd) D(elete).
-# Archaeology Branch holds RWAD on every graph and is left out of the rows.
-#
-#   permit work            Permit Reviewer/Decider/SDM RWAD, Inventory
-#   (permit_application,   Reviewer/Manager RWAD, Resource Editor RWA,
-#   alteration,            Resource Reviewer RW, Resource Exporter R
-#   inspection,
-#   investigation,
-#   information_request,
-#   notice_of_project_intent,
-#   bcap_message,
-#   document_submission,
-#   contributor)
-#
-#   process_requirement    Permit Decider/SDM RWAD, Inventory Manager RWAD,
-#                          Resource Editor RWA, Permit Reviewer RW, Resource
-#                          Reviewer RW, Inventory Reviewer RW,
-#                          Resource Exporter R
-#
-#   inventory              Inventory Manager RWAD, Inventory Reviewer RW
-#   (archaeological_site,
-#   site_visit,
-#   site_submission)
-#
-#   hca_permit             Inventory Manager RWAD, Permit Decider/SDM RWAD,
-#                          Inventory Reviewer RW, Permit Reviewer RW
-#
-#   publication,           Resource Editor RWA, Resource Reviewer R,
-#   repository             Resource Exporter R
-#
-#   legislative_act,       Resource Editor/Reviewer/Exporter R
-#   local_government
-#
-#   workflow_drafts        every internal group RWAD
-#
-#   branch only            no other group: project_sandbox,
-#                          hria_discontinued_data, lg_person
-#
-# Permit Manager appears on workflow_drafts alone, so it reads no permit.
-
-ARCHAEOLOGY_BRANCH_GROUP_ID = GroupId("Archaeology Branch")
-INVENTORY_MANAGER_GROUP_ID = GroupId("Inventory Manager")
-INVENTORY_REVIEWER_GROUP_ID = GroupId("Inventory Reviewer")
-PERMIT_DECIDER_GROUP_ID = GroupId("Permit Decider")
-PERMIT_MANAGER_GROUP_ID = GroupId("Permit Manager")
-PERMIT_REVIEWER_GROUP_ID = GroupId("Permit Reviewer")
-PERMIT_SDM_GROUP_ID = GroupId("Permit SDM")
-RESOURCE_EDITOR_GROUP_ID = GroupId("Resource Editor")
-RESOURCE_EXPORTER_GROUP_ID = GroupId("Resource Exporter")
-RESOURCE_REVIEWER_GROUP_ID = GroupId("Resource Reviewer")
+# An applicant files and revises but never removes: a submitted resource is part
+# of the record. Their own drafts are the exception, and get full access.
+APPLICANT_ACCESS = [
+    "view_resourceinstance",
+    "change_resourceinstance",
+    "add_resourceinstance",
+]
 
 PERMISSION_DEFAULTS = {
-    "cef9c510-e3e6-4057-ac08-89ad926180b4": [  # archaeological_site
+    # archaeological_site: the site inventory: staff record it, an applicant
+    # never files one
+    "cef9c510-e3e6-4057-ac08-89ad926180b4": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "2da1c15f-1ab6-4122-9dbc-d10da693ac79": [  # site_visit
+    # site_visit: a visit to an inventoried site, recorded by staff
+    "2da1c15f-1ab6-4122-9dbc-d10da693ac79": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "52dd40f2-1dee-45d2-b72c-234c8cbb5418": [  # legislative_act
+    # site_submission: a proposed change to the inventory, worked by staff
+    "4e69d0a9-7af2-473f-929f-71d462ea32d1": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "aacf8bb6-3f6e-46d9-a551-b0749d7efffc": [  # local_government
+    # legislative_act: reference data behind the inventory
+    "52dd40f2-1dee-45d2-b72c-234c8cbb5418": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "4e69d0a9-7af2-473f-929f-71d462ea32d1": [  # site_submission
+    # local_government: reference data: the governments a site or permit falls
+    # under
+    "aacf8bb6-3f6e-46d9-a551-b0749d7efffc": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "c3923080-d21e-42d7-b8f1-637b9d0ab63c": [  # project_sandbox
+    # lg_person: the contacts on a local government
+    "412444dd-b13f-4289-9f04-5c7f1878ad4e": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "19806d98-8200-45b4-9f5d-9f07d9a9aaa1": [  # hria_discontinued_data
+    # project_sandbox: staff scratch space
+    "c3923080-d21e-42d7-b8f1-637b9d0ab63c": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "412444dd-b13f-4289-9f04-5c7f1878ad4e": [  # lg_person
+    # hria_discontinued_data: retired HRIA records, kept for staff lookup
+    "19806d98-8200-45b4-9f5d-9f07d9a9aaa1": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    # Submitter is deliberately absent from every graph. External users reach
-    # their own work through ownership, which passes before any grant is
-    # consulted; a grant here would be graph-wide and let one submitter read and
-    # edit another's.
-    "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206": [  # workflow_drafts
+    # hca_permit: the issued permit, written by staff once a decision is made
+    "f4b391f1-79d1-4886-ab2d-d72a197a9f21": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "5c900e2b-257c-4af3-b67f-b5caf3850f71": [  # permit_application
+    # publication: reference data on the reports the inventory cites
+    "3caf329f-b8f7-11e6-84a5-026d961c88e6": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "b2901f47-bdfc-47bb-b212-3132b96efb0a": [  # alteration
+    # repository: reference data on where artifacts are held
+    "3e6a2880-14d4-11ec-9df0-5254008afee6": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "87968032-6faa-481b-a47c-30f9747acd52": [  # inspection
+    # workflow_drafts: an applicant's unsubmitted work, and staff filling one in
+    # for them
+    "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
     ],
-    "febca6ba-2a51-494f-9809-c54e2dd42fc3": [  # investigation
+    # permit_application: the applicant's filing, and the staff review of it
+    "5c900e2b-257c-4af3-b67f-b5caf3850f71": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d": [  # information_request
+    # alteration: a permit type's own resource, filed as part of an application
+    "b2901f47-bdfc-47bb-b212-3132b96efb0a": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "6ca13de7-f5b3-4e38-a947-64eaf2a04b65": [  # notice_of_project_intent
+    # inspection: a permit type's own resource, filed as part of an application
+    "87968032-6faa-481b-a47c-30f9747acd52": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "fef4e675-e4c8-4bea-9e8a-cb30c3978bef": [  # bcap_message
+    # investigation: a permit type's own resource, filed as part of an
+    # application
+    "febca6ba-2a51-494f-9809-c54e2dd42fc3": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "0e74b1fa-1da4-4f17-9e65-dd79fbc96313": [  # process_requirement
+    # information_request: an applicant's request, answered by staff
+    "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a": [  # document_submission
+    # notice_of_project_intent: an applicant's notice ahead of a permit
+    "6ca13de7-f5b3-4e38-a947-64eaf2a04b65": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_EDITOR_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "f4b391f1-79d1-4886-ab2d-d72a197a9f21": [  # hca_permit
+    # bcap_message: the correspondence between an applicant and staff
+    "fef4e675-e4c8-4bea-9e8a-cb30c3978bef": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": INVENTORY_MANAGER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "605b0bbc-8661-4cf2-b340-df743a8c5f89": [  # contributor
+    # process_requirement: the checklist on an application: staff set it, an
+    # applicant answers it
+    "0e74b1fa-1da4-4f17-9e65-dd79fbc96313": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_DECIDER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": PERMIT_SDM_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_REVIEWER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
-        },
-        {
-            "id": INVENTORY_MANAGER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "3caf329f-b8f7-11e6-84a5-026d961c88e6": [  # publication
+    # document_submission: the files an applicant attaches to a requirement
+    "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
-    "3e6a2880-14d4-11ec-9df0-5254008afee6": [  # repository
+    # contributor: the person or company behind an account, edited from either
+    # side
+    "605b0bbc-8661-4cf2-b340-df743a8c5f89": [
         {
             "id": ARCHAEOLOGY_BRANCH_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-                "delete_resourceinstance",
-            ],
+            "permissions": FULL_ACCESS,
         },
         {
-            "id": RESOURCE_REVIEWER_GROUP_ID,
+            "id": SUBMITTER_GROUP_ID,
             "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EDITOR_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-                "change_resourceinstance",
-                "add_resourceinstance",
-            ],
-        },
-        {
-            "id": RESOURCE_EXPORTER_GROUP_ID,
-            "type": "group",
-            "permissions": [
-                "view_resourceinstance",
-            ],
+            "permissions": APPLICANT_ACCESS,
         },
     ],
 }
+
+# Graphs where an applicant's grant is narrowed to the permit or draft the
+# resource hangs off. Belongs here when a permit points at it within two hops;
+# everything else is left to the route's owner filter.
+# This drives check_resource_instance_permissions.
+PERMIT_SCOPED_GRAPHS = frozenset(
+    {
+        "5c900e2b-257c-4af3-b67f-b5caf3850f71",  # permit_application
+        "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",  # workflow_drafts
+        "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",  # process_requirement
+        "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",  # bcap_message
+        "b2901f47-bdfc-47bb-b212-3132b96efb0a",  # alteration
+        "87968032-6faa-481b-a47c-30f9747acd52",  # inspection
+        "febca6ba-2a51-494f-9809-c54e2dd42fc3",  # investigation
+        "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",  # document_submission
+        "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",  # notice_of_project_intent
+        "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d",  # information_request
+    }
+)
