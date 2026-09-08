@@ -22,7 +22,10 @@ from arches import __version__ as arches_version
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONSerializer
 
-from bcap.permissions.route_permissions import Internal, internal_only_django_view
+from bcap.permissions.bcap_arches_permission_framework import (
+    Internal,
+    internal_only_django_view,
+)
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.borden_number_api import (
     BordenGridServiceError,

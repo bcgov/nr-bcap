@@ -1,6 +1,7 @@
 from django.core.cache import cache
 
 from arches.app.models import models
+from arches.app.utils.betterJSONSerializer import JSONDeserializer
 
 
 def get_current_graph(slug: str) -> models.GraphModel | None:
@@ -52,3 +53,17 @@ def node_id(graph_slug, alias):
 def nodegroup_id(graph_slug, alias):
     """nodegroup_id as a string for a graph's node alias."""
     return node_info(graph_slug, alias)[1]
+
+
+def relatable_graph_slugs(graph_slug, alias):
+    """The graph slugs a resource-instance node offers, empty for any other
+    node."""
+    node = models.Node.objects.filter(
+        graph__slug=graph_slug, alias=alias, source_identifier=None
+    ).first()
+    config = JSONDeserializer().deserialize(node.config.value) if node else {}
+    return frozenset(
+        models.GraphModel.objects.filter(
+            pk__in=[entry["graphid"] for entry in config.get("graphs", [])]
+        ).values_list("slug", flat=True)
+    )
