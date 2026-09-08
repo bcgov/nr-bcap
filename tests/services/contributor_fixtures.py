@@ -39,8 +39,13 @@ def make_user(username, internal=False):
 def make_party(builder, username, first_name, name, internal=False, **kwargs):
     """A user and the Contributor that links to them by bcap_username -- the
     pairing every message/dashboard fixture needs, since party membership and
-    assignment are both looked up through the Contributor."""
-    return make_user(username, internal), make_contributor(
+    assignment are both looked up through the Contributor. The name goes on the
+    auth user too, the way the identity provider supplies it, since that is what
+    display_name reads."""
+    user = make_user(username, internal)
+    user.first_name, user.last_name = first_name, name
+    user.save(update_fields=["first_name", "last_name"])
+    return user, make_contributor(
         builder, name, first_name, bcap_username=username, **kwargs
     )
 

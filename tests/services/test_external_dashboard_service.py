@@ -159,7 +159,7 @@ class ExternalDashboardServiceTests(TestCase):
         self.assertEqual(card.project_name, "Mine Active")
         self.assertRegex(card.application_number, r"^APP-\d+$")
         self.assertEqual(card.submission_date, "2026-06-18")
-        self.assertEqual(card.created_by_name, "me")
+        self.assertEqual(card.created_by_name, "Grace Hopper")
         self.assertEqual(card.permit_id, self.hca_id)
         self.assertEqual(card.permit_number, "HCA-001")
         self.assertEqual(card.organization, "Acme Corp")
@@ -288,7 +288,9 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertEqual(card.status, "Submission Required")
         self.assertEqual(card.project_name, "Draft Project")
         self.assertEqual(card.application_number, "DRAFT-1")
-        self.assertEqual(card.created_by_name, "drafter")
+        # Blank rather than the username: this fixture user has no name, and a
+        # login identifier is not a display name.
+        self.assertEqual(card.created_by_name, "")
 
     def test_module_drafts_get_a_card_carrying_their_graph(self):
         page = self.service.get_cards(
@@ -405,7 +407,7 @@ class ExternalDashboardCompanyDraftsTests(TestCase):
         )
 
         card = next(c for c in page.results if c.id == str(self.colleagues.pk))
-        self.assertEqual(card.created_by_name, "drafter-colleague")
+        self.assertEqual(card.created_by_name, "Alan Hopper")
 
     def test_created_by_me_leaves_out_the_colleagues_draft(self):
         page = self.service.get_cards(
