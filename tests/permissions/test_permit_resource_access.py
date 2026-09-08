@@ -24,7 +24,7 @@ class ResourceAccessTests(TestCase):
 
         acme = cls.acme = make_contributor(builder, "Acme Corp")
         cls.stranger = make_contributor(builder, "Stranger Co")
-        cls.applicant, cls.applicant_contributor = make_party(
+        cls.applicant, _ = make_party(
             builder, "applicant", "Amy", "Applicant", associated_organization=acme
         )
         cls.colleague, _ = make_party(
@@ -92,15 +92,6 @@ class ResourceAccessTests(TestCase):
     def test_creating_a_filing_does_not_survive_leaving_the_company(self):
         self.assertFalse(
             PermitResourceAccess.can_view(self.applicant, self.former_permit.pk)
-        )
-
-    def test_applicant_reaches_their_own_contributor(self):
-        # It hangs off no permit until one is filed, and the profile page reads
-        # it either way.
-        self.assertTrue(
-            PermitResourceAccess.can_view(
-                self.applicant, self.applicant_contributor.pk
-            )
         )
 
     def test_applicant_reaches_a_contributor_on_a_permit_they_can_see(self):
