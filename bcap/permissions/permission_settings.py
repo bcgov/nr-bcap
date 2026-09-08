@@ -270,22 +270,12 @@ PERMISSION_DEFAULTS = {
     ],
 }
 
-# Graphs where an applicant's grant is narrowed to the permit or draft the
-# resource hangs off. Belongs here when a permit points at it within two hops;
-# everything else is left to the route's owner filter.
-# This drives check_resource_instance_permissions.
+# Every graph an applicant is granted above, narrowed per resource to the
+# permits and drafts they reach. Derived rather than listed, so a grant cannot
+# be added without its narrowing. Identity, not equality, keeps the lazy group
+# id from being resolved at import.
 PERMIT_SCOPED_GRAPHS = frozenset(
-    {
-        "5c900e2b-257c-4af3-b67f-b5caf3850f71",  # permit_application
-        "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",  # workflow_drafts
-        "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",  # process_requirement
-        "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",  # bcap_message
-        "b2901f47-bdfc-47bb-b212-3132b96efb0a",  # alteration
-        "87968032-6faa-481b-a47c-30f9747acd52",  # inspection
-        "febca6ba-2a51-494f-9809-c54e2dd42fc3",  # investigation
-        "010b893e-c9d2-4dfe-b5d1-837c49c2bb9a",  # document_submission
-        "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",  # notice_of_project_intent
-        "d4f514eb-bdc6-4f68-9c27-92883e1d4e7d",  # information_request
-        "605b0bbc-8661-4cf2-b340-df743a8c5f89",  # contributor
-    }
+    graph_id
+    for graph_id, grants in PERMISSION_DEFAULTS.items()
+    if any(grant["id"] is SUBMITTER_GROUP_ID for grant in grants)
 )
