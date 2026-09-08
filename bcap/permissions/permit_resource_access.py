@@ -1,8 +1,11 @@
 """Object-level access for external applicants: which instances a caller may
 touch, once their route gate has let them in.
 
-An applicant reaches what they created, plus anything hanging off a permit
-application they can see. The list filters live here too, so a list route and a
+An applicant reaches a permit application their company holds, or that they
+filed under no company, and whatever hangs off one within two hops. Authorship
+is not enough on its own and is deliberately taken back: arches permits a
+resource's creator before it consults any grant, and the framework narrows that
+away with the check here. The list filters live here too, so a list route and a
 detail route answer "my work, and my company's" from one place.
 """
 
