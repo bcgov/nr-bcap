@@ -200,12 +200,13 @@ class ProcessRequirementBuilder(ResourceBuilder):
     @staticmethod
     def _resource_reference(resource_id):
         """Tile data for a resource-instance node pointing at one resource, in the
-        shape arches stores it. post_tile_save fills in the relationship id."""
+        shape arches stores it."""
         return [
             {
                 "resourceId": str(resource_id),
                 "ontologyProperty": "",
                 "inverseOntologyProperty": "",
+                "resourceXresourceId": "",
             }
         ]
 
