@@ -1,7 +1,10 @@
 from arches.app.views.resource import ResourceReportView as ResourceReportViewCore
 from arches.app.views.resource import ResourceEditLogView as ResourceEditLogViewCore
 
-from bcap.permissions.route_permissions import resource_editor_only_django_view
+from bcap.permissions.bcap_arches_permission_framework import (
+    internal_only_django_view,
+    resource_editor_only_django_view,
+)
 from arches.app.models import models
 from arches.app.models.system_settings import settings
 from django.shortcuts import render
@@ -15,6 +18,7 @@ class ResourceReportView(ResourceReportViewCore):
         return super().get(request, resourceid)
 
 
+@internal_only_django_view
 class ResourceEditLogView(ResourceEditLogViewCore):
     def get(
         self, request, resourceid=None, view_template="views/resource/edit-log.htm"

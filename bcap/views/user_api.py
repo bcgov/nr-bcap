@@ -11,11 +11,13 @@ from drf_spectacular.utils import extend_schema
 
 from arches.app.models import models
 
+from bcap.permissions.bcap_arches_permission_framework import SubmitterOrInternal
 from bcap.serializers.dashboard_serializers import UserProfileResponseSerializer
 
 
 class UserProfile(APIView):
     authentication_classes = [SessionAuthentication]
+    permission_classes = [SubmitterOrInternal]
 
     @extend_schema(
         tags=["External: user_profile"],
