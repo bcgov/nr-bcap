@@ -14,7 +14,9 @@ def last_first(first, last):
 
 
 def display_name(user):
-    """The user's full name, falling back to username; "" if no user."""
+    """The user's full name, blank when they have none. Never the username: for
+    a BCeID account that is a login identifier, and these names are shown to
+    other applicants."""
     if not user:
         return ""
-    return full_name(user.first_name, user.last_name) or user.username
+    return full_name(user.first_name, user.last_name)
