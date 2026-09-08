@@ -1,12 +1,14 @@
 """Seed the role groups added since 1415 and drop the resource-access functions
-they replace. Group names are repeated literally here, as migrations must."""
+they replace."""
 
 from django.db import migrations
 
+from bcap.permissions.groups import Groups
+
 ROLE_GROUPS = [
-    "Permit SDM",
-    "Permit Manager",
-    "MPP Submitter",
+    Groups.PERMIT_SDM,
+    Groups.PERMIT_MANAGER,
+    Groups.MPP_SUBMITTER,
 ]
 
 # Their per-instance no_access grants are superseded by the default-deny
