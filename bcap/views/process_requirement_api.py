@@ -27,7 +27,7 @@ from arches_zod_validation.views.mixins import UserOwnedResourceMixin
 
 from bcap.permissions.groups import is_internal_user
 from bcap.permissions.permit_resource_access import PermitResourceAccess
-from bcap.permissions.route_permissions import (
+from bcap.permissions.bcap_arches_permission_framework import (
     Internal,
     SubmitterOrInternal,
     SubmitterReadsInternalReadWrites,
@@ -119,8 +119,10 @@ class ProcessRequirementSeedView(APIView):
     The permit type is a path segment; a type with no host resource is a 400."""
 
     authentication_classes = [SessionAuthentication]
-    # Applicants file their own modules, so this only asks for a login; which
-    # permits they may file against is settled by the permit lookup.
+    # Applicants file their own modules, so the route only asks for a login;
+    # which permit they may file against is settled per request against the id
+    # in the path, since that id is the only thing naming whose modules these
+    # are.
     permission_classes = [SubmitterOrInternal]
     # A module carrying file uploads (a document submission and its photographs)
     parser_classes = [JSONParser, MultiPartJSONParser]
@@ -147,6 +149,7 @@ class ProcessRequirementSeedView(APIView):
     def get(self, request, pk, permit_type):
         """The module's host resources attached to the permit application."""
         serializer_class = self._host_serializer_class(permit_type, pk)
+        PermitResourceAccess.require_view(request.user, str(pk))
         hosts = ProcessRequirementService(request).permit_module_tiles(pk, permit_type)
         return Response(
             [serializer_class(host, request=request).data for host in hosts]
@@ -158,6 +161,7 @@ class ProcessRequirementSeedView(APIView):
     )
     def post(self, request, pk, permit_type):
         serializer_class = self._host_serializer_class(permit_type, pk)
+        PermitResourceAccess.require_change(request.user, str(pk))
         host_serializer = serializer_class(data=request.data, request=request)
         host_serializer.is_valid(raise_exception=True)
         host = host_serializer.save()

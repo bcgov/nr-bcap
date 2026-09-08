@@ -24,7 +24,7 @@ from rest_framework_dataclasses.serializers import DataclassSerializer
 from arches.app.models.models import ResourceInstance
 from arches.app.utils.permission_backend import user_can_edit_resource
 
-from bcap.permissions.route_permissions import SubmitterOrInternal
+from bcap.permissions.bcap_arches_permission_framework import SubmitterOrInternal
 from bcap.serializers.graph_serializers import aliased_data_union_schema
 from bcap.services.workflow_draft_service import DraftRecord, WorkflowDraftService
 from bcap.util.graph import get_current_graph

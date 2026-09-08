@@ -18,7 +18,7 @@ from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPaginati
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from bcap.permissions.permit_resource_access import PermitResourceAccess
-from bcap.permissions.route_permissions import SubmitterOrInternal
+from bcap.permissions.bcap_arches_permission_framework import SubmitterOrInternal
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
     ModuleUnreadSerializer,

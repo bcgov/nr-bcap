@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from bcap.permissions.route_permissions import Internal
+from bcap.permissions.bcap_arches_permission_framework import Internal
 from bcap.serializers.contributor_serializers import ContributorSummarySerializer
 from bcap.services.contributor.contributor_service import ContributorService
 
