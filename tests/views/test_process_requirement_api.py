@@ -78,6 +78,7 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         ResourceInstance.objects.filter(pk=permit.pk).update(
             principaluser=cls.submitter
         )
+        cls.permit_id = str(permit.pk)
         cls.unattached_id = str(make_requirement(ProcessRequirementBuilder()).pk)
 
         resource = ResourceTileTree.get_tiles(
@@ -219,6 +220,38 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.editor)
         url = reverse("api_process_requirement", kwargs={"pk": self.unattached_id})
         self.assertEqual(self.client.delete(url).status_code, 204)
+
+    def test_applicant_cannot_read_modules_off_another_permit(self):
+        """The permit id is the only thing naming whose modules these are, so it
+        is checked per request rather than trusted for existing."""
+        other = get_user_model().objects.create_user(
+            username="pr-other-applicant", password="pass"
+        )
+        other.groups.add(Group.objects.get(name=Groups.SUBMITTER))
+        self.idir_login_simulate(other)
+        response = self.client.get(
+            reverse(
+                "seed_process_requirements",
+                kwargs={"pk": self.permit_id, "permit_type": "inspection"},
+            )
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_applicant_cannot_file_a_module_against_another_permit(self):
+        other = get_user_model().objects.create_user(
+            username="pr-other-filer", password="pass"
+        )
+        other.groups.add(Group.objects.get(name=Groups.SUBMITTER))
+        self.idir_login_simulate(other)
+        response = self.client.post(
+            reverse(
+                "seed_process_requirements",
+                kwargs={"pk": self.permit_id, "permit_type": "inspection"},
+            ),
+            data=json.dumps({ALIASED_DATA: {}}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 403)
 
     def test_patch_by_a_user_with_no_role_is_refused(self):
         self.idir_login_simulate(self.user)
