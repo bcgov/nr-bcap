@@ -58,14 +58,13 @@ class PermitResourceAccess(BaseGraphService):
         )
 
     @classmethod
-    def can_view(cls, user, resource_id):
-        """Staff by the graph policy's read grant, an applicant by what their
-        permit reaches. An applicant is never asked the graph policy: they hold
-        no grant that would let them read their own work."""
+    def on_visible_permit_or_draft(cls, user, resource_id):
+        """Whether this resource hangs off a permit application or draft the
+        user can see, by the same own-or-company rule the list filters apply.
+        Asks nothing of the graph policy, so the permission framework can narrow
+        an applicant's graph grant with it without looping back through itself."""
         if not resource_id:
             return False
-        if is_internal_user(user):
-            return user_can_read_resource(user, resourceid=resource_id)
         if cls._own_or_company_permit_exists(
             user, cls._candidate_permit_ids(resource_id)
         ):
@@ -73,14 +72,21 @@ class PermitResourceAccess(BaseGraphService):
         return cls._own_or_company_draft_exists(user, resource_id)
 
     @classmethod
+    def can_view(cls, user, resource_id):
+        """One question for staff and applicants alike: the graph policy, which
+        the permission framework narrows for an applicant by calling back into
+        the reach check above. Without an id arches answers the model-level
+        question instead, which grants rather than denies, so guard it."""
+        return bool(resource_id) and user_can_read_resource(
+            user, resourceid=resource_id
+        )
+
+    @classmethod
     def can_change(cls, user, resource_id):
-        """As the read, but staff need the edit grant: a read-only role sees a
-        permit without being able to act on it."""
-        if is_internal_user(user):
-            return bool(resource_id) and user_can_edit_resource(
-                user, resourceid=resource_id
-            )
-        return cls.can_view(user, resource_id)
+        """As the read, against the edit grant."""
+        return bool(resource_id) and user_can_edit_resource(
+            user, resourceid=resource_id
+        )
 
     @classmethod
     def require_view(cls, user, resource_id):
