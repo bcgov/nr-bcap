@@ -47,39 +47,23 @@ class TestDateFormat(SimpleTestCase):
     def _node(self, config):
         return Mock(config=config)
 
-    def test_date_format_from_camel_case_key(self):
-        self.assertEqual(
-            _cmd()._date_format(self._node({"dateFormat": "DD/MM/YYYY"})), "DD/MM/YYYY"
-        )
-
-    def test_date_format_from_lowercase_key(self):
-        self.assertEqual(
-            _cmd()._date_format(self._node({"dateformat": "MM-YYYY"})), "MM-YYYY"
-        )
-
-    def test_camel_case_key_takes_priority_over_lowercase(self):
-        self.assertEqual(
-            _cmd()._date_format(
-                self._node({"dateFormat": "YYYY", "dateformat": "other"})
+    def test_date_format(self):
+        cases = [
+            ("camel_case_key", {"dateFormat": "DD/MM/YYYY"}, "DD/MM/YYYY"),
+            ("lowercase_key", {"dateformat": "MM-YYYY"}, "MM-YYYY"),
+            (
+                "camel_case_takes_priority",
+                {"dateFormat": "YYYY", "dateformat": "other"},
+                "YYYY",
             ),
-            "YYYY",
-        )
-
-    def test_fallback_when_config_is_none(self):
-        self.assertEqual(_cmd()._date_format(self._node(None)), "YYYY-MM-DD")
-
-    def test_fallback_when_config_is_empty_dict(self):
-        self.assertEqual(_cmd()._date_format(self._node({})), "YYYY-MM-DD")
-
-    def test_fallback_when_key_absent(self):
-        self.assertEqual(
-            _cmd()._date_format(self._node({"unrelated": "value"})), "YYYY-MM-DD"
-        )
-
-    def test_fallback_when_date_format_is_empty_string(self):
-        self.assertEqual(
-            _cmd()._date_format(self._node({"dateFormat": ""})), "YYYY-MM-DD"
-        )
+            ("config_is_none", None, "YYYY-MM-DD"),
+            ("config_is_empty_dict", {}, "YYYY-MM-DD"),
+            ("key_absent", {"unrelated": "value"}, "YYYY-MM-DD"),
+            ("date_format_is_empty_string", {"dateFormat": ""}, "YYYY-MM-DD"),
+        ]
+        for name, config, expected in cases:
+            with self.subTest(name):
+                self.assertEqual(_cmd()._date_format(self._node(config)), expected)
 
 
 # ---------------------------------------------------------------------------

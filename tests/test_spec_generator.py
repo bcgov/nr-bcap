@@ -287,7 +287,13 @@ class TestGetFlatColumns(SimpleTestCase):
 
 
 class TestGenerate(SimpleTestCase):
-    def _run_generate(self, spec_kwargs=None):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.result, cls.files = cls._run_generate(cls._minimal_spec_kwargs())
+
+    @staticmethod
+    def _run_generate(spec_kwargs=None):
         with tempfile.TemporaryDirectory() as out_dir:
             spec = _spec(**(spec_kwargs or {}))
             gen = SpecGenerator(spec, out_dir)
@@ -296,7 +302,8 @@ class TestGenerate(SimpleTestCase):
             files = set(os.listdir(schema_dir))
         return result, files
 
-    def _minimal_spec_kwargs(self):
+    @staticmethod
+    def _minimal_spec_kwargs():
         return {
             "schema": "my_schema",
             "ng": [
@@ -311,7 +318,6 @@ class TestGenerate(SimpleTestCase):
         }
 
     def test_returns_dict_with_expected_keys(self):
-        result, _ = self._run_generate(self._minimal_spec_kwargs())
         for key in (
             "slug",
             "schema",
@@ -321,39 +327,23 @@ class TestGenerate(SimpleTestCase):
             "grains",
             "grain_view_names",
         ):
-            self.assertIn(key, result)
+            self.assertIn(key, self.result)
 
-    def test_branch_mv_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("mv_branch.sql", files)
-
-    def test_mv_resource_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("mv_resource.sql", files)
-
-    def test_mv_resource_flat_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("mv_resource_flat.sql", files)
-
-    def test_resource_view_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("resource_view.sql", files)
-
-    def test_flat_views_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("flat_views.sql", files)
-
-    def test_refresh_resource_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("refresh_resource.sql", files)
-
-    def test_refresh_flat_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("refresh_flat.sql", files)
-
-    def test_alignment_test_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("alignment_test.sql", files)
+    def test_writes_the_expected_files(self):
+        expected = {
+            "mv_branch.sql",
+            "mv_resource.sql",
+            "mv_resource_flat.sql",
+            "resource_view.sql",
+            "flat_views.sql",
+            "refresh_resource.sql",
+            "refresh_flat.sql",
+            "alignment_test.sql",
+        }
+        for name in sorted(expected):
+            with self.subTest(name):
+                self.assertIn(name, self.files)
+        self.assertEqual(self.files - expected, set(), "unexpected files written")
 
     def test_grain_flat_file_written_for_configured_grain(self):
         spec_kw = {
@@ -413,12 +403,10 @@ class TestGenerate(SimpleTestCase):
         self.assertIn("mv_geom_site_boundary.sql", files)
 
     def test_result_tops_matches_top_level_nodegroups(self):
-        result, _ = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("branch", result["tops"])
+        self.assertIn("branch", self.result["tops"])
 
     def test_result_schema_matches_spec(self):
-        result, _ = self._run_generate(self._minimal_spec_kwargs())
-        self.assertEqual(result["schema"], "my_schema")
+        self.assertEqual(self.result["schema"], "my_schema")
 
 
 # ---------------------------------------------------------------------------
