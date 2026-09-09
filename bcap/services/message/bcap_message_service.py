@@ -59,12 +59,17 @@ class BcapMessageService(AliasedDataReader):
     A = BcapMessageAliases
 
     @classmethod
-    def base_query(cls, user, resource_ids=None):
+    def base_query(cls, user, resource_ids=None, as_representation=True):
         """Every message for branch staff; for everyone else the ones they are
         party to on a permit they or their company filed. Being party to it is not
-        enough on its own."""
+        enough on its own.
+
+        Fetch with as_representation off to save the result back: representation
+        turns reference values into dicts the datatype refuses on the way in."""
         queryset = ResourceTileTree.get_tiles(
-            MESSAGE_GRAPH_SLUG, resource_ids=resource_ids, as_representation=True
+            MESSAGE_GRAPH_SLUG,
+            resource_ids=resource_ids,
+            as_representation=as_representation,
         ).select_related("graph", "resource_instance_lifecycle_state")
         if is_internal_user(user):
             return queryset
@@ -118,7 +123,9 @@ class BcapMessageService(AliasedDataReader):
         read_date = self._payload_node_value(data, self.A.MESSAGE_READ_DATE)
         # Through the base query, so a skipped gate raises rather than stamping
         # someone else's message.
-        message = self.base_query(request.user, resource_ids=[str(message_id)]).get()
+        message = self.base_query(
+            request.user, resource_ids=[str(message_id)], as_representation=False
+        ).get()
         content = message.aliased_data.message_content.aliased_data
         content.message_read_date = parse_iso_or_set_value(read_date)
         message.save(request=request, partial=True)
