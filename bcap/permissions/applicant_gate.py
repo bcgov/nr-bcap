@@ -47,6 +47,7 @@ class ArchesDefaultDenyApplicantGate:
         "arches.app.views.notifications",
         "arches.app.views.plugin",
         "arches.app.views.user",
+        "arches_controlled_lists.views",
         "arches_vue_components.views.api.card_x_node_x_widget",
         "arches_vue_components.views.api.concept",
         "arches_vue_components.views.api.language",

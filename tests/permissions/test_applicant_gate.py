@@ -82,9 +82,11 @@ class TestArchesDefaultDenyApplicantGate(AuthTestHelper, TestCase):
 
     def test_applicant_keeps_the_views_the_permit_app_needs(self):
         self.idir_login_simulate()
-        self.assertNotEqual(
-            self.client.get(reverse("user_profile_manager")).status_code, 403
-        )
+        # Reference widgets read their dropdown options from the controlled list.
+        for route in ("user_profile_manager", "controlled_list_options"):
+            with self.subTest(route):
+                status = self.client.get(reverse(route)).status_code
+                self.assertNotEqual(status, 403)
 
     def test_internal_user_reaches_search(self):
         self.user.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
