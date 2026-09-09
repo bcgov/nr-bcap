@@ -14,6 +14,11 @@ from arches.app.models.models import ResourceInstance, TileModel
 from bcap.permissions.groups import Groups, is_internal_user
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.file import BCAPFileView
+from tests.builders import FixtureBuilder
+from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.permit_fixtures import build_permit
+from tests.services.contributor_fixtures import make_contributor, make_party
+from tests.services.test_bcap_message_service import make_message
 
 
 class FileAccessTests(TestCase):
@@ -67,3 +72,57 @@ class FileAccessTests(TestCase):
         staff = User.objects.create_user("file-staff")
         staff.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
         self.assertTrue(is_internal_user(staff))
+
+
+class MessageAttachmentAccessTests(TestCase):
+    """A message points at a permit rather than hanging off one, so no permit
+    reaches it and its attachments answer to the thread's own visibility."""
+
+    @classmethod
+    def setUpTestData(cls):
+        ControlledListFixtures.seed()
+        builder = FixtureBuilder()
+        acme = make_contributor(builder, "Acme Corp")
+        cls.staff, staff_contrib = make_party(
+            builder, "attach-staff", "Sam", "Staff", internal=True
+        )
+        cls.applicant, applicant_contrib = make_party(
+            builder,
+            "attach-applicant",
+            "Amy",
+            "Applicant",
+            associated_organization=acme,
+        )
+        cls.outsider = make_party(builder, "attach-outsider", "Otto", "Outsider")[0]
+        permit = build_permit(builder, "Attachment App", organization=acme)
+
+        cls.public = make_message(
+            builder,
+            context=permit,
+            author=staff_contrib,
+            recipient=applicant_contrib,
+            subject="Here is the form",
+        )
+        cls.internal = make_message(
+            builder,
+            context=permit,
+            author=staff_contrib,
+            recipient=staff_contrib,
+            is_internal=True,
+            subject="Between us",
+        )
+
+    def attachment(self, message):
+        tile = TileModel.objects.filter(resourceinstance=message).first()
+        return File.objects.create(tile=tile, path="uploadedfiles/note.txt").pk
+
+    def test_who_reads_an_attachment(self):
+        for name, expected, user, message in (
+            ("a party on their own thread", True, self.applicant, self.public),
+            ("an outsider to the thread", False, self.outsider, self.public),
+            ("a party to an internal thread", False, self.applicant, self.internal),
+        ):
+            with self.subTest(name):
+                fileid = self.attachment(message)
+                readable = BCAPFileView.applicant_may_read(user, fileid)
+                self.assertIs(bool(readable), expected)

@@ -7,6 +7,8 @@ from arches.app.utils.permission_backend import user_can_read_resource
 from arches.app.views.file import FileView
 
 from bcap.permissions.groups import is_internal_user
+from bcap.services.message.bcap_message_service import BcapMessageService
+from bcap.util.bcap_aliases import GraphSlugs
 
 
 class BCAPFileView(FileView):
@@ -32,7 +34,19 @@ class BCAPFileView(FileView):
 
     @staticmethod
     def applicant_may_read(user, fileid):
-        file = File.objects.filter(pk=fileid).select_related("tile").first()
-        return bool(file and file.tile_id) and user_can_read_resource(
-            user, file.tile.resourceinstance_id
+        file = (
+            File.objects.filter(pk=fileid)
+            .select_related("tile__resourceinstance__graph")
+            .first()
         )
+        if not (file and file.tile_id):
+            return False
+        resource = file.tile.resourceinstance
+        # A message points at the permit rather than hanging off it, so no permit
+        # reaches one and the reach check always says no. Its attachments follow
+        # the thread's own rule instead: party to it, and not internal-only.
+        if resource.graph.slug == GraphSlugs.BCAP_MESSAGE:
+            return BcapMessageService.base_query(
+                user, resource_ids=[str(resource.pk)], as_representation=False
+            ).exists()
+        return user_can_read_resource(user, resource.pk)
