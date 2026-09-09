@@ -85,7 +85,7 @@ const discontinuedTenureColumns = [
     { field: 'site_jurisdiction', label: 'Jurisdiction' },
     { field: 'tenure_type', label: 'Tenure/Reserves Type' },
     { field: 'tenure_identifier', label: 'Description' },
-    { field: 'tenure_remarks', label: 'Tenure Remarks' },
+    { field: 'tenure_remarks', label: 'Tenure Remarks', isHtml: true },
     { field: 'jurisdiction_entered_date', label: 'Modified On' },
     { field: 'jurisdiction_entered_by', label: 'Modified By' },
 ];
